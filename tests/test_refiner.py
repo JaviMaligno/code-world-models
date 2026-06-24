@@ -4,8 +4,9 @@ from cwm.groundtruth import tictactoe as g
 from cwm.trajectories import collect_trajectories
 from cwm.world_model import build_contract
 from cwm.games import GAMES
-CONTRACT_TEXT = build_contract(GAMES["tictactoe"].rules_text)
 from cwm.llm.provider import FakeProvider
+
+CONTRACT_TEXT = build_contract(GAMES["tictactoe"].rules_text)
 
 PERFECT = inspect.getsource(g)  # ground-truth source implements the contract
 

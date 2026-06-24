@@ -40,6 +40,7 @@ def returns(state: dict) -> dict:
 RULES_TEXT = """\
 This game is tic-tac-toe.
   - board has 9 cells (indices 0..8, row-major over a 3x3 grid): 0 empty, 1 = X, 2 = O.
+  - current_player is 1 (X) or 2 (O); players alternate each move, placing their own mark.
   - Action is the cell index 0..8 to place the current player's mark.
   - A player wins with 3 of their marks in a row, column, or diagonal.
   - The board full with no winner is a draw.

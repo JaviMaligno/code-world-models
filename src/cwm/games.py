@@ -1,4 +1,5 @@
 """Registry of supported games."""
+import types
 from dataclasses import dataclass
 
 from .groundtruth import tictactoe
@@ -7,7 +8,7 @@ from .groundtruth import tictactoe
 @dataclass(frozen=True)
 class GameSpec:
     name: str
-    module: object          # exposes the world-model contract functions
+    module: types.ModuleType          # exposes the world-model contract functions
     rules_text: str
     policy_description: str
 
