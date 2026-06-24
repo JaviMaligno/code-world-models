@@ -21,3 +21,11 @@ def test_build_contract_combines_api_and_rules():
 
 def test_policy_description_present():
     assert "tic-tac-toe" in GAMES["tictactoe"].policy_description.lower()
+
+def test_registry_has_connect4():
+    from cwm.games import GAMES
+    spec = GAMES["connect4"]
+    assert spec.name == "connect4"
+    s = spec.module.initial_state()
+    assert s == {"board": [0]*42, "current_player": 1}
+    assert "connect four" in spec.policy_description.lower()
