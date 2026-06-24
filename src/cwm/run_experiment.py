@@ -15,8 +15,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from .world_model import CONTRACT_TEXT
-from .groundtruth import tictactoe as g
+from .games import GAMES
+from .world_model import build_contract
 from .trajectories import collect_trajectories
 from .llm.azure_openai import AzureOpenAIProvider
 from .synthesizer import synthesize_cwm
@@ -44,6 +44,7 @@ def main(argv=None):
     ap.add_argument("--train-games", type=int, default=20)
     ap.add_argument("--simulations", type=int, default=300)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--game", default="tictactoe", choices=list(GAMES))
     args = ap.parse_args(argv)
 
     provider = AzureOpenAIProvider(
@@ -55,13 +56,17 @@ def main(argv=None):
     baseline_model = os.environ[_DEPLOY_ENV[args.baseline_size]]
     meter = CostMeter()
 
+    spec = GAMES[args.game]
+    g = spec.module
+    contract = build_contract(spec.rules_text)
+
     # 1. Collect trajectories from the oracle
     traj = collect_trajectories(g, n_games=args.train_games, seed=args.seed)
 
     # 2. Synthesize + 3. refine to accuracy 1.0
-    code, usage = synthesize_cwm(provider, synth_model, CONTRACT_TEXT, traj)
+    code, usage = synthesize_cwm(provider, synth_model, contract, traj)
     meter.add(args.synth_size, usage)
-    refined = refine_cwm(provider, synth_model, CONTRACT_TEXT, code, traj)
+    refined = refine_cwm(provider, synth_model, contract, code, traj)
     for u in refined.usages:
         meter.add(args.synth_size, u)
 
@@ -81,7 +86,7 @@ def main(argv=None):
         return mcts_policy(cwm, state, n_simulations=args.simulations, seed=args.seed + _mcts_calls["n"])
 
     def baseline_agent(state, legal):
-        action, u = baseline_policy(provider, baseline_model, state, legal)
+        action, u = baseline_policy(provider, baseline_model, state, legal, spec.policy_description)
         meter.add(args.baseline_size, u)
         return action
 
@@ -91,6 +96,7 @@ def main(argv=None):
 
     per_game_baseline_usd = meter.by_role.get(args.baseline_size, 0.0) / max(1, arena.games)
     report = {
+        "game": args.game,
         "seed": args.seed,
         "synth_size": args.synth_size,
         "baseline_size": args.baseline_size,
@@ -107,7 +113,7 @@ def main(argv=None):
     out = json.dumps(report, indent=2)
     print(out)
     Path("results").mkdir(exist_ok=True)
-    Path(f"results/tictactoe_{args.synth_size}_vs_{args.baseline_size}.json").write_text(out)
+    Path(f"results/{args.game}_{args.synth_size}_vs_{args.baseline_size}.json").write_text(out)
     return 0
 
 if __name__ == "__main__":

@@ -36,3 +36,17 @@ def returns(state: dict) -> dict:
     if w == 2:
         return {1: -1.0, 2: 1.0}
     return {1: 0.0, 2: 0.0}
+
+RULES_TEXT = """\
+This game is tic-tac-toe.
+  - board has 9 cells (indices 0..8, row-major over a 3x3 grid): 0 empty, 1 = X, 2 = O.
+  - current_player is 1 (X) or 2 (O); players alternate each move, placing their own mark.
+  - Action is the cell index 0..8 to place the current player's mark.
+  - A player wins with 3 of their marks in a row, column, or diagonal.
+  - The board full with no winner is a draw.
+"""
+
+POLICY_DESCRIPTION = (
+    "You play tic-tac-toe. The board is a list of 9 cells (0 empty, 1=X, 2=O), "
+    "indices 0..8 row-major. A move is the cell index 0..8 to play."
+)

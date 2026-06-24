@@ -1,24 +1,22 @@
-"""LLM-as-policy baseline agent."""
+"""LLM-as-policy baseline agent (game-agnostic)."""
 import re
 from cwm.llm.provider import Usage
 
-_SYSTEM = ("You play tic-tac-toe. Board is a list of 9 cells (0 empty, 1=X, "
-           "2=O), indices 0..8 row-major. Reply with ONLY the index you play.")
-
-def build_policy_messages(state: dict, legal: list[int]) -> list[dict]:
+def build_policy_messages(state: dict, legal: list[int], policy_description: str) -> list[dict]:
+    system = policy_description + " Reply with ONLY the integer of your chosen legal move."
     user = (f"Board: {state['board']}\nYou are player {state['current_player']}.\n"
-            f"Legal moves: {legal}\nReply with one index from the legal moves.")
-    return [{"role": "system", "content": _SYSTEM},
+            f"Legal moves: {legal}\nReply with one integer from the legal moves.")
+    return [{"role": "system", "content": system},
             {"role": "user", "content": user}]
 
 def parse_action(text: str) -> int | None:
-    # NOTE: single-digit \d is correct for tic-tac-toe (actions 0..8); extend to \d+ for games with multi-digit actions (e.g. Connect Four).
-    m = re.search(r"\d", text)
+    m = re.search(r"\d+", text)   # multi-digit: works for tic-tac-toe (0..8) and Connect Four (0..6) and beyond
     return int(m.group()) if m else None
 
-def baseline_policy(provider, model, state: dict, legal: list[int]) -> tuple[int | None, "Usage"]:
-    completion = provider.complete(build_policy_messages(state, legal), model=model)
+def baseline_policy(provider, model, state: dict, legal: list[int],
+                    policy_description: str) -> tuple[int | None, "Usage"]:
+    completion = provider.complete(build_policy_messages(state, legal, policy_description), model=model)
     action = parse_action(completion.text)
     if action not in legal:
-        return None, completion.usage   # illegal/unparseable -> arena handles it
+        return None, completion.usage
     return action, completion.usage
