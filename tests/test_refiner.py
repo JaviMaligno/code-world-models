@@ -40,3 +40,10 @@ def test_refine_recovers_from_broken():
     fake = FakeProvider([f"```python\n{PERFECT}\n```"])  # one fix is enough
     res = refine_cwm(fake, "nano", CONTRACT_TEXT, BROKEN, traj, max_iters=5)
     assert res.accuracy == 1.0 and res.iterations == 1
+
+def test_refine_stops_at_max_iters_when_unfixable():
+    traj = collect_trajectories(g, n_games=3, seed=3)
+    # provider keeps returning BROKEN -> accuracy never reaches 1.0
+    fake = FakeProvider([f"```python\n{BROKEN}\n```"] * 10)
+    res = refine_cwm(fake, "nano", CONTRACT_TEXT, BROKEN, traj, max_iters=3)
+    assert res.accuracy < 1.0 and res.iterations == 3

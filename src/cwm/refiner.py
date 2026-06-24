@@ -16,7 +16,7 @@ def transition_accuracy(code: str, trajectories: list, timeout: float = 5.0):
     cases = [{"state": t.state, "action": t.action} for t in trajectories]
     call = (
         "import json\n"
-        f"_cases = json.loads(r'''{json.dumps(cases)}''')\n"
+        f"_cases = json.loads({json.dumps(json.dumps(cases))})\n"
         "_out = []\n"
         "for _c in _cases:\n"
         "    try:\n"
@@ -28,15 +28,21 @@ def transition_accuracy(code: str, trajectories: list, timeout: float = 5.0):
     res = run_in_sandbox(code, call, timeout=timeout)
     if not res.ok:
         return 0.0, [res.stderr.strip()[-300:] or "execution failed"]
-    produced = json.loads(res.stdout.strip().splitlines()[-1])
+    lines = res.stdout.strip().splitlines()
+    if not lines:
+        return 0.0, ["sandbox produced no output"]
+    try:
+        produced = json.loads(lines[-1])
+    except json.JSONDecodeError:
+        return 0.0, [f"bad JSON output: {lines[-1][:200]}"]
     failures = []
     correct = 0
     for t, got in zip(trajectories, produced):
         if got == t.next_state:
             correct += 1
         else:
-            failures.append(f"state={t.state} action={t.action} "
-                            f"expected={t.next_state} got={got}")
+            failures.append((f"state={t.state} action={t.action} "
+                             f"expected={t.next_state} got={got}")[:200])
     return correct / len(trajectories), failures
 
 def refine_cwm(provider, model, contract, code, trajectories, max_iters=5):
