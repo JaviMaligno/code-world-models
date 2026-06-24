@@ -19,7 +19,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from .games import GAMES
-from .world_model import build_contract
+from .world_model import build_contract, CONTRACT_API
 from .trajectories import collect_trajectories
 from .llm.azure_openai import AzureOpenAIProvider
 from .synthesizer import synthesize_cwm
@@ -59,6 +59,9 @@ def main(argv=None):
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--visited-cap", type=int, default=4000,
                     help="max states per visited distribution (bounds sandbox cost)")
+    ap.add_argument("--no-rules", action="store_true",
+                    help="pure inference: synthesize from trajectories only, "
+                         "withholding RULES_TEXT (generic CONTRACT_API only)")
     args = ap.parse_args(argv)
 
     provider = AzureOpenAIProvider(
@@ -69,7 +72,9 @@ def main(argv=None):
     synth_model = os.environ[_DEPLOY_ENV[args.synth_size]]
     spec = GAMES[args.game]
     g = spec.module
-    contract = build_contract(spec.rules_text)
+    # Pure-inference mode withholds the game's rules so the model must infer the
+    # dynamics from trajectories alone — the clean test for the coverage gap.
+    contract = CONTRACT_API if args.no_rules else build_contract(spec.rules_text)
     meter = CostMeter()
 
     # D_truth depends only on the ground truth; compute once and reuse.
@@ -119,13 +124,15 @@ def main(argv=None):
         })
 
     report = {"game": args.game, "synth_size": args.synth_size,
+              "no_rules": args.no_rules,
               "summary": aggregate_gap(per_seed),
               "per_seed": per_seed,
               "cost_usd_total": meter.total_usd()}
     out = json.dumps(report, indent=2)
     print(out)
     Path("results").mkdir(exist_ok=True)
-    Path(f"results/gap_{args.game}_{args.synth_size}.json").write_text(out)
+    suffix = "_norules" if args.no_rules else ""
+    Path(f"results/gap_{args.game}_{args.synth_size}{suffix}.json").write_text(out)
     return 0
 
 

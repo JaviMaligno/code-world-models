@@ -14,10 +14,11 @@ GRID = [
 ]
 COMMON = ["--synth-seeds", "5", "--selfplay-games", "20",
           "--simulations", "300", "--train-games", "40", "--seed", "0"]
+EXTRA = sys.argv[1:]  # passthrough, e.g. --no-rules
 
 for game, size in GRID:
-    print(f"\n########## {game} / {size} ##########", flush=True)
-    argv = ["--game", game, "--synth-size", size] + COMMON
+    print(f"\n########## {game} / {size} {' '.join(EXTRA)} ##########", flush=True)
+    argv = ["--game", game, "--synth-size", size] + COMMON + EXTRA
     try:
         main(argv)
     except Exception as e:  # keep the grid going if one cell fails
