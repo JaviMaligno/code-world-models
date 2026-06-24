@@ -1,8 +1,8 @@
 """Shared world-model contract and (de)serialization for the sandbox boundary."""
 import json
 
-State = dict   # {"board": list[int] len 9, "current_player": int}
-Action = int   # 0..8
+State = dict   # {"board": list[int], "current_player": int (1 or 2)} — board size is game-specific
+Action = int   # game-specific (e.g. tic-tac-toe cell 0..8, Connect Four column 0..6)
 
 def state_to_json(state: State) -> str:
     return json.dumps(state, sort_keys=True)

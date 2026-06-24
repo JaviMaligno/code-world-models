@@ -31,6 +31,8 @@ def legal_actions(state: dict) -> list[int]:
 def apply_action(state: dict, action: int) -> dict:
     board = list(state["board"])
     r = _drop_row(board, action)
+    if r is None:
+        raise ValueError(f"illegal action: column {action} is full")
     board[_idx(r, action)] = state["current_player"]
     return {"board": board, "current_player": 2 if state["current_player"] == 1 else 1}
 
