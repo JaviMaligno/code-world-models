@@ -9,9 +9,9 @@ class Trajectory:
     next_state: dict
     reward: dict
     terminal: bool
-    legal_actions: list
+    legal_actions: list[int]
 
-def collect_trajectories(model, n_games: int, seed: int) -> list:
+def collect_trajectories(model, n_games: int, seed: int) -> list[Trajectory]:
     rng = random.Random(seed)
     out: list = []
     for _ in range(n_games):
