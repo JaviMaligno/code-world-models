@@ -5,6 +5,8 @@ Azure GPT-5.4 pricing before quoting any figure in the article.
 """
 from dataclasses import dataclass, field
 
+from cwm.llm.provider import Usage
+
 PRICES = {
     "large": (5.0, 25.0),   # TODO: real gpt-5.4 pricing
     "mini": (1.0, 5.0),     # TODO: real gpt-5.4-mini pricing
@@ -15,7 +17,7 @@ PRICES = {
 class CostMeter:
     by_role: dict = field(default_factory=dict)
 
-    def add(self, role: str, usage) -> None:
+    def add(self, role: str, usage: Usage) -> None:
         pin, pout = PRICES[role]
         cost = (usage.prompt_tokens / 1e6) * pin + (usage.completion_tokens / 1e6) * pout
         self.by_role[role] = self.by_role.get(role, 0.0) + cost

@@ -13,3 +13,11 @@ def test_cost_accumulates_by_role():
 
 def test_extrapolate_linear():
     assert extrapolate(0.5, 10) == 5.0
+
+def test_add_same_role_accumulates():
+    m = CostMeter()
+    u = Usage(prompt_tokens=1_000_000, completion_tokens=0)
+    m.add("nano", u)
+    first = m.by_role["nano"]
+    m.add("nano", u)
+    assert m.by_role["nano"] == 2 * first
