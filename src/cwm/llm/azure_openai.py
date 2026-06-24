@@ -11,7 +11,11 @@ class AzureOpenAIProvider:
     def complete(self, messages: list[dict], model: str) -> Completion:
         # NOTE: no temperature/top_p — GPT-5.4 rejects them.
         resp = self._client.chat.completions.create(model=model, messages=messages)
+        if not resp.choices:
+            raise ValueError("Azure OpenAI returned no choices (possibly content-filtered)")
         u = resp.usage
+        if u is None:
+            raise ValueError("Azure OpenAI returned no usage metadata")
         return Completion(
             text=resp.choices[0].message.content or "",
             usage=Usage(prompt_tokens=u.prompt_tokens,
