@@ -1,16 +1,18 @@
 """Token accounting and USD estimation.
 
-PRICES are PLACEHOLDERS (USD per 1M tokens, input/output). Replace with real
-Azure GPT-5.4 pricing before quoting any figure in the article.
+PRICES are real Azure OpenAI "Global Standard" list prices (USD per 1M tokens,
+input/output), fetched from the Azure Retail Prices API on 2026-06-24. Re-check
+before quoting in the article, as list prices change.
 """
 from dataclasses import dataclass, field
 
 from cwm.llm.provider import Usage
 
+# (input, output) USD per 1M tokens — Azure Global Standard, 2026-06-24
 PRICES = {
-    "large": (5.0, 25.0),   # TODO: real gpt-5.4 pricing
-    "mini": (1.0, 5.0),     # TODO: real gpt-5.4-mini pricing
-    "nano": (0.5, 2.0),     # TODO: real gpt-5.4-nano pricing
+    "large": (2.5, 15.0),    # gpt-5.4
+    "mini": (0.75, 4.5),     # gpt-5.4-mini
+    "nano": (0.2, 1.25),     # gpt-5.4-nano
 }
 
 @dataclass
