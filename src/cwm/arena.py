@@ -32,7 +32,7 @@ def play_match(referee, agent1, agent2, seed) -> MatchResult:
         state = referee.apply_action(state, action)
         moves += 1
     r = referee.returns(state)
-    winner = 1 if r[1] == 1.0 else (2 if r[2] == 1.0 else 0)
+    winner = 1 if r[1] > 0.5 else (2 if r[2] > 0.5 else 0)
     return MatchResult(winner=winner, illegal_by=illegal_by, moves=moves)
 
 def run_arena(referee, cwm_agent, baseline_agent, n_games, seed) -> ArenaResult:

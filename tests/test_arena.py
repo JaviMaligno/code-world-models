@@ -24,3 +24,13 @@ def test_run_arena_aggregates_and_alternates():
     assert isinstance(res, ArenaResult)
     assert res.games == 4
     assert res.cwm_wins == 4 and res.baseline_illegal == 4
+    assert res.cwm_illegal == 0 and res.draws == 0
+
+def test_run_arena_attributes_cwm_illegal_across_roles():
+    # cwm always illegal, baseline always legal -> cwm forfeits every game,
+    # whether it starts (even index) or not (odd index). Proves cross-role attribution.
+    res = run_arena(g, cwm_agent=always_illegal, baseline_agent=first_legal,
+                    n_games=4, seed=1)
+    assert res.cwm_illegal == 4
+    assert res.baseline_wins == 4
+    assert res.cwm_wins == 0 and res.draws == 0 and res.baseline_illegal == 0
