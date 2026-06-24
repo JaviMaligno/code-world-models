@@ -29,7 +29,7 @@ def extract_code(text: str) -> str:
     m = re.search(r"```python\s*\n(.*?)```", text, re.DOTALL)
     if m:
         return m.group(1).rstrip("\n")
-    m = re.search(r"```\s*\n(.*?)```", text, re.DOTALL)
+    m = re.search(r"```(?!python)\s*\n(.*?)```", text, re.DOTALL)
     if m:
         return m.group(1).rstrip("\n")
     return text.strip()

@@ -18,7 +18,11 @@ def test_extract_code_from_fence():
     assert extract_code(text) == "def f():\n    return 1"
 
 def test_extract_code_without_fence_returns_text():
-    assert extract_code("def f():\n    return 1").startswith("def f")
+    assert extract_code("def f():\n    return 1") == "def f():\n    return 1"
+
+def test_extract_code_from_bare_fence():
+    text = "```\ndef f():\n    return 1\n```"
+    assert extract_code(text) == "def f():\n    return 1"
 
 def test_synthesize_returns_code_and_usage():
     traj = collect_trajectories(g, n_games=1, seed=1)
