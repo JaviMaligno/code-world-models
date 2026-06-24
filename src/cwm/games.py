@@ -2,7 +2,7 @@
 import types
 from dataclasses import dataclass
 
-from .groundtruth import tictactoe, connect_four, gen_tictactoe
+from .groundtruth import tictactoe, connect_four, gen_tictactoe, gen_chess
 
 
 @dataclass(frozen=True)
@@ -31,5 +31,11 @@ GAMES = {
         module=gen_tictactoe,
         rules_text=gen_tictactoe.RULES_TEXT,
         policy_description=gen_tictactoe.POLICY_DESCRIPTION,
+    ),
+    "army5x5a": GameSpec(
+        name="army5x5a",
+        module=gen_chess,
+        rules_text=gen_chess.RULES_TEXT,
+        policy_description=gen_chess.POLICY_DESCRIPTION,
     ),
 }
