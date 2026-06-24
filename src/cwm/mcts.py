@@ -2,6 +2,7 @@
 """Minimal UCT MCTS over a world-model contract."""
 import math
 import random
+from .world_model import state_to_json
 
 class _Node:
     __slots__ = ("state", "player", "parent", "action", "children",
@@ -27,9 +28,12 @@ def _rollout(model, state, rng):
         state = model.apply_action(state, rng.choice(model.legal_actions(state)))
     return model.returns(state)
 
-def mcts_policy(model, state: dict, n_simulations: int = 200, seed: int = 0) -> int:
+def mcts_policy(model, state: dict, n_simulations: int = 200, seed: int = 0,
+                visited: set | None = None) -> int:
     rng = random.Random(seed)
     root = _Node(model, state)
+    if visited is not None:
+        visited.add(state_to_json(state))
     for _ in range(n_simulations):
         node = root
         # Selection
@@ -43,6 +47,8 @@ def mcts_policy(model, state: dict, n_simulations: int = 200, seed: int = 0) -> 
                           parent=node, action=a)
             node.children.append(child)
             node = child
+            if visited is not None:
+                visited.add(state_to_json(child.state))
         # Simulation
         result = _rollout(model, node.state, rng)
         # Backpropagation (reward from each node's mover's perspective)
