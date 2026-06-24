@@ -30,6 +30,11 @@ class DivergenceReport:
     # divergence visible rather than hidden.
     n_terminal: int = 0
     legal_terminal_divergences: int = 0
+    # States whose CWM evaluation could not be obtained (sandbox timeout/crash on
+    # the batch, even after a retry). Excluded from the rate denominators so a slow
+    # CWM is never mistaken for a fully-divergent one; surfaced here so a run with
+    # many of these reads as unreliable, not as a real gap.
+    n_exec_errors: int = 0
 
 
 def _truth_expectations(states, truth_module):
@@ -89,70 +94,91 @@ _CALL = (
 )
 
 
-def contract_divergence(cwm_code: str, states: list, truth_module,
-                        timeout: float = 10.0) -> DivergenceReport:
-    if not states:
-        return DivergenceReport(0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, [])
-    truth, cases = _truth_expectations(states, truth_module)
-    payload = json.dumps(json.dumps(cases))
+def _run_chunk(cwm_code: str, cases_chunk: list, timeout: float):
+    """Run the CWM on one chunk of cases in the sandbox. Returns the aligned
+    `produced` list, or None if the sandbox failed/timed out or output was bad."""
+    payload = json.dumps(json.dumps(cases_chunk))
     res = run_in_sandbox(cwm_code, _CALL.format(payload=payload), timeout=timeout)
     if not res.ok:
-        return DivergenceReport(len(states), 0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                [res.stderr.strip()[-300:] or "sandbox failed"])
+        return None
     lines = res.stdout.strip().splitlines()
     try:
         produced = json.loads(lines[-1]) if lines else None
     except json.JSONDecodeError:
-        produced = None
-    if not isinstance(produced, list) or len(produced) != len(states):
-        return DivergenceReport(len(states), 0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                ["malformed sandbox output"])
+        return None
+    if not isinstance(produced, list) or len(produced) != len(cases_chunk):
+        return None
+    return produced
+
+
+def contract_divergence(cwm_code: str, states: list, truth_module,
+                        chunk_size: int = 1000, timeout: float = 60.0) -> DivergenceReport:
+    if not states:
+        return DivergenceReport(0, 0, 1.0, 1.0, 1.0, 1.0, 1.0, [])
+    truth, cases = _truth_expectations(states, truth_module)
 
     legal_ok = legal_denom = term_ok = ret_ok = states_ok = 0
-    n_terminal = legal_terminal_divergences = 0
-    pairs = pairs_ok = 0
+    n_terminal = legal_terminal_divergences = n_exec_errors = 0
+    pairs = pairs_ok = measured = 0
     examples = []
-    for st, tr, got in zip(states, truth, produced):
-        truth_terminal = tr["terminal"] is True
-        t_ok = got.get("terminal") == tr["terminal"]
-        r_ok = got.get("returns") == tr["returns"]
-        # legal_actions on a finished game is undefined and never used by MCTS
-        # (is_terminal gates expansion), so exclude it from the gap on terminal
-        # states; track the divergence separately as a diagnostic.
-        if truth_terminal:
-            n_terminal += 1
-            l_ok = True
-            if got.get("legal") != tr["legal"]:
-                legal_terminal_divergences += 1
-        else:
-            l_ok = got.get("legal") == tr["legal"]
-            legal_ok += l_ok
-            legal_denom += 1
-        trans_ok = True
-        for a_str, exp in tr["nexts"].items():
-            pairs += 1
-            if got.get("nexts", {}).get(a_str) == exp:
-                pairs_ok += 1
+    for start in range(0, len(states), chunk_size):
+        end = start + chunk_size
+        cases_chunk = cases[start:end]
+        # Run the chunk; one retry at 3x timeout before giving up (a batch
+        # timeout is a sizing artifact, not a per-state divergence).
+        produced = _run_chunk(cwm_code, cases_chunk, timeout)
+        if produced is None:
+            produced = _run_chunk(cwm_code, cases_chunk, timeout * 3)
+        if produced is None:
+            n_exec_errors += len(cases_chunk)
+            if len(examples) < 10:
+                examples.append(
+                    f"exec error: chunk states[{start}:{end}] "
+                    f"failed/timed out in sandbox")
+            continue
+        for st, tr, got in zip(states[start:end], truth[start:end], produced):
+            measured += 1
+            truth_terminal = tr["terminal"] is True
+            t_ok = got.get("terminal") == tr["terminal"]
+            r_ok = got.get("returns") == tr["returns"]
+            # legal_actions on a finished game is undefined and never used by MCTS
+            # (is_terminal gates expansion), so exclude it from the gap on terminal
+            # states; track the divergence separately as a diagnostic.
+            if truth_terminal:
+                n_terminal += 1
+                l_ok = True
+                if got.get("legal") != tr["legal"]:
+                    legal_terminal_divergences += 1
             else:
-                trans_ok = False
-        term_ok += t_ok
-        ret_ok += r_ok
-        if l_ok and t_ok and r_ok and trans_ok:
-            states_ok += 1
-        elif len(examples) < 10:
-            examples.append(
-                f"state={st} legal_ok={l_ok} terminal_ok={t_ok} "
-                f"returns_ok={r_ok} transitions_ok={trans_ok}")
-    n = len(states)
+                l_ok = got.get("legal") == tr["legal"]
+                legal_ok += l_ok
+                legal_denom += 1
+            trans_ok = True
+            for a_str, exp in tr["nexts"].items():
+                pairs += 1
+                if got.get("nexts", {}).get(a_str) == exp:
+                    pairs_ok += 1
+                else:
+                    trans_ok = False
+            term_ok += t_ok
+            ret_ok += r_ok
+            if l_ok and t_ok and r_ok and trans_ok:
+                states_ok += 1
+            elif len(examples) < 10:
+                examples.append(
+                    f"state={st} legal_ok={l_ok} terminal_ok={t_ok} "
+                    f"returns_ok={r_ok} transitions_ok={trans_ok}")
+    n = measured  # rate denominators exclude exec-errored states
     return DivergenceReport(
         n_states=n, n_pairs=pairs,
         legal_rate=(legal_ok / legal_denom) if legal_denom else 1.0,
-        terminal_rate=term_ok / n,
-        returns_rate=ret_ok / n,
+        terminal_rate=(term_ok / n) if n else 0.0,
+        returns_rate=(ret_ok / n) if n else 0.0,
         transition_rate=(pairs_ok / pairs) if pairs else 1.0,
-        state_agreement_rate=states_ok / n, examples=examples,
+        state_agreement_rate=(states_ok / n) if n else 0.0, examples=examples,
         n_terminal=n_terminal,
-        legal_terminal_divergences=legal_terminal_divergences)
+        legal_terminal_divergences=legal_terminal_divergences,
+        n_exec_errors=n_exec_errors)
 
 
 def collect_visited_states(model, n_games: int, simulations: int, seed: int,

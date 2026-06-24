@@ -35,6 +35,29 @@ def test_terminal_legal_divergence_excluded_but_tracked():
     assert rep.n_terminal == 1
     assert rep.legal_terminal_divergences == 1      # but surfaced as a diagnostic
 
+def test_exec_failure_reported_not_counted_as_divergence():
+    # A CWM whose module crashes on import cannot be evaluated at all (the whole
+    # sandbox program exits non-zero). That must be reported as n_exec_errors
+    # (excluded from rate denominators), NOT silently counted as a divergent run.
+    states = [tictactoe.initial_state(),
+              {"board": [1, 0, 0, 0, 0, 0, 0, 0, 0], "current_player": 2}]
+    rep = contract_divergence("raise RuntimeError('boom')", states, tictactoe,
+                              timeout=2.0)
+    assert rep.n_exec_errors == len(states)
+    assert rep.n_states == 0           # nothing measured
+    assert rep.examples                # surfaced
+
+def test_chunking_matches_single_batch():
+    # Same result whether the states are evaluated in one batch or several chunks.
+    src = inspect.getsource(tictactoe)
+    states = [tictactoe.initial_state(),
+              {"board": [1, 1, 0, 2, 2, 0, 0, 0, 0], "current_player": 1},
+              {"board": [1, 1, 1, 2, 2, 0, 0, 0, 0], "current_player": 2}]
+    big = contract_divergence(src, states, tictactoe, chunk_size=100)
+    small = contract_divergence(src, states, tictactoe, chunk_size=1)
+    assert big.state_agreement_rate == small.state_agreement_rate == 1.0
+    assert big.n_states == small.n_states == 3
+
 def test_empty_states_is_safe():
     src = inspect.getsource(tictactoe)
     rep = contract_divergence(src, [], tictactoe)

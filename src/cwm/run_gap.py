@@ -57,6 +57,8 @@ def main(argv=None):
     ap.add_argument("--simulations", type=int, default=300)
     ap.add_argument("--train-games", type=int, default=40)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--visited-cap", type=int, default=4000,
+                    help="max states per visited distribution (bounds sandbox cost)")
     args = ap.parse_args(argv)
 
     provider = AzureOpenAIProvider(
@@ -72,7 +74,8 @@ def main(argv=None):
 
     # D_truth depends only on the ground truth; compute once and reuse.
     truth_states = collect_visited_states(
-        g, n_games=args.selfplay_games, simulations=args.simulations, seed=args.seed)
+        g, n_games=args.selfplay_games, simulations=args.simulations,
+        seed=args.seed, cap=args.visited_cap)
 
     per_seed = []
     for s in range(args.synth_seeds):
@@ -90,10 +93,19 @@ def main(argv=None):
         cwm = _load_module_from_code(refined.code)
         gate_states = [t.state for t in traj]
         cwm_states = collect_visited_states(
-            cwm, n_games=args.selfplay_games, simulations=args.simulations, seed=seed)
+            cwm, n_games=args.selfplay_games, simulations=args.simulations,
+            seed=seed, cap=args.visited_cap)
         d_gate = contract_divergence(refined.code, gate_states, g)
         d_cwm = contract_divergence(refined.code, cwm_states, g)
         d_truth = contract_divergence(refined.code, truth_states, g)
+        # If a distribution could not be evaluated at all (every chunk failed in
+        # the sandbox), the agreement is unmeasured — recording gap=1-0 would be a
+        # spurious gap. Skip the seed with the reason instead.
+        if d_gate.n_states == 0 or d_cwm.n_states == 0:
+            per_seed.append({"seed": seed, "skipped": "cwm-eval-failed",
+                             "gate_exec_errors": d_gate.n_exec_errors,
+                             "cwm_exec_errors": d_cwm.n_exec_errors})
+            continue
         per_seed.append({
             "seed": seed,
             "gap": d_gate.state_agreement_rate - d_cwm.state_agreement_rate,
