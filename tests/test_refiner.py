@@ -1,5 +1,5 @@
 import inspect
-from cwm.refiner import transition_accuracy, refine_cwm, RefineResult
+from cwm.refiner import contract_accuracy, refine_cwm, RefineResult
 from cwm.groundtruth import tictactoe as g
 from cwm.trajectories import collect_trajectories
 from cwm.world_model import CONTRACT_TEXT
@@ -17,14 +17,23 @@ BROKEN = (
     "def returns(state):\n    return {1:0.0,2:0.0}\n"
 )
 
+# apply_action is perfect but is_terminal always returns False
+BROKEN_TERMINAL = PERFECT + "\ndef is_terminal(state): return False\n"
+
 def test_perfect_code_scores_1():
     traj = collect_trajectories(g, n_games=5, seed=3)
-    acc, failures = transition_accuracy(PERFECT, traj)
+    acc, failures = contract_accuracy(PERFECT, traj)
     assert acc == 1.0 and failures == []
 
 def test_broken_code_scores_below_1():
     traj = collect_trajectories(g, n_games=5, seed=3)
-    acc, failures = transition_accuracy(BROKEN, traj)
+    acc, failures = contract_accuracy(BROKEN, traj)
+    assert acc < 1.0 and len(failures) > 0
+
+def test_broken_terminal_scores_below_1():
+    """apply_action is perfect but is_terminal broken — gate must catch it."""
+    traj = collect_trajectories(g, n_games=5, seed=3)
+    acc, failures = contract_accuracy(BROKEN_TERMINAL, traj)
     assert acc < 1.0 and len(failures) > 0
 
 def test_refine_stops_at_perfect_accuracy():

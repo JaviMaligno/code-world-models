@@ -1,4 +1,4 @@
-"""Measure transition accuracy of synthesized code and refine it to 1.0."""
+"""Measure contract accuracy of synthesized code and refine it to 1.0."""
 import json
 from dataclasses import dataclass
 from .sandbox import run_in_sandbox
@@ -11,20 +11,40 @@ class RefineResult:
     iterations: int
     usages: list
 
-def transition_accuracy(code: str, trajectories: list, timeout: float = 5.0):
+def contract_accuracy(code: str, trajectories: list, timeout: float = 5.0):
     if not trajectories:
         return 0.0, ["no trajectories provided"]
-    # Build one batch program: apply each action, print the resulting states as JSON.
+    # Batch program: for each (state, action) compute all four contract properties.
     cases = [{"state": t.state, "action": t.action} for t in trajectories]
     call = (
         "import json\n"
         f"_cases = json.loads({json.dumps(json.dumps(cases))})\n"
         "_out = []\n"
         "for _c in _cases:\n"
+        "    _r = {}\n"
         "    try:\n"
-        "        _out.append(apply_action(_c['state'], _c['action']))\n"
+        "        _ns = apply_action(_c['state'], _c['action'])\n"
+        "        _r['next_state'] = _ns\n"
         "    except Exception as e:\n"
-        "        _out.append({'__error__': repr(e)})\n"
+        "        _r['next_state'] = {'__error__': repr(e)}\n"
+        "        _ns = None\n"
+        "    try:\n"
+        "        _r['legal'] = legal_actions(_c['state'])\n"
+        "    except Exception as e:\n"
+        "        _r['legal'] = {'__error__': repr(e)}\n"
+        "    if _ns is not None:\n"
+        "        try:\n"
+        "            _r['terminal'] = is_terminal(_ns)\n"
+        "        except Exception as e:\n"
+        "            _r['terminal'] = {'__error__': repr(e)}\n"
+        "        try:\n"
+        "            _r['reward'] = returns(_ns)\n"
+        "        except Exception as e:\n"
+        "            _r['reward'] = {'__error__': repr(e)}\n"
+        "    else:\n"
+        "        _r['terminal'] = {'__error__': 'next_state failed'}\n"
+        "        _r['reward'] = {'__error__': 'next_state failed'}\n"
+        "    _out.append(_r)\n"
         "print(json.dumps(_out))\n"
     )
     res = run_in_sandbox(code, call, timeout=timeout)
@@ -40,16 +60,31 @@ def transition_accuracy(code: str, trajectories: list, timeout: float = 5.0):
     failures = []
     correct = 0
     for t, got in zip(trajectories, produced):
-        if got == t.next_state:
-            correct += 1
+        # Normalize reward keys: JSON round-trip turns int keys to str; trajectory has int keys.
+        expected_reward = {str(k): v for k, v in t.reward.items()}
+        mismatches = []
+        if got.get("next_state") != t.next_state:
+            mismatches.append("next_state")
+        if got.get("legal") != t.legal_actions:
+            mismatches.append("legal_actions")
+        if got.get("terminal") != t.terminal:
+            mismatches.append("is_terminal")
+        if got.get("reward") != expected_reward:
+            mismatches.append("returns")
+        if mismatches:
+            msg = (
+                f"state={t.state} action={t.action} "
+                f"mismatched={mismatches} "
+                f"got={got}"
+            )[:200]
+            failures.append(msg)
         else:
-            failures.append((f"state={t.state} action={t.action} "
-                             f"expected={t.next_state} got={got}")[:200])
+            correct += 1
     return correct / len(trajectories), failures
 
 def refine_cwm(provider, model, contract, code, trajectories, max_iters=5):
     usages = []
-    acc, failures = transition_accuracy(code, trajectories)
+    acc, failures = contract_accuracy(code, trajectories)
     iterations = 0
     while acc < 1.0 and iterations < max_iters:
         msg = (
@@ -63,5 +98,5 @@ def refine_cwm(provider, model, contract, code, trajectories, max_iters=5):
         usages.append(completion.usage)
         code = extract_code(completion.text)
         iterations += 1
-        acc, failures = transition_accuracy(code, trajectories)
+        acc, failures = contract_accuracy(code, trajectories)
     return RefineResult(code=code, accuracy=acc, iterations=iterations, usages=usages)
