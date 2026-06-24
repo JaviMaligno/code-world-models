@@ -6,11 +6,11 @@ Usage:
     python -m cwm.run_experiment --games 20 --synth-size nano --baseline-size large
 """
 import argparse
-import importlib.util
 import json
 import os
 import sys
 import types
+from dataclasses import asdict
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -64,6 +64,7 @@ def main(argv=None):
     for u in refined.usages:
         meter.add(args.synth_size, u)
 
+    # accuracy is correct/total computed from integer sandbox counts, so an exact 1.0 is expected on success
     if refined.accuracy < 1.0:
         print(json.dumps({"error": "synthesis did not reach accuracy 1.0",
                           "accuracy": refined.accuracy,
@@ -85,18 +86,18 @@ def main(argv=None):
     arena = run_arena(g, cwm_agent=cwm_agent, baseline_agent=baseline_agent,
                       n_games=args.games, seed=100)
 
-    per_game_baseline_usd = meter.by_role.get(args.baseline_size, 0.0) / max(1, args.games)
+    per_game_baseline_usd = meter.by_role.get(args.baseline_size, 0.0) / max(1, arena.games)
     report = {
         "synth_size": args.synth_size,
         "baseline_size": args.baseline_size,
         "refinement_iterations": refined.iterations,
         "transition_accuracy": refined.accuracy,
-        "arena": vars(arena),
+        "arena": asdict(arena),
         "cost_usd_by_role": meter.by_role,
         "cost_usd_total": meter.total_usd(),
         "extrapolation_note": (
             f"baseline ~${per_game_baseline_usd:.4f}/game; "
-            f"synthesis is one-off ~${sum(v for k,v in meter.by_role.items() if k==args.synth_size):.4f}"
+            f"synthesis is one-off ~${meter.by_role.get(args.synth_size, 0.0):.4f}"
         ),
     }
     out = json.dumps(report, indent=2)
