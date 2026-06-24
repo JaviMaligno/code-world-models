@@ -15,3 +15,16 @@ def test_blocks_immediate_loss():
 def test_returns_legal_action():
     state = g.initial_state()
     assert mcts_policy(g, state, n_simulations=50, seed=1) in g.legal_actions(state)
+
+def test_visited_collects_tree_states():
+    from cwm.mcts import mcts_policy
+    from cwm.groundtruth import tictactoe as g
+    visited = set()
+    mcts_policy(g, g.initial_state(), n_simulations=50, seed=1, visited=visited)
+    assert len(visited) > 1  # root plus expanded children
+
+def test_visited_default_none_unchanged():
+    from cwm.mcts import mcts_policy
+    from cwm.groundtruth import tictactoe as g
+    a = mcts_policy(g, g.initial_state(), n_simulations=50, seed=1)
+    assert a in g.legal_actions(g.initial_state())
