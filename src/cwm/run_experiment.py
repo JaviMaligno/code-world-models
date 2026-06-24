@@ -36,13 +36,14 @@ def _load_module_from_code(code: str) -> types.ModuleType:
     return mod
 
 def main(argv=None):
-    load_dotenv()
+    load_dotenv(override=True)  # the experiment's .env must win over any inherited shell AZURE_* vars
     ap = argparse.ArgumentParser()
     ap.add_argument("--games", type=int, default=20)
     ap.add_argument("--synth-size", default="nano", choices=list(_DEPLOY_ENV))
     ap.add_argument("--baseline-size", default="large", choices=list(_DEPLOY_ENV))
     ap.add_argument("--train-games", type=int, default=20)
     ap.add_argument("--simulations", type=int, default=300)
+    ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args(argv)
 
     provider = AzureOpenAIProvider(
@@ -55,7 +56,7 @@ def main(argv=None):
     meter = CostMeter()
 
     # 1. Collect trajectories from the oracle
-    traj = collect_trajectories(g, n_games=args.train_games, seed=0)
+    traj = collect_trajectories(g, n_games=args.train_games, seed=args.seed)
 
     # 2. Synthesize + 3. refine to accuracy 1.0
     code, usage = synthesize_cwm(provider, synth_model, CONTRACT_TEXT, traj)
@@ -74,8 +75,10 @@ def main(argv=None):
     cwm = _load_module_from_code(refined.code)
 
     # 4. Build agents. CWM+MCTS plans on the synthesized model.
+    _mcts_calls = {"n": 0}
     def cwm_agent(state, legal):
-        return mcts_policy(cwm, state, n_simulations=args.simulations, seed=0)
+        _mcts_calls["n"] += 1
+        return mcts_policy(cwm, state, n_simulations=args.simulations, seed=args.seed + _mcts_calls["n"])
 
     def baseline_agent(state, legal):
         action, u = baseline_policy(provider, baseline_model, state, legal)
@@ -84,10 +87,11 @@ def main(argv=None):
 
     # 5. Arena
     arena = run_arena(g, cwm_agent=cwm_agent, baseline_agent=baseline_agent,
-                      n_games=args.games, seed=100)
+                      n_games=args.games, seed=args.seed + 1000)
 
     per_game_baseline_usd = meter.by_role.get(args.baseline_size, 0.0) / max(1, arena.games)
     report = {
+        "seed": args.seed,
         "synth_size": args.synth_size,
         "baseline_size": args.baseline_size,
         "refinement_iterations": refined.iterations,
