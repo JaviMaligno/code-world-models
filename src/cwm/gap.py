@@ -5,7 +5,6 @@ a set of states, across legal_actions / is_terminal / returns / apply_action.
 collect_visited_states gathers the states MCTS expands while planning on a model.
 """
 import json
-import random
 import sys
 from dataclasses import dataclass, field
 
