@@ -27,3 +27,16 @@ def test_empty_states_is_safe():
     rep = contract_divergence(src, [], tictactoe)
     assert rep.n_states == 0
     assert rep.state_agreement_rate == 1.0
+
+def test_collect_visited_states_basic():
+    from cwm.gap import collect_visited_states
+    from cwm.groundtruth import tictactoe
+    states = collect_visited_states(tictactoe, n_games=2, simulations=30, seed=1)
+    assert len(states) > 1
+    assert all(set(s.keys()) == {"board", "current_player"} for s in states)
+
+def test_collect_visited_states_respects_cap():
+    from cwm.gap import collect_visited_states
+    from cwm.groundtruth import tictactoe
+    states = collect_visited_states(tictactoe, n_games=5, simulations=80, seed=1, cap=10)
+    assert len(states) <= 10

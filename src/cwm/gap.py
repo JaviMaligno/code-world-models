@@ -5,9 +5,13 @@ a set of states, across legal_actions / is_terminal / returns / apply_action.
 collect_visited_states gathers the states MCTS expands while planning on a model.
 """
 import json
+import random
+import sys
 from dataclasses import dataclass, field
 
+from .mcts import mcts_policy
 from .sandbox import run_in_sandbox
+from .world_model import state_from_json
 
 
 @dataclass
@@ -128,3 +132,24 @@ def contract_divergence(cwm_code: str, states: list, truth_module,
         returns_rate=ret_ok / n,
         transition_rate=(pairs_ok / pairs) if pairs else 1.0,
         state_agreement_rate=states_ok / n, examples=examples)
+
+
+def collect_visited_states(model, n_games: int, simulations: int, seed: int,
+                           cap: int = 20000) -> list:
+    """States MCTS expands while self-playing `model` against itself."""
+    visited: set = set()
+    for g in range(n_games):
+        state = model.initial_state()
+        move = 0
+        while not model.is_terminal(state):
+            a = mcts_policy(model, state, n_simulations=simulations,
+                            seed=seed + g * 1000 + move, visited=visited)
+            state = model.apply_action(state, a)
+            move += 1
+            if len(visited) >= cap:
+                break
+        if len(visited) >= cap:
+            print(f"collect_visited_states: hit cap {cap}; stopping early",
+                  file=sys.stderr)
+            break
+    return [state_from_json(s) for s in list(visited)[:cap]]
