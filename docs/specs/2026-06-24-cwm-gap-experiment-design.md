@@ -132,8 +132,12 @@ with `current_player ∈ {1, 2}`; `Action = int`; functions `initial_state`,
 
 #### `src/cwm/groundtruth/gen_chess.py` — army5x5a (no prior)
 
-- Board: 5×5, 25 cells, `index = row*5 + col`. row 0 = rank A (top) … row 4 = E
-  (bottom); col 0 = file 1 (left).
+- Board: a list of **26** ints — indices 0..24 are the 5×5 cells
+  (`index = row*5 + col`; row 0 = rank A top … row 4 = E bottom; col 0 = file 1
+  left), and index 25 is the **ply counter** (half-moves played, starts at 0).
+  Embedding the counter in `board` keeps the contract shape `{board, current_player}`
+  intact while making termination state-only (the synthesizer learns it from the
+  rules text + trajectories).
 - Piece encoding: `0` empty; P1: `1` general / `2` infantry / `3` cavalry;
   P2: `4` general / `5` infantry / `6` cavalry.
 - Move offsets `(Δrow, Δcol)` (from the paper's Appendix H.5):
@@ -153,15 +157,18 @@ with `current_player ∈ {1, 2}`; `Action = int`; functions `initial_state`,
 - Action int: `from_idx * 25 + to_idx` (0..624); `PASS = 625`. `legal_actions`
   returns only offset-legal moves; `PASS` is legal **only when the player has no
   piece move** (prevents trivial stalling).
-- Initial position (`current_player = 1`):
-  - rank E (P1, indices 20–24): `cavalry, infantry, general, infantry, cavalry`
+- Initial position (`current_player = 1`). Player 1 starts on the TOP rank so its
+  pawn-like infantry (forward = +row, downward) advances toward the opponent;
+  Player 2 (mirrored) starts on the bottom rank:
+  - rank A (P1, indices 0–4): `cavalry, infantry, general, infantry, cavalry`
     → `[3,2,1,2,3]`.
-  - rank A (P2, indices 0–4): `cavalry, infantry, general, infantry, cavalry`
+  - rank E (P2, indices 20–24): `cavalry, infantry, general, infantry, cavalry`
     → `[6,5,4,5,6]`.
   - ranks B–D empty.
-- Terminal: a side's general no longer on the board → the other side wins; OR the
-  ply cap is reached → draw. **Ply cap** module constant `MAX_PLIES = 100`
-  guarantees termination (generals could otherwise shuffle forever).
+- Terminal: a side's general no longer on the board (among cells 0..24) → the
+  other side wins; OR `board[25] >= MAX_PLIES` → draw. **Ply cap** module constant
+  `MAX_PLIES = 100` guarantees termination (generals could otherwise shuffle
+  forever).
 - returns: winner `+1.0`, loser `-1.0`; draw `0.0/0.0`.
 
 #### `src/cwm/groundtruth/trike.py` — Trike (wrong prior)
