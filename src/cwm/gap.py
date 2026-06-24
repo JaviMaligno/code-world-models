@@ -23,6 +23,13 @@ class DivergenceReport:
     transition_rate: float
     state_agreement_rate: float
     examples: list = field(default_factory=list)
+    # Diagnostics for the terminal-state legal_actions convention. legal_rate and
+    # state_agreement_rate exclude legal_actions on truth-terminal states (a move
+    # from a finished game is undefined, and MCTS never queries legal_actions there
+    # since is_terminal gates expansion). These fields keep that excluded
+    # divergence visible rather than hidden.
+    n_terminal: int = 0
+    legal_terminal_divergences: int = 0
 
 
 def _truth_expectations(states, truth_module):
@@ -101,13 +108,26 @@ def contract_divergence(cwm_code: str, states: list, truth_module,
         return DivergenceReport(len(states), 0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                 ["malformed sandbox output"])
 
-    legal_ok = term_ok = ret_ok = states_ok = 0
+    legal_ok = legal_denom = term_ok = ret_ok = states_ok = 0
+    n_terminal = legal_terminal_divergences = 0
     pairs = pairs_ok = 0
     examples = []
     for st, tr, got in zip(states, truth, produced):
-        l_ok = got.get("legal") == tr["legal"]
+        truth_terminal = tr["terminal"] is True
         t_ok = got.get("terminal") == tr["terminal"]
         r_ok = got.get("returns") == tr["returns"]
+        # legal_actions on a finished game is undefined and never used by MCTS
+        # (is_terminal gates expansion), so exclude it from the gap on terminal
+        # states; track the divergence separately as a diagnostic.
+        if truth_terminal:
+            n_terminal += 1
+            l_ok = True
+            if got.get("legal") != tr["legal"]:
+                legal_terminal_divergences += 1
+        else:
+            l_ok = got.get("legal") == tr["legal"]
+            legal_ok += l_ok
+            legal_denom += 1
         trans_ok = True
         for a_str, exp in tr["nexts"].items():
             pairs += 1
@@ -115,7 +135,6 @@ def contract_divergence(cwm_code: str, states: list, truth_module,
                 pairs_ok += 1
             else:
                 trans_ok = False
-        legal_ok += l_ok
         term_ok += t_ok
         ret_ok += r_ok
         if l_ok and t_ok and r_ok and trans_ok:
@@ -127,10 +146,13 @@ def contract_divergence(cwm_code: str, states: list, truth_module,
     n = len(states)
     return DivergenceReport(
         n_states=n, n_pairs=pairs,
-        legal_rate=legal_ok / n, terminal_rate=term_ok / n,
+        legal_rate=(legal_ok / legal_denom) if legal_denom else 1.0,
+        terminal_rate=term_ok / n,
         returns_rate=ret_ok / n,
         transition_rate=(pairs_ok / pairs) if pairs else 1.0,
-        state_agreement_rate=states_ok / n, examples=examples)
+        state_agreement_rate=states_ok / n, examples=examples,
+        n_terminal=n_terminal,
+        legal_terminal_divergences=legal_terminal_divergences)
 
 
 def collect_visited_states(model, n_games: int, simulations: int, seed: int,

@@ -22,6 +22,19 @@ def test_corrupted_module_is_detected():
     assert rep.state_agreement_rate < 1.0
     assert rep.examples  # at least one mismatch surfaced
 
+def test_terminal_legal_divergence_excluded_but_tracked():
+    # A CWM that omits the is_terminal guard in legal_actions returns empty cells
+    # even on a won board. That divergence must NOT count against the gap (legal
+    # moves from a finished game are undefined), but must be tracked as a diagnostic.
+    src = inspect.getsource(tictactoe)
+    no_guard = src.replace("    if is_terminal(state):\n        return []\n", "")
+    assert "if is_terminal(state):" not in no_guard.split("def apply_action")[0]
+    terminal = [{"board": [1, 1, 1, 2, 2, 0, 0, 0, 0], "current_player": 2}]  # P1 won
+    rep = contract_divergence(no_guard, terminal, tictactoe)
+    assert rep.state_agreement_rate == 1.0          # terminal-legal excluded
+    assert rep.n_terminal == 1
+    assert rep.legal_terminal_divergences == 1      # but surfaced as a diagnostic
+
 def test_empty_states_is_safe():
     src = inspect.getsource(tictactoe)
     rep = contract_divergence(src, [], tictactoe)
