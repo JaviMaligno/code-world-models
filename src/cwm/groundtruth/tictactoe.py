@@ -1,0 +1,38 @@
+"""Hand-written tic-tac-toe oracle implementing the world_model contract."""
+
+_LINES = [
+    (0, 1, 2), (3, 4, 5), (6, 7, 8),   # rows
+    (0, 3, 6), (1, 4, 7), (2, 5, 8),   # cols
+    (0, 4, 8), (2, 4, 6),              # diagonals
+]
+
+def initial_state() -> dict:
+    return {"board": [0] * 9, "current_player": 1}
+
+def legal_actions(state: dict) -> list[int]:
+    if is_terminal(state):
+        return []
+    return [i for i, c in enumerate(state["board"]) if c == 0]
+
+def apply_action(state: dict, action: int) -> dict:
+    board = list(state["board"])
+    board[action] = state["current_player"]
+    return {"board": board, "current_player": 2 if state["current_player"] == 1 else 1}
+
+def winner(state: dict) -> int:
+    b = state["board"]
+    for x, y, z in _LINES:
+        if b[x] != 0 and b[x] == b[y] == b[z]:
+            return b[x]
+    return 0
+
+def is_terminal(state: dict) -> bool:
+    return winner(state) != 0 or all(c != 0 for c in state["board"])
+
+def returns(state: dict) -> dict:
+    w = winner(state)
+    if w == 1:
+        return {1: 1.0, 2: -1.0}
+    if w == 2:
+        return {1: -1.0, 2: 1.0}
+    return {1: 0.0, 2: 0.0}
