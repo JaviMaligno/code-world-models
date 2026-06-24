@@ -94,3 +94,12 @@ used to validate Connect Four).
    registry; verify non-triviality by self-play sweep.
 4. Run the gap measurement; if a gap exists, implement search-guided synthesis.
 5. Imperfect-information round (poker + Quadranto + Hand of War).
+6. **Rethink applications beyond games (open, deliberate brainstorm needed).**
+   The Code World Model pattern (LLM synthesizes a verifiable executable model
+   from examples + classical planning/checking on top) may transfer to non-game
+   domains — e.g. business rules / pricing (connects to the author's real work
+   and to the cognitive-debt blog article), workflows, operations/scheduling,
+   API behavior modeling. Harder to make publishable (noisy/partial-observability
+   dynamics, single-case generalization risk); likely a strong 2nd blog article
+   unless a general, clean non-game domain is found. Worth a dedicated
+   brainstorm — what is the most valuable, original non-game application?
