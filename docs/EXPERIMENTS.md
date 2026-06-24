@@ -148,3 +148,39 @@ PYTHONPATH=src python scripts/gap_grid.py   # 3 games × {mini,nano}, 5 seeds ea
 
 Total grid cost ≈ $0.81 (army5x5a/nano alone $0.43 — wasted refinement loops on
 unreachable gate). Per-run JSON in `results/` (git-ignored).
+
+## Pure-inference variant — `--no-rules` (2026-06-24)
+
+To test whether the gap is hidden by *giving* the model the rules (translation,
+not inference), we reran the grid withholding `RULES_TEXT` — synthesizing from
+trajectories alone (generic `CONTRACT_API` only). `cwm/run_gap.py --no-rules`,
+results suffixed `_norules`.
+
+| Game | Regime | Synth | gate-pass | gaps (scored) | skip accuracies |
+|------|--------|-------|-----------|---------------|-----------------|
+| gen_tictactoe | correct prior | mini | 2/5 | [0.0, 0.0] | [0.61, 0.62, 0.96] |
+| gen_tictactoe | correct prior | nano | 2/5 | [0.0, 0.0] | [0.0, 0.50, 0.63] |
+| army5x5a | no prior | mini | 0/5 | – | all 0.0 |
+| army5x5a | no prior | nano | 0/5 | – | all 0.0 |
+| trike | wrong prior | mini | 0/5 | – | all 0.0 |
+| trike | wrong prior | nano | 0/5 | – | all 0.0 |
+
+**Findings:**
+- Where the gate is reached, gap is still **0** — only gen_tictactoe passes
+  (2/5), driven by recall, and those CWMs are correct (gap 0).
+- For genuinely novel games (army5x5a, trike) pure inference **fails the gate
+  entirely** (0% accuracy): the model cannot infer the dynamics from trajectories
+  alone, especially the opaque action encodings (`from*25+to`; disc/pawn value
+  scheme). It does not produce a wrong-but-gate-passing CWM — it produces nothing.
+
+**Decisive conclusion.** Across with-rules and no-rules, in all three regimes,
+there is **no "passes the gate but wrong on the search distribution" case**.
+Either the model gets it right (gap 0) or it fails the gate. The coverage gap
+does not materialize here. Diagnosis: for these games the random-trajectory
+sample **identifies** the dynamics — there is no compact wrong hypothesis
+consistent with 40 random games that diverges elsewhere (no under-determination).
+The gate is not weak; it is identifying.
+
+**Implication (pivot).** A real gap needs **sample under-determination**: a rule
+that random play almost never exercises but optimal play seeks out (a rarely-
+triggered tactic). That is the next instrument — see RESEARCH-DIRECTION.md.

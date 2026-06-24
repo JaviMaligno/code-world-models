@@ -18,34 +18,56 @@ resume without re-deriving context.
   direct policy (up to 30–0 in Connect Four). The thesis of arXiv:2510.04542
   reproduces — but reproduction alone is NOT preprint-worthy.
 
-## The original contribution we are pursuing
+## The original contribution we pursued — and the null result
 
 **The gap between "verified" and "correct."** The acceptance gate is
-*transition accuracy 1.0 on random-policy trajectories*. But MCTS visits a
-different distribution (search-promising states, often out-of-distribution). A
-world model can pass the gate at 100% and still be wrong exactly where planning
-needs it. The paper never measured this.
+*transition accuracy 1.0 on random-policy trajectories*. The hypothesis was that
+MCTS visits a different distribution (search-promising, often OOD) where a
+gate-passing world model could still be wrong. We built the measurement harness
+(`cwm/gap.py`, `run_gap.py`) and ran it across three knowledge regimes — correct
+prior (Gen-TTT 6×6), no prior (army5x5a), wrong prior (Trike) — both with the
+rules given (translation) and withheld (`--no-rules`, pure inference).
 
-Refined framing (the spine of the preprint) — **three knowledge regimes**,
-established empirically via a cold "declarative probe" of gpt-5.4 (ask it the
-rules before giving any):
+**Result (2026-06-24): the gap does not appear.** See EXPERIMENTS.md. In every
+regime the outcome is binary — either the model produces a globally-correct CWM
+(gap ≈ 0) or it fails the gate entirely. There is no "passes the gate but wrong
+on the search distribution" case. Diagnosis: for these small, fully-specified
+games the random-trajectory sample **identifies** the dynamics — no compact wrong
+hypothesis fits 40 random games yet diverges elsewhere (no under-determination).
+The gate is not weak; it is identifying. Secondary findings: the binding
+constraint is **gate-attainability** (game complexity × model scale; nano fails
+army5x5a 5/5), and the whole method leans on the rules being *given* (no-rules
+inference collapses to 0% for novel games).
 
-| Regime | Game | gpt-5.4's prior | What it tests |
-|--------|------|-----------------|---------------|
-| Correct prior | Generalized Tic-Tac-Toe 6×6 win-4 | knows it (m,n,k family) | recall baseline |
-| No prior | **Generalized Chess `army5x5a`** | does NOT know the movesets (refused to guess) | clean inference from trajectories |
-| **Wrong prior** | **Trike** (Erickson 2020) | knows metadata, **confabulates the mechanics** | the case where the gap should bite hardest |
+## The pivot — manufacturing under-determination (a "rare-rule" game)
 
-The hypothesis: where the model has a *wrong* prior (Trike), the synthesized CWM
-may inherit the confabulated mechanics and still pass the random-trajectory gate
-(coverage doesn't hit the disagreeing states) → coverage gap demonstrated
-causally. `army5x5a` measures inference without a prior; Trike measures
-inference *against* a wrong prior. Ties directly to the blog article on
-cognitive debt: validating on the wrong distribution = false security.
+A real gap needs **sample under-determination**: a rule R with
+P(R triggers | random play) ≈ 0 but P(R triggers | optimal play) high, on a base
+the model *can* synthesize (else it fails the gate and there is no candidate).
 
-**Proposed solution if the gap exists:** search-guided synthesis — refine the
-CWM on the states MCTS actually visits (DAgger/active-learning over the world
-model), and measure how much it closes the gap.
+**Lead instrument (proposed 2026-06-24, not yet built):** Connect Four (recalled
+base → gate passes) + a rarely-reached, planner-forceable instant-win rule, e.g.
+"placing the disc that fills the top-centre cell (row 0, col 3) wins." Columns
+rarely fill under random play (games end on a 4-in-a-row first) → R is absent
+from the 40 training trajectories → a `--no-rules` CWM recalls standard CF and
+**omits R** → passes the gate → MCTS on the *true* game forces R → divergence.
+
+Two methodology notes for this experiment:
+1. **Headline must be `gap_truth = agreement(D_gate) − agreement(D_truth)`.** A CWM
+   that omits R never explores R's region itself, so D_cwm won't diverge; the
+   correct-planner distribution D_truth exposes the omission.
+2. **Validate empirically first** (as with non-triviality): confirm R fires in
+   ~0/40 random games but MCTS-on-truth uses it. Fallback rules if too
+   rare/un-forceable: a rule needing a near-full board, or a short advantageous
+   tactic on a specific central line.
+
+Variants: `--no-rules` (near-guaranteed omission → clear gap) as the first demo;
+`--with-rules` (model is told R but the gate can't verify the rare branch, so a
+subtle bug there survives) as the subtler follow-up.
+
+**Proposed solution if the gap appears:** search-guided synthesis — refine the
+CWM on the states MCTS actually visits (DAgger/active-learning), and measure how
+much it closes the gap.
 
 ## Validated candidates (deep-research 2026-06-24)
 
@@ -79,22 +101,28 @@ model), and measure how much it closes the gap.
 
 ## Non-triviality caveat
 
-Non-triviality (no forced first-player win) is NOT proven for Gen-TTT(6,6,4) or
-army5x5a. Verify empirically via self-play / MCTS-vs-MCTS before trusting them as
-skill discriminators (we already have the tools: a self-play sweep like the one
-used to validate Connect Four).
+Non-triviality confirmed empirically (2026-06-24, `scripts/nontriviality_sweep.py`):
+MCTS beats random from both sides on Gen-TTT(6,6,4), army5x5a, and Trike (zero
+losses). army5x5a is balanced under strong search (MCTS-vs-MCTS ~P1 2/P2 3/5 draws
+over 10 at 800 sims). See EXPERIMENTS.md.
 
 ## Next steps (resume here)
 
-1. **Extract army5x5a starting setup** from Appendix H.5 of the PDF.
-2. **Mini-spec the gap experiment** (brainstorming → writing-plans → subagent-
-   driven, as before): MCTS visited-state logging hook + CWM-vs-ground-truth
-   comparison on that distribution, across the three regimes.
-3. Implement `army5x5a` and Trike ground truths via the existing multi-game
-   registry; verify non-triviality by self-play sweep.
-4. Run the gap measurement; if a gap exists, implement search-guided synthesis.
-5. Imperfect-information round (poker + Quadranto + Hand of War).
-6. **Rethink applications beyond games (open, deliberate brainstorm needed).**
+DONE (2026-06-24): army5x5a setup defined (paper omits it; we chose our own);
+gap harness specced/planned/built subagent-driven (merge 79165bf); 3 ground
+truths + sweep + run_gap implemented; gap grid run with-rules AND `--no-rules`.
+**Result: null — the gap does not appear** (see EXPERIMENTS.md, and the pivot
+section above).
+
+1. **Build the rare-rule instrument** (lead: Connect Four + top-centre instant
+   win, run `--no-rules`; headline `gap_truth`). Brainstorm → spec → plan →
+   subagent-driven, same as the harness. Empirically validate R's rarity under
+   random play and its use by MCTS-on-truth BEFORE the full run.
+2. If the gap appears: implement search-guided synthesis (DAgger over the world
+   model) and measure how much it closes the gap. If not: the null is definitive
+   — write it up (the gate is identifying; gate-attainability is the real axis).
+3. Imperfect-information round (poker + Quadranto + Hand of War).
+4. **Rethink applications beyond games (open, deliberate brainstorm needed).**
    The Code World Model pattern (LLM synthesizes a verifiable executable model
    from examples + classical planning/checking on top) may transfer to non-game
    domains — e.g. business rules / pricing (connects to the author's real work
