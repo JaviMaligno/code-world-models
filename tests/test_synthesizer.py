@@ -1,7 +1,9 @@
 # tests/test_synthesizer.py
 from cwm.synthesizer import build_synthesis_messages, extract_code, synthesize_cwm
 from cwm.llm.provider import FakeProvider
-from cwm.world_model import CONTRACT_TEXT
+from cwm.world_model import build_contract
+from cwm.games import GAMES
+CONTRACT_TEXT = build_contract(GAMES["tictactoe"].rules_text)
 from cwm.groundtruth import tictactoe as g
 from cwm.trajectories import collect_trajectories
 
