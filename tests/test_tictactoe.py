@@ -1,4 +1,3 @@
-import json
 from cwm.groundtruth import tictactoe as g
 from cwm import world_model as wm
 
@@ -45,3 +44,15 @@ def test_legal_actions_excludes_filled():
 def test_json_roundtrip():
     s = g.apply_action(g.initial_state(), 4)
     assert wm.state_from_json(wm.state_to_json(s)) == s
+
+def test_returns_nonterminal_is_zero():
+    assert g.returns(g.initial_state()) == {1: 0.0, 2: 0.0}
+
+def test_column_win_for_o_and_returns():
+    # X plays 0,2,8 ; O plays 1,4,7 -> O wins column 1,4,7
+    s = g.initial_state()
+    for a in [0, 1, 2, 4, 8, 7]:  # X:0, O:1, X:2, O:4, X:8, O:7 -> O wins column 1,4,7
+        s = g.apply_action(s, a)
+    assert g.winner(s) == 2
+    assert g.is_terminal(s) is True
+    assert g.returns(s) == {1: -1.0, 2: 1.0}
