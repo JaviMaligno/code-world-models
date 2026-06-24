@@ -32,6 +32,7 @@ def play_match(referee, agent1, agent2, seed) -> MatchResult:
         state = referee.apply_action(state, action)
         moves += 1
     r = referee.returns(state)
+    # > 0.5 tolerates float reward representations; the {-1,0,1} contract makes this exact for the ground-truth referee.
     winner = 1 if r[1] > 0.5 else (2 if r[2] > 0.5 else 0)
     return MatchResult(winner=winner, illegal_by=illegal_by, moves=moves)
 

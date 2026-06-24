@@ -1,5 +1,6 @@
 """LLM-as-policy baseline agent."""
 import re
+from cwm.llm.provider import Usage
 
 _SYSTEM = ("You play tic-tac-toe. Board is a list of 9 cells (0 empty, 1=X, "
            "2=O), indices 0..8 row-major. Reply with ONLY the index you play.")
@@ -10,11 +11,12 @@ def build_policy_messages(state: dict, legal: list[int]) -> list[dict]:
     return [{"role": "system", "content": _SYSTEM},
             {"role": "user", "content": user}]
 
-def parse_action(text: str):
+def parse_action(text: str) -> int | None:
+    # NOTE: single-digit \d is correct for tic-tac-toe (actions 0..8); extend to \d+ for games with multi-digit actions (e.g. Connect Four).
     m = re.search(r"\d", text)
     return int(m.group()) if m else None
 
-def baseline_policy(provider, model, state: dict, legal: list[int]):
+def baseline_policy(provider, model, state: dict, legal: list[int]) -> tuple[int | None, "Usage"]:
     completion = provider.complete(build_policy_messages(state, legal), model=model)
     action = parse_action(completion.text)
     if action not in legal:

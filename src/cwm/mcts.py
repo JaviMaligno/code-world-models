@@ -2,7 +2,6 @@
 """Minimal UCT MCTS over a world-model contract."""
 import math
 import random
-from .world_model import state_to_json
 
 class _Node:
     __slots__ = ("state", "player", "parent", "action", "children",

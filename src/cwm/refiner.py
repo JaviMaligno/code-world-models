@@ -12,6 +12,8 @@ class RefineResult:
     usages: list
 
 def transition_accuracy(code: str, trajectories: list, timeout: float = 5.0):
+    if not trajectories:
+        return 0.0, ["no trajectories provided"]
     # Build one batch program: apply each action, print the resulting states as JSON.
     cases = [{"state": t.state, "action": t.action} for t in trajectories]
     call = (
