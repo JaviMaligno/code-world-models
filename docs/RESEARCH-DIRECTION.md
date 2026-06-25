@@ -61,13 +61,35 @@ Two methodology notes for this experiment:
    rare/un-forceable: a rule needing a near-full board, or a short advantageous
    tactic on a specific central line.
 
-Variants: `--no-rules` (near-guaranteed omission → clear gap) as the first demo;
-`--with-rules` (model is told R but the gate can't verify the rare branch, so a
-subtle bug there survives) as the subtler follow-up.
+**RESULT (2026-06-25): the instrument worked — but the metric had to change.**
+Top-centre and other Connect-Four rules failed (rarity↔consequence tension; see
+EXPERIMENTS.md). A random-vs-competent **divergence** measurement selected
+**army5x5a** as the base, and a **material-at-cap** rule (deep tail: at the ply
+cap, more material wins instead of a draw) landed in the rare∧consequential
+quadrant (~1% of random games, ~50% of competent games). Built as
+`groundtruth/gen_chess_material.py` with paired `army5x5a_material` (complete) /
+`army5x5a_material_incomplete` (rule withheld) specs.
 
-**Proposed solution if the gap appears:** search-guided synthesis — refine the
-CWM on the states MCTS actually visits (DAgger/active-learning), and measure how
-much it closes the gap.
+Key correction to the metric: **`gap_truth` (state agreement) is the WRONG lens.**
+A rare-but-pivotal rule error is *diluted* — the divergence region is <1% of
+visited states, so gap_truth ≈ 0 even when the CWM is wrong, and symmetric MCTS
+self-play barely visits it. The right metric is **play performance**: a
+CWM+MCTS agent vs a ground-truth+MCTS agent in the true game (`run_gap
+--play-games`, `_play_performance`). Result: the rule-omitting CWM (gate-passing,
+gap_truth = 0, ≥99% state-accurate) **loses ~2:1** — win rate **0.383 vs a
+calibrated 0.504 baseline** (`scripts/play_cost.py`), reproducible across seeds;
+the complete-rules control plays near baseline.
+
+**Headline contribution:** transition/state accuracy is the wrong adequacy
+criterion for a planning world model. A model can pass sampling-based
+verification and be state-accurate yet systematically lose, because the <1% it
+gets wrong is the pivotal tactic. Adequacy must be measured by play. Connects to
+the cognitive-debt article: verifying on the wrong signal = false security.
+
+**Possible follow-ups:** (a) search-guided synthesis — refine the CWM on the
+states MCTS actually visits (DAgger), and measure how much play performance
+recovers; (b) the `--no-rules` / `--with-rules-but-buggy-rare-branch` variants;
+(c) write up (blog + preprint) around the play-vs-accuracy adequacy result.
 
 ## Validated candidates (deep-research 2026-06-24)
 
@@ -108,21 +130,24 @@ over 10 at 800 sims). See EXPERIMENTS.md.
 
 ## Next steps (resume here)
 
-DONE (2026-06-24): army5x5a setup defined (paper omits it; we chose our own);
-gap harness specced/planned/built subagent-driven (merge 79165bf); 3 ground
-truths + sweep + run_gap implemented; gap grid run with-rules AND `--no-rules`.
-**Result: null — the gap does not appear** (see EXPERIMENTS.md, and the pivot
-section above).
+DONE (2026-06-24/25): gap harness built (merge 79165bf); state-agreement gap is
+**null** across regimes; rarity↔consequence tension found (6 rules);
+divergence-selected **army5x5a + material-at-cap** instrument built and run; the
+**play-performance** result lands the headline — a verified, gap_truth=0,
+≥99%-state-accurate CWM that omits the rule **loses ~2:1** (0.383 vs 0.504). All
+in EXPERIMENTS.md; code on `main`.
 
-1. **Build the rare-rule instrument** (lead: Connect Four + top-centre instant
-   win, run `--no-rules`; headline `gap_truth`). Brainstorm → spec → plan →
-   subagent-driven, same as the harness. Empirically validate R's rarity under
-   random play and its use by MCTS-on-truth BEFORE the full run.
-2. If the gap appears: implement search-guided synthesis (DAgger over the world
-   model) and measure how much it closes the gap. If not: the null is definitive
-   — write it up (the gate is identifying; gate-attainability is the real axis).
-3. Imperfect-information round (poker + Quadranto + Hand of War).
-4. **Rethink applications beyond games (open, deliberate brainstorm needed).**
+1. **Write it up** — the result is ready: *transition/state accuracy is the wrong
+   adequacy criterion for a planning world model; adequacy must be measured by
+   play.* Blog article (connects to the cognitive-debt piece) + possible preprint.
+   This is the strongest, most original framing we have.
+2. **(Optional) Search-guided synthesis** — refine the CWM on MCTS-visited states
+   (DAgger) and measure how much play performance recovers. Strengthens the
+   preprint with a fix, not just a diagnosis.
+3. **(Optional) Tighten the play result** — more seeds/sims, confidence intervals,
+   and the synthesized-CWM (not just hand-written base) at scale.
+4. Imperfect-information round (poker + Quadranto + Hand of War).
+5. **Rethink applications beyond games (open, deliberate brainstorm needed).**
    The Code World Model pattern (LLM synthesizes a verifiable executable model
    from examples + classical planning/checking on top) may transfer to non-game
    domains — e.g. business rules / pricing (connects to the author's real work
