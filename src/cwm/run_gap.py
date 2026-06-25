@@ -110,10 +110,11 @@ def main(argv=None):
         # If a distribution could not be evaluated at all (every chunk failed in
         # the sandbox), the agreement is unmeasured — recording gap=1-0 would be a
         # spurious gap. Skip the seed with the reason instead.
-        if d_gate.n_states == 0 or d_cwm.n_states == 0:
+        if d_gate.n_states == 0 or d_cwm.n_states == 0 or d_truth.n_states == 0:
             per_seed.append({"seed": seed, "skipped": "cwm-eval-failed",
                              "gate_exec_errors": d_gate.n_exec_errors,
-                             "cwm_exec_errors": d_cwm.n_exec_errors})
+                             "cwm_exec_errors": d_cwm.n_exec_errors,
+                             "truth_exec_errors": d_truth.n_exec_errors})
             continue
         per_seed.append({
             "seed": seed,

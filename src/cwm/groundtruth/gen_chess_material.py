@@ -14,7 +14,7 @@ from .gen_chess import (  # re-export the unchanged contract surface
 )
 
 
-def _material(board: list) -> tuple:
+def _material(board: list) -> tuple[int, int]:
     p1 = sum(1 for v in board[:N] if v in (1, 2, 3))
     p2 = sum(1 for v in board[:N] if v in (4, 5, 6))
     return p1, p2
