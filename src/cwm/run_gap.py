@@ -25,6 +25,8 @@ from .llm.azure_openai import AzureOpenAIProvider
 from .synthesizer import synthesize_cwm
 from .refiner import refine_cwm
 from .gap import collect_visited_states, contract_divergence
+from .mcts import mcts_policy
+from .arena import run_arena
 from .cost_meter import CostMeter
 
 _DEPLOY_ENV = {"large": "AZURE_DEPLOYMENT_LARGE",
@@ -46,9 +48,41 @@ def aggregate_gap(per_seed: list) -> dict:
 
     n, gmean, gmin, gmax = _agg("gap")
     _, tmean, tmin, tmax = _agg("gap_truth")
-    return {"n_seeds": n,
-            "gap_mean": gmean, "gap_min": gmin, "gap_max": gmax,
-            "gap_truth_mean": tmean, "gap_truth_min": tmin, "gap_truth_max": tmax}
+    # Play-performance: win rate of the CWM+MCTS agent vs a ground-truth+MCTS agent
+    # in the true game, averaged over scored seeds that carry a play result.
+    wr = [r["play"]["cwm_winrate"] for r in per_seed
+          if "play" in r and "cwm_winrate" in r.get("play", {})]
+    nw = len(wr)
+    out = {"n_seeds": n,
+           "gap_mean": gmean, "gap_min": gmin, "gap_max": gmax,
+           "gap_truth_mean": tmean, "gap_truth_min": tmin, "gap_truth_max": tmax}
+    if nw:
+        out["play_n"] = nw
+        out["cwm_winrate_mean"] = sum(wr) / nw
+        out["cwm_winrate_min"] = min(wr)
+        out["cwm_winrate_max"] = max(wr)
+    return out
+
+
+def _play_performance(truth_module, cwm_module, sims: int, n_games: int, seed: int) -> dict:
+    """Arena in the TRUE game: a CWM+MCTS agent (plans on the synthesized model)
+    vs a ground-truth+MCTS agent. A CWM that omits a pivotal rule misplays and
+    loses here even if its state-prediction accuracy is ~1.0."""
+    def agent_for(model, base):
+        counter = {"n": 0}
+        def agent(state, legal):
+            counter["n"] += 1
+            return mcts_policy(model, state, n_simulations=sims, seed=base + counter["n"])
+        return agent
+
+    arena = run_arena(truth_module,
+                      cwm_agent=agent_for(cwm_module, seed + 1),
+                      baseline_agent=agent_for(truth_module, seed + 100_000),
+                      n_games=n_games, seed=seed + 2000)
+    games = arena.games
+    return {"cwm_wins": arena.cwm_wins, "truth_wins": arena.baseline_wins,
+            "draws": arena.draws, "cwm_illegal": arena.cwm_illegal,
+            "cwm_winrate": (arena.cwm_wins + 0.5 * arena.draws) / games if games else 0.0}
 
 
 def main(argv=None):
@@ -66,6 +100,9 @@ def main(argv=None):
     ap.add_argument("--no-rules", action="store_true",
                     help="pure inference: synthesize from trajectories only, "
                          "withholding RULES_TEXT (generic CONTRACT_API only)")
+    ap.add_argument("--play-games", type=int, default=0,
+                    help="if >0, also measure play performance: CWM+MCTS vs "
+                         "ground-truth+MCTS in the true game, this many games")
     args = ap.parse_args(argv)
 
     provider = AzureOpenAIProvider(
@@ -100,13 +137,21 @@ def main(argv=None):
                              "accuracy": refined.accuracy})
             continue
         cwm = _load_module_from_code(refined.code)
-        gate_states = [t.state for t in traj]
-        cwm_states = collect_visited_states(
-            cwm, n_games=args.selfplay_games, simulations=args.simulations,
-            seed=seed, cap=args.visited_cap)
-        d_gate = contract_divergence(refined.code, gate_states, g)
-        d_cwm = contract_divergence(refined.code, cwm_states, g)
-        d_truth = contract_divergence(refined.code, truth_states, g)
+        # The synthesized CWM is untrusted code run in-process for MCTS; it can pass
+        # the gate yet raise on an out-of-distribution state MCTS reaches. Contain
+        # such a crash to this seed instead of killing the whole run.
+        try:
+            gate_states = [t.state for t in traj]
+            cwm_states = collect_visited_states(
+                cwm, n_games=args.selfplay_games, simulations=args.simulations,
+                seed=seed, cap=args.visited_cap)
+            d_gate = contract_divergence(refined.code, gate_states, g)
+            d_cwm = contract_divergence(refined.code, cwm_states, g)
+            d_truth = contract_divergence(refined.code, truth_states, g)
+        except Exception as e:
+            per_seed.append({"seed": seed, "skipped": "cwm-runtime-error",
+                             "error": repr(e)[:200]})
+            continue
         # If a distribution could not be evaluated at all (every chunk failed in
         # the sandbox), the agreement is unmeasured — recording gap=1-0 would be a
         # spurious gap. Skip the seed with the reason instead.
@@ -116,7 +161,7 @@ def main(argv=None):
                              "cwm_exec_errors": d_cwm.n_exec_errors,
                              "truth_exec_errors": d_truth.n_exec_errors})
             continue
-        per_seed.append({
+        entry = {
             "seed": seed,
             "gap": d_gate.state_agreement_rate - d_cwm.state_agreement_rate,
             "gap_truth": d_gate.state_agreement_rate - d_truth.state_agreement_rate,
@@ -127,7 +172,14 @@ def main(argv=None):
             "d_gate": asdict(d_gate),
             "d_cwm": asdict(d_cwm),
             "d_truth": asdict(d_truth),
-        })
+        }
+        if args.play_games > 0:
+            try:
+                entry["play"] = _play_performance(
+                    g, cwm, args.simulations, args.play_games, seed)
+            except Exception as e:
+                entry["play"] = {"error": repr(e)[:200]}
+        per_seed.append(entry)
 
     report = {"game": args.game, "synth_size": args.synth_size,
               "no_rules": args.no_rules,
