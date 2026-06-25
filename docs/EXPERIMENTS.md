@@ -184,3 +184,92 @@ The gate is not weak; it is identifying.
 **Implication (pivot).** A real gap needs **sample under-determination**: a rule
 that random play almost never exercises but optimal play seeks out (a rarely-
 triggered tactic). That is the next instrument — see RESEARCH-DIRECTION.md.
+
+## Rarity↔consequence tension (rule search, 2026-06-24/25)
+
+Before building an instrument we searched for a rule that is **rare under random
+play** (so the gate misses it) yet **consequential in competent play** (so a
+planner exploits it). Validated empirically (`scratchpad` spikes): rarity =
+fraction of random games the rule decides; consequence = R-aware-MCTS vs
+R-blind-MCTS in the true game.
+
+| Base | Rule | Rarity (random) | Consequence |
+|------|------|-----------------|-------------|
+| Connect Four | last-placer-on-full-board wins | 0% | none |
+| Connect Four | corner 4-in-a-row is poison | 3% | weak |
+| Connect Four | top-centre fill wins | 12% | strong |
+| Connect Four | vertical-3 in centre wins | 23% | strong |
+| Connect Four | 2×2 square wins | 38% | strong |
+| army5x5a | infantry breakthrough wins | 75% | strong |
+
+Six rules across two games lie on a **rarity↔consequence anti-correlation curve**:
+anything a planner can force, random play also stumbles into. Connect Four
+admits no rare-AND-consequential rule. **Diagnosis:** the gap requires a game
+where random-play and competent-play state distributions diverge. A
+random-vs-MCTS divergence measurement (`scripts/divergence.py`) ranked the games
+by game-length divergence (competent − random median plies): **army5x5a** stands
+out (random 23, competent 58, routinely hitting the 100-ply cap), while trike and
+gen_tictactoe are Connect-Four-like (low divergence).
+
+## The instrument: army5x5a + material-at-cap (2026-06-25)
+
+In army5x5a's deep tail (competent play maneuvers there; random rarely reaches
+it) a **material-at-cap** rule lands in the rare∧consequential quadrant: at the
+ply cap with both generals alive, the player with more pieces wins (instead of a
+draw). Validated: it *changes the outcome* in only **~1%** of random games (cap
+reached 5.3%, mostly equal-material draws) yet decides **~50%** of competent
+games. Implemented as `groundtruth/gen_chess_material.py` with paired specs:
+`army5x5a_material` (complete rules) and `army5x5a_material_incomplete` (base
+rules, omitting the rule). `run_gap.py --game <spec> --play-games N`.
+
+### State-agreement is the wrong lens (dilution)
+
+| Condition (mini, 5 seeds) | gate-pass | gap_truth | note |
+|---------------------------|-----------|-----------|------|
+| incomplete (omits rule) | 2–3/5 | **0.000** | skipped seeds failed gate at acc 0.998 — the rule WAS in their 40 training trajectories, so the base CWM mismatched it and the gate caught it |
+| complete (control) | 5/5 | **0.000** | — |
+
+`gap_truth` ≈ 0 in both conditions. The divergence region (cap+unequal-material)
+is <1% of visited states, and symmetric MCTS self-play ties on material → the
+states where the rule-blind CWM is wrong are barely visited. **A rare-but-pivotal
+rule error does not move the state-agreement rate** (it is diluted), and the gate
+is actually *sensitive* when the rule appears in the training sample (it then
+fails the gate). nano fails the gate entirely on army5x5a (representational
+complexity), as before.
+
+### Play performance IS the lens (the result)
+
+Adequacy for planning must be measured by **play**, not prediction accuracy. The
+rule-omitting CWM is, for play, equivalent to hand-written base army5x5a (differs
+only at the rare cap+material states), so its play cost is measured exactly and
+Azure-free (`scripts/play_cost.py`, 600 sims, 240 games):
+
+| Arena (true game = army5x5a + material) | win rate |
+|-----------------------------------------|----------|
+| truth-vs-truth (fairness baseline) | 0.479, 0.529 → **0.504** |
+| **rule-blind vs truth** (base/incomplete-CWM) | 0.383, 0.383 → **0.383** |
+
+The LLM-synthesized incomplete CWMs (gate-passing, gap_truth = 0) play at
+**0.28–0.37** win rate vs a truth agent; the complete-rules CWMs at **0.38–0.45**
+(non-overlapping) — and the hand-written rule-blind oracle, measured at scale,
+sits at a reproducible **0.383** against a calibrated **0.504** baseline. Losing
+~2:1 (≈63L/35W of 120).
+
+**Headline finding.** A world model can pass transition-accuracy verification
+(gate 1.0) and be **≥99% state-accurate on the search distribution** (gap_truth
+= 0) yet **systematically lose at play** because the <1% it gets wrong is exactly
+the pivotal tactic. Transition/state accuracy is the wrong adequacy criterion for
+planning — play performance is. Complete rules close it (control plays near
+baseline); an incomplete spec leaves a rare branch that sampling-based
+verification cannot see but a planner punishes.
+
+### Commands
+
+```bash
+# state-agreement grid, treatment + control, with play performance:
+for c in army5x5a_material_incomplete army5x5a_material; do
+  PYTHONPATH=src python -m cwm.run_gap --game $c --synth-size mini \
+    --synth-seeds 5 --selfplay-games 20 --simulations 400 --train-games 40 --play-games 30
+done
+PYTHONPATH=src python scripts/play_cost.py   # Azure-free play-cost + fairness baseline
+```
