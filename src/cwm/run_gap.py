@@ -39,12 +39,16 @@ def _load_module_from_code(code: str) -> types.ModuleType:
 
 
 def aggregate_gap(per_seed: list) -> dict:
-    gaps = [r["gap"] for r in per_seed if "gap" in r]
-    n = len(gaps)
+    def _agg(key):
+        vals = [r[key] for r in per_seed if key in r]
+        n = len(vals)
+        return n, (sum(vals) / n if n else 0.0), (min(vals) if n else 0.0), (max(vals) if n else 0.0)
+
+    n, gmean, gmin, gmax = _agg("gap")
+    _, tmean, tmin, tmax = _agg("gap_truth")
     return {"n_seeds": n,
-            "gap_mean": sum(gaps) / n if n else 0.0,
-            "gap_min": min(gaps) if n else 0.0,
-            "gap_max": max(gaps) if n else 0.0}
+            "gap_mean": gmean, "gap_min": gmin, "gap_max": gmax,
+            "gap_truth_mean": tmean, "gap_truth_min": tmin, "gap_truth_max": tmax}
 
 
 def main(argv=None):
@@ -106,14 +110,16 @@ def main(argv=None):
         # If a distribution could not be evaluated at all (every chunk failed in
         # the sandbox), the agreement is unmeasured — recording gap=1-0 would be a
         # spurious gap. Skip the seed with the reason instead.
-        if d_gate.n_states == 0 or d_cwm.n_states == 0:
+        if d_gate.n_states == 0 or d_cwm.n_states == 0 or d_truth.n_states == 0:
             per_seed.append({"seed": seed, "skipped": "cwm-eval-failed",
                              "gate_exec_errors": d_gate.n_exec_errors,
-                             "cwm_exec_errors": d_cwm.n_exec_errors})
+                             "cwm_exec_errors": d_cwm.n_exec_errors,
+                             "truth_exec_errors": d_truth.n_exec_errors})
             continue
         per_seed.append({
             "seed": seed,
             "gap": d_gate.state_agreement_rate - d_cwm.state_agreement_rate,
+            "gap_truth": d_gate.state_agreement_rate - d_truth.state_agreement_rate,
             "gate": d_gate.state_agreement_rate,
             "cwm": d_cwm.state_agreement_rate,
             "truth": d_truth.state_agreement_rate,
