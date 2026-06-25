@@ -62,7 +62,7 @@ gap_cwm` is itself evidence that the blind spot is on the *competent* distributi
 Expect **bimodality** across seeds in the incomplete condition: seeds whose 40
 training trajectories happened to include a cap+unequal-material transition
 (~33%) have R verified → `gap_truth ≈ 0`; the rest omit R → `gap_truth > 0`.
-Per-seed reporting; also report how many seeds saw R in training.
+Read directly from per-seed `gap_truth`.
 
 ## Components
 
@@ -77,9 +77,9 @@ Per-seed reporting; also report how many seeds saw R in training.
   - `"army5x5a_material_incomplete"` → module = the material variant, but
     rules_text = `gen_chess.RULES_TEXT` (base, omits R).
 - **`src/cwm/run_gap.py`** — add `gap_truth` (and keep `gap`=gap_cwm) to each
-  per-seed entry and to `aggregate_gap` (mean/min/max over `gap_truth`). Add a
-  per-seed flag `r_seen_in_training` (whether any training trajectory reached a
-  cap+unequal-material state).
+  per-seed entry and to `aggregate_gap` (mean/min/max over both). Kept
+  game-agnostic: bimodality is read directly from the per-seed `gap_truth`
+  values (no game-specific "rule seen in training" hook).
 - **`scripts/gap_grid.py`** — already passes through flags; the two conditions are
   two `--game` values.
 - **Tests:** `tests/test_gen_chess_material.py` — R fires at cap with unequal
