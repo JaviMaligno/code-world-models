@@ -76,3 +76,29 @@ def test_collect_visited_states_respects_cap():
     from cwm.groundtruth import tictactoe
     states = collect_visited_states(tictactoe, n_games=5, simulations=80, seed=1, cap=10)
     assert len(states) <= 10
+
+def test_inference_accuracy_perfect_oracle():
+    import inspect
+    from cwm.gap import inference_accuracy
+    from cwm.groundtruth import kuhn_poker
+    src = inspect.getsource(kuhn_poker)
+    states = [kuhn_poker.initial_state(),
+              {"board": [2, 0, 1, 1, -1, -1], "current_player": 2}]
+    rep = inference_accuracy(src, states, kuhn_poker)
+    assert rep["observation_rate"] == 1.0
+    assert rep["inference_rate"] == 1.0
+    assert rep["n_exec_errors"] == 0
+
+def test_inference_accuracy_detects_wrong_infer():
+    import inspect
+    from cwm.gap import inference_accuracy
+    from cwm.groundtruth import kuhn_poker
+    src = inspect.getsource(kuhn_poker)
+    # corrupt infer_states to drop one consistent state (return only the first)
+    bad = src.replace("    return out\n\n\nRULES_TEXT",
+                      "    return out[:1]\n\n\nRULES_TEXT")
+    assert bad != src
+    states = [{"board": [2, 0, 1, -1, -1, -1], "current_player": 1}]
+    rep = inference_accuracy(bad, states, kuhn_poker)
+    assert rep["inference_rate"] < 1.0
+    assert rep["examples"]

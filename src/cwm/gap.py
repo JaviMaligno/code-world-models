@@ -181,6 +181,85 @@ def contract_divergence(cwm_code: str, states: list, truth_module,
         n_exec_errors=n_exec_errors)
 
 
+def inference_accuracy(cwm_code: str, states: list, truth_module,
+                       timeout: float = 10.0) -> dict:
+    """Verify a synthesized imperfect-info CWM's observation() and infer_states()
+    against the truth on sampled full states, for both players. Order-insensitive
+    MULTISET-equality on the inferred states (sorted tuples, no dedup) — so a
+    membership-valid-but-skewed/duplicated set is caught, not just a missing one;
+    errors count as mismatches, not silent passes."""
+    if not states:
+        return {"n": 0, "observation_rate": 1.0, "inference_rate": 1.0,
+                "n_exec_errors": 0, "examples": []}
+    # truth expectations (in-process)
+    def _canon(stlist):
+        return sorted(tuple(s["board"]) for s in stlist)
+    truth = []
+    for s in states:
+        row = {}
+        for p in (1, 2):
+            o = truth_module.observation(s, p)
+            row[p] = {"obs": o, "infer": _canon(truth_module.infer_states(o, p))}
+        truth.append(row)
+    cases = [{"state": s} for s in states]
+    payload = json.dumps(json.dumps(cases))
+    call = (
+        "import json\n"
+        f"_cases = json.loads({payload})\n"
+        "_out = []\n"
+        "for _c in _cases:\n"
+        "    _s = _c['state']\n"
+        "    _r = {}\n"
+        "    for _p in (1, 2):\n"
+        "        _e = {}\n"
+        "        try:\n"
+        "            _o = observation(_s, _p)\n"
+        "            _e['obs'] = _o\n"
+        "        except Exception as ex:\n"
+        "            _e['obs'] = {'__error__': repr(ex)}; _o = None\n"
+        "        try:\n"
+        "            _inf = infer_states(_o, _p) if _o is not None else None\n"
+        "            _e['infer'] = sorted([tuple(x['board']) for x in _inf]) if _inf is not None else {'__error__': 'no obs'}\n"
+        "        except Exception as ex:\n"
+        "            _e['infer'] = {'__error__': repr(ex)}\n"
+        "        _r[str(_p)] = _e\n"
+        "    _out.append(_r)\n"
+        "print(json.dumps(_out))\n"
+    )
+    res = run_in_sandbox(cwm_code, call, timeout=timeout)
+    lines = res.stdout.strip().splitlines() if res.ok else []
+    try:
+        produced = json.loads(lines[-1]) if lines else None
+    except json.JSONDecodeError:
+        produced = None
+    if not isinstance(produced, list) or len(produced) != len(states):
+        return {"n": 0, "observation_rate": 0.0, "inference_rate": 0.0,
+                "n_exec_errors": len(states),
+                "examples": [(res.stderr or "malformed output")[-200:]]}
+
+    obs_ok = inf_ok = measured = 0
+    examples = []
+    for st, tr, got in zip(states, truth, produced):
+        for p in (1, 2):
+            measured += 1
+            g = got.get(str(p), {})
+            # observation: JSON round-trips lists fine; compare directly
+            if g.get("obs") == tr[p]["obs"]:
+                obs_ok += 1
+            elif len(examples) < 10:
+                examples.append(f"obs mismatch state={st['board']} p={p} got={g.get('obs')}")
+            # inference: truth infer is list[tuple]; sandbox gives list[list]
+            got_inf = g.get("infer")
+            norm = sorted(tuple(x) for x in got_inf) if isinstance(got_inf, list) else got_inf
+            if norm == tr[p]["infer"]:
+                inf_ok += 1
+            elif len(examples) < 10:
+                examples.append(f"infer mismatch state={st['board']} p={p} got={got_inf}")
+    n = measured
+    return {"n": n, "observation_rate": obs_ok / n, "inference_rate": inf_ok / n,
+            "n_exec_errors": 0, "examples": examples}
+
+
 def collect_visited_states(model, n_games: int, simulations: int, seed: int,
                            cap: int = 20000) -> list:
     """States MCTS expands while self-playing `model` against itself."""
