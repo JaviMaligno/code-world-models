@@ -10,8 +10,8 @@ from cwm.law import rarity, arena_winrate, danger
 from cwm.groundtruth import gen_chess_material as gm, connect_four as base_cf
 from cwm.groundtruth import gen_chess as base_army
 
-SIMS = 400
-N_GAMES = 80
+SIMS = 300
+N_GAMES = 60          # x len(SEEDS) pooled games per point
 SEEDS = [0, 1, 2]
 RARITY_GAMES = 400
 N_TRAJ = [20, 40, 80]          # gate sizes for the danger metric
@@ -123,7 +123,7 @@ class BaseArmyCap:
 
 def main():
     configs = [(f"army cap={mp}", gm.make_material(max_plies=mp), BaseArmyCap(mp), "material")
-               for mp in (30, 40, 50, 60, 80, 100, 140)]
+               for mp in (30, 40, 50, 60, 80, 100)]
     configs += [(f"cf {rule}", CFRule(rule), base_cf, "rule")
                 for rule in ("topcenter", "vthree", "square")]
 
