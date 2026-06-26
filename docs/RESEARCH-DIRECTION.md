@@ -174,10 +174,17 @@ divergence-selected **army5x5a + material-at-cap** instrument built and run; the
 ≥99%-state-accurate CWM that omits the rule **loses ~2:1** (0.383 vs 0.504). All
 in EXPERIMENTS.md; code on `main`.
 
+DONE (2026-06-26): **quantitative law established** (EXPERIMENTS.md "Quantitative
+law"). `danger = play_cost × (1−rarity)^N`; play_cost ~constant 0.12 (competent
+play always reaches the rule region), rarity swept cheaply. Threshold curve: harm
+≈0 while the rule is common enough for the gate to catch, rises as it gets rare,
+plateaus at full play_cost once it escapes; N shifts the threshold. This is the
+breadth/generality the result needed.
+
 1. **Write it up** — the result is ready: *transition/state accuracy is the wrong
    adequacy criterion for a planning world model; adequacy must be measured by
-   play.* Blog article (connects to the cognitive-debt piece) + possible preprint.
-   This is the strongest, most original framing we have.
+   play* + the quantitative danger law + the translation-not-inference repair
+   finding. Blog (connects to cognitive-debt) + preprint. Strongest framing we have.
 2. **(Optional) Search-guided synthesis** — refine the CWM on MCTS-visited states
    (DAgger) and measure how much play performance recovers. Strengthens the
    preprint with a fix, not just a diagnosis.
