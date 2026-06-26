@@ -121,3 +121,70 @@ def returns(state: dict) -> dict:
         return {1: 0.0, 2: 0.0}
     amt = float(b[4])
     return {w: amt, _other(w): -amt}
+
+
+def observation(state: dict, player: int) -> list:
+    b = list(state["board"])
+    if player == 1:
+        b[1] = -1                              # hide opponent's card
+    else:
+        b[0] = -1
+    if b[3] == 0:                              # community hidden until round 1
+        b[2] = -1
+    return b
+
+
+def infer_states(obs_board: list, player: int) -> list:
+    obs = list(obs_board)
+    own = obs[0] if player == 1 else obs[1]
+    visible = {own}
+    if obs[2] != -1:                           # community already public (round 1)
+        visible.add(obs[2])
+    remaining = [c for c in DECK if c not in visible]
+    cp = _cp_from_board(obs)
+    out = []
+    opp_idx = 1 if player == 1 else 0
+    if obs[2] == -1:                           # round 0: hidden = opponent + community
+        for opp in remaining:
+            for comm in remaining:
+                if comm == opp:
+                    continue
+                s = list(obs)
+                s[opp_idx] = opp
+                s[2] = comm
+                out.append({"board": s, "current_player": cp})
+    else:                                      # round 1: hidden = opponent only
+        for opp in remaining:
+            s = list(obs)
+            s[opp_idx] = opp
+            out.append({"board": s, "current_player": cp})
+    return out
+
+
+RULES_TEXT = """\
+This game is Leduc poker (2 players).
+  - Cards are physical ids 0..5; the rank is id//2 (ids 0,1 = J, 2,3 = Q, 4,5 = K),
+    with J < Q < K. The deck is the six ids 0..5 (two cards per rank).
+  - board has 9 integers: [p1_id, p2_id, community_id, round, committed_p1,
+    committed_p2, raises_round, acted_round, status]. The community card is dealt at
+    the start but is hidden until round 1. status: 0 ongoing, 1 a player folded,
+    2 showdown.
+  - Each player antes 1. There are two betting rounds: round 0 (bet size 2), then
+    the community card becomes visible, then round 1 (bet size 4). Max 2 raises per
+    round. Actions: 0 = fold, 1 = check/call, 2 = raise. Fold is legal only when
+    facing a bet (committeds unequal).
+  - A round ends when a bet is called or both players check; the round-0 end reveals
+    the community card and starts round 1; the round-1 end is a showdown.
+  - Showdown: a private card whose rank equals the community rank (a pair) beats a
+    non-pair; otherwise the higher private rank wins; equal private ranks split.
+  - returns are net chips: the winner gains the loser's committed amount; a split is
+    0/0. On a fold the folder loses what they committed.
+  - Imperfect information: a player sees only their own card, the public betting
+    state, and the community card once round 1 has begun.
+"""
+
+POLICY_DESCRIPTION = (
+    "You play Leduc poker. board = [p1_id, p2_id, community_id, round, committed_p1, "
+    "committed_p2, raises_round, acted_round, status]; rank = id//2 (J<Q<K). You see "
+    "only your own card, the betting state, and the community card from round 1. "
+    "Actions: 0 fold, 1 check/call, 2 raise.")

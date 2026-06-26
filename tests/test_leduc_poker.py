@@ -76,3 +76,40 @@ def test_returns_nonterminal_zero():
 def test_cp_from_board():
     assert L._cp_from_board([0, 2, 4, 0, 1, 1, 0, 0, 0]) == 1
     assert L._cp_from_board([0, 2, 4, 0, 3, 1, 1, 1, 0]) == 2
+
+def test_observation_masks_opponent_and_round0_community():
+    s = {"board": [0, 4, 2, 0, 1, 1, 0, 0, 0], "current_player": 1}
+    assert L.observation(s, 1) == [0, -1, -1, 0, 1, 1, 0, 0, 0]   # P2 + community hidden
+    assert L.observation(s, 2) == [-1, 4, -1, 0, 1, 1, 0, 0, 0]
+
+def test_observation_reveals_community_in_round1():
+    s = {"board": [0, 4, 2, 1, 3, 3, 0, 0, 0], "current_player": 1}
+    assert L.observation(s, 1) == [0, -1, 2, 1, 3, 3, 0, 0, 0]    # community visible
+
+def test_infer_states_round0_spans_opponent_and_community():
+    s = {"board": [0, 4, 2, 0, 1, 1, 0, 0, 0], "current_player": 1}
+    obs = L.observation(s, 1)
+    inferred = L.infer_states(obs, 1)
+    # remaining ids = {1,2,3,4,5}; ordered (opp,comm) distinct = 5*4 = 20
+    assert len(inferred) == 20
+    assert any(d["board"] == s["board"] for d in inferred)        # true state member
+    for d in inferred:
+        assert L.observation(d, 1) == obs                          # round-trip
+        assert d["board"][0] == 0                                  # own card kept
+        assert len({d["board"][0], d["board"][1], d["board"][2]}) == 3
+        assert d["current_player"] == 1
+
+def test_infer_states_round1_spans_opponent_only():
+    s = {"board": [0, 4, 2, 1, 3, 3, 0, 0, 0], "current_player": 1}
+    obs = L.observation(s, 1)
+    inferred = L.infer_states(obs, 1)
+    # remaining ids = {1,3,4,5} (exclude own 0 and community 2) -> 4 opponents
+    assert len(inferred) == 4
+    for d in inferred:
+        assert d["board"][2] == 2                                  # community fixed
+        assert L.observation(d, 1) == obs
+
+def test_leduc_registered():
+    from cwm.games import GAMES
+    assert GAMES["leduc"].module is L
+    assert "leduc" in GAMES["leduc"].rules_text.lower()
