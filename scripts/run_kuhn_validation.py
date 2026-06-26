@@ -20,10 +20,15 @@ from cwm.determinized import imperfect_arena
 from cwm.run_gap import _load_module_from_code
 import random
 
+import sys
+
 provider = AzureOpenAIProvider(
     endpoint=os.environ["AZURE_OPENAI_ENDPOINT"], api_key=os.environ["AZURE_OPENAI_API_KEY"],
     api_version=os.environ["AZURE_OPENAI_API_VERSION"])
-MODEL = os.environ["AZURE_DEPLOYMENT_MINI"]
+SIZE = sys.argv[1] if len(sys.argv) > 1 else "mini"   # mini | large | nano
+MODEL = os.environ[{"mini": "AZURE_DEPLOYMENT_MINI", "large": "AZURE_DEPLOYMENT_LARGE",
+                    "nano": "AZURE_DEPLOYMENT_NANO"}[SIZE]]
+print(f"synth size = {SIZE}", flush=True)
 contract = build_imperfect_contract(k.RULES_TEXT)
 
 
@@ -51,7 +56,7 @@ def collect_imperfect_trajectories(model, n_games, seed):
 traj = collect_imperfect_trajectories(k, n_games=60, seed=1)
 print(f"transitions={len(traj)}", flush=True)
 code, _ = synthesize_cwm(provider, MODEL, contract, traj)
-refined = refine_cwm(provider, MODEL, contract, code, traj, max_iters=6)
+refined = refine_cwm(provider, MODEL, contract, code, traj, max_iters=12)
 print(f"transition gate: accuracy={refined.accuracy:.4f} iters={refined.iterations}", flush=True)
 
 cwm = _load_module_from_code(refined.code)
