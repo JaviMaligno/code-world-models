@@ -319,3 +319,46 @@ PYTHONPATH=src python scripts/repair_spikes/spike_dagger2.py     # proper iterat
 PYTHONPATH=src python scripts/repair_spikes/spike_harvest.py     # on-manifold real data, mini + large
 PYTHONPATH=src python scripts/repair_spikes/spike_targeted2.py   # dose-response + complete-rules control
 ```
+
+## Quantitative law: danger = consequence × P(escape) (2026-06-26)
+
+The harm from accepting a CWM on random-trajectory accuracy is
+`danger(rule, N) = play_cost × (1 − rarity)^N`. Measured efficiently by
+separating the cheap, varying term (rarity = random-play incidence, no MCTS) from
+the expensive, ~constant term (play_cost, MCTS): the rule-blind planner's loss is
+~constant across caps because **competent play always reaches the cap region**,
+while random-play rarity varies with the cap length. So we measure play_cost
+precisely once and sweep rarity cheaply.
+
+- **play_cost ≈ 0.12, ~constant** (independent runs: `play_cost.py` 0.117–0.121 at
+  cap=100, n=240, 600 sims; `law_sweep` 0.112 at cap=30). Fair baseline
+  truth-vs-truth = 0.504 (n=240) ✓ ≈ 0.5.
+- **rarity(cap)** over 3000 random games each, and `danger = 0.12 × (1−rarity)^N`:
+
+| cap | rarity | (1−r)^40 | danger@20 | danger@40 | danger@80 |
+|----:|-------:|---------:|----------:|----------:|----------:|
+|  25 | 0.337  | 0.0000   | 0.000 | 0.000 | 0.000 |
+|  40 | 0.208  | 0.0001   | 0.001 | 0.000 | 0.000 |
+|  60 | 0.107  | 0.0107   | 0.012 | 0.001 | 0.000 |
+|  80 | 0.056  | 0.0997   | 0.038 | 0.012 | 0.001 |
+| 100 | 0.025  | 0.3583   | 0.072 | 0.043 | 0.015 |
+| 120 | 0.011  | 0.6339   | 0.096 | 0.076 | 0.048 |
+| 140 | 0.007  | 0.7652   | 0.105 | 0.092 | 0.070 |
+
+**Result (threshold law, not an inverted-U).** Because play_cost is ~constant,
+danger is ≈0 while the rule is common enough for an N-trajectory gate to catch it
+(cap ≤ 50), then **rises through a threshold** as the rule becomes rare (cap
+60–100), and plateaus at ≈ the full play_cost once the rule almost always escapes
+the gate (cap ≥ 120). The gate size `N` shifts the threshold: more verification
+trajectories push it right (a rarer rule is needed to escape).
+
+This generalizes the single-instrument result: a rule harms a sampling-verified
+planner **iff** it is rare under random play (escapes the gate) yet consequential
+in competent play (high play_cost), and the expected harm is quantitatively
+`play_cost × (1−rarity)^N`. Connect Four's consequential rules cannot enter the
+danger zone (their rarity 0.12–0.38 keeps `(1−rarity)^40 ≈ 0`); army5x5a's
+deep-tail rule can, because competent and random play diverge there.
+
+```bash
+PYTHONPATH=src python scripts/law_curve.py   # cheap rarity grid + cost probes (+ danger curve)
+```
