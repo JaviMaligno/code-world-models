@@ -96,13 +96,13 @@ def observation(state: dict, player: int) -> list:
     return board
 
 
-def infer_states(observation: list, player: int) -> list:
-    obs = list(observation)
+def infer_states(obs_board: list, player: int) -> list:
+    obs = list(obs_board)
     own = obs[0] if player == 1 else obs[1]
-    unknown = [c for c in CARDS if c != own]      # the two cards not held by `player`
+    x, y = [c for c in CARDS if c != own]         # the two cards not held by `player`
     cp = _cp_from_board(obs)
     out = []
-    for a, b in (unknown, unknown[::-1]):
+    for a, b in [(x, y), (y, x)]:                 # both (opponent, unused) assignments
         s = list(obs)
         if player == 1:
             s[1], s[2] = a, b      # opponent card, unused
