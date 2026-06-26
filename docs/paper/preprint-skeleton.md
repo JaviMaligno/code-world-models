@@ -98,8 +98,13 @@ transitions. [imperfect-info one-liner ⬜ pending Claim A/B results]
 
 - Contract extension (`observation`, `infer_states`), determinized-MCTS planner,
   inference gate, imperfect arena — implemented & verified (Kuhn poker). [§ methods ✅]
-- **Pipeline validation (Kuhn):** ⬜ pending the running job (expect recall →
-  gate-pass → play ≈ baseline).
+- **Pipeline validation (Kuhn) ✅:** large synthesizes Kuhn in 0 refinements
+  (transition gate 1.0, inference gate 1.0 — observation & infer_states both
+  perfect); CWM+determinized-MCTS plays at **0.470 [0.422,0.519]**, identical to
+  the truth-vs-truth fair baseline 0.470 — gate-pass → play ≈ baseline (recall),
+  validating the machinery. **mini does NOT recall this (non-standard) encoding**
+  (transition gate 0.845, and its synthesized `infer_states` crashes) — a
+  scale/representation dependence consistent with translation-not-inference (§5).
 - **Claim A (verified-but-wrong inference):** ⬜ a CWM whose `infer_states` is
   membership-valid but skewed/incomplete passes the gate yet loses at play.
 - **Claim B (translation-not-inference, hidden-info):** ⬜ with rules withheld the

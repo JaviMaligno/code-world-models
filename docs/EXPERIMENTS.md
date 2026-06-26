@@ -362,3 +362,28 @@ deep-tail rule can, because competent and random play diverge there.
 ```bash
 PYTHONPATH=src python scripts/law_curve.py   # cheap rarity grid + cost probes (+ danger curve)
 ```
+
+## Imperfect information — Kuhn poker pipeline validation (2026-06-26)
+
+New machinery (contract `observation`/`infer_states`/`initial_states`,
+determinized-MCTS planner, `inference_accuracy` gate, `imperfect_arena`), validated
+end-to-end on Kuhn poker. `scripts/run_kuhn_validation.py {mini|large}`.
+
+| Synth | transition gate | inference gate (obs / infer) | CWM-vs-truth play | fair baseline |
+|-------|-----------------|------------------------------|-------------------|---------------|
+| large | 1.000 (0 iters) | 1.000 / 1.000                | 0.470 [0.422,0.519] | 0.470 [0.422,0.519] |
+| mini  | 0.845 (12 iters, fails gate) | 1.000 / 0.000 (infer_states crashes) | — | — |
+
+- **large:** recalls Kuhn; both gates pass; CWM plays identical to the truth-vs-truth
+  baseline (overlapping CIs) — gate-pass → play ≈ baseline, validating the pipeline
+  (a near-zero gap is the *expected* recall result, not the contribution).
+- **mini:** does NOT cleanly synthesize this (non-standard net-chip) encoding — the
+  transition gate stalls at 0.845 and the synthesized `infer_states` raises
+  (`'list' object is not callable`). A scale/representation dependence consistent
+  with translation-not-inference.
+- Determinized planner hardened to tolerate a faulty synthesized model (raising/
+  empty inference, crashing dynamics) → legal fallback move, so Claim A/B runs on
+  deliberately-wrong models don't abort the arena.
+
+Next (Azure): **Claim A** (membership-valid-but-skewed `infer_states` that passes
+the gate yet loses at play) and **Claim B** (synthesis with rules withheld).
