@@ -49,3 +49,68 @@ RULES_TEXT = base.RULES_TEXT.replace(
 )
 
 POLICY_DESCRIPTION = base.POLICY_DESCRIPTION
+
+
+def _moves(board: list, player: int) -> list:
+    """Legal piece moves for `player`, independent of any cap (base.legal_actions
+    is gated by base.is_terminal at the fixed cap 100, which is wrong for other
+    cap lengths, so generate moves directly)."""
+    actions = []
+    for idx in range(N):
+        v = board[idx]
+        if v != 0 and base._OWNER[v] == player:
+            for tgt in base._piece_dests(board, idx):
+                actions.append(idx * N + tgt)
+    if not actions:
+        actions.append(base.PASS)
+    return actions
+
+
+class _MaterialGame:
+    """army5x5a + material-at-cap, parameterized by cap length and lead threshold."""
+
+    def __init__(self, max_plies: int, lead: int):
+        self.max_plies = max_plies
+        self.lead = lead
+
+    def initial_state(self) -> dict:
+        return initial_state()
+
+    def apply_action(self, state: dict, action: int) -> dict:
+        return apply_action(state, action)
+
+    def outcome(self, state: dict) -> tuple[int, str]:
+        b = state["board"]
+        a1, a2 = _general_alive(b, 1), _general_alive(b, 2)
+        if not a1 or not a2:
+            return (1 if a1 else 2), "capture"
+        if b[N] >= self.max_plies:
+            p1, p2 = _material(b)
+            if p1 - p2 >= self.lead:
+                return 1, "material"
+            if p2 - p1 >= self.lead:
+                return 2, "material"
+            return 0, "draw"
+        return 0, "none"
+
+    def is_terminal(self, state: dict) -> bool:
+        return self.outcome(state)[1] != "none"
+
+    def legal_actions(self, state: dict) -> list:
+        if self.is_terminal(state):
+            return []
+        return _moves(state["board"], state["current_player"])
+
+    def returns(self, state: dict) -> dict:
+        w, reason = self.outcome(state)
+        if reason == "none":
+            return {1: 0.0, 2: 0.0}
+        if w == 1:
+            return {1: 1.0, 2: -1.0}
+        if w == 2:
+            return {1: -1.0, 2: 1.0}
+        return {1: 0.0, 2: 0.0}
+
+
+def make_material(max_plies: int = 100, lead: int = 1) -> "_MaterialGame":
+    return _MaterialGame(max_plies, lead)
