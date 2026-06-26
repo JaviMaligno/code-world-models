@@ -122,24 +122,26 @@ class BaseArmyCap:
 
 
 def main():
-    rows = []
-    for mp in (30, 40, 50, 60, 80, 100, 140):
-        truth = gm.make_material(max_plies=mp)
-        blind = BaseArmyCap(mp)
-        rows.append(row(f"army cap={mp}", truth, blind, "material"))
-    for rule in ("topcenter", "vthree", "square"):
-        truth = CFRule(rule)
-        rows.append(row(f"cf {rule}", truth, base_cf, "rule"))
+    configs = [(f"army cap={mp}", gm.make_material(max_plies=mp), BaseArmyCap(mp), "material")
+               for mp in (30, 40, 50, 60, 80, 100, 140)]
+    configs += [(f"cf {rule}", CFRule(rule), base_cf, "rule")
+                for rule in ("topcenter", "vthree", "square")]
 
     Path("results").mkdir(exist_ok=True)
-    Path("results/law_sweep.json").write_text(json.dumps(rows, indent=2))
-    print(f"{'config':14s} {'rarity':>8s} {'fair':>6s} {'blind':>6s} {'cost':>6s} "
-          f"{'dgr@20':>7s} {'dgr@40':>7s} {'dgr@80':>7s}")
-    for r in rows:
+    header = (f"{'config':14s} {'rarity':>8s} {'fair':>6s} {'blind':>6s} {'cost':>6s} "
+              f"{'dgr@20':>7s} {'dgr@40':>7s} {'dgr@80':>7s}")
+    print(f"[0/{len(configs)}] starting", flush=True)
+    print(header, flush=True)
+    rows = []
+    for i, (name, truth, blind, reason) in enumerate(configs, 1):
+        r = row(name, truth, blind, reason)
+        rows.append(r)
         d = r["danger"]
+        # progress: print + persist each row as it completes (crash-resilient)
         print(f"{r['config']:14s} {r['rarity']:8.3f} {r['fair_winrate']:6.3f} "
               f"{r['blind_winrate']:6.3f} {r['play_cost']:6.3f} "
-              f"{d['20']:7.3f} {d['40']:7.3f} {d['80']:7.3f}")
+              f"{d['20']:7.3f} {d['40']:7.3f} {d['80']:7.3f}   [{i}/{len(configs)}]", flush=True)
+        Path("results/law_sweep.json").write_text(json.dumps(rows, indent=2))
 
 
 if __name__ == "__main__":
