@@ -273,3 +273,49 @@ for c in army5x5a_material_incomplete army5x5a_material; do
 done
 PYTHONPATH=src python scripts/play_cost.py   # Azure-free play-cost + fairness baseline
 ```
+
+## Can the gap be repaired? — translation vs inference (2026-06-26)
+
+Spikes on army5x5a + material-at-cap, INCOMPLETE rules unless noted. Play winrate
+vs the true game (40 games/400 sims; baseline 0.28, fair truth-vs-truth 0.50).
+
+| Repair attempt | discriminating examples | gate acc | rule learned | winrate |
+|----------------|-------------------------|----------|--------------|---------|
+| none (random trajectories) | 0 | 1.000 (false security) | no | 0.28 |
+| naive DAgger (dump competent traj) | ~2 | 0.9996 | no | 0.28 |
+| proper DAgger (flawed model's game path, iterated) | 4–5/round | 0.993 | no | 0.28–0.33 |
+| targeted, **artificial** states | 120 | mini 0.916 / **large 0.004** | no | mini 0.35 / **large 0.05** |
+| targeted, **real** (harvested on-manifold) | 54 | mini 0.959 / large 0.959 | no | mini 0.35 / **large 0.42** |
+| **COMPLETE rules** + targeted (control) | 120 | **1.000 (0 iters)** | **yes** | **0.53** |
+
+**Findings:**
+1. **Detection works, repair-by-examples does not.** Verifying on the play/search
+   distribution makes the gate drop below 1.0 (it *detects* the inadequacy that
+   random-trajectory verification missed). But neither mini nor large can *infer*
+   the rare rule from examples — even 54 real discriminating transitions with 12
+   refinement iters leave the gate at 0.959 and the rule unlearned.
+2. **Spec completeness is decisive.** Given the rule in RULES_TEXT, the model
+   encodes it instantly (0 refinement iters) and plays at parity (0.53 ≈ 0.50).
+3. **Scale helps only marginally.** large (0.42) > mini (0.35) on real data, both
+   far below the complete-rules 0.53. The inference ceiling is general, not a
+   mini-only artifact.
+4. **Repair data must be on-manifold.** Artificial (unreachable) discriminating
+   states *corrupt* synthesis — the large model collapsed to acc 0.004 / winrate
+   0.05 trying to fit them. Harvested reachable states (flawed self-play ends at
+   cap+unequal-material 6/20, 3× competent's 2/20) are sane but still
+   insufficient to teach the rule.
+
+**Unified thesis.** LLM code-world-model synthesis is rule **translation**, not
+rule **inference**: it is correct iff the rules are specified. Sampling-based
+verification gives false adequacy precisely because the model translates what it
+was given — and the gate cannot surface a rule that was never specified and is
+too rare to appear in samples. The actionable fix is **spec completeness +
+verification on the play distribution** (which detects incompleteness); repairing
+by feeding examples does not work at this model scale.
+
+```bash
+# repair spikes (Azure). The .env path is hard-coded; adjust if relocated.
+PYTHONPATH=src python scripts/repair_spikes/spike_dagger2.py     # proper iterative DAgger
+PYTHONPATH=src python scripts/repair_spikes/spike_harvest.py     # on-manifold real data, mini + large
+PYTHONPATH=src python scripts/repair_spikes/spike_targeted2.py   # dose-response + complete-rules control
+```

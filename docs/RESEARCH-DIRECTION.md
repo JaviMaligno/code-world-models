@@ -91,6 +91,43 @@ states MCTS actually visits (DAgger), and measure how much play performance
 recovers; (b) the `--no-rules` / `--with-rules-but-buggy-rare-branch` variants;
 (c) write up (blog + preprint) around the play-vs-accuracy adequacy result.
 
+### Repair spikes (2026-06-26) — the fix is non-trivial; a dose-response
+
+Tested on army5x5a + material-at-cap, INCOMPLETE rules (mini synthesizer). Play
+winrate vs the true game (baseline 0.28; fair truth-vs-truth 0.50):
+
+| method | discriminating examples | gate | winrate |
+|--------|-------------------------|------|---------|
+| baseline (random trajectories) | 0 | 1.000 (false security) | 0.28 |
+| naive DAgger (dump competent traj) | ~2 | 0.9996 (detects) | 0.28 |
+| proper DAgger (flawed model's game path) | 4–5 / round | 0.993 (detects) | 0.28–0.33 |
+| targeted generation | 35 | 0.971 | 0.42 |
+| targeted generation | 120 | (this run) | (this run) |
+
+Key facts established: random/competent play barely generate the discriminating
+cap+unequal-material transition (random ~0%; competent 2/20; the rule-BLIND
+model's own game path 6/20 — 3× more, DAgger's premise). Verifying on the
+play/search distribution **detects** the gap (gate drops below 1.0); **repair**
+needs many discriminating examples — a dose-response (0→0.28, 35→0.42).
+
+### If repair plateaus: diagnose the ceiling (do NOT stop at "it stalled")
+
+Pre-registered battery (each isolates one hypothesis):
+1. **Model inference limit** (mini can't infer "more material wins" from
+   examples): control = COMPLETE rules + targeted (already in this run); if
+   complete→0.50 but incomplete plateaus, the ceiling is inference. Sub-diagnose
+   with a larger synthesizer (gpt-5.4 large), declarative rule vs examples-only,
+   and a code probe (does generated code attempt the rule but buggily, or not at
+   all?).
+2. **Data/coverage limit**: dose-response sweep 0/35/120/300 — does the curve
+   keep rising or saturate?
+3. **Gate/metric limit**: final `acc` < 1.0 with refiner unable to close the
+   residual failures — inspect which.
+4. **Search limit**: ruled out (truth-vs-truth = 0.50 at 400 sims), keep in mind.
+
+"Can LLMs infer rare rules from examples, and where is the ceiling by model size
+/ supervision form?" is itself a complementary preprint angle.
+
 ## Validated candidates (deep-research 2026-06-24)
 
 - **gpt-5.4 knowledge cutoff: 2025-08-31** (snapshot gpt-5.4-2026-03-05).
