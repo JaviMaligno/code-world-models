@@ -10,9 +10,9 @@ from cwm.law import rarity, arena_winrate, danger
 from cwm.groundtruth import gen_chess_material as gm, connect_four as base_cf
 from cwm.groundtruth import gen_chess as base_army
 
-SIMS = 300
-N_GAMES = 60          # x len(SEEDS) pooled games per point
-SEEDS = [0, 1, 2]
+SIMS = 150
+N_GAMES = 40          # x len(SEEDS) pooled games per point
+SEEDS = [0, 1]
 RARITY_GAMES = 400
 N_TRAJ = [20, 40, 80]          # gate sizes for the danger metric
 
