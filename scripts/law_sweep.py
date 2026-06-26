@@ -8,6 +8,7 @@ from pathlib import Path
 
 from cwm.law import rarity, arena_winrate, danger
 from cwm.groundtruth import gen_chess_material as gm, connect_four as base_cf
+from cwm.groundtruth import gen_chess as base_army
 
 SIMS = 400
 N_GAMES = 80
@@ -53,6 +54,9 @@ class CFRule:
 
     def outcome(self, s):
         b = s["board"]
+        # topcenter is a tiebreak: a base line-win takes priority (the `winner==0`
+        # guard), so it only fires when no 4-in-a-row exists. This slightly
+        # under-counts topcenter rarity, which is conservative for the contrast.
         if self.rule == "topcenter" and b[_i(0, 3)] != 0 and base_cf.winner(s) == 0:
             return b[_i(0, 3)], "rule"
         if self.rule == "vthree":
@@ -91,9 +95,6 @@ def row(name, truth, blind, reason):
             "blind_winrate": blind_res["winrate"],
             "blind_ci": [blind_res["lo"], blind_res["hi"]],
             "play_cost": play_cost, "danger": dangers}
-
-
-from cwm.groundtruth import gen_chess as base_army
 
 
 class BaseArmyCap:

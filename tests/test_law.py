@@ -1,4 +1,3 @@
-import math
 from cwm.law import wilson_ci, rarity, arena_winrate, danger
 from cwm.groundtruth import gen_chess_material as gm
 
