@@ -11,23 +11,43 @@ from .mcts import mcts_policy
 from .law import wilson_ci
 
 
+def _fallback_action(model, state) -> int:
+    """A legal move when planning cannot proceed. Tolerates a faulty model's
+    legal_actions too (the arena maps an illegal result to a real legal move)."""
+    try:
+        legal = model.legal_actions(state)
+        return legal[0] if legal else 0
+    except Exception:
+        return 0
+
+
 def determinized_policy(model, state: dict, n_determinizations=None,
                         simulations: int = 200, seed: int = 0) -> int:
     player = state["current_player"]
-    obs = model.observation(state, player)
-    dets = model.infer_states(obs, player)
+    # The model may be a (possibly wrong) synthesized one whose observation/
+    # infer_states raise or return an empty set. Treat any such failure as
+    # "cannot plan" -> a legal fallback move, so a buggy CWM plays (badly)
+    # instead of crashing the whole arena. This is exactly the Claim A / Claim B
+    # use case: measuring how a faulty model plays, not aborting the run.
+    try:
+        obs = model.observation(state, player)
+        dets = model.infer_states(obs, player)
+    except Exception:
+        return _fallback_action(model, state)
     if not dets:
-        # A (possibly wrong) synthesized model may infer an empty set for some
-        # information set. Don't crash the whole arena — fall back to a legal move.
-        legal = model.legal_actions(state)
-        return legal[0] if legal else 0
+        return _fallback_action(model, state)
     if n_determinizations is not None and len(dets) > n_determinizations:
         rng = random.Random(seed)
         dets = rng.sample(dets, n_determinizations)
     votes: dict = {}
     for i, d in enumerate(dets):
-        a = mcts_policy(model, d, n_simulations=simulations, seed=seed + i)
+        try:
+            a = mcts_policy(model, d, n_simulations=simulations, seed=seed + i)
+        except Exception:
+            continue          # a determinization whose dynamics crash is skipped
         votes[a] = votes.get(a, 0) + 1
+    if not votes:
+        return _fallback_action(model, state)
     # deterministic tie-break: highest votes, then smallest action
     return max(sorted(votes), key=lambda a: votes[a])
 

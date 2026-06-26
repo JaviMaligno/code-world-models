@@ -38,3 +38,26 @@ def test_imperfect_arena_fair_baseline_truth_vs_truth():
     assert 0.0 <= res["lo"] <= res["a_winrate"] <= res["hi"] <= 1.0
     # symmetric self-play with alternating deals -> roughly even
     assert 0.30 < res["a_winrate"] < 0.70
+
+
+def test_determinized_policy_survives_buggy_model():
+    # A model whose infer_states raises must not crash the planner; it falls back
+    # to a legal move (the Claim A use case runs deliberately-wrong models).
+    from cwm.determinized import determinized_policy
+    from cwm.groundtruth import kuhn_poker as k
+
+    class BuggyInfer:
+        initial_state = staticmethod(k.initial_state)
+        initial_states = staticmethod(k.initial_states)
+        legal_actions = staticmethod(k.legal_actions)
+        apply_action = staticmethod(k.apply_action)
+        is_terminal = staticmethod(k.is_terminal)
+        returns = staticmethod(k.returns)
+        observation = staticmethod(k.observation)
+        @staticmethod
+        def infer_states(obs, player):
+            raise TypeError("'list' object is not callable")   # mimic a bad synth
+
+    s = k.initial_state()
+    a = determinized_policy(BuggyInfer, s, simulations=30, seed=1)
+    assert a in k.legal_actions(s)
