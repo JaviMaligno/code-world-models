@@ -16,6 +16,11 @@ def determinized_policy(model, state: dict, n_determinizations=None,
     player = state["current_player"]
     obs = model.observation(state, player)
     dets = model.infer_states(obs, player)
+    if not dets:
+        # A (possibly wrong) synthesized model may infer an empty set for some
+        # information set. Don't crash the whole arena — fall back to a legal move.
+        legal = model.legal_actions(state)
+        return legal[0] if legal else 0
     if n_determinizations is not None and len(dets) > n_determinizations:
         rng = random.Random(seed)
         dets = rng.sample(dets, n_determinizations)

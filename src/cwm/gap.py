@@ -184,8 +184,10 @@ def contract_divergence(cwm_code: str, states: list, truth_module,
 def inference_accuracy(cwm_code: str, states: list, truth_module,
                        timeout: float = 10.0) -> dict:
     """Verify a synthesized imperfect-info CWM's observation() and infer_states()
-    against the truth on sampled full states, for both players. Set-equality on the
-    inferred consistent states; errors count as mismatches, not silent passes."""
+    against the truth on sampled full states, for both players. Order-insensitive
+    MULTISET-equality on the inferred states (sorted tuples, no dedup) — so a
+    membership-valid-but-skewed/duplicated set is caught, not just a missing one;
+    errors count as mismatches, not silent passes."""
     if not states:
         return {"n": 0, "observation_rate": 1.0, "inference_rate": 1.0,
                 "n_exec_errors": 0, "examples": []}
