@@ -30,3 +30,22 @@ non-terminal state. Players are 1 and 2 and alternate.
 
 def build_contract(rules_text: str) -> str:
     return CONTRACT_API + "\n\n" + rules_text
+
+
+IMPERFECT_CONTRACT_API = CONTRACT_API + """
+
+This is an IMPERFECT-INFORMATION game. The board encodes hidden information.
+Additionally implement EXACTLY these signatures:
+  def initial_states() -> list[dict]   # every possible initial (post-deal) state
+  def observation(state: dict, player: int) -> list[int]   # board as `player` sees it; hidden entries are -1
+  def infer_states(observation: list[int], player: int) -> list[dict]  # all full states consistent with the observation
+
+returns may be real-valued NET payoffs (not limited to {-1.0,0.0,1.0}); a positive
+value means that player gains that many chips. current_player is derivable from the
+public betting history. Every state in infer_states(observation(s,p),p) must map
+back to the same observation, and the true state must be included.
+"""
+
+
+def build_imperfect_contract(rules_text: str) -> str:
+    return IMPERFECT_CONTRACT_API + "\n\n" + rules_text
