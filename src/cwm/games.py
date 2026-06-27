@@ -3,7 +3,7 @@ import types
 from dataclasses import dataclass
 
 from .groundtruth import (tictactoe, connect_four, gen_tictactoe, gen_chess,
-                          trike, gen_chess_material, kuhn_poker, leduc_poker)
+                          trike, gen_chess_material, kuhn_poker, leduc_poker, beacon)
 
 
 @dataclass(frozen=True)
@@ -68,5 +68,11 @@ GAMES = {
         module=leduc_poker,
         rules_text=leduc_poker.RULES_TEXT,
         policy_description=leduc_poker.POLICY_DESCRIPTION,
+    ),
+    "beacon": GameSpec(
+        name="beacon",
+        module=beacon.make_beacon(),
+        rules_text=beacon.RULES_TEXT,
+        policy_description=beacon.POLICY_DESCRIPTION,
     ),
 }

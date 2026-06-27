@@ -83,6 +83,55 @@ class _Beacon:
             return {1: -1.0, 2: 1.0}
         return {1: 0.0, 2: 0.0}                         # draw or non-terminal
 
+    def observation(self, state: dict, player: int) -> list:
+        b = list(state["board"])
+        b[3 if player == 1 else 2] = -1            # mask opponent's type
+        return b
+
+    def infer_states(self, obs_board: list, player: int) -> list:
+        obs = list(obs_board)
+        opp_idx = 3 if player == 1 else 2          # opponent type slot
+        last_opp = obs[5] if player == 1 else obs[4]
+        step_opp = obs[1] if player == 1 else obs[0]
+        cp = self._cp_from_board(obs)
+        if last_opp == -1:                         # opponent not moved -> ambiguous
+            candidates = [0, 1]
+        else:                                      # invert safe(step_opp-1, t)=last_opp
+            candidates = [(last_opp - step_opp + 1) % 2]
+        out = []
+        for t in candidates:
+            s = list(obs)
+            s[opp_idx] = t
+            out.append({"board": s, "current_player": cp})
+        return out
+
 
 def make_beacon(T: int = 8) -> "_Beacon":
     return _Beacon(T)
+
+
+RULES_TEXT = """\
+This game is Beacon (2 players), a survival walk followed by a hidden-type guess.
+  - Each player has a hidden type t in {0,1}, fixed at the start.
+  - board has 9 integers: [step1, step2, t1, t2, last1, last2, guess1, guess2,
+    status]. status: 0 walking, 1 final round, 2 player 1 wins, 3 player 2 wins,
+    4 draw. last_i is a player's most recent move (-1 if none); guess_i is their
+    final guess (-1 if none).
+  - Walk: players alternate (player 1 first). On your turn at your own step index k
+    (= your completed safe steps), the actions are 0 and 1; the SAFE action is
+    (k + your_type) % 2. Playing the safe action advances you by one step and records
+    it in last_i. Playing the other action loses immediately (the opponent wins).
+  - When both players have completed T safe steps, the game enters the final round.
+  - Final round: players alternate (player 1 first) committing a guess in {0,1}.
+    You score 1 if your guess equals the OPPONENT's hidden type, else 0. The higher
+    score wins; equal scores draw. returns are net chips (+1 win, -1 loss, 0 draw).
+  - Imperfect information: you see your own type and every player's public moves
+    (last_i) and the full betting/guess state, but NOT the opponent's type label —
+    which is recoverable from their observed moves, since a move at step k by a
+    player of type t is (k + t) % 2.
+"""
+
+POLICY_DESCRIPTION = (
+    "You play Beacon. board = [step1, step2, t1, t2, last1, last2, guess1, guess2, "
+    "status]. In the walk, play the safe action (k+your_type)%2 to survive. In the "
+    "final round, guess the opponent's hidden type (deducible from their moves).")

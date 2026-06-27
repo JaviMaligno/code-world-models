@@ -79,3 +79,56 @@ def test_cp_from_board():
 
 def test_returns_nonterminal_zero():
     assert G.returns(G.initial_state()) == {1: 0.0, 2: 0.0}
+
+def test_final_round_scoring_p2_wins():
+    # t1=1, t2=0; P1 guesses 1 (wrong, t2=0); P2 guesses 1 (correct, t1=1) -> P2 wins
+    s = {"board": [3, 3, 1, 0, 1, 0, -1, -1, 1], "current_player": 1}
+    s = G.apply_action(s, 1)                              # P1 guesses 1 != t2(0) wrong
+    s = G.apply_action(s, 1)                              # P2 guesses 1 == t1(1) correct
+    assert s["board"][8] == 3 and G.returns(s) == {1: -1.0, 2: 1.0}
+
+def test_observation_masks_only_opponent_type():
+    s = {"board": [1, 0, 1, 0, 1, -1, -1, -1, 0], "current_player": 1}
+    assert G.observation(s, 1) == [1, 0, 1, -1, 1, -1, -1, -1, 0]   # t2 masked
+    assert G.observation(s, 2) == [1, 0, -1, 0, 1, -1, -1, -1, 0]   # t1 masked
+
+def test_infer_states_ambiguous_before_opponent_moved():
+    # player 1 to infer t2; opponent (P2) has not moved (last2 == -1)
+    s = {"board": [1, 0, 1, 0, 1, -1, -1, -1, 0], "current_player": 2}
+    obs = G.observation(s, 1)
+    inferred = G.infer_states(obs, 1)
+    assert sorted(d["board"][3] for d in inferred) == [0, 1]        # both t2
+    for d in inferred:
+        assert G.observation(d, 1) == obs                           # round-trip
+        assert d["board"][2] == 1                                   # own type kept
+
+def test_infer_states_singleton_after_opponent_moved():
+    # P2 type 0 has taken 1 step: last2 = safe(0,0) = 0. From obs, infer t2.
+    s = {"board": [1, 1, 1, 0, 1, 0, -1, -1, 0], "current_player": 1}
+    obs = G.observation(s, 1)
+    inferred = G.infer_states(obs, 1)
+    assert len(inferred) == 1 and inferred[0]["board"][3] == 0      # t2 recovered
+    assert inferred[0]["board"] == s["board"]                       # true state
+    assert G.observation(inferred[0], 1) == obs
+
+def test_infer_states_inversion_nonidentity_step2():
+    # P2 type 1 took 2 steps: last2 = safe(1,1) = 0. invert: t=(0-2+1)%2 = 1
+    s = {"board": [2, 2, 0, 1, 1, 0, -1, -1, 0], "current_player": 1}
+    obs = G.observation(s, 1)
+    inferred = G.infer_states(obs, 1)
+    assert len(inferred) == 1 and inferred[0]["board"][3] == 1
+
+def test_true_state_always_member():
+    g = B.make_beacon(T=4)
+    s = g.initial_state_with(1, 1)
+    rng_actions = [g.safe(0, 1), g.safe(0, 1)]                      # P1, P2 one step each
+    for a in rng_actions:
+        s = g.apply_action(s, a)
+    for player in (1, 2):
+        obs = g.observation(s, player)
+        assert any(d["board"] == s["board"] for d in g.infer_states(obs, player))
+
+def test_beacon_registered():
+    from cwm.games import GAMES
+    assert "beacon" in GAMES["beacon"].rules_text.lower()
+    assert GAMES["beacon"].module.T == 8
