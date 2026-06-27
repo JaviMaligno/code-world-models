@@ -37,11 +37,6 @@ class BeaconWrongInference:
         return inferred
 
 
-def infoset_key(model, board, player):
-    return tuple(model.observation({"board": list(board),
-                                    "current_player": player}, player))
-
-
 def random_reach_final_rate(model, n_games: int, seed: int) -> float:
     rng = random.Random(seed)
     deals = model.initial_states()

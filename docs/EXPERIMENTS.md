@@ -1,5 +1,53 @@
 # Experiments Log
 
+## Imperfect information — Beacon: a PROVABLE positive Claim A (2026-06-27)
+
+Poker has no inference coverage gap (competent play is shallower than random).
+Beacon is the minimal game engineered to have one: a survival walk (depth =
+survival; `safe(k,t)=(k+t)%2`, an unsafe move loses immediately) + a final round
+where each player must guess the opponent's hidden type (inferable from its observed
+moves). Random play reaches the final round with probability `(1/2)^{2T}`; optimal
+play with probability 1. Oracle `src/cwm/groundtruth/beacon.py`, instrument
+`src/cwm/beacon_instrument.py`, driver `scripts/beacon_claimA.py`.
+
+The Claim A instrument flips the opponent type **only at final-round states**
+(`status==1`) — the deep region D a random gate never samples.
+
+**Result (T=8, GATE_GAMES=2000, arena N=400×3 seeds, 100 sims, 2 determinizations):**
+
+| metric | value |
+|--------|-------|
+| random reaches final round | 0.00000 |
+| instrument inference mismatches on random sample | **0 / 8156** (passes the gate) |
+| fair baseline (truth vs truth) winrate | 0.500 [0.472, 0.528] (all draws) |
+| instrument winrate vs truth | **0.000 [0.000, 0.003]**, net −1200/1200 |
+
+The instrument passes the inference gate perfectly yet loses every game — a
+**verified-but-wrong inference function that is play-inadequate**, the
+imperfect-information analogue of the perfect-info rare-rule gap, and the first
+*positive* imperfect-info Claim A.
+
+**Danger law on the inference axis** (`danger = play_cost·(1−ε)^N`, ε=`(1/2)^{2T}`,
+N=2000, play_cost=0.5):
+
+| T | ε | gate-miss (1−ε)^N | danger |
+|---|---|-------------------|--------|
+| 4 | 3.9e-3 | 0.000 | 0.000 |
+| 6 | 2.4e-4 | 0.614 | 0.307 |
+| 8 | 1.5e-5 | 0.970 | 0.485 |
+| 10 | 9.5e-7 | 0.998 | 0.499 |
+
+At T=4 the rule is frequent enough that the gate catches it (danger≈0); by T≥8 the
+gate is blind and harm saturates at play_cost/2 — the exact `(1−ε)^N` threshold, now
+instantiated on the inference half of the contract. Same gate-miss mechanism, two
+faces (transition rule ↔ inference info-set).
+
+What is proven vs measured: the reach bound `(1/2)^{2T}`, optimal-reaches-D, and
+flip⇒loss are analytic (see RESEARCH-DIRECTION); the table is their instantiation.
+Whole-branch review (opus) verified the oracle by hand-trace + live simulation:
+instrument loses *only* because of the flipped inference; fair baseline is all-draws;
+the determinized planner converts correct inference into the winning guess.
+
 Reproducible record of evaluation runs. All runs use the Azure OpenAI Global
 Standard deployments (`gpt-5.4`, `gpt-5.4-mini`, `gpt-5-nano`) configured in
 `.env`, baseline = `gpt-5.4` as a direct LLM policy.

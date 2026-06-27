@@ -25,7 +25,8 @@ GATE_GAMES = 2000
 
 
 def gate_mismatches_on_random(truth, inst, n_games, seed):
-    """Fraction of random-play (state,player) inferences where instrument != truth."""
+    """(mismatches, checks): count of random-play (state,player) inferences where
+    instrument != truth, and the total number checked."""
     rng = random.Random(seed)
     deals = truth.initial_states()
     checks = mismatches = 0
