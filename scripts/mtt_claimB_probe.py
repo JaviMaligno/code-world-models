@@ -59,7 +59,9 @@ def collect_transitions(model, n_games, seed):
 
 
 def random_states(model, n, seed):
-    """Reachable full states (mid-game, where the center may be filled or empty)."""
+    """Reachable full states (mid-game). Truth's observation masks the center to -1
+    even when empty, so a non-masking (identity) observation differs from truth on
+    EVERY state — the discriminator does not depend on the center being filled."""
     rng = random.Random(seed)
     out = []
     while len(out) < n:
@@ -98,6 +100,9 @@ def main():
         api_version=os.environ["AZURE_OPENAI_API_VERSION"])
     print(f"Claim B probe on masked tic-tac-toe, synth size={size}", flush=True)
     r_full = run("FULL rules", RULES_FULL, provider, model_name)
+    if r_full["transition_acc"] < 0.99:
+        print("WARNING: full-rules transition gate < 0.99 — synthesis is confounded; "
+              "the full-vs-withheld comparison is undermined this run.", flush=True)
     r_wh = run("WITHHELD masking rule", RULES_WITHHELD, provider, model_name)
     print("\n=== SUMMARY ===", flush=True)
     for r in (r_full, r_wh):
