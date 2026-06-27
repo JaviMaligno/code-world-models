@@ -1,6 +1,6 @@
 # When a Verified World Model Still Loses: Play-Adequacy vs Prediction-Accuracy in LLM-Synthesized Code World Models
 
-**Authors:** Javier Aguilar [AUTHOR: add co-authors and affiliations]
+**Author:** Javier Aguilar — AGILabs (javieraguilar.ai)
 **Status:** First draft, 2026-06-27. Numbers from `docs/EXPERIMENTS.md` — re-verify against the log before submission.
 
 ---
@@ -21,7 +21,7 @@ Taken together, these results suggest that adequacy for LLM-synthesized world mo
 
 The observation that a small language model plus a well-specified world model plus classical search can outperform a much larger model used as a direct policy is central to recent work on LLMs for game playing. The *Code World Model* (CWM) paradigm makes this concrete: an LLM is prompted with a game's rules and some sampled trajectories, and asked to synthesize a fully executable implementation of the game's transition dynamics. A classical planner — typically Monte Carlo Tree Search (MCTS) — then searches over the synthesized world model, interacts with a referee (the true game), and is evaluated in an arena.
 
-We reproduce this baseline on tic-tac-toe and Connect Four (§3.1): LLM-synthesized CWMs refined to transition accuracy 1.0 paired with UCT-MCTS dominate the same LLM used as a direct policy by wide margins (e.g., 29–1 in Connect Four). This reproduces the direction of the result in arXiv:2510.04542 [CITE?: Ruoss et al., 2024] on known games. The synthesis is also trivially cheap: total API cost across all runs in this paper is approximately $2, with roughly $0.001–0.005 per arena game for the LLM-as-policy baseline and synthesis a one-off cost.
+We reproduce this baseline on tic-tac-toe and Connect Four (§3.1): LLM-synthesized CWMs refined to transition accuracy 1.0 paired with UCT-MCTS dominate the same LLM used as a direct policy by wide margins (e.g., 29–1 in Connect Four). This reproduces the direction of the result in arXiv:2510.04542 (Lehrach et al., 2025) on known games. The synthesis is also trivially cheap: total API cost across all runs in this paper is approximately $2, with roughly $0.001–0.005 per arena game for the LLM-as-policy baseline and synthesis a one-off cost.
 
 ### 1.2 The implicit trust step
 
@@ -57,9 +57,11 @@ This paper makes five contributions:
 
 3. **Translation, not inference (§5):** LLM CWM synthesis is rule translation. The omitted rule cannot be recovered from example transitions regardless of model scale (mini, large) or data regime (naive DAgger, proper DAgger, targeted on-manifold examples). Artificial off-manifold repair data actively corrupts synthesis.
 
-4. **The coverage bound (§6, Theorem 1) and Beacon (§6):** We prove that a size-N random inference gate is identifying when `N ≳ b^{d_max} · p_chance^{-1} · log|𝓘|`, which explains the absence of an inference gap in Kuhn and Leduc. We then construct Beacon, the minimal game that escapes this bound, obtaining 0/8156 gate mismatches alongside 0.000 play win rate.
+4. **The coverage bound (§6, Theorem 1) and Beacon (§6.4):** We prove that a size-N random inference gate is identifying when `N ≳ b^{d_max} · p_chance^{-1} · log|𝓘|`, which explains the absence of an inference gap in Kuhn and Leduc. We then construct Beacon, the minimal game that escapes this bound, obtaining 0/8156 gate mismatches alongside 0.000 play win rate.
 
-5. **Unification (§6, §7):** The verified-vs-correct gap and the inference gap are one mechanism on two halves of the CWM contract. A size-N random gate fails exactly on events of random-reach probability ≲ 1/N that competent play nonetheless reaches; the harm is `(consequence) × P(gate miss)`, with `P(gate miss) ≈ e^{−Nr}` for transition rules and `≈ e^{−N·b^{−d_max}}` for inference info-sets.
+5. **Claim B — the belief model is invisible to a transition gate (§6.6):** We prove (Proposition 2) that the information partition encoded by `observation`/`infer_states` appears in no transition tuple, so a transition-accuracy gate cannot detect a wrong belief model. We demonstrate it on masked tic-tac-toe: withholding the masking rule yields a transition-gate-perfect (1.000) but belief-wrong (`observation_rate` 0.020) synthesis. With Beacon, this gives both faces of belief-model verification — a wrong belief loses at play *and* is invisible to a transition gate.
+
+6. **Unification (§6, §7):** The verified-vs-correct gap and the inference gap are one mechanism on two halves of the CWM contract. A size-N random gate fails exactly on events of random-reach probability ≲ 1/N that competent play nonetheless reaches; the harm is `(consequence) × P(gate miss)`, with `P(gate miss) ≈ e^{−Nr}` for transition rules and `≈ e^{−N·b^{−d_max}}` for inference info-sets.
 
 ---
 
@@ -85,7 +87,7 @@ This contract mirrors the minimal interface required by UCT-MCTS for perfect-inf
 
 ### 2.2 Synthesis and the gate
 
-An LLM (Azure OpenAI Global Standard deployments `gpt-5.4`, `gpt-5.4-mini`, `gpt-5-nano` [AUTHOR: confirm exact deployment names and version strings before submission]) is prompted with the game's `RULES_TEXT` and a set of random-policy trajectories. The prompt asks the model to synthesize a complete Python module implementing the contract.
+An LLM (Azure OpenAI Global Standard deployments `gpt-5.4`, `gpt-5.4-mini`, `gpt-5-nano`; snapshot `gpt-5.4-2026-03-05`) is prompted with the game's `RULES_TEXT` and a set of random-policy trajectories. The prompt asks the model to synthesize a complete Python module implementing the contract.
 
 The synthesized module is then refined in a sandbox: a referee plays a fresh set of random trajectories through both the synthesized CWM and the ground-truth oracle, and any discrepancy produces an error message fed back to the LLM for correction. Refinement continues until the synthesized CWM achieves *transition accuracy 1.0* on the random-trajectory sample, or until a refinement budget is exhausted. Passing this test is called *passing the gate*.
 
@@ -97,7 +99,7 @@ For imperfect-information games, an analogous *inference gate* measures accuracy
 
 For perfect-information games, planning uses UCT-MCTS with a configurable simulation budget (200–600 per move, depending on the experiment; see individual sections). The planner operates entirely on the synthesized CWM and never queries the true game during search; only the arena referee is the true game.
 
-For imperfect-information games, planning uses determinized MCTS: at each decision point, the planner samples a set of possible hidden-state completions from `infer_states`, runs UCT-MCTS on each determinization, and aggregates votes [CITE?: Cowling et al., 2012 or equivalent determinized MCTS reference]. The planner is hardened to tolerate a faulty `infer_states` (raising exceptions, returning empty lists) via a legal-fallback mechanism, ensuring arena runs do not abort when the CWM is deliberately instrumented to be wrong.
+For imperfect-information games, planning uses determinized MCTS: at each decision point, the planner samples a set of possible hidden-state completions from `infer_states`, runs UCT-MCTS on each determinization, and aggregates votes (Cowling et al., 2012; Long et al., 2010). The planner is hardened to tolerate a faulty `infer_states` (raising exceptions, returning empty lists) via a legal-fallback mechanism, ensuring arena runs do not abort when the CWM is deliberately instrumented to be wrong.
 
 ### 2.4 Metrics
 
@@ -120,7 +122,7 @@ We use the following games, selected to span known, novel, and partially-known r
 - **Tic-tac-toe** — well-known; used to verify the CWM paradigm.
 - **Connect Four** — well-known; used to verify the paradigm and as a negative control for the danger law.
 - **Generalized tic-tac-toe 6×6 win-4** — a parameterized variant (m,n,k game with m=n=6, k=4); model has some prior knowledge.
-- **army5x5a** — a generalized chess game from the DeepMind CWM paper (arXiv:2510.04542, Appendix H.5): a 5×5 board with infantry, cavalry, and general pieces, win by capturing the opponent's general. The GPT-5.4 knowledge cutoff (2025-08-31) post-dates the paper's public release, but a declarative probe confirmed the model does not know the detailed movesets — making it a genuine translation target.
+- **army5x5a** — a generalized chess game from the DeepMind CWM paper (arXiv:2510.04542, Appendix H.5): a 5×5 board with infantry, cavalry, and general pieces, win by capturing the opponent's general. The paper's public release (arXiv, 2025-10-06) post-dates the GPT-5.4 knowledge cutoff (2025-08-31), so army5x5a falls outside the training window; a declarative probe independently confirmed the model does not know the detailed movesets — making it a genuine translation target.
 - **army5x5a + material-at-cap** — the above, with an added tiebreak rule: if the game reaches the ply cap (100 plies by default) with both generals alive, the player with more material wins. This is the primary instrument for the rare-rule gap.
 - **Trike** (Erickson, 2020) — an abstract combinatorial game; the model knows the name but confabulates the mechanics (wrong-prior regime). Real rules: place a disc on an empty cell on the shared pawn's line, then move the pawn to that disc; game ends when the pawn is surrounded; score = discs adjacent to the pawn.
 - **Kuhn poker** — a minimal imperfect-information game; used to validate the imperfect-information pipeline.
@@ -374,9 +376,24 @@ The danger law from §4 applies directly to the inference gap. Sweeping $T$ (so 
 
 At T=4, the deep region is frequent enough that a gate of N=2000 catches the inference error (danger ≈ 0); by T ≥ 8, the gate is blind and harm saturates near play_cost/2 (the maximum possible given the game structure). The same threshold law, the same $(1−\varepsilon)^N$ factor, now instantiated on the inference half of the contract.
 
-### 6.6 Claim B (open)
+### 6.6 Claim B: the belief model is invisible to a transition gate
 
-A natural follow-up is whether an LLM-synthesized `infer_states` — trained without explicit rules for the inference function — can infer it from observed trajectories. The translation-not-inference finding of §5 predicts it cannot, but this has not been tested on imperfect-information CWMs. Beacon establishes the existence and provability of the inference gap; the perfect-information §5 already shows translation-not-inference for dynamics. Testing Claim B (withholding inference rules and attempting synthesis from play) is left for future work.
+Beacon (§6.4) shows a verified-but-wrong belief model *loses at play*. The complementary verification question is whether a transition-accuracy gate could have *caught* the wrong belief model in the first place. It cannot, and for a structural reason.
+
+**Proposition 2 (belief–transition orthogonality).** A transition dataset is a set of tuples $(s, a, s', r)$ over *full* ground-truth states. The functions `observation(s, p)` and `infer_states(o, p)` encode the information partition — what player $p$ can distinguish — which appears in no $(s, a, s', r)$ tuple. Therefore (i) no transition dataset constrains the masking convention; (ii) a gate that scores transition accuracy cannot detect an incorrect `observation`/`infer_states`; (iii) the belief model must be specified and is verifiable only by a separate inference gate. $\blacksquare$
+
+**Demonstration (masked tic-tac-toe).** We take standard tic-tac-toe dynamics (which GPT-5.4 synthesizes at transition gate 1.000 by recall) and overlay an arbitrary, non-recallable masking rule: the center cell is hidden from both players (shown as $-1$), even after it is played. We synthesize the contract two ways — with the masking rule present (*full*) and with it removed (*withheld*, leaving tic-tac-toe + an imperfect-information framing that still demands `observation`/`infer_states` but does not say what is hidden) — and gate each on transitions and on inference:
+
+| variant | transition gate | observation_rate | inference_rate |
+|---------|-----------------|------------------|----------------|
+| full rules | **1.000** (0 iters) | **1.000** | 0.000 (infer_states crashes) |
+| withheld masking rule | **1.000** | **0.020** | 0.180 |
+
+The transition gate is **1.000 in both arms** — the dynamics are recall, unaffected by the masking rule, and the gate (which calls only `apply_action`/`legal_actions`/`is_terminal`/`returns`) never invokes the belief functions. With the rule, the model masks the center correctly (`observation_rate` 1.000); without it, the synthesized `observation` does not mask the center (`observation_rate` 0.020) — a wrong belief model that the transition gate nonetheless certifies at 1.000. This is Proposition 2 instantiated: a wrong belief model is invisible to a transition gate.
+
+The clean discriminator is `observation_rate`, not `inference_rate`: GPT-5.4's synthesized `infer_states` raises `'list' object is not callable` across three distinct games (Kuhn-mini, Beacon, masked tic-tac-toe), so `inference_rate` is confounded by a synthesis-robustness failure in both arms. That recurring crash is itself a secondary finding — the belief surface is not only un-gateable by transition data but also hard to synthesize at all.
+
+Together, Beacon (Claim A) and masked tic-tac-toe (Claim B) are the two faces of belief-model verification: a wrong belief both **loses at play** and is **invisible to a transition gate**.
 
 ---
 
@@ -384,27 +401,27 @@ A natural follow-up is whether an LLM-synthesized `infer_states` — trained wit
 
 ### 7.1 Objective mismatch in model-based reinforcement learning
 
-The closest conceptual antecedent is the *objective mismatch* problem in model-based reinforcement learning identified by Lambert et al. (2020) [CITE?]: prediction accuracy of a learned world model and the downstream control performance of a planner using that model can diverge substantially, because they optimize different objectives. Our work is in the same spirit but differs in setting and mechanism. We work in the LLM-code-synthesis regime (the world model is a synthesized program, not a learned neural model), the verification step is a discrete sampling gate (not a continuous loss), and the failure mode we characterize is a *rule-coverage blind spot* in that gate rather than a model-capacity or distribution-shift issue. We also provide a closed-form danger law and a proof that the gate-miss probability is exact under i.i.d. Bernoulli sampling — not just an empirical observation.
+The closest conceptual antecedent is the *objective mismatch* problem in model-based reinforcement learning identified by Lambert et al. (2020): prediction accuracy of a learned world model and the downstream control performance of a planner using that model can diverge substantially, because they optimize different objectives. Our work is in the same spirit but differs in setting and mechanism. We work in the LLM-code-synthesis regime (the world model is a synthesized program, not a learned neural model), the verification step is a discrete sampling gate (not a continuous loss), and the failure mode we characterize is a *rule-coverage blind spot* in that gate rather than a model-capacity or distribution-shift issue. We also provide a closed-form danger law and a proof that the gate-miss probability is exact under i.i.d. Bernoulli sampling — not just an empirical observation.
 
-The broader literature on model-based RL world-model quality (e.g., Dreamer [CITE?], MBPO [CITE?]) largely focuses on learned continuous-state models where world model error is pervasive rather than localized. Our rare-rule gap is a localized, discrete failure that state-accuracy metrics mask by dilution — a point that may be worth revisiting in continuous settings as well.
+The broader literature on model-based RL world-model quality (e.g., Dreamer, Hafner et al., 2020; MBPO, Janner et al., 2019) largely focuses on learned continuous-state models where world model error is pervasive rather than localized. Our rare-rule gap is a localized, discrete failure that state-accuracy metrics mask by dilution — a point that may be worth revisiting in continuous settings as well.
 
 ### 7.2 Code World Models and LLMs for game playing
 
-The Code World Models for General Game Playing paper (Ruoss et al., arXiv:2510.04542, 2024) [CITE?: verify author list and year] introduces the paradigm we build on: an LLM synthesizes an executable world model from rules and trajectories, which a classical planner (in their case, MCTS) then uses. Their results on a set of novel DeepMind board games show that CWM+MCTS outperforms direct LLM policy. We reproduce this result on tic-tac-toe and Connect Four (§3.1) and extend the paradigm to ask whether the gate they use — transition accuracy on random trajectories — certifies play-adequacy. Our contribution is essentially a rigorous negative answer on that question, together with the mechanisms that explain it.
+The Code World Models for General Game Playing paper (Lehrach et al., arXiv:2510.04542, 2025) introduces the paradigm we build on: an LLM synthesizes an executable world model from rules and trajectories, which a classical planner (in their case, MCTS) then uses. Their results on a set of novel DeepMind board games show that CWM+MCTS outperforms direct LLM policy. We reproduce this result on tic-tac-toe and Connect Four (§3.1) and extend the paradigm to ask whether the gate they use — transition accuracy on random trajectories — certifies play-adequacy. Our contribution is essentially a rigorous negative answer on that question, together with the mechanisms that explain it.
 
-Related work on code-as-policy (e.g., [CITE? Liang et al., 2023; Gao et al., 2023]) uses LLMs to synthesize executable plans or robot controllers, typically verified by execution rather than by sampling. The distinction between what the LLM was told and what it can infer is implicit in much of this work but has not, to our knowledge, been studied with a controlled rare-rule instrument.
+Related work on code-as-policy (e.g., Liang et al., 2023; Gao et al., 2023) uses LLMs to synthesize executable plans or robot controllers, typically verified by execution rather than by sampling. The distinction between what the LLM was told and what it can infer is implicit in much of this work but has not, to our knowledge, been studied with a controlled rare-rule instrument.
 
-The gg-bench effort [CITE?: arXiv:2505.07215] generates novel games procedurally specifically to avoid LLM contamination. Our army5x5a instrument is chosen partly for the same reason (verified non-recall of movesets, §2.5) and the gg-bench approach is an attractive complement for future scaling.
+The gg-bench effort (arXiv:2505.07215) generates novel games procedurally specifically to avoid LLM contamination. Our army5x5a instrument is chosen partly for the same reason (verified non-recall of movesets, §2.4) and the gg-bench approach is an attractive complement for future scaling.
 
 ### 7.3 DAgger and dataset aggregation
 
-Our §5 repair experiments are directly inspired by the DAgger framework of Ross, Gordon, and Bagnell (2011) [CITE?]: iteratively label states visited by the current learned policy under the oracle, and retrain. In DAgger's original imitation-learning setting, this reduces covariate shift. Our finding — that DAgger fails to teach the rare rule — is consistent with the translation hypothesis: DAgger addresses *distribution mismatch* between training and test, but the bottleneck here is not distribution mismatch. The model receives discriminating examples of the rule; it simply cannot infer the rule from them. This is a different failure mode from the one DAgger was designed to address.
+Our §5 repair experiments are directly inspired by the DAgger framework of Ross, Gordon, and Bagnell (2011): iteratively label states visited by the current learned policy under the oracle, and retrain. In DAgger's original imitation-learning setting, this reduces covariate shift. Our finding — that DAgger fails to teach the rare rule — is consistent with the translation hypothesis: DAgger addresses *distribution mismatch* between training and test, but the bottleneck here is not distribution mismatch. The model receives discriminating examples of the rule; it simply cannot infer the rule from them. This is a different failure mode from the one DAgger was designed to address.
 
 ### 7.4 Imperfect-information planning and determinization
 
-Determinized MCTS (also called single-observer MCTS, SOMCTS, or information-set MCTS in some formulations [CITE?: Cowling et al., 2012; Whitehouse et al., 2011]) resolves imperfect information by sampling a consistent complete-information game at each decision point. It is not game-theoretically optimal — it is subject to the strategy-fusion problem — but it is a practical planner for moderate-sized imperfect-information games. We use it as the planner in §6, holding the planner fixed across conditions (the baseline is truth-vs-truth under the same determinized MCTS) so that the contrast isolates the CWM inference function rather than planner quality.
+Determinized MCTS (also called single-observer MCTS, SOMCTS, or information-set MCTS in some formulations; Cowling et al., 2012; Whitehouse et al., 2011; determinization analysis, Long et al., 2010) resolves imperfect information by sampling a consistent complete-information game at each decision point. It is not game-theoretically optimal — it is subject to the strategy-fusion problem — but it is a practical planner for moderate-sized imperfect-information games. We use it as the planner in §6, holding the planner fixed across conditions (the baseline is truth-vs-truth under the same determinized MCTS) so that the contrast isolates the CWM inference function rather than planner quality.
 
-Counterfactual regret minimization (CFR [CITE?]) and its variants are the standard for Nash-equilibrium-optimal play in imperfect-information games but require exact game structure and are not CWM-compatible without further adaptation; we leave that direction to future work.
+Counterfactual regret minimization (CFR; Zinkevich et al., 2007) and its variants are the standard for Nash-equilibrium-optimal play in imperfect-information games but require exact game structure and are not CWM-compatible without further adaptation; we leave that direction to future work.
 
 ---
 
@@ -420,9 +437,9 @@ Counterfactual regret minimization (CFR [CITE?]) and its variants are the standa
 
 **Beacon is a minimal, strategically trivial witness.** Beacon was designed to satisfy the coverage-bound design corollary in the smallest possible game, not to model a realistic scenario. Its survival-walk structure is artificial. The experiment establishes existence and confirms the danger law on the inference axis; it does not demonstrate that natural imperfect-information games with the same structure produce an equally clean gap. Building such a game (e.g., a partially-observable variant of army5x5a) is a natural next step.
 
-**Claim B is open.** We have not tested whether an LLM can infer an `infer_states` function from observations alone (without explicit inference rules). The translation-not-inference thesis predicts it cannot, but this is an extrapolation from the perfect-information §5 result rather than a direct measurement. We mark this as a conjecture (§6.6) rather than a finding.
+**Scope of Claim B.** Claim B (§6.6) establishes that a transition gate is blind to a wrong belief model, demonstrated by withholding an *observation* (masking) rule that is genuinely independent of the dynamics. It does not establish the stronger claim that the belief model could never be inferred from any richer, observation-bearing signal — only that transition data cannot constrain it (Proposition 2) and that withholding the rule yields a wrong, transition-certified belief model. The recurring `infer_states` synthesis crash also means our cleanest signal is `observation_rate`; a study isolating the inference-enumeration failure from the masking failure is future work.
 
-**Knowledge cutoff and contamination.** GPT-5.4's training cutoff is approximately 2025-08-31. The army5x5a game appears in a paper published before this date. We confirmed via a declarative probe that the model does not recall the specific movesets (§2.5), and the gate-attainability difficulty (nano fails 5/5) is further evidence of genuine translation rather than recall. However, the "post-cutoff = uncontaminated" argument is not a hard guarantee; readers should interpret the "no prior" label as "no detectable recall" rather than "strictly novel."
+**Knowledge cutoff and contamination.** GPT-5.4's training cutoff is approximately 2025-08-31, and the army5x5a paper (arXiv:2510.04542) was released 2025-10-06 — after the cutoff — so the game falls outside the training window. We additionally confirmed via a declarative probe that the model does not recall the specific movesets (§2.4), and the gate-attainability difficulty (nano fails 5/5) is further evidence of genuine translation rather than recall. Even so, the "post-cutoff = uncontaminated" argument is not a hard guarantee (cutoff dates are approximate and corpora leak); readers should interpret the "no prior" label as "no detectable recall" rather than "strictly novel."
 
 ---
 
@@ -454,9 +471,29 @@ Key scripts:
 - `scripts/leduc_coverage_diagnostic.py` — Leduc coverage-gap measurement
 - `scripts/leduc_depth_probe.py` — Leduc depth sweep
 - `scripts/beacon_claimA.py` — Beacon Claim A result and danger law sweep
+- `scripts/mtt_claimB_probe.py` — masked tic-tac-toe Claim B probe (full vs withheld masking)
 
 All runs use the Azure OpenAI Global Standard deployments configured in `.env`. Per-run JSON results are in `results/` (git-ignored). Total API cost across all experiments: approximately $2.
 
 ---
 
-*[AUTHOR: Review all numbers against `docs/EXPERIMENTS.md` before any submission. In particular confirm: the Wilson CI notation is consistent throughout; the Kuhn CI [0.422, 0.519] appears twice and both should match; the play win rates in §3.3 cross-reference correctly with the EXPERIMENTS.md table; and the exact model deployment strings in §2.2 are up to date.]*
+## References
+
+- Cowling, P. I., Powley, E. J., & Whitehouse, D. (2012). Information Set Monte Carlo Tree Search. *IEEE Transactions on Computational Intelligence and AI in Games*, 4(2), 120–143.
+- Gao, L., Madaan, A., Zhou, S., Alon, U., Liu, P., Yang, Y., Callan, J., & Neubig, G. (2023). PAL: Program-aided Language Models. *ICML 2023*.
+- gg-bench (2025). A procedurally generated game benchmark for LLMs. arXiv:2505.07215 (repo: `vivek3141/gg-bench`).
+- Hafner, D., Lillicrap, T., Ba, J., & Norouzi, M. (2020). Dream to Control: Learning Behaviors by Latent Imagination. *ICLR 2020*.
+- Janner, M., Fu, J., Zhang, M., & Levine, S. (2019). When to Trust Your Model: Model-Based Policy Optimization (MBPO). *NeurIPS 2019*.
+- Lambert, N. O., Amos, B., Yadan, O., & Calandra, R. (2020). Objective Mismatch in Model-based Reinforcement Learning. *L4DC 2020*, PMLR 120, 761–770. arXiv:2002.04523.
+- Lehrach, W., Hennes, D., Lazaro-Gredilla, M., Lou, X., Wendelken, C., Li, Z., Dedieu, A., Grau-Moya, J., Lanctot, M., Iscen, A., Schultz, J., Chiam, M., Gemp, I., Zielinski, P., Singh, S., & Murphy, K. P. (2025). Code World Models for General Game Playing. arXiv:2510.04542.
+- Liang, J., Huang, W., Xia, F., Xu, P., Hausman, K., Ichter, B., Florence, P., & Zeng, A. (2023). Code as Policies: Language Model Programs for Embodied Control. *ICRA 2023*.
+- Long, J. R., Sturtevant, N. R., Buro, M., & Furtak, T. (2010). Understanding the Success of Perfect Information Monte Carlo Sampling in Game Tree Search. *AAAI 2010*.
+- Ross, S., Gordon, G. J., & Bagnell, J. A. (2011). A Reduction of Imitation Learning and Structured Prediction to No-Regret Online Learning (DAgger). *AISTATS 2011*, PMLR 15, 627–635.
+- Whitehouse, D., Powley, E. J., & Cowling, P. I. (2011). Determinization and Information Set Monte Carlo Tree Search for the Card Game Dou Di Zhu. *IEEE CIG 2011*.
+- Zinkevich, M., Johanson, M., Bowling, M., & Piccione, C. (2007). Regret Minimization in Games with Incomplete Information (CFR). *NeurIPS 2007*.
+
+*Bibliographic note: Lehrach et al. (2025) and Lambert et al. (2020) were verified against arXiv; the remaining entries are standard references filled from established venues and warrant a final citation-manager pass before submission. The gg-bench author list is not yet confirmed (cited by arXiv id).*
+
+---
+
+*All figures and tables are sourced from `docs/EXPERIMENTS.md` (runs of 2026-06-24 to 2026-06-27); the two theorems and their proofs are stated in `docs/RESEARCH-DIRECTION.md`. Numbers were cross-checked against EXPERIMENTS.md on 2026-06-27 (Kuhn CI, Beacon 0/8156 and 0.000/0.500, Claim-B observation_rate, deployment strings).*
