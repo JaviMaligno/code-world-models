@@ -200,3 +200,103 @@ breadth/generality the result needed.
    dynamics, single-case generalization risk); likely a strong 2nd blog article
    unless a general, clean non-game domain is found. Worth a dedicated
    brainstorm — what is the most valuable, original non-game application?
+
+---
+
+## The coverage bound (formal) — turning the imperfect-info null into a theorem
+
+The Kuhn and Leduc nulls are not just "we ran it and found nothing." They are an
+instance of a provable statement about when an inference gate sampled on random
+play is **identifying**. Stating it as a bound (proof, not experiment) also yields
+the design spec for a game on which Claim A *can* be positive.
+
+**Setup.** A finite two-player extensive-form game with chance (the deal) and
+imperfect information. `b` = maximum branching over player decision nodes;
+`d(I)` = number of player-action edges on a shortest history reaching information
+set `I`; `d_max = max_I d(I)`; `p_chance` = minimum probability of a deal
+consistent with any reachable info-set; `𝓘` = set of reachable info-sets. The
+uniform-random policy `ρ` plays every legal action with probability `1/|A| ≥ 1/b`.
+
+**Lemma 1 (inclusion).** For any policy profile `σ`, `reach(σ) ⊆ reach(ρ)`.
+*Proof.* Every player edge has `ρ`-probability `≥ 1/b > 0` and chance edges are
+shared, so any history with `π^σ(h) > 0` has `π^ρ(h) > 0`. ∎
+
+**Lemma 2 (reach lower bound under ρ).** Every reachable `I` has
+`π^ρ(I) ≥ p_chance · b^{-d(I)} ≥ p_chance · b^{-d_max}`.
+*Proof.* Take one history `h ∈ I`; `π^ρ(h) = π_chance(h)·∏_{edges} 1/|A| ≥
+p_chance · b^{-d(h)}`, and `π^ρ(I) ≥ π^ρ(h)`. ∎
+
+**Theorem (the gate is identifying when N ≳ b^{d_max}).** Draw `N` i.i.d. games
+under `ρ`. The probability that some reachable info-set is never visited is
+`≤ |𝓘| · exp(−N · p_chance · b^{-d_max})` (union bound + Lemma 2). Hence for
+`N ≳ b^{d_max} · p_chance^{-1} · log|𝓘|`, the sample covers **every** reachable
+info-set w.h.p. — and by Lemma 1 every info-set any policy (incl. a competent
+planner) relies on. An inference function whose error is confined to reachable
+info-sets is then detected w.h.p., so **no gate-passing inference function can be
+play-inadequate through a coverage gap.** ∎
+
+**Corollary (Kuhn, Leduc).** Kuhn: `b=2, d_max≈2` → covered at any `N`. Leduc:
+`b=3, d_max≈8` → `b^{d_max}≈6561`, so `N≈8000` already covers everything —
+matching the measured `0/1259` competent-only inference-relevant info-sets.
+
+**Design corollary (the bigger game).** A coverage gap is *possible* only when
+`b^{d_max} ≫ N` at feasible `N`, i.e. **large branching and/or large depth**, with
+hidden information making inference non-trivial, and a competent policy that
+concentrates reach on a deep region of `ρ`-measure `≪ 1/N`. Then the gate
+(`ρ`-sampled) provably misses that region while the competent planner relies on
+it: a wrong inference confined there passes the gate yet loses at play. This is the
+exact analogue of the perfect-info rare-rule gap, which exploited **game depth**
+(competent play reaches the ply cap; short random games never do).
+
+**Note on epistemic status of the paper's claims.** Existence claims (the
+verified-vs-correct gap exists; translation-not-inference) are properly empirical —
+one rigorous instance with CIs suffices. The coverage result above and the danger
+law's N/rarity dependence below are genuine theorems, with the experiments as
+instantiations. Only `play_cost` and its approximate rarity-invariance are
+irreducibly empirical.
+
+---
+
+## The danger law (formal) — the gate-miss factor is exact, not a fit
+
+`src/cwm/law.py` defines `danger(play_cost, r, N) = play_cost · (1 − r)^N`, where
+`r` = rarity = the probability that a single uniform-random play-through is decided
+by the rule (`rarity()` measures exactly this Bernoulli rate). The N/r dependence
+is not an empirical fit — it is forced by the gate's sampling procedure.
+
+**Proposition (gate-miss probability).** A sampling gate draws `N` i.i.d.
+uniform-random play-throughs and detects the rule iff at least one of them is
+decided by the rule. Since each play-through is decided by the rule independently
+with probability `r`, the probability the gate observes the rule in none of its
+`N` draws is exactly
+`P(miss) = (1 − r)^N ≈ e^{−Nr}`.
+*Proof.* Independence of the `N` i.i.d. draws; each is a Bernoulli(`r`) "rule
+fired" event; `P(all N are 0) = (1−r)^N`. ∎
+
+**Corollary (expected play-harm of a size-N gate).** Let `κ = play_cost` be the
+expected play-deficit of a planner whose CWM omits the rule, conditional on the
+omission surviving the gate (rule still operative in real play). The expected harm
+from gating at size `N` is `danger(N) = κ · (1 − r)^N`. The `(1−r)^N` factor is
+exact (Proposition); `κ` is the empirical, game- and planner-specific consequence
+magnitude.
+
+**Remark (what stays empirical).** The measured regularity is that `κ` is
+approximately invariant to the rarity knob (≈ 0.12 for army5x5a material-at-cap):
+competent MCTS reaches the rule region (the ply cap) regardless of how the knob
+tunes `r`, so conditional on the rule being pivotal the blind planner's error
+magnitude does not depend on `r`. This invariance is structural-but-empirical — it
+requires the planner to reach the region, a property of the game and search budget,
+not of the sampling model.
+
+## One mechanism, two faces
+
+The coverage bound and the danger law are the same statement on the two halves of a
+CWM. A size-`N` gate of i.i.d. random play fails to certify a CWM exactly on
+events of random-reach probability `≲ 1/N` that competent play nonetheless reaches;
+the resulting harm is `(consequence) × P(gate miss)`, with `P(gate miss) ≈ e^{−Nr}`
+for a transition rule of rarity `r` (danger law) and `≈ e^{−N·b^{−d_max}}` for an
+inference info-set at depth `d_max` (coverage bound). A positive gap therefore
+needs `r ≪ 1/N` (rare deep rule) or `b^{d_max} ≫ N` (deep/wide hidden game) **and**
+a competent planner that reaches the region. Perfect-info board games supply the
+depth (army5x5a); shallow betting games (Kuhn, Leduc) do not, which is why their
+inference gate is provably identifying.

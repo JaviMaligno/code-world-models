@@ -7,7 +7,6 @@ play actually goes — the imperfect-info analogue of the rare-rule instrument.
 import random
 
 from .groundtruth import leduc_poker as L
-from .mcts import mcts_policy
 from .determinized import determinized_policy
 
 

@@ -387,3 +387,81 @@ end-to-end on Kuhn poker. `scripts/run_kuhn_validation.py {mini|large}`.
 
 Next (Azure): **Claim A** (membership-valid-but-skewed `infer_states` that passes
 the gate yet loses at play) and **Claim B** (synthesis with rules withheld).
+
+## Imperfect information — Leduc coverage-gap (Claim A) is structurally NULL (2026-06-27)
+
+Built a Leduc oracle (6-card deck, community card, 2 betting rounds with raises;
+`src/cwm/groundtruth/leduc_poker.py`) to attempt Claim A via an inference
+coverage gap: a CWM whose `infer_states` is wrong only on info-sets that competent
+play reaches but random sampling (the gate) misses. `scripts/leduc_coverage_diagnostic.py`.
+
+**Result — no coverage gap exists.** Random play (8000 games) vs competent
+determinized-MCTS play (300 games):
+
+| metric | value |
+|--------|-------|
+| random-reachable info-sets | 574 |
+| competent-visited info-sets | 156 |
+| competent visits on random-covered info-sets | 1259/1259 = **1.000** |
+| competent visits on info-sets random missed (inference-relevant) | 0/1259 = **0.000** |
+| distinct competent-only inference-relevant info-sets | **0** |
+
+Competent info-sets are a strict **subset** of random-covered ones. Reason:
+uniform-random play raises/calls indiscriminately (prob 1/3 each), so it
+*over-explores* the shallow betting tree relative to selective competent play
+(which folds dominated hands). Random play reaches even the deepest capped-pot
+lines (`max_committed=13, total=22`) at frequency 0.0071 ≫ 1/8000.
+
+**This is the imperfect-info analogue of the gate-is-identifying result, and it
+admits a proof, not just an experiment** (see RESEARCH-DIRECTION "coverage bound"):
+under uniform random play every reachable info-set at betting-depth d has reach
+probability ≥ b^{-d} (b = max branching), so a sample of N ≳ b^{d_max} games covers
+all reachable info-sets — hence all competent-relevant ones. A coverage gap
+therefore requires b^{d_max} ≫ N (large branching and/or depth), which shallow
+betting games (Kuhn b=2 d≈2; Leduc b=3 d≈8, b^d≈6561 < N) do not have. The
+perfect-info rare-rule gap exploited exactly such depth (army5x5a: competent play
+reaches the ply cap; short random games do not).
+
+**Implication:** a positive imperfect-info Claim A needs a game with
+b^{d_max} ≫ feasible N — a *deep/wide* imperfect-information game, not a toy poker.
+The machinery (contract, determinized planner, inference gate, arena, instrument)
+is built and validated; only a larger oracle is missing.
+
+## Imperfect information — Leduc coverage-gap (Claim A) is structurally NULL (2026-06-27)
+
+Built a Leduc oracle (6-card deck, community card, 2 betting rounds with raises;
+`src/cwm/groundtruth/leduc_poker.py`) to attempt Claim A via an inference
+coverage gap: a CWM whose `infer_states` is wrong only on info-sets that competent
+play reaches but random sampling (the gate) misses. `scripts/leduc_coverage_diagnostic.py`.
+
+**Result — no coverage gap exists.** Random play (8000 games) vs competent
+determinized-MCTS play (300 games):
+
+| metric | value |
+|--------|-------|
+| random-reachable info-sets | 574 |
+| competent-visited info-sets | 156 |
+| competent visits on random-covered info-sets | 1259/1259 = **1.000** |
+| competent visits on info-sets random missed (inference-relevant) | 0/1259 = **0.000** |
+| distinct competent-only inference-relevant info-sets | **0** |
+
+Competent info-sets are a strict **subset** of random-covered ones. Reason:
+uniform-random play raises/calls indiscriminately (prob 1/3 each), so it
+*over-explores* the shallow betting tree relative to selective competent play
+(which folds dominated hands). Random play reaches even the deepest capped-pot
+lines (`max_committed=13, total=22`) at frequency 0.0071 ≫ 1/8000.
+
+**This is the imperfect-info analogue of the gate-is-identifying result, and it
+admits a proof, not just an experiment** (see RESEARCH-DIRECTION): under uniform
+random play every reachable info-set at betting-depth d has reach probability
+≥ b^{-d} (b = max branching), so a sample of N ≳ b^{d_max} games covers all
+reachable info-sets — hence all competent-relevant ones. A coverage gap therefore
+requires b^{d_max} ≫ N (large branching and/or depth), which shallow betting games
+(Kuhn b=2 d≈2; Leduc b=3 d≈8, b^d≈6561 < N) do not have. The perfect-info
+rare-rule gap exploited exactly such depth (army5x5a: competent play reaches the
+ply cap; short random games do not).
+
+**Implication:** a positive imperfect-info Claim A needs a game with
+b^{d_max} ≫ feasible N — a *deep/wide* imperfect-information game, not a toy poker.
+The machinery (contract, determinized planner, inference gate, arena, instrument)
+is built and validated; only a larger oracle is missing.
