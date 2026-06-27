@@ -300,3 +300,38 @@ needs `r ≪ 1/N` (rare deep rule) or `b^{d_max} ≫ N` (deep/wide hidden game) 
 a competent planner that reaches the region. Perfect-info board games supply the
 depth (army5x5a); shallow betting games (Kuhn, Leduc) do not, which is why their
 inference gate is provably identifying.
+
+---
+
+## Belief–transition orthogonality (Claim B) — proposition + result
+
+A second failure surface in imperfect-information CWMs is the **belief model**
+(`observation`, `infer_states`). It is not gateable by transition data at all.
+
+**Proposition (belief–transition orthogonality).** A transition dataset is a set of
+tuples `(s, a, s', r)` over *full* ground-truth states. `observation(s,p)` and
+`infer_states(o,p)` encode the information partition — what player `p` can
+distinguish — which appears in no `(s,a,s',r)` tuple. Therefore (i) no transition
+dataset constrains the masking convention; (ii) a transition-accuracy gate cannot
+detect an incorrect `observation`/`infer_states`; (iii) the belief model must be
+specified and is verifiable only by a separate inference gate. ∎ (This is what
+motivates the inference gate.)
+
+**Demonstration (masked tic-tac-toe, GPT-5.4 large).** Standard tic-tac-toe dynamics
+(synthesize at transition gate 1.000 by recall) + an arbitrary, non-recallable
+masking rule (the center cell is hidden). Synthesizing with the masking rule **full**
+→ transition 1.000, `observation_rate` 1.000; **withheld** → transition still 1.000
+but `observation_rate` 0.020 (the belief model is wrong, yet the transition gate
+certifies it). The transition gate (`contract_accuracy`) never calls
+observation/infer_states, so the blindness is structural, not statistical.
+
+**Secondary finding.** GPT-5.4's synthesized `infer_states` raises `'list' object is
+not callable` across three distinct games (Kuhn-mini, Beacon, masked tic-tac-toe) —
+the belief surface is also hard to synthesize, independent of the gating point. (So
+the clean Claim-B discriminator is `observation_rate`, not `inference_rate`.)
+
+**Epistemic status.** The Proposition is analytic (a statement about what transition
+data contains). The demonstration and the synthesis-robustness finding are empirical.
+Claim B complements Claim A (Beacon): a wrong belief both loses at play (A, with a
+proven reach bound) and is invisible to a transition gate (B, by the orthogonality
+proposition).

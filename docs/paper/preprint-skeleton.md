@@ -135,10 +135,23 @@ The same gap appears on the *other half* of the contract — the inference funct
   against a fixed gate `N=2000`: harm `= play_cost·(1−ε)^N` traces the same
   threshold — T=4 `danger≈0` (gate catches it), T=8 `0.485`, T=10 `0.499`. Same
   gate-miss mechanism as the perfect-info danger law (§4), now on inference.
-- **Claim B (translation-not-inference, hidden info):** ⬜ withhold the rules and
-  test whether a synthesized `infer_states` can be inferred from play — a later
-  round; Beacon establishes the existence/provability of the inference gap, the
-  perfect-info §5 already shows translation-not-inference for dynamics.
+- **Claim B (belief model is invisible to a transition gate) ✅.** *Proposition
+  (belief–transition orthogonality):* transition data are tuples `(s,a,s',r)` over
+  full states; `observation`/`infer_states` encode the information partition, which
+  appears in no such tuple — so a transition-accuracy gate cannot detect a wrong
+  belief model. *Demonstration (masked tic-tac-toe = recall dynamics + an arbitrary,
+  non-recallable hidden-center rule; GPT-5.4 large):* synthesizing with the masking
+  rule **full** → transition gate 1.000, observation masks correctly (observation_rate
+  1.000); **withheld** → transition gate still 1.000 but observation_rate **0.020**
+  (the synthesized belief model is wrong, yet certified by the transition gate). The
+  transition gate is structurally blind to the belief surface (it never calls
+  observation/infer_states). *Secondary finding:* GPT-5.4's `infer_states` crashes
+  (`'list' object is not callable`) across three games — the belief surface is also
+  hard to synthesize, not just un-gateable. Together with Beacon (Claim A): a wrong
+  belief both loses at play and is invisible to a transition gate.
+- The Beacon synthesis probe also showed novel imperfect games can defeat *transition*
+  synthesis itself (GPT-5.4 ≈0.45 on Beacon dynamics) — gate-attainability vs novelty,
+  consistent with §3.2.
 
 **One mechanism, two faces.** §3–4 (transition rule, rarity `r`) and §6 (inference
 info-set, depth `T`) are the same statement: a size-`N` random gate fails to certify

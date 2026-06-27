@@ -1,5 +1,44 @@
 # Experiments Log
 
+## Imperfect information — Claim B: the belief model is invisible to a transition gate (2026-06-27)
+
+`scripts/mtt_claimB_probe.py` (Azure GPT-5.4 large). Masked tic-tac-toe = standard
+tic-tac-toe dynamics + an arbitrary, non-recallable masking rule (the center cell is
+hidden, shown as -1). Synthesize the contract two ways — full rules vs the masking
+rule withheld — and gate each on transitions AND inference:
+
+| variant | transition gate | observation_rate | inference_rate |
+|---------|-----------------|------------------|----------------|
+| FULL rules | **1.000** (0 iters) | **1.000** | 0.000 (infer_states crashes) |
+| WITHHELD masking rule | **1.000** | **0.020** | 0.180 |
+
+**The demonstrable triangle (clean on `observation_rate`):**
+- **transition gate = 1.000 in BOTH arms** — tic-tac-toe dynamics synthesize by
+  recall, unaffected by the masking rule. The transition gate never invokes
+  `observation`/`infer_states` (verified: `contract_accuracy` calls only
+  apply_action/legal_actions/is_terminal/returns), so it is **structurally blind to
+  the belief model**.
+- **FULL → observation_rate 1.000:** told the masking rule, the model masks the
+  center correctly.
+- **WITHHELD → observation_rate 0.020:** without the rule the synthesized
+  `observation` does not mask the center — a wrong belief model — yet the transition
+  gate still certifies it at 1.000.
+
+This is Claim B: a belief model that fails the inference gate is invisible to a
+transition-accuracy gate, because the information partition it encodes appears in no
+`(s,a,s')` transition tuple (see RESEARCH-DIRECTION, belief–transition orthogonality
+proposition). Complements Claim A (Beacon): a wrong belief both **loses at play** (A)
+and is **invisible to a transition gate** (B).
+
+**Caveat (honest):** `inference_rate` is NOT a clean signal here — GPT-5.4's
+synthesized `infer_states` raises `'list' object is not callable` (full arm → 0.000),
+the same recurring bug seen on Kuhn-mini and Beacon. So `inference_rate` is confounded
+by a synthesis-robustness failure in both arms; the clean discriminator is
+`observation_rate`. That recurring crash is itself a secondary finding: across three
+games GPT-5.4 fails to robustly synthesize an enumeration-style `infer_states`, i.e.
+the belief surface is not only un-gateable by transitions but also hard to synthesize
+at all.
+
 ## Imperfect information — Beacon: a PROVABLE positive Claim A (2026-06-27)
 
 Poker has no inference coverage gap (competent play is shallower than random).
@@ -537,3 +576,29 @@ the ply cap, random blunders out early; this is exactly the rare-rule gap). The
 positive imperfect-info path is therefore a **partially-observable deep board
 game** (hidden state over an army5x5a-like game that already exhibits the gap), not
 poker.
+
+### Claim B probe — Beacon is confounded for inference-synthesis (2026-06-27)
+
+`scripts/beacon_claimB_probe.py` (Azure GPT-5.4 large). Synthesizing Beacon's
+contract, full rules vs the type-revelation rule withheld:
+
+| variant | transition gate | observation_rate | inference_rate |
+|---------|------------------|------------------|----------------|
+| FULL rules | 0.487 (fails, 10 iters) | 1.000 | 0.000 (infer_states crashes) |
+| WITHHELD revelation | 0.443 (fails) | 1.000 | 0.000 |
+
+**Beacon does not work as a Claim B (synthesis) vehicle:** GPT-5.4 large cannot
+synthesize even Beacon's *transitions* (≈0.45, near random) with fully-specified
+rules, and its `infer_states` crashes (`'list' object is not callable`, the same
+shadowing bug seen on Kuhn-mini). With the transition function broken, the full-vs-
+withheld inference comparison is confounded — we cannot separate "inference fails
+because withheld" from "the model cannot synthesize this unusual game at all."
+(Note: this is a synthesis-capability limit on a novel encoding, NOT translation-
+not-inference — the rules were given. The hand-built Claim A positive is unaffected;
+it never used synthesis.)
+
+Implication for Claim B: it needs a vehicle whose **dynamics synthesize cleanly**
+(so the only variable is the belief model) plus a **withholdable observation rule
+independent of the dynamics**. Candidate: a familiar-dynamics game (synthesizes at
+gate 1.0) overlaid with an arbitrary, non-recallable masking rule — see
+RESEARCH-DIRECTION.
