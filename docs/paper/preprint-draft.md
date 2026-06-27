@@ -1,6 +1,6 @@
 # When a Verified World Model Still Loses: Play-Adequacy vs Prediction-Accuracy in LLM-Synthesized Code World Models
 
-**Author:** Javier Aguilar — AGILabs (javieraguilar.ai)
+**Author:** Javier Aguilar Martin — AGILabs (javieraguilar.ai)
 **Status:** First draft, 2026-06-27. Numbers from `docs/EXPERIMENTS.md` — re-verify against the log before submission.
 
 ---
