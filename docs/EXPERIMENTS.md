@@ -465,3 +465,27 @@ ply cap; short random games do not).
 b^{d_max} ≫ feasible N — a *deep/wide* imperfect-information game, not a toy poker.
 The machinery (contract, determinized planner, inference gate, arena, instrument)
 is built and validated; only a larger oracle is missing.
+
+### Depth probe — poker depth does NOT create a usable inference gap (2026-06-27)
+
+`scripts/leduc_depth_probe.py` sweeps Leduc's per-round raise cap (deepening the
+betting tree) at fixed random-gate N=8000, 100 competent determinized-MCTS games:
+
+| raise cap | random infosets (max depth) | competent infosets (max depth) | uncovered inference-relevant |
+|-----------|------------------------------|--------------------------------|------------------------------|
+| 2 | 574 (8)  | 120 (6) | 0 / 418 = 0.0000 |
+| 4 | 1090 (11)| 128 (7) | 0 / 400 = 0.0000 |
+| 6 | 1210 (12)| 127 (9) | 5 / 396 = **0.0126** |
+
+A gap appears only at cap 6 and is marginal (1.26% of competent visits, 5 info-sets)
+— too weak for a CI-separated play deficit. Mechanism: in poker, betting **depth
+comes from aggression**, which competent play *minimizes* (it calls/folds), so
+competent play is always SHALLOWER than random (max depth 9 vs 12). Competent ⊆
+random-covered persists. **Poker is the wrong family for an inference coverage gap.**
+
+A usable gap needs competent play to reach a deep/rare region MORE than random —
+which happens when depth = *survival* (perfect-info board games: competent reaches
+the ply cap, random blunders out early; this is exactly the rare-rule gap). The
+positive imperfect-info path is therefore a **partially-observable deep board
+game** (hidden state over an army5x5a-like game that already exhibits the gap), not
+poker.
