@@ -9,9 +9,9 @@
 
 Large language models (LLMs) can synthesize the rules of a game as executable code — a *Code World Model* (CWM) — which a classical planner then searches over. The synthesized model is typically accepted when it reaches high *transition accuracy* on sampled trajectories. We argue that this acceptance criterion is the wrong notion of adequacy for planning.
 
-Across perfect- and imperfect-information games we find: (1) A CWM can pass a sampling gate at 100% transition accuracy and be ≥99% state-accurate on the distribution a planner actually visits, yet lose systematically at play — because the less than 1% it gets wrong is exactly the pivotal dynamics. We call this the *verified-vs-correct gap*. (2) The expected harm follows a quantitative law, `danger = play_cost × (1 − rarity)^N`, where `rarity` is the probability a random play-through triggers the omitted rule and `N` is the gate size. The `(1 − rarity)^N` factor is *proven exact* (i.i.d. Bernoulli); `play_cost` is measured empirically. This law predicts when sampling verification is blind: harm is negligible while the rule is common enough for the gate to catch, then rises through a threshold as it becomes rare, and saturates at the full `play_cost` once it almost always escapes. (3) The failure is not repaired by more data. LLM CWM synthesis is *rule translation*, not *rule inference*: it correctly encodes rules it was given and cannot infer rules that were omitted, regardless of model scale or the quantity of on-manifold example transitions. (4) The same failure mechanism recurs on the *inference* function of imperfect-information CWMs. We prove a coverage bound: a size-N random gate is identifying for the inference function when `N ≳ b^{d_max}`, which explains why shallow games (Kuhn poker, Leduc poker) show no inference gap. We also construct a minimal game, Beacon, that escapes this bound — a verified-but-wrong `infer_states` function passes the inference gate (0/8156 mismatches) yet loses every game (0.000 vs fair baseline 0.500), with the danger law recurring on this new axis.
+Across perfect- and imperfect-information games we find four things. (1) A CWM can pass a sampling gate at 100% transition accuracy and be ≥99% state-accurate on the distribution the planner actually visits, yet lose systematically at play — because the less than 1% it gets wrong is exactly the pivotal dynamics. We call this the *verified-vs-correct gap*. (2) The expected harm follows a quantitative law, `danger = play_cost × (1 − rarity)^N`, where `rarity` is the probability a random play-through triggers the omitted rule and `N` is the gate size. The `(1 − rarity)^N` gate-miss factor is *proven exact* (i.i.d. Bernoulli); `play_cost` is measured empirically. This law predicts when sampling verification is blind: harm is negligible while the rule is common enough for the gate to catch it, rises through a threshold as the rule becomes rare, and saturates at the full `play_cost` once it almost always escapes. (3) The failure is not repaired by more data. LLM CWM synthesis is *rule translation*, not *rule inference*: it correctly encodes rules it was given and cannot infer rules that were omitted, regardless of model scale or the quantity of on-manifold example transitions. (4) The same mechanism recurs on the *inference* function of imperfect-information CWMs. We prove a coverage bound — a size-N random gate is identifying for the inference function when `N ≳ b^{d_max}` — which explains why shallow games (Kuhn poker, Leduc poker) show no inference gap. We then construct a minimal game, Beacon, that escapes this bound: a verified-but-wrong `infer_states` function passes the inference gate (0/8156 mismatches) yet loses every game (0.000 vs fair baseline 0.500), with the danger law recurring on this new axis.
 
-Taken together, these results suggest that adequacy for LLM-synthesized world models used in planning should be measured on the search distribution or by play directly, not by prediction accuracy on sampled transitions, and that making the specification complete is more effective than attempting repair by example.
+Taken together, these results suggest that adequacy for LLM-synthesized world models used in planning should be measured on the search distribution or by play directly, not by prediction accuracy on sampled transitions, and that completing the specification is more effective than attempting repair by example.
 
 ---
 
@@ -19,37 +19,37 @@ Taken together, these results suggest that adequacy for LLM-synthesized world mo
 
 ### 1.1 The Code World Model paradigm
 
-The observation that a small language model plus a well-specified world model plus classical search can outperform a much larger model used as a direct policy is central to recent work on LLMs for game playing. The *Code World Model* (CWM) paradigm makes this concrete: an LLM is prompted with a game's rules and some sampled trajectories, and asked to synthesize a fully executable implementation of the game's transition dynamics. A classical planner — typically Monte Carlo Tree Search (MCTS) — then searches over the synthesized world model, interacts with a referee (the true game), and is evaluated in an arena.
+A central observation in recent work on LLMs for game playing is that a small language model plus a well-specified world model plus classical search can outperform a much larger model used as a direct policy. The *Code World Model* (CWM) paradigm makes this concrete: an LLM is prompted with a game's rules and some sampled trajectories and asked to synthesize a fully executable implementation of the game's transition dynamics. A classical planner — typically Monte Carlo Tree Search (MCTS) — then searches over the synthesized world model, interacts with a referee (the true game), and is evaluated in an arena.
 
-We reproduce this baseline on tic-tac-toe and Connect Four (§3.1): LLM-synthesized CWMs refined to transition accuracy 1.0 paired with UCT-MCTS dominate the same LLM used as a direct policy by wide margins (e.g., 29–1 in Connect Four). This reproduces the direction of the result in arXiv:2510.04542 (Lehrach et al., 2025) on known games. The synthesis is also trivially cheap: total API cost across all runs in this paper is approximately $2, with roughly $0.001–0.005 per arena game for the LLM-as-policy baseline and synthesis a one-off cost.
+We reproduce this baseline on tic-tac-toe and Connect Four (§3.1): LLM-synthesized CWMs refined to transition accuracy 1.0 and paired with UCT-MCTS dominate the same LLM used as a direct policy by wide margins (e.g., 29–1 in Connect Four), reproducing the direction of the result in Lehrach et al. (2025) on known games. Synthesis is trivially cheap: total API cost across all runs in this paper is approximately $2, with roughly $0.001–0.005 per arena game for the LLM-as-policy baseline and synthesis a one-off cost.
 
 ### 1.2 The implicit trust step
 
-Accepting a synthesized world model involves a gatekeeping step: the CWM is refined in a sandbox until it achieves transition accuracy 1.0 on a set of randomly sampled trajectories. This gate is computationally cheap and serves as the only barrier between synthesis and deployment in the planner.
+Accepting a synthesized world model involves a gatekeeping step: the CWM is refined in a sandbox until it achieves transition accuracy 1.0 on a set of randomly sampled trajectories. This gate is computationally cheap and is the only barrier between synthesis and deployment in the planner.
 
 Our central question is: **does passing this gate certify that the CWM is adequate for planning?**
 
-The concern is structural. A planner does not play randomly — it concentrates search on states it deems strategically significant. If the random-trajectory gate and the planner's search distribution diverge in a systematic way, there could exist a CWM that passes the gate yet is wrong precisely on the states that matter for competent play. We call this the *verified-vs-correct gap*.
+The concern is structural. A planner does not play randomly — it concentrates search on states it deems strategically significant. If the random-trajectory gate and the planner's search distribution diverge systematically, there could exist a CWM that passes the gate yet is wrong precisely on the states that matter for competent play. We call this the *verified-vs-correct gap*.
 
 ### 1.3 A first look: when the gate is identifying
 
-Our first experiments across three game families and two knowledge regimes (rules given / rules withheld) found that the feared gap does not appear on small, fully-specified games (§3.2). Whenever a CWM passes the random-trajectory gate, it is also correct on the MCTS-visited distribution; whenever it is wrong on the search distribution, it also fails the gate. For these games, the random sample is *identifying* — no compact wrong hypothesis fits all training trajectories yet diverges elsewhere. This is an honest null result; we report it as such, because understanding *when* the gate is identifying is necessary to understand when it is not.
+Our first experiments, across three game families and two knowledge regimes (rules given / rules withheld), find that the feared gap does not appear on small, fully-specified games (§3.2). Whenever a CWM passes the random-trajectory gate, it is also correct on the MCTS-visited distribution; whenever it is wrong on the search distribution, it also fails the gate. For these games the random sample is *identifying* — no compact wrong hypothesis fits all training trajectories yet diverges elsewhere. This is an honest null result, and we report it as such, because understanding *when* the gate is identifying is necessary to understand when it is not.
 
 ### 1.4 When the gate fails: rare rules and the danger law
 
 The null result on small games points to the condition under which the gate can be fooled: a rule that random play almost never triggers but competent play reliably seeks out. We engineered a minimal instrument satisfying this condition (§3.3): a variant of the game army5x5a augmented with a *material-at-cap* tiebreak rule that triggers in roughly 1% of random games but decides roughly 50% of competent games.
 
-A CWM that omits this rule passes the gate at transition accuracy 1.0, is ≥99% state-accurate on the search distribution — yet loses approximately 2:1 in play (win rate 0.383 vs calibrated baseline 0.504). State accuracy is blind to the omission (dilution); play is not.
+A CWM that omits this rule passes the gate at transition accuracy 1.0 and is ≥99% state-accurate on the search distribution, yet loses approximately 2:1 in play (win rate 0.383 vs calibrated baseline 0.504). State accuracy is blind to the omission (dilution); play is not.
 
 We then quantify when this can happen via a law that relates harm to gate size and rule rarity (§4), and show that the gap cannot be repaired by providing more example transitions (§5).
 
 ### 1.5 Extension to imperfect information
 
-The same mechanism appears on the *inference* half of an imperfect-information CWM. An imperfect-information world model must also implement an `infer_states` function — given a sequence of observations, reconstruct the set of possible hidden states — and this function is gated separately. We prove (§6) that the inference gate is identifying when the game is shallow enough, explain why poker games fall below this threshold, and construct a minimal game (Beacon) where a verified-but-wrong `infer_states` passes the inference gate yet loses every game.
+The same mechanism appears on the *inference* half of an imperfect-information CWM. Such a model must also implement an `infer_states` function — given a sequence of observations, reconstruct the set of possible hidden states — and this function is gated separately. We prove (§6) that the inference gate is identifying when the game is shallow enough, explain why poker games fall below this threshold, and construct a minimal game (Beacon) in which a verified-but-wrong `infer_states` passes the inference gate yet loses every game.
 
 ### 1.6 Contributions
 
-This paper makes five contributions:
+This paper makes six contributions:
 
 1. **The verified-vs-correct gap (§3.3):** A gate-passing, ≥99%-state-accurate CWM that loses ~2:1 in play. The gap arises from a rare-but-pivotal rule omitted from the specification and invisible to random-trajectory sampling. We also document the honest null — small fully-specified games show no gap — which clarifies the boundary conditions.
 
@@ -89,9 +89,9 @@ This contract mirrors the minimal interface required by UCT-MCTS for perfect-inf
 
 An LLM (Azure OpenAI Global Standard deployments `gpt-5.4`, `gpt-5.4-mini`, `gpt-5-nano`; snapshot `gpt-5.4-2026-03-05`) is prompted with the game's `RULES_TEXT` and a set of random-policy trajectories. The prompt asks the model to synthesize a complete Python module implementing the contract.
 
-The synthesized module is then refined in a sandbox: a referee plays a fresh set of random trajectories through both the synthesized CWM and the ground-truth oracle, and any discrepancy produces an error message fed back to the LLM for correction. Refinement continues until the synthesized CWM achieves *transition accuracy 1.0* on the random-trajectory sample, or until a refinement budget is exhausted. Passing this test is called *passing the gate*.
+The synthesized module is then refined in a sandbox: a referee plays a fresh set of random trajectories through both the synthesized CWM and the ground-truth oracle, and any discrepancy produces an error message fed back to the LLM for correction. Refinement continues until the synthesized CWM achieves *transition accuracy 1.0* on the random-trajectory sample, or until a refinement budget is exhausted. Passing this test we call *passing the gate*.
 
-The transition accuracy metric is the fraction of (state, action, next-state) tuples from randomly sampled play-throughs on which the synthesized CWM agrees with the ground truth. Note that this is the gate's own lens; §3 and §4 argue it is the wrong lens for planning.
+Transition accuracy is the fraction of (state, action, next-state) tuples from randomly sampled play-throughs on which the synthesized CWM agrees with the ground truth. This is the gate's own lens; §3 and §4 argue it is the wrong lens for planning.
 
 For imperfect-information games, an analogous *inference gate* measures accuracy on the `infer_states` function over the observations generated by random play.
 
@@ -101,7 +101,7 @@ For perfect-information games, planning uses UCT-MCTS with a configurable simula
 
 For imperfect-information games, planning uses determinized MCTS: at each decision point, the planner samples a set of possible hidden-state completions from `infer_states`, runs UCT-MCTS on each determinization, and aggregates votes (Cowling et al., 2012; Long et al., 2010). The planner is hardened to tolerate a faulty `infer_states` (raising exceptions, returning empty lists) via a legal-fallback mechanism, ensuring arena runs do not abort when the CWM is deliberately instrumented to be wrong.
 
-Throughout the paper, **competent play** denotes play under the deployed planner $\Pi$ (UCT-MCTS for perfect information, determinized MCTS for imperfect information, at the stated simulation budget). It is a heuristic proxy for skilled play, *not* an equilibrium strategy: "competent" should be read as "what the deployed planner does," and never as "optimal." All gap, danger, and reach statements below are made with respect to this deployed-planner distribution unless we explicitly say "equilibrium."
+Throughout the paper, **competent play** denotes play under the deployed planner $\Pi$ (UCT-MCTS for perfect information, determinized MCTS for imperfect information, at the stated simulation budget). It is a heuristic proxy for skilled play, *not* an equilibrium strategy: "competent" should be read as "what the deployed planner does," never as "optimal." All gap, danger, and reach statements below are made with respect to this deployed-planner distribution unless we explicitly say "equilibrium."
 
 ### 2.4 Metrics
 
@@ -154,7 +154,7 @@ LLM-synthesized CWMs on tic-tac-toe and Connect Four pass the transition gate in
 
 (30 games each, seed 7; CWM agent = synthesized model + MCTS; baseline = direct LLM policy.)
 
-The CWM+MCTS agents dominate the direct LLM policy, replicating the paradigm's core claim. However, the fact that these models reach transition accuracy 1.0 in zero refinements is itself revealing: on well-known games, the model is almost certainly *recalling* the rules rather than inferring them from trajectories. "Accuracy 1.0 on sampled trajectories" likely coincides with global correctness here for the right reason — but that coincidence has nothing to say about whether the gate is reliable in general.
+The CWM+MCTS agents dominate the direct LLM policy, replicating the paradigm's core claim. That these models reach transition accuracy 1.0 in zero refinements is itself revealing: on well-known games, the model is almost certainly *recalling* the rules rather than inferring them from trajectories. Here "accuracy 1.0 on sampled trajectories" likely coincides with global correctness for the right reason — but that coincidence says nothing about whether the gate is reliable in general.
 
 ### 3.2 The state-agreement gap does not appear on small complete-rules games
 
@@ -169,17 +169,17 @@ To measure the gap properly, we ran a grid across three knowledge regimes and tw
 | trike | wrong prior | mini | 0.000 | 0.000 | 4/5 | 1 | 0 |
 | trike | wrong prior | nano | 0.000 | 0.000 | 5/5 | 0 | 0 |
 
-We report this as an honest null. In every regime, the outcome is binary: either the CWM is globally correct (gap ≈ 0) or it fails the gate entirely. There is no case of a CWM that passes the gate yet is wrong on the MCTS-visited distribution. The same pattern holds in a `--no-rules` variant (synthesis from trajectories alone, with `RULES_TEXT` withheld): gen_tictactoe passes in 2/5 seeds via recall, with gap 0; army5x5a and Trike fail the gate entirely (0/5).
+We report this as an honest null. In every regime the outcome is binary: either the CWM is globally correct (gap ≈ 0) or it fails the gate entirely. No CWM passes the gate yet is wrong on the MCTS-visited distribution. The same pattern holds in a `--no-rules` variant (synthesis from trajectories alone, with `RULES_TEXT` withheld): gen_tictactoe passes in 2/5 seeds via recall, with gap 0; army5x5a and Trike fail the gate entirely (0/5).
 
-The diagnosis: for small, fully-specified games, the random-trajectory sample is *identifying* — no compact wrong hypothesis fits 40 random trajectories yet diverges on the search distribution. The gate is not weak; it is identifying. This makes it harder, not easier, to construct the gap: we need a game where random and competent play genuinely diverge.
+The diagnosis: for small, fully-specified games, the random-trajectory sample is *identifying* — no compact wrong hypothesis fits 40 random trajectories yet diverges on the search distribution. The gate is not weak; it is identifying. This makes the gap harder, not easier, to construct: we need a game where random and competent play genuinely diverge.
 
-The null is informative in a second way: it shows that the binding constraint on small games is *gate-attainability*, not gap size. nano fails army5x5a outright (0/5 gate passes) because the action encoding (`from*25+to` integer, plus a ply counter) is representationally complex; mini handles it (4/5). The knowledge regime matters less than model scale and encoding complexity. This is consistent with the translation hypothesis (§5).
+The null is informative in a second way: it shows that the binding constraint on small games is *gate-attainability*, not gap size. nano fails army5x5a outright (0/5 gate passes) because the action encoding (a `from*25+to` integer plus a ply counter) is representationally complex; mini handles it (4/5). The knowledge regime matters less than model scale and encoding complexity — consistent with the translation hypothesis (§5).
 
 ### 3.3 The rare-rule instrument: verified but wrong at play (headline result)
 
 The null result on fully-specified games points to the necessary condition for a gap: a rule whose random-play incidence is near zero but whose competent-play incidence is high. We searched for such rules systematically.
 
-**The rarity↔consequence frontier.** We tested six rules across Connect Four and army5x5a (rarity = fraction of random games the rule decides; consequence = performance change from rule-aware vs rule-blind MCTS on the true game):
+**The rarity↔consequence frontier.** We tested six rules across Connect Four and army5x5a (rarity = fraction of random games the rule decides; consequence = performance change between rule-aware and rule-blind MCTS on the true game):
 
 | Base | Rule | Rarity (random) | Consequence |
 |------|------|-----------------|-------------|
@@ -190,7 +190,7 @@ The null result on fully-specified games points to the necessary condition for a
 | Connect Four | 2×2 square wins | 38% | strong |
 | army5x5a | infantry breakthrough wins | 75% | strong |
 
-These six rules lie on a *rarity↔consequence anti-correlation curve*: anything a planner can force, random play also stumbles into. Connect Four admits no rule in the rare-and-consequential quadrant. The diagnosis is confirmed by a random-vs-MCTS game-length divergence measurement: army5x5a stands out with median game length 23 plies under random play vs 58 plies under competent play (routinely hitting the 100-ply cap), while Trike and generalized tic-tac-toe behave like Connect Four (low divergence). A game where random and competent play visit very different parts of the state space is the necessary substrate.
+These six rules lie on a *rarity↔consequence anti-correlation curve*: anything a planner can force, random play also stumbles into. Connect Four admits no rule in the rare-and-consequential quadrant. A random-vs-MCTS game-length measurement confirms the diagnosis: army5x5a stands out with median game length 23 plies under random play vs 58 plies under competent play (routinely hitting the 100-ply cap), while Trike and generalized tic-tac-toe behave like Connect Four (low divergence). A game where random and competent play visit very different parts of the state space is the necessary substrate.
 
 **The instrument.** We constructed a variant of army5x5a with a *material-at-cap* tiebreak rule: if the game reaches the ply cap (100 plies) with both generals alive, the player with more pieces wins (rather than drawing). This rule triggers in approximately 1% of random games (the cap is reached in 5.3% of random games, mostly as equal-material draws) yet decides approximately 50% of competent games. Implementations: `groundtruth/gen_chess_material.py` with paired specifications `army5x5a_material` (complete rules) and `army5x5a_material_incomplete` (base rules, omitting the material-at-cap tiebreak).
 
@@ -201,7 +201,7 @@ These six rules lie on a *rarity↔consequence anti-correlation curve*: anything
 | incomplete (omits rule) | 2–3/5 | 0.000 | seeds that fail the gate do so because the rule appeared in their 40 training trajectories |
 | complete (control) | 5/5 | 0.000 | — |
 
-The divergence region (ply-cap states with unequal material) is less than 1% of visited states, and symmetric MCTS self-play tends toward equal material, so the states where the rule-blind CWM is wrong are barely sampled. State accuracy is diluted.
+The divergence region (ply-cap states with unequal material) is less than 1% of visited states, and symmetric MCTS self-play tends toward equal material, so the states where the rule-blind CWM is wrong are barely sampled. State accuracy is diluted away.
 
 **Play performance is the right lens.** Measuring play directly (true game = army5x5a + material, arena refereed by truth, play_cost measured via `scripts/play_cost.py` at 240 games, 600 simulations):
 
@@ -212,13 +212,13 @@ The divergence region (ply-cap states with unequal material) is less than 1% of 
 
 The fairness baseline is well-calibrated (0.504, consistent with no start-order bias). The rule-blind CWM loses approximately 2:1 (roughly 63 losses and 35 wins per 120 games) — a systematic, reproducible deficit. The LLM-synthesized incomplete CWMs play at 0.28–0.37 win rate (across seeds) vs truth; the complete-rules CWMs at 0.38–0.45 (non-overlapping).
 
-**Summary.** A world model can pass transition-accuracy verification (gate 1.0), be ≥99% state-accurate on the search distribution (gap_truth = 0), and yet lose systematically at play — because the less-than-1% it gets wrong is exactly the pivotal tactic. Transition and state accuracy are the wrong adequacy criteria for planning. Play performance is the right criterion.
+**Summary.** A world model can pass transition-accuracy verification (gate 1.0), be ≥99% state-accurate on the search distribution (gap_truth = 0), and yet lose systematically at play — because the less than 1% it gets wrong is exactly the pivotal tactic. Transition and state accuracy are the wrong adequacy criteria for planning; play performance is the right one.
 
 ---
 
 ## 4. A Quantitative Law of Sampling-Verification Harm
 
-We now characterize *when* the harm from a sampling gate is large. The key observation is that a gate of N random play-throughs fails to observe a rule that fires with probability r per play-through with exact probability `(1 − r)^N`. We formalize this and measure the remaining empirical component.
+We now characterize *when* the harm from a sampling gate is large. The key observation is that a gate of N random play-throughs fails to observe a rule that fires with probability r per play-through with exact probability `(1 − r)^N`. We formalize this gate-miss probability and measure the remaining empirical component.
 
 ### 4.1 The gate-miss proposition
 
@@ -234,7 +234,7 @@ The $(1-r)^N$ factor is exact (Proposition 1); $\kappa$ is the empirically-measu
 
 **Remark (what stays empirical).** The measured regularity that $\kappa$ is approximately constant across rarity values is structural but not analytically forced. It holds here because competent MCTS reaches the ply-cap region regardless of how the rarity knob tunes r — i.e., the consequence of omitting the rule is roughly the same whether the rule is common or rare, as long as it escapes the gate. This invariance requires the planner to consistently reach the rule region, a property of the game and search budget, not of the sampling model.
 
-**Remark (reading the two factors).** The danger law factorizes cleanly into a *verification-distribution* term and a *play-distribution* term: $(1-r)^N$ is the probability the verification distribution (N i.i.d. uniform-random plays) misses the rule — and $r$ is correctly a random-play rate, because the gate genuinely samples i.i.d. uniform-random plays — while $\kappa = \text{play\_cost}$ is the consequence measured on the play distribution. The approximate constancy of $\kappa$ is a property of *symmetric MCTS self-play* reaching the cap region. Under a true equilibrium opponent (rather than MCTS self-play) the play-cost factor could differ — an equilibrium opponent might exploit the rule-blind agent more aggressively, or the omitted rule might sit off the equilibrium path entirely. The "$\approx$ constant play_cost" claim is therefore scoped to the deployed self-play planner, not to equilibrium opponents.
+**Remark (reading the two factors).** The danger law factorizes cleanly into a *verification-distribution* term and a *play-distribution* term: $(1-r)^N$ is the probability the verification distribution (N i.i.d. uniform-random plays) misses the rule — and $r$ is correctly a random-play rate, because the gate genuinely samples i.i.d. uniform-random plays — while $\kappa = \text{play\_cost}$ is the consequence measured on the play distribution. Under a true equilibrium opponent (rather than MCTS self-play) the play-cost factor could differ: an equilibrium opponent might exploit the rule-blind agent more aggressively, or the omitted rule might sit off the equilibrium path entirely. The "$\approx$ constant play_cost" claim is therefore scoped to the deployed self-play planner, not to equilibrium opponents.
 
 ### 4.2 Measured danger curve
 
@@ -250,15 +250,15 @@ We measure `play_cost` precisely once (play_cost ≈ 0.12, from independent runs
 | 120 | 0.011  | 0.6339   | 0.096 | 0.076 | 0.048 |
 | 140 | 0.007  | 0.7652   | 0.105 | 0.092 | 0.070 |
 
-The result is a threshold law, not an inverted-U. Danger is approximately zero while the rule is common enough for a size-N gate to catch (cap ≤ 50), rises through a threshold as the rule becomes rare (cap 60–100), and plateaus at approximately the full play_cost once the rule almost always escapes the gate (cap ≥ 120). The gate size N shifts the threshold: larger N pushes it toward rarer rules.
+The result is a threshold law, not an inverted-U. Danger is approximately zero while the rule is common enough for a size-N gate to catch it (cap ≤ 50), rises through a threshold as the rule becomes rare (cap 60–100), and plateaus at approximately the full play_cost once the rule almost always escapes the gate (cap ≥ 120). The gate size N shifts the threshold: larger N pushes it toward rarer rules.
 
 ### 4.3 Why Connect Four lies safely below the threshold
 
-Six rules across Connect Four and army5x5a were tested (§3.3). All of Connect Four's consequential rules have rarity 0.12–0.38, giving $(1-r)^{40} \approx 0$ — they are caught by even a modest gate. army5x5a's material-at-cap rule at cap=100 has rarity 0.025, giving $(1-r)^{40} \approx 0.36$ — deep in the danger zone. The structural reason is the same: in Connect Four, any rule that a planner can force also appears regularly under random play (the rarity↔consequence tension); in army5x5a, competent play drives the game to the deep-ply-cap region that random play almost never reaches.
+Recall the six rules tested across Connect Four and army5x5a (§3.3). All of Connect Four's consequential rules have rarity 0.12–0.38, giving $(1-r)^{40} \approx 0$ — they are caught by even a modest gate. army5x5a's material-at-cap rule at cap=100 has rarity 0.025, giving $(1-r)^{40} \approx 0.36$ — deep in the danger zone. The structural reason is the same as before: in Connect Four, any rule a planner can force also appears regularly under random play (the rarity↔consequence tension); in army5x5a, competent play drives the game to the deep-ply-cap region that random play almost never reaches.
 
 ### 4.4 Which reference distribution? Random-reach vs equilibrium-reach
 
-The danger law and the gap results are stated with respect to two different distributions, and it is worth being explicit about which is which. The gate's miss probability $(1-r)^N$ is a property of the *verification* distribution — N i.i.d. uniform-random plays — and is exact there. The consequence $\kappa$, by contrast, is a property of the *deployment* distribution: the reach of the deployed planner $\Pi$.
+The danger law and the gap results are stated with respect to two different distributions, and it is worth being explicit about which is which. The gate's miss probability $(1-r)^N$ is a property of the *verification* distribution — N i.i.d. uniform-random plays — and is exact there. The consequence $\kappa$, by contrast, is a property of the *deployment* distribution, the reach of the deployed planner $\Pi$.
 
 The normatively correct reference for play-adequacy is arguably neither of these but *equilibrium / best-response reach*. Two consequences follow, which we keep distinct. (i) The coverage bound of §6.2 is *equilibrium-robust*: because the verification policy $\rho$ has full support, equilibrium reach is contained in random reach (Lemma 1), so the sufficiency direction holds against an equilibrium reference too — a strength. (ii) The gap and danger results, however, are reported with respect to the *deployed planner's* reach, and we keep the hedge "on the distribution the planner actually visits" throughout rather than upgrading to a distribution-free claim. Substituting equilibrium reach for MCTS reach would shift the *numbers* (a rarity-under-equilibrium and a play-cost-under-equilibrium, both measured against a solver we did not run) but not the *mechanism*: a verified model can be wrong precisely where the reference distribution concentrates and the verification distribution does not.
 
@@ -266,7 +266,7 @@ The normatively correct reference for play-adequacy is arguably neither of these
 
 ## 5. Repairing the Gap: Translation, Not Inference
 
-If the gap is caused by a missing rule, can it be repaired by providing example transitions that demonstrate the rule? We ran a systematic set of repair attempts on army5x5a + material-at-cap with incomplete rules.
+If the gap is caused by a missing rule, can it be repaired by providing example transitions that demonstrate the rule? We ran a systematic set of repair attempts on army5x5a + material-at-cap, synthesized from incomplete rules.
 
 ### 5.1 Repair experiments
 
@@ -283,7 +283,7 @@ All conditions use the mini synthesizer unless noted; play winrate is vs the tru
 
 ### 5.2 Findings
 
-**Detection works, repair does not.** Verifying on the play/search distribution — rather than random trajectories — drops the gate below 1.0, detecting the inadequacy that random-trajectory verification missed. But neither mini nor large can *infer* the missing rule from examples. Even 54 real, on-manifold discriminating transitions with 12 refinement iterations leave the gate at 0.959 and the rule unlearned.
+**Detection works, repair does not.** Verifying on the play/search distribution rather than on random trajectories drops the gate below 1.0, detecting the inadequacy that random-trajectory verification missed. But neither mini nor large can *infer* the missing rule from examples. Even 54 real, on-manifold discriminating transitions with 12 refinement iterations leave the gate at 0.959 and the rule unlearned.
 
 **Spec completeness is decisive.** Given the rule in `RULES_TEXT`, the model encodes it correctly in 0 refinement iterations and plays at parity with the baseline (0.53 ≈ 0.50). The complete-rules control leaves no doubt: the limitation is not the synthesizer's code-writing ability but the absence of the rule from the specification.
 
@@ -293,13 +293,14 @@ All conditions use the mini synthesizer unless noted; play winrate is vs the tru
 
 ### 5.3 Conclusion: translation, not inference
 
-LLM CWM synthesis is *rule translation*: it correctly encodes rules it was given and cannot reliably infer rules that were omitted, even when those rules are demonstrated by example transitions. The actionable implication is that the specification must be complete before synthesis, and that verification on the play distribution detects (but does not repair) incompleteness. Attempting repair by feeding example transitions is not a reliable substitute for a complete specification.
+LLM CWM synthesis is *rule translation*: it correctly encodes rules it was given and cannot reliably infer rules that were omitted, even when those rules are demonstrated by example transitions. The actionable implication is that the specification must be complete before synthesis, and that verification on the play distribution detects incompleteness but does not repair it. Feeding example transitions is not a reliable substitute for a complete specification.
 
 ---
 
 ## 6. Imperfect Information: The Inference Function as a New Failure Surface
 
 The danger law applies not just to the transition function (the CWM's model of how states evolve) but also to the inference function (the CWM's model of how to reconstruct hidden state from observations). We extend the contract, prove a coverage bound that explains when the inference gate is provably safe, and construct a minimal game where it is not.
+
 
 ### 6.1 Pipeline validation: Kuhn poker
 
@@ -310,11 +311,11 @@ Before constructing a gap, we validate the imperfect-information pipeline on Kuh
 | large | 1.000 (0 iters) | 1.000 / 1.000 | 0.470 [0.422, 0.519] | 0.470 [0.422, 0.519] |
 | mini | 0.845 (12 iters, fails gate) | 1.000 / 0.000 (infer_states crashes) | — | — |
 
-The large model recalls Kuhn poker; both transition and inference gates pass; the CWM+determinized-MCTS agent plays at 0.470 [0.422, 0.519], overlapping with the truth-vs-truth baseline — consistent with a near-zero gap, as expected when the model has recalled the game correctly. The mini model fails: the transition gate stalls at 0.845 and the synthesized `infer_states` raises a runtime error (`'list' object is not callable`). This scale/representation dependence is consistent with the translation-not-inference finding of §5.
+The large model recalls Kuhn poker: both transition and inference gates pass, and the CWM+determinized-MCTS agent plays at 0.470 [0.422, 0.519], overlapping with the truth-vs-truth baseline — consistent with a near-zero gap, as expected when the model has recalled the game correctly. The mini model fails: the transition gate stalls at 0.845 and the synthesized `infer_states` raises a runtime error (`'list' object is not callable`). This scale/representation dependence is consistent with the translation-not-inference finding of §5.
 
 ### 6.2 When the inference gate is provably sufficient: a coverage bound
 
-We now formalize when the inference gate sampled on random play is *identifying* — i.e., when every competent-play-relevant inference error would be caught by the random-trajectory gate.
+We now formalize when the inference gate, sampled on random play, is *identifying* — that is, when every competent-play-relevant inference error would be caught by the random-trajectory gate.
 
 **Setup.** Consider a finite two-player extensive-form game **with perfect recall**, chance (the deal) and imperfect information. Let: $b$ = maximum, over **player** information sets $I$, of $|A(I)|$ (the number of actions available at $I$), with chance handled separately through $p_{\text{chance}}$; $d(I)$ = number of player-action edges on a shortest history reaching information set $I$; $d_{\max} = \max_I d(I)$; $p_{\text{chance}}$ = minimum probability of a deal consistent with any reachable info-set; $\mathcal{I}$ = set of reachable info-sets. The uniform-random policy $\rho$ plays every legal action with probability $1/|A(I)| \geq 1/b$, and therefore assigns positive probability to every legal action (full support).
 
@@ -344,11 +345,11 @@ To confirm that poker cannot supply the necessary depth, we swept Leduc's per-ro
 | 4 | 1090 (11) | 128 (7) | 0 / 400 = 0.0000 |
 | 6 | 1210 (12) | 127 (9) | 5 / 396 = 0.0126 |
 
-A coverage gap appears only at cap 6, and is marginal (1.26% of competent visits, 5 info-sets) — insufficient for a CI-separated play deficit. The mechanism is fundamental: in poker, betting depth comes from aggression, and competent play minimizes aggression. In game-theoretic terms, the deep betting region is **off the equilibrium path** because equilibrium folds or calls dominated hands rather than raising into them — so the deep region is off-best-response-path, not a region optimal play relies on. Competent info-sets are always a strict subset of random-covered ones — the opposite of the structure needed for a coverage gap. Poker is the wrong family.
+A coverage gap appears only at cap 6, and even there it is marginal (1.26% of competent visits, 5 info-sets) — insufficient for a CI-separated play deficit. The mechanism is fundamental: in poker, betting depth comes from aggression, and competent play minimizes aggression. In game-theoretic terms, the deep betting region is **off the equilibrium path**, because equilibrium folds or calls dominated hands rather than raising into them — so the deep region is off-best-response-path, not a region optimal play relies on. Competent info-sets are always a strict subset of the random-covered ones — the opposite of the structure needed for a coverage gap. Poker is the wrong family.
 
 ### 6.4 Beacon: a minimal positive imperfect-information gap
 
-A positive gap requires a game where depth comes from *survival*: optimal play reaches a deep region by staying alive, while random play blunders out early. This is the exact imperfect-information analogue of the rare-rule gap in army5x5a, where competent play reaches the ply cap (the deep region) while random play ends much earlier.
+A positive gap requires a game where depth comes from *survival*: optimal play reaches a deep region by staying alive, while random play blunders out early. This is the exact imperfect-information analogue of the rare-rule gap in army5x5a, where competent play reaches the ply cap (the deep region) and random play ends much earlier.
 
 **Game construction.** Beacon is a two-player game with the following structure:
 
@@ -360,9 +361,9 @@ The region "game reaches the final round" is called D (the deep region). Random 
 
 **The instrument.** A CWM whose `infer_states` is *correct* except that it flips the inferred opponent type at final-round states (`status == 1`) — wrong only on D. Random play almost never samples D, so the inference gate almost never sees the error. The correct inference function enables the determinized MCTS planner to make the right guess; the flipped inference function causes the planner to guess wrong.
 
-**Beacon as a signaling game.** Beacon is naturally read as a Bayesian (signaling) game: Nature draws each player a type $\theta_i \in \{0,1\}$; the survival walk emits type-correlated signals (the safe move depends on the type); and the final guess is a belief-dependent action. The correct `infer_states` is the Bayesian posterior support $\mu(\theta_{-i} \mid \text{observed actions})$ over the opponent's type; the flipped instrument encodes a wrong, non-Bayesian belief. Stated cleanly: an `infer_states` error is a non-Bayesian belief, and under it the planner's final action is no longer a best response to the true type distribution. This connects directly to *sequential equilibrium* (Kreps & Wilson, 1982): an assessment is a (strategy, belief) pair whose beliefs are Bayes-consistent on the equilibrium path, and an action optimal against wrong beliefs is part of no sequential equilibrium. The gate certifies the strategy component of the assessment while leaving the belief component unconstrained *off* the random-reach path — exactly the off-path region where Beacon's error lives. Two qualifications keep the picture honest: `infer_states` returns a *set-valued* belief (the support / info-set), and determinized MCTS then imposes its own weighting over that set — so even a correct `infer_states` leaves the belief *weights* to the planner.
+**Beacon as a signaling game.** Beacon is naturally read as a Bayesian (signaling) game: Nature draws each player a type $\theta_i \in \{0,1\}$; the survival walk emits type-correlated signals (the safe move depends on the type); and the final guess is a belief-dependent action. The correct `infer_states` is the Bayesian posterior support $\mu(\theta_{-i} \mid \text{observed actions})$ over the opponent's type, while the flipped instrument encodes a wrong, non-Bayesian belief. An `infer_states` error is thus a non-Bayesian belief, and under it the planner's final action is no longer a best response to the true type distribution. This connects directly to *sequential equilibrium* (Kreps & Wilson, 1982): an assessment is a (strategy, belief) pair whose beliefs are Bayes-consistent on the equilibrium path, and an action optimal against wrong beliefs is part of no sequential equilibrium. The gate certifies the strategy component of the assessment while leaving the belief component unconstrained *off* the random-reach path — exactly the off-path region where Beacon's error lives. Two qualifications keep the picture honest: `infer_states` returns a *set-valued* belief (the support / info-set), and determinized MCTS then imposes its own weighting over that set — so even a correct `infer_states` leaves the belief *weights* to the planner.
 
-**Why the result is planner-robust.** One might worry that the Beacon result is an artifact of determinized MCTS being a weak planner. The PIMC error decomposition (Long et al., 2010) shows the opposite. Beacon's decisive move is a pure *disambiguation* task, and determinization is weakest exactly when disambiguation dominates; but here a correct posterior makes the optimal guess deterministic, so determinized MCTS with a *correct* `infer_states` recovers the optimal action despite strategy fusion, while with the *flipped* `infer_states` it is forced to the wrong action. The result is therefore not an artifact of planner suboptimality — if anything, Beacon is the cleanest possible setting for a determinization planner.
+**Why the result is planner-robust.** One might worry that the Beacon result is an artifact of determinized MCTS being a weak planner. The PIMC error decomposition (Long et al., 2010) shows the opposite. Beacon's decisive move is a pure *disambiguation* task, and determinization is weakest exactly when disambiguation dominates; but here a correct posterior makes the optimal guess deterministic, so determinized MCTS with a *correct* `infer_states` recovers the optimal action despite strategy fusion, while with the *flipped* `infer_states` it is forced to the wrong action. The result is therefore not an artifact of planner suboptimality — if anything, Beacon is the cleanest possible setting for a determinization planner to succeed in.
 
 **Result (T=8, GATE_GAMES=2000, arena N=400×3 seeds, 100 simulations, 2 determinizations):**
 
@@ -373,7 +374,7 @@ The region "game reaches the final round" is called D (the deep region). Random 
 | fair baseline (truth vs truth) win rate | 0.500 [0.472, 0.528] (all draws) |
 | instrument win rate vs truth | **0.000 [0.000, 0.003]**, net −1200/1200 |
 
-The instrument passes the inference gate perfectly — 0 mismatches on 8156 sampled observations — yet loses every game. This is the imperfect-information analogue of the rare-rule gap: a verified-but-wrong inference function that is play-inadequate.
+The instrument passes the inference gate perfectly — 0 mismatches on 8156 sampled observations — yet loses every game. This is the imperfect-information analogue of the rare-rule gap: a verified-but-wrong inference function that is nonetheless play-inadequate.
 
 What is proven vs measured: the reach bound $(1/2)^{2T}$, the fact that optimal play reaches D with probability 1, and the logical implication that flipping the inference on D causes the planner to guess wrong are all analytic properties of the Beacon construction. The play win rate 0.000 [0.000, 0.003] and the 0/8156 gate mismatch count are measured. The determinized planner's conversion of correct inference into the winning guess was verified by a whole-branch code review.
 
@@ -390,11 +391,11 @@ The danger law from §4 applies directly to the inference gap. Sweeping $T$ (so 
 | 8 | 1.5×10⁻⁵ | 0.970 | 0.485 |
 | 10 | 9.5×10⁻⁷ | 0.998 | 0.499 |
 
-At T=4, the deep region is frequent enough that a gate of N=2000 catches the inference error (danger ≈ 0); by T ≥ 8, the gate is blind and harm saturates near play_cost/2 (the maximum possible given the game structure). The same threshold law, the same $(1−\varepsilon)^N$ factor, now instantiated on the inference half of the contract.
+At T=4, the deep region is frequent enough that a gate of N=2000 catches the inference error (danger ≈ 0); by T ≥ 8, the gate is blind and harm saturates near play_cost/2 (the maximum possible given the game structure). The same threshold law and the same $(1−\varepsilon)^N$ factor, now instantiated on the inference half of the contract.
 
 ### 6.6 Claim B: the belief model is invisible to a transition gate
 
-Beacon (§6.4) shows a verified-but-wrong belief model *loses at play*. The complementary verification question is whether a transition-accuracy gate could have *caught* the wrong belief model in the first place. It cannot, and for a structural reason.
+Beacon (§6.4) shows that a verified-but-wrong belief model *loses at play*. The complementary verification question is whether a transition-accuracy gate could have *caught* the wrong belief model in the first place. It cannot, and for a structural reason.
 
 **Proposition 2 (belief–transition orthogonality).** A transition dataset is a set of tuples $(s, a, s', u)$ over *full* ground-truth states, where $u$ is the reward/utility on the transition. The functions `observation(s, p)` and `infer_states(o, p)` encode the information partition — the fibers of the observation map, i.e. what player $p$ can distinguish. This partition is a *free primitive* of the extensive-form game, logically independent of the transition kernel $P(s'\mid s,a)$ and the reward $u$ — the analogue of the fact that two POMDPs with identical latent dynamics and rewards but different observation functions are different control problems. It appears in no $(s, a, s', u)$ tuple. Therefore (i) no *full-ground-state* transition dataset constrains the masking convention; (ii) a gate that scores transition accuracy cannot detect an incorrect `observation`/`infer_states`; (iii) the belief model must be specified and is verifiable only by a separate inference gate. (A dataset of observation-to-observation tuples $(o, a, o')$ *would* constrain the partition; ours is full-state by construction.) $\blacksquare$
 
@@ -405,7 +406,7 @@ Beacon (§6.4) shows a verified-but-wrong belief model *loses at play*. The comp
 | full rules | **1.000** (0 iters) | **1.000** | 0.000 (infer_states crashes) |
 | withheld masking rule | **1.000** | **0.020** | 0.180 |
 
-The transition gate is **1.000 in both arms** — the dynamics are recall, unaffected by the masking rule, and the gate (which calls only `apply_action`/`legal_actions`/`is_terminal`/`returns`) never invokes the belief functions. With the rule, the model masks the center correctly (`observation_rate` 1.000); without it, the synthesized `observation` does not mask the center (`observation_rate` 0.020) — a wrong belief model that the transition gate nonetheless certifies at 1.000. This is Proposition 2 instantiated: a wrong belief model is invisible to a transition gate.
+The transition gate is **1.000 in both arms** — the dynamics are recalled, unaffected by the masking rule, and the gate (which calls only `apply_action`/`legal_actions`/`is_terminal`/`returns`) never invokes the belief functions. With the rule, the model masks the center correctly (`observation_rate` 1.000); without it, the synthesized `observation` does not mask the center (`observation_rate` 0.020) — a wrong belief model that the transition gate nonetheless certifies at 1.000. This is Proposition 2 instantiated: a wrong belief model is invisible to a transition gate.
 
 The clean discriminator is `observation_rate`, not `inference_rate`: GPT-5.4's synthesized `infer_states` raises `'list' object is not callable` across three distinct games (Kuhn-mini, Beacon, masked tic-tac-toe), so `inference_rate` is confounded by a synthesis-robustness failure in both arms. That recurring crash is itself a secondary finding — the belief surface is not only un-gateable by transition data but also hard to synthesize at all.
 
@@ -417,13 +418,13 @@ Together, Beacon (Claim A) and masked tic-tac-toe (Claim B) are the two faces of
 
 ### 7.1 Objective mismatch in model-based reinforcement learning
 
-The closest conceptual antecedent is the *objective mismatch* problem in model-based reinforcement learning identified by Lambert et al. (2020): prediction accuracy of a learned world model and the downstream control performance of a planner using that model can diverge substantially, because they optimize different objectives. Our work is in the same spirit but differs in setting and mechanism. We work in the LLM-code-synthesis regime (the world model is a synthesized program, not a learned neural model), the verification step is a discrete sampling gate (not a continuous loss), and the failure mode we characterize is a *rule-coverage blind spot* in that gate rather than a model-capacity or distribution-shift issue. We also provide a closed-form danger law and a proof that the gate-miss probability is exact under i.i.d. Bernoulli sampling — not just an empirical observation.
+The closest conceptual antecedent is the *objective mismatch* problem in model-based reinforcement learning identified by Lambert et al. (2020): the prediction accuracy of a learned world model and the downstream control performance of a planner using that model can diverge substantially, because they optimize different objectives. Our work is in the same spirit but differs in setting and mechanism. We work in the LLM-code-synthesis regime (the world model is a synthesized program, not a learned neural model), the verification step is a discrete sampling gate (not a continuous loss), and the failure mode we characterize is a *rule-coverage blind spot* in that gate rather than a model-capacity or distribution-shift issue. We also provide a closed-form danger law and a proof that the gate-miss probability is exact under i.i.d. Bernoulli sampling — not merely an empirical observation.
 
 The broader literature on model-based RL world-model quality (e.g., Dreamer, Hafner et al., 2020; MBPO, Janner et al., 2019) largely focuses on learned continuous-state models where world model error is pervasive rather than localized. Our rare-rule gap is a localized, discrete failure that state-accuracy metrics mask by dilution — a point that may be worth revisiting in continuous settings as well.
 
 ### 7.2 Code World Models and LLMs for game playing
 
-The Code World Models for General Game Playing paper (Lehrach et al., arXiv:2510.04542, 2025) introduces the paradigm we build on: an LLM synthesizes an executable world model from rules and trajectories, which a classical planner (in their case, MCTS) then uses. Their results on a set of novel DeepMind board games show that CWM+MCTS outperforms direct LLM policy. We reproduce this result on tic-tac-toe and Connect Four (§3.1) and extend the paradigm to ask whether the gate they use — transition accuracy on random trajectories — certifies play-adequacy. Our contribution is essentially a rigorous negative answer on that question, together with the mechanisms that explain it.
+The Code World Models for General Game Playing paper (Lehrach et al., 2025) introduces the paradigm we build on: an LLM synthesizes an executable world model from rules and trajectories, which a classical planner (in their case, MCTS) then uses. Their results on a set of novel DeepMind board games show that CWM+MCTS outperforms the direct LLM policy. We reproduce this result on tic-tac-toe and Connect Four (§3.1) and extend the paradigm to ask whether the gate they use — transition accuracy on random trajectories — certifies play-adequacy. Our contribution is essentially a rigorous negative answer to that question, together with the mechanisms that explain it.
 
 Related work on code-as-policy (e.g., Liang et al., 2023; Gao et al., 2023) uses LLMs to synthesize executable plans or robot controllers, typically verified by execution rather than by sampling. The distinction between what the LLM was told and what it can infer is implicit in much of this work but has not, to our knowledge, been studied with a controlled rare-rule instrument.
 
@@ -431,13 +432,13 @@ The gg-bench effort (arXiv:2505.07215) generates novel games procedurally specif
 
 ### 7.3 DAgger and dataset aggregation
 
-Our §5 repair experiments are directly inspired by the DAgger framework of Ross, Gordon, and Bagnell (2011): iteratively label states visited by the current learned policy under the oracle, and retrain. In DAgger's original imitation-learning setting, this reduces covariate shift. Our finding — that DAgger fails to teach the rare rule — is consistent with the translation hypothesis: DAgger addresses *distribution mismatch* between training and test, but the bottleneck here is not distribution mismatch. The model receives discriminating examples of the rule; it simply cannot infer the rule from them. This is a different failure mode from the one DAgger was designed to address.
+Our §5 repair experiments are directly inspired by the DAgger framework of Ross et al. (2011): iteratively label, under the oracle, the states visited by the current learned policy, and retrain. In DAgger's original imitation-learning setting, this reduces covariate shift. Our finding — that DAgger fails to teach the rare rule — is consistent with the translation hypothesis: DAgger addresses *distribution mismatch* between training and test, but the bottleneck here is not distribution mismatch. The model receives discriminating examples of the rule; it simply cannot infer the rule from them. This is a different failure mode from the one DAgger was designed to address.
 
 ### 7.4 Imperfect-information planning and determinization
 
 Determinized MCTS (also called single-observer MCTS, SOMCTS, or information-set MCTS in some formulations; Cowling et al., 2012; Whitehouse et al., 2011; determinization analysis, Long et al., 2010) resolves imperfect information by sampling a consistent complete-information game at each decision point. It is not game-theoretically optimal — it is subject to the two canonical PIMC pathologies, *strategy fusion* and *non-locality* (Frank & Basin, 1998), and in the vocabulary of Long et al. (2010) its error is governed by leaf correlation, bias, and a disambiguation factor — but it is a practical planner for moderate-sized imperfect-information games. We use it as the planner in §6, holding the planner fixed across conditions (the baseline is truth-vs-truth under the same determinized MCTS) so that the contrast isolates the CWM inference function rather than planner quality.
 
-Two planner choices deserve a head-on discussion, because a reader may expect them.
+Two planner choices deserve a head-on discussion, because a reader will expect them.
 
 *Information-set MCTS (ISMCTS).* ISMCTS (Cowling et al., 2012) is the natural CWM-compatible imperfect-information planner most readers would reach for over plain determinization-per-decision. We used determinization-per-decision for simplicity and to reuse the existing perfect-information harness, not because it is preferable. This choice is, if anything, conservative for the Beacon result: Beacon is pure disambiguation, the regime in which ISMCTS most cleanly outperforms determinization, so the gap would be at least as clean — likely cleaner — under ISMCTS.
 
@@ -447,7 +448,7 @@ Two planner choices deserve a head-on discussion, because a reader may expect th
 
 ## 8. Limitations and Honest Assessment
 
-**Single model family.** All synthesis experiments use Azure OpenAI GPT-5.x (mini, nano, large). Whether the translation-not-inference finding generalizes to other LLM families — especially open models or post-training variants with stronger code-reasoning abilities — is untested. The rare-rule instrument (§3.3) is carefully constructed to require true rule inference, not recall, so we believe the finding is likely to persist at similar scales, but this is a claim rather than a measurement.
+**Single model family.** All synthesis experiments use Azure OpenAI GPT-5.x (mini, nano, large). Whether the translation-not-inference finding generalizes to other LLM families — especially open models or post-training variants with stronger code-reasoning abilities — is untested. The rare-rule instrument (§3.3) is carefully constructed to require true rule inference rather than recall, so we believe the finding is likely to persist at similar scales, but this is a claim rather than a measurement.
 
 **The rare-rule instrument is engineered.** The material-at-cap rule was selected specifically because it falls in the rare-and-consequential quadrant. We do not claim that all or even most rules in arbitrary games will produce this kind of gap; the rarity↔consequence anti-correlation found in Connect Four (§3.3) shows that the gap requires a specific structural condition. The point is that the gap *can* exist and *does* exist in a game where random and competent play diverge — which is itself informative about when the sampling gate is unsafe.
 
@@ -469,7 +470,7 @@ The central finding of this paper is that transition accuracy on randomly sample
 
 The failure follows a quantitative law: `danger = play_cost × (1 − rarity)^N`. The gate-miss factor is proven exact under i.i.d. Bernoulli sampling; play_cost is empirical. This law identifies the condition under which sampling verification is unsafe: a rule whose random-play incidence is small enough to escape a size-N gate but whose competent-play incidence is high enough to matter.
 
-The gap is not repaired by providing example transitions. LLM CWM synthesis is rule translation: it encodes rules it was given and does not infer rules that were omitted, regardless of model scale or the form of the repair data. Off-manifold repair data actively corrupts synthesis. The actionable fix is specification completeness plus verification on the play distribution; the latter detects but does not repair incompleteness.
+The gap is not repaired by providing example transitions. LLM CWM synthesis is rule translation: it encodes rules it was given and does not infer rules that were omitted, regardless of model scale or the form of the repair data. Off-manifold repair data actively corrupts synthesis. The actionable fix is specification completeness plus verification on the play distribution; the latter detects incompleteness but does not repair it.
 
 The same mechanism appears on the inference half of imperfect-information CWMs. We prove a coverage bound that explains why shallow poker games are safe (their inference gate is provably identifying), and construct a minimal game (Beacon) where a verified-but-wrong `infer_states` passes the gate yet loses every game, with the danger law recurring on the inference axis. Perfect-information board games (transition rules, rarity r) and imperfect-information games (inference info-sets, depth T) are the same statement on two faces of the CWM contract.
 
