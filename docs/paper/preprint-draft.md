@@ -333,15 +333,15 @@ This splits "translation, not inference" cleanly into a provable core and an emp
 - **(a) Provable, universal.** When the rule is absent from the sample (probability $(1-r)^N$), it cannot be inferred by *any* learner — not a limitation of LLMs but of the data (Proposition 3). The gap-exhibiting seeds in §3.3 are this event, not an LLM failure. This is a theorem.
 - **(b) Empirical, LLM-specific.** Even when the rule *is* present in the sample (probability $1-(1-r)^N$), the LLM synthesizer does not reliably encode it: the §5.1 repair battery (proper DAgger, targeted on-manifold examples) supplies discriminating transitions and the rule is still omitted. This is the genuinely LLM-specific, scoped finding — established under the GPT-5.x family (mini, large) across the §5 regimes. Its universal-for-all-models form remains a conjecture.
 
-  We measure (b) directly on the synthesis pipeline (`scripts/danger_synthesis_sweep.py`, GPT-5.4-mini): synthesizing from the incomplete rules and $N$ true-game trajectories, with refinement drawing **fresh** trajectories each iteration, the fraction of seeds whose CWM is rule-blind is essentially $1$ regardless of $N$, far above the identifiability floor $(1-r)^N$:
+  We measure (b) directly on the synthesis pipeline (`scripts/danger_synthesis_sweep.py`): synthesizing from the incomplete rules and $N$ true-game trajectories, with refinement drawing **fresh** trajectories each iteration, the fraction of seeds whose CWM is rule-blind is essentially $1$ regardless of $N$ for both model sizes, far above the identifiability floor $(1-r)^N$:
 
-  | $N$ (games) | rule-blind seeds | floor $(1-r)^N$ |
-  |-------------|------------------|-----------------|
-  | 40  | 6/6 = 1.00 | 0.363 |
-  | 120 | 6/6 = 1.00 | 0.048 |
-  | 200 | 6/6 = 1.00 | 0.006 |
+  | $N$ (games) | mini rule-blind | large rule-blind | floor $(1-r)^N$ |
+  |-------------|-----------------|------------------|-----------------|
+  | 40  | 6/6 = 1.00 | 6/6 = 1.00 | 0.363 |
+  | 120 | 6/6 = 1.00 | 6/6 = 1.00 | 0.048 |
+  | 200 | 6/6 = 1.00 | 6/6 = 1.00 | 0.006 |
 
-  At $N=200$ the rule is present with probability $\approx 99.4\%$ (gate accuracy reaches $0.999$ — the rule is heavily sampled and the model attempts to fix it over six refinement iterations) yet the CWM remains rule-blind in every seed. The gap between the measured $\approx 1.0$ and the floor $(1-r)^N$ is exactly the LLM residual: the floor is what *any* learner suffers; the LLM fails well above it. (This corrects a prior pipeline detail — refinement previously re-used a fixed trajectory set; with fresh resampling, the rule had every opportunity to appear and still was not learned.)
+  The gap between the measured $\approx 1.0$ and the floor $(1-r)^N$ is exactly the LLM residual: the floor is what *any* learner suffers; the LLM fails well above it. The **large** model is the sharper case — its gate accuracy across the $N=120$/$200$ seeds is mostly $0.00$–$0.13$, so the rule is *heavily present* in the sample (the rule-blind CWM mismatches those transitions, hence the gate cannot reach $1.0$), yet after six refinement iterations the CWM is still rule-blind in every seed: the model sees the rule en masse and does not encode it. (mini occasionally reached gate $1.0$ — the rule happening to be absent, i.e. the identifiability event; large's low gate accuracy excludes that explanation and isolates the genuine learning failure.) This also corrects a prior pipeline detail — refinement previously re-used a fixed trajectory set; with fresh resampling the rule had every opportunity to appear and still was not learned.
 
 So "translation, not inference" should be read as the conjunction: **(a)** an omitted rule is unidentifiable from a sample that misses it (provable, universal, exactly the danger-law gate-miss event), and **(b)** even a sample that *contains* it does not reliably teach the LLM (empirical, tested on GPT-5.x mini/large across the §5 regimes). Stating (a) as a theorem strengthens the claim: the part of the failure that looks like an LLM weakness is in fact information-theoretic and binds every possible learner; only the residual (b) is a model-specific finding, and we are explicit that its universal form is conjectural.
 

@@ -8,24 +8,35 @@ INCOMPLETE army5x5a rules + N true-game (army5x5a+material) trajectories, with t
 reuse bug is corrected). Rule-blindness tested MCTS-free: does the CWM's `returns`
 give the material winner on cap+unequal-material states (truth) or a draw (rule-blind)?
 
-| N (games) | rule-blind seeds | identifiability floor (1−r)^N | n_samples (distinct, with resampling) |
-|-----------|------------------|-------------------------------|----------------------------------------|
-| 40  | **6/6 = 1.000** | 0.363 | 1.2k–9.0k |
-| 120 | **6/6 = 1.000** | 0.048 | 11.7k–28.2k |
-| 200 | **6/6 = 1.000** | 0.006 | 44k–46.6k |
+| N (games) | mini rule-blind | large rule-blind | identifiability floor (1−r)^N |
+|-----------|-----------------|------------------|-------------------------------|
+| 40  | **6/6 = 1.000** | **6/6 = 1.000** | 0.363 |
+| 120 | **6/6 = 1.000** | **6/6 = 1.000** | 0.048 |
+| 200 | **6/6 = 1.000** | **6/6 = 1.000** | 0.006 |
 
-At N=200 the rule is present in the sample with probability 1−(1−r)^200 ≈ 99.4%
-(gate accuracy reaches 0.999 — the rule is heavily present and the model tries to
-fix it across 6 refinement iterations) yet the CWM is rule-blind in 6/6 seeds. The
-rule-blind rate is ≈1.0 across N, **far above** the identifiability floor (1−r)^N.
-This is the (a)+(b) split measured on the actual synthesis pipeline: (a) the floor
-(1−r)^N is the rate at which the rule is unidentifiable (any learner); (b) the LLM
-is rule-blind well above the floor — it does not infer the rule from trajectories
-even when present at large N with resampling. (GPT-5.4-mini; §5's large-model repair
-results — gate 0.959, rule unlearned — corroborate.) This *earns* a strong empirical
-form of translation-not-inference rather than asserting it. Fixed-refiner note: the
-n_samples column confirms refinement now draws fresh trajectories (N×iters distinct),
-so the rule had every opportunity to appear; it still was not learned.
+The rule-blind rate is ≈1.0 across N for BOTH model sizes, **far above** the
+identifiability floor (1−r)^N. This is the (a)+(b) split measured on the actual
+synthesis pipeline: (a) the floor (1−r)^N is the rate at which the rule is
+unidentifiable (any learner); (b) the LLM is rule-blind well above the floor — it
+does not infer the rule from trajectories even when present at large N with
+resampling.
+
+**large is the sharper case:** its gate accuracy is mostly LOW (0.00–0.13 across
+N=120/200 seeds) — i.e. the rule IS heavily present in the sample (the rule-blind
+CWM mismatches those transitions, so the gate cannot reach 1.0) — yet after six
+refinement iterations the CWM is still rule-blind in every seed. The model sees the
+rule en masse and still does not encode it. (mini sometimes reached gate 1.0 = the
+rule happened to be absent — the identifiability event; large's low gate accuracy
+rules that out, isolating the genuine learning failure.) **nano** (confounded:
+gate accuracy is low everywhere because nano cannot synthesize army5x5a at all,
+§3.2) is also rule-blind 6/6 at N=40; its rule-blindness reflects gate-attainability,
+not the inference question.
+
+This *earns* a strong empirical form of translation-not-inference (mini AND large,
+fresh-resampling refiner, up to N=200) rather than asserting it. Fixed-refiner note:
+the distinct-sample count (n_samples 1.2k–46.6k with resampling) confirms refinement
+now draws fresh trajectories, so the rule had every opportunity to appear; it still
+was not learned.
 
 ## Revision-2 hardening: coverage constants, identifiability, play_cost mechanism (2026-06-28)
 
