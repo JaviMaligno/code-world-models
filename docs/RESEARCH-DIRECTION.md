@@ -464,3 +464,29 @@ from a sample that misses it (provable, universal, = the danger-law event), and
 **(b)** even a sample that contains it does not reliably teach the LLM (empirical,
 tested on GPT-5.x mini/large across the §5 regimes). The universal-for-all-models
 form of (b) remains a conjecture; (a) is a theorem.
+
+---
+
+## Notes for a future "writing this paper with AI" article (not part of the paper)
+
+Process/career angles to develop in a separate blog post (kept here so they aren't lost):
+
+- **Credibility / not-incapacity:** the author had a published preprint *before* using
+  AI — a pure-math thesis result (a proved theorem). So the speed here is amplification
+  of an already-capable researcher, not a substitute for capability.
+- **Effort/time gap, honestly:** the math preprint took **>2 years** with institutional
+  backing (university / funded project); this one ~**2 weeks**, largely **independent**
+  (no university or funding). But DO NOT attribute the whole gap to AI — untangle the
+  confounders:
+  - **Scope: pure math vs empirical AI/ML.** Proving a theorem is intrinsically slower
+    and harder than an empirical ML preprint; different kind of work.
+  - **Length.** The math paper is ~2× this one or longer (verify exact figures when
+    writing) — more to write accounts for some of the time.
+  - **Process overhead** of institutional publishing vs solo preprinting.
+  Net: even normalized, the jump is large, but honesty requires separating "AI made me
+  faster" from "this is a shorter, more empirical, solo project."
+- **Career-transition thread:** the pure-math → applied/ML shift is itself the
+  narrative spine (mathematician → AI/ML practitioner).
+- See also the agent-memory note `project_blog_article_ideas` for the meta-process
+  (AI-assisted reading of the source paper, agent-run experiments, multi-AI adversarial
+  review, separating provable-vs-measured).
