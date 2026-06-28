@@ -1,5 +1,21 @@
 # Experiments Log
 
+## Headline play-cost with Wilson CIs (n=360) — peer-review hardening (2026-06-28)
+
+`scripts/play_cost_ci.py` / `scripts/play_cost_blind3.py` (Azure-free, 600 sims,
+3 seeds × 120 = 360 games/arm, true game = army5x5a + material-at-cap):
+
+| Arena | W/D/L | win rate | Wilson 95% |
+|-------|-------|----------|------------|
+| truth-vs-truth (fair baseline) | 109/137/114 | 0.493 | [0.442, 0.545] |
+| rule-blind vs truth (play cost) | 99/73/188 | 0.376 | [0.328, 0.427] |
+
+**Separated:** fair lower bound 0.442 > rule-blind upper bound 0.427. play_cost =
+0.117 (consistent with the prior 0.117–0.121). These CI'd values at n=360 supersede
+the earlier point estimates 0.504/0.383 (n=240, no CIs) as the headline; rule-blind
+is rock-steady (per-seed 0.383/0.383/0.362). Addresses reviewer point #7 (visible
+statistics) and the budget-matched, instrumented basis of the causal claim (#2).
+
 ## Imperfect information — Claim B: the belief model is invisible to a transition gate (2026-06-27)
 
 `scripts/mtt_claimB_probe.py` (Azure GPT-5.4 large). Masked tic-tac-toe = standard
@@ -77,7 +93,7 @@ N=2000, play_cost=0.5):
 | 10 | 9.5e-7 | 0.998 | 0.499 |
 
 At T=4 the rule is frequent enough that the gate catches it (danger≈0); by T≥8 the
-gate is blind and harm saturates at play_cost/2 — the exact `(1−ε)^N` threshold, now
+gate is blind and harm saturates at play_cost (≈0.5; danger T=10 = 0.499) — the exact `(1−ε)^N` threshold, now
 instantiated on the inference half of the contract. Same gate-miss mechanism, two
 faces (transition rule ↔ inference info-set).
 
