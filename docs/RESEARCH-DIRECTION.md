@@ -377,3 +377,46 @@ data contains). The demonstration and the synthesis-robustness finding are empir
 Claim B complements Claim A (Beacon): a wrong belief both loses at play (A, with a
 proven reach bound) and is invisible to a transition gate (B, by the orthogonality
 proposition).
+
+---
+
+## Hypothesis-verification audit (2026-06-28)
+
+Each formal statement carries hypotheses; this records that they hold at every
+use-site (prompted by a reviewer concern that statements outran results).
+
+**Proposition 1 (danger gate-miss, `(1−r)^N`).** Hypothesis: N *distinct,
+independent* i.i.d. uniform-random play-throughs, each rule-deciding with prob r
+(Bernoulli). Use-sites:
+- army5x5a material-at-cap: the training/gate trajectories are independent random
+  games. **Correction found & applied:** `refine_cwm(...)` REUSES the same
+  trajectory set across iterations (verified in `src/cwm/refiner.py`), and
+  `run_gap.py` uses `gate_states = [t.state for t in traj]` — the gate IS the
+  training set. So N = train_games (≈40), NOT train+refinement+validation. The
+  paper's "What N counts" was corrected accordingly. ✓
+- Beacon inference axis: N=2000 independent gate games, each reaching the final
+  round w.p. (1/2)^{2T}. ✓
+
+**Theorem 1 (coverage bound) + Lemmas 1–2.** Hypotheses: finite extensive-form
+game with PERFECT RECALL; uniform-random ρ with full support; b = max over player
+info-sets of |A(I)|. Use-sites:
+- Kuhn: perfect recall ✓ (own card + full betting history); b=2. ✓
+- Leduc: perfect recall ✓ (own card + community + betting history); b=3, d_max≈8. ✓
+- Beacon (design corollary): perfect recall ✓ — each player always knows its own
+  type and the public board (step counts, last moves, guesses), so its own action
+  history is recoverable; b=2. ✓
+- Full support: uniform-random over legal actions has full support on every finite
+  game. ✓
+- Equilibrium-robustness remark relies only on full support of ρ → holds wherever ρ
+  is uniform-random. ✓
+
+**Proposition 2 (belief–transition orthogonality).** Hypothesis: the verification
+dataset is *full-ground-state* transition tuples. Use-site:
+- masked tic-tac-toe (Claim B): the transition gate calls `apply_action`/`returns`
+  on full ground states (`contract_accuracy` in `refiner.py` operates on full
+  states), so the dataset is full-ground-state and the partition is unconstrained
+  by it. ✓
+
+**One real defect found and fixed:** the N-definition (Prop 1) overstated the
+sample count by including refinement and a validation gate that our pipeline does
+not draw independently. All other hypotheses hold at their use-sites.
