@@ -420,3 +420,47 @@ dataset is *full-ground-state* transition tuples. Use-site:
 **One real defect found and fixed:** the N-definition (Prop 1) overstated the
 sample count by including refinement and a validation gate that our pipeline does
 not draw independently. All other hypotheses hold at their use-sites.
+
+---
+
+## Sample-identifiability of an omitted rule (strengthening "translation, not inference")
+
+The reviewer asked whether "translation, not inference" can be *earned* rather than
+softened. It can — by splitting it into a provable core and an empirical residual.
+
+**Setup.** A rule R is omitted from the specification (incomplete rules / no-rules
+regime), so the only possible source for it is the trajectory sample. Let the true
+game's R fire on a set of play-throughs of probability r under the verification
+(uniform-random) distribution D. Write M_R for the world model WITH R and M_∅ for
+the otherwise-identical model WITHOUT R; they agree on every transition except those
+in the rule region. The pipeline draws N i.i.d. play-throughs from D (the training
+sample, which is also the gate — see the N-audit above).
+
+**Proposition (sample-identifiability).** Condition on the event ¬E that no sampled
+play-through hits the rule region; `P(¬E) = (1−r)^N`. On ¬E, M_R and M_∅ produce
+identical outputs on every sampled transition, so the sample is *observationally
+equivalent* under the two models. Hence any selection procedure that is a function
+of the sample alone — LLM synthesis, gradient learning, program search, exhaustive
+enumeration — assigns M_R and M_∅ the same score and cannot prefer the correct one.
+The omitted rule is therefore **information-theoretically unidentifiable** from the
+sample, and a sample-passing M_∅ is admissible (the gate cannot reject it). ∎
+
+**Corollary (identifiability = the danger-law gate-miss).** The probability that the
+omitted rule is unidentifiable from the N samples is exactly `(1−r)^N` — the same
+factor as the danger law. The danger law is thus an identifiability statement:
+`danger = play_cost × P(rule unidentifiable from the N samples)`.
+
+**This splits the claim cleanly:**
+- **(a) Provable, universal:** when the rule is absent from the sample (prob
+  `(1−r)^N`), it cannot be inferred by ANY learner — not a limitation of LLMs but of
+  the data. The gap-exhibiting seeds in §3.3 are this event, not an LLM failure.
+- **(b) Empirical, LLM-specific:** even when the rule IS present in the sample (prob
+  `1−(1−r)^N`), the LLM synthesizer does not reliably encode it — the §5 repair
+  battery supplies discriminating examples (proper DAgger, targeted on-manifold) and
+  the rule is still omitted. This is the genuinely LLM-specific, scoped finding.
+
+So "translation, not inference" becomes: **(a)** an omitted rule is unidentifiable
+from a sample that misses it (provable, universal, = the danger-law event), and
+**(b)** even a sample that contains it does not reliably teach the LLM (empirical,
+tested on GPT-5.x mini/large across the §5 regimes). The universal-for-all-models
+form of (b) remains a conjecture; (a) is a theorem.

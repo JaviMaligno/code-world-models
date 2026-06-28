@@ -1,5 +1,34 @@
 # Experiments Log
 
+## Revision-2 hardening: coverage constants, identifiability, play_cost mechanism (2026-06-28)
+
+**Coverage bound, exact constants** (`scripts/coverage_bound_constants.py`, exact
+enumeration of reachable info-sets + reach probabilities under uniform-random play):
+- Kuhn: |𝓘|=12, π_min=0.0833, N_suff(tight)=66; at N=80 exact union coverage-failure
+  = 0.0028 → **provably covered**.
+- Leduc: |𝓘|=576, π_min=3.5e-4; the worst-case-depth bound needs N≈7.4M, the tight
+  (π_min) bound N≈27k, and at N=8000 the union failure over ALL 576 reachable
+  info-sets = 2.22 → the theorem does **not** certify full coverage at 8000.
+- Leduc, competent-relevant subset (`scripts/coverage_competent_leduc.py`): the 146
+  info-sets competent determinized-MCTS visits have π_min=6.9e-4; at N=8000 the exact
+  union coverage-failure over this subset = **0.027 < 0.05 → PROVABLY COVERED**.
+  Since Claim A concerns only competent-relevant info-sets, the Leduc null is provable
+  for the relevant subset (the full-reachable-set bound stays loose). Turns
+  "empirically covered" into "provably covered (competent-relevant subset)".
+
+**Material-at-cap rarity, two measured rates** (3000 random games, cap=100):
+cap reached (both generals alive) = 5.2%; **material-terminal rarity** (the rule
+decides the game; used by the danger law) = **2.5%**. (Corrects the earlier loose
+"~1%" figure — the law's r=0.025 is the material-terminal rate.)
+
+**play_cost mechanism** (`scripts/play_cost_reach.py`, MCTS 300 sims, 40 games):
+P(reach cap) competent vs random by cap — 30: 0.200/0.375; 60: 0.200/0.200;
+100: 0.225/0.075. Competent reach-cap is roughly CONSTANT in the cap knob (~0.21)
+while random reach-cap VARIES strongly. This is a (small-sample) mechanistic
+correlate of the danger law's cheap/expensive split: play_cost (competent reach,
+~constant) vs rarity (random reach, knob-dependent). play_cost stays an empirical
+regularity, now with a measured mechanism.
+
 ## Headline play-cost with Wilson CIs (n=360) — peer-review hardening (2026-06-28)
 
 `scripts/play_cost_ci.py` / `scripts/play_cost_blind3.py` (Azure-free, 600 sims,
