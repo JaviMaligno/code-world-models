@@ -1,0 +1,84 @@
+# arXiv submission guide — "When a Verified World Model Still Loses"
+
+Status: **content frozen** (3 review rounds + polish). LaTeX compiles clean
+(28 pp, 0 errors, 0 undefined cites/refs, 0 bibtex warnings). This file documents
+everything done and everything YOU still need to do to put it on arXiv.
+
+## 1. What is ready (done)
+
+- `main.tex` — the paper (article class; amsthm, booktabs, natbib/plainnat,
+  hyperref, geometry, amssymb, graphicx, xcolor — all standard TeXLive).
+- `references.bib` — 17 entries, **all citations verified** (see §4).
+- `main.bbl` — pre-generated bibliography (see `arxiv-submission/`).
+- `main.pdf` — reference build (28 pp).
+
+## 2. The submission bundle (upload this to arXiv)
+
+`docs/paper/arxiv-submission/` contains the three files arXiv needs:
+- `main.tex`
+- `main.bbl`  ← pre-generated so arXiv does NOT need to run bibtex
+- `references.bib`  (included for completeness; arXiv uses the .bbl)
+
+A ready tarball is at `docs/paper/arxiv-submission.tar.gz`. Upload either the
+tarball or the three files directly.
+
+To regenerate the bundle after any edit:
+```bash
+cd docs/paper
+pdflatex -interaction=nonstopmode main.tex && bibtex main && \
+  pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex
+mkdir -p arxiv-submission && cp main.tex references.bib main.bbl arxiv-submission/
+tar -czf arxiv-submission.tar.gz -C arxiv-submission main.tex references.bib main.bbl
+rm -f main.aux main.log main.out main.blg main.toc main.bbl
+```
+
+## 3. Steps YOU must do on arXiv (cannot be automated)
+
+1. **Endorsement.** First-time submitters to cs.LG / cs.AI / cs.GT need an
+   endorser. If your earlier math-thesis preprint was on arXiv under the same
+   account, you are likely already able to submit to math.* but may still need a
+   one-time endorsement for the cs.* archive. Check arxiv.org → your account →
+   "endorsement" before starting.
+2. **Categories.** Primary: **cs.LG**. Cross-list: **cs.AI**, **cs.GT**.
+3. **License.** Choose one at submission (CC BY 4.0 recommended for a preprint;
+   arXiv's default non-exclusive license is the conservative alternative).
+4. **Metadata.** Title = the paper title; authors = "Javier Aguilar Martín"
+   (AGILabs); abstract = paste the plain-text abstract (strip markdown/LaTeX).
+5. **Upload** the bundle (§2), let arXiv compile, and check the produced PDF
+   matches `main.pdf` (page count, tables, bibliography rendered).
+6. After it gets an arXiv ID, **cite it in the blog** and update any "to appear"
+   placeholders.
+
+## 4. Citation verification status (done 2026-06-28)
+
+Verified against primary sources (arXiv / publisher / DBLP):
+- Lehrach et al. 2025 (arXiv:2510.04542) — **author list corrected** (was wrong:
+  "Zhiwei Li"→Zun Li, "Ahmed Iscen"→Atil Iscen, "Murray Chiam"→Marcus Chiam).
+- gg-bench (arXiv:2505.07215) — **fixed**: real title "Measuring General
+  Intelligence with Generated Games", authors Verma, Huang, Chen, Klein, Tomlin
+  (was a placeholder title with no authors).
+- Lambert et al. 2020; Kreps & Wilson 1982; von Stengel 1996; Cowling et al. 2012;
+  Long et al. 2010; Zinkevich et al. 2007; Janner et al. 2019; Liang et al. 2023;
+  Gao et al. 2023 — verified (authors/year/venue; pages added where available).
+- Hafner et al. 2020, Ross et al. 2011, Frank & Basin 1998, Claessen & Hughes 2000,
+  Rubinstein & Kroese, Whitehouse et al. 2011 — standard references, entries match
+  canonical metadata.
+
+## 5. Recommended BEFORE you submit (arXiv is permanent)
+
+- **A human read-through.** Every "review" in this project was AI-simulated; one
+  careful human pass (you or a colleague) is the single most valuable remaining
+  step and the only review type not yet done.
+- **Make the code repo public** (currently PRIVATE: github.com/JaviMaligno/
+  code-world-models). The paper's reproducibility appendix references it; either
+  make it public before the blog/arXiv link goes live, or remove the references.
+- Optional: skim the PDF for any residual typo / cross-ref.
+
+## 6. Honest residual limitations (already disclosed in §8)
+
+- LLM results are one model family (GPT-5.x: mini, large; nano confounded).
+- The imperfect-information positive gaps (Beacon, masked tic-tac-toe) are
+  hand-instrumented witnesses, not synthesized CWMs (stated in abstract, §6, §9).
+- play_cost-constancy is an empirical regularity (small-sample mechanism in §4).
+- Leduc coverage is provable on the *sampled* competent subset, Kuhn fully.
+These are disclosed; no fix needed — they are the honest scope.

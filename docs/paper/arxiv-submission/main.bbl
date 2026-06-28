@@ -1,0 +1,129 @@
+\begin{thebibliography}{17}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Claessen and Hughes(2000)]{claessen2000quickcheck}
+Koen Claessen and John Hughes.
+\newblock {QuickCheck}: A lightweight tool for random testing of {Haskell}
+  programs.
+\newblock In \emph{Proceedings of the Fifth {ACM} {SIGPLAN} International
+  Conference on Functional Programming (ICFP)}, pages 268--279, 2000.
+
+\bibitem[Cowling et~al.(2012)Cowling, Powley, and
+  Whitehouse]{cowling2012ismcts}
+Peter~I. Cowling, Edward~J. Powley, and Daniel Whitehouse.
+\newblock Information set {Monte} {Carlo} tree search.
+\newblock \emph{{IEEE} Transactions on Computational Intelligence and {AI} in
+  Games}, 4\penalty0 (2):\penalty0 120--143, 2012.
+
+\bibitem[Frank and Basin(1998)]{frank1998incomplete}
+Ian Frank and David Basin.
+\newblock Search in games with incomplete information: A case study using
+  {Bridge} card play.
+\newblock \emph{Artificial Intelligence}, 100\penalty0 (1--2):\penalty0
+  87--123, 1998.
+
+\bibitem[Gao et~al.(2023)Gao, Madaan, Zhou, Alon, Liu, Yang, Callan, and
+  Neubig]{gao2023pal}
+Luyu Gao, Aman Madaan, Shuyan Zhou, Uri Alon, Pengfei Liu, Yiming Yang, Jamie
+  Callan, and Graham Neubig.
+\newblock {PAL}: Program-aided language models.
+\newblock In \emph{Proceedings of the 40th International Conference on Machine
+  Learning (ICML)}, Proceedings of Machine Learning Research, pages
+  10764--10799, 2023.
+
+\bibitem[Hafner et~al.(2020)Hafner, Lillicrap, Ba, and
+  Norouzi]{hafner2020dreamer}
+Danijar Hafner, Timothy Lillicrap, Jimmy Ba, and Mohammad Norouzi.
+\newblock Dream to control: Learning behaviors by latent imagination.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2020.
+
+\bibitem[Janner et~al.(2019)Janner, Fu, Zhang, and Levine]{janner2019mbpo}
+Michael Janner, Justin Fu, Marvin Zhang, and Sergey Levine.
+\newblock When to trust your model: Model-based policy optimization.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2019.
+
+\bibitem[Kreps and Wilson(1982)]{kreps1982sequential}
+David~M. Kreps and Robert Wilson.
+\newblock Sequential equilibria.
+\newblock \emph{Econometrica}, 50\penalty0 (4):\penalty0 863--894, 1982.
+
+\bibitem[Lambert et~al.(2020)Lambert, Amos, Yadan, and
+  Calandra]{lambert2020objective}
+Nathan~O. Lambert, Brandon Amos, Omry Yadan, and Roberto Calandra.
+\newblock Objective mismatch in model-based reinforcement learning.
+\newblock In \emph{Proceedings of the 2nd Conference on Learning for Dynamics
+  and Control (L4DC)}, volume 120 of \emph{Proceedings of Machine Learning
+  Research}, pages 761--770, 2020.
+\newblock arXiv:2002.04523.
+
+\bibitem[Lehrach et~al.(2025)Lehrach, Hennes, Lazaro-Gredilla, Lou, Wendelken,
+  Li, Dedieu, Grau-Moya, Lanctot, Iscen, Schultz, Chiam, Gemp, Zielinski,
+  Singh, and Murphy]{lehrach2025cwm}
+Wolfgang Lehrach, Daniel Hennes, Miguel Lazaro-Gredilla, Xinghua Lou, Carter
+  Wendelken, Zun Li, Antoine Dedieu, Jordi Grau-Moya, Marc Lanctot, Atil Iscen,
+  John Schultz, Marcus Chiam, Ian Gemp, Piotr Zielinski, Satinder Singh, and
+  Kevin~P. Murphy.
+\newblock {Code World Models} for general game playing, 2025.
+
+\bibitem[Liang et~al.(2023)Liang, Huang, Xia, Xu, Hausman, Ichter, Florence,
+  and Zeng]{liang2023codeaspolicies}
+Jacky Liang, Wenlong Huang, Fei Xia, Peng Xu, Karol Hausman, Brian Ichter, Pete
+  Florence, and Andy Zeng.
+\newblock Code as policies: Language model programs for embodied control.
+\newblock In \emph{{IEEE} International Conference on Robotics and Automation
+  (ICRA)}, pages 9493--9500, 2023.
+
+\bibitem[Long et~al.(2010)Long, Sturtevant, Buro, and Furtak]{long2010pimc}
+Jeffrey~Richard Long, Nathan~R. Sturtevant, Michael Buro, and Timothy Furtak.
+\newblock Understanding the success of perfect information {Monte} {Carlo}
+  sampling in game tree search.
+\newblock In \emph{Proceedings of the {AAAI} Conference on Artificial
+  Intelligence}, pages 134--140, 2010.
+
+\bibitem[Ross et~al.(2011)Ross, Gordon, and Bagnell]{ross2011dagger}
+St{\'e}phane Ross, Geoffrey~J. Gordon, and J.~Andrew Bagnell.
+\newblock A reduction of imitation learning and structured prediction to
+  no-regret online learning.
+\newblock In \emph{Proceedings of the 14th International Conference on
+  Artificial Intelligence and Statistics (AISTATS)}, volume~15 of
+  \emph{Proceedings of Machine Learning Research}, pages 627--635, 2011.
+
+\bibitem[Rubinstein and Kroese(2017)]{rubinstein2017montecarlo}
+Reuven~Y. Rubinstein and Dirk~P. Kroese.
+\newblock \emph{Simulation and the {Monte} {Carlo} Method}.
+\newblock Wiley, 3rd edition, 2017.
+
+\bibitem[Verma et~al.(2025)Verma, Huang, Chen, Klein, and Tomlin]{ggbench2025}
+Vivek Verma, David Huang, William Chen, Dan Klein, and Nicholas Tomlin.
+\newblock Measuring general intelligence with generated games, 2025.
+\newblock The \texttt{gg-bench} benchmark; repository
+  \texttt{vivek3141/gg-bench}.
+
+\bibitem[von Stengel(1996)]{vonstengel1996sequenceform}
+Bernhard von Stengel.
+\newblock Efficient computation of behavior strategies.
+\newblock \emph{Games and Economic Behavior}, 14\penalty0 (2):\penalty0
+  220--246, 1996.
+
+\bibitem[Whitehouse et~al.(2011)Whitehouse, Powley, and
+  Cowling]{whitehouse2011determinization}
+Daniel Whitehouse, Edward~J. Powley, and Peter~I. Cowling.
+\newblock Determinization and information set {Monte} {Carlo} tree search for
+  the card game {Dou} {Di} {Zhu}.
+\newblock In \emph{{IEEE} Conference on Computational Intelligence and Games
+  (CIG)}, 2011.
+
+\bibitem[Zinkevich et~al.(2007)Zinkevich, Johanson, Bowling, and
+  Piccione]{zinkevich2007cfr}
+Martin Zinkevich, Michael Johanson, Michael Bowling, and Carmelo Piccione.
+\newblock Regret minimization in games with incomplete information.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2007.
+
+\end{thebibliography}
