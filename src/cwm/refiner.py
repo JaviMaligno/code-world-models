@@ -10,6 +10,7 @@ class RefineResult:
     accuracy: float
     iterations: int
     usages: list
+    n_samples: int = 0   # total DISTINCT trajectories seen (synth + any resamples)
 
 def contract_accuracy(code: str, trajectories: list, timeout: float = 5.0):
     if not trajectories:
@@ -82,8 +83,21 @@ def contract_accuracy(code: str, trajectories: list, timeout: float = 5.0):
             correct += 1
     return correct / len(trajectories), failures
 
-def refine_cwm(provider, model, contract, code, trajectories, max_iters=5):
+def refine_cwm(provider, model, contract, code, trajectories, max_iters=5,
+               resample_fn=None):
+    """Refine `code` until it matches the contract on the trajectories.
+
+    By default the SAME `trajectories` are re-checked each iteration (the original
+    behavior). If `resample_fn` is given, it is called as `resample_fn(iteration)`
+    to draw a FRESH, independent trajectory set before each accuracy check — a
+    genuine validation loop in which refinement sees new random play-throughs, so
+    the total number of distinct samples (and the chance a rare rule is observed)
+    grows with the iteration count rather than overfitting one fixed set.
+    `n_samples` reports the total distinct trajectories seen across synthesis +
+    refinement.
+    """
     usages = []
+    n_samples = len(trajectories)
     acc, failures = contract_accuracy(code, trajectories)
     iterations = 0
     while acc < 1.0 and iterations < max_iters:
@@ -98,5 +112,9 @@ def refine_cwm(provider, model, contract, code, trajectories, max_iters=5):
         usages.append(completion.usage)
         code = extract_code(completion.text)
         iterations += 1
+        if resample_fn is not None:
+            trajectories = resample_fn(iterations)
+            n_samples += len(trajectories)
         acc, failures = contract_accuracy(code, trajectories)
-    return RefineResult(code=code, accuracy=acc, iterations=iterations, usages=usages)
+    return RefineResult(code=code, accuracy=acc, iterations=iterations,
+                        usages=usages, n_samples=n_samples)
