@@ -7,3 +7,11 @@ venv/
 *.egg-info/
 results/
 .superpowers/
+
+# LaTeX build artifacts
+docs/paper/*.aux
+docs/paper/*.log
+docs/paper/*.out
+docs/paper/*.bbl
+docs/paper/*.blg
+docs/paper/*.toc
