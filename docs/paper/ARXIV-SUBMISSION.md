@@ -82,3 +82,45 @@ Verified against primary sources (arXiv / publisher / DBLP):
 - play_cost-constancy is an empirical regularity (small-sample mechanism in §4).
 - Leduc coverage is provable on the *sampled* competent subset, Kuhn fully.
 These are disclosed; no fix needed — they are the honest scope.
+
+## 7. Endorsement — who to ask, and what to do if you can't get one
+
+**How it works.** To submit to a cs archive (cs.LG / cs.AI / cs.GT) for the first
+time you need an *endorser*: an existing arXiv author who is registered in that
+archive and has met arXiv's recent-submission threshold for it. When you start the
+submission, arXiv shows you an **endorsement code**; you send that code to a
+qualified person, who endorses (or declines). Notes:
+- Endorsement is **per-archive**. A math.* endorser (e.g. from your thesis) does
+  **not** count for cs.* — you need someone active in cs.
+- It's **one-time**: after your first accepted cs submission you're auto-endorsed
+  for related cs categories.
+- Submitting from a recognized academic-institution email can auto-qualify you;
+  AGILabs / company email will **not**, so plan on a human endorser.
+
+**Who can endorse (wildcards to line up):**
+1. **Your academic network**, *if* they publish in cs.* — thesis advisor or
+   co-authors who also do ML/CS, or who can introduce you to someone who does.
+   (A pure-math contact can't endorse cs, but can refer.)
+2. **ML researchers in your professional network** — current/former colleagues,
+   anyone you know who posts to arXiv cs.LG/cs.AI.
+3. **Authors of work you cite and genuinely engage with** — a short, specific,
+   non-spammy email ("I build on your X, here's a preprint, would you endorse?")
+   can work; warm intros are far higher yield. Keep it to one or two targeted asks.
+4. **Community channels** (ML Discords/Slacks, some have endorsement-help threads) —
+   use sparingly.
+
+**If you can't get an endorser — citable alternatives (no gatekeeping):**
+1. **Zenodo (recommended fallback).** CERN-backed, no endorsement, mints a permanent
+   **DOI immediately**, fully citable, and can auto-archive a GitHub release. This is
+   the strongest no-gatekeeping option: you get a real DOI for the blog to cite
+   today, and you can still post to arXiv later and cross-reference.
+2. **OSF Preprints** — free, DOI, no endorsement.
+3. **TechRxiv (IEEE)** or **SSRN** — preprint servers; TechRxiv suits CS/EE.
+4. **Own site / ResearchGate + a Zenodo DOI** — host the PDF, mint the DOI via Zenodo.
+5. **An arXiv-endorsed co-author** — if someone contributes meaningfully, co-authorship
+   resolves endorsement and strengthens the paper (changes authorship; only if real).
+
+**Recommendation:** try arXiv with an endorser first (best visibility in ML). If
+that stalls, publish on **Zenodo** to get a citable DOI immediately — the blog can
+cite that DOI now, and arXiv can follow once endorsed. You lose nothing by doing
+Zenodo first.
