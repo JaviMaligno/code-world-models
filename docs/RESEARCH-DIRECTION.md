@@ -210,21 +210,32 @@ instance of a provable statement about when an inference gate sampled on random
 play is **identifying**. Stating it as a bound (proof, not experiment) also yields
 the design spec for a game on which Claim A *can* be positive.
 
-**Setup.** A finite two-player extensive-form game with chance (the deal) and
-imperfect information. `b` = maximum branching over player decision nodes;
-`d(I)` = number of player-action edges on a shortest history reaching information
-set `I`; `d_max = max_I d(I)`; `p_chance` = minimum probability of a deal
-consistent with any reachable info-set; `𝓘` = set of reachable info-sets. The
-uniform-random policy `ρ` plays every legal action with probability `1/|A| ≥ 1/b`.
+**Setup.** A finite two-player extensive-form game **with perfect recall**, chance
+(the deal) and imperfect information. `b` = maximum, over **player** information
+sets `I`, of `|A(I)|` (the number of actions available at `I`); chance is handled
+separately through `p_chance`. `d(I)` = number of player-action edges on a shortest
+history reaching information set `I`; `d_max = max_I d(I)`; `p_chance` = minimum
+probability of a deal consistent with any reachable info-set; `𝓘` = set of
+reachable info-sets. The uniform-random policy `ρ` plays every legal action with
+probability `1/|A(I)| ≥ 1/b`, and so assigns positive probability to every legal
+action (full support).
 
-**Lemma 1 (inclusion).** For any policy profile `σ`, `reach(σ) ⊆ reach(ρ)`.
-*Proof.* Every player edge has `ρ`-probability `≥ 1/b > 0` and chance edges are
-shared, so any history with `π^σ(h) > 0` has `π^ρ(h) > 0`. ∎
+**Lemma 1 (full-support inclusion).** Because `ρ` assigns positive probability to
+every legal action, `supp(π^σ) ⊆ supp(π^ρ)` for every profile `σ`; equivalently,
+`reach(σ) ⊆ reach(ρ)`.
+*Proof.* This is the standard fact that a fully-mixed strategy reaches every node
+reachable under any profile. Reach of an info-set is taken under the actual
+interactive profile (planner + opponent + chance); since chance edges are shared
+and `ρ` dominates each player's per-edge contribution (`ρ`-probability `≥ 1/b > 0`
+on every player edge), any history `h` with `π^σ(h) > 0` has `π^ρ(h) > 0`. ∎
 
 **Lemma 2 (reach lower bound under ρ).** Every reachable `I` has
 `π^ρ(I) ≥ p_chance · b^{-d(I)} ≥ p_chance · b^{-d_max}`.
-*Proof.* Take one history `h ∈ I`; `π^ρ(h) = π_chance(h)·∏_{edges} 1/|A| ≥
-p_chance · b^{-d(h)}`, and `π^ρ(I) ≥ π^ρ(h)`. ∎
+*Proof.* Take one history `h ∈ I`. Along `h` each player edge at info-set `I_t`
+has `ρ`-probability `1/|A(I_t)| ≥ 1/b`, so the **realization probability** of `I`
+(in the sense of von Stengel 1996's sequence form) satisfies
+`π^ρ(h) = π_chance(h)·∏_t 1/|A(I_t)| ≥ p_chance · b^{-d(h)}`, and
+`π^ρ(I) ≥ π^ρ(h)`. ∎
 
 **Theorem (the gate is identifying when N ≳ b^{d_max}).** Draw `N` i.i.d. games
 under `ρ`. The probability that some reachable info-set is never visited is
@@ -235,6 +246,15 @@ planner) relies on. An inference function whose error is confined to reachable
 info-sets is then detected w.h.p., so **no gate-passing inference function can be
 play-inadequate through a coverage gap.** ∎
 
+**Remark (equilibrium-robustness).** The sufficiency direction (coverage ⇒
+identifying) does not depend on the reference distribution being MCTS reach.
+Because `ρ` has full support, `reach(σ*) ⊆ reach(ρ)` for the Nash / best-response
+profile `σ*` exactly as for any other profile (Lemma 1). The bound therefore
+certifies coverage of every info-set that *equilibrium* play relies on, not merely
+those the deployed planner visits — a strength rather than a caveat. Substituting
+equilibrium reach for MCTS reach would change which info-sets are deemed relevant
+(and hence the numbers) but not the sufficiency argument.
+
 **Corollary (Kuhn, Leduc).** Kuhn: `b=2, d_max≈2` → covered at any `N`. Leduc:
 `b=3, d_max≈8` → `b^{d_max}≈6561`, so `N≈8000` already covers everything —
 matching the measured `0/1259` competent-only inference-relevant info-sets.
@@ -244,9 +264,13 @@ matching the measured `0/1259` competent-only inference-relevant info-sets.
 hidden information making inference non-trivial, and a competent policy that
 concentrates reach on a deep region of `ρ`-measure `≪ 1/N`. Then the gate
 (`ρ`-sampled) provably misses that region while the competent planner relies on
-it: a wrong inference confined there passes the gate yet loses at play. This is the
-exact analogue of the perfect-info rare-rule gap, which exploited **game depth**
-(competent play reaches the ply cap; short random games never do).
+it: a wrong inference confined there passes the gate yet loses at play. In
+game-theoretic terms, the gap lives on info-sets reached with negligible
+probability under the **sampling policy** but on-path under **optimal play** —
+off-equilibrium-path-style info-sets that the verification distribution does not
+discipline. This is the exact analogue of the perfect-info rare-rule gap, which
+exploited **game depth** (competent play reaches the ply cap; short random games
+never do).
 
 **Note on epistemic status of the paper's claims.** Existence claims (the
 verified-vs-correct gap exists; translation-not-inference) are properly empirical —
@@ -301,6 +325,17 @@ a competent planner that reaches the region. Perfect-info board games supply the
 depth (army5x5a); shallow betting games (Kuhn, Leduc) do not, which is why their
 inference gate is provably identifying.
 
+**Note (reference distribution: random-reach vs equilibrium-reach).** The
+normatively correct reference distribution for play-adequacy is equilibrium /
+best-response reach, not MCTS reach. Two consequences, kept distinct: (i) the
+coverage bound is *equilibrium-robust* — by full support, `reach(σ*) ⊆ reach(ρ)`
+for the best-response profile `σ*`, so the sufficiency direction holds against
+equilibrium reach (a strength). (ii) The gap and danger results are stated w.r.t.
+the **deployed planner's** reach, so the hedge "on the distribution the planner
+actually visits" is retained throughout and is not upgraded to a distribution-free
+claim. Substituting equilibrium reach would shift the *numbers* (rarity-under-eq,
+play_cost-under-eq) but not the *mechanism*.
+
 ---
 
 ## Belief–transition orthogonality (Claim B) — proposition + result
@@ -309,13 +344,20 @@ A second failure surface in imperfect-information CWMs is the **belief model**
 (`observation`, `infer_states`). It is not gateable by transition data at all.
 
 **Proposition (belief–transition orthogonality).** A transition dataset is a set of
-tuples `(s, a, s', r)` over *full* ground-truth states. `observation(s,p)` and
-`infer_states(o,p)` encode the information partition — what player `p` can
-distinguish — which appears in no `(s,a,s',r)` tuple. Therefore (i) no transition
-dataset constrains the masking convention; (ii) a transition-accuracy gate cannot
-detect an incorrect `observation`/`infer_states`; (iii) the belief model must be
-specified and is verifiable only by a separate inference gate. ∎ (This is what
-motivates the inference gate.)
+tuples `(s, a, s', u)` over *full* ground-truth states (`u` = the reward/utility on
+the transition). `observation(s,p)` and `infer_states(o,p)` encode the information
+partition — the fibers of the observation map, i.e. what player `p` can
+distinguish. The information partition is a **free primitive** of the extensive-form
+game, logically independent of the transition kernel `P(s'|s,a)` and the reward
+`u`: it is the exact analogue of "two POMDPs with identical latent dynamics and
+rewards but different observation functions are different control problems." This
+partition appears in no `(s,a,s',u)` tuple. Therefore (i) no **full-ground-state**
+transition dataset constrains the masking convention; (ii) a transition-accuracy
+gate cannot detect an incorrect `observation`/`infer_states`; (iii) the belief
+model must be specified and is verifiable only by a separate inference gate. ∎
+(This is what motivates the inference gate. Note a dataset of
+observation-to-observation tuples `(o, a, o')` *would* constrain the partition;
+ours is full-state by construction, so it does not.)
 
 **Demonstration (masked tic-tac-toe, GPT-5.4 large).** Standard tic-tac-toe dynamics
 (synthesize at transition gate 1.000 by recall) + an arbitrary, non-recallable
