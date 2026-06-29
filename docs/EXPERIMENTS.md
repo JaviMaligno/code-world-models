@@ -22,7 +22,7 @@ reachable relation. For tic-tac-toe (small enough to enumerate) we make the chec
 exhaustive → gate-pass ⇒ globally correct, proven. For army5x5a / gen_tictactoe 6×6
 the reachable space is too large to enumerate, so the null stays a statement about
 the evaluated distributions — consistent with army5x5a being the one game with a
-residual (gap 0.002). Result JSON: `results/exhaustive_tictactoe.json`.
+residual (gap 0.002). Result JSON: `results/exhaustive_tictactoe.json`. Tic-tac-toe is the only §3.2 game small enough: **Trike side-6 reachable space exceeds 3,000,000 states** (measured BFS, still growing at the cap), and army5x5a / gen_tictactoe 6×6 are far larger — so those stay sampled, not exhaustively proven.
 
 ## Synthesis-pipeline danger curve — translation-not-inference, earned (2026-06-28)
 
