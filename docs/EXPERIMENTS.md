@@ -1,5 +1,29 @@
 # Experiments Log
 
+## §3.2 null upgraded to a proof by exhaustion — tic-tac-toe (2026-06-29)
+
+`scripts/exhaustive_verify_tictactoe.py` (Azure GPT-5.4-mini). Synthesize a
+tic-tac-toe CWM, confirm it passes the random gate (accuracy 1.0, 0 refine iters),
+then verify it against the truth over the ENTIRE reachable state space by BFS:
+
+- reachable states: **5478**; transitions checked: **16167**
+- **search-relevant mismatches: 0** (legal_actions on non-terminal states,
+  apply_action on every (state, legal action), is_terminal, returns) →
+  **globally correct on reachable states, by exhaustion** (not "no observed divergence").
+- terminal-legal convention artifacts (excluded): **880** — the synthesized code
+  omits the `is_terminal` guard in `legal_actions`, so it returns moves on won-but-
+  not-full boards; a planner never queries `legal_actions` on a terminal state, so
+  this is behaviourally irrelevant (the paper's `legal_terminal_divergences`,
+  independently re-derived here by exhaustion).
+
+This is the transition-function analogue of the coverage bound (Theorem 1): the
+random gate certifies global correctness exactly when its check covers the full
+reachable relation. For tic-tac-toe (small enough to enumerate) we make the check
+exhaustive → gate-pass ⇒ globally correct, proven. For army5x5a / gen_tictactoe 6×6
+the reachable space is too large to enumerate, so the null stays a statement about
+the evaluated distributions — consistent with army5x5a being the one game with a
+residual (gap 0.002). Result JSON: `results/exhaustive_tictactoe.json`.
+
 ## Synthesis-pipeline danger curve — translation-not-inference, earned (2026-06-28)
 
 `scripts/danger_synthesis_sweep.py` (Azure GPT-5.4-mini). Synthesize a CWM from the

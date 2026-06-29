@@ -490,3 +490,19 @@ Process/career angles to develop in a separate blog post (kept here so they aren
 - See also the agent-memory note `project_blog_article_ideas` for the meta-process
   (AI-assisted reading of the source paper, agent-run experiments, multi-AI adversarial
   review, separating provable-vs-measured).
+
+---
+
+## Coverage applies to BOTH halves of the contract (transition + belief)
+
+The coverage bound (Theorem 1) was stated for the inference/belief function, but the
+same logic governs the transition function: a random gate certifies global
+correctness exactly when its check covers the full reachable (search-relevant)
+relation. We made this concrete on tic-tac-toe — the one game small enough to
+enumerate — via `scripts/exhaustive_verify_tictactoe.py`: a gate-passing synthesized
+CWM has 0 search-relevant mismatches over all 5478 reachable states / 16167
+transitions (excluding 880 legal_actions-on-terminal convention artifacts), i.e.
+*proven* globally correct by exhaustion, upgrading the §3.2 null from "no observed
+divergence" to a proof where the game is enumerable. For large games (army5x5a) the
+gate cannot cover the relation, so only sampled certification holds — and that is
+exactly where the residual gap (0.002) and the rare-rule instrument live.
