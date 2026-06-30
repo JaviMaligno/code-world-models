@@ -317,7 +317,7 @@ We measure `play_cost` precisely once (play_cost ≈ 0.13; the headline `play_co
 
 (Danger computed with a round constant play_cost = 0.12; the headline measurement is 0.131 and the threshold shape is insensitive to this choice.)
 
-The result is a threshold law, not an inverted-U. Danger is approximately zero while the rule is common enough for a size-N gate to catch it (cap ≤ 50), rises through a threshold as the rule becomes rare (cap 60–100), and plateaus at approximately the full play_cost once the rule almost always escapes the gate (cap ≥ 120). The gate size N shifts the threshold: larger N pushes it toward rarer rules.
+The result is a threshold law in rarity. Danger is approximately zero while the rule is common enough for a size-N gate to catch it (cap ≤ 50), rises through a threshold as the rule becomes rare (cap 60–100), and plateaus at approximately the full play_cost once the rule almost always escapes the gate (cap ≥ 120). The gate size N shifts the threshold: larger N pushes it toward rarer rules.
 
 ### 4.3 Why Connect Four lies safely below the threshold
 
