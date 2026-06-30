@@ -76,7 +76,7 @@ Our first experiments, across three game families and two knowledge regimes (rul
 
 The null result on small games points to the condition under which the gate can be fooled: a rule that random play almost never triggers but competent play reliably seeks out. We engineered a minimal instrument satisfying this condition (Section~\ref{sec:rare-rule}): a variant of the game army5x5a augmented with a \emph{material-at-cap} tiebreak rule whose material-terminal rarity under random play is 2.5\% (the rate at which the rule decides the game) yet which decides roughly 50\% of competent games.
 
-A CWM that omits this rule passes the gate at transition accuracy 1.0 and is $\geq 99\%$ state-accurate on the search distribution, yet loses approximately 2:1 in play (win rate 0.376 [0.338, 0.415] vs calibrated baseline 0.507 [0.467, 0.547], Wilson 95\% intervals, n=600). State accuracy is blind to the omission (dilution); play is not.
+A CWM that omits this rule passes the gate at transition accuracy 1.0 and is $\geq 99\%$ state-accurate on the search distribution, yet loses approximately 2:1 in play (win rate 0.376 [0.338, 0.415] vs fair baseline 0.507 [0.467, 0.547], Wilson 95\% intervals, n=600). State accuracy is blind to the omission (dilution); play is not.
 
 We then quantify when this can happen via a law that relates harm to gate size and rule rarity (Section~\ref{sec:danger-law}), and show that the gap cannot be repaired by providing more example transitions (Section~\ref{sec:repair}).
 
