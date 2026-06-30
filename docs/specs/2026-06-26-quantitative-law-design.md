@@ -21,6 +21,17 @@ the two trade off, so `danger` is an inverted-U in `rarity`, peaking at
 intermediate rarity. Whether a game *admits* a high-danger rule depends on its
 structure (deep tails reachable by competent but not random play).
 
+> **Update (run result): the inverted-U was refuted.** The trade-off above
+> assumes `play_cost` falls toward zero at extreme rarity (a rule so rare it is
+> inconsequential even under competent play). The run found the opposite:
+> `play_cost ≈ 0.12` is ~constant across the cap sweep, because competent play
+> always reaches the cap region even when random play almost never does. So
+> `danger` rises and **plateaus** — a *threshold law in rarity*, not an
+> inverted-U. (As a pure function of `rarity` with `play_cost` fixed, `danger`
+> is in fact monotone — see the test in Tests below; the inverted-U was only
+> ever a conjecture about the joint `(rarity, play_cost)` trajectory.) See
+> `docs/EXPERIMENTS.md` §"Quantitative law".
+
 The spike already showed the ordering this predicts: army5x5a deep-tail rules
 (rarity ~0–0.01, danger ~0.08–0.11) dominate every Connect Four rule
 (rarity 0.12–0.38, danger ≤0.003) despite CF rules having *higher* raw play_cost.
@@ -47,7 +58,8 @@ Statistics: `S` arena seeds per point; report blind_winrate mean and a binomial
 cap → games reach the cap more often → the rule fires more often → less rare;
 higher cap → rarer. Sweep `MAX_PLIES ∈ {30, 40, 50, 60, 80, 100, 140}` (×, and
 optionally lead threshold `k ∈ {1,2}`). This traces `rarity` from high→~0 and
-thus `danger` across the inverted-U. army5x5a is the high-divergence base that
+thus `danger` across the curve (predicted inverted-U; the run found a threshold
+— see the Update note above). army5x5a is the high-divergence base that
 admits the danger zone.
 
 **Contrast — Connect Four**, low divergence. Its consequential rules (topcenter,
@@ -92,7 +104,8 @@ validates that the CPU proxy stands in for the real LLM-synthesized model. Reuse
 1. truth-vs-truth fair baseline per game (confirm ≈0.5).
 2. army cap-sweep (7 points) + CF (3 points): rarity (R=400), arena
    (sims=400, n_games=80, seeds=3 → 240 pooled games/point), danger@N.
-3. Tabulate; the headline is the **danger-vs-rarity curve** (army inverted-U)
+3. Tabulate; the headline is the **danger-vs-rarity curve** (army threshold;
+   predicted inverted-U, refuted — see the Update note above)
    with CF points far below the peak.
 4. LLM confirmation at 2–3 points.
 5. Write results to `docs/EXPERIMENTS.md`.

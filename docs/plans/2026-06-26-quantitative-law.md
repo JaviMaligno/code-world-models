@@ -330,7 +330,7 @@ git commit -m "feat(law): rarity, arena win rate, danger metric with Wilson CIs"
 
 ```python
 """Run the quantitative-law sweep: army5x5a cap-length rarity knob (the
-inverted-U danger curve) + Connect Four low-divergence contrast. CPU only.
+threshold danger curve) + Connect Four low-divergence contrast. CPU only.
 
 Run: PYTHONPATH=src python scripts/law_sweep.py
 """
@@ -506,9 +506,12 @@ git commit -m "feat(law): sweep driver — army cap-length curve + Connect Four 
 ## Post-implementation (manual)
 
 1. Full sweep: `PYTHONPATH=src python scripts/law_sweep.py` (CPU; minutes). Read
-   `results/law_sweep.json`. Expect the army `danger` column to trace an
-   inverted-U over the cap sweep (peaking at intermediate rarity) and every CF row
-   to have `danger ≈ 0` at N≥40 despite high `play_cost`.
+   `results/law_sweep.json`. [Pre-registration hypothesis, REFUTED by the run:
+   we predicted the army `danger` column would trace an inverted-U over the cap
+   sweep, peaking at intermediate rarity. The run found play_cost ≈ constant, so
+   danger rises and plateaus — a **threshold law in rarity**, not an inverted-U.
+   See `docs/EXPERIMENTS.md`.] Every CF row has `danger ≈ 0` at N≥40 despite high
+   `play_cost`, as expected.
 2. Confirm the fair baseline (`fair_winrate`) is ≈0.5 for every row; if a row is
    far off, raise `SIMS`/`N_GAMES`.
 3. LLM confirmation (Azure): at 2–3 cap values, synthesize the CWM with INCOMPLETE
