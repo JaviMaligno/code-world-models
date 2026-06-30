@@ -1,5 +1,5 @@
 """Run the quantitative-law sweep: army5x5a cap-length rarity knob (the
-inverted-U danger curve) + Connect Four low-divergence contrast. CPU only.
+threshold danger curve) + Connect Four low-divergence contrast. CPU only.
 
 Run: PYTHONPATH=src python scripts/law_sweep.py
 """
