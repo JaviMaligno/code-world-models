@@ -231,8 +231,72 @@ def fig_play_cost_mechanism():
     save(fig, "play_cost_mechanism")
 
 
+# ---------------------------------------------------------------------------
+# Figure 5: conceptual schematic of the reach-distribution shift that underlies
+# every gap in the paper. The verification policy (uniform-random) puts its mass
+# on shallow/common histories; the deployment policy (competent planner) puts
+# its mass on deep/rare histories. The dangerous region is reached by the
+# planner but missed by the gate -- so the model is never disciplined there.
+# This is a diagram, not data; it visualizes the structural diagnosis stated
+# in the introduction and conclusion.
+# ---------------------------------------------------------------------------
+def fig_reach_schematic():
+    x = np.linspace(0, 10, 500)
+
+    # Verification reach rho (uniform-random): mass on shallow histories, decays.
+    rho = np.exp(-x / 1.6)
+    rho = rho / rho.max()
+
+    # Deployment reach Pi (competent planner): mass concentrated on a deep region.
+    Pi = np.exp(-((x - 7.6) ** 2) / (2 * 1.1 ** 2))
+    Pi = Pi / Pi.max()
+
+    fig, ax = plt.subplots(figsize=(7.4, 3.6))
+
+    ax.fill_between(x, 0, rho, color=C_BLUE, alpha=0.30, lw=0)
+    ax.plot(x, rho, color=C_BLUE, lw=2.0,
+            label=r"verification reach $\rho$ (uniform-random gate)")
+    ax.fill_between(x, 0, Pi, color=C_RED, alpha=0.30, lw=0)
+    ax.plot(x, Pi, color=C_RED, lw=2.0,
+            label=r"deployment reach $\Pi$ (competent planner)")
+
+    # danger band: where Pi is high but rho is ~0
+    band_lo, band_hi = 6.4, 8.8
+    ax.axvspan(band_lo, band_hi, color=C_GREEN, alpha=0.10)
+    ax.annotate(
+        "rare-but-pivotal region\n(omitted rule / wrong belief)\n"
+        r"$\Pi$ reaches it, $\rho$ misses it"
+        "\n$\\Rightarrow$ gate is blind here",
+        xy=(7.6, 0.45),
+        xytext=(3.4, 0.80),
+        fontsize=8.5,
+        ha="center",
+        color="#1a1a1a",
+        arrowprops=dict(arrowstyle="->", color=C_GREEN, lw=1.4),
+    )
+
+    ax.annotate("gate samples\n" r"$\propto \rho$", xy=(1.0, 0.50),
+                fontsize=8.5, color=C_BLUE, ha="center")
+    ax.annotate("planner plays\n" r"$\propto \Pi$", xy=(9.1, 0.55),
+                fontsize=8.5, color=C_RED, ha="center")
+
+    ax.set_xticks([0.4, 9.6])
+    ax.set_xticklabels(["shallow / common\nhistories", "deep / rare\nhistories"])
+    ax.set_yticks([])
+    ax.set_ylim(0, 1.05)
+    ax.set_xlim(0, 10)
+    ax.set_xlabel("game histories, ordered by depth (how far competent play drives the game)")
+    ax.set_ylabel("reach density")
+    ax.set_title("The structural diagnosis: a reach-distribution shift between gate and planner")
+    ax.grid(False)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 0.02),
+              framealpha=0.95, fontsize=8.5)
+    save(fig, "reach_divergence")
+
+
 if __name__ == "__main__":
     fig_danger_law()
     fig_headline_play()
     fig_play_cost_mechanism()
+    fig_reach_schematic()
     print("done ->", OUT)
