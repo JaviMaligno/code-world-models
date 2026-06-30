@@ -36,7 +36,7 @@
 \begin{abstract}
 Large language models (LLMs) can synthesize the rules of a game as executable code --- a \emph{Code World Model} (CWM) --- which a classical planner then searches over. The synthesized model is typically accepted when it reaches high \emph{transition accuracy} on sampled trajectories. We argue that this acceptance criterion is the wrong notion of adequacy for planning.
 
-Our perfect-information results are on LLM-synthesized CWMs; our imperfect-information results pair an LLM-synthesis pipeline validation (Kuhn poker) with hand-instrumented witnesses that isolate the belief-function failure. We find four things. (1) A CWM can pass a sampling gate at 100\% transition accuracy and be $\geq 99\%$ state-accurate on the distribution the planner actually visits, yet lose systematically at play --- because the less than 1\% it gets wrong is exactly the pivotal dynamics. We call this the \emph{verified-vs-correct gap}. (2) The expected harm follows a quantitative law, $\mathrm{danger} = \mathrm{play\_cost} \times (1 - \mathrm{rarity})^N$, where $\mathrm{rarity}$ is the probability a random play-through triggers the omitted rule and $N$ is the gate size. The $(1 - \mathrm{rarity})^N$ gate-miss factor is \emph{proven exact} (i.i.d.\ Bernoulli); $\mathrm{play\_cost}$ is measured empirically. This law predicts when sampling verification is blind: harm is negligible while the rule is common enough for the gate to catch it, rises through a threshold as the rule becomes rare, and saturates at the full $\mathrm{play\_cost}$ once it almost always escapes. (3) The failure is not repaired by more data. LLM CWM synthesis behaves as \emph{rule translation} rather than \emph{rule inference}: it correctly encodes rules it was given and, across the regimes we tested, did not infer the omitted rule --- under the GPT-5.x family (mini and large) and across the Section~\ref{sec:repair} data regimes (rules-given, no-rules, naive DAgger, proper DAgger, targeted on-manifold examples), independent of the quantity of on-manifold example transitions. (4) The same mechanism recurs on the \emph{inference} function of imperfect-information CWMs. We prove a coverage bound --- a size-$N$ random gate is identifying for the inference function when $N \gtrsim b^{\dmax}$ --- which explains why shallow games (Kuhn poker, Leduc poker) show no inference gap. We then hand-construct a minimal witness, Beacon (not a synthesized CWM), that escapes this bound: a verified-but-wrong \texttt{infer\_states} function passes the inference gate (0/8156 mismatches) yet loses every game (0.000 vs fair baseline 0.500), with the danger law recurring on this new axis.
+Our perfect-information existence results are on LLM-synthesized CWMs; the precise causal magnitude is isolated with a budget-matched, hand-instrumented agent that is play-equivalent to the incomplete synthesized CWM, with the synthesized runs corroborating the direction. Our imperfect-information results pair an LLM-synthesis pipeline validation (Kuhn poker) with hand-instrumented witnesses that isolate the belief-function failure. We find four things. (1) An LLM-synthesized CWM can pass a sampling gate at 100\% transition accuracy and be $\geq 99\%$ state-accurate on the distribution the planner actually visits, yet lose systematically at play --- because the less than 1\% it gets wrong is exactly the pivotal dynamics; the play cost of the omitted rule, isolated with the play-equivalent instrument, is $0.131$ (95\% CIs separated; seed-clustered 95\% CI $[0.086, 0.175]$, $n=600$). We call this the \emph{verified-vs-correct gap}. (2) The harm from \emph{sampling-gate blindness} follows a quantitative law, $\mathrm{danger} = \mathrm{play\_cost} \times (1 - \mathrm{rarity})^N$, where $\mathrm{rarity}$ is the probability a random play-through triggers the omitted rule and $N$ is the gate size. This law isolates one channel --- the gate failing to \emph{observe} a rule; it does not model the distinct, empirical synthesis-residual channel in which the rule is present in the sample yet the LLM still fails to encode it (finding (3)). The $(1 - \mathrm{rarity})^N$ gate-miss factor is \emph{proven exact} (i.i.d.\ Bernoulli); $\mathrm{play\_cost}$ is measured empirically. This law predicts when sampling verification is blind: harm is negligible while the rule is common enough for the gate to catch it, rises through a threshold as the rule becomes rare, and saturates at the full $\mathrm{play\_cost}$ once it almost always escapes. (3) The failure is not repaired by more data. LLM CWM synthesis behaves as \emph{rule translation} rather than \emph{rule inference}: it correctly encodes rules it was given and, across the regimes we tested, did not infer the omitted rule --- under the GPT-5.x family (mini and large) and across the Section~\ref{sec:repair} data regimes (rules-given, no-rules, naive DAgger, proper DAgger, targeted on-manifold examples), independent of the quantity of on-manifold example transitions. (4) The same mechanism recurs on the \emph{inference} function of imperfect-information CWMs. We prove a coverage bound --- a size-$N$ random gate is identifying for the inference function (under a detectability hypothesis) when $N \gtrsim b^{\dmax}$ --- which explains why shallow games show no inference gap: Kuhn poker is provably covered at the deployed gate, and for Leduc poker the bound certifies the competent-relevant info-set subset we sampled (not all reachable info-sets, which the deployed gate is too small to guarantee). We then hand-construct a minimal witness, Beacon (not a synthesized CWM), that escapes this bound: a verified-but-wrong \texttt{infer\_states} function passes the inference gate (0/8156 mismatches) yet loses every game (0.000 vs fair baseline 0.500), with the danger law recurring on this new axis.
 
 Taken together, these results suggest that adequacy for LLM-synthesized world models used in planning should be measured on the search distribution or by play directly, not by prediction accuracy on sampled transitions, and that completing the specification is more effective than attempting repair by example.
 \end{abstract}
@@ -65,7 +65,7 @@ Our first experiments, across three game families and two knowledge regimes (rul
 
 The null result on small games points to the condition under which the gate can be fooled: a rule that random play almost never triggers but competent play reliably seeks out. We engineered a minimal instrument satisfying this condition (Section~\ref{sec:rare-rule}): a variant of the game army5x5a augmented with a \emph{material-at-cap} tiebreak rule whose material-terminal rarity under random play is 2.5\% (the rate at which the rule decides the game) yet which decides roughly 50\% of competent games.
 
-A CWM that omits this rule passes the gate at transition accuracy 1.0 and is $\geq 99\%$ state-accurate on the search distribution, yet loses approximately 2:1 in play (win rate 0.376 [0.328, 0.427] vs calibrated baseline 0.493 [0.442, 0.545], Wilson 95\% intervals, n=360). State accuracy is blind to the omission (dilution); play is not.
+A CWM that omits this rule passes the gate at transition accuracy 1.0 and is $\geq 99\%$ state-accurate on the search distribution, yet loses approximately 2:1 in play (win rate 0.376 [0.338, 0.415] vs calibrated baseline 0.507 [0.467, 0.547], Wilson 95\% intervals, n=600). State accuracy is blind to the omission (dilution); play is not.
 
 We then quantify when this can happen via a law that relates harm to gate size and rule rarity (Section~\ref{sec:danger-law}), and show that the gap cannot be repaired by providing more example transitions (Section~\ref{sec:repair}).
 
@@ -78,7 +78,7 @@ The same mechanism appears on the \emph{inference} half of an imperfect-informat
 This paper makes six contributions:
 
 \begin{enumerate}
-\item \textbf{The verified-vs-correct gap (Section~\ref{sec:rare-rule}):} A gate-passing, $\geq 99\%$-state-accurate CWM that loses ${\sim}2{:}1$ in play (win rate 0.376 [0.328, 0.427] vs fair baseline 0.493 [0.442, 0.545], Wilson 95\% intervals that do not overlap, n=360). The gap arises from a rare-but-pivotal rule omitted from the specification and invisible to random-trajectory sampling. We also document the honest null --- small fully-specified games show no gap --- which clarifies the boundary conditions.
+\item \textbf{The verified-vs-correct gap (Section~\ref{sec:rare-rule}):} A gate-passing, $\geq 99\%$-state-accurate CWM that loses ${\sim}2{:}1$ in play (win rate 0.376 [0.338, 0.415] vs fair baseline 0.507 [0.467, 0.547], Wilson 95\% intervals that do not overlap, n=600). The gap arises from a rare-but-pivotal rule omitted from the specification and invisible to random-trajectory sampling. We also document the honest null --- small fully-specified games show no gap --- which clarifies the boundary conditions.
 
 \item \textbf{A quantitative danger law (Section~\ref{sec:danger-law}):} $\mathrm{danger} = \mathrm{play\_cost} \times (1 - \mathrm{rarity})^N$. The $(1 - \mathrm{rarity})^N$ gate-miss factor is proven exact under i.i.d.\ Bernoulli sampling (Proposition~\ref{prop:gatemiss}); $\mathrm{play\_cost}$ is empirical. The law predicts a threshold below which verification is safe and above which harm saturates at the full play cost.
 
@@ -150,6 +150,37 @@ We distinguish two families of metrics throughout the paper:
 \end{itemize}
 
 Fairness baselines are established by running truth-vs-truth arenas (ground-truth+MCTS against itself), which should produce win rates near 0.5 for balanced games. Deviations from 0.5 in the fairness baseline indicate start-order imbalance or search-budget asymmetry; we report them alongside each play result.
+
+\subsection{Experimental configuration}
+\label{sec:config}
+
+Table~\ref{tab:config} collects the fixed components of the pipeline so the experiments are reproducible from the paper alone; per-experiment quantities (simulation budget, gate size $N$, game) are stated in each section, and the full harness is in \texttt{docs/EXPERIMENTS.md} and the cited scripts.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+Component & Setting \\
+\midrule
+Synthesizer LLM & Azure OpenAI \texttt{gpt-5.4} / \texttt{-mini} / \texttt{-nano}, snapshot \texttt{gpt-5.4-2026-03-05} \\
+Synthesis prompt & \texttt{RULES\_TEXT} + a set of random-policy trajectories; asks for a full contract module \\
+Gate sampler & uniform-random policy (\texttt{rng.choice(legal\_actions)}), seeded per run \\
+Gate criterion & transition accuracy $=1.0$ on the sampled (state, action, next-state) tuples \\
+Refinement & re-uses the same sample each iteration (fresh batch only in Section~\ref{sec:repair}); budget $\leq 5$ iters \\
+Held-out gate & none separate --- the training trajectories \emph{are} the gate (Section~\ref{sec:danger-law}) \\
+Planner (perfect info) & UCT-MCTS, exploration constant $c = 1.41 \approx \sqrt{2}$, uniform-random rollout to terminal \\
+Planner (imperfect info) & determinized MCTS \citep{cowling2012ismcts,long2010pimc} with legal-fallback hardening \\
+Selection tie-break & first argmax of UCT; move chosen = most-visited child (first on ties) \\
+Simulation budget & 200--600 per move (stated per experiment) \\
+Arena & start side alternated every game ($i \bmod 2$); distinct RNG seeds per agent and arena \\
+State accuracy & agreement with ground truth on \emph{all} contract outputs at a state \\
+Terminal-legal convention & \texttt{legal\_actions} on terminal states excluded (planner never queries it) \\
+\bottomrule
+\end{tabular}
+\caption{Fixed experimental configuration. Per-experiment values (budget, gate $N$, game) are stated in context.}
+\label{tab:config}
+\end{table}
 
 \subsection{Games}
 \label{sec:games}
@@ -229,7 +260,7 @@ We report this as an honest null. In every regime the outcome is binary: either 
 
 For the one game small enough to enumerate, we can make this a \emph{proof} rather than an observation. On tic-tac-toe we synthesize a CWM, confirm it passes the random gate (accuracy 1.0), then check it against the truth over the \textbf{entire reachable state space} by breadth-first enumeration: 5478 reachable states, 16167 transitions. The result is \textbf{zero mismatches on the search-relevant relation} --- \texttt{legal\_actions} on non-terminal states, \texttt{apply\_action} on every (state, legal action), \texttt{is\_terminal}, and \texttt{returns} --- so the gate-passing CWM is \emph{globally correct on reachable states}, by exhaustion (\texttt{scripts/exhaustive\_verify\_tictactoe.py}). The enumeration also surfaces 880 \texttt{legal\_actions}-on-terminal-state divergences (the synthesized code omits the \texttt{is\_terminal} guard); a planner never queries \texttt{legal\_actions} on a terminal state, so these are a behaviourally-irrelevant convention artifact, excluded exactly as the gap measurement does. This is the transition-function analogue of the coverage bound (Section~\ref{sec:coverage-bound}): when the check covers the whole reachable relation, passing it certifies global correctness by exhaustion. For the larger games the reachable space is too large to enumerate cheaply --- Trike side-6 alone exceeds 3 million reachable states (measured), and army5x5a and generalized tic-tac-toe $6\times6$ are far larger --- so there the null is a statement about the evaluated distributions, not a proof; consistently, army5x5a (the largest) is the one game with a tiny residual (gap 0.002).
 
-The diagnosis: for small, fully-specified games, the random-trajectory sample is \emph{identifying} --- no compact wrong hypothesis fits 40 random trajectories yet diverges on the search distribution. The gate is not weak; it is identifying. This makes the gap harder, not easier, to construct: we need a game where random and competent play genuinely diverge.
+The diagnosis: for small, fully-specified games, the random-trajectory sample \emph{appears identifying on the evaluated distributions} --- no compact wrong hypothesis we observed fits 40 random trajectories yet diverges on the search distribution (proven by exhaustion for tic-tac-toe; an empirical statement on the evaluated distributions for the larger games above). The gate is not weak in these regimes; it is identifying. This makes the gap harder, not easier, to construct: we need a game where random and competent play genuinely diverge.
 
 The null is informative in a second way: it shows that the binding constraint on small games is \emph{gate-attainability}, not gap size. nano fails army5x5a outright (0/5 gate passes) because the action encoding (a \texttt{from*25+to} integer plus a ply counter) is representationally complex; mini handles it (4/5). The knowledge regime matters less than model scale and encoding complexity --- consistent with the translation hypothesis (Section~\ref{sec:repair}).
 
@@ -284,7 +315,7 @@ The divergence region (ply-cap states with unequal material) is less than 1\% of
 
 \paragraph{Play performance is the decision-relevant lens.} We report play in two clearly separated panels: a budget-matched, instrumented, CI'd headline (Panel A) and an LLM-synthesized corroboration (Panel B). We deliberately do not pool instrumented and synthesized evidence into one number.
 
-\paragraph{Panel A --- budget-matched, instrumented, CPU-only (the headline causal claim).} Identical budget across arms ($n = 360 = 3$ seeds $\times$ 120 games, 600 simulations), arena refereed by the true game (army5x5a + material-at-cap), measured via \texttt{scripts/play\_cost\_ci.py} / \texttt{scripts/play\_cost\_blind3.py}:
+\paragraph{Panel A --- budget-matched, instrumented, CPU-only (the headline causal claim).} Identical budget across arms ($n = 600 = 5$ seeds $\times$ 120 games, 600 simulations), arena refereed by the true game (army5x5a + material-at-cap), measured via \texttt{scripts/play\_cost\_ci.py} / \texttt{scripts/play\_cost\_blind3.py}:
 
 \begin{table}[ht]
 \centering
@@ -293,16 +324,18 @@ The divergence region (ply-cap states with unequal material) is less than 1\% of
 \toprule
 Arena (true game = army5x5a + material-at-cap) & win rate [Wilson 95\%] \\
 \midrule
-truth-vs-truth (fair baseline)        & \textbf{0.493} [0.442, 0.545] \\
-rule-blind vs truth (play cost)       & \textbf{0.376} [0.328, 0.427] \\
+truth-vs-truth (fair baseline)        & \textbf{0.507} [0.467, 0.547] \\
+rule-blind vs truth (play cost)       & \textbf{0.376} [0.338, 0.415] \\
 \bottomrule
 \end{tabular}
 \caption{Panel A: budget-matched, instrumented headline. The Wilson 95\% intervals do not overlap.}
 \end{table}
 
-play\_cost = 0.117. The Wilson 95\% intervals \textbf{do not overlap} (fair lower bound 0.442 $>$ rule-blind upper bound 0.427) --- separated. The rule-blind arm is rock-steady across seeds (per-seed 0.383 / 0.383 / 0.362). (These CI'd values at n=360 supersede the earlier point estimates 0.504/0.383 at n=240 without CIs; the slightly different values reflect the larger pooled sample. play\_cost $\approx 0.12$ is unchanged.)
+play\_cost = 0.131. The Wilson 95\% intervals \textbf{do not overlap} (fair lower bound 0.467 $>$ rule-blind upper bound 0.415) --- separated.
 
-The rule-blind agent is hand-written base army5x5a, which is \emph{play-equivalent} to the incomplete synthesized CWM: the two differ only at the rare cap+unequal-material states (measured gap\_cwm $\approx 0$, Section~\ref{sec:gap}), so base-vs-truth isolates the rule's play cost exactly, at any budget, without invoking the LLM. This is why the headline causal claim rests on an instrumented, budget-matched, CI'd comparison rather than on the synthesized runs.
+\paragraph{Seed-clustered inference (the seed, not the game, as the unit).} The Wilson intervals above pool games and so treat each game as independent. Because games within a seed share a synthesis/instrument draw and an RNG stream, we also report a more conservative analysis that takes the \emph{seed} as the independent unit. The per-seed win rates are rock-steady --- fair 0.479 / 0.529 / 0.471 / 0.529 / 0.525, rule-blind 0.383 / 0.383 / 0.362 / 0.417 / 0.333 --- and the paired-by-seed difference (which cancels start-side and budget effects, identical across arms) has mean $0.131$ with a Student-$t$ 95\% interval of $[0.086, 0.175]$ over the five seeds ($\mathrm{sd} = 0.039$, $\mathrm{df} = 4$), \textbf{excluding zero}. The clustered interval is wider than the pooled one, as expected with only five clusters, but the effect survives it. (At $n=360$, the earlier 3-seed subset gave fair 0.493 and rule-blind 0.376; adding two seeds leaves the rule-blind point unchanged and moves the baseline by $0.014$, well within the interval.)
+
+The rule-blind agent is hand-written base army5x5a. Two distinct equivalences are at work and we keep them separate. (i) Base-vs-truth isolates the \emph{rule's} play cost \emph{by construction}: both arms are exact hand-written games that differ only in the material-at-cap rule, so the contrast is exact at any budget without invoking the LLM. (ii) The bridge to the synthesized pipeline is \emph{empirical}, not proven: base is play-equivalent to the incomplete synthesized CWM only up to the measured gap\_cwm $\approx 0$ (a tiny residual --- gap\_max $0.016$ on one seed, Section~\ref{sec:gap}), not by a proof of functional equivalence outside the rare region. This is why the headline causal claim rests on an instrumented, budget-matched, CI'd comparison rather than on the synthesized runs, with the synthesized runs corroborating the direction (Panel B).
 
 \paragraph{Panel B --- LLM-synthesized corroboration (Azure, smaller per-seed budget, ranges only).} Reported as ranges, \emph{not} budget-matched, and clearly labeled as corroboration rather than the headline:
 
@@ -328,6 +361,8 @@ These synthesized runs use a smaller per-seed budget (120 games) and are reporte
 \label{sec:danger-law}
 
 We now characterize \emph{when} the harm from a sampling gate is large. The key observation is that a gate of $N$ random play-throughs fails to observe a rule that fires with probability $r$ per play-through with exact probability $(1 - r)^N$. We formalize this gate-miss probability and measure the remaining empirical component.
+
+It is worth stating up front exactly which channel of harm this law captures, since the paper documents three and only one is governed by the law. (a) The \emph{gate-miss} channel: the gate never observes the rule, with probability $(1-r)^N$ --- proven exact below. (b) The \emph{play-cost} channel: conditional on the rule being absent from the synthesized model, how much a competent opponent can exploit the omission --- measured empirically ($\mathrm{play\_cost}$). The danger law is the product of these two. (c) A distinct \emph{synthesis-residual} channel, which the law does \emph{not} model: even when the rule \emph{does} appear in the gate sample, the LLM may still fail to encode it (Section~\ref{sec:repair} shows this is the common case under repair-by-example). The law is therefore a lower bound on total harm under an idealized synthesizer that always encodes what it observes; the synthesis-residual channel is reported separately and empirically.
 
 \subsection{The gate-miss proposition}
 
@@ -371,7 +406,7 @@ The danger law factorizes cleanly into a \emph{verification-distribution} term a
 
 \subsection{Measured danger curve}
 
-We measure $\mathrm{play\_cost}$ precisely once ($\mathrm{play\_cost} \approx 0.12$, from independent runs: \texttt{play\_cost.py} returns 0.117--0.121 at cap=100, n=240, 600 sims; \texttt{law\_sweep} returns 0.112 at cap=30) and sweep $\mathrm{rarity}$ cheaply by varying the ply cap (a lower cap makes the cap-and-equal-material event more common, hence larger rarity; a higher cap makes it rarer). Rarity per cap is measured over 3000 random games. Results:
+We measure $\mathrm{play\_cost}$ precisely once ($\mathrm{play\_cost} \approx 0.13$; the headline \texttt{play\_cost\_ci.py} run returns 0.131 at cap=100, n=600, 600 sims, with independent runs corroborating: \texttt{play\_cost.py} returns 0.117--0.121 at cap=100, n=240, and \texttt{law\_sweep} returns 0.112 at cap=30) and sweep $\mathrm{rarity}$ cheaply by varying the ply cap (a lower cap makes the cap-and-equal-material event more common, hence larger rarity; a higher cap makes it rarer). Rarity per cap is measured over 3000 random games. Results:
 
 \begin{table}[ht]
 \centering
@@ -389,7 +424,7 @@ cap & rarity & $(1-r)^{40}$ & danger@$N$=20 & danger@$N$=40 & danger@$N$=80 \\
 140 & 0.007 & 0.7652 & 0.105 & 0.092 & 0.070 \\
 \bottomrule
 \end{tabular}
-\caption{Measured danger curve: a threshold law in rarity.}
+\caption{Measured danger curve: a threshold law in rarity. Computed with a round constant $\mathrm{play\_cost} = 0.12$ (the headline measurement is $0.131$); the threshold shape is insensitive to this choice.}
 \end{table}
 
 The result is a threshold law, not an inverted-U. Danger is approximately zero while the rule is common enough for a size-$N$ gate to catch it (cap $\leq 50$), rises through a threshold as the rule becomes rare (cap 60--100), and plateaus at approximately the full play\_cost once the rule almost always escapes the gate (cap $\geq 120$). The gate size $N$ shifts the threshold: larger $N$ pushes it toward rarer rules.
@@ -412,7 +447,7 @@ If the gap is caused by a missing rule, can it be repaired by providing example 
 
 \subsection{Repair experiments}
 
-All conditions use the mini synthesizer unless noted; play winrate is vs the true game, 40 games at 400 simulations; baseline 0.28, fair truth-vs-truth 0.50. Discriminating examples are transitions that involve the material-at-cap rule.
+All conditions use the mini synthesizer unless noted; play winrate is vs the true game, 40 arena games at 400 simulations (30 for the DAgger rows), one synthesis seed per condition; baseline 0.28, fair truth-vs-truth 0.50. Discriminating examples are transitions that involve the material-at-cap rule. ``Rule learned'' is judged by code inspection (does the synthesized module contain the material-at-cap branch?) cross-checked against play parity with the complete-rules control; it is a binary structural fact about the synthesized code, not a winrate threshold. With one seed and 40 games per condition, each individual winrate carries a wide interval (e.g.\ $0.28$ is Wilson 95\% $[0.16, 0.43]$); the load-bearing signal is therefore not any single cell but the \emph{consistent} no-learn outcome across every repair form together with the clean parity of the complete-rules control --- not a precise per-condition effect size.
 
 \begin{table}[ht]
 \centering
@@ -438,7 +473,7 @@ COMPLETE rules + targeted (control) & 120 & 1.000 (0 iters) & yes & 0.53 \\
 
 \paragraph{Detection works, repair does not.} Verifying on the play/search distribution rather than on random trajectories drops the gate below 1.0, detecting the inadequacy that random-trajectory verification missed. But neither mini nor large can \emph{infer} the missing rule from examples. Even 54 real, on-manifold discriminating transitions with 12 refinement iterations leave the gate at 0.959 and the rule unlearned.
 
-\paragraph{Spec completeness is decisive.} Given the rule in \texttt{RULES\_TEXT}, the model encodes it correctly in 0 refinement iterations and plays at parity with the baseline (0.53 $\approx$ 0.50). The complete-rules control leaves no doubt: the limitation is not the synthesizer's code-writing ability but the absence of the rule from the specification.
+\paragraph{Spec completeness, not code-writing ability, is what binds.} Given the rule in \texttt{RULES\_TEXT}, the model encodes it correctly in 0 refinement iterations and plays at parity with the baseline (0.53 $\approx$ 0.50). The complete-rules control isolates the cause: the limitation is not the synthesizer's code-writing ability but the absence of the rule from the specification.
 
 \paragraph{Scale helps marginally but not sufficiently.} The large model (0.42) exceeds mini (0.35) on real on-manifold data, but both remain far below the complete-rules baseline (0.53). The inference ceiling is not a mini-specific artifact.
 
@@ -551,11 +586,11 @@ Take any history $h \in I$. Along $h$ each player edge at info-set $I_t$ has $\r
 
 \begin{theorem}[the inference gate is identifying when $N \gtrsim b^{\dmax}$]
 \label{thm:coverage}
-Draw $N$ i.i.d.\ games under $\rho$. The probability that some reachable info-set is never visited is at most $|\Ireach| \cdot \exp(-N \cdot p_{\text{chance}} \cdot b^{-\dmax})$ (union bound over info-sets plus Lemma~\ref{lem:reachbound}). Hence for $N \gtrsim b^{\dmax} \cdot p_{\text{chance}}^{-1} \cdot \log |\Ireach|$, the random sample covers every reachable info-set with high probability --- and by Lemma~\ref{lem:fullsupport}, every info-set any policy (including a competent planner) relies on. An inference function whose error is confined to reachable info-sets is then detected with high probability, so no gate-passing inference function can be play-inadequate through a coverage gap.
+Assume \emph{detectability}: whenever the gate visits an info-set on which \texttt{infer\_states} errs, its comparison against ground truth at that info-set surfaces the error. Draw $N$ i.i.d.\ games under $\rho$. The probability that some reachable info-set is never visited is at most $|\Ireach| \cdot \exp(-N \cdot p_{\text{chance}} \cdot b^{-\dmax})$ (union bound over info-sets plus Lemma~\ref{lem:reachbound}). Hence for $N \gtrsim b^{\dmax} \cdot p_{\text{chance}}^{-1} \cdot \log |\Ireach|$, the random sample covers every reachable info-set with high probability --- and by Lemma~\ref{lem:fullsupport}, every info-set any policy (including a competent planner) relies on. An inference function whose error is confined to reachable info-sets is then detected with high probability under detectability, so no gate-passing inference function can be play-inadequate through a coverage gap.
 \end{theorem}
 
 \begin{proof}
-Immediate from the union bound over $\Ireach$ and the per-info-set reach lower bound of Lemma~\ref{lem:reachbound}; the coverage of equilibrium-relevant info-sets follows from Lemma~\ref{lem:fullsupport}.
+Immediate from the union bound over $\Ireach$ and the per-info-set reach lower bound of Lemma~\ref{lem:reachbound}; the coverage of equilibrium-relevant info-sets follows from Lemma~\ref{lem:fullsupport}. Detectability holds for our inference gate by construction: at every visited observation history it compares the synthesized consistent-state set against the ground-truth set elementwise, so any discrepancy at a visited info-set is recorded as a mismatch. It is not automatic for an arbitrary gate --- one that checked only a coarse summary of \texttt{infer\_states} could visit an erring info-set without surfacing the error --- which is why we state it as a hypothesis.
 \end{proof}
 
 \begin{remark}[equilibrium-robustness]
@@ -745,9 +780,9 @@ Finally, the failure has a direct analogue in model-based reinforcement learning
 
 \paragraph{The rare-rule instrument is engineered.} The material-at-cap rule was selected specifically because it falls in the rare-and-consequential quadrant. We do not claim that all or even most rules in arbitrary games will produce this kind of gap; the rarity$\leftrightarrow$consequence tension found across our six-rule probe set on Connect Four (Section~\ref{sec:rare-rule}) shows that the gap requires a specific structural condition. The point is that the gap \emph{can} exist and \emph{does} exist in a game where random and competent play diverge --- which is itself informative about when the sampling gate is unsafe.
 
-\paragraph{Pure-Python MCTS limits arena size.} Our MCTS implementation is a pure Python reference. This limits the number of simulations and arena games that are computationally tractable, which in turn limits the tightness of confidence intervals for some conditions. We mitigate this with the cheap/expensive separation in the danger law (Section~\ref{sec:danger-law}) --- rarity is swept cheaply, play\_cost is measured precisely once at scale --- and with Kuhn poker's small game size (tight CIs). The headline play result (rule-blind 0.376 [0.328, 0.427] vs fair baseline 0.493 [0.442, 0.545]) is reproducible across seeds, and the Wilson 95\% intervals do not overlap (n=360).
+\paragraph{Pure-Python MCTS limits arena size.} Our MCTS implementation is a pure Python reference. This limits the number of simulations and arena games that are computationally tractable, which in turn limits the tightness of confidence intervals for some conditions. We mitigate this with the cheap/expensive separation in the danger law (Section~\ref{sec:danger-law}) --- rarity is swept cheaply, play\_cost is measured precisely once at scale --- and with Kuhn poker's small game size (tight CIs). The headline play result (rule-blind 0.376 [0.338, 0.415] vs fair baseline 0.507 [0.467, 0.547]) is reproducible across seeds, the Wilson 95\% intervals do not overlap (n=600), and a seed-clustered paired interval ($[0.086, 0.175]$, the seed as the unit) excludes zero.
 
-\paragraph{Determinized MCTS is not game-theoretically optimal.} As noted in Section~\ref{sec:related}, determinized MCTS is subject to strategy fusion and non-locality and is not a Nash-equilibrium strategy. The baseline for the imperfect-information experiments is truth-vs-truth under the same determinized MCTS (not an equilibrium baseline), so the contrast is internally consistent but not a statement about how a game-theoretically optimal player would interact with the gap. Holding the planner $\Pi$ fixed across the two arms is deliberate: any pathology intrinsic to $\Pi$ is present in both arms, so the performance \emph{difference} is attributable to the CWM rather than to the planner. We are careful, though, not to overstate this as a theorem. The ``cancellation'' is really that the wrong CWM is weakly dominated \emph{in this specific instrument} --- by construction in Beacon (proven) and by measurement in army5x5a (0.493 vs 0.376) --- not a general guarantee that planner pathologies cancel for arbitrary CWM perturbations; a sufficiently suboptimal planner could in principle let two wrongs cancel. None of the existence claims depends on equilibrium play.
+\paragraph{Determinized MCTS is not game-theoretically optimal.} As noted in Section~\ref{sec:related}, determinized MCTS is subject to strategy fusion and non-locality and is not a Nash-equilibrium strategy. The baseline for the imperfect-information experiments is truth-vs-truth under the same determinized MCTS (not an equilibrium baseline), so the contrast is internally consistent but not a statement about how a game-theoretically optimal player would interact with the gap. Holding the planner $\Pi$ fixed across the two arms is deliberate: any pathology intrinsic to $\Pi$ is present in both arms, so the performance \emph{difference} is attributable to the CWM rather than to the planner. We are careful, though, not to overstate this as a theorem. The ``cancellation'' is really that the wrong CWM is weakly dominated \emph{in this specific instrument} --- by construction in Beacon (proven) and by measurement in army5x5a (0.507 vs 0.376) --- not a general guarantee that planner pathologies cancel for arbitrary CWM perturbations; a sufficiently suboptimal planner could in principle let two wrongs cancel. None of the existence claims depends on equilibrium play.
 
 \paragraph{Beacon is a minimal, strategically trivial witness.} Beacon was designed to satisfy the coverage-bound design corollary in the smallest possible game, not to model a realistic scenario. Its survival-walk structure is artificial. The experiment establishes existence and confirms the danger law on the inference axis; it does not demonstrate that natural imperfect-information games with the same structure produce an equally clean gap. Building such a game (e.g., a partially-observable variant of army5x5a) is a natural next step.
 
@@ -776,7 +811,7 @@ These results suggest two concrete practices. First, verify on the distribution 
 All experimental results and exact reproduction commands are in \texttt{docs/EXPERIMENTS.md}. All code is on the \texttt{main} branch (\texttt{cwm/} package, \texttt{scripts/}). Research narrative and formal theorem statements are in \texttt{docs/RESEARCH-DIRECTION.md}. Exact commands for the results introduced in this revision:
 
 \begin{verbatim}
-# Headline play-cost with Wilson CIs (Sec. 3.3, n=360)
+# Headline play-cost with Wilson CIs + seed-clustered interval (Sec. 3.3, n=600)
 PYTHONPATH=src python scripts/play_cost_ci.py
 # Coverage-bound exact constants - Kuhn & Leduc reachable info-sets (Sec. 6.2)
 PYTHONPATH=src python scripts/coverage_bound_constants.py

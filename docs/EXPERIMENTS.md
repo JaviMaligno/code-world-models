@@ -93,21 +93,28 @@ correlate of the danger law's cheap/expensive split: play_cost (competent reach,
 ~constant) vs rarity (random reach, knob-dependent). play_cost stays an empirical
 regularity, now with a measured mechanism.
 
-## Headline play-cost with Wilson CIs (n=360) — peer-review hardening (2026-06-28)
+## Headline play-cost with Wilson CIs + seed-clustered interval (n=600) — peer-review hardening (2026-06-30)
 
 `scripts/play_cost_ci.py` / `scripts/play_cost_blind3.py` (Azure-free, 600 sims,
-3 seeds × 120 = 360 games/arm, true game = army5x5a + material-at-cap):
+**5 seeds × 120 = 600 games/arm**, true game = army5x5a + material-at-cap). Writes
+`results/play_cost_ci.json`.
 
 | Arena | W/D/L | win rate | Wilson 95% |
 |-------|-------|----------|------------|
-| truth-vs-truth (fair baseline) | 109/137/114 | 0.493 | [0.442, 0.545] |
-| rule-blind vs truth (play cost) | 99/73/188 | 0.376 | [0.328, 0.427] |
+| truth-vs-truth (fair baseline) | 197/214/189 | 0.507 | [0.467, 0.547] |
+| rule-blind vs truth (play cost) | 169/113/318 | 0.376 | [0.338, 0.415] |
 
-**Separated:** fair lower bound 0.442 > rule-blind upper bound 0.427. play_cost =
-0.117 (consistent with the prior 0.117–0.121). These CI'd values at n=360 supersede
-the earlier point estimates 0.504/0.383 (n=240, no CIs) as the headline; rule-blind
-is rock-steady (per-seed 0.383/0.383/0.362). Addresses reviewer point #7 (visible
-statistics) and the budget-matched, instrumented basis of the causal claim (#2).
+**Pooled separation:** fair lower bound 0.467 > rule-blind upper bound 0.415.
+play_cost = 0.131 (consistent with the prior 0.117–0.121).
+
+**Seed-clustered (the seed, not the game, as the independent unit)** — addresses the
+per-game-independence objection (reviewer point #2). Per-seed win rates: fair
+0.479/0.529/0.471/0.529/0.525, rule-blind 0.383/0.383/0.362/0.417/0.333. The
+paired-by-seed difference (cancels start-side/budget, identical across arms) has
+mean 0.131, sd 0.039, and a Student-t 95% interval **[0.086, 0.175] (df=4) that
+excludes zero**. Wider than the pooled interval (only 5 clusters) but the effect
+survives. Upgrades the earlier n=360 (3-seed subset: fair 0.493, rule-blind 0.376)
+to n=600 with a cluster-robust interval; the rule-blind point is unchanged.
 
 ## Imperfect information — Claim B: the belief model is invisible to a transition gate (2026-06-27)
 
