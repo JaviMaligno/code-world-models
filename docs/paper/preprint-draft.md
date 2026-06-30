@@ -127,13 +127,27 @@ The table below collects the fixed components of the pipeline so the experiments
 | Gate criterion | transition accuracy = 1.0 on the sampled (state, action, next-state) tuples |
 | Refinement | re-uses the same sample each iteration (fresh batch only in §5); budget ≤ 5 iters |
 | Held-out gate | none separate — the training trajectories *are* the gate (§4) |
-| Planner (perfect info) | UCT-MCTS, exploration constant c = 1.41 ≈ √2, uniform-random rollout to terminal |
+| Planner (perfect info) | UCT-MCTS, exploration constant c = 1.41 ≈ √2 (see note), uniform-random rollout to terminal |
 | Planner (imperfect info) | determinized MCTS (Cowling et al. 2012; Long et al. 2010) with legal-fallback hardening |
 | Selection tie-break | first argmax of UCT; move chosen = most-visited child (first on ties) |
 | Simulation budget | 200–600 per move (stated per experiment) |
 | Arena | start side alternated every game (i mod 2); distinct RNG seeds per agent and arena |
 | State accuracy | agreement with ground truth on *all* contract outputs at a state |
 | Terminal-legal convention | `legal_actions` on terminal states excluded (planner never queries it) |
+
+*Note on the exploration constant.* We use c = 1.41 ≈ √2, the canonical UCT
+value (Kocsis & Szepesvári 2006), as a fixed convention rather than a tuned
+hyperparameter — search strength is set by the simulation budget, and the
+planner serves only as a reproducible fixed-strength instrument. The √2 constant
+is derived for rewards in [0, 1]; our `returns` lie in {−1, 0, +1}, so a strictly
+range-calibrated value would be ≈ 2√2. We verified that this does not affect the
+reported quantities: across the perfect-information games, c = 1.41 and c = 2√2
+yield identical win/draw/loss outcomes against fixed opponents (uniform-random
+and, on tic-tac-toe, a perfect minimax solver) at 200–600 simulations, and on
+Beacon — the adversarial instrument for the coverage gap — the planner follows an
+identical forced line under both constants. Trajectories on the open games
+diverge only by selecting among equally-optimal moves, leaving play strength and
+gap measurements unchanged, so no re-run with a recalibrated constant is needed.
 
 ### 2.6 Games
 

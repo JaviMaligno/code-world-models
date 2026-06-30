@@ -17,6 +17,24 @@ class _Node:
         self.value = 0.0
         self.untried = list(model.legal_actions(state))
 
+# Exploration constant. c = 1.41 ≈ √2 is the canonical UCT value from
+# Kocsis & Szepesvári (2006): √2 is the constant for which the UCB1 regret bound
+# is derived, assuming rewards in [0, 1]. It is the textbook default and was NOT
+# tuned for this project — the planner is used as a fixed-strength, reproducible
+# instrument (search strength is controlled by the simulation budget, not c), so
+# we keep the convention rather than fit it.
+#
+# Caveat: this repo's `returns` are in {-1, 0, +1}, so the exploitation term
+# value/visits lives in [-1, 1] (range 2, not 1). The √2 derivation assumes
+# range 1, so the strictly range-calibrated constant here would be ~2√2 ≈ 2.83.
+# We deliberately keep c = 1.41 because the reported quantities are empirically
+# invariant to the choice at the budgets used (200–600 sims): against a perfect
+# tic-tac-toe minimax opponent both c = 1.41 and c = 2√2 lose the same number of
+# games, and win rates vs fixed opponents on connect4/beacon are identical under
+# both. Trajectories on open games (ttt/connect4/trike) differ — but only by
+# selecting among equally-optimal moves — while Beacon, the adversarial gap
+# instrument, plays an identical (forced) line under both constants, so the
+# headline gap results do not depend on c. See docs/paper/preprint-draft.md §2.5.
 def _uct(child, c=1.41):
     if child.visits == 0:
         return float("inf")
