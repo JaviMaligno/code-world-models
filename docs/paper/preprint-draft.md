@@ -48,7 +48,7 @@ Our first experiments, across three game families and two knowledge regimes (rul
 
 The null result on small games points to the condition under which the gate can be fooled: a rule that random play almost never triggers but competent play reliably seeks out. We engineered a minimal instrument satisfying this condition (§3.3): a variant of the game army5x5a augmented with a *material-at-cap* tiebreak rule whose material-terminal rarity under random play is 2.5% (the rate at which the rule decides the game) yet which decides roughly 50% of competent games.
 
-A CWM that omits this rule passes the gate at transition accuracy 1.0 and is ≥99% state-accurate on the search distribution, yet loses approximately 2:1 in play (win rate 0.376 [0.338, 0.415] vs fair baseline 0.507 [0.467, 0.547], Wilson 95% intervals, n=600). State accuracy is blind to the omission (dilution); play is not.
+A CWM that omits this rule passes the gate at transition accuracy 1.0 and is ≥99% state-accurate on the search distribution, yet loses approximately 2:1 in play (win rate 0.376 [0.338, 0.415] vs fair baseline 0.507 [0.467, 0.547], Wilson 95% intervals, n=600). State accuracy is blind to the omission (_dilution_: the handful of wrong states is averaged into a large pool of correct ones, so the aggregate barely moves); play is not.
 
 We then quantify when this can happen via a law that relates harm to gate size and rule rarity (§4), and show that the gap cannot be repaired by providing more example transitions (§5).
 
@@ -87,7 +87,7 @@ Each state is a Python dictionary containing at minimum `board` and `current_pla
 - `initial_states(obs, player) → list[state]` — returns all states consistent with a first observation.
 - `infer_states(history_obs, player) → list[state]` — returns all states consistent with a sequence of observations.
 
-This contract mirrors the minimal interface required by UCT-MCTS for perfect-information games and determinized MCTS for imperfect-information games.
+This contract mirrors the minimal interface required by UCT-MCTS (Monte Carlo tree search with the UCT — upper confidence bounds applied to trees — selection rule) for perfect-information games and determinized MCTS for imperfect-information games.
 
 ### 2.2 Synthesis and the gate
 
@@ -266,7 +266,7 @@ The divergence region (ply-cap states with unequal material) is less than 1% of 
 
 *Figure 2. The headline result of the Panel A table: a gate-passing, ≥99% state-accurate, rule-blind CWM (right) loses to the fair baseline (left) at play. The Wilson 95% intervals are visibly separated (fair lower bound 0.467 > rule-blind upper bound 0.415), so the 0.131 play cost is not a sampling artifact.*
 
-play_cost = 0.131. The Wilson 95% intervals **do not overlap** (fair lower bound 0.467 > rule-blind upper bound 0.415) — separated.
+play_cost = 0.131 (the fair-baseline win rate minus the rule-blind win rate). The Wilson 95% intervals **do not overlap** (fair lower bound 0.467 > rule-blind upper bound 0.415): the two intervals are _CI-separated_ — they share no common value, so the gap is not a sampling artifact. We use "CI-separated" throughout for this non-overlap of 95% confidence intervals.
 
 **Seed-clustered inference (the seed, not the game, as the unit).** The Wilson intervals above pool games and so treat each game as independent. Because games within a seed share a synthesis/instrument draw and an RNG stream, we also report a more conservative analysis that takes the *seed* as the independent unit. The per-seed win rates are rock-steady (table below), and the paired-by-seed difference (which cancels start-side and budget effects, identical across arms) has mean 0.131 with a Student-t 95% interval of [0.086, 0.175] over the five seeds (sd = 0.039, df = 4), **excluding zero**. The clustered interval is wider than the pooled one, as expected with only five clusters, but the effect survives it. (At n=360, the earlier 3-seed subset gave fair 0.493 and rule-blind 0.376; adding two seeds leaves the rule-blind point unchanged and moves the baseline by 0.014, well within the interval.)
 
