@@ -440,7 +440,17 @@ The large model recalls Kuhn poker: both transition and inference gates pass, an
 
 We now formalize when the inference gate, sampled on random play, is *identifying* — that is, when every competent-play-relevant inference error would be caught by the random-trajectory gate.
 
-**Setup.** Consider a finite two-player extensive-form game **with perfect recall**, chance (the deal) and imperfect information. Let: $b$ = maximum, over **player** information sets $I$, of $|A(I)|$ (the number of actions available at $I$), with chance handled separately through $p_{\text{chance}}$; $d(I)$ = number of player-action edges on a shortest history reaching information set $I$; $d_{\max} = \max_I d(I)$; $p_{\text{chance}}$ = minimum probability of a deal consistent with any reachable info-set; $\mathcal{I}$ = set of reachable info-sets; $\pi^\sigma(\cdot)$ = realization (reach) probability of a history or info-set under strategy profile $\sigma$; $\text{supp}(\cdot)$ and $\text{reach}(\cdot)$ = the histories, resp. info-sets, given positive probability. The uniform-random policy $\rho$ plays every legal action with probability $1/|A(I)| \geq 1/b$, and therefore assigns positive probability to every legal action (full support).
+**Setup.** Consider a finite two-player extensive-form game **with perfect recall**, chance (the deal) and imperfect information. We use the following notation:
+
+- $b$ = maximum, over **player** information sets $I$, of $|A(I)|$ (the number of actions available at $I$), with chance handled separately through $p_{\text{chance}}$;
+- $d(I)$ = number of player-action edges on a shortest history reaching information set $I$;
+- $d_{\max} = \max_I d(I)$, the maximum such depth;
+- $p_{\text{chance}}$ = minimum probability of a deal consistent with any reachable info-set;
+- $\mathcal{I}$ = set of reachable info-sets;
+- $\pi^\sigma(\cdot)$ = realization (reach) probability of a history or info-set under strategy profile $\sigma$;
+- $\text{supp}(\cdot)$ and $\text{reach}(\cdot)$ = the histories, resp. info-sets, given positive probability.
+
+The uniform-random policy $\rho$ plays every legal action with probability $1/|A(I)| \geq 1/b$, and therefore assigns positive probability to every legal action (full support).
 
 **Lemma 1 (full-support inclusion).** *Because $\rho$ assigns positive probability to every legal action, $\text{supp}(\pi^\sigma) \subseteq \text{supp}(\pi^\rho)$ for every profile $\sigma$; equivalently $\text{reach}(\sigma) \subseteq \text{reach}(\rho)$.*
 
