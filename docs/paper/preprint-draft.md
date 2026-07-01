@@ -633,7 +633,7 @@ These results suggest two concrete practices. First, verify on the distribution 
 
 ## Appendix A: Reproducibility
 
-All experimental results and exact reproduction commands are in `docs/EXPERIMENTS.md`. All code is on the `main` branch (`cwm/` package, `scripts/`). Research narrative and formal theorem statements are in `docs/RESEARCH-DIRECTION.md`. Exact commands for the results introduced in this revision:
+All code is available at <https://github.com/JaviMaligno/code-world-models>. All experimental results and exact reproduction commands are in `docs/EXPERIMENTS.md`, and all code is on the `main` branch (`cwm/` package, `scripts/`). Research narrative and formal theorem statements are in `docs/RESEARCH-DIRECTION.md`. Exact commands for the results introduced in this revision:
 
 ```bash
 # Headline play-cost with Wilson CIs + seed-clustered interval (§3.3, n=600)
