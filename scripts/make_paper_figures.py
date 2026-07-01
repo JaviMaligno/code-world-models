@@ -132,15 +132,18 @@ def fig_danger_law():
         markeredgewidth=0.6,
         zorder=5,
     )
-    t_offsets = {4: (3.0, -0.005), 6: (2.2, 0.030), 8: (0.45, 0.040), 10: (0.5, 0.012)}
+    # Place each T label inside the frame: dx>1 shifts the text toward larger
+    # eps, i.e. inward (the x axis is inverted), keeping the near-edge points
+    # (T=8, T=10) clear of the top/right frame instead of being clipped by it.
+    t_offsets = {4: (2.0, 0.030), 6: (2.2, 0.033), 8: (3.5, 0.020), 10: (3.0, -0.030)}
     for Ti, ei, di in zip(T, eps, danger_b):
         dx, dy = t_offsets[Ti]
         axB.annotate(
             f"$T={Ti}$",
-            xy=(ei, di),
-            xytext=(ei * dx, di + dy),
+            xy=(ei * dx, di + dy),
             fontsize=8,
             color=C_RED,
+            ha="center",
         )
     axB.axvline(1.5e-5, color=C_GREY, ls="--", lw=1.0)
     axB.annotate(
@@ -155,7 +158,10 @@ def fig_danger_law():
     axB.set_xlabel(r"deep-region reach $\varepsilon=(1/2)^{2T}$ (random play)")
     axB.set_ylabel(r"danger $= \mathrm{play\_cost}\,(1-\varepsilon)^N$")
     axB.set_title("(b) Inference axis — Beacon")
-    axB.set_ylim(-0.02, 0.55)
+    # Give the near-edge T labels headroom (top) and a right-hand margin so no
+    # text is clipped by the frame. Set limits before inverting the axis.
+    axB.set_xlim(2.5e-7, 1.5e-2)
+    axB.set_ylim(-0.02, 0.58)
     axB.legend(loc="upper left", framealpha=0.95)
     axB.invert_xaxis()
 
@@ -194,8 +200,14 @@ def fig_headline_play():
     )
     ax.text(0.56, 0.441, "intervals\nseparated", color=C_GREEN, fontsize=8, va="center")
 
-    for xi, p in zip(x, point):
-        ax.text(xi, p + 0.001, f"{p:.3f}", ha="center", va="bottom", fontsize=9)
+    # Put each value label above the upper CI cap (not on the bar) so the
+    # vertical error-bar line no longer crosses through the digits; a light
+    # white bbox keeps it legible over the gridlines.
+    for xi, p, h in zip(x, point, hi):
+        ax.text(
+            xi, h + 0.006, f"{p:.3f}", ha="center", va="bottom", fontsize=9,
+            bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.85),
+        )
 
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
@@ -275,10 +287,14 @@ def fig_reach_schematic():
         arrowprops=dict(arrowstyle="->", color=C_GREEN, lw=1.4),
     )
 
-    ax.annotate("gate samples\n" r"$\propto \rho$", xy=(1.0, 0.50),
-                fontsize=8.5, color=C_BLUE, ha="center")
-    ax.annotate("planner plays\n" r"$\propto \Pi$", xy=(9.1, 0.55),
-                fontsize=8.5, color=C_RED, ha="center")
+    # Sit both callouts clear above their curves, with a light white bbox, so
+    # the density lines no longer cut through the text.
+    ax.annotate("gate samples\n" r"$\propto \rho$", xy=(1.5, 0.60),
+                fontsize=8.5, color=C_BLUE, ha="center",
+                bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.8))
+    ax.annotate("planner plays\n" r"$\propto \Pi$", xy=(9.15, 0.62),
+                fontsize=8.5, color=C_RED, ha="center",
+                bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.8))
 
     ax.set_xticks([0.4, 9.6])
     ax.set_xticklabels(["shallow / common\nhistories", "deep / rare\nhistories"])
