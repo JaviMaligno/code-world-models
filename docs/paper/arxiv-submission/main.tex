@@ -184,7 +184,7 @@ Gate sampler & uniform-random policy (\texttt{rng.choice(legal\_actions)}), seed
 Gate criterion & transition accuracy $=1.0$ on the sampled (state, action, next-state) tuples \\
 Refinement & re-uses the same sample each iteration (fresh batch only in Section~\ref{sec:repair}); budget $\leq 5$ iters \\
 Held-out gate & none separate --- the training trajectories \emph{are} the gate (Section~\ref{sec:danger-law}) \\
-Planner (perfect info) & UCT-MCTS, exploration constant $c = 1.41 \approx \sqrt{2}$, uniform-random rollout to terminal \\
+Planner (perfect info) & UCT-MCTS, exploration constant $c = 1.41 \approx \sqrt{2}$ (see note), uniform-random rollout to terminal \\
 Planner (imperfect info) & determinized MCTS \citep{cowling2012ismcts,long2010pimc} with legal-fallback hardening \\
 Selection tie-break & first argmax of UCT; move chosen = most-visited child (first on ties) \\
 Simulation budget & 200--600 per move (stated per experiment) \\
@@ -196,6 +196,8 @@ Terminal-legal convention & \texttt{legal\_actions} on terminal states excluded 
 \caption{Fixed experimental configuration. Per-experiment values (budget, gate $N$, game) are stated in context.}
 \label{tab:config}
 \end{table}
+
+\paragraph{Note on the exploration constant.} We use $c = 1.41 \approx \sqrt{2}$, the canonical UCT value \citep{kocsis2006bandit}, as a fixed convention rather than a tuned hyperparameter --- search strength is set by the simulation budget, and the planner serves only as a reproducible fixed-strength instrument. The $\sqrt{2}$ constant is derived for rewards in $[0, 1]$; our \texttt{returns} lie in $\{-1, 0, +1\}$, so a strictly range-calibrated value would be $\approx 2\sqrt{2}$. We verified that this does not affect the reported quantities: across the perfect-information games, $c = 1.41$ and $c = 2\sqrt{2}$ yield identical win/draw/loss outcomes against fixed opponents (uniform-random and, on tic-tac-toe, a perfect minimax solver) at 200--600 simulations, and on Beacon --- the adversarial instrument for the coverage gap --- the planner follows an identical forced line under both constants. Trajectories on the open games diverge only by selecting among equally-optimal moves, leaving play strength and gap measurements unchanged, so no re-run with a recalibrated constant is needed.
 
 \subsection{Games}
 \label{sec:games}

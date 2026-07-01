@@ -48,6 +48,12 @@ Michael Janner, Justin Fu, Marvin Zhang, and Sergey Levine.
 \newblock In \emph{Advances in Neural Information Processing Systems
   (NeurIPS)}, 2019.
 
+\bibitem[Kocsis and Szepesv{\'a}ri(2006)]{kocsis2006bandit}
+Levente Kocsis and Csaba Szepesv{\'a}ri.
+\newblock Bandit based {Monte}-{Carlo} planning.
+\newblock In \emph{Proceedings of the 17th European Conference on Machine
+  Learning (ECML)}, pages 282--293, 2006.
+
 \bibitem[Kreps and Wilson(1982)]{kreps1982sequential}
 David~M. Kreps and Robert Wilson.
 \newblock Sequential equilibria.
