@@ -51,7 +51,7 @@ def save(fig, name):
 # ---------------------------------------------------------------------------
 # Figure 1: the danger law on both axes of the CWM contract (unification).
 # Panel (a) transition axis (army5x5a + material-at-cap), Sec. 4 table.
-# Panel (b) inference axis (Beacon), Sec. 6.6 table.
+# Panel (b) inference axis (Beacon), Sec. 6.5 table (tab:inferenceaxis).
 # In both: smooth analytic curve danger = play_cost * (1 - r)^N, with the
 # measured operating points from the table overlaid as markers.
 # ---------------------------------------------------------------------------
