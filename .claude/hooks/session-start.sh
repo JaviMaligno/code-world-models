@@ -12,6 +12,11 @@ if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi
 
+# Run in the background so the session starts without waiting for the install.
+# Safe here: the paper's PDF is compiled at the END of a change, long after this
+# hook has finished — so the install is never in flight when pdflatex is needed.
+echo '{"async": true, "asyncTimeout": 300000}'
+
 # --- LaTeX (for building docs/paper/main.tex with pdflatex + bibtex) ---
 # The paper uses: geometry, amsmath/amssymb/amsthm, booktabs, graphicx, xcolor,
 # natbib, hyperref. These live across the base/recommended/extra TeXLive bundles.
