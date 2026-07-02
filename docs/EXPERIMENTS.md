@@ -95,6 +95,22 @@ probabilities; only the rule-level constants b and bar_d enter):
 - Occam/class-uniform variant needs N ≳ artifact description length (~10^4 bits
   for kB-scale code) → prefer a held-out gate (sample drawn after synthesis).
 
+**Beacon exact play_cost by exhaustion** (`scripts/play_cost_exact_beacon.py`,
+2026-07-02): play_cost on Beacon is now a THEOREM, not a measurement. Two levels,
+both mechanically verified against the implementation (4 deals × 2 seatings = 8
+deterministic games):
+- belief→guess abstraction (the proof): fair arm draws all 8 → win rate exactly
+  0.500; instrument seat loses all 8 → exactly 0.000; **play_cost = 0.500 EXACT**.
+- real determinized-MCTS policy (the planner check): reproduces all-draws /
+  all-losses on the same 8 games.
+The arena 0.000 [0.000, 0.003] (n=1200) is now confirmation of a theorem. With
+Prop 1 (gate-miss exact) this makes BOTH danger-law factors analytic on the
+inference axis. Also recorded in the paper: play_cost upper bound
+play_cost ≤ μ_query(E) (coupling argument, Prop 2) — consistency on army5x5a:
+competent cap-reach 0.200–0.225 lower-bounds μ_query, measured play_cost 0.131
+respects it; and the n=600 CI measurement re-read as a witness-certified lower
+bound play_cost ≥ 0.086 (seed-clustered 95%).
+
 **Material-at-cap rarity, two measured rates** (3000 random games, cap=100):
 cap reached (both generals alive) = 5.2%; **material-terminal rarity** (the rule
 decides the game; used by the danger law) = **2.5%**. (Corrects the earlier loose
