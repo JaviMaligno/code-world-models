@@ -80,12 +80,17 @@ by `rule_status(code) -> ('aware'|'blind'|'crash', error)`: a crash is reported
 separately and **excluded from the rule-blind denominator** (rate = blind/(blind
 +aware)), unless every seed crashes (structural — the crash count makes that
 visible). Principle: a crash, unless structural and unavoidable, is not a result.
-The same pattern exists in `gap.inference_accuracy` (a crashed `infer_states`
-lands in the `inference_rate` denominator as a non-inference; it already reports
-`n_exec_errors` separately) — left as-is for now because it feeds published
-masked-TTT/Kuhn numbers, but it should get the same treatment on the next rerun,
-especially now that the contract name-collision fix above should remove most of
-those crashes.
+The same pattern in `gap.inference_accuracy` is **now fixed too**: a crashed
+`observation()`/`infer_states()` no longer lands in the rate denominator as a
+non-inference. `observation_rate = obs_ok/obs_measured` and `inference_rate =
+inf_ok/inf_measured` range only over cases that actually ran; exec errors are
+reported separately (`obs_errors`, `inf_errors`, `n_exec_errors` = cases with any
+error), and an all-crash surface reads as structural (rate 0.0 with the error
+count making it visible) rather than a scored miss. This changes published
+masked-TTT/Kuhn `inference_rate` numbers once rerun (e.g. the masked-TTT FULL arm
+0.000 was entirely the `infer_states` crash — it will now read as structural
+exec-error, and with the contract name-collision fix above the crash itself
+should largely disappear). Covered by `test_inference_accuracy_excludes_exec_errors`.
 
 **Per-seed results are now logged (fixed this commit).** The sweep previously
 printed per-seed lines to stdout but persisted nothing, so crashes vs blind vs
