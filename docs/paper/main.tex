@@ -531,7 +531,7 @@ COMPLETE rules + targeted (control) & 120 & 1.000 (0 iters) & yes & 0.53 \\
 
 \paragraph{Spec completeness, not code-writing ability, is what binds.} Given the rule in \texttt{RULES\_TEXT}, the model encodes it correctly in 0 refinement iterations and plays at parity with the baseline (0.53 $\approx$ 0.50). The complete-rules control isolates the cause: the limitation is not the synthesizer's code-writing ability but the absence of the rule from the specification.
 
-\paragraph{Scale helps marginally but not sufficiently.} The large model (0.42) exceeds mini (0.35) on real on-manifold data, but both remain far below the complete-rules baseline (0.53). The inference ceiling is not a mini-specific artifact.
+\paragraph{Scale helps marginally but not sufficiently --- and only where there is signal to help.} The large model (0.42) exceeds mini (0.35) on real on-manifold data, but both remain far below the complete-rules baseline (0.53). The inference ceiling is not a mini-specific artifact: the marginal gain lives in the on-manifold regime, where the discriminating transitions are actually sampled and the task is \emph{generalizing} observed rule-firings into code. In the unsampled regime the scale effect does not merely shrink --- it is provably absent (Section~\ref{sec:sample-identifiability}): no model, at any scale, can prefer the correct rule from a sample that carries no evidence for it.
 
 \paragraph{Off-manifold repair data corrupts synthesis.} Artificial (unreachable) discriminating states cause catastrophic failure in the large model (accuracy collapses to 0.004, win rate 0.05). The synthesizer attempts to fit transitions that cannot arise in real play and damages the parts of the CWM it had already learned correctly.
 
