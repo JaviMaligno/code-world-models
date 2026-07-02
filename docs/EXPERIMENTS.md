@@ -73,12 +73,28 @@ resolves the crash needs a local LLM rerun** (`scripts/mtt_claimB_probe.py`,
 the paper's "GPT-5.4 cannot robustly synthesize `infer_states`" narrative is
 partly an artifact of our contract and should be softened.
 
-**Secondary methodological note (not changed here, flagged for review):** in
-`danger_synthesis_sweep.is_rule_blind`, a synthesized CWM that *crashes* on the
-test states is counted as rule-blind (bare `except -> True`). That conflates a
-synthesis-robustness failure with genuine rule-blindness; for `large` the paper
-argues low gate accuracy rules out the confound, but separating "crashed" from
-"ran and drew" in the output would make the finding-3 denominators cleaner.
+**Crashes no longer count as results (fixed this commit).** `is_rule_blind`
+(bare `except -> True`) counted a synthesized CWM that *crashes* as rule-blind,
+conflating a synthesis-robustness failure with genuine rule-blindness. Replaced
+by `rule_status(code) -> ('aware'|'blind'|'crash', error)`: a crash is reported
+separately and **excluded from the rule-blind denominator** (rate = blind/(blind
++aware)), unless every seed crashes (structural — the crash count makes that
+visible). Principle: a crash, unless structural and unavoidable, is not a result.
+The same pattern exists in `gap.inference_accuracy` (a crashed `infer_states`
+lands in the `inference_rate` denominator as a non-inference; it already reports
+`n_exec_errors` separately) — left as-is for now because it feeds published
+masked-TTT/Kuhn numbers, but it should get the same treatment on the next rerun,
+especially now that the contract name-collision fix above should remove most of
+those crashes.
+
+**Per-seed results are now logged (fixed this commit).** The sweep previously
+printed per-seed lines to stdout but persisted nothing, so crashes vs blind vs
+aware could not be audited after the fact. It now writes
+`results/danger_synthesis_<size>.json` with a `summary` (per-N blind/aware/crash
+counts, rate + Wilson CI, identifiability floor) and a `per_seed` array (status,
+error, gate_acc, iters, n_samples, and the synthesized code for each seed). The
+headline play-cost sweep (`play_cost_ci.py`) already logged per-seed win rates
+and the paired-difference vector to `results/play_cost_ci.json`.
 
 ## §3.2 null upgraded to a proof by exhaustion — tic-tac-toe (2026-06-29)
 
