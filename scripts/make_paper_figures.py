@@ -222,12 +222,13 @@ def fig_headline_play():
 # Figure 3: mechanism behind play_cost-constancy (Sec. 4 remark). Competent
 # reach of the cap region is ~flat across the cap knob while random reach
 # falls -> play_cost rides competent reach, rarity rides random reach.
-# 40 games / 300 sims per point: suggestive, not a proof (as the text says).
+# 120 games / 300 sims per point (play_cost_reach.py --games 120): a mechanistic
+# correlate, not a proof (as the text says).
 # ---------------------------------------------------------------------------
 def fig_play_cost_mechanism():
     cap = np.array([30, 60, 100])
-    competent = np.array([0.200, 0.200, 0.225])
-    random = np.array([0.375, 0.200, 0.075])
+    competent = np.array([0.183, 0.242, 0.275])
+    random = np.array([0.442, 0.133, 0.067])
 
     fig, ax = plt.subplots(figsize=(5.0, 3.6))
     ax.plot(cap, competent, "o-", color=C_BLUE, lw=1.8, ms=6,
@@ -237,8 +238,8 @@ def fig_play_cost_mechanism():
     ax.set_xlabel("ply cap (rarity knob)")
     ax.set_ylabel("P(reach cap region)")
     ax.set_xticks(cap)
-    ax.set_ylim(0.0, 0.42)
-    ax.set_title(r"Why play$\_$cost is $\approx$rarity-invariant (40 games/pt: suggestive)")
+    ax.set_ylim(0.0, 0.48)
+    ax.set_title(r"Why play$\_$cost is $\approx$rarity-invariant (120 games/pt)")
     ax.legend(loc="upper right", framealpha=0.95)
     save(fig, "play_cost_mechanism")
 

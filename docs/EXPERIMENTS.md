@@ -1,5 +1,23 @@
 # Experiments Log
 
+## Mechanism reach at n=120 — the small-sample caveat is retired (2026-07-02)
+
+`python scripts/play_cost_reach.py --games 120` (CPU-only, MCTS 300 sims). Triples
+the sample of the §4 mechanism measurement (was n=40):
+
+| cap | competent reach (n=40 → n=120) | random reach (n=40 → n=120) |
+|---|---|---|
+| 30  | 0.200 → 0.183 [0.124, 0.262] | 0.375 → **0.442** [0.356, 0.531] |
+| 60  | 0.200 → 0.242 [0.174, 0.326] | 0.200 → 0.133 [0.084, 0.206] |
+| 100 | 0.225 → 0.275 [0.203, 0.361] | 0.075 → 0.067 [0.034, 0.126] |
+
+The story sharpens: competent reach stays flat (Wilson 95% intervals overlap
+pairwise — no trend resolved), while random reach falls 6.6× (0.442 → 0.067,
+CI-separated end to end; at n=40 the drop was 5×). Paper §4 remark + Figure 3
+(make_paper_figures.py) + the §6.4 consistency check updated (reach at the
+deployed cap is 0.275, so the omitted rule flips ~half of the games that reach
+the region, not ~two-thirds). Cost: $0 (CPU), ~50 min.
+
 ## Contract-fix rerun: the `infer_states` crash is gone in all three games (2026-07-02)
 
 Rerun of the three imperfect-info probes under the corrected contract (parameter
