@@ -24,6 +24,7 @@ from cwm.llm.azure_openai import AzureOpenAIProvider
 from cwm.synthesizer import synthesize_cwm
 from cwm.refiner import refine_cwm
 from cwm.run_gap import _load_module_from_code
+from cwm.law import wilson_ci
 
 SIZE = sys.argv[1] if len(sys.argv) > 1 else "mini"
 MODEL = os.environ[{"mini": "AZURE_DEPLOYMENT_MINI", "large": "AZURE_DEPLOYMENT_LARGE",
@@ -35,7 +36,13 @@ provider = AzureOpenAIProvider(
 
 R = 0.025
 N_GRID = [40, 120, 200]
-SEEDS = list(range(6))
+# Default 6 seeds/cell reproduces the published sweep; pass a count as argv[2] to
+# tighten the denominator (e.g. 20). At 6/6 the Wilson 95% lower bound on the
+# rule-blind rate is only ~0.61, so the summary now prints it -- a bare "1.000"
+# over 6 seeds oversells the point (see the limitations roadmap in
+# docs/EXPERIMENTS.md).
+N_SEEDS = int(sys.argv[2]) if len(sys.argv) > 2 else 6
+SEEDS = list(range(N_SEEDS))
 
 
 def rule_region_states():
@@ -82,8 +89,9 @@ def main():
             b, acc, iters, nsamp = run_seed(N, seed)
             blind += int(b)
             print(f"  N={N} seed={seed}: rule_blind={b} gate_acc={acc:.3f} iters={iters} n_samples={nsamp}", flush=True)
-        frac = blind / len(SEEDS)
-        print(f"=> N={N}: rule_blind {blind}/{len(SEEDS)} = {frac:.3f}   "
+        frac, lo, hi = wilson_ci(blind, len(SEEDS))
+        print(f"=> N={N}: rule_blind {blind}/{len(SEEDS)} = {frac:.3f} "
+              f"(Wilson95 [{lo:.3f}, {hi:.3f}])   "
               f"(identifiability prediction (1-r)^N = {(1-R)**N:.3f})", flush=True)
     print("DONE", flush=True)
 

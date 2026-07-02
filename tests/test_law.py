@@ -1,5 +1,22 @@
-from cwm.law import wilson_ci, rarity, arena_winrate, danger
+import pytest
+
+from cwm.law import wilson_ci, rarity, arena_winrate, danger, t_crit_95
 from cwm.groundtruth import gen_chess_material as gm
+
+
+def test_t_crit_95_known_values():
+    # standard two-sided 95% t critical values
+    assert t_crit_95(1) == 12.706
+    assert t_crit_95(4) == 2.776      # the seed-clustered headline df (5 seeds)
+    assert t_crit_95(9) == 2.262
+    # decreasing in df, and above the normal quantile for finite df
+    assert t_crit_95(4) > t_crit_95(9) > t_crit_95(30) >= 1.96
+    # untabulated df rounds DOWN (conservative: >= the true value)
+    assert t_crit_95(35) == t_crit_95(30)
+    # far tail floors at the df=120 value (slightly conservative vs normal 1.96)
+    assert t_crit_95(500) == 1.98
+    with pytest.raises(ValueError):
+        t_crit_95(0)
 
 def test_wilson_ci_bounds():
     p, lo, hi = wilson_ci(5, 10)

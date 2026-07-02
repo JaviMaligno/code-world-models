@@ -5,11 +5,18 @@ lengths. CPU.
 
 Run: PYTHONPATH=src python scripts/play_cost_reach.py
 """
-import random
+import argparse, random
 from cwm.groundtruth.gen_chess_material import make_material, N
 from cwm.mcts import mcts_policy
 
-SIMS = 300; GAMES = 40
+# Defaults reproduce the published mechanism figures (40 games, 300 sims). This
+# is the n the paper flags as "small-sample"; --games raises it (CPU-only but
+# long) -- see the limitations roadmap in docs/EXPERIMENTS.md.
+_ap = argparse.ArgumentParser(description=__doc__)
+_ap.add_argument("--sims", type=int, default=300)
+_ap.add_argument("--games", type=int, default=40)
+_args = _ap.parse_args()
+SIMS = _args.sims; GAMES = _args.games
 
 def frac_reach_cap(game, competent, seed):
     rng = random.Random(seed); reached = 0

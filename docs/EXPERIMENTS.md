@@ -1,5 +1,58 @@
 # Experiments Log
 
+## Limitations roadmap — CPU-vs-LLM triage of §7 (2026-07-02)
+
+Triage of every paragraph in the paper's *Limitations and Honest Assessment*
+(§7 of `main.tex`), split by whether follow-up work needs the LLM (Azure, must
+be run locally with credentials) or is CPU-only (pure-Python MCTS, runnable in
+CI/here). This commit lands the CPU-only *enablers*; the long reruns and all
+LLM work are listed for local execution.
+
+**Enablers landed in this commit (CPU-only, no result numbers changed):**
+- `src/cwm/llm/azure_openai.py`: `max_retries=6` (was the SDK default 2) and a
+  120 s timeout, both constructor-overridable. The openai SDK does exponential
+  backoff and honours `Retry-After`; the previous ceiling was too low to ride
+  out sustained 429s on multi-hour synthesis sweeps. This is the prerequisite
+  for every LLM rerun below.
+- `src/cwm/law.py`: new `t_crit_95(df)` — two-sided 95% Student-t critical
+  values for any df (table to 120, conservative round-down, normal-ish tail).
+  Removes the per-script hardcoded dicts that capped at ~6 seeds.
+- `scripts/play_cost_ci.py`: `--seeds/--games/--sims` (defaults reproduce the
+  published n=600); uses `t_crit_95`, so the seed-clustered interval is no
+  longer limited to <=6 seeds. **Bug fixed:** the old code indexed its t table
+  by the seed *count* k, i.e. it used the df=5 critical value (2.571) for a
+  paired-t over 5 seeds whose correct df is 4 (2.776). The published clustered
+  interval `[0.086, 0.175]` was computed with the wrong df; the correct df=4
+  interval is **`[0.083, 0.179]`** (still excludes zero — the conclusion holds,
+  and the lower bound moves 0.086 -> 0.083). The paper text/abstract quote the
+  old numbers and should be updated (see below).
+- `scripts/play_cost_reach.py`: `--games/--sims` (defaults reproduce the n=40
+  mechanism figures) so the "small-sample" mechanism reach can be raised.
+- `scripts/danger_synthesis_sweep.py`: prints the Wilson 95% interval alongside
+  each `blind/len(SEEDS)` (a bare 6/6=1.000 has Wilson LB ~0.61), and takes an
+  optional seed-count `argv[2]` to grow the denominator.
+
+**Per-limitation triage:**
+
+| §7 paragraph | Follow-up | Where | Command / note |
+|---|---|---|---|
+| Pure-Python MCTS limits CIs | raise headline seeds 5->~20 (Azure-free) | **CPU-only, long** | `python scripts/play_cost_ci.py --seeds 20` (~3-4 h; then update Table/abstract CIs + rebuild PDF) |
+| (same) mechanism n=40 flagged small-sample | raise reach games 40->~120 | **CPU-only, long** | `python scripts/play_cost_reach.py --games 120` (then update §4 numbers + `make_paper_figures.py`) |
+| Determinized MCTS not GT-optimal | external-sampling MCCFR equilibrium baseline (CFR is contract-compatible, §8) | **CPU-only, large build** | new solver + validation; measures the gap vs equilibrium reach, not MCTS reach |
+| Rare-rule instrument is engineered | broaden the rarity<->consequence characterization across a rule set (rarity via random games + play_cost via hand-coded rule-blind instrument, both in `cwm.law`) | **CPU-only** for the map; **LLM** to confirm the LLM reproduces a gap | extend the Connect-Four 6-rule probe |
+| Single model family (GPT-5.x only) | run synthesis on other families (open models / stronger code models) | **LLM (local)** | `danger_synthesis_sweep.py` + gap grid against non-Azure providers; needs a provider adapter |
+| finding-3 denominators are 6 seeds | grow `danger_synthesis_sweep` 6->~20 seeds/cell | **LLM (local)** | `python3.12 scripts/danger_synthesis_sweep.py large 20` (retry/backoff now makes this survivable) |
+| Beacon is a minimal/trivial witness | synthesize a CWM for a partially-observable army5x5a variant | **LLM (local)** | game/instrument is CPU; the synthesized-CWM demonstration needs the LLM |
+| Gate-blindness scope / `infer_states` crash | study isolating inference-enumeration failure from the masking failure | **LLM (local)** | the recurring `'list' object is not callable` crash confounds `inference_rate`; needs synthesis reruns |
+| Knowledge cutoff / contamination | more declarative recall probes | **LLM (local), inherent** | cutoff dates are approximate; "no detectable recall", not "strictly novel" — not fully closable |
+
+**Methodological note (not changed here, flagged for review):** in
+`danger_synthesis_sweep.is_rule_blind`, a synthesized CWM that *crashes* on the
+test states is counted as rule-blind (bare `except -> True`). That conflates a
+synthesis-robustness failure with genuine rule-blindness; for `large` the paper
+argues low gate accuracy rules out the confound, but separating "crashed" from
+"ran and drew" in the output would make the finding-3 denominators cleaner.
+
 ## §3.2 null upgraded to a proof by exhaustion — tic-tac-toe (2026-06-29)
 
 `scripts/exhaustive_verify_tictactoe.py` (Azure GPT-5.4-mini). Synthesize a
