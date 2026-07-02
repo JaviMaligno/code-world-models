@@ -506,3 +506,23 @@ transitions (excluding 880 legal_actions-on-terminal convention artifacts), i.e.
 divergence" to a proof where the game is enumerable. For large games (army5x5a) the
 gate cannot cover the relation, so only sampled certification holds — and that is
 exactly where the residual gap (0.002) and the rare-rule instrument live.
+
+---
+
+## Enumeration-free companion certificate (error mass, 2026-07-02)
+
+Theorem 1's constants (π_min, |𝓘|) require enumerating the reachable info-sets —
+feasible for Kuhn/Leduc, intractable in general. Theorem 2 (paper §6.2,
+`scripts/error_mass_certificate.py`) removes the enumeration by weakening the
+conclusion: instead of "every reachable info-set was visited" it certifies "the
+undetected error region of the accepted artifact has small sampling mass". For a
+candidate `infer_states` f with error set E_f, a passing size-N gate implies
+per-game hit mass μ_ν(E_f) ≤ ln(1/δ)/N (held-out gate; +ℓ·ln2 for a
+description-length-ℓ class if the training sample doubles as the gate). Transfer
+to play is governed by the reach ratio: μ_σ ≤ b^bar_d · μ_ρ for any profile σ
+(bar_d = player-move horizon), and Beacon realizes this blow-up (ratio 2^{2T}),
+so it is not slack. A mixture gate ((1−λ)ρ + λ·competent-self-play) replaces
+b^bar_d with 1/λ for the reference competent profile — "verify on the search
+distribution" in certificate form. Neither theorem subsumes the other: coverage
+is a for-all-error-patterns guarantee with enumerative, game-growing constants;
+error-mass is per-artifact with game-size-free constants. The paper keeps both.

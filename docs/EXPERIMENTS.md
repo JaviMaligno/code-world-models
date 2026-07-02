@@ -80,6 +80,21 @@ enumeration of reachable info-sets + reach probabilities under uniform-random pl
   "empirically covered" into "covered under exact random-reach probs on the sampled
   competent-relevant subset".
 
+**Enumeration-free error-mass certificate** (`scripts/error_mass_certificate.py`,
+2026-07-02; companion to the coverage bound — no |𝓘|, no π_min, no reach
+probabilities; only the rule-level constants b and bar_d enter):
+- Kuhn (N=80, b=2, bar_d=3): any gate-passing `infer_states` fixed before the gate
+  has undetected-error hit mass ≤ ln(1/0.05)/80 = **0.037** under ρ; any-profile
+  transfer (×b^bar_d = 8) ≤ **0.30**. Weaker than the enumerative full-coverage
+  certificate at the same N — where enumeration is feasible, Theorem 1 stays sharper.
+- Leduc (N=8000, b=3, bar_d=8): mass under ρ ≤ **3.7e-4**, but the any-profile
+  transfer factor 3^8=6561 is vacuous (consistent with Theorem 1 not certifying
+  N=8000). Mixture gate (λ=1/2, same N=8000): deployed-planner error mass ≤
+  **7.5e-4** — a competent-relevant certificate the enumeration route could not
+  give (it needed N≈27k and only certified the SAMPLED competent subset).
+- Occam/class-uniform variant needs N ≳ artifact description length (~10^4 bits
+  for kB-scale code) → prefer a held-out gate (sample drawn after synthesis).
+
 **Material-at-cap rarity, two measured rates** (3000 random games, cap=100):
 cap reached (both generals alive) = 5.2%; **material-terminal rarity** (the rule
 decides the game; used by the danger law) = **2.5%**. (Corrects the earlier loose
