@@ -1,5 +1,37 @@
 # Experiments Log
 
+## Contract-fix rerun: the `infer_states` crash is gone in all three games (2026-07-02)
+
+Rerun of the three imperfect-info probes under the corrected contract (parameter
+renamed `observation` -> `obs` + anti-shadowing note; see the root-cause entry
+below). Azure GPT-5.4; single seed per probe, matching the original runs.
+
+| Probe | arm | transition gate | observation_rate | inference_rate | exec_err |
+|---|---|---|---|---|---|
+| masked TTT (large) | full | 1.000 (0 iters) | 1.000 | **1.000** (was: crash) | **0** |
+| masked TTT (large) | withheld | 1.000 | 0.020 | 0.180 | **0** |
+| Kuhn (mini) | — | **1.000 (0 iters)** (was: 0.845 fail) | 0.500 (p2 obs-index convention, wrong-but-running) | **1.000** (was: crash) | **0** |
+| Beacon T=6 (large) | full | 0.456 (10 iters, fails gate) | 1.000 | 0.200 | **0** |
+| Beacon T=6 (large) | withheld revelation | **1.000** (2 iters) | 1.000 | **0.000** | **0** |
+
+**Findings.** (1) Zero execution errors across all three games — the recurring
+`'list' object is not callable` was entirely our contract's name collision, as
+diagnosed; the "synthesis-robustness failure" narrative is retracted in the paper
+(§6.6 correction paragraph). (2) The masked-TTT withheld rates are unchanged
+(0.020/0.180) and the full arm's `infer_states` is now **exact** — inference_rate
+becomes a second clean discriminator (1.000 vs 0.180). (3) Kuhn mini now passes
+both gates and plays at parity (0.470 = fair 0.470); its only divergence is a
+player-2 observation-index convention (obs 0.500), not a crash. (4) **Bonus:
+synthesized gate-blindness corroboration on Beacon** — the withheld-revelation
+arm passes the transition gate at 1.000 with inference_rate 0.000: a
+transition-certified, belief-wrong CWM, synthesized end-to-end (single-seed
+probe; the full arm fails the transition gate at 0.456, reported honestly).
+
+Paper updated: tab:kuhn (mini row), tab:mtt (full-arm inference 1.000), §6.6
+rewritten (both discriminators + correction paragraph + Beacon corroboration),
+§8 scope note, contribution 5, §2.4 metric definitions (exec-error exclusion).
+Log: scratchpad `llm_chain.log`. Cost: <$1.
+
 ## Limitations roadmap — CPU-vs-LLM triage of §7 (2026-07-02)
 
 Triage of every paragraph in the paper's *Limitations and Honest Assessment*
