@@ -38,12 +38,17 @@ This is an IMPERFECT-INFORMATION game. The board encodes hidden information.
 Additionally implement EXACTLY these signatures:
   def initial_states() -> list[dict]   # every possible initial (post-deal) state
   def observation(state: dict, player: int) -> list[int]   # board as `player` sees it; hidden entries are -1
-  def infer_states(observation: list[int], player: int) -> list[dict]  # all full states consistent with the observation
+  def infer_states(obs: list[int], player: int) -> list[dict]  # all full states consistent with the observation `obs`
+
+Note: the infer_states parameter is named `obs` (a board list), NOT `observation`
+— do not shadow the `observation()` function with it; if you need a board's
+observation, call the function observation(state, player).
 
 returns may be real-valued NET payoffs (not limited to {-1.0,0.0,1.0}); a positive
 value means that player gains that many chips. current_player is derivable from the
-public betting history. Every state in infer_states(observation(s,p),p) must map
-back to the same observation, and the true state must be included.
+public betting history. Every state s' in infer_states(observation(s,p),p) must map
+back to the same observation (i.e. observation(s',p) == observation(s,p)), and the
+true state must be included.
 """
 
 

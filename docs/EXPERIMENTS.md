@@ -24,8 +24,11 @@ LLM work are listed for local execution.
   paired-t over 5 seeds whose correct df is 4 (2.776). The published clustered
   interval `[0.086, 0.175]` was computed with the wrong df; the correct df=4
   interval is **`[0.083, 0.179]`** (still excludes zero — the conclusion holds,
-  and the lower bound moves 0.086 -> 0.083). The paper text/abstract quote the
-  old numbers and should be updated (see below).
+  and the lower bound moves 0.086 -> 0.083). **The paper is now corrected**:
+  `main.tex`, the arXiv copy, `preprint-draft.md`, and `RESEARCH-DIRECTION.md`
+  all quote `[0.083, 0.179]` / `>= 0.083`, and `main.pdf` + the arXiv tarball
+  are rebuilt. (The dated entries lower in this log keep the original numbers as
+  a record of what was reported at the time.)
 - `scripts/play_cost_reach.py`: `--games/--sims` (defaults reproduce the n=40
   mechanism figures) so the "small-sample" mechanism reach can be raised.
 - `scripts/danger_synthesis_sweep.py`: prints the Wilson 95% interval alongside
@@ -43,10 +46,34 @@ LLM work are listed for local execution.
 | Single model family (GPT-5.x only) | run synthesis on other families (open models / stronger code models) | **LLM (local)** | `danger_synthesis_sweep.py` + gap grid against non-Azure providers; needs a provider adapter |
 | finding-3 denominators are 6 seeds | grow `danger_synthesis_sweep` 6->~20 seeds/cell | **LLM (local)** | `python3.12 scripts/danger_synthesis_sweep.py large 20` (retry/backoff now makes this survivable) |
 | Beacon is a minimal/trivial witness | synthesize a CWM for a partially-observable army5x5a variant | **LLM (local)** | game/instrument is CPU; the synthesized-CWM demonstration needs the LLM |
-| Gate-blindness scope / `infer_states` crash | study isolating inference-enumeration failure from the masking failure | **LLM (local)** | the recurring `'list' object is not callable` crash confounds `inference_rate`; needs synthesis reruns |
+| Gate-blindness scope / `infer_states` crash | **root cause found & contract fixed (below)**; then rerun to confirm | fix **CPU-only (done)**; confirm **LLM (local)** | the `'list' object is not callable` crash was a name collision in OUR contract, not an LLM limit — see the root-cause note below |
 | Knowledge cutoff / contamination | more declarative recall probes | **LLM (local), inherent** | cutoff dates are approximate; "no detectable recall", not "strictly novel" — not fully closable |
 
-**Methodological note (not changed here, flagged for review):** in
+**Root cause of the recurring `'list' object is not callable` crash — very
+likely OURS, not the LLM's, and not transient.** The `infer_states` crash the
+paper reports across Kuhn-mini / Beacon / masked-tic-tac-toe is a deterministic
+Python `TypeError`, so it is neither a rate-limit nor a flake. The mechanism: the
+imperfect-info contract (`world_model.IMPERFECT_CONTRACT_API`) prescribed the
+signature `def infer_states(observation: list[int], player: int)` — the
+**parameter is named `observation`, which shadows the required `observation()`
+function** in the same contract. The very next contract sentence tells the model
+"every state in `infer_states(observation(s,p),p)` must map back to the same
+observation", i.e. it invites the model to call `observation(...)` from inside
+`infer_states` — where that name is now the list argument. Any such call yields
+exactly `'list' object is not callable`. The reference implementation sidesteps
+this by naming the parameter `obs_board` (`groundtruth/masked_tictactoe.py`),
+but the *prompt* told the model to use `observation`.
+**Fix applied (this commit):** the contract now names the parameter `obs`, adds
+an explicit "do not shadow the `observation()` function" note, and spells out the
+round-trip invariant as `observation(s',p) == observation(s,p)`. No code depends
+on the old parameter name (the sandbox calls `infer_states` positionally and the
+reference impls use their own names; 192 tests green). **Confirmation that this
+resolves the crash needs a local LLM rerun** (`scripts/mtt_claimB_probe.py`,
+`scripts/run_kuhn_validation.py`, `scripts/beacon_claimB_probe.py`) — if it does,
+the paper's "GPT-5.4 cannot robustly synthesize `infer_states`" narrative is
+partly an artifact of our contract and should be softened.
+
+**Secondary methodological note (not changed here, flagged for review):** in
 `danger_synthesis_sweep.is_rule_blind`, a synthesized CWM that *crashes* on the
 test states is counted as rule-blind (bare `except -> True`). That conflates a
 synthesis-robustness failure with genuine rule-blindness; for `large` the paper
