@@ -506,3 +506,46 @@ transitions (excluding 880 legal_actions-on-terminal convention artifacts), i.e.
 divergence" to a proof where the game is enumerable. For large games (army5x5a) the
 gate cannot cover the relation, so only sampled certification holds — and that is
 exactly where the residual gap (0.002) and the rare-rule instrument live.
+
+---
+
+## Enumeration-free companion certificate (error mass, 2026-07-02)
+
+Theorem 1's constants (π_min, |𝓘|) require enumerating the reachable info-sets —
+feasible for Kuhn/Leduc, intractable in general. Theorem 2 (paper §6.2,
+`scripts/error_mass_certificate.py`) removes the enumeration by weakening the
+conclusion: instead of "every reachable info-set was visited" it certifies "the
+undetected error region of the accepted artifact has small sampling mass". For a
+candidate `infer_states` f with error set E_f, a passing size-N gate implies
+per-game hit mass μ_ν(E_f) ≤ ln(1/δ)/N (held-out gate; +ℓ·ln2 for a
+description-length-ℓ class if the training sample doubles as the gate). Transfer
+to play is governed by the reach ratio: μ_σ ≤ b^bar_d · μ_ρ for any profile σ
+(bar_d = player-move horizon), and Beacon realizes this blow-up (ratio 2^{2T}),
+so it is not slack. A mixture gate ((1−λ)ρ + λ·competent-self-play) replaces
+b^bar_d with 1/λ for the reference competent profile — "verify on the search
+distribution" in certificate form. Neither theorem subsumes the other: coverage
+is a for-all-error-patterns guarantee with enumerative, game-growing constants;
+error-mass is per-artifact with game-size-free constants. The paper keeps both.
+
+---
+
+## play_cost: no longer purely empirical (2026-07-02)
+
+Three provable fronts now bracket play_cost (paper §4 Prop 2 + remark, §6.4 Prop 4):
+- **Upper bound (theorem, general):** play_cost ≤ μ_query(E), the probability the
+  planner's search queries its model on the error region at least once per game
+  (coupling argument: runs are identical until the first E-query; the relevant
+  distribution is the QUERY distribution, dominating trajectory reach). Makes the
+  danger law an end-to-end upper bound: danger ≤ μ_query(E)·(1−r)^N, no fitted
+  constant.
+- **Exact on solvable witnesses:** Beacon's play_cost = 1/2 exactly, by exhaustion
+  over its 4 deals × 2 seatings (`scripts/play_cost_exact_beacon.py`, plus a
+  determinized-MCTS check on the same 8 games). Both danger-law factors are now
+  analytic on the inference axis; the 0.000 arena result is confirmation of a
+  theorem.
+- **Lower bounds by witness (no game-solving):** an explicit opponent strategy +
+  arena measurement is a statistical certificate; the n=600 CI run certifies
+  play_cost ≥ 0.086 (seed-clustered 95%).
+What stays empirical at scale is only the exact constant — a game-value
+difference, i.e. solving the game: the play-value analogue of the
+enumeration/sampling wall (three-levels remark, paper §6.2).
