@@ -186,11 +186,20 @@ def inference_accuracy(cwm_code: str, states: list, truth_module,
     """Verify a synthesized imperfect-info CWM's observation() and infer_states()
     against the truth on sampled full states, for both players. Order-insensitive
     MULTISET-equality on the inferred states (sorted tuples, no dedup) — so a
-    membership-valid-but-skewed/duplicated set is caught, not just a missing one;
-    errors count as mismatches, not silent passes."""
+    membership-valid-but-skewed/duplicated set is caught, not just a missing one.
+
+    Exec errors (a crashing observation()/infer_states()) are a synthesis-
+    ROBUSTNESS failure, not a wrong belief model, so they are EXCLUDED from the
+    rate denominators and reported separately (obs_errors/inf_errors, n_exec_errors
+    = cases with any error). observation_rate = obs_ok/obs_measured and
+    inference_rate = inf_ok/inf_measured range over the cases that actually ran;
+    if none ran (structural, every case crashed) the rate is 0.0 and the error
+    counts make that visible. A wrong-but-running output still counts as a
+    mismatch, not a silent pass."""
     if not states:
         return {"n": 0, "observation_rate": 1.0, "inference_rate": 1.0,
-                "n_exec_errors": 0, "examples": []}
+                "obs_measured": 0, "inf_measured": 0, "obs_errors": 0,
+                "inf_errors": 0, "n_exec_errors": 0, "examples": []}
     # truth expectations (in-process)
     def _canon(stlist):
         return sorted(tuple(s["board"]) for s in stlist)
@@ -233,31 +242,59 @@ def inference_accuracy(cwm_code: str, states: list, truth_module,
     except json.JSONDecodeError:
         produced = None
     if not isinstance(produced, list) or len(produced) != len(states):
-        return {"n": 0, "observation_rate": 0.0, "inference_rate": 0.0,
-                "n_exec_errors": len(states),
+        # the whole sandbox program failed to produce parseable output -> every
+        # case is a structural exec error (nothing measured on either surface).
+        return {"n": 2 * len(states), "observation_rate": 0.0, "inference_rate": 0.0,
+                "obs_measured": 0, "inf_measured": 0,
+                "obs_errors": 2 * len(states), "inf_errors": 2 * len(states),
+                "n_exec_errors": 2 * len(states),
                 "examples": [(res.stderr or "malformed output")[-200:]]}
 
-    obs_ok = inf_ok = measured = 0
+    obs_ok = obs_measured = inf_ok = inf_measured = 0
+    obs_errors = inf_errors = case_errors = 0
     examples = []
     for st, tr, got in zip(states, truth, produced):
         for p in (1, 2):
-            measured += 1
             g = got.get(str(p), {})
-            # observation: JSON round-trips lists fine; compare directly
-            if g.get("obs") == tr[p]["obs"]:
-                obs_ok += 1
-            elif len(examples) < 10:
-                examples.append(f"obs mismatch state={st['board']} p={p} got={g.get('obs')}")
-            # inference: truth infer is list[tuple]; sandbox gives list[list]
+            case_errored = False
+            # observation: an exec error surfaces as {'__error__': ...}; exclude it
+            # from the rate (a crash is not a wrong belief model) and count it.
+            obs_val = g.get("obs")
+            if isinstance(obs_val, dict) and "__error__" in obs_val:
+                obs_errors += 1
+                case_errored = True
+                if len(examples) < 10:
+                    examples.append(f"obs EXEC-ERROR state={st['board']} p={p} {obs_val['__error__']}")
+            else:
+                obs_measured += 1
+                if obs_val == tr[p]["obs"]:   # JSON round-trips lists fine; compare directly
+                    obs_ok += 1
+                elif len(examples) < 10:
+                    examples.append(f"obs mismatch state={st['board']} p={p} got={obs_val}")
+            # inference: a dict marks an exec error (its own crash, or the 'no obs'
+            # cascade when observation() crashed); a list is a real answer to score.
             got_inf = g.get("infer")
-            norm = sorted(tuple(x) for x in got_inf) if isinstance(got_inf, list) else got_inf
-            if norm == tr[p]["infer"]:
-                inf_ok += 1
-            elif len(examples) < 10:
-                examples.append(f"infer mismatch state={st['board']} p={p} got={got_inf}")
-    n = measured
-    return {"n": n, "observation_rate": obs_ok / n, "inference_rate": inf_ok / n,
-            "n_exec_errors": 0, "examples": examples}
+            if isinstance(got_inf, dict):
+                inf_errors += 1
+                case_errored = True
+                if len(examples) < 10:
+                    examples.append(f"infer EXEC-ERROR state={st['board']} p={p} {got_inf.get('__error__')}")
+            else:
+                inf_measured += 1
+                norm = sorted(tuple(x) for x in got_inf)   # truth infer is list[tuple]; sandbox gives list[list]
+                if norm == tr[p]["infer"]:
+                    inf_ok += 1
+                elif len(examples) < 10:
+                    examples.append(f"infer mismatch state={st['board']} p={p} got={got_inf}")
+            if case_errored:
+                case_errors += 1
+    n = 2 * len(states)   # total (state, player) cases attempted
+    return {"n": n,
+            "observation_rate": (obs_ok / obs_measured) if obs_measured else 0.0,
+            "inference_rate": (inf_ok / inf_measured) if inf_measured else 0.0,
+            "obs_measured": obs_measured, "inf_measured": inf_measured,
+            "obs_errors": obs_errors, "inf_errors": inf_errors,
+            "n_exec_errors": case_errors, "examples": examples}
 
 
 def collect_visited_states(model, n_games: int, simulations: int, seed: int,

@@ -26,6 +26,32 @@ def wilson_ci(successes: float, n: int, z: float = 1.96) -> tuple[float, float, 
     return (p, max(0.0, center - half), min(1.0, center + half))
 
 
+# Two-sided 95% Student-t critical values t_{0.975, df}. Keyed by df; for a df
+# not in the table we use the largest tabulated df <= our df, which is >= the
+# true value (t decreases in df) and so stays conservative. Beyond df=120 the
+# t is within 1% of the normal 1.96. This replaces per-script hardcoded dicts
+# that capped out at a handful of seeds.
+_T975 = {1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447,
+         7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228, 11: 2.201, 12: 2.179,
+         13: 2.160, 14: 2.145, 15: 2.131, 16: 2.120, 17: 2.110, 18: 2.101,
+         19: 2.093, 20: 2.086, 21: 2.080, 22: 2.074, 23: 2.069, 24: 2.064,
+         25: 2.060, 26: 2.056, 27: 2.052, 28: 2.048, 29: 2.045, 30: 2.042,
+         40: 2.021, 50: 2.009, 60: 2.000, 80: 1.990, 100: 1.984, 120: 1.980}
+
+
+def t_crit_95(df: int) -> float:
+    """Two-sided 95% Student-t critical value for `df` degrees of freedom.
+    Conservative: rounds df down to the nearest tabulated value, so the result
+    is >= the exact t. For df > 120 it floors at the df=120 value (1.98), within
+    1% of the normal quantile 1.96 and slightly conservative."""
+    if df < 1:
+        raise ValueError("df must be >= 1")
+    if df in _T975:
+        return _T975[df]
+    keys = [k for k in _T975 if k <= df]
+    return _T975[max(keys)]
+
+
 def rarity(game, rule_reason: str, n_games: int, seed: int) -> tuple[float, float, float]:
     """Fraction of random games whose terminal outcome is decided by `rule_reason`
     (per game.outcome), with a Wilson CI."""

@@ -545,7 +545,7 @@ Three provable fronts now bracket play_cost (paper §4 Prop 2 + remark, §6.4 Pr
   theorem.
 - **Lower bounds by witness (no game-solving):** an explicit opponent strategy +
   arena measurement is a statistical certificate; the n=600 CI run certifies
-  play_cost ≥ 0.086 (seed-clustered 95%).
+  play_cost ≥ 0.083 (seed-clustered 95%).
 What stays empirical at scale is only the exact constant — a game-value
 difference, i.e. solving the game: the play-value analogue of the
 enumeration/sampling wall (three-levels remark, paper §6.2).

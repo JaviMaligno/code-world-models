@@ -101,4 +101,27 @@ def test_inference_accuracy_detects_wrong_infer():
     states = [{"board": [2, 0, 1, -1, -1, -1], "current_player": 1}]
     rep = inference_accuracy(bad, states, kuhn_poker)
     assert rep["inference_rate"] < 1.0
+
+def test_inference_accuracy_excludes_exec_errors():
+    """A crashing infer_states is a robustness failure: excluded from the rate
+    denominator and counted separately, NOT scored as an inference miss. A crash
+    on inference must also not drag down observation_rate."""
+    import inspect
+    from cwm.gap import inference_accuracy
+    from cwm.groundtruth import kuhn_poker
+    src = inspect.getsource(kuhn_poker)
+    # make infer_states crash the classic way: call a list (the 'list' object is
+    # not callable TypeError the contract name-collision used to induce).
+    crash = src.replace("    return out\n\n\nRULES_TEXT",
+                        "    return out()\n\n\nRULES_TEXT")
+    assert crash != src
+    states = [{"board": [2, 0, 1, -1, -1, -1], "current_player": 1}]
+    rep = inference_accuracy(crash, states, kuhn_poker)
+    assert rep["inf_measured"] == 0                 # every case crashed on inference
+    assert rep["inf_errors"] == rep["n"]
+    assert rep["n_exec_errors"] > 0
+    assert rep["inference_rate"] == 0.0             # structural, not a scored miss
+    # observation() still runs -> not contaminated by the infer crash
+    assert rep["observation_rate"] == 1.0
+    assert rep["obs_errors"] == 0
     assert rep["examples"]

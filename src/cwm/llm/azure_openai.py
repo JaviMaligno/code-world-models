@@ -2,10 +2,17 @@
 from .provider import Completion, Usage
 
 class AzureOpenAIProvider:
-    def __init__(self, endpoint: str, api_key: str, api_version: str):
+    # Long synthesis sweeps issue thousands of serial calls; the SDK default of
+    # max_retries=2 is not enough to ride out sustained 429s. The openai SDK
+    # already does exponential backoff and honours the Retry-After header, so we
+    # just raise the ceiling and lengthen the per-request timeout. Both are
+    # overridable for callers that want different behaviour.
+    def __init__(self, endpoint: str, api_key: str, api_version: str,
+                 max_retries: int = 6, timeout: float = 120.0):
         from openai import AzureOpenAI  # lazy import so tests don't need the dep wired
         self._client = AzureOpenAI(
-            azure_endpoint=endpoint, api_key=api_key, api_version=api_version
+            azure_endpoint=endpoint, api_key=api_key, api_version=api_version,
+            max_retries=max_retries, timeout=timeout,
         )
 
     def complete(self, messages: list[dict], model: str) -> Completion:

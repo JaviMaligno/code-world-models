@@ -10,18 +10,27 @@ games). Writes results/play_cost_ci.json.
 
 Run: PYTHONPATH=src python scripts/play_cost_ci.py
 """
-import json, math
+import argparse, json, math
 from pathlib import Path
 from cwm.run_gap import _play_performance
 from cwm.groundtruth import gen_chess_material as mat, gen_chess as base
-from cwm.law import wilson_ci
+from cwm.law import wilson_ci, t_crit_95
 
-SIMS = 600
-N = 120
-SEEDS = [0, 1, 2, 3, 4]   # 600 games per arm
+# Defaults reproduce the published headline (n=600 = 5 seeds x 120, 600 sims).
+# All three are overridable so the seed-clustered interval (df = seeds-1) can be
+# tightened with more seeds; the t critical value is now computed for any df via
+# cwm.law.t_crit_95, so the old 6-seed ceiling is gone. Reruns beyond the
+# defaults are CPU-only but long (pure-Python MCTS) -- see the limitations
+# roadmap in docs/EXPERIMENTS.md.
+_ap = argparse.ArgumentParser(description=__doc__)
+_ap.add_argument("--sims", type=int, default=600)
+_ap.add_argument("--games", type=int, default=120, help="games per seed per arm")
+_ap.add_argument("--seeds", type=int, default=5, help="number of seeds (>=2)")
+_args = _ap.parse_args()
 
-# two-sided t critical values (df = n_seeds - 1) for 95%
-T_CRIT = {1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447}
+SIMS = _args.sims
+N = _args.games
+SEEDS = list(range(_args.seeds))
 
 def arm(label, cwm_model):
     W = D = L = 0
@@ -53,7 +62,7 @@ k = len(diffs)
 mean_d = sum(diffs) / k
 sd = math.sqrt(sum((d - mean_d) ** 2 for d in diffs) / (k - 1)) if k > 1 else 0.0
 se = sd / math.sqrt(k)
-tcrit = T_CRIT.get(k, 2.776)
+tcrit = t_crit_95(k - 1)
 clo, chi = mean_d - tcrit * se, mean_d + tcrit * se
 print(f"play_cost (pooled point) = {fair['winrate'] - blind['winrate']:.3f}", flush=True)
 print(f"play_cost (seed-clustered, paired-by-seed): mean={mean_d:.3f} sd={sd:.3f} "

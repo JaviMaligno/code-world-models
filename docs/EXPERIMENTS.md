@@ -1,5 +1,106 @@
 # Experiments Log
 
+## Limitations roadmap — CPU-vs-LLM triage of §7 (2026-07-02)
+
+Triage of every paragraph in the paper's *Limitations and Honest Assessment*
+(§7 of `main.tex`), split by whether follow-up work needs the LLM (Azure, must
+be run locally with credentials) or is CPU-only (pure-Python MCTS, runnable in
+CI/here). This commit lands the CPU-only *enablers*; the long reruns and all
+LLM work are listed for local execution.
+
+**Enablers landed in this commit (CPU-only, no result numbers changed):**
+- `src/cwm/llm/azure_openai.py`: `max_retries=6` (was the SDK default 2) and a
+  120 s timeout, both constructor-overridable. The openai SDK does exponential
+  backoff and honours `Retry-After`; the previous ceiling was too low to ride
+  out sustained 429s on multi-hour synthesis sweeps. This is the prerequisite
+  for every LLM rerun below.
+- `src/cwm/law.py`: new `t_crit_95(df)` — two-sided 95% Student-t critical
+  values for any df (table to 120, conservative round-down, normal-ish tail).
+  Removes the per-script hardcoded dicts that capped at ~6 seeds.
+- `scripts/play_cost_ci.py`: `--seeds/--games/--sims` (defaults reproduce the
+  published n=600); uses `t_crit_95`, so the seed-clustered interval is no
+  longer limited to <=6 seeds. **Bug fixed:** the old code indexed its t table
+  by the seed *count* k, i.e. it used the df=5 critical value (2.571) for a
+  paired-t over 5 seeds whose correct df is 4 (2.776). The published clustered
+  interval `[0.086, 0.175]` was computed with the wrong df; the correct df=4
+  interval is **`[0.083, 0.179]`** (still excludes zero — the conclusion holds,
+  and the lower bound moves 0.086 -> 0.083). **The paper is now corrected**:
+  `main.tex`, the arXiv copy, `preprint-draft.md`, and `RESEARCH-DIRECTION.md`
+  all quote `[0.083, 0.179]` / `>= 0.083`, and `main.pdf` + the arXiv tarball
+  are rebuilt. (The dated entries lower in this log keep the original numbers as
+  a record of what was reported at the time.)
+- `scripts/play_cost_reach.py`: `--games/--sims` (defaults reproduce the n=40
+  mechanism figures) so the "small-sample" mechanism reach can be raised.
+- `scripts/danger_synthesis_sweep.py`: prints the Wilson 95% interval alongside
+  each `blind/len(SEEDS)` (a bare 6/6=1.000 has Wilson LB ~0.61), and takes an
+  optional seed-count `argv[2]` to grow the denominator.
+
+**Per-limitation triage:**
+
+| §7 paragraph | Follow-up | Where | Command / note |
+|---|---|---|---|
+| Pure-Python MCTS limits CIs | raise headline seeds 5->~20 (Azure-free) | **CPU-only, long** | `python scripts/play_cost_ci.py --seeds 20` (~3-4 h; then update Table/abstract CIs + rebuild PDF) |
+| (same) mechanism n=40 flagged small-sample | raise reach games 40->~120 | **CPU-only, long** | `python scripts/play_cost_reach.py --games 120` (then update §4 numbers + `make_paper_figures.py`) |
+| Determinized MCTS not GT-optimal | external-sampling MCCFR equilibrium baseline (CFR is contract-compatible, §8) | **CPU-only, large build** | new solver + validation; measures the gap vs equilibrium reach, not MCTS reach |
+| Rare-rule instrument is engineered | broaden the rarity<->consequence characterization across a rule set (rarity via random games + play_cost via hand-coded rule-blind instrument, both in `cwm.law`) | **CPU-only** for the map; **LLM** to confirm the LLM reproduces a gap | extend the Connect-Four 6-rule probe |
+| Single model family (GPT-5.x only) | run synthesis on other families (open models / stronger code models) | **LLM (local)** | `danger_synthesis_sweep.py` + gap grid against non-Azure providers; needs a provider adapter |
+| finding-3 denominators are 6 seeds | grow `danger_synthesis_sweep` 6->~20 seeds/cell | **LLM (local)** | `python3.12 scripts/danger_synthesis_sweep.py large 20` (retry/backoff now makes this survivable) |
+| Beacon is a minimal/trivial witness | synthesize a CWM for a partially-observable army5x5a variant | **LLM (local)** | game/instrument is CPU; the synthesized-CWM demonstration needs the LLM |
+| Gate-blindness scope / `infer_states` crash | **root cause found & contract fixed (below)**; then rerun to confirm | fix **CPU-only (done)**; confirm **LLM (local)** | the `'list' object is not callable` crash was a name collision in OUR contract, not an LLM limit — see the root-cause note below |
+| Knowledge cutoff / contamination | more declarative recall probes | **LLM (local), inherent** | cutoff dates are approximate; "no detectable recall", not "strictly novel" — not fully closable |
+
+**Root cause of the recurring `'list' object is not callable` crash — very
+likely OURS, not the LLM's, and not transient.** The `infer_states` crash the
+paper reports across Kuhn-mini / Beacon / masked-tic-tac-toe is a deterministic
+Python `TypeError`, so it is neither a rate-limit nor a flake. The mechanism: the
+imperfect-info contract (`world_model.IMPERFECT_CONTRACT_API`) prescribed the
+signature `def infer_states(observation: list[int], player: int)` — the
+**parameter is named `observation`, which shadows the required `observation()`
+function** in the same contract. The very next contract sentence tells the model
+"every state in `infer_states(observation(s,p),p)` must map back to the same
+observation", i.e. it invites the model to call `observation(...)` from inside
+`infer_states` — where that name is now the list argument. Any such call yields
+exactly `'list' object is not callable`. The reference implementation sidesteps
+this by naming the parameter `obs_board` (`groundtruth/masked_tictactoe.py`),
+but the *prompt* told the model to use `observation`.
+**Fix applied (this commit):** the contract now names the parameter `obs`, adds
+an explicit "do not shadow the `observation()` function" note, and spells out the
+round-trip invariant as `observation(s',p) == observation(s,p)`. No code depends
+on the old parameter name (the sandbox calls `infer_states` positionally and the
+reference impls use their own names; 192 tests green). **Confirmation that this
+resolves the crash needs a local LLM rerun** (`scripts/mtt_claimB_probe.py`,
+`scripts/run_kuhn_validation.py`, `scripts/beacon_claimB_probe.py`) — if it does,
+the paper's "GPT-5.4 cannot robustly synthesize `infer_states`" narrative is
+partly an artifact of our contract and should be softened.
+
+**Crashes no longer count as results (fixed this commit).** `is_rule_blind`
+(bare `except -> True`) counted a synthesized CWM that *crashes* as rule-blind,
+conflating a synthesis-robustness failure with genuine rule-blindness. Replaced
+by `rule_status(code) -> ('aware'|'blind'|'crash', error)`: a crash is reported
+separately and **excluded from the rule-blind denominator** (rate = blind/(blind
++aware)), unless every seed crashes (structural — the crash count makes that
+visible). Principle: a crash, unless structural and unavoidable, is not a result.
+The same pattern in `gap.inference_accuracy` is **now fixed too**: a crashed
+`observation()`/`infer_states()` no longer lands in the rate denominator as a
+non-inference. `observation_rate = obs_ok/obs_measured` and `inference_rate =
+inf_ok/inf_measured` range only over cases that actually ran; exec errors are
+reported separately (`obs_errors`, `inf_errors`, `n_exec_errors` = cases with any
+error), and an all-crash surface reads as structural (rate 0.0 with the error
+count making it visible) rather than a scored miss. This changes published
+masked-TTT/Kuhn `inference_rate` numbers once rerun (e.g. the masked-TTT FULL arm
+0.000 was entirely the `infer_states` crash — it will now read as structural
+exec-error, and with the contract name-collision fix above the crash itself
+should largely disappear). Covered by `test_inference_accuracy_excludes_exec_errors`.
+
+**Per-seed results are now logged (fixed this commit).** The sweep previously
+printed per-seed lines to stdout but persisted nothing, so crashes vs blind vs
+aware could not be audited after the fact. It now writes
+`results/danger_synthesis_<size>.json` with a `summary` (per-N blind/aware/crash
+counts, rate + Wilson CI, identifiability floor) and a `per_seed` array (status,
+error, gate_acc, iters, n_samples, and the synthesized code for each seed). The
+headline play-cost sweep (`play_cost_ci.py`) already logged per-seed win rates
+and the paired-difference vector to `results/play_cost_ci.json`.
+
 ## §3.2 null upgraded to a proof by exhaustion — tic-tac-toe (2026-06-29)
 
 `scripts/exhaustive_verify_tictactoe.py` (Azure GPT-5.4-mini). Synthesize a
