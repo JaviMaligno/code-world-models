@@ -1,5 +1,31 @@
 # Experiments Log
 
+## Synthesis sweep at 20 seeds/cell — 6/6 upgraded to 20/20, zero crashes (2026-07-02)
+
+`python3.12 scripts/danger_synthesis_sweep.py {mini,large} 20` under the new
+crash/blind/aware semantics (crashes excluded from denominators) and the
+corrected contract. 120 syntheses total (2 sizes × 3 N × 20 seeds), each with
+≤6 fresh-batch refinement iterations. Results JSON (per-seed, auditable):
+`results/danger_synthesis_{mini,large}.json`.
+
+| N | mini rule-blind | large rule-blind | initial-batch floor (1−r)^N |
+|---|---|---|---|
+| 40  | **20/20 = 1.000** [Wilson LB 0.839] | **20/20 = 1.000** | 0.363 |
+| 120 | **20/20 = 1.000** | **20/20 = 1.000** | 0.048 |
+| 200 | **20/20 = 1.000** | **20/20 = 1.000** | 0.006 |
+
+**Zero crashes, zero aware, in all 120 runs** — the published 6/6 table is
+confirmed at 3.3× the denominator, and the crash-vs-blind methodological
+concern is resolved empirically: nothing was ever conflated. Wilson 95% lower
+bound on the rule-blind rate rises from ~0.61 (6/6) to **0.839** (20/20).
+Gate-accuracy detail: at N=200 large, 0/20 seeds reach gate 1.0 (the rule is in
+every sample) yet all 20 are blind — the cleanest (b)-residual cell. At N=120,
+6/20 mini and 3/20 large reach gate 1.0 while blind, matching the compounded
+per-batch miss rate (≈0.29 over up to 7 batches of (1−r)^120 = 0.048).
+Paper updated: tab:synthcurve (20/20 + caption), "On the floor" paragraph
+(gate-accuracy narrative re-derived from the 20-seed data). Cost: ~$3-8 Azure,
+~2.5 h wall (mini+large chained).
+
 ## Mechanism reach at n=120 — the small-sample caveat is retired (2026-07-02)
 
 `python scripts/play_cost_reach.py --games 120` (CPU-only, MCTS 300 sims). Triples
