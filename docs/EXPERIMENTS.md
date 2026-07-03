@@ -1,5 +1,33 @@
 # Experiments Log
 
+## Headline play-cost at 20 seeds (n=4800) — df=19, heterogeneity revealed (2026-07-03)
+
+`python scripts/play_cost_ci.py --seeds 20` (CPU-only, $0, ~40 h wall on shared
+cores). The final item of the CPU triage: 20 seeds × 120 games × 2 arms at 600
+sims. Results: `results/play_cost_ci.json` (full per-seed).
+
+| arm | pooled (n=2400) | Wilson 95% | per-seed mean ± sd |
+|---|---|---|---|
+| fair (truth-vs-truth) | 0.495 | [0.475, 0.515] | 0.495 ± 0.035 |
+| rule-blind vs truth | 0.404 | [0.384, 0.424] | 0.404 ± 0.041 |
+
+**play_cost = 0.091**, seed-clustered paired t95 **[0.065, 0.117]** (df=19,
+sd 0.055), **excludes zero**; pooled CIs separated (0.475 > 0.424).
+
+**Honest movements.** (1) The point estimate came DOWN from 0.131 (5 seeds) to
+0.091 — consistent (0.091 ∈ [0.083, 0.179], the old CI): the first five seeds
+sat on the high side. Provenance ladder now in the paper: 3 seeds 0.117-ish →
+5 seeds 0.131 [0.083, 0.179] → 20 seeds 0.091 [0.065, 0.117]. (2) "Rock-steady
+across seeds" is retired: per-seed differences range 0.00 (two seeds!) to 0.19
+— real between-seed heterogeneity, which the clustered interval absorbs; the
+effect survives anyway. (3) "Loses ~2:1" softened to "1.6 losses per win"
+(725W/1187L).
+
+Paper updated everywhere the headline appears (abstract, §1.5, contributions,
+Panel A + per-seed table → 20-seed summary table, figure 2 regenerated, §4
+measurement note, danger-curve caption, §6.4 consistency check → "about a
+third", witness bound ≥0.065, limitations, reproduction appendix).
+
 ## Feedback-channel confound found & closed + cross-family probes (2026-07-03)
 
 **The confound.** While relaying pipeline messages to a Claude agent for the

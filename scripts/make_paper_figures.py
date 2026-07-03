@@ -179,9 +179,9 @@ def fig_danger_law():
 # ---------------------------------------------------------------------------
 def fig_headline_play():
     labels = ["truth vs truth\n(fair baseline)", "rule-blind vs truth\n(play cost)"]
-    point = np.array([0.507, 0.376])
-    lo = np.array([0.467, 0.338])
-    hi = np.array([0.547, 0.415])
+    point = np.array([0.495, 0.404])
+    lo = np.array([0.475, 0.384])
+    hi = np.array([0.515, 0.424])
     colors = [C_BLUE, C_RED]
 
     fig, ax = plt.subplots(figsize=(5.0, 3.6))
@@ -192,10 +192,10 @@ def fig_headline_play():
     ax.axhline(0.5, color=C_GREY, ls="--", lw=1.0, zorder=0)
     ax.text(1.45, 0.505, "0.5", color=C_GREY, fontsize=8, va="bottom", ha="right")
 
-    # annotate the gap between the two intervals (0.467 vs 0.415)
+    # annotate the gap between the two intervals (0.475 vs 0.424)
     ax.annotate(
         "",
-        xy=(0.5, 0.415), xytext=(0.5, 0.467),
+        xy=(0.5, 0.424), xytext=(0.5, 0.475),
         arrowprops=dict(arrowstyle="<->", color=C_GREEN, lw=1.4),
     )
     ax.text(0.56, 0.441, "intervals\nseparated", color=C_GREEN, fontsize=8, va="center")
@@ -213,7 +213,7 @@ def fig_headline_play():
     ax.set_xticklabels(labels)
     ax.set_ylabel("win rate [Wilson 95% CI]")
     ax.set_ylim(0.30, 0.58)
-    ax.set_title("Headline play result (army5x5a + material-at-cap, $n=600$)")
+    ax.set_title("Headline play result (army5x5a + material-at-cap, $n=4800$)")
     ax.grid(axis="x", visible=False)
     save(fig, "headline_play")
 
