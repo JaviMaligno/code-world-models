@@ -73,11 +73,20 @@ def contract_accuracy(code: str, trajectories: list, timeout: float = 5.0):
         if got.get("reward") != expected_reward:
             mismatches.append("returns")
         if mismatches:
-            msg = (
-                f"state={t.state} action={t.action} "
-                f"mismatched={mismatches} "
-                f"got={got}"
-            )[:200]
+            # Show expected AND got for each mismatched field, and only for
+            # those fields — maximal signal per character. (An earlier version
+            # cut the whole line at 200 chars with no expected= at all, so the
+            # feedback header said "expected vs got" while the body carried
+            # neither: a model cannot learn an omitted rule from feedback that
+            # only names the failing states.)
+            exp = {"next_state": t.next_state, "legal_actions": t.legal_actions,
+                   "is_terminal": t.terminal, "returns": expected_reward}
+            got_key = {"next_state": "next_state", "legal_actions": "legal",
+                       "is_terminal": "terminal", "returns": "reward"}
+            detail = "; ".join(
+                f"{m}: expected={exp[m]} got={got.get(got_key[m])}"
+                for m in mismatches)
+            msg = (f"state={t.state} action={t.action} {detail}")[:800]
             failures.append(msg)
         else:
             correct += 1

@@ -1,5 +1,53 @@
 # Experiments Log
 
+## Feedback-channel confound found & closed + cross-family probes (2026-07-03)
+
+**The confound.** While relaying pipeline messages to a Claude agent for the
+cross-family probe, the agent complained the failure data was truncated — and it
+was right: `refiner.py` cut every failure line at 200 chars and NEVER included
+the expected values ("FAILURES (expected vs got)" carried neither), and the
+synthesis prompt shows only 30 random example transitions (P(contains a
+material-terminal transition) ≈ 0.7%). So the rule was present in the *gate's*
+trajectories but almost never reached the *model* legibly. This confounded the
+strong reading of the §5.2 sweep ("the rule had every opportunity to appear and
+still was not learned") — true of the pipeline, not attributable to the model.
+
+**The fix.** `refiner.py` failure lines now show `expected=` and `got=` per
+mismatched field (cap 800 chars); covered by
+`test_failure_lines_carry_expected_values` (199 tests green).
+
+**The discriminant experiment.** `scripts/refine_feedback_cell.py` — headline
+cell (N=200, fresh-batch refinement) with the FIXED feedback, 6 seeds × 2 sizes:
+
+| size | result | signature |
+|---|---|---|
+| mini | **6/6 blind, 0 crashes** | 5/6 stall at gate 0.999 |
+| large | **6/6 blind, 0 crashes** | 4/6 stall at gate 0.999 |
+
+With `returns: expected={1: 1.0, 2: -1.0} got={1: 0.0, 2: 0.0}` printed in the
+feedback on cap states, the model repairs everything EXCEPT the rule — the
+0.999 stall means exactly the material transitions stay unfixed. Finding 3 is
+**deconfounded and stronger**. Results: `results/refine_feedback_cell.json`.
+
+**Cross-family probes** (`scripts/crossfamily_probe.py` + new
+`cwm/llm/openai_compat.py`; results `results/crossfamily_probe.json`):
+- **Qwen3-Coder-30B** (open, HF router): **3/3 blind, 0 crashes**; 2/3 fail to
+  reach gate 1.0 (gate-attainability, like nano). Cost ~$0.1 HF credits.
+- **Claude Sonnet** (agent-relayed, pipeline-identical messages via
+  `scripts/crossfamily_claude_step.py`): 2 single-seed probes, 1–2 refinement
+  iters each, **all compositions rule-blind**; in refinement the model
+  explicitly reasoned about the mismatching material states and kept the draw —
+  "I cannot identify a behavioral change that alters these outputs without
+  contradicting the spec" — the translation mechanism verbalized. Wrapper note:
+  two relay attempts were REFUSED by the agent's anti-injection heuristics
+  (file-plus-"output only code" pattern); recorded as an agent-wrapper behavior,
+  resolved by embedding content directly.
+- **DeepSeek-V3.2**: aborted mid-seed on HF 402 (monthly credits exhausted).
+
+Paper updated: §5.2 confound paragraph + discriminant result; §7 "Single model
+family" → "one sweep, two cross-family probes" (conjecture stays a conjecture).
+Total cost: ~$1 Azure + ~$0.15 HF.
+
 ## Equilibrium-reach coverage — the §7.4 promise fulfilled (2026-07-03)
 
 `PYTHONPATH=src python3.12 scripts/equilibrium_coverage.py` (CPU-only, $0).

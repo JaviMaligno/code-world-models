@@ -59,3 +59,20 @@ def test_refine_stops_at_max_iters_when_unfixable():
     fake = FakeProvider([f"```python\n{BROKEN}\n```"] * 10)
     res = refine_cwm(fake, "nano", CONTRACT_TEXT, BROKEN, traj, max_iters=3)
     assert res.accuracy < 1.0 and res.iterations == 3
+
+
+def test_failure_lines_carry_expected_values():
+    """The refinement feedback must SHOW the expected value of every mismatched
+    field, and must not truncate it away: a model cannot learn an omitted rule
+    from feedback that only says which states failed. (This was a real defect:
+    lines were cut at 200 chars with no expected= at all, so the header said
+    'expected vs got' while the body carried neither.)"""
+    traj = collect_trajectories(g, n_games=5, seed=3)
+    # BROKEN's returns are always 0/0, so terminal transitions mismatch 'returns'
+    acc, failures = contract_accuracy(BROKEN, traj)
+    assert failures
+    for line in failures:
+        assert "expected=" in line, f"no expected in: {line}"
+    # a returns-mismatch line must show the expected reward dict readably
+    ret_lines = [l for l in failures if "returns" in l]
+    assert ret_lines and any("expected={" in l for l in ret_lines)
