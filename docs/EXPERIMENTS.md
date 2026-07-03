@@ -1,5 +1,29 @@
 # Experiments Log
 
+## Declarative recall probe persisted — question & answer now auditable (2026-07-03)
+
+`PYTHONPATH=src python3.12 scripts/declarative_recall_probe.py large` — the
+paper's two recall claims were asserted but their evidence was never persisted.
+Now they are: `results/declarative_recall_probe.json` holds the verbatim
+system prompt, questions, and full responses.
+
+- **army5x5a**: asked for board size / piece counts / movement offsets / win
+  condition / starting position with an explicit decline option → "I do not
+  know" to **all five parts**, self-labelled [RECALL]. Confirms "no prior".
+- **Trike**: declines all five parts ("I do not reliably know"), self-labelled
+  [GUESS]. **Nuance found and fixed in the paper**: the old §2.5 line said the
+  model "knows the name but confabulates the mechanics" — in a declarative
+  probe with a decline option it does NOT confabulate, it declines; the
+  confabulation appears under *synthesis pressure* (no-rules synthesis produces
+  confidently wrong mechanics, 0/5 gate). §2.5 rephrased accordingly.
+- **Kuhn poker (positive control)**: complete correct recall (deck, betting,
+  payoffs, 6 first-player infosets) — so the army5x5a "I do not know" is
+  informative, not a generic hedge.
+
+Paper updated: §2.5 (army5x5a + Trike entries), §7 contamination paragraph,
+reproduction appendix (probe command + updated sweep/mechanism flags).
+Cost: <$0.05, ~1 min.
+
 ## Synthesis sweep at 20 seeds/cell — 6/6 upgraded to 20/20, zero crashes (2026-07-02)
 
 `python3.12 scripts/danger_synthesis_sweep.py {mini,large} 20` under the new
@@ -115,15 +139,15 @@ LLM work are listed for local execution.
 
 | §7 paragraph | Follow-up | Where | Command / note |
 |---|---|---|---|
-| Pure-Python MCTS limits CIs | raise headline seeds 5->~20 (Azure-free) | **CPU-only, long** | `python scripts/play_cost_ci.py --seeds 20` (~3-4 h; then update Table/abstract CIs + rebuild PDF) |
-| (same) mechanism n=40 flagged small-sample | raise reach games 40->~120 | **CPU-only, long** | `python scripts/play_cost_reach.py --games 120` (then update §4 numbers + `make_paper_figures.py`) |
+| Pure-Python MCTS limits CIs | raise headline seeds 5->~20 (Azure-free) | **CPU-only, long — IN PROGRESS (2026-07-03)** | `python scripts/play_cost_ci.py --seeds 20` running (~1 h/seed on this machine, not 3-4 h total; update Table/abstract CIs + rebuild PDF when done) |
+| (same) mechanism n=40 flagged small-sample | raise reach games 40->~120 | **✅ DONE (2026-07-02)** | n=120 run; §4 + Figure 3 + §6.4 consistency check updated (see entry above) |
 | Determinized MCTS not GT-optimal | external-sampling MCCFR equilibrium baseline (CFR is contract-compatible, §8) | **CPU-only, large build** | new solver + validation; measures the gap vs equilibrium reach, not MCTS reach |
 | Rare-rule instrument is engineered | broaden the rarity<->consequence characterization across a rule set (rarity via random games + play_cost via hand-coded rule-blind instrument, both in `cwm.law`) | **CPU-only** for the map; **LLM** to confirm the LLM reproduces a gap | extend the Connect-Four 6-rule probe |
 | Single model family (GPT-5.x only) | run synthesis on other families (open models / stronger code models) | **LLM (local)** | `danger_synthesis_sweep.py` + gap grid against non-Azure providers; needs a provider adapter |
-| finding-3 denominators are 6 seeds | grow `danger_synthesis_sweep` 6->~20 seeds/cell | **LLM (local)** | `python3.12 scripts/danger_synthesis_sweep.py large 20` (retry/backoff now makes this survivable) |
+| finding-3 denominators are 6 seeds | grow `danger_synthesis_sweep` 6->~20 seeds/cell | **✅ DONE (2026-07-02)** | 20/20 in every cell, both sizes, zero crashes (see entry above) |
 | Beacon is a minimal/trivial witness | synthesize a CWM for a partially-observable army5x5a variant | **LLM (local)** | game/instrument is CPU; the synthesized-CWM demonstration needs the LLM |
-| Gate-blindness scope / `infer_states` crash | **root cause found & contract fixed (below)**; then rerun to confirm | fix **CPU-only (done)**; confirm **LLM (local)** | the `'list' object is not callable` crash was a name collision in OUR contract, not an LLM limit — see the root-cause note below |
-| Knowledge cutoff / contamination | more declarative recall probes | **LLM (local), inherent** | cutoff dates are approximate; "no detectable recall", not "strictly novel" — not fully closable |
+| Gate-blindness scope / `infer_states` crash | **root cause found & contract fixed (below)**; then rerun to confirm | **✅ CONFIRMED (2026-07-02)** | rerun of all three games: zero exec errors; §6 rewritten (see entry above) |
+| Knowledge cutoff / contamination | more declarative recall probes | **✅ probe persisted (2026-07-03); inherent limit remains** | `scripts/declarative_recall_probe.py` — army5x5a/Trike/Kuhn-control Q&A verbatim in `results/declarative_recall_probe.json`; "no detectable recall", not "strictly novel" — not fully closable |
 
 **Root cause of the recurring `'list' object is not callable` crash — very
 likely OURS, not the LLM's, and not transient.** The `infer_states` crash the

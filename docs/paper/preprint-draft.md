@@ -168,9 +168,9 @@ We use the following games, selected to span known, novel, and partially-known r
 - **Tic-tac-toe** — well-known; used to verify the CWM paradigm.
 - **Connect Four** — well-known; used to verify the paradigm and as a negative control for the danger law.
 - **Generalized tic-tac-toe 6×6 win-4** — a parameterized variant (m,n,k game with m=n=6, k=4); model has some prior knowledge.
-- **army5x5a** — a generalized chess game from the DeepMind CWM paper (arXiv:2510.04542, Appendix H.5): a 5×5 board with infantry, cavalry, and general pieces, win by capturing the opponent's general. The paper's public release (arXiv, 2025-10-06) post-dates the GPT-5.4 knowledge cutoff (2025-08-31), so army5x5a falls outside the training window; a declarative probe independently confirmed the model does not know the detailed movesets — making it a genuine translation target.
+- **army5x5a** — a generalized chess game from the DeepMind CWM paper (arXiv:2510.04542, Appendix H.5): a 5×5 board with infantry, cavalry, and general pieces, win by capturing the opponent's general. The paper's public release (arXiv, 2025-10-06) post-dates the GPT-5.4 knowledge cutoff (2025-08-31), so army5x5a falls outside the training window; a declarative probe independently confirmed the model does not know the detailed movesets — asked to state the board size, piece counts, movement offsets, win condition, and starting position or decline each explicitly, the model answered "I do not know" to all five parts, while a positive-control question on Kuhn poker in the same session was answered with complete, correct recall (question and full response persisted in `results/declarative_recall_probe.json`; `scripts/declarative_recall_probe.py`) — making it a genuine translation target.
 - **army5x5a + material-at-cap** — the above, with an added tiebreak rule: if the game reaches the ply cap (100 plies by default) with both generals alive, the player with more material wins. This is the primary instrument for the rare-rule gap.
-- **Trike** (Erickson, 2020) — an abstract combinatorial game; the model knows the name but confabulates the mechanics (wrong-prior regime). Real rules: place a disc on an empty cell on the shared pawn's line, then move the pawn to that disc; game ends when the pawn is surrounded; score = discs adjacent to the pawn.
+- **Trike** (Erickson, 2020) — an abstract combinatorial game in the *wrong-prior* regime: in a declarative probe that allows declining, the model declines to state the mechanics ("I do not reliably know," all five parts; `results/declarative_recall_probe.json`), yet a no-rules synthesis produces confidently wrong mechanics that fail the gate in every seed (0/5, §3.2) — the wrong prior manifests under synthesis pressure, not in declarative recall. Real rules: place a disc on an empty cell on the shared pawn's line, then move the pawn to that disc; game ends when the pawn is surrounded; score = discs adjacent to the pawn.
 - **Kuhn poker** — a minimal imperfect-information game; used to validate the imperfect-information pipeline.
 - **Leduc poker** — a slightly larger poker game (6-card deck, community card, two betting rounds); used for the coverage-bound corollary.
 - **Beacon** — a minimal game constructed specifically to instantiate the positive imperfect-information gap; described in §6.
@@ -663,7 +663,7 @@ Finally, the failure has a direct analogue in model-based reinforcement learning
 
 **Scope of the gate-blindness claim.** The masked tic-tac-toe result (§6.6) establishes that a transition gate is blind to a wrong belief model, demonstrated by withholding an *observation* (masking) rule that is genuinely independent of the dynamics. It does not establish the stronger claim that the belief model could never be inferred from any richer, observation-bearing signal — indeed Proposition 5 is explicit that a dataset of observation-to-observation tuples $(o,a,o')$ *would* constrain the information partition. The claim is scoped to *full-ground-state* transition data: such data cannot constrain the belief model (Proposition 5), and withholding the rule yields a wrong, transition-certified belief model. An earlier version of this scope note was narrower still, because a recurring `infer_states` synthesis crash confounded the inference-rate column; that crash traced to a name collision in our own contract and disappeared entirely on rerun after the fix (§6.6), so both `observation_rate` and `inference_rate` now discriminate cleanly.
 
-**Knowledge cutoff and contamination.** GPT-5.4's training cutoff is approximately 2025-08-31, and the army5x5a paper (arXiv:2510.04542) was released 2025-10-06 — after the cutoff — so the game falls outside the training window. We additionally confirmed via a declarative probe that the model does not recall the specific movesets (§2.6), and the gate-attainability difficulty (nano fails 5/5) is further evidence of genuine translation rather than recall. Even so, the "post-cutoff = uncontaminated" argument is not a hard guarantee (cutoff dates are approximate and corpora leak); readers should interpret the "no prior" label as "no detectable recall" rather than "strictly novel."
+**Knowledge cutoff and contamination.** GPT-5.4's training cutoff is approximately 2025-08-31, and the army5x5a paper (arXiv:2510.04542) was released 2025-10-06 — after the cutoff — so the game falls outside the training window. We additionally confirmed via a declarative probe that the model does not recall the specific movesets — with the question, the full "I do not know" response, and a correctly-answered Kuhn-poker positive control persisted verbatim in `results/declarative_recall_probe.json` (§2.6) — and the gate-attainability difficulty (nano fails 5/5) is further evidence of genuine translation rather than recall. Even so, the "post-cutoff = uncontaminated" argument is not a hard guarantee (cutoff dates are approximate and corpora leak); readers should interpret the "no prior" label as "no detectable recall" rather than "strictly novel."
 
 ---
 
@@ -699,9 +699,11 @@ PYTHONPATH=src python scripts/error_mass_certificate.py
 # Beacon exact play_cost by exhaustion + planner check (§6.4)
 PYTHONPATH=src python scripts/play_cost_exact_beacon.py
 # play_cost mechanism: competent vs random reach-cap by cap knob (§4)
-PYTHONPATH=src python scripts/play_cost_reach.py
+PYTHONPATH=src python scripts/play_cost_reach.py --games 120
 # Synthesis-pipeline danger curve (§5.2), one model at a time (mini|large|nano)
-PYTHONPATH=src python3.12 scripts/danger_synthesis_sweep.py large
+PYTHONPATH=src python3.12 scripts/danger_synthesis_sweep.py large 20
+# Declarative recall probe - army5x5a / Trike / Kuhn control (§2.5, §7)
+PYTHONPATH=src python3.12 scripts/declarative_recall_probe.py large
 ```
 
 The danger-curve script requires Azure OpenAI credentials in `.env`; the others are

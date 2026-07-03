@@ -140,9 +140,11 @@ Pre-registered battery (each isolates one hypothesis):
   - general:  `[(1,0),(-1,0),(0,1),(0,-1),(0,-2),(0,2)]`
   - infantry: `[(1,0),(2,0),(1,-1),(1,1),(-1,0)]`
   - cavalry:  `[(0,3),(1,2),(2,1),(3,0)]`
-  - **OPEN:** exact starting positions / army composition (how many of each
-    piece and where) are NOT yet extracted — pull from Appendix H.5 of the PDF
-    (https://arxiv.org/pdf/2510.04542) when implementing.
+  - ~~OPEN~~ **RESOLVED:** exact starting positions / army composition were
+    extracted and implemented in `src/cwm/groundtruth/gen_chess.py` (P1 top
+    rank 3,2,1,2,3; P2 bottom rank 6,5,4,5,6). The declarative recall probe
+    (question + verbatim response) is persisted in
+    `results/declarative_recall_probe.json`.
 - **Secondary: Generalized Tic-Tac-Toe 6×6 win-4** (Appendix H.4). m,n,k(6,6,4).
   Probe: model knows it → weak anti-recall, use as the correct-prior baseline.
 - **Generator: gg-bench** (arXiv:2505.07215, repo `vivek3141/gg-bench`) — mints
