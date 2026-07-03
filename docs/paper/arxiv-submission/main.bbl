@@ -1,4 +1,4 @@
-\begin{thebibliography}{18}
+\begin{thebibliography}{20}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -68,6 +68,13 @@ Nathan~O. Lambert, Brandon Amos, Omry Yadan, and Roberto Calandra.
   Research}, pages 761--770, 2020.
 \newblock arXiv:2002.04523.
 
+\bibitem[Lanctot et~al.(2009)Lanctot, Waugh, Zinkevich, and
+  Bowling]{lanctot2009mccfr}
+Marc Lanctot, Kevin Waugh, Martin Zinkevich, and Michael Bowling.
+\newblock Monte {C}arlo sampling for regret minimization in extensive games.
+\newblock In \emph{Advances in Neural Information Processing Systems 22
+  (NeurIPS)}, pages 1078--1086, 2009.
+
 \bibitem[Lehrach et~al.(2025)Lehrach, Hennes, Lazaro-Gredilla, Lou, Wendelken,
   Li, Dedieu, Grau-Moya, Lanctot, Iscen, Schultz, Chiam, Gemp, Zielinski,
   Singh, and Murphy]{lehrach2025cwm}
@@ -104,6 +111,11 @@ St{\'e}phane Ross, Geoffrey~J. Gordon, and J.~Andrew Bagnell.
 Reuven~Y. Rubinstein and Dirk~P. Kroese.
 \newblock \emph{Simulation and the {Monte} {Carlo} Method}.
 \newblock Wiley, 3rd edition, 2017.
+
+\bibitem[Tammelin(2014)]{tammelin2014cfrplus}
+Oskari Tammelin.
+\newblock Solving large imperfect information games using {CFR}+.
+\newblock \emph{arXiv preprint arXiv:1407.5042}, 2014.
 
 \bibitem[Verma et~al.(2025)Verma, Huang, Chen, Klein, and Tomlin]{ggbench2025}
 Vivek Verma, David Huang, William Chen, Dan Klein, and Nicholas Tomlin.

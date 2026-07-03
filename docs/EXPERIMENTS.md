@@ -1,5 +1,39 @@
 # Experiments Log
 
+## Equilibrium-reach coverage — the §7.4 promise fulfilled (2026-07-03)
+
+`PYTHONPATH=src python3.12 scripts/equilibrium_coverage.py` (CPU-only, $0).
+New `cwm.cfr` module: external-sampling MCCFR + full-tree CFR+ over the
+imperfect-info contract, exact public-tree best response, exploitability.
+Validated on Kuhn against the analytic value (−1/18; tests/test_cfr.py, 5/5).
+Results: `results/equilibrium_coverage.json`.
+
+| game | solver | game value | exploitability | eq-weighted uncovered mass | union bound |
+|---|---|---|---|---|---|
+| Kuhn (N=80) | CFR+ 2000 iters | −0.0558 (analytic −0.0556) | 0.0068 | 0.015% | all 12 covered (0.0028) |
+| Leduc (N=8000) | CFR+ 1000 iters | −0.0866 (lit. ≈−0.0856) | 0.084 (monotone ↓) | **0.013%** | eq-reach ≥1e-3: 316 covered (0.021); tail ≥1e-4 not certifiable |
+
+**The §6.2 coverage conclusion holds against the normatively correct reference
+(equilibrium reach), not just MCTS self-play** — and is robust to profile
+quality (a crude profile with exploitability 0.79 gives the same conclusion).
+
+**Technical finding worth recording (imperfect recall pitfall).** Both solvers
+plateaued at ~0.6–0.8 exploitability when info-sets were keyed by the
+*instantaneous* observation: Leduc's per-round counters reset between rounds,
+merging distinct betting histories (check-bet-call ≡ bet-call in round 1) — the
+observation-keyed game has IMPERFECT RECALL, where CFR carries no guarantee and
+a per-branch best response overstates exploitation. Fix: solve on perfect-recall
+keys (observation + exact public history) and project reach back onto the
+observation keys the gate samples. After the fix, exploitability decreases
+monotonically. Kuhn never showed the problem (its observation encodes the full
+history). Zero-sum was verified exhaustively over all 5,880 Leduc leaves while
+diagnosing.
+
+Paper updated: §6.2 (equilibrium-reach upgrade), §2.3 Planning (ISMCTS/CFR
+choices moved here from Related Work), §7.4 condensed to pure related work with
+pointers, §8 planner paragraph (remaining gaps: CFR arena + minimax reference).
+Two verified refs added (Lanctot et al. 2009; Tammelin 2014).
+
 ## Declarative recall probe persisted — question & answer now auditable (2026-07-03)
 
 `PYTHONPATH=src python3.12 scripts/declarative_recall_probe.py large` — the
