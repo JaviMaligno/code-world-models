@@ -680,6 +680,17 @@ by game-length divergence (competent − random median plies): **army5x5a** stan
 out (random 23, competent 58, routinely hitting the 100-ply cap), while trike and
 gen_tictactoe are Connect-Four-like (low divergence).
 
+> **Reproduction note (2026-07-03).** The original run of this measurement was
+> ad-hoc and its script was never persisted; `scripts/divergence.py` now exists
+> (recreated) and writes `results/divergence.json`. The rerun (30 games/arm,
+> 300 sims) reproduces the qualitative signature decisively but NOT the exact
+> medians: army5x5a competent-play lengths are strongly bimodal (quick wins or
+> cap-length games), so the median is unstable — the robust divergence metric
+> is the cap-hit rate: **43% of competent games hit the 100-ply cap vs 3%
+> random** (means 52 vs 32 plies); gen_tictactoe −14, trike +2, connect_four +2
+> median divergence (no army-like signature anywhere else). The paper's §3.3
+> sentence has been updated to the reproducible metric with a provenance note.
+
 ## The instrument: army5x5a + material-at-cap (2026-06-25)
 
 In army5x5a's deep tail (competent play maneuvers there; random rarely reaches
