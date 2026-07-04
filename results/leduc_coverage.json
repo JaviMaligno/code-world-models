@@ -1,0 +1,31 @@
+{
+  "coverage": {
+    "competent_infosets": 110,
+    "competent_tail": 38,
+    "random_covered": 574,
+    "tail_uncovered_by_random": 0
+  },
+  "instrument_gate": {
+    "truth_inference_rate": 1.0,
+    "instrument_mismatches_on_random_sample": 950,
+    "n_checks": 3282
+  },
+  "play": {
+    "fair_winrate": 0.5116666666666667,
+    "fair_ci": [
+      0.4833921138753328,
+      0.539866760049609
+    ],
+    "instrument_winrate": 0.5116666666666667,
+    "instrument_ci": [
+      0.4833921138753328,
+      0.539866760049609
+    ],
+    "instrument_net": 128.0,
+    "n": 1200
+  },
+  "danger": {
+    "play_cost": 0.0,
+    "frac_tail_uncovered_at_8000": 0.0
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "game": "army5x5a",
+  "synth_size": "mini",
+  "summary": {
+    "n_seeds": 4,
+    "gap_mean": 0.002124999999999988,
+    "gap_min": 0.0,
+    "gap_max": 0.008499999999999952
+  },
+  "per_seed": [
+    {
+      "seed": 0,
+      "gap": 0.0,
+      "gate": 1.0,
+      "cwm": 1.0,
+      "truth": 1.0,
+      "refinement_iterations": 0,
+      "d_gate": {
+        "n_states": 1369,
+        "n_pairs": 12299,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 0,
+        "legal_terminal_divergences": 0,
+        "n_exec_errors": 0
+      },
+      "d_cwm": {
+        "n_states": 4000,
+        "n_pairs": 42111,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 366,
+        "legal_terminal_divergences": 366,
+        "n_exec_errors": 0
+      },
+      "d_truth": {
+        "n_states": 4000,
+        "n_pairs": 46163,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 113,
+        "legal_terminal_divergences": 113,
+        "n_exec_errors": 0
+      }
+    },
+    {
+      "seed": 1,
+      "gap": 0.008499999999999952,
+      "gate": 1.0,
+      "cwm": 0.9915,
+      "truth": 1.0,
+      "refinement_iterations": 0,
+      "d_gate": {
+        "n_states": 1249,
+        "n_pairs": 11975,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 0,
+        "legal_terminal_divergences": 0,
+        "n_exec_errors": 0
+      },
+      "d_cwm": {
+        "n_states": 4000,
+        "n_pairs": 48260,
+        "legal_rate": 1.0,
+        "terminal_rate": 0.99175,
+        "returns_rate": 0.9915,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 0.9915,
+        "examples": [
+          "state={'board': [0, 2, 1, 2, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3, 5, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 3, 5, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 5, 0, 0, 5, 3, 0, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 5, 6, 0, 3, 0, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 5, 3, 0, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 6, 5, 3, 0, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 5, 3, 5, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 3, 5, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 6, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 3, 5, 0, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 3, 5, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True"
+        ],
+        "n_terminal": 201,
+        "legal_terminal_divergences": 201,
+        "n_exec_errors": 0
+      },
+      "d_truth": {
+        "n_states": 4000,
+        "n_pairs": 46163,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 113,
+        "legal_terminal_divergences": 113,
+        "n_exec_errors": 0
+      }
+    },
+    {
+      "seed": 2,
+      "gap": 0.0,
+      "gate": 1.0,
+      "cwm": 1.0,
+      "truth": 1.0,
+      "refinement_iterations": 0,
+      "d_gate": {
+        "n_states": 1278,
+        "n_pairs": 11721,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 0,
+        "legal_terminal_divergences": 0,
+        "n_exec_errors": 0
+      },
+      "d_cwm": {
+        "n_states": 4000,
+        "n_pairs": 41994,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 315,
+        "legal_terminal_divergences": 315,
+        "n_exec_errors": 0
+      },
+      "d_truth": {
+        "n_states": 4000,
+        "n_pairs": 46163,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 113,
+        "legal_terminal_divergences": 113,
+        "n_exec_errors": 0
+      }
+    },
+    {
+      "seed": 3,
+      "skipped": "gate<1.0",
+      "accuracy": 0.017485428809325562
+    },
+    {
+      "seed": 4,
+      "gap": 0.0,
+      "gate": 1.0,
+      "cwm": 1.0,
+      "truth": 1.0,
+      "refinement_iterations": 0,
+      "d_gate": {
+        "n_states": 1231,
+        "n_pairs": 11388,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 0,
+        "legal_terminal_divergences": 0,
+        "n_exec_errors": 0
+      },
+      "d_cwm": {
+        "n_states": 4000,
+        "n_pairs": 38136,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 211,
+        "legal_terminal_divergences": 211,
+        "n_exec_errors": 0
+      },
+      "d_truth": {
+        "n_states": 4000,
+        "n_pairs": 46163,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 113,
+        "legal_terminal_divergences": 113,
+        "n_exec_errors": 0
+      }
+    }
+  ],
+  "cost_usd_total": 0.08824874999999999
+}

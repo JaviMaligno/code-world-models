@@ -1,0 +1,64 @@
+{
+  "kuhn": {
+    "iters": 2000,
+    "game_value_p1": -0.05584936312790145,
+    "exploitability": 0.006790939996665413,
+    "reachable_infosets": 12,
+    "gate_N": 80,
+    "eq_weighted_uncovered_mass_frac": 0.00014701391269075417,
+    "per_threshold": [
+      {
+        "threshold": 0.01,
+        "n_infosets": 12,
+        "union_bound_miss": 0.0028474768997743326,
+        "pi_min_random": 0.08333333333333333,
+        "covered": true
+      },
+      {
+        "threshold": 0.001,
+        "n_infosets": 12,
+        "union_bound_miss": 0.0028474768997743326,
+        "pi_min_random": 0.08333333333333333,
+        "covered": true
+      },
+      {
+        "threshold": 0.0001,
+        "n_infosets": 12,
+        "union_bound_miss": 0.0028474768997743326,
+        "pi_min_random": 0.08333333333333333,
+        "covered": true
+      }
+    ]
+  },
+  "leduc": {
+    "iters": 1000,
+    "game_value_p1": -0.08663624130577723,
+    "exploitability": 0.08426885276443079,
+    "reachable_infosets": 576,
+    "gate_N": 8000,
+    "eq_weighted_uncovered_mass_frac": 0.00012807769240800554,
+    "per_threshold": [
+      {
+        "threshold": 0.01,
+        "n_infosets": 74,
+        "union_bound_miss": 4.5425358585362606e-07,
+        "pi_min_random": 0.0020833333333333333,
+        "covered": true
+      },
+      {
+        "threshold": 0.001,
+        "n_infosets": 316,
+        "union_bound_miss": 0.020762826679538143,
+        "pi_min_random": 0.0006944444444444446,
+        "covered": true
+      },
+      {
+        "threshold": 0.0001,
+        "n_infosets": 434,
+        "union_bound_miss": 1.1171617503170874,
+        "pi_min_random": 0.0003472222222222223,
+        "covered": false
+      }
+    ]
+  }
+}

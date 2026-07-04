@@ -1,0 +1,123 @@
+{
+  "game": "gen_tictactoe",
+  "synth_size": "nano",
+  "no_rules": true,
+  "summary": {
+    "n_seeds": 2,
+    "gap_mean": 0.0,
+    "gap_min": 0.0,
+    "gap_max": 0.0
+  },
+  "per_seed": [
+    {
+      "seed": 0,
+      "gap": 0.0,
+      "gate": 1.0,
+      "cwm": 1.0,
+      "truth": 1.0,
+      "refinement_iterations": 0,
+      "d_gate": {
+        "n_states": 932,
+        "n_pairs": 22618,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 0,
+        "legal_terminal_divergences": 0,
+        "n_exec_errors": 0
+      },
+      "d_cwm": {
+        "n_states": 4000,
+        "n_pairs": 106742,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 78,
+        "legal_terminal_divergences": 78,
+        "n_exec_errors": 0
+      },
+      "d_truth": {
+        "n_states": 4000,
+        "n_pairs": 108678,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 27,
+        "legal_terminal_divergences": 27,
+        "n_exec_errors": 0
+      }
+    },
+    {
+      "seed": 1,
+      "skipped": "gate<1.0",
+      "accuracy": 0.49600798403193613
+    },
+    {
+      "seed": 2,
+      "skipped": "gate<1.0",
+      "accuracy": 0.0
+    },
+    {
+      "seed": 3,
+      "gap": 0.0,
+      "gate": 1.0,
+      "cwm": 1.0,
+      "truth": 1.0,
+      "refinement_iterations": 0,
+      "d_gate": {
+        "n_states": 972,
+        "n_pairs": 23095,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 0,
+        "legal_terminal_divergences": 0,
+        "n_exec_errors": 0
+      },
+      "d_cwm": {
+        "n_states": 4000,
+        "n_pairs": 121629,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 26,
+        "legal_terminal_divergences": 0,
+        "n_exec_errors": 0
+      },
+      "d_truth": {
+        "n_states": 4000,
+        "n_pairs": 108678,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 27,
+        "legal_terminal_divergences": 0,
+        "n_exec_errors": 0
+      }
+    },
+    {
+      "seed": 4,
+      "skipped": "gate<1.0",
+      "accuracy": 0.6343042071197411
+    }
+  ],
+  "cost_usd_total": 0.15108374999999996
+}

@@ -1,0 +1,22 @@
+{
+  "game": "connect4",
+  "seed": 7,
+  "synth_size": "mini",
+  "baseline_size": "large",
+  "refinement_iterations": 0,
+  "transition_accuracy": 1.0,
+  "arena": {
+    "games": 30,
+    "cwm_wins": 29,
+    "baseline_wins": 1,
+    "draws": 0,
+    "baseline_illegal": 0,
+    "cwm_illegal": 0
+  },
+  "cost_usd_by_role": {
+    "mini": 0.009528,
+    "large": 0.12548499999999965
+  },
+  "cost_usd_total": 0.13501299999999966,
+  "extrapolation_note": "baseline ~$0.0042/game; synthesis is one-off ~$0.0095"
+}

@@ -1,0 +1,38 @@
+{
+  "model_size": "large",
+  "deployment": "gpt-5.4",
+  "date": "2026-07-03",
+  "system_prompt": "You are being probed for factual recall of specific game rules. Answer precisely. If you do not reliably know something, say 'I do not know' explicitly instead of guessing. End your answer with exactly one of the labels: [RECALL] if you are reporting rules you actually know from training, or [GUESS] if any part of your description is invented or inferred.",
+  "probes": [
+    {
+      "id": "army5x5a",
+      "claim_in_paper": "no prior: the model does not know the detailed movesets",
+      "question": "The DeepMind paper 'Code World Models for General Game Playing' (arXiv:2510.04542) defines a two-player board game called 'army5x5a' in its Appendix H.5. Do you know this specific game? If yes, state precisely: (a) the board size, (b) the piece types each player has and how many of each, (c) the exact movement offsets of every piece type, (d) the win condition, and (e) the starting position. If you do not know the game or any of these details, say so explicitly for each part rather than guessing.",
+      "response": "I do not know this specific game definition from Appendix H.5 well enough to state any of those details reliably.\n\n(a) Board size: I do not know.  \n(b) Piece types and counts: I do not know.  \n(c) Exact movement offsets of every piece type: I do not know.  \n(d) Win condition: I do not know.  \n(e) Starting position: I do not know.  \n\n[RECALL]",
+      "usage": {
+        "prompt_tokens": 217,
+        "completion_tokens": 93
+      }
+    },
+    {
+      "id": "trike",
+      "claim_in_paper": "wrong prior: the model knows the name but confabulates the mechanics",
+      "question": "Do you know the abstract combinatorial board game 'Trike', designed by Alek Erickson in 2020? If yes, state precisely: (a) the board shape and size, (b) what pieces exist and who owns them, (c) what a turn consists of, (d) how the game ends, and (e) how the winner is determined. If you do not reliably know any of these, say so explicitly for that part rather than guessing.",
+      "response": "I do not reliably know the precise rules of Alek Erickson\u2019s 2020 abstract game **Trike** well enough to state all of (a)\u2013(e) without risking error.\n\n- (a) Board shape and size: I do not know reliably.\n- (b) What pieces exist and who owns them: I do not know reliably.\n- (c) What a turn consists of: I do not know reliably.\n- (d) How the game ends: I do not know reliably.\n- (e) How the winner is determined: I do not know reliably.\n\n[GUESS]",
+      "usage": {
+        "prompt_tokens": 184,
+        "completion_tokens": 128
+      }
+    },
+    {
+      "id": "kuhn_poker_control",
+      "claim_in_paper": "positive control: a game the model certainly knows",
+      "question": "Do you know Kuhn poker? If yes, state precisely: (a) the deck, (b) the betting structure, (c) the payoffs, and (d) the number of information sets for the first player. If you do not know any of these, say so explicitly.",
+      "response": "Yes.\n\n(a) Deck: 3 cards, typically J, Q, K, with one card dealt privately to each player and one card left undealt.\n\n(b) Betting structure: 2 players, one betting round. Each antes 1 chip. Player 1 acts first and may check or bet 1. If Player 1 checks, Player 2 may check or bet 1. If Player 2 bets after a check, Player 1 may fold or call 1. If Player 1 bets initially, Player 2 may fold or call 1. No raises beyond this single bet.\n\n(c) Payoffs: Winner is the player with the higher card if there is a showdown. If both players check, pot is 2 and winner gets net +1, loser -1. If a bet is made and called, pot is 4 and winner gets net +2, loser -2. If a player folds to a bet, bettor wins the pot of 3 for net +1, folder loses net -1.\n\n(d) Number of information sets for the first player: 6.\n\n[RECALL]",
+      "usage": {
+        "prompt_tokens": 147,
+        "completion_tokens": 233
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "game": "trike",
+  "synth_size": "nano",
+  "no_rules": true,
+  "summary": {
+    "n_seeds": 0,
+    "gap_mean": 0.0,
+    "gap_min": 0.0,
+    "gap_max": 0.0
+  },
+  "per_seed": [
+    {
+      "seed": 0,
+      "skipped": "gate<1.0",
+      "accuracy": 0.002105263157894737
+    },
+    {
+      "seed": 1,
+      "skipped": "gate<1.0",
+      "accuracy": 0.002105263157894737
+    },
+    {
+      "seed": 2,
+      "skipped": "gate<1.0",
+      "accuracy": 0.0
+    },
+    {
+      "seed": 3,
+      "skipped": "gate<1.0",
+      "accuracy": 0.0
+    },
+    {
+      "seed": 4,
+      "skipped": "gate<1.0",
+      "accuracy": 0.00423728813559322
+    }
+  ],
+  "cost_usd_total": 0.4748123
+}

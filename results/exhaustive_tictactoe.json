@@ -1,0 +1,10 @@
+{
+  "size": "mini",
+  "gate_accuracy": 1.0,
+  "gate_iters": 0,
+  "reachable_states": 5478,
+  "transitions_checked": 16167,
+  "terminal_legal_artifacts": 880,
+  "search_relevant_mismatches": 0,
+  "verdict": "PROVEN globally correct on the entire reachable search-relevant relation"
+}

@@ -1,0 +1,21 @@
+{
+  "seed": 7,
+  "synth_size": "mini",
+  "baseline_size": "large",
+  "refinement_iterations": 0,
+  "transition_accuracy": 1.0,
+  "arena": {
+    "games": 30,
+    "cwm_wins": 18,
+    "baseline_wins": 2,
+    "draws": 10,
+    "baseline_illegal": 6,
+    "cwm_illegal": 0
+  },
+  "cost_usd_by_role": {
+    "mini": 0.00447075,
+    "large": 0.0387525
+  },
+  "cost_usd_total": 0.043223250000000005,
+  "extrapolation_note": "baseline ~$0.0013/game; synthesis is one-off ~$0.0045"
+}

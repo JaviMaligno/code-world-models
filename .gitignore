@@ -5,7 +5,9 @@ __pycache__/
 venv/
 .pytest_cache/
 *.egg-info/
-results/
+# results/*.json are the paper's cited evidence artifacts — versioned on purpose
+# (audit 2026-07-04: the paper cites a dozen 'persisted in results/...' files that
+# were previously gitignored and thus absent from the remote).
 .superpowers/
 
 # LaTeX build artifacts

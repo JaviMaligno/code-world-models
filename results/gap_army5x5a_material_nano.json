@@ -1,0 +1,42 @@
+{
+  "game": "army5x5a_material",
+  "synth_size": "nano",
+  "no_rules": false,
+  "summary": {
+    "n_seeds": 0,
+    "gap_mean": 0.0,
+    "gap_min": 0.0,
+    "gap_max": 0.0,
+    "gap_truth_mean": 0.0,
+    "gap_truth_min": 0.0,
+    "gap_truth_max": 0.0
+  },
+  "per_seed": [
+    {
+      "seed": 0,
+      "skipped": "gate<1.0",
+      "accuracy": 0.0
+    },
+    {
+      "seed": 1,
+      "skipped": "gate<1.0",
+      "accuracy": 0.0
+    },
+    {
+      "seed": 2,
+      "skipped": "gate<1.0",
+      "accuracy": 0.009389671361502348
+    },
+    {
+      "seed": 3,
+      "skipped": "gate<1.0",
+      "accuracy": 0.010824313072439634
+    },
+    {
+      "seed": 4,
+      "skipped": "gate<1.0",
+      "accuracy": 0.01380991064175467
+    }
+  ],
+  "cost_usd_total": 0.4066532500000001
+}

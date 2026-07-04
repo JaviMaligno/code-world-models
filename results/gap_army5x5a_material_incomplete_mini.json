@@ -1,0 +1,207 @@
+{
+  "game": "army5x5a_material_incomplete",
+  "synth_size": "mini",
+  "no_rules": false,
+  "summary": {
+    "n_seeds": 3,
+    "gap_mean": 0.005166666666666653,
+    "gap_min": 0.0,
+    "gap_max": 0.015499999999999958,
+    "gap_truth_mean": 0.0,
+    "gap_truth_min": 0.0,
+    "gap_truth_max": 0.0,
+    "play_n": 3,
+    "cwm_winrate_mean": 0.3277777777777778,
+    "cwm_winrate_min": 0.2833333333333333,
+    "cwm_winrate_max": 0.36666666666666664
+  },
+  "per_seed": [
+    {
+      "seed": 0,
+      "skipped": "gate<1.0",
+      "accuracy": 0.9985390796201608
+    },
+    {
+      "seed": 1,
+      "gap": 0.0,
+      "gap_truth": 0.0,
+      "gate": 1.0,
+      "cwm": 1.0,
+      "truth": 1.0,
+      "refinement_iterations": 0,
+      "d_gate": {
+        "n_states": 1249,
+        "n_pairs": 11975,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 0,
+        "legal_terminal_divergences": 0,
+        "n_exec_errors": 0
+      },
+      "d_cwm": {
+        "n_states": 4000,
+        "n_pairs": 48066,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 514,
+        "legal_terminal_divergences": 514,
+        "n_exec_errors": 0
+      },
+      "d_truth": {
+        "n_states": 4000,
+        "n_pairs": 51824,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 83,
+        "legal_terminal_divergences": 83,
+        "n_exec_errors": 0
+      },
+      "play": {
+        "cwm_wins": 6,
+        "truth_wins": 19,
+        "draws": 5,
+        "cwm_illegal": 0,
+        "cwm_winrate": 0.2833333333333333
+      }
+    },
+    {
+      "seed": 2,
+      "skipped": "gate<1.0",
+      "accuracy": 0.9984350547730829
+    },
+    {
+      "seed": 3,
+      "gap": 0.015499999999999958,
+      "gap_truth": 0.0,
+      "gate": 1.0,
+      "cwm": 0.9845,
+      "truth": 1.0,
+      "refinement_iterations": 0,
+      "d_gate": {
+        "n_states": 1201,
+        "n_pairs": 11553,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 0,
+        "legal_terminal_divergences": 0,
+        "n_exec_errors": 0
+      },
+      "d_cwm": {
+        "n_states": 4000,
+        "n_pairs": 45645,
+        "legal_rate": 1.0,
+        "terminal_rate": 0.98475,
+        "returns_rate": 0.9845,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 0.9845,
+        "examples": [
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 3, 5, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 5, 0, 5, 3, 0, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 6, 5, 3, 0, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 6, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 6, 5, 3, 0, 0, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 6, 5, 3, 0, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 6, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 5, 3, 0, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 6, 5, 3, 0, 0, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 5, 0, 5, 3, 0, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 3, 5, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True",
+          "state={'board': [0, 2, 1, 2, 3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 5, 3, 0, 6, 4], 'current_player': 1} legal_ok=True terminal_ok=False returns_ok=False transitions_ok=True"
+        ],
+        "n_terminal": 475,
+        "legal_terminal_divergences": 475,
+        "n_exec_errors": 0
+      },
+      "d_truth": {
+        "n_states": 4000,
+        "n_pairs": 51824,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 83,
+        "legal_terminal_divergences": 83,
+        "n_exec_errors": 0
+      },
+      "play": {
+        "cwm_wins": 9,
+        "truth_wins": 19,
+        "draws": 2,
+        "cwm_illegal": 0,
+        "cwm_winrate": 0.3333333333333333
+      }
+    },
+    {
+      "seed": 4,
+      "gap": 0.0,
+      "gap_truth": 0.0,
+      "gate": 1.0,
+      "cwm": 1.0,
+      "truth": 1.0,
+      "refinement_iterations": 0,
+      "d_gate": {
+        "n_states": 1231,
+        "n_pairs": 11388,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 0,
+        "legal_terminal_divergences": 0,
+        "n_exec_errors": 0
+      },
+      "d_cwm": {
+        "n_states": 4000,
+        "n_pairs": 41499,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 244,
+        "legal_terminal_divergences": 244,
+        "n_exec_errors": 0
+      },
+      "d_truth": {
+        "n_states": 4000,
+        "n_pairs": 51824,
+        "legal_rate": 1.0,
+        "terminal_rate": 1.0,
+        "returns_rate": 1.0,
+        "transition_rate": 1.0,
+        "state_agreement_rate": 1.0,
+        "examples": [],
+        "n_terminal": 83,
+        "legal_terminal_divergences": 83,
+        "n_exec_errors": 0
+      },
+      "play": {
+        "cwm_wins": 9,
+        "truth_wins": 17,
+        "draws": 4,
+        "cwm_illegal": 0,
+        "cwm_winrate": 0.36666666666666664
+      }
+    }
+  ],
+  "cost_usd_total": 0.11282174999999998
+}
