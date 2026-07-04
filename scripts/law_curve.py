@@ -49,7 +49,7 @@ class BaseArmyCap:
 
 # CHEAP rarity grid (no MCTS): many caps, many random games.
 CAP_GRID = [25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 140]
-RARITY_GAMES = 2000
+RARITY_GAMES = 3000   # matches the paper (rarity per cap over 3000 random games)
 # EXPENSIVE cost probes (MCTS): a few caps, enough games to resolve ~0.1.
 COST_CAPS = [30, 60, 100]
 COST_SIMS = 300

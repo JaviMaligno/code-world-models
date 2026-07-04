@@ -61,6 +61,16 @@ TRUTH_RET = [truth.returns(s) for s in TEST]
 assert all(r != {1: 0.0, 2: 0.0} for r in TRUTH_RET), "test states must be decisive"
 
 
+def _norm_returns(r):
+    """Normalize key type so a string-keyed returns dict (which passes the
+    JSON-round-tripped gate) is not misclassified as blind by the in-process
+    comparison (audit finding: latent gate-vs-rule_status asymmetry)."""
+    try:
+        return {int(k): float(v) for k, v in r.items()}
+    except (ValueError, TypeError, AttributeError):
+        return r
+
+
 def rule_status(code):
     """Classify a synthesized CWM on the rule-region test states into one of:
       'aware' — runs and matches truth (gives the material winner) on ALL of them,
@@ -73,7 +83,7 @@ def rule_status(code):
     try:
         m = _load_module_from_code(code)
         for s, tr in zip(TEST, TRUTH_RET):
-            if m.returns({"board": list(s["board"]), "current_player": s["current_player"]}) != tr:
+            if _norm_returns(m.returns({"board": list(s["board"]), "current_player": s["current_player"]})) != tr:
                 return "blind", None   # disagrees with truth on a rule-region state
         return "aware", None
     except Exception as e:

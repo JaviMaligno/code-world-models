@@ -1,5 +1,57 @@
 # Experiments Log
 
+## Full script audit — 4 parallel reviewers, every scripts/ + core module (2026-07-04)
+
+Motivated by the bugs found this week (df-indexing, feedback truncation,
+crash-vs-blind), all 32 scripts + core modules were audited in 4 batches
+(statistics / coverage-CFR / synthesis-sweeps / probes-figures), each finding
+verified by the reviewer with read-only computations and the actionable ones
+re-verified by hand before fixing. **No finding reverses a published
+conclusion**; the figures were verified number-by-number against the current
+paper (zero stale); cfr.py's best response was validated against brute-force
+enumeration (1e-10 agreement); all headline statistics recompute exactly from
+raw data.
+
+**Fixed in this commit (code):**
+- `rule_status` in 4 scripts: normalize returns-dict key types before comparing
+  (latent gate-vs-classifier asymmetry that could misclassify an AWARE model as
+  blind on a rerun; verified never fired on the 120+ stored codes).
+- `coverage_bound_constants.py`: d_max now measured per the paper's definition
+  (shortest-history player-action depth per info-set) — Kuhn 2 / Leduc 6, not
+  the 3/8 horizon. Corrected loose bound: Leduc N≈818k (was 7.4M, ×9 inflated).
+- Stale docstrings/defaults frozen at superseded stages: play_cost_ci.py
+  (headline is --seeds 20), play_cost_reach.py (--games 120), law_curve.py
+  RARITY_GAMES 2000→3000 (published table back-solves to n=3000).
+- leduc_coverage_diagnostic.py print labels (said 4000/120 games, ran
+  8000/300); leduc_coverage.py gate 4000→8000 + stale debug-sized
+  results/leduc_coverage.json regenerated; coverage_competent_leduc.py now
+  asserts no competent key is silently dropped from the exact-reach dict.
+- divergence/harvest/gen_chess_material docstrings corrected.
+
+**Fixed in this commit (paper):**
+- §5.2 confound paragraph: the "≈0.7%" prompt-exposure figure was WRONG — the
+  prompt shows a deterministic prefix (first 30 transitions) that can NEVER
+  contain a material-at-cap terminal (index ≥ 99 by construction). Probability
+  is exactly 0, which sharpens the confound story. Discriminant-signature
+  sentence scoped to 9/12 seeds (3 end in refinement collapse, blind too).
+- §6.2: loose bound 7.4M → 818k with the d_max correction note; "bar_d = d_max
+  with equality" claim corrected to strict inequality (3/8 vs 2/6); "0/1259
+  inference-relevant visits" relabeled (denominator counts all visits);
+  exploitability annotated as NashConv (BR₁+BR₂).
+- tab:repair: "proper DAgger" row relabeled "DAgger-style iterated retraining"
+  with an audit footnote — the script never aggregates datasets across rounds
+  (DAgger's defining mechanism); conservative direction, labeled by what ran.
+  "120" targeted examples marked nominal (pre-move validation only).
+
+**Recorded, not fixed** (LOW/latent, documented): consecutive MCTS base seeds
+across replicate seeds (second-order independence risk; replicates verified to
+differ); arena.play_match dead `seed` parameter (all callers safe via stateful
+agent closures); D_gate duplicate-weighting vs deduped D_cwm (small,
+one-directional); visited-cap subset PYTHONHASHSEED-dependence (unbiased,
+marginal irreproducibility); order-sensitive legal_actions gate comparison
+(conservative); N=40/120/200 trajectory prefix-nesting per seed (cells
+dependent across N, fine for a curve). Tests: 199 passed.
+
 ## Headline play-cost at 20 seeds (n=4800) — df=19, heterogeneity revealed (2026-07-03)
 
 `python scripts/play_cost_ci.py --seeds 20` (CPU-only, $0, ~40 h wall on shared

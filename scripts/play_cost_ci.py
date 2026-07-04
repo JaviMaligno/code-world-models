@@ -16,7 +16,8 @@ from cwm.run_gap import _play_performance
 from cwm.groundtruth import gen_chess_material as mat, gen_chess as base
 from cwm.law import wilson_ci, t_crit_95
 
-# Defaults reproduce the published headline (n=600 = 5 seeds x 120, 600 sims).
+# NOTE: the published headline is the 20-seed run (n=4800): --seeds 20.
+# Defaults (5 seeds, n=600) reproduce the superseded intermediate stage only.
 # All three are overridable so the seed-clustered interval (df = seeds-1) can be
 # tightened with more seeds; the t critical value is now computed for any df via
 # cwm.law.t_crit_95, so the old 6-seed ceiling is gone. Reruns beyond the

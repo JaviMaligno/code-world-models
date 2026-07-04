@@ -9,7 +9,8 @@ import argparse, random
 from cwm.groundtruth.gen_chess_material import make_material, N
 from cwm.mcts import mcts_policy
 
-# Defaults reproduce the published mechanism figures (40 games, 300 sims). This
+# NOTE: the published Figure 3 uses --games 120; defaults (40 games) reproduce
+# the retired small-sample stage only.
 # is the n the paper flags as "small-sample"; --games raises it (CPU-only but
 # long) -- see the limitations roadmap in docs/EXPERIMENTS.md.
 _ap = argparse.ArgumentParser(description=__doc__)

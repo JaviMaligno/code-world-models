@@ -4,8 +4,9 @@ the refinement feedback actually SHOWS it?
 Background: the original refiner truncated failure lines at 200 chars and never
 included the expected values, so the "FAILURES (expected vs got)" feedback
 carried neither — the rule's signal never reached the model in legible form
-through the refinement channel (and the synthesis prompt's 30 random examples
-contain a material-terminal transition with probability ~0.7%). The refiner is
+through the refinement channel (and the synthesis prompt shows the FIRST 30
+transitions of the trajectory stream — a deterministic prefix that can never
+contain a material-at-cap terminal, whose global index is >= 99 by construction). The refiner is
 now fixed (expected= shown per mismatched field). This script reruns the
 headline tab:synthcurve cell (N=200, fresh-batch refinement) under the fixed
 feedback:
@@ -56,12 +57,22 @@ TEST = rule_region_states()
 TRUTH_RET = [truth.returns(s) for s in TEST]
 
 
+def _norm_returns(r):
+    """Normalize key type so a string-keyed returns dict (which passes the
+    JSON-round-tripped gate) is not misclassified as blind by the in-process
+    comparison (audit finding: latent gate-vs-rule_status asymmetry)."""
+    try:
+        return {int(k): float(v) for k, v in r.items()}
+    except (ValueError, TypeError, AttributeError):
+        return r
+
+
 def rule_status(code):
     try:
         m = _load_module_from_code(code)
         for s, tr in zip(TEST, TRUTH_RET):
-            if m.returns({"board": list(s["board"]),
-                          "current_player": s["current_player"]}) != tr:
+            if _norm_returns(m.returns({"board": list(s["board"]),
+                          "current_player": s["current_player"]})) != tr:
                 return "blind", None
         return "aware", None
     except Exception as e:

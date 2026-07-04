@@ -87,7 +87,7 @@ certify("Kuhn", kuhn, N_used=80,
         enum_note="coverage bound certifies FULL coverage at N=80 (N_suff=66) -- "
                   "stronger where enumeration is feasible")
 certify("Leduc", leduc, N_used=8000,
-        enum_note="coverage bound needs N~27k (tight) / 7.4M (loose) and does NOT "
+        enum_note="coverage bound needs N~27k (tight) / 818k (loose, d_max=6) and does NOT "
                   "certify N=8000; the mixture error-mass certificate holds at N=8000 "
                   "with no enumeration")
 print("DONE", flush=True)

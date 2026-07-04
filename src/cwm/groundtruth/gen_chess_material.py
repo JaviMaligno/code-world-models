@@ -4,7 +4,7 @@ Identical to gen_chess (army5x5a) EXCEPT terminal scoring at the ply cap: when t
 ply counter reaches MAX_PLIES with both generals alive, instead of a draw the
 player with more pieces on the board (cells 0..24) wins; equal counts is a draw.
 is_terminal / legal_actions / apply_action are unchanged from base, so only
-`returns` differs. This rule is rare under random play (~1% of games) but central
+`returns` differs. This rule is rare under random play (~2.5% of random games (measured material-terminal rate)) but central
 to competent play (~50%), exposing the gate's coverage blind spot.
 """
 from . import gen_chess as base

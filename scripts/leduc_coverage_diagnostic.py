@@ -74,8 +74,8 @@ def main():
     uncovered = {k: c for k, c in comp.items()
                  if k not in rand_set and n_consistent(k, _player_of(k)) > 1}
 
-    print(f"random info-sets (4000 games): {len(rand_set)}")
-    print(f"competent info-sets (120 games): {len(comp)}")
+    print(f"random info-sets (8000 games): {len(rand_set)}")
+    print(f"competent info-sets (300 games): {len(comp)}")
     covered = sum(c for k, c in comp.items() if k in rand_set)
     print(f"competent VISITS on random-covered info-sets: "
           f"{covered}/{comp_total} = {covered/comp_total:.3f}")

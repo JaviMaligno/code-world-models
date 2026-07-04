@@ -29,7 +29,7 @@ def main():
 
     # (1) coverage gap
     comp = competent_infosets(L, n_games=80, sims=SIMS, seed=0)
-    rand = random_infoset_coverage(L, n_games=4000, seed=0)
+    rand = random_infoset_coverage(L, n_games=8000, seed=0)
     comp_tail = {k for k in comp if _is_tail(list(k))}
     uncovered_tail = {k for k in comp_tail if k not in rand}
     out["coverage"] = {"competent_infosets": len(comp), "competent_tail": len(comp_tail),
@@ -75,7 +75,7 @@ def main():
     play_cost = max(0.0, fair["a_winrate"] - play["a_winrate"])
     p_tail = (len(comp_tail) and len(uncovered_tail) / len(comp_tail)) or 0.0
     out["danger"] = {"play_cost": play_cost,
-                     "frac_tail_uncovered_at_4000": p_tail}
+                     "frac_tail_uncovered_at_8000": p_tail}
     print(f"danger: play_cost={play_cost:.3f} tail_uncovered_frac={p_tail:.3f}", flush=True)
 
     Path("results/leduc_coverage.json").write_text(json.dumps(out, indent=2))

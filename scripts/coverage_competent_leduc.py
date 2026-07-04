@@ -42,7 +42,8 @@ def competent_infosets(n_games, sims, seed):
 reach = exact_reach()
 comp = competent_infosets(n_games=200, sims=150, seed=0)
 comp_reach = {k: reach[k] for k in comp if k in reach}
-unreached = [k for k in comp if k not in reach]   # should be empty (terminal-only keys)
+unreached = [k for k in comp if k not in reach]
+assert not unreached, f"competent-visited keys missing from exact reach: {unreached[:3]}"  # silent drop would inflate pi_min
 pi_min_c = min(comp_reach.values())
 I_c = len(comp_reach)
 N_suff = (1.0/pi_min_c)*math.log(I_c/0.05)

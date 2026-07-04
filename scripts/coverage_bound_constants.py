@@ -23,25 +23,29 @@ def reach_probs(model):
     play, chance = uniform over initial_states()."""
     deals = model.initial_states()
     pchance = 1.0 / len(deals)
-    reach = {}   # infoset -> probability
+    reach = {}       # infoset -> probability
+    d_shortest = {}  # infoset -> min player-action edges on a history reaching it
     bmax = 0
-    dmax = 0
 
     def rec(state, prob, depth):
-        nonlocal bmax, dmax
+        nonlocal bmax
         if model.is_terminal(state):
             return
         p = state["current_player"]
         k = infoset_key(model, state["board"], p)
         reach[k] = reach.get(k, 0.0) + prob
+        d_shortest[k] = min(d_shortest.get(k, depth), depth)
         legal = model.legal_actions(state)
         bmax = max(bmax, len(legal))
-        dmax = max(dmax, depth + 1)
         for a in legal:
             rec(model.apply_action(state, a), prob * (1.0 / len(legal)), depth + 1)
 
     for d in deals:
         rec({"board": list(d["board"]), "current_player": d["current_player"]}, pchance, 0)
+    # d_max per the paper's definition: max over info-sets of the SHORTEST-history
+    # player-action depth d(I). (An audit found an earlier version measured the
+    # game horizon, max depth + 1, inflating the loose bound: Leduc b^8 vs b^6.)
+    dmax = max(d_shortest.values())
     return reach, pchance, bmax, dmax
 
 
