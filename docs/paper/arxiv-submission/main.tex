@@ -178,7 +178,7 @@ Table~\ref{tab:config} collects the fixed components of the pipeline so the expe
 \begin{table}[ht]
 \centering
 \small
-\begin{tabular}{ll}
+\begin{tabular}{@{}l p{0.72\textwidth}@{}}
 \toprule
 Component & Setting \\
 \midrule
@@ -738,7 +738,7 @@ In the danger-law reading, any play harm mediated by consulting $f$ on an erring
 \end{proof}
 
 \begin{corollary}[constants without enumeration]
-Instantiating at $\delta = 0.05$ (\texttt{scripts/error\_mass\_certificate.py}; the only game-dependent inputs are the rule-level constants $b$ and $\bar d$):
+Instantiating at $\delta = 0.05$ (\texttt{scripts/\allowbreak error\_\allowbreak mass\_\allowbreak certificate.py}; the only game-dependent inputs are the rule-level constants $b$ and $\bar d$):
 
 \emph{Kuhn} ($N = 80$, $b = 2$, $\bar d = 3$): any gate-passing \texttt{infer\_states} fixed before the gate has undetected-error hit mass $\mu_\rho(E_f) \leq 0.037$, and $\mu_\sigma(E_f) \leq 8 \times 0.037 = 0.30$ for every profile $\sigma$. This is strictly weaker than the enumerative corollary (which certifies \emph{full coverage} at $N = 80$) --- where enumeration is feasible, Theorem~\ref{thm:coverage} remains the sharper tool.
 
@@ -841,7 +841,7 @@ In Beacon with any $T \geq 1$, consider agents that (a) play the safe walk actio
 \end{proposition}
 
 \begin{proof}
-By exhaustion over the four equally-likely type assignments and both seatings --- eight deterministic games, checked mechanically against the implementation by \texttt{scripts/play\_cost\_exact\_beacon.py}. The argument each check instantiates: under (a) both players survive, so every game reaches D. At D each player has observed $T \geq 1$ opponent moves, so the true posterior is the singleton $\{$true type$\}$ (invertibility of the safe map); the truth's guess is therefore correct with probability 1 while the instrument's, flipped on D, is wrong with probability 1. Truth-vs-truth scores $1$--$1$: a draw, every deal. Instrument-vs-truth scores $0$--$1$: the instrument seat loses, every deal.
+By exhaustion over the four equally-likely type assignments and both seatings --- eight deterministic games, checked mechanically against the implementation by \texttt{scripts/\allowbreak play\_\allowbreak cost\_\allowbreak exact\_\allowbreak beacon.py}. The argument each check instantiates: under (a) both players survive, so every game reaches D. At D each player has observed $T \geq 1$ opponent moves, so the true posterior is the singleton $\{$true type$\}$ (invertibility of the safe map); the truth's guess is therefore correct with probability 1 while the instrument's, flipped on D, is wrong with probability 1. Truth-vs-truth scores $1$--$1$: a draw, every deal. Instrument-vs-truth scores $0$--$1$: the instrument seat loses, every deal.
 \end{proof}
 
 The proposition lives at the belief$\to$guess abstraction (any planner satisfying (a)--(b)); that determinized MCTS realizes (a)--(b) is the planner-conversion fact noted above (verified by whole-branch code review, and re-verified by the same script driving the eight games with the actual determinized-MCTS policy, which reproduces all-draws / all-losses). The measured 0.000 [0.000, 0.003] over $n = 1200$ arena games is thus the confirmation of a theorem rather than a standalone estimate.
