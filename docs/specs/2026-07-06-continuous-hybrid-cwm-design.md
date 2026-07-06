@@ -202,6 +202,22 @@ for all sweeps CPU-only).
    competent reach flat, random reach falling** (if not, re-engineer reward).
 2. Rarity sweep + hand-written blind proxy + MPC play_cost → danger curve
    (CPU-only paper skeleton).
+
+> **Update (2026-07-06): steps 1–2 DONE, go/no-go PASSED.** Code:
+> `src/cwm/continuous/` (envs, mpc, harness) + `tests/test_continuous.py` +
+> `scripts/continuous_reach.py`; results in EXPERIMENTS.md §"PAPER 2 —
+> Continuous/hybrid instrument" and `results/continuous_reach.json`. Rarity
+> sweeps 0.331→0.002 over `x_wall ∈ [2,10]`; play_cost ≈ 1.03 knob-invariant
+> (blind planner scores below random — pinned at the wall all episode, every
+> knob); danger threshold law reproduced with the full (1−r)^N elbow inside
+> the sweep. Design deltas vs this spec, from calibration: (i) reward is two
+> sigmoid *plateaus* (not a Gaussian band near the wall) — point lodes demand
+> braking finesse random shooting lacks; (ii) the far lode at x=12 with walls
+> swept in [2,10] decouples the lure from the knob and keeps play_cost flat;
+> (iii) MPC candidates must be piecewise-constant + constant {−1,0,+1} — with
+> i.i.d. per-step candidates, imagination is diffusive, truth/blind rank
+> candidates identically and the wall never enters imagination; (iv) play_cost
+> is normalized regret and can exceed 1 (blind < random) — report unclamped.
 3. Pinned-integrator synthesis contract + full-spec/omitted arms (mini first).
 4. Exactness + pervasive-error control + smooth-bump contrast.
 5. Repair arms + MLP probe + second hybrid instrument as robustness.

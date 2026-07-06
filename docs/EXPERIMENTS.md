@@ -1,5 +1,57 @@
 # Experiments Log
 
+## PAPER 2 — Continuous/hybrid instrument: mechanism go/no-go PASSED (2026-07-06)
+
+First run of the continuous/hybrid rare-mode instrument (cart-with-wall; spec
+`docs/specs/2026-07-06-continuous-hybrid-cwm-design.md`, order-of-work step
+1-2). The wall-blind model is the hand-written on-manifold proxy (same code
+path minus the wall branch — **bit-exact off-mode by construction**, tested);
+planner is random-shooting MPC with piecewise-constant + constant candidates.
+
+`PYTHONPATH=src python scripts/continuous_reach.py` (3000 rarity rollouts,
+20 MPC episodes/arm per knob, 146 s CPU; `results/continuous_reach.json`):
+
+| x_wall | rarity [Wilson 95%] | J_truth | J_blind | J_rand | play_cost | blind hit | truth hit | d@N=20 | d@40 | d@80 |
+|-------:|---------------------|--------:|--------:|-------:|----------:|----------:|----------:|-------:|-----:|-----:|
+| 2 | 0.331 [0.315, 0.348] | 17.77 | 0.00 | 0.53 | 1.031 | 1.00 | 0.00 | 0.000 | 0.000 | 0.000 |
+| 3 | 0.219 [0.205, 0.234] | 17.77 | 0.00 | 0.53 | 1.031 | 1.00 | 0.00 | 0.007 | 0.000 | 0.000 |
+| 4 | 0.143 [0.131, 0.156] | 17.77 | 0.00 | 0.53 | 1.031 | 1.00 | 0.00 | 0.047 | 0.002 | 0.000 |
+| 5 | 0.084 [0.075, 0.095] | 17.77 | 0.00 | 0.53 | 1.031 | 1.00 | 0.00 | 0.177 | 0.030 | 0.001 |
+| 6 | 0.050 [0.043, 0.059] | 17.77 | 0.00 | 0.53 | 1.031 | 1.00 | 0.00 | 0.367 | 0.131 | 0.017 |
+| 8 | 0.013 [0.009, 0.017] | 17.77 | 0.02 | 0.53 | 1.030 | 1.00 | 0.00 | 0.798 | 0.619 | 0.372 |
+| 10 | 0.002 [0.001, 0.004] | 17.77 | 0.94 | 0.53 | 0.977 | 1.00 | 0.00 | 0.938 | 0.901 | 0.832 |
+
+**The paper-1 mechanism reproduces in continuous state space, sharper:**
+- **Threshold law again:** danger ≈ 0 while the wall is inside the random
+  envelope, rises through the elbow, plateaus at full play_cost; N shifts the
+  threshold (d@20 vs d@80 columns). The whole elbow sits inside the sweep.
+- **play_cost knob-invariant** (1.031 flat; 0.977 at x_wall=10 where the
+  sigmoid tail of the far lode leaks J_blind=0.94) — and **> 1**: the
+  blind-model planner scores *below random* (J 0.00 vs 0.53), because MPC is
+  not merely uninformed but actively exploited — it drives into the phantom
+  region and stays pinned pressing against the wall for the entire episode,
+  replanning the same doomed plan every step (`blind hit` = 1.00 at every
+  knob; final x = x_wall exactly). The continuous analogue of "loses ~2:1",
+  in stronger form.
+- **The reach mechanism, cleaner than paper 1:** exploited-planner wall reach
+  flat at 1.00 across the knob; random reach (= rarity) falls 0.33 → 0.002;
+  truth-planner trajectory reach 0.00 (the wall is off *its* path — the mode
+  lives on the blind planner's deployment path and the truth planner's *query*
+  distribution, per the μ_query bound).
+- Gate-miss exactness re-verified in-tests: empirical P(N rollouts miss) =
+  (1−r)^N within binomial error (`tests/test_continuous.py`).
+
+Calibration findings recorded for the paper (spikes, same date): (i) i.i.d.
+per-step candidate sampling makes MPC imagination diffusive — it never reaches
+distant reward, and truth/blind rank candidates *identically* (the wall never
+enters imagination); piecewise-constant blocks + constant {−1,0,+1} candidates
+fix it. (ii) Point (Gaussian) reward lodes demand braking finesse random
+shooting lacks; sigmoid plateaus remove the confound. (iii) The plant's drag
+time-constant must sit well inside the planning horizon or no arm can act.
+
+GO for order-of-work steps 3+ (synthesis contract, exactness + pervasive-error
+control, smooth-bump contrast — `envs.py` already carries the C∞ bump arm).
+
 ## Editorial de-archaeology + proper-DAgger rerun + effective-dose measurement (2026-07-05/06)
 
 Follow-up to the concern that some audit *notes* were patches avoiding a needed
