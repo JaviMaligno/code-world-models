@@ -193,7 +193,18 @@ breadth/generality the result needed.
 3. **(Optional) Tighten the play result** — more seeds/sims, confidence intervals,
    and the synthesized-CWM (not just hand-written base) at scale.
 4. Imperfect-information round (poker + Quadranto + Hand of War).
-5. **Rethink applications beyond games (open, deliberate brainstorm needed).**
+5. **Continuous/hybrid follow-up paper (designed 2026-07-06, to live in this
+   repo).** The danger law is measure-theoretic and transfers to continuous
+   state spaces; the localized mechanism lives at **hybrid mode boundaries**
+   (contacts, hard stops, regime switches), and code synthesis is what makes
+   the localization realizable there (an omitted branch is bit-exact off the
+   omitted mode — something smooth learned models can't represent). Paper 1
+   points to this via the "continuous settings" remark (`main.tex`,
+   `rem:continuous`). Full design — instrument (cart-with-wall, wall-position
+   rarity knob), gate (pinned-integrator, near-exact), MPC planner, synthesis
+   arms, order of work — in
+   `docs/specs/2026-07-06-continuous-hybrid-cwm-design.md`.
+6. **Rethink applications beyond games (open, deliberate brainstorm needed).**
    The Code World Model pattern (LLM synthesizes a verifiable executable model
    from examples + classical planning/checking on top) may transfer to non-game
    domains — e.g. business rules / pricing (connects to the author's real work
