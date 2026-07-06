@@ -1,5 +1,45 @@
 # Experiments Log
 
+## Editorial de-archaeology + proper-DAgger rerun + effective-dose measurement (2026-07-05/06)
+
+Follow-up to the concern that some audit *notes* were patches avoiding a needed
+redo. Resolved on three fronts:
+
+**1. Proper DAgger, actually run (the redo, not a note).** `spike_dagger2.py`
+now aggregates the dataset across rounds (Ross et al. 2011 — the mechanism the
+earlier version omitted). Reran (mini, 3 rounds): dataset grows 1249→1860,
+discriminating transitions accumulate 0→3→5→11, **rule never learned** across
+all rounds (winrates 0.33/0.42/0.33/0.28). One round's synthesis collapsed at
+the gate (0.00); the other two reached 0.994–0.997 (<1.0 because the aggregated
+dataset now holds rule transitions the rule-blind CWM can't match — same signal
+as the sweep). So tab:repair's row is now "proper DAgger" by construction, and
+the audit footnote is **deleted**, not kept as a disclaimer.
+
+**2. Effective dose measured (redo, not a hedge).** The targeted-artificial
+"120" was audited as a nominal count; measured directly: **115 of 120**
+constructed transitions demonstrate the rule decisively (4 general-capture,
+1 equal-material draw). Table now reads "120 (115 decisive)" — a number, not
+"(nominal)".
+
+**3. Editorial de-archaeology pass.** An agent inventoried every draft-history
+self-reference in main.tex and classified each: (A) pure archaeology → delete
+the historical clause, keep the content; (B) lesson-in-disguise → restate the
+lesson directly; (C) legitimate content → keep. Applied: the `infer_states`
+shadowing-crash story (told in FIVE places) collapsed to its single thematic
+home (§6.6, retitled "A pitfall worth recording"); 11 pure-archaeology clauses
+deleted (audit-corrected-7.4M, ≈0.7%-assumed-random, "earlier version of this
+table/run/scope note", "this revision", etc.); 4 lessons rewritten as
+robustness checks (seed-scaling stability, mechanism sample-robustness, median
+instability under bimodality, fixed-vs-fresh resampling contrast). The two
+genuinely scientific correction narratives (§5.2 feedback-channel confound →
+discriminant experiment; §6.6 contract-induced crash → thesis instance) kept.
+Principle codified: draft history lives in this log and git, not the manuscript.
+
+Also: the "results/ git-ignored" phrasing in the reproducibility section is now
+"versioned in the repo" (the artifacts were un-ignored in the prior commit).
+
+PDF 40 pp, clean. Cost: ~$0.5 Azure (DAgger rerun).
+
 ## Full script audit — 4 parallel reviewers, every scripts/ + core module (2026-07-04)
 
 Motivated by the bugs found this week (df-indexing, feedback truncation,

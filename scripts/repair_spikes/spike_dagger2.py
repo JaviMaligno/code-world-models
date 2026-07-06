@@ -79,12 +79,17 @@ def synth_eval(traj, label, max_iters=8):
 random_traj = collect_trajectories(mat, n_games=40, seed=SEED)
 print(f"random transitions={len(random_traj)}", flush=True)
 cwm = synth_eval(random_traj, "round 0 (random only)")
-aggregated = list(random_traj)
+# TRUE DAgger: the dataset AGGREGATES across rounds (Ross et al. 2011). An audit
+# found an earlier version rebuilt the dataset from only the current round's
+# path data (and duplicated disc); that version generated the original table row.
+agg_disc, agg_rest = [], []
 for k in range(1, 4):
     path = path_trajectories(cwm, n_games=25, sims=300, seed=SEED + 100 * k)
     disc = [t for t in path if is_disc(t)]
     rest = [t for t in path if not is_disc(t)]
-    keep = disc + random.Random(0).sample(rest, min(200, len(rest)))
-    aggregated = disc + random_traj + keep        # discriminating first (synthesis 30-cap + refiner failures see them)
-    print(f"  round {k}: path_transitions={len(path)} discriminating={len(disc)}", flush=True)
-    cwm = synth_eval(aggregated, f"round {k}")
+    agg_disc += disc
+    agg_rest += random.Random(k).sample(rest, min(200, len(rest)))
+    dataset = agg_disc + random_traj + agg_rest   # discriminating first (synthesis 30-cap + refiner failures see them)
+    print(f"  round {k}: path_transitions={len(path)} new_disc={len(disc)} "
+          f"aggregated: disc={len(agg_disc)} total={len(dataset)}", flush=True)
+    cwm = synth_eval(dataset, f"round {k}")

@@ -1,0 +1,8 @@
+random transitions=1249
+  [round 0 (random only)] acc=1.0000 iters=0 rule_learned=False winrate=0.33 (7W/6D/17L)
+  round 1: path_transitions=559 new_disc=3 aggregated: disc=3 total=1452
+  [round 1] acc=0.0000 iters=8 rule_learned=False winrate=0.42 (10W/5D/15L)
+  round 2: path_transitions=554 new_disc=2 aggregated: disc=5 total=1654
+  [round 2] acc=0.9970 iters=8 rule_learned=False winrate=0.33 (7W/6D/17L)
+  round 3: path_transitions=1115 new_disc=6 aggregated: disc=11 total=1860
+  [round 3] acc=0.9941 iters=8 rule_learned=False winrate=0.28 (6W/5D/19L)
