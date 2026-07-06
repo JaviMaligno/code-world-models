@@ -1,4 +1,4 @@
-\begin{thebibliography}{20}
+\begin{thebibliography}{26}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -12,12 +12,26 @@ Koen Claessen and John Hughes.
 \newblock In \emph{Proceedings of the Fifth {ACM} {SIGPLAN} International
   Conference on Functional Programming (ICFP)}, pages 268--279, 2000.
 
+\bibitem[Coulom(2006)]{coulom2006mcts}
+R{\'e}mi Coulom.
+\newblock Efficient selectivity and backup operators in monte-carlo tree
+  search.
+\newblock In \emph{Computers and Games (CG 2006)}, volume 4630 of \emph{Lecture
+  Notes in Computer Science}, pages 72--83. Springer, 2006.
+
 \bibitem[Cowling et~al.(2012)Cowling, Powley, and
   Whitehouse]{cowling2012ismcts}
 Peter~I. Cowling, Edward~J. Powley, and Daniel Whitehouse.
 \newblock Information set {Monte} {Carlo} tree search.
 \newblock \emph{{IEEE} Transactions on Computational Intelligence and {AI} in
   Games}, 4\penalty0 (2):\penalty0 120--143, 2012.
+
+\bibitem[Erickson(2020)]{erickson2020trike}
+Alek Erickson.
+\newblock Trike.
+\newblock Abstract board game; rules and design notes self-published by the
+  author, 2020.
+\newblock URL to be supplied by the author.
 
 \bibitem[Frank and Basin(1998)]{frank1998incomplete}
 Ian Frank and David Basin.
@@ -58,6 +72,13 @@ Levente Kocsis and Csaba Szepesv{\'a}ri.
 David~M. Kreps and Robert Wilson.
 \newblock Sequential equilibria.
 \newblock \emph{Econometrica}, 50\penalty0 (4):\penalty0 863--894, 1982.
+
+\bibitem[Kuhn(1950)]{kuhn1950poker}
+H.~W. Kuhn.
+\newblock A simplified two-person poker.
+\newblock In H.~W. Kuhn and A.~W. Tucker, editors, \emph{Contributions to the
+  Theory of Games, Volume I}, number~24 in Annals of Mathematics Studies, pages
+  97--103. Princeton University Press, 1950.
 
 \bibitem[Lambert et~al.(2020)Lambert, Amos, Yadan, and
   Calandra]{lambert2020objective}
@@ -112,6 +133,21 @@ Reuven~Y. Rubinstein and Dirk~P. Kroese.
 \newblock \emph{Simulation and the {Monte} {Carlo} Method}.
 \newblock Wiley, 3rd edition, 2017.
 
+\bibitem[Selten(1975)]{selten1975trembling}
+Reinhard Selten.
+\newblock Reexamination of the perfectness concept for equilibrium points in
+  extensive games.
+\newblock \emph{International Journal of Game Theory}, 4\penalty0 (1):\penalty0
+  25--55, 1975.
+
+\bibitem[Southey et~al.(2005)Southey, Bowling, Larson, Piccione, Burch,
+  Billings, and Rayner]{southey2005leduc}
+Finnegan Southey, Michael Bowling, Bryce Larson, Carmelo Piccione, Neil Burch,
+  Darse Billings, and Chris Rayner.
+\newblock Bayes' bluff: Opponent modelling in poker.
+\newblock In \emph{Proceedings of the 21st Conference on Uncertainty in
+  Artificial Intelligence (UAI)}, pages 550--558, 2005.
+
 \bibitem[Tammelin(2014)]{tammelin2014cfrplus}
 Oskari Tammelin.
 \newblock Solving large imperfect information games using {CFR}+.
@@ -136,6 +172,12 @@ Daniel Whitehouse, Edward~J. Powley, and Peter~I. Cowling.
   the card game {Dou} {Di} {Zhu}.
 \newblock In \emph{{IEEE} Conference on Computational Intelligence and Games
   (CIG)}, 2011.
+
+\bibitem[Wilson(1927)]{wilson1927}
+Edwin~B. Wilson.
+\newblock Probable inference, the law of succession, and statistical inference.
+\newblock \emph{Journal of the American Statistical Association}, 22\penalty0
+  (158):\penalty0 209--212, 1927.
 
 \bibitem[Zinkevich et~al.(2007)Zinkevich, Johanson, Bowling, and
   Piccione]{zinkevich2007cfr}
