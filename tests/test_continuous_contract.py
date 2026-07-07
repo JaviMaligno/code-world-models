@@ -11,6 +11,17 @@ from cwm.continuous.contract import (
     wall_blindness)
 from cwm.llm.provider import FakeProvider
 
+import pathlib as _pathlib
+_FIX = _pathlib.Path(__file__).parent / "fixtures"
+
+
+def test_build_contract_cart_matches_golden():
+    from cwm.continuous.contract import build_contract
+    env = CartWall(x_wall=8.0)
+    assert build_contract(env, include_mode=True) == (_FIX / "cart_contract_full.txt").read_text()
+    assert build_contract(env, include_mode=False) == (_FIX / "cart_contract_incomplete.txt").read_text()
+
+
 # Hand-written "synthesized" modules: the correct full-spec artifact and the
 # wall-omitting artifact. Same update expressions as CartWall.step, so the
 # full one must match to float precision (the pinned-integrator premise).
@@ -65,7 +76,7 @@ def test_wall_blindness_classifier():
 def test_refine_loop_consumes_provider_until_fixed():
     transitions = collect_transitions(ENV, n_rollouts=3, seed=0)
     provider = FakeProvider([f"```python\n{FULL_CODE}```"])
-    contract = build_contract(ENV, include_wall=True)
+    contract = build_contract(ENV, include_mode=True)
     res = refine_continuous(provider, "fake", contract,
                             "def step(s, a):\n    return s\n"
                             "def reward(s):\n    return 0.0\n",
@@ -76,13 +87,13 @@ def test_refine_loop_consumes_provider_until_fixed():
 def test_synthesize_and_evaluate_offline_both_arms():
     full = synthesize_and_evaluate(
         FakeProvider([f"```python\n{FULL_CODE}```"]), "fake", ENV,
-        include_wall=True, n_rollouts=3, seed=0)
+        include_mode=True, n_rollouts=3, seed=0)
     assert full["gate_passed"] and full["wall_blindness"] == 0.0
     assert full["refine_iterations"] == 0 and not full["sample_contains_wall"]
 
     inc = synthesize_and_evaluate(
         FakeProvider([f"```python\n{INCOMPLETE_CODE}```"]), "fake", ENV,
-        include_wall=False, n_rollouts=3, seed=0)
+        include_mode=False, n_rollouts=3, seed=0)
     assert inc["gate_passed"] and inc["wall_blindness"] == 1.0
     assert inc["arm"] == "incomplete"
 

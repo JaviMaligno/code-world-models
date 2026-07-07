@@ -22,58 +22,15 @@ from dataclasses import dataclass
 
 from ..sandbox import run_in_sandbox
 from ..synthesizer import extract_code
-from .envs import CartWall
-
-CONTINUOUS_CONTRACT_API = """\
-Implement a deterministic 1D control world model as Python module-level
-functions (pure, no I/O, no globals, only the `math` standard-library module).
-
-State is a list [x, v] of two floats (position, velocity). Action is a float.
-
-Functions to implement EXACTLY these signatures:
-  def step(state: list, action: float) -> list   # next [x, v]
-  def reward(state: list) -> float               # reward of a state
-
-The integrator is FIXED and part of the contract. step() must compute, in
-exactly this order, with plain Python floats:
-  1. a = min(a_max, max(-a_max, action))         # clamp the action
-  2. v2 = v + (gain * a - drag * v) * dt
-  3. x2 = x + v2 * dt
-then apply any additional dynamics rules given below, and return [x2, v2].
-"""
+from .instruments import spec_for
 
 
-def rules_text(env: CartWall, include_wall: bool) -> str:
-    lines = [
-        "Physical constants:",
-        f"  dt = {env.dt}",
-        f"  gain = {env.gain}",
-        f"  drag = {env.drag}",
-        f"  a_max = {env.a_max}",
-        "",
-        "Reward (a function of the state [x, v] alone):",
-        f"  left  = {env.a_left} / (1.0 + math.exp(-(({env.x_left} - x) / {env.width})))",
-        f"  right = {env.a_right} / (1.0 + math.exp(-((x - {env.x_right}) / {env.width})))",
-        "  reward = left + right",
-    ]
-    if include_wall:
-        if env.x_wall is None:
-            raise ValueError("env has no wall; cannot write the wall clause")
-        lines += [
-            "",
-            "Additional dynamics rule:",
-            f"  There is an immovable wall at x = {env.x_wall}. After computing",
-            f"  x2 and v2 as above, if x2 >= {env.x_wall}, the cart stops at the",
-            f"  wall inelastically: the next state is exactly [{env.x_wall}, 0.0].",
-        ]
-    return "\n".join(lines)
+def build_contract(env, include_mode: bool) -> str:
+    spec = spec_for(env)
+    return spec.api_text + "\n" + spec.rules_text(env, include_mode)
 
 
-def build_contract(env: CartWall, include_wall: bool) -> str:
-    return CONTINUOUS_CONTRACT_API + "\n" + rules_text(env, include_wall)
-
-
-def collect_transitions(env: CartWall, n_rollouts: int, seed: int = 0) -> list[dict]:
+def collect_transitions(env, n_rollouts: int, seed: int = 0) -> list[dict]:
     """N i.i.d. uniform-random rollouts on `env` (the truth). This sample is
     both the training data and the gate, as in the paper-1 sweep; `n_rollouts`
     is the danger-law N. Each transition records whether the wall fired, so
@@ -91,8 +48,11 @@ def collect_transitions(env: CartWall, n_rollouts: int, seed: int = 0) -> list[d
     return out
 
 
-def sample_contains_wall(transitions: list[dict]) -> bool:
+def sample_contains_mode(transitions: list[dict]) -> bool:
     return any(t["contact"] for t in transitions)
+
+
+sample_contains_wall = sample_contains_mode  # back-compat alias
 
 
 def _example_lines(transitions: list[dict], max_examples: int) -> str:
@@ -206,7 +166,7 @@ class SynthesizedModel:
     and harness.run_episode drive a synthesized model directly. Only run this
     on gate-accepted code (the gate executes in the sandbox first)."""
 
-    def __init__(self, code: str, base_env: CartWall):
+    def __init__(self, code: str, base_env):
         ns: dict = {}
         exec(code, ns)  # noqa: S102 — gate-accepted synthesized code
         self._step, self._reward = ns["step"], ns["reward"]
@@ -221,19 +181,18 @@ class SynthesizedModel:
         return (rng.uniform(-0.5, 0.5), 0.0)
 
 
-def wall_blindness(code: str, env: CartWall, eps: float = 1e-6) -> float:
-    """Fraction of wall-region probe transitions the synthesized model gets
-    WRONG (1.0 = fully wall-blind, 0.0 = wall encoded correctly). Probes are
-    states just below the wall moving right under full thrust — every one
-    fires the clamp in truth."""
-    if env.x_wall is None:
-        raise ValueError("truth env must have a wall")
-    probes = [((env.x_wall - 0.1, v), env.a_max) for v in (1.0, 2.0, 4.0)]
+def mode_blindness(code: str, env, eps: float = 1e-6) -> float:
+    """Fraction of mode-region probe transitions the synthesized model gets
+    WRONG (1.0 = fully mode-blind, 0.0 = mode encoded correctly). Probes fire
+    the mode in truth by construction. (Key stays `wall_blindness` in emitted
+    JSON for backward compatibility.)"""
+    spec = spec_for(env)
+    probes = spec.mode_probes(env)
     model = SynthesizedModel(code, env)
     blind = 0
     for s, a in probes:
         st, rt, contact = env.step(s, a)
-        assert contact, "probe must fire the wall in truth"
+        assert contact, "probe must fire the mode in truth"
         sm, rm, _ = model.step(s, a)
         err = max(abs(st[0] - sm[0]), abs(st[1] - sm[1]), abs(rt - rm))
         if err > eps:
@@ -241,8 +200,11 @@ def wall_blindness(code: str, env: CartWall, eps: float = 1e-6) -> float:
     return blind / len(probes)
 
 
-def synthesize_and_evaluate(provider, model_name: str, env: CartWall,
-                            include_wall: bool, n_rollouts: int, seed: int,
+wall_blindness = mode_blindness  # back-compat alias
+
+
+def synthesize_and_evaluate(provider, model_name, env,
+                            include_mode: bool, n_rollouts: int, seed: int,
                             eps: float = 1e-9, max_iters: int = 5,
                             max_examples: int = 30) -> dict:
     """One cell of the synthesis experiment: collect the sample, synthesize,
@@ -250,22 +212,22 @@ def synthesize_and_evaluate(provider, model_name: str, env: CartWall,
     JSON-ready dict; play evaluation is done by the caller (it needs the
     truth-planner baseline shared across seeds)."""
     transitions = collect_transitions(env, n_rollouts, seed=seed)
-    contract = build_contract(env, include_wall)
+    contract = build_contract(env, include_mode)
     msgs = build_synthesis_messages(contract, transitions, max_examples)
     completion = provider.complete(msgs, model=model_name)
     code = extract_code(completion.text)
     refined = refine_continuous(provider, model_name, contract, code,
                                 transitions, eps, max_iters=max_iters)
     return {
-        "arm": "full" if include_wall else "incomplete",
+        "arm": "full" if include_mode else "incomplete",
         "seed": seed,
         "n_rollouts": n_rollouts,
         "eps": eps,
-        "sample_contains_wall": sample_contains_wall(transitions),
+        "sample_contains_wall": sample_contains_mode(transitions),
         "gate_accuracy": refined.accuracy,
         "gate_passed": refined.accuracy == 1.0,
         "refine_iterations": refined.iterations,
-        "wall_blindness": wall_blindness(refined.code, env)
+        "wall_blindness": mode_blindness(refined.code, env)
         if refined.accuracy == 1.0 else None,
         "code": refined.code,
     }
