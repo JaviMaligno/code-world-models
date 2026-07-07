@@ -1,0 +1,45 @@
+baselines: 6 truth-MPC + random episodes...
+J_truth=17.76  J_random=0.00
+[full seed=0] wall_in_sample=False gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=1] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=2] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=3] wall_in_sample=False gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=4] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[incomplete seed=0] wall_in_sample=False gate=1.000 iters=0 blind=1.0 play_cost=0.9989653929316836
+[incomplete seed=1] wall_in_sample=True gate=1.000 iters=2 blind=0.0 play_cost=0.0
+[incomplete seed=2] wall_in_sample=True gate=1.000 iters=1 blind=0.0 play_cost=0.0
+[incomplete seed=3] wall_in_sample=False gate=1.000 iters=0 blind=1.0 play_cost=0.9989653929316836
+[incomplete seed=4] wall_in_sample=True gate=1.000 iters=3 blind=0.0 play_cost=0.0
+
+incomplete arm: 2/5 seeds had the wall ABSENT from the sample (identifiability event); of those, 2 passed the gate fully wall-blind (Wilson 95% (1.0, 0.34237195288961925, 1.0))
+wrote results/continuous_synthesis_mini.json  [393.9s]
+baselines: 6 truth-MPC + random episodes...
+J_truth=17.76  J_random=0.00
+[full seed=0] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=1] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=2] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=3] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=4] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[incomplete seed=0] wall_in_sample=True gate=1.000 iters=5 blind=0.0 play_cost=0.0
+[incomplete seed=1] wall_in_sample=True gate=0.974 iters=5 blind=None play_cost=n/a
+[incomplete seed=2] wall_in_sample=True gate=0.996 iters=5 blind=None play_cost=n/a
+[incomplete seed=3] wall_in_sample=True gate=1.000 iters=5 blind=0.0 play_cost=0.0
+[incomplete seed=4] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+
+incomplete arm: wall present in every sample
+wrote results/continuous_synthesis_mini.json  [200.4s]
+baselines: 6 truth-MPC + random episodes...
+J_truth=17.76  J_random=0.00
+[full seed=0] wall_in_sample=False gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=1] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=2] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=3] wall_in_sample=False gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[full seed=4] wall_in_sample=True gate=1.000 iters=0 blind=0.0 play_cost=0.0
+[incomplete seed=0] wall_in_sample=False gate=1.000 iters=0 blind=1.0 play_cost=0.9989653929316836
+[incomplete seed=1] wall_in_sample=True gate=1.000 iters=1 blind=0.0 play_cost=0.0
+[incomplete seed=2] wall_in_sample=True gate=1.000 iters=1 blind=0.0 play_cost=0.0
+[incomplete seed=3] wall_in_sample=False gate=1.000 iters=0 blind=1.0 play_cost=0.9989653929316836
+[incomplete seed=4] wall_in_sample=True gate=1.000 iters=1 blind=0.0 play_cost=0.0
+
+incomplete arm: 2/5 seeds had the wall ABSENT from the sample (identifiability event); of those, 2 passed the gate fully wall-blind (Wilson 95% (1.0, 0.34237195288961925, 1.0))
+wrote results/continuous_synthesis_large.json  [206.0s]
