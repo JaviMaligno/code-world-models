@@ -1,5 +1,40 @@
 # Experiments Log
 
+## PAPER 2 — Smooth-learner probe: the mode cannot be localized by a smooth hypothesis (2026-07-07)
+
+Design-doc step-5 probe (`scripts/continuous_smooth_probe.py`, 11 s CPU;
+`results/continuous_smooth_probe.json`). Trains the two most favorable smooth
+learners on the SAME N=40 samples the synthesis arms used (x_wall=8; seed
+10000 = wall-free, seed 20000 = wall-containing with 4/3200 contact rows):
+closed-form linear least squares (off the wall the dynamics are EXACTLY
+linear, so this is the smooth-learner best case) and a small tanh MLP (h=8).
+
+| model | trained on | off-mode err (mean / max) | wall probe err | gate 1e-9 | gate 1e-2 |
+|-------|-----------|---------------------------|---------------:|:---:|:---:|
+| linear-LSQ | wall-free | 3.6e-15 / 1.7e-14 | 4.18 | PASS | PASS |
+| linear-LSQ | wall-data | 1.9e-03 / 1.2e-02 | 4.17 | fail | fail |
+| MLP h=8 | wall-free | 3.5e-03 / 5.0e-02 | 4.20 | fail | fail |
+| MLP h=8 | wall-data | 6.0e-03 / 4.9e-02 | 4.19 | fail | fail |
+
+Readings (the two halves of thesis point 3, both measured):
+- **Identifiability is learner-independent, live.** The linear model trained
+  on the wall-free sample recovers the off-mode dynamics to 1e-15, PASSES
+  both gates (including eps=1e-9), and is exactly as wall-blind as the
+  synthesized blind code (probe err 4.18 — it predicts straight through the
+  wall). The (1−r)^N unsoundness is not an LLM property; ANY gate-passing
+  learner in the gate-miss event is blind (paper 1's Proposition, instantiated
+  on a second learner class).
+- **With the mode IN the data, smooth and code part ways.** 4 contact rows
+  out of 3200 tilt the linear fit by TWELVE orders of magnitude off-mode
+  (1.7e-14 → 1.2e-02 max) and it fails both gates while still getting the
+  mode wrong (probe 4.17): the smooth hypothesis cannot put the error ON the
+  mode — it leaks everywhere. The synthesized code on the same sample wrote
+  `if x2 >= 8.0: return [8.0, 0.0]` and passed at float precision. Repair is
+  a *representational* capability of code, not just a data question.
+- The MLP never gets its pervasive floor (~5e-3) under any gate and never
+  learns the mode (probe 4.2) — the generic smooth learner combines both
+  failure axes. Scope: probe, not a tuned baseline (as per the design doc).
+
 ## PAPER 2 — LLM synthesis arms executed (credentialed run per the design-doc runbook) (2026-07-07)
 
 Ran `scripts/continuous_danger_synthesis.py` as documented in the design doc's
@@ -64,6 +99,27 @@ lives in the (1−r)^N event that the sample misses the discontinuity (there it 
 total, play_cost≈1), while the paper-1 (b) "translation-not-inference" residual
 largely vanishes. Per the runbook this "becomes its own section" for paper 2's
 write-up (not yet drafted).
+
+**3b. Artifact-level analysis of the repairs (code inspection, 2026-07-07).**
+Reading the synthesized `step()` of every wall-present incomplete seed
+(`results/continuous_synthesis_*_xwall*.json`, `code` field) sharpens finding 3
+into a soundness statement:
+- Every *repaired* seed wrote the TRUE global rule — `if x2 >= 8.0: return
+  [8.0, 0.0]` (modulo formatting; large 3/3, mini 5/8) — not a curve fit. One
+  mini seed (x_wall=4, seed 50000) wrote it in **0 iterations**, i.e. inferred
+  the clamp from the synthesis examples alone, before any refinement feedback.
+- Every *stalled* seed is a **superstitious local patch**, not a near-miss of
+  the rule: `if abs(x2 - 8.0) <= 0.15 and abs(v2) <= 1.1: x2 = 8.0` (mini@8
+  seed 20000) and `if x < 4.0 and x2 >= 4.0: x2 = 4.0` (mini@4 seed 10000) —
+  clamps fitted to the *observed manifestation* of the mode (low-speed,
+  near-wall contact transitions), which mispredict other approaches to the
+  wall. **The gate correctly rejects all of them** (0.974–0.998, never 1.000).
+- Net: with the mode present in the data, the synthesize+refine+gate loop is
+  *sound* — it either recovers the exact mode or refuses the artifact. The
+  ONLY unsoundness anywhere in the continuous pipeline is the (1−r)^N
+  identifiability event, where the wrong artifact is accepted at gate 1.000
+  and exploited at play. The danger law here is not just exact; it is
+  *exhaustive*.
 
 **Notes.** n_seeds=5/cell as documented — a spot-check, not a sweep; robust on
 the wall-absent cell (4/4), suggestive-with-variance on the repair rate.

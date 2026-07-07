@@ -294,3 +294,20 @@ run overwrites its own JSON only.
 > `scripts/continuous_danger_synthesis.py`) validated end-to-end offline
 > with FakeProvider, including float-exactness of the pinned-integrator
 > gate at eps=1e-9 through the sandbox.
+
+> **Update (2026-07-07): step 3 RUN (credentialed, 3 cells) and step 5's
+> probes largely resolved.** Results in EXPERIMENTS.md ("LLM synthesis arms
+> executed" + "Smooth-learner probe"). Key outcomes vs this spec: (i) the
+> wall-absent identifiability cell reproduces paper 1's headline end-to-end
+> synthesized (4/4 across mini+large: gate 1.000, blind 1.0, play_cost
+> 0.999); (ii) the anticipated divergence HAPPENED — with the wall in the
+> sample the LLM repairs the mode (large: 3/3 in 1 iter, exact global rule;
+> mini: most seeds, with stalls being superstitious local patches the gate
+> correctly rejects), so the dedicated repair arms (item 5.i/ii) are RESOLVED
+> organically: repair-from-data works in this regime and the danger collapses
+> to the pure (1−r)^N event; (iii) the smooth-learner probe shows
+> identifiability is learner-independent (a wall-free linear fit passes both
+> gates, fully blind) and that smooth learners cannot localize the mode
+> (4 contact rows tilt the linear fit 12 orders of magnitude off-mode).
+> Remaining from item 5: only the optional second hybrid instrument.
+> Next: item 6 — draft paper 2 (`docs/paper2/`).
