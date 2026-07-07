@@ -78,8 +78,57 @@ class CartWall:
         return s2, self.reward(s2), contact
 
 
-def blind_of(env: CartWall) -> CartWall:
-    """The mode-omitting model of `env`: identical plant, no wall."""
+@dataclass(frozen=True)
+class PendulumStop:
+    """Second hybrid instrument: pendulum with a hard angular stop.
+
+    The base plant is NONLINEAR (gravity term sin(theta); theta = 0 hanging
+    down), so this checks the mechanism is not an artifact of the cart's
+    linear off-mode dynamics. Rarity is natural here: gravity confines the
+    random walk near the bottom and climbing is rare. Same interface as
+    CartWall (state (theta, omega)); the mode is an inelastic stop at
+    th_stop, and blind_of() removes it.
+    """
+    dt: float = 0.1
+    gain: float = 3.0          # torque gain; > grav so directed swing-up works
+    grav: float = 2.0
+    drag: float = 0.3
+    a_max: float = 1.0
+    th_stop: float | None = 1.2
+    th_left: float = -2.0
+    a_left: float = 0.3
+    th_right: float = 3.0
+    a_right: float = 1.0
+    width: float = 0.25
+    h_episode: int = 80
+    th0_range: float = 0.3
+
+    def initial_state(self, rng) -> State:
+        return (rng.uniform(-self.th0_range, self.th0_range), 0.0)
+
+    def reward(self, state: State) -> float:
+        th = state[0]
+        left = self.a_left / (1.0 + math.exp(-((self.th_left - th) / self.width)))
+        right = self.a_right / (1.0 + math.exp(-((th - self.th_right) / self.width)))
+        return left + right
+
+    def step(self, state: State, action: float) -> tuple[State, float, bool]:
+        th, om = state
+        a = max(-self.a_max, min(self.a_max, action))
+        om2 = om + (self.gain * a - self.grav * math.sin(th)
+                    - self.drag * om) * self.dt
+        th2 = th + om2 * self.dt
+        contact = False
+        if self.th_stop is not None and th2 >= self.th_stop:
+            th2, om2, contact = self.th_stop, 0.0, True
+        s2 = (th2, om2)
+        return s2, self.reward(s2), contact
+
+
+def blind_of(env):
+    """The mode-omitting model of `env`: identical plant, no wall/stop."""
+    if isinstance(env, PendulumStop):
+        return replace(env, th_stop=None)
     return replace(env, x_wall=None)
 
 

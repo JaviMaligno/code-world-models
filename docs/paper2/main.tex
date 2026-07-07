@@ -1,0 +1,344 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[round]{natbib}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\bibliographystyle{plainnat}
+
+\emergencystretch=3em
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\title{An Omitted Mode Is a Rare Rule: The Sampling-Verification Danger Law in Continuous Code World Models}
+
+\author{Javier Aguilar Mart\'in\\ AGILabs (\href{https://javieraguilar.ai}{javieraguilar.ai})}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+In the Code World Model (CWM) paradigm, a large language model synthesizes an executable world model that a classical planner searches over, and the model is accepted when it matches sampled transitions. In discrete games, a companion paper showed this gate certifies the wrong thing: a model can pass at 100\% transition accuracy and still lose systematically at play, following a quantitative law, $\mathrm{danger} = \mathrm{play\_cost} \times (1-\mathrm{rarity})^N$ \citep{aguilar2026verified}. This paper moves the question to continuous state spaces --- where the model-based RL literature holds that world-model error is \emph{pervasive} rather than localized --- and shows that the danger law not only transfers but becomes \emph{exhaustive}.
+
+Three results. \textbf{(1)} The law is measure-theoretic, and its continuous home is hybrid dynamics: the gate-miss factor and the identifiability argument are statements about a measurable critical region, and we prove that a smooth (Lipschitz) truth/model pair cannot satisfy the localization premise at all --- a large error confined to a metrically small region forces a large Lipschitz constant. The premise is realizable exactly where continuous systems are hybrid, and an omitted mode is precisely a rare rule. On two minimal hybrid instruments (a cart with an inelastic wall; a pendulum with a hard stop) the discrete phenomenology reproduces sharply: rarity sweeps two orders of magnitude while the mode-blind planner's regret stays flat at $\approx 1$ --- it scores \emph{below random}, pinned against the phantom mode for entire episodes --- and the danger threshold law appears with the whole $(1-r)^N$ elbow inside the sweep. \textbf{(2)} With a pinned-integrator synthesis contract, correct code matches the truth to float precision, so the gate runs at $\varepsilon = 10^{-9}$, and an axis-separation experiment shows the gate polices pervasive error while missing the localized hard mode exactly $(1-r)^N$ of the time --- the measured acceptance rate matches the prediction. A smooth $C^\infty$ perturbation of comparable rarity has zero, or even negative, play cost: smoothness kills consequence, not detectability. \textbf{(3)} Running real LLM synthesis: when the wall is absent from the sample --- the $(1-r)^N$ event, logged per seed --- every synthesis (4/4 across two model sizes) passes the gate fully mode-blind and is exploited at play (regret 0.999). But when the wall \emph{is} in the sample, the LLM repairs it, writing the true global clamp rule --- unlike the discrete setting, where demonstrated rules were persistently not learned. Failed repairs are superstitious local patches that the gate correctly rejects. With the mode in the data, the synthesize--refine--gate loop is \emph{sound}; the only unsoundness anywhere in the pipeline is the sampling event whose probability the law gives in closed form. A smooth-learner probe completes the picture: an exact linear least-squares model trained on mode-free data passes the same gate equally blind (identifiability is learner-independent), while four contact rows in 3200 tilt the same fit by twelve orders of magnitude off-mode. Localization --- and hence both the danger and the repair --- is a representational property of \emph{code}.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+The companion paper \citep{aguilar2026verified} established, in discrete games, that transition accuracy on randomly sampled play-throughs is the wrong adequacy criterion for a world model used in planning, and quantified the failure: $\mathrm{danger} = \mathrm{play\_cost} \times (1-\mathrm{rarity})^N$, with the gate-miss factor exact under i.i.d.\ sampling. Its related-work discussion closed with a promissory note: the rare-rule gap is a localized, discrete failure that state-accuracy metrics mask by dilution --- a point worth revisiting in continuous settings, where the model-based RL literature \citep{lambert2020objective,hafner2020dreamer,janner2019mbpo} treats world-model error as pervasive and compounding rather than localized and pivotal.
+
+This paper is that revisit. The question is not whether continuous world models can be wrong --- that literature is mature --- but whether the specific \emph{verified-but-wrong} geometry of the discrete result exists in continuous state spaces: a model that passes a sampling gate cleanly, is (in a precise sense) almost-everywhere correct, and is still exploited catastrophically by the planner that trusts it.
+
+The answer is yes, and the continuous version of the story is in one respect cleaner than the discrete one. The discrete headline had two components: a provable one (when the rare rule is absent from the sample, no learner can infer it --- an identifiability event with probability exactly $(1-r)^N$) and an empirical one (the LLMs tested did not infer the rule \emph{even when it was present} --- ``translation, not inference''). In the continuous instrument the second component \textbf{vanishes}: the LLM infers an omitted hybrid mode from a handful of boundary-crossing transitions, writing the exact global rule. What remains is the provable core, now standing alone: the gate--synthesis loop is sound whenever the data contains the mode, and unsound exactly on the $(1-r)^N$ event. The danger law here is not just exact; it is exhaustive.
+
+Contributions:
+\begin{enumerate}
+\item \textbf{Theory transfer, and one new piece.} The gate-miss proposition, the identifiability proposition, and the play-cost upper bound via query-hit mass transfer to continuous state spaces with only notational change --- they are measure-theoretic (Section~\ref{sec:theory}). The genuinely discrete ingredient of the companion paper is the \emph{localization premise}, and we prove it requires unbounded local Lipschitz structure: for $L$-Lipschitz truth and model differing by $\eta$ at a point, the disagreement region contains a metric ball of radius $(\eta-\varepsilon)/2L$ (Proposition~\ref{prop:lipschitz}). Hybrid mode boundaries are exactly where this obstruction disappears --- an omitted mode is a rare rule.
+\item \textbf{Two minimal hybrid instruments} --- cart-with-wall (linear off-mode plant) and pendulum-with-stop (nonlinear) --- on which the full discrete phenomenology is measured with the same harness and no per-instrument re-calibration: the threshold law with the whole $(1-r)^N$ elbow inside the knob sweep, knob-invariant $\mathrm{play\_cost} \approx 1$ (the exploited planner scores below random, pinned against the phantom mode all episode), and the reach mechanism in its cleanest form (Section~\ref{sec:mechanism}). Three instrument-design lessons of independent value are recorded (Section~\ref{sec:lessons}).
+\item \textbf{A pinned-integrator gate and a measured axis separation} (Section~\ref{sec:axes}): the gate rejects supra-tolerance global bias on every rollout, passes sub-tolerance bias harmlessly, and misses the hard mode exactly $(1-r)^N$ of the time --- measured acceptance rates match the prediction. A smooth localized perturbation of comparable rarity has $\approx 0$, at higher amplitude \emph{negative}, play cost.
+\item \textbf{The synthesis result: danger collapses to pure identifiability} (Section~\ref{sec:synthesis}). Real-LLM arms with the identifiability event logged per seed: mode absent $\Rightarrow$ 4/4 verified-blind-exploited (regret 0.999); mode present $\Rightarrow$ repaired to the exact global rule (larger model: 3/3 in one refinement iteration) or rejected by the gate (the stalls are superstitious local patches, never accepted).
+\item \textbf{Smooth learners cannot localize} (Section~\ref{sec:smooth}): a closed-form linear fit on mode-free data passes both gates fully blind (identifiability is learner-independent); on mode-containing data it is tilted twelve orders of magnitude off-mode by four contact rows in 3200 while still missing the mode. Both the danger geometry and the repair capability are representational properties of code.
+\end{enumerate}
+
+Scope up front: two 1D instruments, one planner family (random-shooting MPC), 5 seeds per synthesis cell (spot-checks, not sweeps), and a probe-grade MLP. Section~\ref{sec:limitations} gives the honest assessment.
+
+\section{The instruments}
+\label{sec:instrument}
+
+\subsection{Cart-with-wall}
+\label{sec:cartwall}
+
+State $(x, v)$; action $a \in [-a_{\max}, a_{\max}]$; semi-implicit Euler with fixed $dt$:
+\[
+a \leftarrow \mathrm{clamp}(a), \qquad
+v' = v + (\mathrm{gain}\cdot a - \mathrm{drag}\cdot v)\,dt, \qquad
+x' = x + v'\,dt,
+\]
+with defaults $dt = 0.1$, $\mathrm{gain} = 3$, $\mathrm{drag} = 0.3$, $a_{\max} = 1$. The \textbf{hybrid mode} is an inelastic wall at $x_\mathrm{wall}$: if $x' \geq x_\mathrm{wall}$, the next state is exactly $(x_\mathrm{wall}, 0)$. The \textbf{blind model} is the same code path with the wall branch removed --- the hand-written on-manifold proxy for a CWM synthesized from a spec that omits the wall, \emph{bit-exact off-mode by construction} (tested: exact float equality on wall-free trajectories). Reward is two sigmoid plateaus: a small reachable one on the left ($0.3$, at $x \leq -6$) and a large one on the right ($1.0$, at $x \geq 12$) whose approach every swept wall position blocks. Episodes are 80 steps from $x_0 \sim U(-0.5, 0.5)$, $v_0 = 0$.
+
+The design requirements mirror the companion paper's material-at-cap instrument: (a) random rollouts rarely fire the mode --- the wall position is the \textbf{rarity knob} ($r$ sweeps $0.331 \to 0.0020$ over $x_\mathrm{wall} \in [2, 10]$; Table~\ref{tab:danger}); (b) the omission is \emph{exploited}, not merely mispredicted --- the wall-blind model predicts coasting through the wall toward the large plateau, so the planner it advises drives right and is pinned; (c) the truth planner's optimal play differs qualitatively --- it goes left.
+
+The second instrument (pendulum with a hard angular stop; nonlinear gravity term) is described with its results in Section~\ref{sec:pendulum}.
+
+\subsection{Planner and play\_cost}
+\label{sec:planner}
+
+The planner is model-predictive control by random shooting: at each step, sample candidate action sequences (piecewise-constant blocks plus the three constant sequences $\{-a_{\max}, 0, +a_{\max}\}$), roll each out on the \emph{model}, take the best first action, replan. The planner is a deterministic function of its model's responses and the seed, so the play-cost upper bound via query-hit mass applies verbatim (Section~\ref{sec:theory}). Single-agent control makes play\_cost a normalized regret, cleaner than a two-player arena (no opponent confound):
+\[
+\mathrm{play\_cost} \;=\; \frac{J_{\text{truth-planner}} - J_{\text{model-planner}}}{J_{\text{truth-planner}} - J_{\text{random}}},
+\]
+all returns measured in the true environment on paired seeds. The blind planner can score \emph{below random} (it is actively exploited), so the normalized value can exceed 1; we report it unclamped.
+
+\subsection{Three instrument-design lessons}
+\label{sec:lessons}
+
+Recorded because they will bite any continuous CWM study:
+\begin{enumerate}
+\item \textbf{I.i.d.\ per-step candidate sampling silently removes the mode from imagination.} With i.i.d.\ candidates, imagined displacement is diffusive; no sampled sequence reaches distant reward within the horizon, so the truth model and the blind model rank all candidates \emph{identically} and the wall never enters imagination --- the two arms become indistinguishable not because the models agree but because the planner never queries where they differ. Piecewise-constant blocks plus constant candidates fix it. The planner's \emph{query} distribution, not just its trajectory distribution, is part of the instrument.
+\item \textbf{Point (Gaussian) reward lodes demand braking finesse that random shooting lacks}; sigmoid plateaus remove the parking problem and give clean imagined-value margins in both directions.
+\item \textbf{The plant's drag time-constant must sit well inside the planning horizon}, or no arm can act on the reward at all (our first calibration had $\tau = 1/\mathrm{drag} = 10$\,s against a 3\,s horizon; nothing moved).
+\end{enumerate}
+
+\section{Theory: what transfers, what changes, what is new}
+\label{sec:theory}
+
+Notation: a verification gate draws $N$ i.i.d.\ rollouts from the gate policy $\rho$ (uniform-random actions from the initial-state distribution) and accepts a model $\hat f$ if it matches the truth $f$ within $\varepsilon$ in sup-norm on every visited transition.
+
+\begin{proposition}[gate miss; transfers verbatim]
+\label{prop:gatemiss}
+Let $R$ be any measurable set of rollouts (``the critical event''; here: the rollout fires the wall mode) with $r = P_\rho(R)$. The probability that $N$ i.i.d.\ gate rollouts all avoid $R$ is exactly $(1-r)^N$.
+\end{proposition}
+
+Nothing in the companion paper's proof uses discreteness; the event is Bernoulli($r$) and the draws are i.i.d.
+
+\begin{proposition}[identifiability; transfers verbatim]
+\label{prop:ident}
+Condition on the miss event. Any two models that agree off the mode produce identical outputs on every sampled transition, so any score that is a function of the sample (the gate, a likelihood, a refinement objective) cannot distinguish them; preference for the correct one must come from the prior or the specification. In particular this holds for \emph{any} learner --- LLM, linear regression, MLP --- a point Section~\ref{sec:smooth} instantiates empirically.
+\end{proposition}
+
+\begin{proposition}[play-cost upper bound; transfers verbatim]
+\label{prop:playcost}
+For any planner that is a deterministic function of model responses and a seed, $|J(f) - J(\hat f)| \leq \mu_{\mathrm{query}}(E)$, where $E$ is the disagreement region and $\mu_{\mathrm{query}}$ the probability the planner queries its model on $E$ during an episode.
+\end{proposition}
+
+The coupling proof of \citet{aguilar2026verified} is unchanged; MPC's imagined rollouts are the queries. Empirically our instrument saturates it: the blind planner queries the wall region in every episode and $\mathrm{play\_cost} \approx 1$.
+
+\paragraph{What does not transfer.} The companion paper's coverage certificates enumerate finite information-set spaces. Continuous state spaces admit no such enumeration; covering-number analogues under Lipschitz assumptions are left open (Section~\ref{sec:limitations}).
+
+\paragraph{What is new: the localization premise is a theorem-shaped obstruction.}
+
+\begin{proposition}[smoothness forbids localized error]
+\label{prop:lipschitz}
+Let $f, \hat f : S \subset \mathbb{R}^d \to \mathbb{R}^d$ be $L$-Lipschitz (sup-norm), and suppose $\|f(s_0) - \hat f(s_0)\|_\infty = \eta$ at some $s_0$. Then for any tolerance $\varepsilon < \eta$, the disagreement region $R_\varepsilon = \{s : \|f(s) - \hat f(s)\|_\infty > \varepsilon\}$ contains the metric ball $B\!\left(s_0, \tfrac{\eta-\varepsilon}{2L}\right)$.
+\end{proposition}
+
+\begin{proof}
+$g = f - \hat f$ is $2L$-Lipschitz, so for $\|s - s_0\|_\infty < (\eta-\varepsilon)/2L$ we have $\|g(s)\|_\infty \geq \eta - 2L\|s-s_0\|_\infty > \varepsilon$.
+\end{proof}
+
+Read as its contrapositive: a model error that is \emph{large somewhere} (large enough to matter at play) and \emph{invisible at tolerance $\varepsilon$ outside a metrically tiny region} requires $L$ large --- in the limit, a discontinuity. This is exactly the sense in which the discrete localization premise (``the wrong model is exact off the rule region'') is discrete: it is unsatisfiable by smooth truth/model pairs, up to the ball-radius quantification. Two consequences structure the paper: (i) the natural continuous home of the danger geometry is \textbf{hybrid dynamics} --- contacts, hard stops, saturations, regime switches --- where the truth itself has unbounded local Lipschitz constant across a mode boundary (our wall: $v$ jumps to 0), and an omitted mode is precisely a rare rule; (ii) the premise is \emph{representationally} available to programs (an omitted or added branch is bit-exact off the omitted case) and not to smooth learned models, a distinction Section~\ref{sec:smooth} measures.
+
+\begin{remark}[metric, not measure]
+The ball in Proposition~\ref{prop:lipschitz} is metric, and its \emph{probability} under the gate's visitation measure can still be small --- smoothness bounds how spatially concentrated an error can be, not how often the gate visits it. The proposition removes the \emph{exact} localization premise for smooth pairs; the $(1-r)^N$ mechanism itself is representation-independent and applies to any critical region of small visitation measure.
+\end{remark}
+
+\section{The mechanism and the threshold law}
+\label{sec:mechanism}
+
+All numbers CPU-only, with the hand-written blind model as the on-manifold proxy (\texttt{scripts/continuous\_reach.py}; 3000 rarity rollouts and 20 MPC episodes/arm per knob; Wilson 95\% CIs \citep{wilson1927} in the versioned results).
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{rrrrrrrrrrr}
+\toprule
+$x_\mathrm{wall}$ & rarity & $J_\mathrm{truth}$ & $J_\mathrm{blind}$ & $J_\mathrm{rand}$ & cost & blind hit & truth hit & d@20 & d@40 & d@80 \\
+\midrule
+2 & 0.3313 & 17.77 & 0.00 & 0.53 & 1.031 & 1.00 & 0.00 & 0.000 & 0.000 & 0.000 \\
+3 & 0.2193 & 17.77 & 0.00 & 0.53 & 1.031 & 1.00 & 0.00 & 0.007 & 0.000 & 0.000 \\
+4 & 0.1430 & 17.77 & 0.00 & 0.53 & 1.031 & 1.00 & 0.00 & 0.047 & 0.002 & 0.000 \\
+5 & 0.0843 & 17.77 & 0.00 & 0.53 & 1.031 & 1.00 & 0.00 & 0.177 & 0.030 & 0.001 \\
+6 & 0.0503 & 17.77 & 0.00 & 0.53 & 1.031 & 1.00 & 0.00 & 0.367 & 0.131 & 0.017 \\
+8 & 0.0127 & 17.77 & 0.02 & 0.53 & 1.030 & 1.00 & 0.00 & 0.798 & 0.619 & 0.372 \\
+10 & 0.0020 & 17.77 & 0.94 & 0.53 & 0.977 & 1.00 & 0.00 & 0.938 & 0.901 & 0.832 \\
+\bottomrule
+\end{tabular}
+\caption{The danger curve on the wall-position knob. ``blind/truth hit'' = fraction of episodes in which that planner's trajectory fires the wall mode; d@$N$ = $\mathrm{play\_cost}\cdot(1-r)^N$.}
+\label{tab:danger}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.55\textwidth]{figures/danger_threshold.pdf}
+\caption{The threshold law on the wall-position knob (Table~\ref{tab:danger} rendered): danger $\approx 0$ while the wall is inside the random envelope, rises through the elbow, plateaus at full play\_cost; $N$ shifts the threshold.}
+\label{fig:threshold}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.55\textwidth]{figures/reach_mechanism.pdf}
+\caption{The two reach distributions of the danger law: the exploited planner's mode reach is flat at 1.00 across the knob; random reach (= rarity) falls two orders of magnitude; the truth planner's trajectory reach is 0.00 --- the mode lives on its \emph{query} distribution (Proposition~\ref{prop:playcost}), not its path.}
+\label{fig:reach}
+\end{figure}
+
+Readings: \textbf{the threshold law again} --- danger $\approx 0$ while the wall sits inside the random-rollout envelope, rises through the elbow, and plateaus at full play\_cost, with the entire elbow inside the sweep (Figure~\ref{fig:threshold}). \textbf{play\_cost is knob-invariant and $> 1$}: the blind planner is not merely uninformed but \emph{exploited} --- MPC on the wall-less model plans into the phantom region, is pinned at the wall (final $x = x_\mathrm{wall}$ exactly, contact rate 1.00 at every knob), and replans the same doomed plan every step, for the entire episode, scoring below random (0.00 vs 0.53). The 0.977 at $x_\mathrm{wall} = 10$ is the sigmoid tail of the far plateau leaking $J_\mathrm{blind} = 0.94$; the mechanism is unchanged. \textbf{The reach mechanism} appears in its cleanest form (Figure~\ref{fig:reach}), with the query/trajectory distinction now visible. Gate-miss exactness is re-verified in-tests and again at gate scale in Section~\ref{sec:axes}.
+
+\subsection{Robustness: the same law on a nonlinear plant}
+\label{sec:pendulum}
+
+The cart's off-mode dynamics are linear, which is convenient for Section~\ref{sec:smooth} but invites the worry that the phenomenology depends on it. A second instrument --- a pendulum (gravity term $\sin\theta$, $\theta = 0$ hanging down) with a hard angular stop, same interface, same MPC, same two-plateau reward on $\theta$ --- reproduces the identical picture with \emph{no} re-calibration (rarity is natural here: gravity confines the random walk near the bottom, so climbing to the stop is rare):
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{rrrrrrr}
+\toprule
+$\theta_\mathrm{stop}$ & rarity & $J_\mathrm{truth}$ & $J_\mathrm{blind}$ & cost & blind hit & d@40 \\
+\midrule
+0.8 & 0.2970 & 20.08 & 0.01 & 1.002 & 1.00 & 0.000 \\
+1.0 & 0.1277 & 20.08 & 0.03 & 1.002 & 1.00 & 0.004 \\
+1.2 & 0.0527 & 20.08 & 0.05 & 1.000 & 1.00 & 0.115 \\
+1.4 & 0.0193 & 20.08 & 0.12 & 0.997 & 1.00 & 0.457 \\
+1.6 & 0.0073 & 20.08 & 0.26 & 0.990 & 1.00 & 0.737 \\
+2.0 & 0.0000 & 20.08 & 1.23 & 0.942 & 1.00 & 0.942 \\
+\bottomrule
+\end{tabular}
+\caption{Pendulum-with-stop: threshold law, knob-invariant exploitation (pinned at the stop in every episode at every knob), truth planner untouched by the mode. The mechanism does not care that the plant is nonlinear --- only that the mode is hard and rare under the gate's measure.}
+\label{tab:pendulum}
+\end{table}
+
+\section{Axis separation: the gate fails only where the law says it can}
+\label{sec:axes}
+
+The classic continuous-model failure axis is pervasive sub-tolerance error; the danger law's axis is a localized hard mode. A tolerance gate ($\varepsilon = 0.01$, deployment-realistic) must be shown to fail \emph{only} on the second axis, and only at the $(1-r)^N$ rate. Five arms, one table (\texttt{scripts/continuous\_axes.py}; reveal-rarity $=$ P(a random rollout contains a transition where truth and model differ $> \varepsilon$), 2000 rollouts; pass@40 over 300 independent $N{=}40$ gates; 20 MPC episodes/arm):
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+arm & reveal-rarity & $(1-r)^{40}$ & pass@40 measured & play\_cost & danger@40 \\
+\midrule
+wall@4 omitted & 0.1385 & 0.0026 & 0.003 & 1.031 & 0.0027 \\
+wall@8 omitted & 0.0125 & 0.6046 & 0.667 & 1.030 & 0.6227 \\
+drag bias $\times$1.03 (sub-$\varepsilon$) & 0.0000 & 1.0000 & 0.997 & 0.000 & 0.0000 \\
+drag bias $\times$2.0 (supra-$\varepsilon$) & 1.0000 & 0.0000 & 0.000 & 0.000 & 0.0000 \\
+$C^\infty$ bump@4, amp 0.5 & 0.1875 & 0.0002 & 0.000 & 0.000 & 0.0000 \\
+$C^\infty$ bump@4, amp 1.0 & 0.2085 & 0.0001 & 0.000 & $-0.745$ & $-0.0001$ \\
+\bottomrule
+\end{tabular}
+\caption{Axis separation at $\varepsilon = 0.01$, $N = 40$. Danger lives in one quadrant only: rare $\wedge$ hard-mode.}
+\label{tab:axes}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.6\textwidth]{figures/axis_separation.pdf}
+\caption{Table~\ref{tab:axes} as the danger quadrant: gate-miss probability (log) vs play\_cost. Only the rare hard mode reaches the top right; danger is the product of the coordinates.}
+\label{fig:axes}
+\end{figure}
+
+Readings: \textbf{gate exactness at gate scale} --- measured pass@40 matches $(1-r)^{40}$ in both wall rows (0.003 vs 0.0026; 0.667 vs 0.605, inside the 300-gate Wilson interval); the proposition is the observed acceptance rate, not asymptotic decoration. \textbf{The gate polices the pervasive axis}: a global drag bias above tolerance is revealed on every rollout and never accepted; a sub-tolerance bias is accepted (0.997; the 0.3\% is the extreme velocity tail) and is harmless at play. Verified-and-fine is a real cell, and the gate finds it. \textbf{Smoothness kills consequence, not detectability}: the $C^\infty$ drag bump at the wall's location has comparable rarity to the wall (0.19 vs 0.14 --- it is just as \emph{detectable}, confirming Proposition~\ref{prop:lipschitz} is about error geometry, not about hiding from the gate) yet play\_cost 0.000 at amplitude 0.5. At amplitude 1.0 play\_cost turns \emph{negative} ($-0.745$): the truth planner, seeing the slowdown near its horizon edge, is over-pessimistic and often settles for the small plateau, while the bump-blind planner pushes through and wins. A smooth localized omission produces planner-side timing effects of ambiguous sign; only the hard mode produces the one-way exploitation geometry (pinned, forever, below random).
+
+\section{LLM synthesis: the danger collapses to pure identifiability}
+\label{sec:synthesis}
+
+Real-LLM arms (\texttt{scripts/continuous\_danger\_synthesis.py}; Azure GPT-5.x mini and large; $N = 40$ training rollouts which double as the gate, as in the companion paper's sweep; $\varepsilon = 10^{-9}$ pinned-integrator gate; 5 seeds/cell; 6 MPC play episodes/seed; per-seed JSON with the synthesized code versioned in the repository). The contract pins the integrator (Section~\ref{sec:cartwall}'s equations, stated in the spec text, constants generated from the environment instance so they cannot drift); the \emph{full} arm includes the wall clause, the \emph{incomplete} arm omits it. Crucially, each seed logs whether the wall fired in its training sample --- the identifiability event that the companion paper could not condition on post hoc.
+
+\paragraph{Full arm (both sizes, 3 cells, 15 seeds): gate 1.000 in 0 refinement iterations, wall probes exact, play at truth parity --- every seed.} The pinned-integrator premise holds with a real LLM: correct synthesis is float-exact through the sandbox, so $\varepsilon = 10^{-9}$ costs nothing and the tolerance axis is fully disarmed. As in the discrete setting, given the rule, the model translates it perfectly.
+
+\paragraph{Incomplete arm.} Three-way structure:
+\begin{enumerate}
+\item \textbf{Wall absent from the sample} (the $(1-r)^N$ event; 2/5 seeds at $x_\mathrm{wall} = 8$ for both sizes, consistent with $(1-0.0125)^{40} \approx 0.60$): every such seed --- \textbf{4/4 across mini and large} --- passed the gate at 1.000, fully wall-blind on the probes, and was exploited at play: pinned at the wall, contact rate 1.0, \textbf{play\_cost 0.999}. This is the discrete headline, synthesized end-to-end in a continuous CWM: a verified, almost-everywhere-exact model that performs worse than random.
+\item \textbf{Wall present, repaired:} the LLM does \emph{not} stay blind. It reads the failing transitions and writes the true global rule --- \texttt{if x2 >= 8.0: return [8.0, 0.0]} --- not a curve fit. Large repaired \textbf{3/3 wall-present seeds in one refinement iteration each}; mini repaired most (5/8 across the two knob cells), and one mini seed wrote the clamp in \textbf{0 iterations}, i.e.\ inferred the mode from the ${\sim}4$ contact examples in its synthesis prompt before any refinement feedback. This is the divergence from the discrete setting, where rules demonstrated by example transitions were persistently not learned (``translation, not inference''). A numerically-manifested discontinuity is learnable from data in a way a symbolic game rule was not.
+\item \textbf{Wall present, not repaired:} mini's three stalls (gate 0.974--0.998 at the 5-iteration budget) are not near-misses of the rule but \textbf{superstitious local patches}: e.g.\ \texttt{if abs(x2 - 8.0) <= 0.15 and abs(v2) <= 1.1: x2 = 8.0} --- a clamp fitted to the \emph{observed manifestation} of the mode (low-speed, near-wall contacts), which mispredicts other approaches to the wall. \textbf{The gate rejected every one of them.}
+\end{enumerate}
+
+The three branches compose into the paper's central claim. With the mode in the data, the synthesize--refine--gate loop is \emph{sound}: it either recovers the exact mode or refuses the artifact. With the mode absent, no loop can help (Proposition~\ref{prop:ident}), and the acceptance of a blind artifact is not a failure of the LLM, the refinement, or the gate implementation --- it is the sampling event whose probability is exactly $(1-r)^N$. The discrete danger law had a provable core plus an empirical residual (the rule not learned even when shown); in the continuous instrument the residual vanishes and \textbf{the law is the entire failure surface}. The actionable consequence sharpens correspondingly: in this regime, spec completeness and gate-sample coverage are not two independent worries --- coverage \emph{is} the worry, because the synthesis loop repairs what the sample reveals.
+
+(Scope: 5 seeds/cell --- the wall-absent cell is 4/4 across sizes and consistent across two independent runs; the repair rate is suggestive-with-variance, not a sweep. LLM synthesis is stochastic across calls; the three-way structure is stable run-to-run, per-seed iteration counts are not.)
+
+\section{Smooth learners cannot localize: both halves, measured}
+\label{sec:smooth}
+
+If localization is representational, two things must be checkable on non-code learners trained on the \emph{same data} (\texttt{scripts/continuous\_smooth\_probe.py}; the two most favorable smooth learners: closed-form linear least squares --- off the wall, the dynamics are \emph{exactly linear}, so this is the smooth best case --- and a small tanh MLP, probe-grade):
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{llrrcc}
+\toprule
+model & trained on & off-mode err mean / max & probe err & gate $10^{-9}$ & gate $10^{-2}$ \\
+\midrule
+linear-LSQ & wall-free & $3.6\mathrm{e}{-15}$ / $1.7\mathrm{e}{-14}$ & 4.18 & \textbf{PASS} & \textbf{PASS} \\
+linear-LSQ & wall-data & $1.9\mathrm{e}{-03}$ / $1.2\mathrm{e}{-02}$ & 4.17 & fail & fail \\
+MLP h=8 & wall-free & $3.5\mathrm{e}{-03}$ / $5.0\mathrm{e}{-02}$ & 4.20 & fail & fail \\
+MLP h=8 & wall-data & $6.0\mathrm{e}{-03}$ / $4.9\mathrm{e}{-02}$ & 4.19 & fail & fail \\
+\bottomrule
+\end{tabular}
+\caption{Smooth learners on the synthesis samples ($x_\mathrm{wall} = 8$). ``probe err'' is the wall-region probe error (4.2 $\approx$ predicting straight through the wall).}
+\label{tab:smooth}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.6\textwidth]{figures/smooth_localization.pdf}
+\caption{Off-mode max error (log) by model and training data. The wall-free linear fit sits at float noise and passes both gates (blind); four contact rows tilt it twelve orders of magnitude; synthesized code is exactly zero off-mode.}
+\label{fig:smooth}
+\end{figure}
+
+\textbf{Identifiability is learner-independent, live.} On the wall-free sample the linear model recovers the off-mode dynamics to $10^{-15}$, \textbf{passes the $\varepsilon = 10^{-9}$ gate}, and is exactly as wall-blind as the synthesized blind code (probe error 4.18: it predicts straight through the wall). Proposition~\ref{prop:ident} instantiated on a second hypothesis class: in the gate-miss event, \emph{any} accepted learner is blind. The $(1-r)^N$ hole is not an LLM property.
+
+\textbf{With the mode in the data, code and smooth part ways.} Four contact rows out of 3200 tilt the linear fit by \textbf{twelve orders of magnitude} off-mode ($1.7\mathrm{e}{-14} \to 1.2\mathrm{e}{-02}$ max) --- it fails both gates \emph{and still} has the mode wrong (probe 4.17). The smooth hypothesis cannot put the error on the mode; it leaks everywhere (Proposition~\ref{prop:lipschitz}'s geometry, observed as a least-squares tradeoff). The synthesized code, on the \emph{same sample}, wrote the exact clamp and passed at float precision. The MLP combines both axes: a pervasive ${\sim}5\mathrm{e}{-3}$ floor that no gate accepts, and a never-learned mode.
+
+Consequence for the CWM paradigm: the paradigm \emph{creates} in continuous control the localized failure class that the learned-model literature says does not dominate there --- and, by the same representational fact, also creates the exact-repair capability that learned models lack. Code cuts both ways, and the gate's sampling coverage decides which way.
+
+\section{Related work}
+\label{sec:related}
+
+\emph{Objective mismatch and model exploitation in model-based RL} \citep{lambert2020objective,janner2019mbpo,hafner2020dreamer}: prediction accuracy and control performance diverge for learned continuous models; planners exploit model errors. Our contribution to that conversation is the \emph{verified-but-wrong localized} regime, which smooth learned models cannot even represent (Proposition~\ref{prop:lipschitz}, Table~\ref{tab:smooth}), plus a closed-form acceptance-failure law confirmed at gate scale. \emph{Hybrid systems:} mode detection and identification of piecewise/hybrid dynamics is classical; our question is not identifying the mode but what a \emph{sampling verifier certifies} when the mode is missed, and what a planner then does. \emph{Code World Models} \citep{lehrach2025cwm} and code-as-policy \citep{liang2023codeaspolicies,gao2023pal} supply the paradigm; the companion paper \citep{aguilar2026verified} is the discrete study this paper extends --- transferring its provable core, showing its empirical residual (translation-not-inference) does not transfer, and adding the representational theorem separating code from smooth hypotheses. \emph{Property-based testing and rare events} \citep{claessen2000quickcheck,rubinstein2017montecarlo}: the gate is random testing of a program against an oracle; $(1-r)^N$ is the standard rare-input coverage gap, here with the planner as the adversary that finds it.
+
+\section{Limitations and Honest Assessment}
+\label{sec:limitations}
+
+\paragraph{Two minimal instruments, one dimension.} Cart-with-wall and pendulum-with-stop are minimal by design, and Section~\ref{sec:pendulum} shows the mechanism survives a nonlinear plant. But both modes are single stationary boundaries in a 2-dimensional state; multi-mode, moving-boundary, and higher-dimensional instruments (2D sticky patch, contact-rich manipulation) are future work. We expect the \emph{mechanism} to survive --- it is measure-theoretic --- but the \emph{repair} finding (Section~\ref{sec:synthesis}) could weaken as mode geometry gets harder to induce from few examples; the synthesis arms have run only on the cart.
+
+\paragraph{One planner family.} Random-shooting MPC with piecewise-constant candidates. The exploitation geometry (pinned forever, below random) is planner-mediated; a planner with online model-error feedback (e.g., replanning on prediction violation) would break the loop --- a mitigation claim consistent with our thesis (verify on the deployment distribution), not against it.
+
+\paragraph{Synthesis cells are spot-checks.} 5 seeds/cell, one model family (GPT-5.x; two sizes). The wall-absent conditional is 4/4 across sizes and two runs; the repair-rate numbers (large 3/3 at 1 iteration; mini 5/8 with 3 gate-rejected stalls) carry small-$n$ variance. No cross-family probe yet.
+
+\paragraph{The MLP is a probe, not a baseline.} It substantiates the representational point at $h{=}8$/pure-Python scale; a tuned modern dynamics model would have a lower floor but the same structural inability to be bit-exact off a mode at $\varepsilon = 10^{-9}$ (an argument, not yet a measurement, at scale).
+
+\paragraph{Proposition~\ref{prop:lipschitz} bounds geometry, not probability.} The ball is metric; converting to gate-visitation probability needs the gate measure on that ball, which is instrument-specific. The empirical complement (Table~\ref{tab:smooth}'s twelve-orders tilt) carries the quantitative weight here.
+
+\paragraph{Coverage certificates do not transfer.} The companion paper's enumeration-based guarantees have no continuous analogue in this paper; covering-number versions under Lipschitz assumptions are open.
+
+\paragraph{play\_cost $> 1$ is a normalization artifact} (blind $<$ random), reported unclamped and explained; the headline claims never depend on the excess over 1.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+The companion paper ended by diagnosing the gate failure as a reach-distribution shift and prescribing verification on the distribution the planner visits. This paper shows the diagnosis is not about discreteness. The gate-miss law, the identifiability argument, and the play-cost bound are measure-theoretic and survive the move to continuous state spaces intact; what the move changes is \emph{where the localized failure can live} (hybrid mode boundaries --- an omitted mode is a rare rule) and \emph{who can express it} (programs, not smooth function classes: Proposition~\ref{prop:lipschitz} and Table~\ref{tab:smooth}). On two minimal hybrid instruments the entire discrete phenomenology reproduces --- threshold law, knob-invariant exploitation, the reach mechanism --- with the gate's acceptance rate matching $(1-r)^N$ at gate scale.
+
+The synthesis experiment then delivers this paper's own finding: the continuous regime is the one where the danger law is \emph{everything}. Given the mode in its sample, the LLM repairs it exactly --- including from the synthesis examples alone --- and when it fails to repair, the gate catches the superstitious patch; given the mode absent, every learner we tried (LLM, exact linear regression) is certified blind and the planner is exploited to below-random performance. The loop is sound except on one event, and the probability of that event is in closed form. For practitioners the message is one clause sharper than the discrete one: in continuous code-world-model pipelines, \emph{sample coverage of the mode boundaries is the whole game} --- the synthesis stack will translate what it is told and repair what it is shown, and no stage of it can know about what the sample never touched.
+
+\appendix
+
+\section{Reproducibility}
+
+All code is at \url{https://github.com/JaviMaligno/code-world-models} (\texttt{src/cwm/continuous/}, \texttt{scripts/continuous\_*.py}); the experiment log is \texttt{docs/EXPERIMENTS.md} (sections prefixed ``PAPER 2'') and per-seed artifacts, including every synthesized program, are versioned under \texttt{results/}. CPU results (Tables~\ref{tab:danger}--\ref{tab:smooth}):
+
+\begin{verbatim}
+PYTHONPATH=src python scripts/continuous_reach.py         # Table 1 (~2.5 min)
+PYTHONPATH=src python scripts/continuous_axes.py          # Table 3 (~3 min)
+PYTHONPATH=src python scripts/continuous_smooth_probe.py  # Table 4 (~11 s)
+PYTHONPATH=src python scripts/continuous_pendulum.py      # Table 2 (~2 min)
+python scripts/make_paper2_figures.py               # figures from the JSONs
+\end{verbatim}
+
+LLM arms (Azure credentials in \texttt{.env}; the runbook --- commands, cost,
+predictions, troubleshooting --- is the section ``Runbook --- LLM arms'' of the
+design spec under \texttt{docs/specs/}, dated 2026-07-06):
+
+\begin{verbatim}
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 5
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 5 --x-wall 4
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py large 5
+\end{verbatim}
+
+\bibliography{references}
+
+\end{document}

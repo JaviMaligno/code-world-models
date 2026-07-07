@@ -24,7 +24,7 @@ The answer is yes, and the continuous version of the story is in one respect cle
 Contributions:
 
 1. **Theory transfer, and one new piece.** The gate-miss proposition, the identifiability proposition, and the play-cost upper bound via query-hit mass transfer to continuous state spaces with only notational change (they are measure-theoretic; §3). The genuinely discrete ingredient of paper 1 is the *localization premise*, and we prove it requires unbounded local Lipschitz structure: for L-Lipschitz truth and model differing by η at a point, the disagreement region contains a metric ball of radius (η−ε)/2L (Proposition 4). Hybrid mode boundaries are exactly where this obstruction disappears — an omitted mode is a rare rule.
-2. **A minimal hybrid instrument** (cart-with-wall) on which the full paper-1 phenomenology is measured: threshold law with the whole (1−r)^N elbow inside the knob sweep, knob-invariant play_cost ≈ 1 (the exploited planner scores below random, pinned against the phantom mode all episode), and the reach mechanism in its cleanest form (exploited-planner mode reach flat at 1.00, random reach falling 0.33 → 0.002, truth-planner trajectory reach 0.00). Three instrument-design lessons of independent value for continuous CWM work are recorded (§2.3).
+2. **Two minimal hybrid instruments** — cart-with-wall (linear off-mode plant) and pendulum-with-stop (nonlinear, gravity) — on which the full paper-1 phenomenology is measured with the same harness and no per-instrument re-calibration: threshold law with the whole (1−r)^N elbow inside the knob sweep, knob-invariant play_cost ≈ 1 (the exploited planner scores below random, pinned against the phantom mode all episode), and the reach mechanism in its cleanest form (exploited-planner mode reach flat at 1.00, random reach falling two orders of magnitude, truth-planner trajectory reach 0.00). Three instrument-design lessons of independent value for continuous CWM work are recorded (§2.3).
 3. **A pinned-integrator gate and a measured axis separation.** Fixing the discretization in the synthesis contract makes correct code float-exact, so the gate runs at ε = 10⁻⁹ and the classic sub-tolerance/pervasive axis is a *control*, not a confound: the gate rejects supra-tolerance global bias on every rollout, passes sub-tolerance bias harmlessly, and misses the hard mode exactly (1−r)^N of the time (empirical pass rates match the prediction; §5). A smooth localized perturbation of comparable rarity has ≈0 — at higher amplitude *negative* — play cost.
 4. **The synthesis result: danger collapses to pure identifiability.** Real-LLM arms (GPT-5.x mini/large) with the identifiability event logged per seed: wall absent → 4/4 verified-blind-exploited (regret 0.999); wall present → repaired to the exact global rule (large 3/3 in 1 iteration) or rejected by the gate (mini's stalls are superstitious local patches — clamps fitted to the observed contact transitions — at gate 0.974–0.998, never accepted). §6.
 5. **Smooth learners cannot localize** (§7): the most favorable smooth learner (closed-form linear least squares — the off-mode dynamics are exactly linear) trained on wall-free data passes both gates fully blind (identifiability is learner-independent), and trained on wall-containing data is tilted twelve orders of magnitude off-mode by 4 contact rows in 3200 while still missing the mode. Both the danger geometry and the repair capability are representational properties of code.
@@ -103,6 +103,21 @@ Readings:
 - **The reach mechanism, in its cleanest form.** Paper 1 measured competent-vs-random reach of the rule region; here the exploited planner's mode reach is flat at 1.00 across the knob while random reach falls 165× — and the *truth* planner's trajectory reach is 0.00. The mode lives on the blind planner's deployment path and on the truth planner's *query* distribution (its imagination crosses the wall while deliberating; Proposition 3's μ_query), not on truth's trajectories. The danger factorization rides two different reach distributions, exactly as in paper 1, with the query/trajectory distinction now visible.
 - Gate-miss exactness is re-verified in-tests (empirical P(N rollouts miss) vs (1−r)^N within binomial error) and again, at gate scale, in §5.
 
+### 4.1 Robustness: the same law on a nonlinear plant
+
+The cart's off-mode dynamics are linear, which is convenient for §7 but invites the worry that the phenomenology depends on it. A second instrument — a pendulum (gravity term sin θ, θ = 0 hanging down) with a hard angular stop, same interface, same MPC, same two-plateau reward on θ — reproduces the identical picture with *no* re-calibration (rarity is natural here: gravity confines the random walk near the bottom, so climbing to the stop is rare):
+
+| θ_stop | rarity | J_truth | J_blind | play_cost | blind hit | d@N=40 |
+|-------:|-------:|--------:|--------:|----------:|----------:|-------:|
+| 0.8 | 0.2970 | 20.08 | 0.01 | 1.002 | 1.00 | 0.000 |
+| 1.0 | 0.1277 | 20.08 | 0.03 | 1.002 | 1.00 | 0.004 |
+| 1.2 | 0.0527 | 20.08 | 0.05 | 1.000 | 1.00 | 0.115 |
+| 1.4 | 0.0193 | 20.08 | 0.12 | 0.997 | 1.00 | 0.457 |
+| 1.6 | 0.0073 | 20.08 | 0.26 | 0.990 | 1.00 | 0.737 |
+| 2.0 | 0.0000 | 20.08 | 1.23 | 0.942 | 1.00 | 0.942 |
+
+Threshold law, knob-invariant exploitation (pinned at the stop in every episode, at every knob), truth planner untouched by the mode. The mechanism does not care that the plant is nonlinear — only that the mode is hard and rare under the gate's measure.
+
 ## 5. Axis separation: the gate fails only where the law says it can
 
 The classic continuous-model failure axis is pervasive sub-tolerance error; the danger law's axis is a localized hard mode. A tolerance gate (ε = 0.01, deployment-realistic) must be shown to fail *only* on the second axis, and only at the (1−r)^N rate. Five arms, one table (`scripts/continuous_axes.py`; reveal-rarity = P(a random rollout contains a transition where truth and model differ > ε), 2000 rollouts; pass@40 over 300 independent N = 40 gates; 20 MPC episodes/arm):
@@ -164,7 +179,7 @@ If localization is representational, two things must be checkable on non-code le
 
 ## 9. Limitations and honest assessment
 
-- **One instrument, one dimension.** Cart-with-wall is minimal by design (as Beacon was in paper 1). The mode is a single stationary boundary; multi-mode, moving-boundary, and higher-dimensional instruments (pendulum hard stop, 2D sticky patch) are future work. We expect the mechanism to survive — it is measure-theoretic — but the *repair* finding (§6) could weaken as mode geometry gets harder to induce from few examples.
+- **Two minimal instruments, one dimension.** Cart-with-wall and pendulum-with-stop are minimal by design (as Beacon was in paper 1), and §4.1 shows the mechanism survives a nonlinear plant. But both modes are single stationary boundaries in a 2-dimensional state; multi-mode, moving-boundary, and higher-dimensional instruments (2D sticky patch, contact-rich manipulation) are future work. We expect the *mechanism* to survive — it is measure-theoretic — but the *repair* finding (§6) could weaken as mode geometry gets harder to induce from few examples; the synthesis arms have run only on the cart.
 - **One planner family.** Random-shooting MPC with piecewise-constant candidates. The exploitation geometry (pinned forever, below random) is planner-mediated; a planner with online model-error feedback (e.g., replanning on prediction-violation) would break the loop — that is a mitigation claim consistent with our thesis (verify on the deployment distribution), not against it.
 - **Synthesis cells are spot-checks.** 5 seeds/cell, one model family (GPT-5.x; two sizes). The wall-absent conditional is 4/4 across sizes and two runs; the repair-rate numbers (large 3/3@1 iter; mini 5/8 with 3 gate-rejected stalls) carry small-n variance. No cross-family probe yet.
 - **The MLP is a probe, not a baseline.** It substantiates the representational point at h=8/pure-Python scale; a tuned modern dynamics model would have a lower floor but the same structural inability to be bit-exact off a mode at ε = 10⁻⁹ (that is an argument, not yet a measurement, at scale).
@@ -188,7 +203,9 @@ All CPU results (Tables 1–3 minus the LLM columns):
 PYTHONPATH=src python scripts/continuous_reach.py          # Table 1 (~2.5 min)
 PYTHONPATH=src python scripts/continuous_axes.py           # Table 2 (~3 min)
 PYTHONPATH=src python scripts/continuous_smooth_probe.py   # Table 3 (~11 s)
-python -m pytest tests/test_continuous*.py tests/test_smooth_fit.py  # 24 tests
+PYTHONPATH=src python scripts/continuous_pendulum.py       # §4.1 (~2 min)
+python scripts/make_paper2_figures.py                      # figures from the JSONs
+python -m pytest tests/test_continuous*.py tests/test_smooth_fit.py  # 27 tests
 ```
 
 LLM arms (Azure credentials in `.env`; see the runbook in

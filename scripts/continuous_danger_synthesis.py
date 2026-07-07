@@ -20,6 +20,13 @@ Run (from the repo root):
   PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 5
   PYTHONPATH=src python scripts/continuous_danger_synthesis.py large 5 --x-wall 8
 Arguments: size (mini|large|nano), n_seeds; see --help for the rest.
+
+Cross-family spot-check (HF Inference Providers router, as in paper 1's
+crossfamily_probe.py; needs HF_TOKEN instead of the Azure variables):
+  HF_TOKEN=... PYTHONPATH=src python scripts/continuous_danger_synthesis.py \
+      mini 3 --compat-model "Qwen/Qwen3-Coder-30B-A3B-Instruct"
+(the positional size is ignored when --compat-model is given; the output
+filename is tagged with the model id instead).
 Cost: ~2-7 LLM calls/seed (1 synthesis + refinements), prompt ~1-2k tokens —
 comparable per-seed to paper 1's danger sweep cells. Runtime is dominated by
 the play evaluation (~1-2 min CPU per seed at the defaults).
@@ -55,6 +62,7 @@ from cwm.continuous.contract import (  # noqa: E402
     SynthesizedModel, synthesize_and_evaluate)
 from cwm.law import wilson_ci  # noqa: E402
 from cwm.llm.azure_openai import AzureOpenAIProvider  # noqa: E402
+from cwm.llm.openai_compat import OpenAICompatProvider  # noqa: E402
 
 ap = argparse.ArgumentParser(description=__doc__,
                              formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -70,15 +78,27 @@ ap.add_argument("--eps", type=float, default=1e-9,
                 "full-spec run fails only on float noise (record it if so)")
 ap.add_argument("--play-episodes", type=int, default=6)
 ap.add_argument("--max-iters", type=int, default=5)
+ap.add_argument("--compat-model", default=None,
+                help="OpenAI-compatible model id (e.g. an HF router id); "
+                "switches provider to OpenAICompatProvider with HF_TOKEN "
+                "and ignores the positional size")
+ap.add_argument("--compat-base-url", default="https://router.huggingface.co/v1")
 args = ap.parse_args()
 
-MODEL = os.environ[{"mini": "AZURE_DEPLOYMENT_MINI",
-                    "large": "AZURE_DEPLOYMENT_LARGE",
-                    "nano": "AZURE_DEPLOYMENT_NANO"}[args.size]]
-provider = AzureOpenAIProvider(
-    endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
-    api_key=os.environ["AZURE_OPENAI_API_KEY"],
-    api_version=os.environ["AZURE_OPENAI_API_VERSION"])
+if args.compat_model:
+    MODEL = args.compat_model
+    provider = OpenAICompatProvider(base_url=args.compat_base_url,
+                                    api_key=os.environ["HF_TOKEN"])
+    TAG = "compat-" + MODEL.split("/")[-1].lower()
+else:
+    MODEL = os.environ[{"mini": "AZURE_DEPLOYMENT_MINI",
+                        "large": "AZURE_DEPLOYMENT_LARGE",
+                        "nano": "AZURE_DEPLOYMENT_NANO"}[args.size]]
+    provider = AzureOpenAIProvider(
+        endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
+        api_key=os.environ["AZURE_OPENAI_API_KEY"],
+        api_version=os.environ["AZURE_OPENAI_API_VERSION"])
+    TAG = args.size
 
 ENV = CartWall(x_wall=args.x_wall)
 ARMS = ["full", "incomplete"] if args.arm == "both" else [args.arm]
@@ -95,7 +115,7 @@ print(f"J_truth={J_TRUTH:.2f}  J_random={J_RANDOM:.2f}", flush=True)
 
 t0 = time.time()
 results = {"script": "continuous_danger_synthesis.py", "model": MODEL,
-           "size": args.size, "params": vars(args),
+           "size": args.size, "tag": TAG, "params": vars(args),
            "j_truth": J_TRUTH, "j_random": J_RANDOM, "cells": []}
 for arm in ARMS:
     for seed in range(args.n_seeds):
@@ -134,6 +154,6 @@ if inc:
           flush=True)
 
 results["elapsed_s"] = round(time.time() - t0, 1)
-out = pathlib.Path(f"results/continuous_synthesis_{args.size}_xwall{args.x_wall:g}.json")
+out = pathlib.Path(f"results/continuous_synthesis_{TAG}_xwall{args.x_wall:g}.json")
 out.write_text(json.dumps(results, indent=2))
 print(f"wrote {out}  [{results['elapsed_s']}s]", flush=True)

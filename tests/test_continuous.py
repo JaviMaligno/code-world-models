@@ -2,7 +2,8 @@
 import math
 import random
 
-from cwm.continuous.envs import CartWall, blind_of, biased_of, unbumped_of
+from cwm.continuous.envs import (CartWall, PendulumStop, biased_of, blind_of,
+                                 unbumped_of)
 from cwm.continuous import gate, harness, mpc
 
 
@@ -140,6 +141,41 @@ def test_smooth_bump_reveals_but_does_not_hurt():
     assert r > 0.05  # localized and detectable, like the wall...
     pc = harness.play_cost(bump, blind, n_episodes=2, seed=9, n_samples=40)
     assert abs(pc["play_cost"]) < 0.1  # ...but inconsequential at play
+
+
+def test_pendulum_stop_clamps_and_blind_matches_off_mode():
+    truth = PendulumStop(th_stop=1.2)
+    blind = blind_of(truth)
+    assert blind.th_stop is None
+    # clamp fires exactly, zeroing angular velocity
+    s, _, contact = truth.step((1.15, 3.0), 1.0)
+    assert contact and s == (1.2, 0.0)
+    # bit-exact off-mode (nonlinear plant): gentle left-biased walk
+    import random as _r
+    rng = _r.Random(1)
+    s_t = s_b = (0.0, 0.0)
+    for _ in range(150):
+        a = rng.uniform(-1.0, 0.4) * 0.4
+        s_t, r_t, c = truth.step(s_t, a)
+        s_b, r_b, _ = blind.step(s_b, a)
+        assert not c
+        assert s_t == s_b and r_t == r_b
+
+
+def test_pendulum_rarity_decreases_with_stop_angle():
+    r_near, _, _ = harness.rarity(PendulumStop(th_stop=0.8), 200, seed=2)
+    r_far, _, _ = harness.rarity(PendulumStop(th_stop=1.6), 200, seed=2)
+    assert r_near > 0.15 > r_far
+
+
+def test_pendulum_mpc_arms():
+    truth = PendulumStop(th_stop=1.2)
+    ep_t = harness.run_episode(truth, truth, "mpc", seed=5, n_samples=40)
+    ep_b = harness.run_episode(truth, blind_of(truth), "mpc", seed=5,
+                               n_samples=40)
+    assert not ep_t.contact and ep_t.ret > 10.0
+    assert ep_b.contact and ep_b.final_state[0] == truth.th_stop
+    assert ep_b.ret < 2.0
 
 
 def test_play_cost_structure():

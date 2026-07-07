@@ -255,6 +255,26 @@ failures list via the sandbox (`'error': repr(e)`) and count as accuracy 0
 var mapping is at the top of the script. The script is restartable: each
 run overwrites its own JSON only.
 
+**Remaining credentialed runs for the paper (2026-07-07):**
+
+```bash
+# (1) Tighten the synthesis cells: 20 seeds (paper-1 standard) on the
+#     headline cell, both sizes. ~4x the cost/time of the 5-seed run.
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 20
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py large 20
+
+# (2) Cross-family spot-check (HF router, HF_TOKEN in env; same convention
+#     as paper 1's crossfamily_probe.py). 3 seeds suffice for a spot-check.
+HF_TOKEN=... PYTHONPATH=src python scripts/continuous_danger_synthesis.py \
+    mini 3 --compat-model "Qwen/Qwen3-Coder-30B-A3B-Instruct"
+```
+
+What to expect: (1) sharpens the Wilson intervals on the identifiability
+conditional (at 20 seeds ~8 wall-absent events expected at x_wall=8) and on
+mini's repair rate; (2) tests whether mode-repair-from-data is a GPT-5.x
+quirk — either outcome is a finding for §6 of the draft. After running,
+paste/commit the JSONs and the draft's §6 numbers get updated.
+
 ## Order of work (resume here)
 
 1. `envs.py` cart-wall + tests; `continuous_reach.py` mechanism plot — **go/no-go:

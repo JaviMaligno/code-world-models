@@ -1,5 +1,37 @@
 # Experiments Log
 
+## PAPER 2 — Second instrument (pendulum-with-stop): the law on a nonlinear plant (2026-07-07)
+
+The design doc's last step-5 item (`scripts/continuous_pendulum.py`, 121 s
+CPU; `results/continuous_pendulum.json`; env `PendulumStop` in
+`cwm.continuous.envs`, same interface, blind_of removes the stop). The base
+plant is NONLINEAR (gravity term sin θ, θ=0 hanging down), so this checks the
+mechanism is not an artifact of the cart's linear off-mode dynamics. Rarity
+is natural here — gravity confines the random walk near the bottom; no lure
+engineering was needed beyond reusing the two-plateau reward on θ. First
+calibration worked unchanged (same MPC, same harness).
+
+| θ_stop | rarity [Wilson 95%] | J_truth | J_blind | J_rand | play_cost | blind hit | d@N=40 |
+|-------:|---------------------|--------:|--------:|-------:|----------:|----------:|-------:|
+| 0.8 | 0.297 [0.281, 0.314] | 20.08 | 0.01 | 0.06 | 1.002 | 1.00 | 0.000 |
+| 1.0 | 0.128 [0.116, 0.140] | 20.08 | 0.03 | 0.06 | 1.002 | 1.00 | 0.004 |
+| 1.2 | 0.053 [0.045, 0.061] | 20.08 | 0.05 | 0.06 | 1.000 | 1.00 | 0.115 |
+| 1.4 | 0.019 [0.015, 0.025] | 20.08 | 0.12 | 0.06 | 0.997 | 1.00 | 0.457 |
+| 1.6 | 0.007 [0.005, 0.011] | 20.08 | 0.26 | 0.06 | 0.990 | 1.00 | 0.737 |
+| 2.0 | 0.000 [0.000, 0.001] | 20.08 | 1.23 | 0.06 | 0.942 | 1.00 | 0.942 |
+
+Identical phenomenology to the cart: threshold law with the elbow inside the
+sweep, play_cost ≈ 1 knob-invariant, blind planner pinned at the stop in
+every episode at every knob (final θ = θ_stop exactly), truth planner never
+touches it. Two-instrument robustness established CPU-only; the synthesis
+arms on the pendulum remain optional future work (the contract machinery is
+env-generic except for the rules text).
+
+Also this date: paper-2 figures generated from the versioned results JSONs
+(`scripts/make_paper2_figures.py` → `docs/paper2/figures/`: danger_threshold,
+reach_mechanism, axis_separation, smooth_localization; Wong CVD-safe palette,
+same conventions as paper 1's figures).
+
 ## PAPER 2 — Smooth-learner probe: the mode cannot be localized by a smooth hypothesis (2026-07-07)
 
 Design-doc step-5 probe (`scripts/continuous_smooth_probe.py`, 11 s CPU;
