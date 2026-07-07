@@ -1,5 +1,54 @@
 # Experiments Log
 
+## PAPER 2 — Axis separation: localized mode vs pervasive error vs smooth bump (2026-07-06)
+
+The design doc's step-4 controls, all CPU (`scripts/continuous_axes.py`,
+eps=0.01 deployment-realistic tolerance gate, 2000 reveal-rarity rollouts,
+300 independent N=40 gates, 20 MPC episodes/arm; 169 s;
+`results/continuous_axes.json`). Reveal-rarity is the measure-theoretic
+rarity: P(a random rollout contains a transition where truth and model
+differ > eps).
+
+| arm | rarity | (1−r)^40 | pass@40 (empirical) | play_cost | danger@40 |
+|-----|-------:|---------:|--------------------:|----------:|----------:|
+| wall@4 omitted | 0.1385 | 0.0026 | 0.003 | 1.031 | 0.0027 |
+| wall@8 omitted | 0.0125 | 0.6046 | 0.667 | 1.030 | 0.6227 |
+| drag bias ×1.03 (sub-eps) | 0.0000 | 1.0000 | 0.997 | 0.000 | 0.0000 |
+| drag bias ×2.0 (supra-eps) | 1.0000 | 0.0000 | 0.000 | 0.000 | 0.0000 |
+| bump@4 amp0.5 (smooth) | 0.1875 | 0.0002 | 0.000 | 0.000 | 0.0000 |
+| bump@4 amp1.0 (smooth) | 0.2085 | 0.0001 | 0.000 | −0.745 | −0.0001 |
+
+Readings:
+- **Gate exactness confirmed empirically**: pass@40 matches (1−r)^40 in both
+  wall rows (0.003 vs 0.0026; 0.667 vs 0.605, inside the 300-gate Wilson CI).
+- **The four-quadrant separation the paper needs**: the tolerance gate
+  *polices pervasive error* (supra-eps bias rejected on every rollout) and
+  *tolerates harmless* sub-eps bias (pass 0.997, play_cost 0.000) — yet is
+  **blind exactly (1−r)^N of the time to the localized hard mode, whose
+  play_cost is ~1**. Danger lives only in the rare∧hard-mode cell.
+- **Smoothness kills consequence, not detectability**: the C∞ drag bump at
+  the same location has *comparable rarity* to the wall (0.19 vs 0.14) but
+  play_cost exactly 0.000 at amp 0.5 — rarity without consequence (the
+  Connect-Four analogue). At amp 1.0 play_cost goes *negative* (−0.745): the
+  truth planner is over-pessimistic about the slowdown near its horizon edge
+  and often settles for the small left plateau, while the bump-blind planner
+  pushes through and wins — a smooth localized omission can even *help*.
+  Smooth perturbations produce planner-side timing effects of ambiguous
+  sign; only the hard mode produces the one-way exploitation geometry.
+- Footnote: the sub-eps arm's 0.997 (not 1.000) pass rate is the velocity
+  tail — in ~1/12,000 rollouts |v| gets large enough to push the drag-bias
+  error marginally over eps. The arm is sub-eps everywhere but the extreme
+  tail.
+
+Offline validation of the LLM arms (no Azure): `tests/test_continuous_contract.py`
+drives the full synthesis pipeline (`cwm.continuous.contract`) with
+FakeProvider — the hand-written full-spec artifact passes the pinned-
+integrator gate at eps=1e-9 **to float precision** (the pinned-integrator
+premise holds through the sandbox JSON round-trip), the wall-omitting
+artifact passes iff the sample missed the wall and probes fully wall-blind,
+and MPC on the synthesized blind artifact is exploited (pinned at the wall).
+Runbook for the credentialed run: design doc §"Runbook — LLM arms".
+
 ## PAPER 2 — Continuous/hybrid instrument: mechanism go/no-go PASSED (2026-07-06)
 
 First run of the continuous/hybrid rare-mode instrument (cart-with-wall; spec

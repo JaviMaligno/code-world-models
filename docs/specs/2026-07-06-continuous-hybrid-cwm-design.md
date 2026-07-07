@@ -196,6 +196,64 @@ for all sweeps CPU-only).
   part-time; synthesis arms on top of the existing pipeline; total well under
   paper 1's cost (no game tree, no arena, 2-dim state).
 
+## Runbook — LLM arms (run in an environment with Azure credentials)
+
+Everything below is implemented and validated offline (FakeProvider drives
+the identical code path in `tests/test_continuous_contract.py`); only the
+credentialed run remains.
+
+**Prerequisites.** `<repo-root>/.env` with the same variables as paper 1:
+`AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_API_VERSION`,
+and `AZURE_DEPLOYMENT_MINI` / `AZURE_DEPLOYMENT_LARGE` (/ `_NANO`).
+`pip install -e .` (needs `python-dotenv`, `openai` — already in
+pyproject).
+
+**Commands** (from the repo root):
+
+```bash
+# Headline cell: x_wall=8 (gate misses the wall in ~60% of seeds at N=40)
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 5
+# Caught cell for contrast: x_wall=4 (gate nearly always sees the wall)
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 5 --x-wall 4
+# Repeat with `large` when mini's behavior is understood
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py large 5
+```
+
+Cost/time: ~2–7 LLM calls per seed (1 synthesis + refinement iterations),
+1–2k prompt tokens each — comparable per-seed to paper 1's danger-sweep
+cells (cents). Wall-clock is dominated by the CPU play evaluation
+(~1–2 min/seed). Output: `results/continuous_synthesis_<size>.json` +
+a printed per-seed line and a cell summary with the identifiability
+conditional.
+
+**What each seed logs** (improving on paper 1, which could not condition
+post hoc): `sample_contains_wall` (the identifiability event), gate
+accuracy/iterations at eps=1e-9 (pinned integrator: correct code matches to
+float precision — validated offline), `wall_blindness` (wall-region probe,
+1.0 = clamp absent), and play (`play_cost`, `play_contact_rate`).
+
+**Predictions to check against:**
+- `full` arm: gate 1.0 in 0–2 iterations, wall_blindness 0.0, play_cost ≈ 0.
+  If gate fails ONLY on float noise (max err ~1e-12 in the failures list),
+  rerun with `--eps 1e-6` and record it — that is a pinned-integrator
+  contract finding, not a synthesis failure.
+- `incomplete` arm, wall absent from sample (~60% of seeds at the defaults):
+  gate 1.0 + wall_blindness 1.0 + play_cost ≈ 1 with play_contact_rate 1.0
+  (pinned at the wall) — the full paper-1 headline, synthesized.
+- `incomplete` arm, wall present in sample: translation-not-inference
+  predicts the gate cannot reach 1.0 (wall transitions are inexplicable to a
+  wall-less program). Watch refinement here: a numerically-manifested
+  discontinuity may be EASIER to induce from data than a symbolic game rule
+  (the model may well invent the clamp from the failing transitions). Either
+  outcome is a finding; if it repairs, that is the interesting divergence
+  from paper 1 and becomes its own section.
+
+**Troubleshooting.** Synthesized code import/exec errors surface in the
+failures list via the sandbox (`'error': repr(e)`) and count as accuracy 0
+— the refine loop feeds them back. If a deployment name differs, the env
+var mapping is at the top of the script. The script is restartable: each
+run overwrites its own JSON only.
+
 ## Order of work (resume here)
 
 1. `envs.py` cart-wall + tests; `continuous_reach.py` mechanism plot — **go/no-go:
@@ -222,3 +280,16 @@ for all sweeps CPU-only).
 4. Exactness + pervasive-error control + smooth-bump contrast.
 5. Repair arms + MLP probe + second hybrid instrument as robustness.
 6. Draft paper 2 (`docs/paper2/`), reusing paper 1's theory section structure.
+
+> **Update (2026-07-06): step 4 DONE (CPU), step 3 READY (awaiting a
+> credentialed run — see the Runbook above).** Axis separation measured
+> (`scripts/continuous_axes.py`, EXPERIMENTS.md §"Axis separation"): the
+> tolerance gate polices pervasive error (supra-eps rejected always,
+> sub-eps passes and is harmless), is blind exactly (1−r)^N to the hard
+> mode (empirical pass rate matches the prediction in both wall rows), and
+> the smooth bump has wall-like rarity with zero (amp 0.5) or *negative*
+> (amp 1.0 — model optimism beats horizon-pessimistic truth planning)
+> play_cost. Synthesis pipeline (`cwm.continuous.contract` +
+> `scripts/continuous_danger_synthesis.py`) validated end-to-end offline
+> with FakeProvider, including float-exactness of the pinned-integrator
+> gate at eps=1e-9 through the sandbox.

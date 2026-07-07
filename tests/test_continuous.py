@@ -2,8 +2,8 @@
 import math
 import random
 
-from cwm.continuous.envs import CartWall, blind_of
-from cwm.continuous import harness, mpc
+from cwm.continuous.envs import CartWall, blind_of, biased_of, unbumped_of
+from cwm.continuous import gate, harness, mpc
 
 
 def test_wall_clamps_without_tunneling():
@@ -100,6 +100,46 @@ def test_mpc_truth_goes_left_blind_gets_pinned():
     assert not ep_t.contact and ep_t.final_state[0] < truth.x_left + 2
     assert ep_b.contact and ep_b.final_state[0] == truth.x_wall
     assert ep_t.ret > 10.0 and ep_b.ret < 1.0
+
+
+def test_gate_truth_vs_itself_is_exact():
+    env = CartWall(x_wall=4.0)
+    res = gate.run_gate(env, env, n_rollouts=5, eps=0.0, seed=0)
+    assert res.passed and res.max_err == 0.0 and res.n_transitions == 5 * env.h_episode
+
+
+def test_gate_sub_tolerance_bias_always_passes():
+    truth = CartWall(x_wall=4.0)
+    res = gate.run_gate(truth, biased_of(truth, 1.03), n_rollouts=20,
+                        eps=0.01, seed=0)
+    assert res.passed
+    assert 0.0 < res.max_err <= 0.01  # errs everywhere, never over tolerance
+
+
+def test_gate_supra_tolerance_bias_always_fails():
+    truth = CartWall(x_wall=4.0)
+    r, _, _ = gate.reveal_rarity(truth, biased_of(truth, 2.0), eps=0.01,
+                                 n_rollouts=30, seed=0)
+    assert r == 1.0  # revealed on every rollout — the gate polices this axis
+
+
+def test_gate_blind_reveal_matches_contact_rarity():
+    """For the wall omission, reveal-rarity coincides with the wall-contact
+    rate (the clamp produces a large deviation whenever it fires)."""
+    truth = CartWall(x_wall=2.0)
+    r_reveal, _, _ = gate.reveal_rarity(truth, blind_of(truth), eps=0.01,
+                                        n_rollouts=200, seed=5)
+    r_contact, _, _ = harness.rarity(truth, n_rollouts=200, seed=5)
+    assert abs(r_reveal - r_contact) < 0.05
+
+
+def test_smooth_bump_reveals_but_does_not_hurt():
+    bump = CartWall(x_wall=None, bump_amp=0.5, bump_center=4.0, bump_width=0.5)
+    blind = unbumped_of(bump)
+    r, _, _ = gate.reveal_rarity(bump, blind, eps=0.01, n_rollouts=150, seed=3)
+    assert r > 0.05  # localized and detectable, like the wall...
+    pc = harness.play_cost(bump, blind, n_episodes=2, seed=9, n_samples=40)
+    assert abs(pc["play_cost"]) < 0.1  # ...but inconsequential at play
 
 
 def test_play_cost_structure():

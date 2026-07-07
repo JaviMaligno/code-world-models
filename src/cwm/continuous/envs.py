@@ -81,3 +81,15 @@ class CartWall:
 def blind_of(env: CartWall) -> CartWall:
     """The mode-omitting model of `env`: identical plant, no wall."""
     return replace(env, x_wall=None)
+
+
+def biased_of(env: CartWall, drag_scale: float) -> CartWall:
+    """The pervasive-error control: globally mis-scaled drag, wall intact.
+    Its error is everywhere (every transition with v != 0) and nowhere large —
+    the opposite error geometry to the localized mode omission."""
+    return replace(env, drag=env.drag * drag_scale)
+
+
+def unbumped_of(env: CartWall) -> CartWall:
+    """The smooth-contrast blind model: omits the localized drag bump."""
+    return replace(env, bump_amp=0.0)
