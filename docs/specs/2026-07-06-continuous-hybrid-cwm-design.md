@@ -311,3 +311,11 @@ run overwrites its own JSON only.
 > (4 contact rows tilt the linear fit 12 orders of magnitude off-mode).
 > Remaining from item 5: only the optional second hybrid instrument.
 > Next: item 6 — draft paper 2 (`docs/paper2/`).
+
+> **Update (2026-07-07, later): item 6 STARTED.** First full prose draft at
+> `docs/paper2/preprint-draft.md` (abstract, instrument + the three design
+> lessons, theory transfer incl. the new Proposition 4 "smoothness forbids
+> localized error" with proof, Tables 1–3 from the measured runs, the
+> synthesis three-way result, smooth-learner probe, related work,
+> limitations, reproduction appendix). Numbers cross-checked against
+> EXPERIMENTS.md; re-verify before submission as usual.
