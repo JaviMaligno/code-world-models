@@ -7,7 +7,7 @@ Then test whether the synthesized CWM is rule-blind: does its returns() give a d
 on cap + unequal-material states where the truth gives a material winner?
 
 Predicted rule-blind fraction if the LLM perfectly learns the rule whenever it
-appears: (1-r)^N (r = material-terminal rarity = 0.025) — the identifiability event.
+appears: (1-r)^N (r = material-terminal rarity = 76/3000 ≈ 0.0253) — the identifiability event.
 If the LLM does not reliably learn even when present (§5), the fraction is HIGHER.
 
 Run: PYTHONPATH=src python3.12 scripts/danger_synthesis_sweep.py [mini|large]
@@ -35,7 +35,7 @@ provider = AzureOpenAIProvider(
     endpoint=os.environ["AZURE_OPENAI_ENDPOINT"], api_key=os.environ["AZURE_OPENAI_API_KEY"],
     api_version=os.environ["AZURE_OPENAI_API_VERSION"])
 
-R = 0.025
+R = 76 / 3000  # measured material-terminal rarity at cap=100, unrounded (law_curve.json)
 N_GRID = [40, 120, 200]
 # Default 6 seeds/cell reproduces the published sweep; pass a count as argv[2] to
 # tighten the denominator (e.g. 20). At 6/6 the Wilson 95% lower bound on the
