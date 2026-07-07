@@ -99,7 +99,7 @@ This paper makes six contributions. The first three establish the perfect-inform
 
 \item \textbf{The belief model is invisible to a transition gate (Section~\ref{sec:gate-blindness}):} We prove (Proposition~\ref{prop:belieftrans}) that the information partition encoded by \texttt{observation}/\texttt{infer\_states} appears in no transition tuple, so a transition-accuracy gate cannot detect a wrong belief model. We demonstrate it on masked tic-tac-toe: withholding the masking rule yields a transition-gate-perfect (1.000) but belief-wrong (\texttt{observation\_rate} 0.020, \texttt{inference\_rate} 0.180) synthesis, with a synthesized single-seed corroboration on Beacon (transition gate 1.000, \texttt{inference\_rate} 0.000). With Beacon, this gives both faces of belief-model verification --- a wrong belief can lose at play \emph{and} is invisible to a transition gate.
 
-\item \textbf{Unification (Sections~\ref{sec:imperfect}, \ref{sec:related}):} The verified-vs-correct gap and the inference gap are one mechanism on two halves of the CWM contract. A size-$N$ random gate fails exactly on events of random-reach probability $\lesssim 1/N$ that competent play nonetheless reaches; the harm is $(\text{consequence}) \times P(\text{gate miss})$, with $P(\text{gate miss}) \approx e^{-Nr}$ for transition rules and $\approx e^{-N \cdot b^{-\dmax}}$ for inference info-sets.
+\item \textbf{Unification (Sections~\ref{sec:imperfect}, \ref{sec:related}):} The verified-vs-correct gap and the inference gap are one mechanism on two halves of the CWM contract. A size-$N$ random gate fails exactly on events of random-reach probability $\lesssim 1/N$ that competent play nonetheless reaches; the harm is $(\text{consequence}) \times P(\text{gate miss})$, with $P(\text{gate miss}) \approx e^{-Nr}$ for transition rules and $\approx e^{-N \cdot p_{\text{chance}} \cdot b^{-\dmax}}$ per inference info-set.
 \end{enumerate}
 
 \section{Setup and Methods}
@@ -340,7 +340,7 @@ The divergence region (ply-cap states with unequal material) is less than 1\% of
 
 \paragraph{Play performance is the decision-relevant lens.} We report play in two clearly separated panels: a budget-matched, instrumented, CI'd headline (Panel A) and an LLM-synthesized corroboration (Panel B). We deliberately do not pool instrumented and synthesized evidence into one number.
 
-\paragraph{Panel A --- budget-matched, instrumented, CPU-only (the headline causal claim).} Identical budget across arms ($n = 4800 = 20$ seeds $\times$ 120 games per arm, 600 simulations), arena refereed by the true game (army5x5a + material-at-cap), measured via \texttt{scripts/play\_cost\_ci.py} / \texttt{scripts/play\_cost\_blind3.py} (Table~\ref{tab:panelA}, visualized in Figure~\ref{fig:headline}):
+\paragraph{Panel A --- budget-matched, instrumented, CPU-only (the headline causal claim).} Identical budget across arms ($n = 2400$ games per arm --- 20 seeds $\times$ 120 games per seed per arm, 4800 games in total --- at 600 simulations), arena refereed by the true game (army5x5a + material-at-cap), measured via \texttt{scripts/play\_cost\_ci.py} / \texttt{scripts/play\_cost\_blind3.py} (Table~\ref{tab:panelA}, visualized in Figure~\ref{fig:headline}):
 
 \begin{table}[ht]
 \centering
@@ -502,7 +502,7 @@ cap & rarity & $(1-r)^{40}$ & danger@$N$=20 & danger@$N$=40 & danger@$N$=80 \\
 140 & 0.007 & 0.7652 & 0.105 & 0.092 & 0.070 \\
 \bottomrule
 \end{tabular}
-\caption{Measured danger curve: a threshold law in rarity. Computed with a round constant $\mathrm{play\_cost} = 0.12$ (headline measurements span $0.091$--$0.131$ across sample sizes); the threshold shape is insensitive to this choice.}
+\caption{Measured danger curve: a threshold law in rarity. Computed with a round constant $\mathrm{play\_cost} = 0.12$ (headline measurements span $0.091$--$0.131$ across sample sizes); the threshold shape is insensitive to this choice. The rarity column is shown rounded; the $(1-r)^{40}$ and danger columns are computed from the unrounded measured rarities (e.g.\ $r = 0.02533$ at cap 100, whence $0.3583$ rather than the $0.363$ that the rounded $0.025$ --- used as the nominal rate in Table~\ref{tab:synthcurve} --- would give).}
 \label{tab:dangercurve}
 \end{table}
 
@@ -568,11 +568,11 @@ Let a rule $R$ be omitted from the specification (the incomplete-rules / no-rule
 
 \begin{proposition}[sample-identifiability]
 \label{prop:identifiability}
-Condition on the event $\neg E$ that no sampled play-through hits the rule region; $P(\neg E) = (1-r)^N$. On $\neg E$, $M_R$ and $M_\emptyset$ produce identical outputs on every sampled transition, so the sample is observationally equivalent under the two models: any score that is a function of the sample alone (the gate's transition accuracy, a likelihood, a program-search objective) is identical for $M_R$ and $M_\emptyset$. Hence the sample carries no evidence favouring the correct model --- the gate cannot distinguish or reject $M_\emptyset$, and any preference for $M_R$ must come from a prior or from the specification, not from the sampled transitions. The omitted rule is in this sense unidentifiable from the sample, and a sample-passing $M_\emptyset$ is admissible.
+Condition on the event $\neg E$ that no sampled play-through hits the rule region; $P(\neg E) = (1-r)^N$. On $\neg E$, $M_R$ and $M_\emptyset$ produce identical outputs on every sampled transition, so the sample is observationally equivalent under the two models: any score that depends on a candidate model only through its outputs on the sampled transitions (the gate's transition accuracy, the likelihood of the sample, the data-fit term of a program-search objective) is identical for $M_R$ and $M_\emptyset$. Hence the sample carries no evidence favouring the correct model --- the gate cannot distinguish or reject $M_\emptyset$, and any preference for $M_R$ must come from a prior or from the specification, not from the sampled transitions. The omitted rule is in this sense unidentifiable from the sample, and a sample-passing $M_\emptyset$ is admissible.
 \end{proposition}
 
 \begin{proof}
-On $\neg E$ the two models are pointwise equal on every transition the sample contains, so any sample functional (a score computed from the sample) takes the same value on both. Any sample-only score therefore cannot order $M_R$ and $M_\emptyset$; any ordering a procedure imposes is a prior or a tie-break, not evidence carried by the sample.
+On $\neg E$ the two models are pointwise equal on every transition the sample contains, so any score that reads a model only through its outputs on the sampled transitions takes the same value on both. Such a score therefore cannot order $M_R$ and $M_\emptyset$; any ordering a procedure imposes is a prior or a tie-break (e.g.\ a description-length term), not evidence carried by the sample.
 \end{proof}
 
 \begin{corollary}[unidentifiability probability = the danger-law gate-miss factor]
@@ -675,7 +675,7 @@ Every reachable info-set $I$ has $\pi^\rho(I) \geq p_{\text{chance}} \cdot b^{-d
 \end{lemma}
 
 \begin{proof}
-Take any history $h \in I$. Along $h$ each player edge at info-set $I_t$ has $\rho$-probability $1/|A(I_t)| \geq 1/b$, so the \textbf{realization probability} of $I$ (in the sense of \citeauthor{vonstengel1996sequenceform}'s \citeyearpar{vonstengel1996sequenceform} sequence form) satisfies $\pi^\rho(h) = \pi_{\text{chance}}(h) \cdot \prod_t 1/|A(I_t)| \geq p_{\text{chance}} \cdot b^{-d(h)}$, and $\pi^\rho(I) \geq \pi^\rho(h)$.
+Take a shortest history $h \in I$, i.e.\ one attaining $d(h) = d(I)$. Along $h$ each player edge at info-set $I_t$ has $\rho$-probability $1/|A(I_t)| \geq 1/b$, so the \textbf{realization probability} of $I$ (in the sense of \citeauthor{vonstengel1996sequenceform}'s \citeyearpar{vonstengel1996sequenceform} sequence form) satisfies $\pi^\rho(h) = \pi_{\text{chance}}(h) \cdot \prod_t 1/|A(I_t)| \geq p_{\text{chance}} \cdot b^{-d(h)} = p_{\text{chance}} \cdot b^{-d(I)}$, and $\pi^\rho(I) \geq \pi^\rho(h)$.
 \end{proof}
 
 \begin{theorem}[the inference gate is identifying when $N \gtrsim b^{\dmax}$]
