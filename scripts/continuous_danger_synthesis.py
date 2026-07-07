@@ -56,7 +56,7 @@ import os  # noqa: E402
 
 sys.path.insert(0, str(_REPO / "src"))
 
-from cwm.continuous.envs import CartWall  # noqa: E402
+from cwm.continuous.envs import CartWall, PendulumStop  # noqa: E402
 from cwm.continuous import harness  # noqa: E402
 from cwm.continuous.contract import (  # noqa: E402
     SynthesizedModel, synthesize_and_evaluate)
@@ -72,6 +72,9 @@ ap.add_argument("--arm", choices=["full", "incomplete", "both"], default="both")
 ap.add_argument("--x-wall", type=float, default=8.0,
                 help="8.0: gate misses the wall ~60%% of seeds at N=40; "
                 "4.0: gate nearly always catches it")
+ap.add_argument("--instrument", choices=["cart", "pendulum"], default="cart")
+ap.add_argument("--th-stop", type=float, default=1.4,
+                help="pendulum mode knob (1.4 headline ~balanced; 1.0 caught)")
 ap.add_argument("--n-rollouts", type=int, default=40, help="the danger-law N")
 ap.add_argument("--eps", type=float, default=1e-9,
                 help="pinned-integrator gate tolerance; loosen to 1e-6 if a "
@@ -100,7 +103,14 @@ else:
         api_version=os.environ["AZURE_OPENAI_API_VERSION"])
     TAG = args.size
 
-ENV = CartWall(x_wall=args.x_wall)
+if args.instrument == "pendulum":
+    ENV = PendulumStop(th_stop=args.th_stop)
+    KNOB = f"thstop{args.th_stop:g}"
+    INSTR_TAG = "pendulum_"
+else:
+    ENV = CartWall(x_wall=args.x_wall)
+    KNOB = f"xwall{args.x_wall:g}"
+    INSTR_TAG = ""
 ARMS = ["full", "incomplete"] if args.arm == "both" else [args.arm]
 
 # Truth-planner + random baselines, shared across all seeds/arms (paired).
@@ -120,7 +130,7 @@ results = {"script": "continuous_danger_synthesis.py", "model": MODEL,
 for arm in ARMS:
     for seed in range(args.n_seeds):
         cell = synthesize_and_evaluate(
-            provider, MODEL, ENV, include_wall=(arm == "full"),
+            provider, MODEL, ENV, include_mode=(arm == "full"),
             n_rollouts=args.n_rollouts, seed=10_000 * (seed + 1),
             eps=args.eps, max_iters=args.max_iters)
         if cell["gate_passed"]:
@@ -146,14 +156,15 @@ if inc:
     missed = [c for c in inc if not c["sample_contains_wall"]]
     blind_when_missed = [c for c in missed
                          if c["gate_passed"] and c["wall_blindness"] == 1.0]
-    print(f"\nincomplete arm: {len(missed)}/{len(inc)} seeds had the wall "
+    print(f"\nincomplete arm: {len(missed)}/{len(inc)} seeds had the mode "
           f"ABSENT from the sample (identifiability event); of those, "
           f"{len(blind_when_missed)} passed the gate fully wall-blind "
           f"(Wilson 95% {wilson_ci(len(blind_when_missed), len(missed))})"
-          if missed else "\nincomplete arm: wall present in every sample",
+          if missed else "\nincomplete arm: mode present in every sample",
           flush=True)
 
 results["elapsed_s"] = round(time.time() - t0, 1)
-out = pathlib.Path(f"results/continuous_synthesis_{TAG}_xwall{args.x_wall:g}.json")
+out = pathlib.Path(
+    f"results/continuous_synthesis_{INSTR_TAG}{TAG}_{KNOB}.json")
 out.write_text(json.dumps(results, indent=2))
 print(f"wrote {out}  [{results['elapsed_s']}s]", flush=True)
