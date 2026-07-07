@@ -69,6 +69,14 @@ Readings (the two halves of thesis point 3, both measured):
 
 ## PAPER 2 — LLM synthesis arms executed (credentialed run per the design-doc runbook) (2026-07-07)
 
+> **Superseded/tightened by the 20-seed + cross-family run below (2026-07-07,
+> later).** This section documents the first 5-seed spot-check; the headline
+> cell (x_wall=8) was subsequently run at 20 seeds/cell (paper-1 standard) on
+> both sizes and a Qwen cross-family spot-check was added — see "20-seed
+> tightening + Qwen cross-family". The three-way structure is unchanged; the
+> tightened run sharpens the identifiability conditional and removes the
+> mini stalls on the headline cell.
+
 Ran `scripts/continuous_danger_synthesis.py` as documented in the design doc's
 "Runbook — LLM arms" (Azure GPT-5.x, eps=1e-9 pinned-integrator gate, N=40
 rollouts, 6 MPC play-episodes/seed, max 5 refine iters), 5 seeds/cell. Baselines
@@ -159,6 +167,72 @@ Reproducibility: seeds fix the trajectory sampling and play; LLM synthesis is
 stochastic across calls, so exact per-seed iters/gate differ run-to-run while
 the three-way structure (full-clean / absent-blind-exploited / present-repairs)
 is stable. Cost: <$1 Azure, ~9 min wall-clock (3 cells).
+
+## PAPER 2 — 20-seed tightening + Qwen cross-family (runbook remaining runs) (2026-07-07, later)
+
+The two "Remaining credentialed runs for the paper" from the design-doc
+runbook. Same script/params as above (eps=1e-9 pinned-integrator gate, N=40
+rollouts, 6 MPC play-episodes/seed, max 5 refine iters). Baselines identical
+(J_truth=17.76, J_random=0.00). Per-seed JSON with the synthesized `code`
+versioned: `results/continuous_synthesis_{mini,large}_xwall8.json` (now 20
+seeds, overwriting the 5-seed versions) and
+`results/continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8.json`.
+
+**(1) Headline cell (x_wall=8) tightened to 20 seeds/cell, both sizes (Azure
+GPT-5.x).**
+
+| arm | mini (gpt-5.4-mini) | large (gpt-5.4) |
+|-----|---------------------|-----------------|
+| full | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 |
+| incomplete — wall ABSENT | 10/20 seeds; **10/10 gate 1.000 + blind 1.0 + play_cost 0.999 + contact 1.0** | 10/20 seeds; **10/10 gate 1.000 + blind 1.0 + play_cost 0.999 + contact 1.0** |
+| incomplete — wall PRESENT | 10/20 seeds; **10/10 repaired** (gate 1.000, blind 0.0, play_cost 0.0), iters {0,1,1,1,1,3,3,3,4,5}, **0 stalled** | 10/20 seeds; **10/10 repaired** (gate 1.000, blind 0.0, play_cost 0.0), iters {0,0,1,1,1,1,1,1,1,1}, **0 stalled** |
+
+- **Identifiability conditional, sharpened.** At 20 seeds the wall-absent event
+  fired in exactly 10/20 seeds per size (r≈0.0125 at x_wall=8 gives
+  (1−r)^40≈0.60; 10/20 is within the sampling band). In EVERY wall-absent seed
+  — **20/20 across sizes** — the synthesized model passed the gate fully
+  wall-blind (1.0) and was exploited at play (pinned at the wall, contact 1.0,
+  play_cost 0.999). Wilson 95% on P(blind | wall missed): **10/10 → lo 0.72**
+  per size, **20/20 → lo 0.84** combined.
+- **Repair is now clean on the headline cell (0 stalls).** Every wall-present
+  seed repaired to the TRUE global clamp (`if x2 >= 8.0: return [8.0, 0.0]`, or
+  the equivalent `if x2 > 8.0: x2 = 8.0` — large seeds 70000/120000/150000),
+  not a curve fit. Large repaired in 0–1 iters (2 seeds in 0 iters, i.e. from
+  the synthesis examples alone); mini in 0–5 iters (1 seed in 0). The 5-seed
+  run's mini stalls do not recur here — with more seeds and only the x_wall=8
+  cell, GPT-5.x mini nailed all 10. (The superstitious-local-patch stalls of
+  the 5-seed run were on x_wall=4 and one x_wall=8 seed; the gate rejected all.)
+
+**(2) Cross-family spot-check (HF Inference Providers router,
+`Qwen/Qwen3-Coder-30B-A3B-Instruct`, 3 seeds, x_wall=8).**
+
+- full: 3/3 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 — the pinned-integrator
+  premise holds cross-family too.
+- incomplete: 1/3 wall-absent → gate 1.000 + blind 1.0 + play_cost 0.999
+  (headline reproduced in a second model family); 2/3 wall-present → **both
+  stalled, 0 repaired** (gate 0.999 and 0.491). The gate-0.999 seed is a
+  superstitious partial patch (`if x2 >= 8.0 and v2 <= 0.0: ...` — clamps only
+  on the observed low-speed approach, mispredicts others); the gate correctly
+  rejected both.
+
+**Finding: repair-from-data is model-dependent; identifiability is not.** The
+wall-absent blind-and-exploited event reproduces in every model tried (GPT-5.x
+20/20, Qwen 1/1) — it is a property of the sample, not the synthesizer. But the
+wall-present *repair* is not uniform: GPT-5.x (both sizes) recovers the exact
+mode reliably (20/20 here), whereas Qwen stalls on both wall-present seeds
+(0/2), producing superstitious patches the gate refuses. So the continuous
+danger law's structure (soundness except on the (1−r)^N event) holds
+cross-family, but the *rate* at which the loop repairs a revealed mode — and
+hence how much of the (b)-residual it eliminates — depends on the model.
+Either outcome is a finding, as the runbook anticipated. Cost: <$1 Azure + HF
+credits; ~46 min mini + ~47 min large + ~6 min Qwen wall-clock.
+
+**Notes.** Reproducibility: seeds fix trajectory sampling and play; LLM
+synthesis is stochastic across calls, so exact per-seed iters differ run-to-run
+while the three-way structure and the identifiability conditional are stable.
+The large cell was run in a git worktree of this branch (a parallel session
+held the main checkout on `main`); results are byte-identical to a main-checkout
+run modulo LLM stochasticity.
 
 ## PAPER 2 — Axis separation: localized mode vs pervasive error vs smooth bump (2026-07-06)
 
