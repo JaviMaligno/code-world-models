@@ -106,3 +106,76 @@ def test_synthesized_blind_model_is_exploited_at_play():
     assert ep.contact and ep.final_state[0] == ENV.x_wall
     truth_ep = harness.run_episode(ENV, ENV, "mpc", seed=3, n_samples=40)
     assert truth_ep.ret > 10 * max(ep.ret, 0.1)
+
+
+from cwm.continuous.envs import PendulumStop
+from cwm.continuous.contract import mode_blindness, sample_contains_mode
+
+# Hand-written pendulum artifacts: same update expressions as PendulumStop.step
+# (nonlinear plant), so the full one must match to float precision.
+PEND_FULL_CODE = '''\
+import math
+def step(state, action):
+    th, om = state
+    a = max(-1.0, min(1.0, action))
+    om2 = om + (3.0 * a - 2.0 * math.sin(th) - 0.3 * om) * 0.1
+    th2 = th + om2 * 0.1
+    if th2 >= 1.4:
+        return [1.4, 0.0]
+    return [th2, om2]
+def reward(state):
+    th = state[0]
+    left = 0.3 / (1.0 + math.exp(-((-2.0 - th) / 0.25)))
+    right = 1.0 / (1.0 + math.exp(-((th - 3.0) / 0.25)))
+    return left + right
+'''
+PEND_INCOMPLETE_CODE = PEND_FULL_CODE.replace(
+    "    if th2 >= 1.4:\n        return [1.4, 0.0]\n", "")
+
+PEND_ENV = PendulumStop(th_stop=1.4)
+
+
+def test_pendulum_full_code_is_float_exact_on_the_gate():
+    transitions = collect_transitions(PEND_ENV, n_rollouts=5, seed=0)
+    acc, failures = contract_accuracy(PEND_FULL_CODE, transitions, eps=1e-9)
+    assert acc == 1.0, failures[:3]
+
+
+def test_pendulum_incomplete_passes_iff_sample_missed_the_stop():
+    far = collect_transitions(PEND_ENV, n_rollouts=5, seed=0)
+    assert not sample_contains_mode(far)  # th_stop=1.4 rarely hit in 5 rollouts
+    acc, _ = contract_accuracy(PEND_INCOMPLETE_CODE, far, eps=1e-9)
+    assert acc == 1.0  # gate-miss event: stop-blind code fully verified
+    near_env = PendulumStop(th_stop=0.5)
+    near = collect_transitions(near_env, n_rollouts=20, seed=0)
+    assert sample_contains_mode(near)
+    acc2, failures = contract_accuracy(
+        PEND_INCOMPLETE_CODE.replace("1.4", "0.5"), near, eps=1e-9)
+    assert acc2 < 1.0 and failures  # stop transitions are inexplicable
+
+
+def test_pendulum_mode_blindness_classifier():
+    assert mode_blindness(PEND_FULL_CODE, PEND_ENV) == 0.0
+    assert mode_blindness(PEND_INCOMPLETE_CODE, PEND_ENV) == 1.0
+
+
+def test_pendulum_synthesize_and_evaluate_offline_both_arms():
+    full = synthesize_and_evaluate(
+        FakeProvider([f"```python\n{PEND_FULL_CODE}```"]), "fake", PEND_ENV,
+        include_mode=True, n_rollouts=3, seed=0)
+    assert full["gate_passed"] and full["wall_blindness"] == 0.0
+    assert full["refine_iterations"] == 0 and not full["sample_contains_wall"]
+
+    inc = synthesize_and_evaluate(
+        FakeProvider([f"```python\n{PEND_INCOMPLETE_CODE}```"]), "fake", PEND_ENV,
+        include_mode=False, n_rollouts=3, seed=0)
+    assert inc["gate_passed"] and inc["wall_blindness"] == 1.0
+    assert inc["arm"] == "incomplete"
+
+
+def test_pendulum_blind_model_is_exploited_at_play():
+    model = SynthesizedModel(PEND_INCOMPLETE_CODE, PEND_ENV)
+    ep = harness.run_episode(PEND_ENV, model, "mpc", seed=3, n_samples=40)
+    assert ep.contact and ep.final_state[0] == PEND_ENV.th_stop
+    truth_ep = harness.run_episode(PEND_ENV, PEND_ENV, "mpc", seed=3, n_samples=40)
+    assert truth_ep.ret > 10 * max(ep.ret, 0.1)
