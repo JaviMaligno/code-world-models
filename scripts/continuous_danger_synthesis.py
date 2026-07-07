@@ -134,6 +134,6 @@ if inc:
           flush=True)
 
 results["elapsed_s"] = round(time.time() - t0, 1)
-out = pathlib.Path(f"results/continuous_synthesis_{args.size}.json")
+out = pathlib.Path(f"results/continuous_synthesis_{args.size}_xwall{args.x_wall:g}.json")
 out.write_text(json.dumps(results, indent=2))
 print(f"wrote {out}  [{results['elapsed_s']}s]", flush=True)

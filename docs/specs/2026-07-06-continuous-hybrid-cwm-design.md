@@ -222,7 +222,8 @@ PYTHONPATH=src python scripts/continuous_danger_synthesis.py large 5
 Cost/time: ~2–7 LLM calls per seed (1 synthesis + refinement iterations),
 1–2k prompt tokens each — comparable per-seed to paper 1's danger-sweep
 cells (cents). Wall-clock is dominated by the CPU play evaluation
-(~1–2 min/seed). Output: `results/continuous_synthesis_<size>.json` +
+(~1–2 min/seed). Output: `results/continuous_synthesis_<size>_xwall<N>.json` (parametrized by
+x_wall so multiple cells do not overwrite each other) +
 a printed per-seed line and a cell summary with the identifiability
 conditional.
 

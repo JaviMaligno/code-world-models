@@ -2,74 +2,75 @@
 
 ## PAPER 2 — LLM synthesis arms executed (credentialed run per the design-doc runbook) (2026-07-07)
 
-Ran `scripts/continuous_danger_synthesis.py` exactly as documented in the
-design doc's "Runbook — LLM arms" (Azure GPT-5.x, eps=1e-9 pinned-integrator
-gate, N=40 rollouts, 6 MPC play-episodes/seed, max 5 refine iters). Three
-cells; baselines J_truth=17.76, J_random=0.00 (play_cost normalized so
-1.0 = performs like random, i.e. pinned at the wall). Logs:
-`results/continuous_synthesis_llm.log`; per-seed JSON:
-`results/continuous_synthesis_{mini,large}.json`.
+Ran `scripts/continuous_danger_synthesis.py` as documented in the design doc's
+"Runbook — LLM arms" (Azure GPT-5.x, eps=1e-9 pinned-integrator gate, N=40
+rollouts, 6 MPC play-episodes/seed, max 5 refine iters), 5 seeds/cell. Baselines
+J_truth=17.76, J_random=0.00 (play_cost normalized: 1.0 = performs like random,
+i.e. pinned at the wall). Per-seed JSON (one file per cell — the filename now
+carries x_wall, fixed this run so cells no longer overwrite each other):
+`results/continuous_synthesis_{mini_xwall8,mini_xwall4,large_xwall8}.json`;
+combined stdout in `results/continuous_synthesis_llm.log`.
 
-**Cell 1 — mini, x_wall=8 (headline, gate misses the wall ~60% at N=40):**
+**Cell 1 — mini, x_wall=8 (headline; gate misses the wall ~60% at N=40).**
+full: 5/5 gate 1.000 / 0 iters / blind 0.0 / play_cost 0.0. incomplete:
 
-| arm | seed | wall_in_sample | gate | iters | wall_blindness | play_cost |
-|-----|-----:|:--------------:|-----:|------:|---------------:|----------:|
-| full | 0–4 | – | 1.000 | 0 | 0.0 | 0.0 |
-| incomplete | 0 | **False** | 1.000 | 0 | **1.0** | **0.999** |
-| incomplete | 1 | True | 1.000 | 2 | 0.0 | 0.0 |
-| incomplete | 2 | True | 1.000 | 1 | 0.0 | 0.0 |
-| incomplete | 3 | **False** | 1.000 | 0 | **1.0** | **0.999** |
-| incomplete | 4 | True | 1.000 | 3 | 0.0 | 0.0 |
+| seed | wall_in_sample | gate | iters | blind | play_cost |
+|-----:|:--------------:|-----:|------:|------:|----------:|
+| 0 | **False** | 1.000 | 0 | **1.0** | **0.999** |
+| 1 | True  | 0.995 | 5 | (gate not passed) | n/a |
+| 2 | True  | 1.000 | 3 | 0.0 | 0.0 |
+| 3 | **False** | 1.000 | 0 | **1.0** | **0.999** |
+| 4 | True  | 1.000 | 3 | 0.0 | 0.0 |
 
-**Cell 2 — mini, x_wall=4 (caught cell, wall in every sample):** full 5/5 gate
-1.000/0 iters/blind 0.0. incomplete: 3/5 repaired to gate 1.000 (blind 0.0,
-play_cost 0.0) in ≤5 iters; 2/5 did NOT reach gate 1.0 within 5 iters (0.974,
-0.996) and were left unclassified (gate not passed → no play).
+**Cell 2 — mini, x_wall=4 (caught; wall in every sample).** full 5/5 clean.
+incomplete: seeds 2,3,4 repaired to gate 1.000 (blind 0.0, play_cost 0.0) in
+5/2/0 iters; seeds 0,1 stalled just below within the 5-iter budget (gate 0.998,
+0.974) and were left unclassified (gate not passed -> no play).
 
-**Cell 3 — large, x_wall=8 (headline):** identical structure to cell 1 — full
-5/5 clean; incomplete seeds 0,3 wall-absent → gate 1.000 + blind 1.0 +
-play_cost 0.999 + contact 1.0; seeds 1,2,4 wall-present → gate 1.000 + blind
-0.0 + play_cost 0.0, repaired in **1 iter each** (large repairs faster than
-mini's 1–3).
+**Cell 3 — large, x_wall=8 (headline).** full 5/5 clean. incomplete: seeds 0,3
+wall-absent -> gate 1.000 + blind 1.0 + play_cost 0.999 + contact 1.0; seeds
+1,2,4 wall-present -> gate 1.000 + blind 0.0 + play_cost 0.0, repaired in **1
+iter each** (large repairs faster and more reliably than mini).
 
 ### Findings
 
-**1. The full arm confirms the pinned-integrator premise live.** Both model
-sizes synthesize correct `step`/`reward` and pass the eps=1e-9 gate to float
-precision in 0 refine iterations, wall_blindness 0.0, play at truth parity —
-the offline (FakeProvider) prediction holds with a real LLM.
+**1. Full arm confirms the pinned-integrator premise live.** Both sizes
+synthesize correct `step`/`reward` and pass the eps=1e-9 gate to float precision
+in 0 iters, blind 0.0, play at truth parity — the offline (FakeProvider)
+prediction holds with a real LLM.
 
-**2. The paper-1 headline reproduces in continuous state space when the wall
-is absent from the sample.** The identifiability event `wall_in_sample=False`
-occurred in 2/5 seeds for both mini and large (consistent with r≈0.0125 at
-x_wall=8, (1−r)^40≈0.60); in EVERY such seed the synthesized model passed the
-gate fully wall-blind (blindness 1.0) and was exploited at play — pinned at
-the wall, play_contact_rate 1.0, play_cost 0.999. A verified-but-wrong
-continuous CWM that loses, synthesized end-to-end.
+**2. Paper-1 headline reproduces in continuous space when the wall is absent
+from the sample.** The identifiability event `wall_in_sample=False` occurred in
+2/5 seeds for both mini and large (consistent with r≈0.0125 at x_wall=8,
+(1−r)^40≈0.60); in EVERY such seed (4/4 across sizes) the synthesized model
+passed the gate fully wall-blind (1.0) and was exploited at play — pinned at the
+wall, contact 1.0, play_cost 0.999. A verified-but-wrong continuous CWM that
+loses, synthesized end-to-end. This cell is rock-solid across both this run and
+the 2026-07-07 first run.
 
-**3. The interesting DIVERGENCE from paper 1 (design doc anticipated it).**
-When the wall WAS present in the sampled transitions, the model did **not**
-stay blind: it **inferred the discontinuity from the failing transitions** and
-encoded the clamp, reaching gate 1.0 with blindness 0.0 and play_cost 0.0 —
-mini in 1–3 refine iters, large in 1. This is the opposite of paper 1's
-symbolic setting, where a rule present in the sample was still not learned
-(the (b) residual). Reading: a **numerically-manifested** discontinuity is
-learnable-from-data in a way a **symbolic** game rule was not — so in the
-continuous setting the gap collapses to a **pure identifiability/coverage
-(channel-(a)) phenomenon**: danger exists only in the (1−r)^N event that the
-sample misses the discontinuity, and there it is total (play_cost≈1). The
-(b) "translation-not-inference" residual essentially vanishes here. Per the
-runbook, "if it repairs, that is the interesting divergence from paper 1 and
-becomes its own section" — flagged for paper 2's write-up (not yet drafted).
+**3. The DIVERGENCE from paper 1 (design doc anticipated it).** When the wall
+WAS present in the sampled transitions, the model did **not** stay blind: it
+inferred the discontinuity from the failing transitions and encoded the clamp.
+Large repaired every wall-present seed to gate 1.000 (blind 0.0, play_cost 0.0)
+in 1 iter; mini repaired most (gate 1.000, blind 0.0) in 0–3 iters but on some
+seeds stalled just below 1.0 within the 5-iter budget (0.974–0.998 — most of the
+clamp encoded, not nailed to eps=1e-9 float precision in time). Either way this
+is the opposite of paper 1's symbolic setting, where a rule present in the
+sample sat at low gate accuracy and was never learned (the (b) residual). A
+**numerically-manifested** discontinuity is learnable-from-data in a way a
+**symbolic** game rule was not, so in the continuous setting the gap collapses
+toward a **pure identifiability/coverage (channel-(a)) phenomenon**: danger
+lives in the (1−r)^N event that the sample misses the discontinuity (there it is
+total, play_cost≈1), while the paper-1 (b) "translation-not-inference" residual
+largely vanishes. Per the runbook this "becomes its own section" for paper 2's
+write-up (not yet drafted).
 
-**Caveats / artifacts.** (i) The script writes `continuous_synthesis_mini.json`
-regardless of x_wall, so cell-2 (x_wall=4) overwrote cell-1's (x_wall=8) mini
-JSON; the mini x_wall=8 headline data is preserved in
-`results/continuous_synthesis_llm.log` (the log also carries `wall_in_sample`
-and `refine_iters`, which the JSON omits). A future run should parametrize the
-output filename by x_wall. (ii) n_seeds=5/cell as documented — a spot-check,
-not a sweep; the repair-vs-blind split is clean but small-n. Cost: ~15 min
-wall-clock total, <$1 Azure.
+**Notes.** n_seeds=5/cell as documented — a spot-check, not a sweep; robust on
+the wall-absent cell (4/4), suggestive-with-variance on the repair rate.
+Reproducibility: seeds fix the trajectory sampling and play; LLM synthesis is
+stochastic across calls, so exact per-seed iters/gate differ run-to-run while
+the three-way structure (full-clean / absent-blind-exploited / present-repairs)
+is stable. Cost: <$1 Azure, ~9 min wall-clock (3 cells).
 
 ## PAPER 2 — Axis separation: localized mode vs pervasive error vs smooth bump (2026-07-06)
 
