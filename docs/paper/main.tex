@@ -165,7 +165,7 @@ We distinguish two families of metrics throughout the paper:
 
 \textbf{The decision-relevant lens (play performance):}
 \begin{itemize}
-\item \emph{Win rate} --- fraction of games won by the CWM+MCTS agent versus a ground-truth+MCTS opponent in an arena refereed by the true game, with Wilson score 95\% confidence intervals \citep{wilson1927}.
+\item \emph{Win rate} --- fraction of games won by the CWM+MCTS agent versus a ground-truth+MCTS opponent in an arena refereed by the true game, counting draws as $\tfrac12$ (the per-game score is $X \in \{0, \tfrac12, 1\}$), with Wilson score 95\% confidence intervals \citep{wilson1927} computed as if the score were binomial. The binomial treatment is conservative, not an approximation error: a $\{0, \tfrac12, 1\}$ score with mean $p$ has variance $p(1-p) - \tfrac14 P(\mathrm{draw}) \leq p(1-p)$, so the reported intervals are never too narrow, and every CI-separation claim below holds a fortiori.
 \end{itemize}
 
 Fairness baselines are established by running truth-vs-truth arenas (ground-truth+MCTS against itself), which should produce win rates near 0.5 for balanced games. Deviations from 0.5 in the fairness baseline indicate start-order imbalance or search-budget asymmetry; we report them alongside each play result.
@@ -823,7 +823,7 @@ metric & value \\
 \midrule
 random reaches final round & 0.00000 \\
 instrument inference mismatches on random gate sample & \textbf{0 / 8156} (passes the gate) \\
-fair baseline (truth vs truth) win rate & 0.500 [0.472, 0.528] (all draws) \\
+fair baseline (truth vs truth) win rate & 0.500 exact, 1200/1200 draws (Prop.~\ref{prop:beaconexact}) \\
 instrument win rate vs truth & \textbf{0.000 [0.000, 0.003]}, net $-1200/1200$ \\
 \bottomrule
 \end{tabular}

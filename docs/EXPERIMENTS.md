@@ -608,7 +608,7 @@ The Claim A instrument flips the opponent type **only at final-round states**
 |--------|-------|
 | random reaches final round | 0.00000 |
 | instrument inference mismatches on random sample | **0 / 8156** (passes the gate) |
-| fair baseline (truth vs truth) winrate | 0.500 [0.472, 0.528] (all draws) |
+| fair baseline (truth vs truth) winrate | 0.500 exact — 1200/1200 draws (deterministic by the Beacon exhaustion proof; a sampling CI is not applicable) |
 | instrument winrate vs truth | **0.000 [0.000, 0.003]**, net −1200/1200 |
 
 The instrument passes the inference gate perfectly yet loses every game — a
