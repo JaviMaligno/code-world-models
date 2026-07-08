@@ -45,30 +45,37 @@ New module `src/cwm/continuous/mitigation.py`:
   **pre-state** `s` as a violation point. (Pinned-integrator world: a correct
   model matches to float precision, and any real mode mismatch is orders of
   magnitude above 1e-6 — the threshold is not delicate.)
-- **Distrust-region truncation** (imagination): while scoring a candidate
-  action sequence, the first time the imagined state comes within ε of any
-  violation point — distance measured on the position coordinate `state[0]`
-  only — the rollout is TRUNCATED: reward accumulated so far is kept, all
-  subsequent imagined reward is dropped. Rationale: once the imagined
-  trajectory reaches a place where the model was observed wrong, nothing
-  downstream of it is trustworthy. (A reward-only mask inside the ball would
-  NOT work: the phantom lure lies beyond the wall, and a trajectory could cross
-  the ball and still collect the phantom plateau on the far side.)
-- **Tie-break when everything truncates**: if the current state is already
-  inside a distrust ball (the pinned situation), every candidate truncates
-  immediately and scores ~equal. Principled tie-break: after truncation the
-  rollout keeps stepping the model WITHOUT accumulating reward, and the
-  candidate whose FINAL imagined state maximizes distance to the nearest
-  violation point wins — "flee the distrusted region when nothing is
-  trustworthy", with full-horizon lookahead. (Design delta 2026-07-08, from
-  implementation: the original first-imagined-state metric was myopic — when
-  two violation balls overlap, the one-step flee gets trapped at the local
-  distance-maximum between them, the midpoint. The final-state metric clears
-  merged balls and also breaks the previously-exact tie at the resting pinned
-  state — the away-from-lure direction wins strictly. Using the model's
-  kinematics beyond the truncation point for DIRECTION only is weaker trust
-  than believing its reward claims; no reward is ever accumulated there.)
-  Deterministic; no dependence on candidate enumeration order.
+- **Distrust fences at the FALSE PREDICTIONS** (design v4, 2026-07-08,
+  numerically validated in prototype): each violation records the POSITION of
+  the model's refuted prediction `ŝ[0]` — not the pre-state. Structural fact
+  that makes this correct: false predictions always lie ON/BEYOND the mode
+  boundary (the clamp fires exactly when the model predicts a crossing), so
+  fences are one-sided by construction.
+- **Segment-crossing truncation** (imagination): while scoring a candidate,
+  the first time an imagined STEP's position interval `[min(x_prev, x_next),
+  max(x_prev, x_next)]` overlaps any fence's ε-band, the rollout is TRUNCATED:
+  reward so far is kept, everything downstream is dropped (the model's step
+  keeps being applied, reward-free, to obtain the final state for the
+  tie-break). Segment overlap — not point distance — makes the fence
+  leap-proof at any imagined speed.
+- **Flee tie-break**: candidates are ranked by `(truncated_total,
+  |x_final − nearest fence|)`. Because fences are one-sided, the final-state
+  distance always prefers the real side over the phantom side — structurally,
+  not by luck. With no violations the second term is a constant 0.0 and the
+  ranking is bit-identical to `mpc.plan`.
+- **Design iterations (recorded because they are themselves a finding — the
+  argmax planner is an adversary against any incomplete fence):**
+  v1 first-step flee over pre-state balls → trapped at the local
+  distance-maximum between overlapping balls. v2 final-state flee over
+  pre-state balls → biased TOWARD the phantom, because violations can only be
+  recorded on the truth side of the boundary, so the far side always looks
+  "far from where the model lied". v3 full-state point fences at the false
+  predictions → the planner probes crossing VELOCITIES, dodging every
+  recorded fence by ≥ε in velocity (measured: 5 fences at v ∈ {0.3, 1.46,
+  1.73, 2.25, 5.47}, episode ends before the fence wall closes). v4
+  (position-band + segment crossing + one-sided fences) is undodgeable: ONE
+  violation suffices on both instruments (measured: 1 fence, escape, travel
+  to the true plateau; bit-identity on truth holds bitwise).
 - **ε per instrument**, fixed across knobs (not tuned per knob): cart ε = 0.25,
   pendulum ε = 0.1 (the scale of each instrument's reward sigmoid width). If
   calibration shows these are bad defaults, adjust once, globally, and record
