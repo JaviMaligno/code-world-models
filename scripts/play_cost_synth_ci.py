@@ -68,11 +68,31 @@ def wall_in_sample(traj) -> bool:
     return False
 
 
+def _with_api_retry(fn, what, attempts=5, wait=90):
+    """Retry a block through transient API/connection errors (machine sleep,
+    Azure blips) beyond the SDK's own retries, so one outage does not kill a
+    multi-hour run. Re-raises after `attempts`."""
+    import time as _t
+    for k in range(attempts):
+        try:
+            return fn()
+        except Exception as e:  # openai.APIConnectionError, timeouts, 5xx, ...
+            if k == attempts - 1:
+                raise
+            print(f"  !! {what}: API error ({type(e).__name__}), retry "
+                  f"{k+1}/{attempts-1} after {wait}s", flush=True)
+            _t.sleep(wait)
+
+
 def synth_and_play(arm, seed):
     traj = collect_trajectories(mat, n_games=args.gate_games, seed=seed)
-    code, _ = synthesize_cwm(provider, MODEL, CONTRACTS[arm], traj)
-    refined = refine_cwm(provider, MODEL, CONTRACTS[arm], code, traj,
-                         max_iters=args.max_iters)   # fixed sample = gate (no resample)
+    code, _ = _with_api_retry(
+        lambda: synthesize_cwm(provider, MODEL, CONTRACTS[arm], traj),
+        f"synth {arm} seed={seed}")
+    refined = _with_api_retry(
+        lambda: refine_cwm(provider, MODEL, CONTRACTS[arm], code, traj,
+                           max_iters=args.max_iters),   # fixed sample = gate (no resample)
+        f"refine {arm} seed={seed}")
     rec = {"arm": arm, "seed": seed, "wall_in_sample": wall_in_sample(traj),
            "gate_accuracy": refined.accuracy, "refine_iters": refined.iterations,
            "gate_passed": refined.accuracy >= 1.0}
@@ -84,13 +104,67 @@ def synth_and_play(arm, seed):
     return rec
 
 
+DEST = Path(f"results/play_cost_synth_{args.size}.json")
+
+
+def _summarize(arm, cells, n_seeds):
+    """Pooled Wilson + seed-clustered paired-t play_cost over gate-passing seeds."""
+    passed = [c for c in cells if c["arm"] == arm and c["gate_passed"]]
+    summ = {"arm": arm, "gate_pass_seeds": len(passed), "of_seeds": n_seeds,
+            "wall_absent_seeds": sum(1 for c in passed if not c["wall_in_sample"])}
+    if not passed:
+        return summ
+    W = sum(c["cwm_wins"] for c in passed); D = sum(c["draws"] for c in passed)
+    L = sum(c["truth_wins"] for c in passed); n = W + D + L
+    pt, lo, hi = wilson_ci(W + 0.5 * D, n)
+    summ.update(pooled_winrate=pt, pooled_wilson95=[lo, hi], pooled_n=n)
+    diffs = [c["play_cost"] for c in passed]
+    k = len(diffs); mean_d = statistics.mean(diffs)
+    if k > 1:
+        sd = statistics.stdev(diffs); se = sd / math.sqrt(k); t = t_crit_95(k - 1)
+        summ.update(play_cost_mean=mean_d, play_cost_sd=sd,
+                    play_cost_t95=[mean_d - t * se, mean_d + t * se],
+                    excludes_zero=(mean_d - t * se) > 0)
+    else:
+        summ.update(play_cost_mean=mean_d, note="single gate-passing seed; no CI")
+    return summ
+
+
+def _aggregate(fair, cells):
+    out = {"size": args.size, "model": MODEL, "params": vars(args),
+           "fair_per_seed": fair, "cells": cells}
+    for arm in ("incomplete", "complete"):
+        out.setdefault("summary", {})[arm] = _summarize(arm, cells, args.seeds)
+    return out
+
+
+def _checkpoint(fair, cells):
+    Path("results").mkdir(exist_ok=True)
+    DEST.write_text(json.dumps(_aggregate(fair, cells), indent=2))
+
+
 def main():
     print(f"synthesized play-cost: size={args.size} seeds={args.seeds} "
           f"games={args.games} sims={args.sims} gate_N={args.gate_games}", flush=True)
-    fair, cells = {}, []
+    # Resume: reuse a compatible checkpoint (same budget), skip finished seeds.
+    fair, cells, done = {}, [], set()
+    if DEST.exists():
+        prev = json.loads(DEST.read_text())
+        bp = prev.get("params", {})
+        if all(bp.get(k) == getattr(args, k) for k in ("games", "sims", "gate_games")):
+            fair = {int(k): v for k, v in prev.get("fair_per_seed", {}).items()}
+            cells = prev.get("cells", [])
+            done = {c["seed"] for c in cells if c["arm"] == "complete"}
+            print(f"resuming: {len(done)} seeds already complete ({sorted(done)})", flush=True)
+
     for seed in range(args.seeds):
-        # paired fair baseline (truth vs truth) on this seed
-        fb = _play_performance(mat, mat, sims=args.sims, n_games=args.games, seed=seed)
+        if seed in done:
+            continue
+        # drop any partial cells from a half-finished seed, then redo it
+        cells = [c for c in cells if c["seed"] != seed]
+        fb = _with_api_retry(
+            lambda: _play_performance(mat, mat, sims=args.sims, n_games=args.games, seed=seed),
+            f"fair seed={seed}")
         fair[seed] = fb["cwm_winrate"]
         print(f"[fair seed={seed}] winrate={fb['cwm_winrate']:.3f}", flush=True)
         for arm in ("incomplete", "complete"):
@@ -103,40 +177,20 @@ def main():
                   f"gate={rec['gate_accuracy']:.3f} iters={rec['refine_iters']} "
                   f"winrate={rec.get('winrate','n/a')} "
                   f"play_cost={rec.get('play_cost','n/a')}", flush=True)
+        _checkpoint(fair, cells)   # crash-safe: persist after every finished seed
 
-    out = {"size": args.size, "model": MODEL, "params": vars(args),
-           "fair_per_seed": fair, "cells": cells}
-    # per-arm aggregates: pooled Wilson + seed-clustered paired-t play_cost
+    _checkpoint(fair, cells)   # final write (aggregate recomputed inside)
+    out = _aggregate(fair, cells)
     for arm in ("incomplete", "complete"):
-        passed = [c for c in cells if c["arm"] == arm and c["gate_passed"]]
-        W = sum(c["cwm_wins"] for c in passed); D = sum(c["draws"] for c in passed)
-        L = sum(c["truth_wins"] for c in passed)
-        nseed = len(passed)
-        summ = {"arm": arm, "gate_pass_seeds": nseed, "of_seeds": args.seeds,
-                "wall_absent_seeds": sum(1 for c in passed if not c["wall_in_sample"])}
-        if passed:
-            n = W + D + L
-            pt, lo, hi = wilson_ci(W + 0.5 * D, n)
-            summ.update(pooled_winrate=pt, pooled_wilson95=[lo, hi], pooled_n=n)
-            diffs = [c["play_cost"] for c in passed]
-            k = len(diffs); mean_d = statistics.mean(diffs)
-            if k > 1:
-                sd = statistics.stdev(diffs); se = sd / math.sqrt(k)
-                t = t_crit_95(k - 1)
-                summ.update(play_cost_mean=mean_d, play_cost_sd=sd,
-                            play_cost_t95=[mean_d - t * se, mean_d + t * se],
-                            excludes_zero=(mean_d - t * se) > 0)
-            else:
-                summ.update(play_cost_mean=mean_d, note="single gate-passing seed; no CI")
-            print(f"=> {arm}: {nseed}/{args.seeds} gate-passing "
-                  f"({summ['wall_absent_seeds']} wall-absent); pooled winrate {pt:.3f} "
-                  f"[{lo:.3f},{hi:.3f}]; play_cost {summ.get('play_cost_t95', mean_d)}", flush=True)
-        out.setdefault("summary", {})[arm] = summ
-
-    Path("results").mkdir(exist_ok=True)
-    dest = Path(f"results/play_cost_synth_{args.size}.json")
-    dest.write_text(json.dumps(out, indent=2))
-    print(f"wrote {dest}", flush=True)
+        s = out["summary"][arm]
+        if s.get("gate_pass_seeds"):
+            print(f"=> {arm}: {s['gate_pass_seeds']}/{args.seeds} gate-passing "
+                  f"({s['wall_absent_seeds']} wall-absent); pooled winrate "
+                  f"{s['pooled_winrate']:.3f} {s['pooled_wilson95']}; "
+                  f"play_cost {s.get('play_cost_t95', s.get('play_cost_mean'))}", flush=True)
+        else:
+            print(f"=> {arm}: 0/{args.seeds} gate-passing", flush=True)
+    print(f"wrote {DEST}", flush=True)
     print("DONE", flush=True)
 
 
