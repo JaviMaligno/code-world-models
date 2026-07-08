@@ -7,9 +7,10 @@ synthesis arms on the pendulum remain optional future work"). Same script and
 contract as the cart (`scripts/continuous_danger_synthesis.py --instrument
 pendulum --th-stop ...`; Azure GPT-5.x mini/large; ε=1e-9 pinned-integrator
 gate; N=40 training rollouts; 6 MPC play episodes/seed; max 5 refine iters),
-20 seeds/cell. Two knobs: **headline** θ_stop=1.4 (rarity 0.019 from Table 2 —
-mode usually but not always missed at N=40) and **caught** θ_stop=1.0 (rarity
-0.128 — mode in nearly every sample). Baselines identical across all pendulum
+20 seeds/cell. Two knobs: **headline** θ_stop=1.4 (rarity 0.019 per the
+2026-07-07 pendulum-mechanism table below — mode usually but not always missed
+at N=40) and **caught** θ_stop=1.0 (rarity 0.128 — mode in nearly every
+sample). Baselines identical across all pendulum
 cells: J_truth=20.08, J_random=0.02. Per-seed JSON:
 `results/continuous_synthesis_pendulum_{mini,large}_thstop{1.4,1}.json` and
 `results/continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4.json`.

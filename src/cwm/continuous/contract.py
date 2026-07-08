@@ -3,14 +3,18 @@
 The integrator is PINNED as part of the contract (design doc): the spec text
 states the exact update equations and their order, so a correct synthesis
 matches the truth to float precision and the gate can run at eps ~ 1e-9 —
-effectively exact-match, sidestepping the tolerance axis. The rules text is
-generated from the CartWall instance so spec constants can never drift from
-the ground truth.
+effectively exact-match, sidestepping the tolerance axis. The instrument-
+specific contract text (integrator, rules, mode probes) comes from an
+InstrumentSpec (see instruments.py, selected by spec_for(env)), so this
+pipeline is env-generic across the cart and pendulum instruments; spec
+constants are generated from the truth env instance so they can never drift
+from the ground truth.
 
 Arms:
-  full        — the wall clause is in the spec (control: translation works)
-  incomplete  — the wall clause is omitted (headline: passes the gate iff the
-                sample missed the wall; the planner is then exploited)
+  full        — the mode clause (wall / stop) is in the spec (control:
+                translation works)
+  incomplete  — the mode clause is omitted (headline: passes the gate iff the
+                sample missed the mode; the planner is then exploited)
 
 The pipeline (synthesize -> refine on the SAME sample, which doubles as the
 gate, as in paper 1's sweep) is pure-function so tests drive it offline with
@@ -162,9 +166,10 @@ def refine_continuous(provider, model: str, contract: str, code: str,
 
 
 class SynthesizedModel:
-    """In-process adapter exposing the CartWall step interface, so mpc.plan
-    and harness.run_episode drive a synthesized model directly. Only run this
-    on gate-accepted code (the gate executes in the sandbox first)."""
+    """In-process adapter exposing the instrument step interface (cart or
+    pendulum), so mpc.plan and harness.run_episode drive a synthesized model
+    directly. Only run this on gate-accepted code (the gate executes in the
+    sandbox first)."""
 
     def __init__(self, code: str, base_env):
         ns: dict = {}
@@ -177,7 +182,7 @@ class SynthesizedModel:
         s2 = self._step(list(state), action)
         return (s2[0], s2[1]), self._reward(list(s2)), False
 
-    def initial_state(self, rng):  # pragma: no cover — parity with CartWall
+    def initial_state(self, rng):  # pragma: no cover — parity with the env
         return (rng.uniform(-0.5, 0.5), 0.0)
 
 
