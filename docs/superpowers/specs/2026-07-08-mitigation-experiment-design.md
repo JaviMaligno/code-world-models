@@ -55,11 +55,20 @@ New module `src/cwm/continuous/mitigation.py`:
   NOT work: the phantom lure lies beyond the wall, and a trajectory could cross
   the ball and still collect the phantom plateau on the far side.)
 - **Tie-break when everything truncates**: if the current state is already
-  inside a distrust ball (the pinned situation), every candidate truncates at
-  step 0 and scores ~equal. Principled tie-break: choose the candidate whose
-  FIRST imagined state maximizes distance to the nearest violation point —
-  "flee the distrusted region when nothing is trustworthy". Deterministic; no
-  dependence on candidate enumeration order.
+  inside a distrust ball (the pinned situation), every candidate truncates
+  immediately and scores ~equal. Principled tie-break: after truncation the
+  rollout keeps stepping the model WITHOUT accumulating reward, and the
+  candidate whose FINAL imagined state maximizes distance to the nearest
+  violation point wins — "flee the distrusted region when nothing is
+  trustworthy", with full-horizon lookahead. (Design delta 2026-07-08, from
+  implementation: the original first-imagined-state metric was myopic — when
+  two violation balls overlap, the one-step flee gets trapped at the local
+  distance-maximum between them, the midpoint. The final-state metric clears
+  merged balls and also breaks the previously-exact tie at the resting pinned
+  state — the away-from-lure direction wins strictly. Using the model's
+  kinematics beyond the truncation point for DIRECTION only is weaker trust
+  than believing its reward claims; no reward is ever accumulated there.)
+  Deterministic; no dependence on candidate enumeration order.
 - **ε per instrument**, fixed across knobs (not tuned per knob): cart ε = 0.25,
   pendulum ε = 0.1 (the scale of each instrument's reward sigmoid width). If
   calibration shows these are bad defaults, adjust once, globally, and record

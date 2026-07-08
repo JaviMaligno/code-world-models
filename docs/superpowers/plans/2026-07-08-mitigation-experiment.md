@@ -131,12 +131,15 @@ lies beyond the wall, so a rollout could cross the ball and still collect the
 phantom plateau on the far side.)
 
 When the current state is already inside a distrust ball (the pinned case)
-every candidate truncates immediately and ties near zero; the tie-break picks
-the candidate whose FIRST imagined state is farthest from the nearest
-violation — flee the distrusted region when nothing is trustworthy. Exact
-float ties (e.g. the symmetric one-step displacements from a resting pinned
-state) resolve to the earliest candidate, which `mpc._candidates` yields
-deterministically ([-a_max]*h first).
+every candidate truncates immediately and ties near zero; the tie-break keeps
+stepping the model past the truncation point WITHOUT accumulating reward and
+picks the candidate whose FINAL imagined state is farthest from the nearest
+violation — flee the distrusted region when nothing is trustworthy, with
+full-horizon lookahead. (A first-step flee metric is myopic: when two
+violation balls overlap it gets trapped at the local distance-maximum between
+them. Direction-only use of the model's kinematics beyond truncation is
+weaker trust than believing its reward claims; no reward is accumulated
+there.)
 
 With a correct model no violation ever fires and plan_mitigated scores and
 ranks candidates exactly as mpc.plan does (same candidate generator, same rng
@@ -162,15 +165,16 @@ def plan_mitigated(model, state, rng, violations, eps,
     is bit-identical to mpc.plan (same candidates, same scores, same argmax)."""
     best_key, best_a0 = None, 0.0
     for acts in mpc._candidates(model.a_max, rng, horizon, n_samples, block):
-        s, total, first = state, 0.0, None
+        s, total, truncated = state, 0.0, False
         for a in acts:
             s, r, _ = model.step(s, a)
-            if first is None:
-                first = s
+            if truncated:
+                continue  # keep stepping for the flee tie-break; no reward
             if violations and _dist_to_nearest(s, violations) <= eps:
-                break  # truncate: keep what is accumulated, drop the rest
+                truncated = True  # nothing downstream is trustworthy
+                continue
             total += r
-        key = (total, _dist_to_nearest(first, violations))
+        key = (total, _dist_to_nearest(s, violations))  # s = final imagined state
         if best_key is None or key > best_key:
             best_key, best_a0 = key, acts[0]
     return best_a0
