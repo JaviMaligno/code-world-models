@@ -1,5 +1,83 @@
 # Experiments Log
 
+## PAPER 2 — Pendulum synthesis arm: repair-from-data on a nonlinear plant (2026-07-08)
+
+Closes the gap the 2026-07-07 pendulum-mechanism section left open ("the
+synthesis arms on the pendulum remain optional future work"). Same script and
+contract as the cart (`scripts/continuous_danger_synthesis.py --instrument
+pendulum --th-stop ...`; Azure GPT-5.x mini/large; ε=1e-9 pinned-integrator
+gate; N=40 training rollouts; 6 MPC play episodes/seed; max 5 refine iters),
+20 seeds/cell. Two knobs: **headline** θ_stop=1.4 (rarity 0.019 from Table 2 —
+mode usually but not always missed at N=40) and **caught** θ_stop=1.0 (rarity
+0.128 — mode in nearly every sample). Baselines identical across all pendulum
+cells: J_truth=20.08, J_random=0.02. Per-seed JSON:
+`results/continuous_synthesis_pendulum_{mini,large}_thstop{1.4,1}.json` and
+`results/continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4.json`.
+
+**(1) Headline cell (θ_stop=1.4), both sizes.**
+
+| arm | mini (gpt-5.4-mini) | large (gpt-5.4) |
+|-----|---------------------|-----------------|
+| full | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 |
+| incomplete — mode ABSENT | 9/20 seeds; **9/9 blind & exploited**, play_cost 0.995 | 9/20 seeds; **9/9 blind & exploited**, play_cost 0.995 |
+| incomplete — mode PRESENT | 11/20 seeds; **11/11 repaired**, iters {0,1,1,1,1,1,1,1,1,3,5}, **0 stalled** | 11/20 seeds; **11/11 repaired**, iters {0,1,1,1,1,1,1,1,1,1,1}, **0 stalled** |
+
+**(2) Caught cell (θ_stop=1.0), both sizes.**
+
+| arm | mini (gpt-5.4-mini) | large (gpt-5.4) |
+|-----|---------------------|-----------------|
+| full | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 |
+| incomplete — mode ABSENT | 0/20 seeds (rarity 0.128 ⇒ (1−r)^40≈0.004 — essentially never missed) | 0/20 seeds |
+| incomplete — mode PRESENT | 20/20 seeds; **20/20 repaired**, iters {0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, **0 stalled** | 20/20 seeds; **20/20 repaired**, iters {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, **0 stalled** |
+
+**GPT-5.x combined (4 Azure cells, both sizes, both knobs, n=80 seeds):**
+full 80/80 clean; mode-ABSENT 18/18 blind & exploited (Wilson 95% lower bound
+0.824; per-size headline-cell 9/9, lower bound 0.701); mode-PRESENT 62/62
+**repaired**, 0 stalled (Wilson 95% lower bound 0.942).
+
+**(3) Cross-family spot-check (HF router,
+`Qwen/Qwen3-Coder-30B-A3B-Instruct`, 3 seeds, θ_stop=1.4).**
+
+- full: 3/3 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 — the pinned-integrator
+  premise holds cross-family on the pendulum too.
+- incomplete: 1/3 mode-ABSENT → blind & exploited, play_cost 0.995 (headline
+  identifiability event reproduced in a second model family); 2/3
+  mode-PRESENT → **both stalled, 0 repaired** (gate 0.9997 and 0.9997 — a
+  hair below the eps=1e-9 float-exact bar, the same superstitious-patch
+  signature as the cart's Qwen stalls).
+
+### Findings
+
+**Repair-from-data generalizes to a nonlinear plant.** Every qualitative
+result from the cart's synthesis section reproduces on the pendulum's
+gravity-driven (sin θ) dynamics with an angular clamp instead of a linear
+positional wall: the full arm is clean at every cell (80/80 GPT-5.x, 3/3
+Qwen); the mode-ABSENT identifiability event is knob- and size-invariant
+(blind & exploited whenever it fires, 18/18 GPT-5.x + 1/1 Qwen, play_cost
+pinned at 0.995 in every occurrence, matching the cart's fixed-point
+exploitation signature); and when the mode IS in the sample, GPT-5.x repairs
+it to the exact angular clamp every single time (62/62, 0 stalls) across both
+knobs and both sizes — including the θ_stop=1.0 "caught" cell where the mode
+is in essentially every sample (40/40 repaired there alone). The synthesis
+result is therefore not a cart artifact: a nonlinear plant plus an angular
+(not positional) hard stop behaves identically under the same harness.
+
+**Cross-family: identifiability reproduces, repair does not.** As on the
+cart, Qwen reproduces the mode-absent blind-and-exploited event (1/1 here)
+but fails to repair either of its mode-present seeds (0/2, stalled at gate
+0.9997) — consistent with the cart's cross-family finding that
+**identifiability is model-independent, repair is model-dependent**. The
+stalled gate values (0.9997) are closer to passing than the cart's Qwen
+stalls (0.491–0.999) but still short of the eps=1e-9 bar, and the gate
+correctly refuses both.
+
+**Notes.** n_seeds=20/cell for GPT-5.x (paper-1 standard), 3 seeds for the
+Qwen spot-check, matching the cart's design. Elapsed: mini θ=1.4 1081.2s,
+large θ=1.4 916.3s, mini θ=1.0 1903.7s, large θ=1.0 1990.6s, Qwen 165.1s.
+Reproducibility: seeds fix trajectory sampling and play; LLM synthesis is
+stochastic across calls, so exact per-seed iteration counts differ run-to-run
+while the three-way structure and identifiability conditional are stable.
+
 ## PAPER 2 — Second instrument (pendulum-with-stop): the law on a nonlinear plant (2026-07-07)
 
 The design doc's last step-5 item (`scripts/continuous_pendulum.py`, 121 s
