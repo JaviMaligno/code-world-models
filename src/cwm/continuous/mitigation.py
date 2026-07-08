@@ -2,9 +2,9 @@
 
 Planner-side only — the model is never modified. After executing each real
 action the planner compares the model's prediction against the observed next
-state; a mismatch beyond tol records the PRE-state as a violation point
-(pinned-integrator world: a correct model matches to float precision, so any
-real mode mismatch is orders of magnitude above tol=1e-6).
+state; a mismatch beyond tol is a violation (pinned-integrator world: a
+correct model matches to float precision, so any real mode mismatch is orders
+of magnitude above tol=1e-6).
 
 Each violation records the POSITION of the model's refuted prediction — its
 "fence". False predictions always lie ON/BEYOND the mode boundary (the clamp
