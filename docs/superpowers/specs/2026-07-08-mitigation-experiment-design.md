@@ -41,10 +41,11 @@ New module `src/cwm/continuous/mitigation.py`:
 
 - **Violation detection** (real steps): after executing `a` from `s` and
   observing `s'`, compare with the model's prediction `ŝ = model.step(s, a)`.
-  If `max(|ŝ₀−s'₀|, |ŝ₁−s'₁|) > tol` with `tol = 1e-6`, record the
-  **pre-state** `s` as a violation point. (Pinned-integrator world: a correct
-  model matches to float precision, and any real mode mismatch is orders of
-  magnitude above 1e-6 — the threshold is not delicate.)
+  If `max(|ŝ₀−s'₀|, |ŝ₁−s'₁|) > tol` with `tol = 1e-6`, a violation fires;
+  what gets recorded is `ŝ[0]` — see the fences bullet below. (Pinned-
+  integrator world: a correct model matches to float precision, and any real
+  mode mismatch is orders of magnitude above 1e-6 — the threshold is not
+  delicate.)
 - **Distrust fences at the FALSE PREDICTIONS** (design v4, 2026-07-08,
   numerically validated in prototype): each violation records the POSITION of
   the model's refuted prediction `ŝ[0]` — not the pre-state. Structural fact
