@@ -1,5 +1,92 @@
 # Experiments Log
 
+## PAPER 2 — Mitigation: distrust-region replanning collapses the exploitation (2026-07-09)
+
+The exploitation measured throughout this paper is planner-mediated, not
+model-mediated, and a planner-side fix collapses it without touching the
+model or the gate. New module `src/cwm/continuous/mitigation.py`
+(`run_mitigated_episode`, `plan_mitigated`), strictly additive — `mpc.py`,
+`harness.py`, `envs.py` untouched. Mechanism: after each real step from state
+`s` with action `a`, compare the model's prediction `ŝ = model.step(s, a)`
+against the observed `s'`; if `max(|ŝ₀−s'₀|, |ŝ₁−s'₁|) > tol` with
+`tol = 1e-6`, record the **position of the model's refuted prediction**
+`ŝ[0]` (not the pre-state) as a one-sided distrust fence — false predictions
+always lie on/beyond the mode boundary, so the fence is one-sided by
+construction. While scoring a candidate rollout, the first imagined step
+whose position interval `[min(x_prev, x_next), max(x_prev, x_next)]`
+overlaps a fence's ε-band (ε = 0.25 cart, ε = 0.1 pendulum, fixed per
+instrument, not tuned per knob) truncates the rollout — reward so far kept,
+everything downstream dropped — so the fence cannot be leapt at any imagined
+speed (segment-crossing truncation, not point distance). Candidates are then
+ranked by `(truncated_total, |x_final − nearest fence|)`; because fences are
+one-sided, the tie-break structurally prefers the real side over the
+phantom side. With zero violations the second term is a constant 0.0 and the
+ranking is bit-identical to `mpc.plan` — the zero-cost control is exact by
+construction and tested bitwise (`tests/test_mitigation.py`,
+`test_plan_reduces_to_mpc_without_violations`,
+`test_bit_identical_episode_on_truth_model`).
+
+**Design iterations (recorded because they are themselves a finding — the
+argmax planner is an adversary against any incomplete fence).** v1, first-step
+flee over pre-state balls, got trapped at the local distance-maximum between
+overlapping balls. v2, final-state flee over pre-state balls, was biased
+*toward* the phantom, because violations can only be recorded on the truth
+side of the boundary, so the far side always looks "far from where the model
+lied." v3, full-state point fences at the false predictions, was dodged by
+the planner probing crossing *velocities* — measured: 5 fences at
+v ∈ {0.3, 1.46, 1.73, 2.25, 5.47}, episode ends before the fence wall closes.
+v4 (position-band + segment crossing + one-sided fences, shipped) is
+undodgeable: one violation suffices on every knob of both instruments. See
+`docs/superpowers/specs/2026-07-08-mitigation-experiment-design.md` for the
+full design record.
+
+**Measurement** (`scripts/continuous_mitigation.py`; three arms — truth-MPC,
+blind-MPC, blind-MPC+mitigation — on paired seeds, 20 episodes/knob;
+episodes=20, cart eps=0.25, pend eps=0.1, elapsed=1770.3s):
+
+| inst | knob | J_truth | J_blind | J_mit | J_rand | pc_blind | pc_mit | c_blind | c_mit | viol | first_contact |
+|------|-----:|--------:|--------:|------:|-------:|---------:|-------:|--------:|------:|-----:|--------------:|
+| cart | 2 | 17.77 | 0.00 | 12.77 | 0.53 | 1.031 | 0.290 | 1.00 | 1.00 | 1.0 | 11.6 |
+| cart | 4 | 17.77 | 0.00 | 10.09 | 0.53 | 1.031 | 0.446 | 1.00 | 1.00 | 1.0 | 16.9 |
+| cart | 6 | 17.77 | 0.00 | 7.80 | 0.53 | 1.031 | 0.578 | 1.00 | 1.00 | 1.0 | 21.3 |
+| cart | 8 | 17.77 | 0.02 | 5.72 | 0.53 | 1.030 | 0.699 | 1.00 | 1.00 | 1.0 | 25.1 |
+| cart | 10 | 17.77 | 0.94 | 3.88 | 0.53 | 0.977 | 0.806 | 1.00 | 1.00 | 1.0 | 28.7 |
+| pend | 0.8 | 20.08 | 0.01 | 17.82 | 0.06 | 1.002 | 0.113 | 1.00 | 1.00 | 1.0 | 7.0 |
+| pend | 1 | 20.08 | 0.03 | 17.49 | 0.06 | 1.002 | 0.129 | 1.00 | 1.00 | 1.0 | 8.1 |
+| pend | 1.2 | 20.08 | 0.05 | 17.21 | 0.06 | 1.000 | 0.143 | 1.00 | 1.00 | 1.0 | 9.0 |
+| pend | 1.4 | 20.08 | 0.12 | 16.88 | 0.06 | 0.997 | 0.160 | 1.00 | 1.00 | 1.0 | 10.0 |
+| pend | 1.6 | 20.08 | 0.26 | 16.54 | 0.06 | 0.990 | 0.177 | 1.00 | 1.00 | 1.0 | 11.0 |
+| pend | 2 | 20.08 | 1.23 | 15.84 | 0.06 | 0.942 | 0.212 | 1.00 | 1.00 | 1.0 | 13.0 |
+
+All numbers verbatim from `results/continuous_mitigation.json`.
+
+**Findings.** The exploitation collapses everywhere: `pc_blind` sits pinned
+at ≈0.94–1.03 on all 11 rows (below random, the existing fact) while
+`pc_mit` never rises above 0.81. Exactly one violation suffices to fence the
+mode on *every* row (`viol` = 1.0, all 11 knobs, both instruments) — the
+one-sided fence at the refuted prediction, truncated by segment crossing, is
+leap-proof, so a single contact is both necessary and sufficient. The
+residual `pc_mit` is not noise; it is the honest cost of the unavoidable
+first contact, and it scales monotonically with the lure distance (read off
+`first_contact`): cart 0.290 → 0.806 as first contact goes 11.6 → 28.7 of the
+80-step horizon (knob 2 → 10); pendulum 0.113 → 0.212 as first contact goes
+7.0 → 13.0 (knob 0.8 → 2.0). You cannot avoid what you have never seen —
+identifiability operationalized at the planner level. The cart knob=10 row is
+the least favorable in the sweep (`pc_mit` 0.806 vs. blind 0.977) because the
+transient consumes most of the horizon there, but the comparison that matters
+is the return, not the normalized cost: the blind planner stays pinned
+*forever* at that knob (J_blind 0.94 of J_truth 17.77) while the mitigated
+planner escapes and recovers most of the horizon (J_mit 3.88). Zero-cost
+control on a correct model is exact, not approximate: `run_mitigated_episode`
+is bit-identical to `harness.run_episode(..., "mpc", ...)` on truth/truth,
+tested bitwise in `tests/test_mitigation.py`. Framing: this does **not**
+contradict the danger law — the gate still certified a wrong model, and
+Proposition 2's identifiability argument is untouched. What collapses is the
+*planner-mediated exploitation* of that wrong model: the planner's own
+prediction-vs-observation signal, free at deployment (no extra sampling, no
+model change), turns a knob-invariant, below-random pin into a bounded
+first-contact transient.
+
 ## PAPER 2 — Pendulum synthesis arm: repair-from-data on a nonlinear plant (2026-07-08)
 
 Closes the gap the 2026-07-07 pendulum-mechanism section left open ("the
