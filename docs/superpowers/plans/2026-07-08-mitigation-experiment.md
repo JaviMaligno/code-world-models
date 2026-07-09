@@ -31,7 +31,7 @@
 **Interfaces:**
 - Consumes: `mpc._candidates(a_max, rng, horizon, n_samples, block)` and `mpc.plan` (for the bit-identity test) from `cwm.continuous.mpc`; `CartWall`, `PendulumStop`, `blind_of` from `cwm.continuous.envs`; `harness.run_episode`.
 - Produces (Task 2 relies on these exact signatures):
-  - `plan_mitigated(model, state, rng, violations: list, eps: float, horizon: int = 40, n_samples: int = 200, block: int = 10) -> float`
+  - `plan_mitigated(model, state, rng, fences: list, eps: float, horizon: int = 40, n_samples: int = 200, block: int = 10) -> float`
   - `run_mitigated_episode(truth, model, seed: int = 0, horizon: int = 40, n_samples: int = 200, block: int = 10, tol: float = 1e-6, eps: float = 0.25) -> MitigatedEpisode`
   - `MitigatedEpisode` dataclass: `ret: float, contact: bool, final_state: tuple, violations: int, first_contact_step: int | None`
 
@@ -120,9 +120,9 @@ Expected: FAIL at collection — `ModuleNotFoundError: No module named 'cwm.cont
 
 Planner-side only — the model is never modified. After executing each real
 action the planner compares the model's prediction against the observed next
-state; a mismatch beyond tol records the PRE-state as a violation point
-(pinned-integrator world: a correct model matches to float precision, so any
-real mode mismatch is orders of magnitude above tol=1e-6).
+state; a mismatch beyond tol is a violation (pinned-integrator world: a
+correct model matches to float precision, so any real mode mismatch is orders
+of magnitude above tol=1e-6).
 
 Each violation records the POSITION of the model's refuted prediction — its
 "fence". False predictions always lie ON/BEYOND the mode boundary (the clamp
