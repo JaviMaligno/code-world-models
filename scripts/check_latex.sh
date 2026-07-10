@@ -15,6 +15,14 @@ MAIN="main"
 # of points. Set to 0 to forbid all overfull boxes.
 OVERFULL_PT_THRESHOLD="${OVERFULL_PT_THRESHOLD:-2.0}"
 
+# Remove intermediate build files; the bbl is restored from git where tracked
+# (both papers commit their bbl when tracked — deleting it would dirty the tree).
+# Must run on EVERY exit path of check_paper, including compile failures.
+cleanup_paper() {
+  rm -f "$MAIN".aux "$MAIN".blg "$MAIN".out
+  git checkout -- "$MAIN.bbl" 2>/dev/null || rm -f "$MAIN.bbl"
+}
+
 check_paper() {
   local PAPER_DIR="$1"
 
@@ -32,12 +40,13 @@ check_paper() {
   final_rc=$?
 
   if [ ! -f "$MAIN.log" ]; then
-    echo "::error::no $MAIN.log produced — compilation did not run"; return 2
+    echo "::error::no $MAIN.log produced — compilation did not run"
+    cleanup_paper; return 2
   fi
   if [ "$final_rc" -ne 0 ]; then
     echo "::error::pdflatex exited non-zero (compilation error). Tail of log:"
     tail -40 "$MAIN.log"
-    return 1
+    cleanup_paper; return 1
   fi
 
   local fail=0
@@ -72,8 +81,7 @@ check_paper() {
   underfull=$(grep -c "^Underfull \\\\hbox" "$MAIN.log")
   echo "== [$PAPER_DIR] Summary: $pages, overfull>${OVERFULL_PT_THRESHOLD}pt: $big_overfull, underfull hbox: $underfull (informational), undefined ref/cit: $undef_ref/$undef_cit =="
 
-  rm -f "$MAIN".aux "$MAIN".blg "$MAIN".out
-  git checkout -- "$MAIN.bbl" 2>/dev/null || rm -f "$MAIN.bbl"
+  cleanup_paper
 
   if [ "$fail" -ne 0 ]; then echo "== [$PAPER_DIR] LaTeX presentation check FAILED =="; return 1; fi
   echo "== [$PAPER_DIR] LaTeX presentation check PASSED =="

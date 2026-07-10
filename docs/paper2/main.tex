@@ -294,7 +294,7 @@ Qwen $\theta_\mathrm{stop}=1.4$ (3 seeds) & 3/3 & $1 \to 1$ (pc 0.995) & $2 \to 
 \label{tab:pendulum-synthesis}
 \end{table}
 
-Pooled across both knobs and both sizes (Table~\ref{tab:pendulum-synthesis}), every mode-absent occurrence was blind and exploited at play\_cost 0.995 (Wilson 95\% lower bound 0.824) --- the same fixed-point exploitation as the cart's play\_cost $\approx 1$ --- and GPT-5.x repaired \textbf{62/62} mode-present seeds to the exact angular clamp (\texttt{if th2 >= theta\_stop: return [theta\_stop, 0.0]}), 0 stalls (Wilson 95\% lower bound 0.942). Qwen reproduces the mode-absent blind-exploited event but stalls on both its mode-present seeds, the same superstitious-patch signature as on the cart. Repair is model-dependent; identifiability, being a property of the sample, is not --- on this instrument too. The mechanism was already validated on two instruments (Section~\ref{sec:pendulum}); the synthesis result now is as well: a nonlinear plant with an angular, not positional, hard stop reproduces the same danger law and the same repair capability, so the repair finding is not a cart artifact.
+Pooled across both knobs and both sizes (Table~\ref{tab:pendulum-synthesis}), every mode-absent occurrence was blind and exploited at play\_cost 0.995 (Wilson 95\% lower bound 0.824 pooled; per-size headline 9/9, lower bound 0.701) --- the same fixed-point exploitation as the cart's play\_cost $\approx 1$ --- and GPT-5.x repaired \textbf{62/62} mode-present seeds to the exact angular clamp (\texttt{if th2 >= theta\_stop: return [theta\_stop, 0.0]}), 0 stalls (Wilson 95\% lower bound 0.942). Qwen reproduces the mode-absent blind-exploited event but stalls on both its mode-present seeds, the same superstitious-patch signature as on the cart. Repair is model-dependent; identifiability, being a property of the sample, is not --- on this instrument too. The mechanism was already validated on two instruments (Section~\ref{sec:pendulum}); the synthesis result now is as well: a nonlinear plant with an angular, not positional, hard stop reproduces the same danger law and the same repair capability, so the repair finding is not a cart artifact.
 
 \subsection{Mitigation: the exploitation is planner-mediated}
 \label{sec:mitigation}
@@ -424,6 +424,13 @@ PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 20 \
   --instrument pendulum --th-stop 1.0
 PYTHONPATH=src python scripts/continuous_danger_synthesis.py large 20 \
   --instrument pendulum --th-stop 1.0
+# Qwen cross-family spot-checks
+# (needs HF_TOKEN: HF Inference Providers router)
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 3 \
+  --compat-model "Qwen/Qwen3-Coder-30B-A3B-Instruct"
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 3 \
+  --instrument pendulum --th-stop 1.4 \
+  --compat-model "Qwen/Qwen3-Coder-30B-A3B-Instruct"
 # Mitigation sweep (CPU only)
 PYTHONPATH=src python scripts/continuous_mitigation.py
 # eps-sensitivity sweep (CPU only)

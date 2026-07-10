@@ -171,9 +171,9 @@ The branches compose into the paper's central claim. With the mode in the data, 
 
 (Scope: 20 seeds/cell on the headline cell, both GPT-5.x sizes; the wall-absent conditional is 20/20 across sizes and consistent across three independent runs; the wall-present repair rate is 20/20 for GPT-5.x on this cell and 0/2 for Qwen — model-dependent, small-n on the cross-family arm. LLM synthesis is stochastic across calls; the three-way structure and the identifiability conditional are stable run-to-run, per-seed iteration counts are not.)
 
-**Second-instrument robustness (pendulum-with-stop, §4.1, 20 seeds/cell, both sizes).** The synthesis arm is not cart-only. Running the identical pipeline on the nonlinear pendulum — headline θ_stop=1.4 (rarity 0.019) and caught θ_stop=1.0 (rarity 0.128, mode present in essentially every sample) — reproduces every branch, including a 3-seed Qwen cross-family spot-check at the headline knob (Table 4):
+**Second-instrument robustness (pendulum-with-stop, §4.1, 20 seeds/cell, both sizes).** The synthesis arm is not cart-only. Running the identical pipeline on the nonlinear pendulum — headline θ_stop=1.4 (rarity 0.019) and caught θ_stop=1.0 (rarity 0.128, mode present in essentially every sample) — reproduces every branch, including a 3-seed Qwen cross-family spot-check at the headline knob (Table 2c):
 
-**Table 4 — pendulum synthesis cells (20 seeds/cell, both GPT-5.x sizes; 3-seed Qwen spot-check at θ_stop=1.4).**
+**Table 2c — pendulum synthesis cells (20 seeds/cell, both GPT-5.x sizes; 3-seed Qwen spot-check at θ_stop=1.4).**
 
 | cell (20 seeds each) | full | mode-absent → blind & exploited | mode-present → repaired (stalled) |
 |---|---|---|---|
@@ -183,7 +183,7 @@ The branches compose into the paper's central claim. With the mode in the data, 
 | large θ_stop=1.0 | 20/20 | 0 → — | 20 → 20 (0) |
 | Qwen θ_stop=1.4 (3 seeds) | 3/3 | 1 → 1 (pc 0.995) | 2 → 0 (2 stalled @0.9997) |
 
-Pooled across both knobs and both sizes (Table 4), every mode-absent occurrence was blind and exploited at play_cost 0.995 (Wilson 95% lower bound 0.824) — the same fixed-point exploitation as the cart's play_cost ≈ 1 — and GPT-5.x repaired **62/62** mode-present seeds to the exact angular clamp (`if th2 >= θ_stop: return [θ_stop, 0.0]`), 0 stalls (Wilson 95% lower bound 0.942). Qwen reproduces the mode-absent blind-exploited event but stalls on both its mode-present seeds, the same superstitious-patch signature as on the cart. Repair is model-dependent; identifiability, being a property of the sample, is not — on this instrument too. The mechanism was already validated on two instruments (§4.1); the synthesis result now is as well: a nonlinear plant with an angular, not positional, hard stop reproduces the same danger law and the same repair capability, so the repair finding is not a cart artifact.
+Pooled across both knobs and both sizes (Table 2c), every mode-absent occurrence was blind and exploited at play_cost 0.995 (Wilson 95% lower bound 0.824 pooled; per-size headline 9/9, lower bound 0.701) — the same fixed-point exploitation as the cart's play_cost ≈ 1 — and GPT-5.x repaired **62/62** mode-present seeds to the exact angular clamp (`if th2 >= θ_stop: return [θ_stop, 0.0]`), 0 stalls (Wilson 95% lower bound 0.942). Qwen reproduces the mode-absent blind-exploited event but stalls on both its mode-present seeds, the same superstitious-patch signature as on the cart. Repair is model-dependent; identifiability, being a property of the sample, is not — on this instrument too. The mechanism was already validated on two instruments (§4.1); the synthesis result now is as well: a nonlinear plant with an angular, not positional, hard stop reproduces the same danger law and the same repair capability, so the repair finding is not a cart artifact.
 
 ### 6.1 Mitigation: the exploitation is planner-mediated
 
@@ -273,6 +273,9 @@ PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 20 --instrumen
 PYTHONPATH=src python scripts/continuous_danger_synthesis.py large 20 --instrument pendulum --th-stop 1.4
 PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 20 --instrument pendulum --th-stop 1.0
 PYTHONPATH=src python scripts/continuous_danger_synthesis.py large 20 --instrument pendulum --th-stop 1.0
+# Qwen cross-family spot-checks (needs HF_TOKEN: HF Inference Providers router)
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 3 --compat-model "Qwen/Qwen3-Coder-30B-A3B-Instruct"
+PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 3 --instrument pendulum --th-stop 1.4 --compat-model "Qwen/Qwen3-Coder-30B-A3B-Instruct"
 # Mitigation sweep (CPU only)
 PYTHONPATH=src python scripts/continuous_mitigation.py
 # eps-sensitivity sweep (CPU only)
