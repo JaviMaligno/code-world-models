@@ -530,7 +530,9 @@ differ > eps).
 
 Readings:
 - **Gate exactness confirmed empirically**: pass@40 matches (1−r)^40 in both
-  wall rows (0.003 vs 0.0026; 0.667 vs 0.605, inside the 300-gate Wilson CI).
+  wall rows (0.003 vs 0.0026; 0.667 vs 0.605 — correction 2026-07-10: the
+  prediction is marginally BELOW the 300-gate Wilson lower bound 0.612, not
+  inside the CI; sampling noise at that gate count, see the ε-sweep entry).
 - **The four-quadrant separation the paper needs**: the tolerance gate
   *polices pervasive error* (supra-eps bias rejected on every rollout) and
   *tolerates harmless* sub-eps bias (pass 0.997, play_cost 0.000) — yet is
