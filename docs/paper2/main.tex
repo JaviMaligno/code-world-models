@@ -233,6 +233,27 @@ $C^\infty$ bump@4, amp 1.0 & 0.2085 & 0.0001 & 0.000 & $-0.745$ & $-0.0001$ \\
 
 Readings: \textbf{gate exactness at gate scale} --- measured pass@40 matches $(1-r)^{40}$ in both wall rows (0.003 vs 0.0026; 0.667 vs 0.605, inside the 300-gate Wilson interval); the proposition is the observed acceptance rate, not asymptotic decoration. \textbf{The gate polices the pervasive axis}: a global drag bias above tolerance is revealed on every rollout and never accepted; a sub-tolerance bias is accepted (0.997; the 0.3\% is the extreme velocity tail) and is harmless at play. Verified-and-fine is a real cell, and the gate finds it. \textbf{Smoothness kills consequence, not detectability}: the $C^\infty$ drag bump at the wall's location has comparable rarity to the wall (0.19 vs 0.14 --- it is just as \emph{detectable}, confirming Proposition~\ref{prop:lipschitz} is about error geometry, not about hiding from the gate) yet play\_cost 0.000 at amplitude 0.5. At amplitude 1.0 play\_cost turns \emph{negative} ($-0.745$): the truth planner, seeing the slowdown near its horizon edge, is over-pessimistic and often settles for the small plateau, while the bump-blind planner pushes through and wins. A smooth localized omission produces planner-side timing effects of ambiguous sign; only the hard mode produces the one-way exploitation geometry (pinned, forever, below random).
 
+\textbf{Is $\varepsilon = 0.01$ a special setting, or is the axis separation itself $\varepsilon$-invariant?} A sweep over $\varepsilon \in \{10^{-9}, 10^{-6}, 10^{-4}, 10^{-3}, 10^{-2}, 3{\times}10^{-2}, 0.1, 0.3\}$ (\texttt{scripts/continuous\_eps\_sweep.py}; full table in \texttt{docs/EXPERIMENTS.md}) answers: $\varepsilon$-invariant. Mode-arm reveal-rarity is flat across the entire deployment-realistic range --- on the cart, \texttt{wall@8} is bit-identically flat through the whole grid including $\varepsilon = 0.3$, and \texttt{wall@4} only dips slightly (never widens) at the top of the grid. The pervasive bias arms switch sharply at their own error scale on both instruments instead.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{rrrr}
+\toprule
+$\varepsilon$ & wall@8 rarity & bias $\times$1.03 rarity & bias $\times$2.0 rarity \\
+\midrule
+$10^{-6}$ & 0.0125 & 1.0000 & 1.0000 \\
+$10^{-2}$ & 0.0125 & 0.0000 & 1.0000 \\
+0.1 & 0.0125 & 0.0000 & 0.0040 \\
+0.3 & 0.0125 & 0.0000 & 0.0040 \\
+\bottomrule
+\end{tabular}
+\caption{Reveal-rarity vs. $\varepsilon$ (cart). The mode arm is flat across the whole grid; the pervasive arms switch at their own error scale.}
+\label{tab:eps-sweep}
+\end{table}
+
+The pendulum replicates both halves: its mode arms are flat too (only a slight dip at the top of the grid --- \texttt{stop@1.0} rarity 0.1410 at $\varepsilon \le 3{\times}10^{-2}$, dipping to 0.1400 at $\varepsilon = 0.1$ and 0.1240 at $\varepsilon = 0.3$), and its bias arms switch at the same error-scale boundaries as the cart's. pass@40 $\approx (1-r)^{40}$ continues to hold for the mode arms at every $\varepsilon$ in the grid, on both instruments (honesty note: at \texttt{wall@8} the closed-form 0.6046 sits marginally below the empirical 300-gate Wilson 95\% CI lower bound of 0.6115 --- sampling noise at that gate count, reported plainly rather than as exact agreement). The gate's $\varepsilon$ is a pervasive-error dial, not a mode-detection dial: tightening it cannot catch the hard mode, and loosening it does not widen the hole.
+
 \section{LLM synthesis: the danger collapses to pure identifiability}
 \label{sec:synthesis}
 

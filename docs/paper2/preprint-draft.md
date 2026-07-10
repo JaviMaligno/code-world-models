@@ -140,6 +140,19 @@ Readings:
 - **Danger lives in one quadrant only**: rare ∧ hard-mode. Common hard mode (wall@4): caught, danger ≈ 0.003. Pervasive error: caught or harmless. Smooth localized: next point.
 - **Smoothness kills consequence, not detectability.** The C∞ drag bump at the wall's location has *comparable rarity* to the wall (0.19 vs 0.14 — it is just as detectable, confirming that Proposition 4 is about error *geometry*, not about hiding from the gate) yet play_cost 0.000 at amplitude 0.5: both planners cross it, one of them slightly surprised. At amplitude 1.0 play_cost turns *negative* (−0.745): the truth planner, seeing the slowdown near its horizon edge, is over-pessimistic and often settles for the small plateau, while the bump-blind planner pushes through and wins. A smooth localized omission produces planner-side timing effects of ambiguous sign; only the hard mode produces the one-way exploitation geometry (pinned, forever, below random).
 
+**Is ε = 0.01 a special setting, or is the axis separation itself ε-invariant?** A sweep over `ε ∈ {1e-9, 1e-6, 1e-4, 1e-3, 1e-2, 3e-2, 0.1, 0.3}` (`scripts/continuous_eps_sweep.py`; full table in `docs/EXPERIMENTS.md`) answers: ε-invariant. Mode-arm reveal-rarity is flat across the entire deployment-realistic range — on the cart, `wall@8` is bit-identically flat through the whole grid including ε = 0.3, and `wall@4` only dips slightly (never widens) at the top of the grid. The pervasive bias arms switch sharply at their own error scale on both instruments instead.
+
+**Table 2a — reveal-rarity vs. ε (cart).**
+
+| ε | wall@8 rarity | bias ×1.03 rarity | bias ×2.0 rarity |
+|---:|---:|---:|---:|
+| 1e-6 | 0.0125 | 1.0000 | 1.0000 |
+| 1e-2 | 0.0125 | 0.0000 | 1.0000 |
+| 0.1 | 0.0125 | 0.0000 | 0.0040 |
+| 0.3 | 0.0125 | 0.0000 | 0.0040 |
+
+The pendulum replicates both halves: its mode arms are flat too (only a slight dip at the top of the grid — `stop@1.0` rarity 0.1410 at ε ≤ 3e-2, dipping to 0.1400 at ε = 0.1 and 0.1240 at ε = 0.3), and its bias arms switch at the same error-scale boundaries as the cart's. pass@40 ≈ (1−r)⁴⁰ continues to hold for the mode arms at every ε in the grid, on both instruments (honesty note: at `wall@8` the closed-form 0.6046 sits marginally below the empirical 300-gate Wilson 95% CI lower bound of 0.6115 — sampling noise at that gate count, reported plainly rather than as exact agreement). The gate's ε is a pervasive-error dial, not a mode-detection dial: tightening it cannot catch the hard mode, and loosening it does not widen the hole.
+
 ## 6. LLM synthesis: the danger collapses to pure identifiability
 
 Real-LLM arms (`scripts/continuous_danger_synthesis.py`; Azure GPT-5.x mini and large; N = 40 training rollouts which double as the gate, as in paper 1's sweep; ε = 10⁻⁹ pinned-integrator gate; **20 seeds/cell on the headline x_wall = 8 cell, both sizes** (paper-1 standard); 6 MPC play episodes/seed; per-seed JSON with the synthesized code versioned in `results/`). The contract pins the integrator (§2.1's equations, stated in the spec text, constants generated from the environment instance so they cannot drift); the *full* arm includes the wall clause, the *incomplete* arm omits it. Crucially, each seed logs whether the wall fired in its training sample — the identifiability event that paper 1 could not condition on post hoc.

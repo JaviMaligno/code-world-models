@@ -187,6 +187,7 @@ for all sweeps CPU-only).
   *fatal* to the blind plan, not incidental. Budget iteration time here.
 - **ε/integrator confounds**: killed by the pinned-integrator contract, but
   the deployment-realistic loose-ε arm needs a documented ε-sensitivity sweep.
+  **(Resolved 2026-07-09: scripts/continuous_eps_sweep.py + results/continuous_eps_sweep.json — mode-arm rarity flat in ε on both instruments, bias policing switches at the error scale; see EXPERIMENTS.md.)**
 - **Repair may succeed here** (a numeric discontinuity is visible in data in a
   way a symbolic rule is not). Not a risk to the thesis — either outcome is a
   finding — but frame the paper so it doesn't depend on repair failing.
