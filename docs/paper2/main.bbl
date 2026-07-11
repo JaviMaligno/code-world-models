@@ -1,4 +1,4 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{16}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -12,6 +12,18 @@ Javier Aguilar~Mart\'in.
 \newblock Companion paper (paper 1). Preprint; repository:
   \url{https://github.com/JaviMaligno/code-world-models}.
 
+\bibitem[Bemporad and Morari(1999)]{bemporad1999control}
+Alberto Bemporad and Manfred Morari.
+\newblock Control of systems integrating logic, dynamics, and constraints.
+\newblock \emph{Automatica}, 35\penalty0 (3):\penalty0 407--427, 1999.
+
+\bibitem[Chua et~al.(2018)Chua, Calandra, McAllister, and Levine]{chua2018deep}
+Kurtland Chua, Roberto Calandra, Rowan McAllister, and Sergey Levine.
+\newblock Deep reinforcement learning in a handful of trials using
+  probabilistic dynamics models.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2018.
+
 \bibitem[Claessen and Hughes(2000)]{claessen2000quickcheck}
 Koen Claessen and John Hughes.
 \newblock {QuickCheck}: A lightweight tool for random testing of {Haskell}
@@ -19,14 +31,21 @@ Koen Claessen and John Hughes.
 \newblock In \emph{Proceedings of the Fifth {ACM} {SIGPLAN} International
   Conference on Functional Programming (ICFP)}, pages 268--279, 2000.
 
+\bibitem[Coulom(2006)]{coulom2006mcts}
+R{\'e}mi Coulom.
+\newblock Efficient selectivity and backup operators in monte-carlo tree
+  search.
+\newblock In \emph{Computers and Games (CG 2006)}, volume 4630 of \emph{Lecture
+  Notes in Computer Science}, pages 72--83. Springer, 2006.
+
 \bibitem[Gao et~al.(2023)Gao, Madaan, Zhou, Alon, Liu, Yang, Callan, and
   Neubig]{gao2023pal}
 Luyu Gao, Aman Madaan, Shuyan Zhou, Uri Alon, Pengfei Liu, Yiming Yang, Jamie
   Callan, and Graham Neubig.
 \newblock {PAL}: Program-aided language models.
 \newblock In \emph{Proceedings of the 40th International Conference on Machine
-  Learning (ICML)}, Proceedings of Machine Learning Research, pages
-  10764--10799, 2023.
+  Learning (ICML)}, volume 202 of \emph{Proceedings of Machine Learning
+  Research}, pages 10764--10799, 2023.
 
 \bibitem[Hafner et~al.(2020)Hafner, Lillicrap, Ba, and
   Norouzi]{hafner2020dreamer}
@@ -41,6 +60,12 @@ Michael Janner, Justin Fu, Marvin Zhang, and Sergey Levine.
 \newblock In \emph{Advances in Neural Information Processing Systems
   (NeurIPS)}, 2019.
 
+\bibitem[Kocsis and Szepesv{\'a}ri(2006)]{kocsis2006bandit}
+Levente Kocsis and Csaba Szepesv{\'a}ri.
+\newblock Bandit based {Monte}-{Carlo} planning.
+\newblock In \emph{Proceedings of the 17th European Conference on Machine
+  Learning (ECML)}, pages 282--293, 2006.
+
 \bibitem[Lambert et~al.(2020)Lambert, Amos, Yadan, and
   Calandra]{lambert2020objective}
 Nathan~O. Lambert, Brandon Amos, Omry Yadan, and Roberto Calandra.
@@ -50,14 +75,17 @@ Nathan~O. Lambert, Brandon Amos, Omry Yadan, and Roberto Calandra.
   Research}, pages 761--770, 2020.
 \newblock arXiv:2002.04523.
 
-\bibitem[Lehrach et~al.(2025)Lehrach, Hennes, Lazaro-Gredilla, Lou, Wendelken,
+\bibitem[Lehrach et~al.(2026)Lehrach, Hennes, Lazaro-Gredilla, Lou, Wendelken,
   Li, Dedieu, Grau-Moya, Lanctot, Iscen, Schultz, Chiam, Gemp, Zielinski,
   Singh, and Murphy]{lehrach2025cwm}
 Wolfgang Lehrach, Daniel Hennes, Miguel Lazaro-Gredilla, Xinghua Lou, Carter
   Wendelken, Zun Li, Antoine Dedieu, Jordi Grau-Moya, Marc Lanctot, Atil Iscen,
   John Schultz, Marcus Chiam, Ian Gemp, Piotr Zielinski, Satinder Singh, and
   Kevin~P. Murphy.
-\newblock {Code World Models} for general game playing, 2025.
+\newblock {Code World Models} for general game playing.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2026.
+\newblock Poster; OpenReview id 1UoB7IWiku.
 
 \bibitem[Liang et~al.(2023)Liang, Huang, Xia, Xu, Hausman, Ichter, Florence,
   and Zeng]{liang2023codeaspolicies}
@@ -66,6 +94,22 @@ Jacky Liang, Wenlong Huang, Fei Xia, Peng Xu, Karol Hausman, Brian Ichter, Pete
 \newblock Code as policies: Language model programs for embodied control.
 \newblock In \emph{{IEEE} International Conference on Robotics and Automation
   (ICRA)}, pages 9493--9500, 2023.
+
+\bibitem[Nagabandi et~al.(2018)Nagabandi, Kahn, Fearing, and
+  Levine]{nagabandi2018neural}
+Anusha Nagabandi, Gregory Kahn, Ronald~S. Fearing, and Sergey Levine.
+\newblock Neural network dynamics for model-based deep reinforcement learning
+  with model-free fine-tuning.
+\newblock In \emph{{IEEE} International Conference on Robotics and Automation
+  (ICRA)}, 2018.
+
+\bibitem[Paoletti et~al.(2007)Paoletti, Juloski, Ferrari-Trecate, and
+  Vidal]{paoletti2007hybrid}
+Simone Paoletti, Aleksandar~Lj. Juloski, Giancarlo Ferrari-Trecate, and Ren\'e
+  Vidal.
+\newblock Identification of hybrid systems: A tutorial.
+\newblock \emph{European Journal of Control}, 13\penalty0 (2-3):\penalty0
+  242--260, 2007.
 
 \bibitem[Rubinstein and Kroese(2017)]{rubinstein2017montecarlo}
 Reuven~Y. Rubinstein and Dirk~P. Kroese.
