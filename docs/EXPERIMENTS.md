@@ -1,5 +1,62 @@
 # Experiments Log
 
+## PAPER 2 — Second planner family (CEM): the other branch of the play-cost bound (2026-07-12)
+
+Proposition 3 says exploitation is planner-dependent: a wrong model can change
+behavior only when the planner queries the disagreement region. The paper's
+random-shooting MPC includes constant-action candidates that reach the distant
+phantom plateau in imagination, and is therefore lured into the omitted mode.
+The second family tested here is cross-entropy-method planning (CEM): per-step
+Gaussian action distributions, refined over 5 elite iterations with 64 samples,
+elite fraction 0.125, horizon 40, and a fixed minimum standard deviation 0.05.
+These hyperparameters are identical across both instruments and all knobs.
+
+`scripts/continuous_cem.py` runs paired truth-CEM, blind-CEM, and random-policy
+episodes (20 seeds/row), and measures a query-hit proxy for both planners: the
+fraction of sampled imagined trajectories that cross the omitted boundary.
+The MPC diagnostic uses its ordinary candidate generator; the CEM diagnostic
+accumulates all 5×64 sampled trajectories at every replanning step. Full run:
+11 rows, elapsed 1719.7 s; all values below are verbatim (rounded for display)
+from `results/continuous_cem.json`.
+
+| inst | knob | J_truth CEM | J_blind CEM | J_random | pc_blind CEM | blind contact | crossing CEM | crossing MPC |
+|------|-----:|------------:|------------:|---------:|-------------:|--------------:|-------------:|-------------:|
+| cart | 2.0 | 17.20 | 17.20 | 0.53 | 0.000 | 0.00 | 0.0010 | 0.3865 |
+| cart | 4.0 | 17.20 | 17.20 | 0.53 | 0.000 | 0.00 | 0.0001 | 0.2453 |
+| cart | 6.0 | 17.20 | 17.20 | 0.53 | 0.000 | 0.00 | 0.0000 | 0.1483 |
+| cart | 8.0 | 17.20 | 17.20 | 0.53 | 0.000 | 0.00 | 0.0000 | 0.0773 |
+| cart | 10.0 | 17.20 | 17.20 | 0.53 | 0.000 | 0.00 | 0.0000 | 0.0369 |
+| pend | 0.8 | 16.46 | 16.31 | 0.06 | 0.009 | 0.70 | 0.1092 | 0.6392 |
+| pend | 1.0 | 16.29 | 15.89 | 0.06 | 0.025 | 0.25 | 0.0703 | 0.5530 |
+| pend | 1.2 | 15.51 | 15.68 | 0.06 | -0.011 | 0.00 | 0.0345 | 0.4672 |
+| pend | 1.4 | 15.37 | 15.68 | 0.06 | -0.021 | 0.00 | 0.0162 | 0.3842 |
+| pend | 1.6 | 15.36 | 15.68 | 0.06 | -0.021 | 0.00 | 0.0085 | 0.3039 |
+| pend | 2.0 | 15.69 | 15.68 | 0.06 | 0.000 | 0.00 | 0.0029 | 0.2158 |
+
+**Findings.** The normalized blind-model play cost is near zero on all 11
+rows (range -0.0213 to 0.0248), rather than ≈0.94–1.03 as under MPC. On the
+cart, truth and blind returns are identical on every row, contact is zero, and
+CEM's imagined crossing fraction falls from 0.0010 to exactly 0 as the wall
+recedes; MPC's comparable start-state diagnostic is 0.3865→0.0369. On the
+pendulum, CEM crossing remains strictly below MPC at every stop (0.1092→0.0029
+vs 0.6392→0.2158), and play cost remains near zero despite honest boundary
+contacts at the two nearest stops: contact rate 0.70 at θ=0.8 and 0.25 at
+θ=1.0, then zero for θ≥1.2. Contact alone is therefore not exploitation: CEM
+can touch a nearby real boundary without being lured into the pinned,
+below-random fixed point created by MPC's phantom-reaching search.
+
+This is the measured other branch of Proposition 3. The certified-blind model
+is a landmine whose consequence depends on the planner's query reach: MPC
+detonates it; this CEM configuration largely does not. The result also turns
+§2.3's calibration lesson into a planner-family result: a search distribution
+that does not discover the phantom cannot optimize toward it. Two caveats are
+load-bearing. First, CEM truth return on the pendulum varies with stop position
+(15.36–16.46 versus MPC truth 20.08), consistent with local optima; the claim
+is about blind-vs-truth geometry within CEM, not CEM optimality. Second,
+limited reach is not knowledge or a safety mechanism: a planner that misses a
+phantom distant reward can also miss a real one. No hyperparameter sweep or
+per-knob tuning was performed.
+
 ## Budget-matched synthesized-CWM play cost, with CIs — codex #1 (2026-07-07/12)
 
 Closes the central pre-submit gap: the synthesized play evidence (Panel B) was

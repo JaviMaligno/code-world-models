@@ -34,7 +34,7 @@ Contributions:
 5. **The synthesis result: danger collapses to pure identifiability.** Real-LLM arms (GPT-5.x mini/large, 20 seeds/cell) with the identifiability event logged per seed: wall absent → 20/20 verified-blind-exploited (regret 0.999, Wilson lower bound 0.84); wall present → repaired to the exact global rule (both sizes 10/10, large in ≤1 iteration), never a wrong artifact accepted. A Qwen cross-family spot-check reproduces the blind-exploited event but repairs neither wall-present seed (superstitious patches the gate rejects) — repair-from-data is model-dependent, while identifiability is a property of the sample, not the model. The whole result replicates on a second, nonlinear instrument (a pendulum with an angular hard stop): GPT-5.x repairs 62/62 mode-present seeds and every mode-absent seed is blind and exploited. §7.
 6. **Smooth learners cannot localize** (§8): the most favorable smooth learner (closed-form linear least squares — the off-mode dynamics are exactly linear) trained on wall-free data passes both gates fully blind (identifiability is learner-independent), and trained on wall-containing data is tilted twelve orders of magnitude off-mode by 4 contact rows in 3200 while still missing the mode. Both the danger geometry and the repair capability are representational properties of code.
 
-Scope up front: two 1D instruments, one planner family (random-shooting MPC), 20 seeds per headline synthesis cell across the two instruments (both GPT-5.x sizes; plus the caught cell on the pendulum), a 3-seed cross-family spot-check per instrument (not full sweeps), and a probe-grade (not tuned-baseline) MLP. §10 gives the honest assessment and the full seed accounting.
+Scope up front: two 1D instruments, two base planner families (random-shooting MPC and CEM, one fixed configuration each), 20 seeds per headline synthesis cell across the two instruments (both GPT-5.x sizes; plus the caught cell on the pendulum), a 3-seed cross-family spot-check per instrument (not full sweeps), and a probe-grade (not tuned-baseline) MLP. §10 gives the honest assessment and the full seed accounting.
 
 ## 2. The instruments
 
@@ -138,6 +138,28 @@ The cart's off-mode dynamics are linear, which is convenient for §8 but invites
 | 2.0 | 0.0000 | 20.08 | 1.23 | 0.942 | 1.00 | 0.942 |
 
 Threshold law, knob-invariant exploitation (pinned at the stop in every episode, at every knob), truth planner untouched by the mode. The mechanism does not care that the plant is nonlinear — only that the mode is hard and rare under the gate's measure.
+
+### 4.2 A second planner family: play_cost is planner-dependent, as the bound prescribes
+
+Proposition 3 predicts two branches: a blind model can change behavior only to the extent that the planner queries its disagreement region. Random-shooting MPC's constant candidates reach the distant phantom plateau in imagination and produce `play_cost ≈ 1`. We therefore repeated the full 11-knob grid with a second base planner, CEM (`scripts/continuous_cem.py`; horizon 40, 5 iterations, 64 samples, elite fraction 0.125, minimum standard deviation 0.05; one fixed setting across both instruments). The crossing columns below are the fraction of sampled imagined trajectories that cross the omitted boundary, measured for CEM throughout each blind-model episode and for MPC from paired initial states.
+
+| instrument | knob | pc_blind MPC | pc_blind CEM | contact CEM | crossing CEM | crossing MPC |
+|---|---:|---:|---:|---:|---:|---:|
+| cart | 2.0 | 1.031 | 0.000 | 0.00 | 0.0010 | 0.3865 |
+| cart | 4.0 | 1.031 | 0.000 | 0.00 | 0.0001 | 0.2453 |
+| cart | 6.0 | 1.031 | 0.000 | 0.00 | 0.0000 | 0.1483 |
+| cart | 8.0 | 1.030 | 0.000 | 0.00 | 0.0000 | 0.0773 |
+| cart | 10.0 | 0.977 | 0.000 | 0.00 | 0.0000 | 0.0369 |
+| pendulum | 0.8 | 1.002 | 0.009 | 0.70 | 0.1092 | 0.6392 |
+| pendulum | 1.0 | 1.002 | 0.025 | 0.25 | 0.0703 | 0.5530 |
+| pendulum | 1.2 | 1.000 | −0.011 | 0.00 | 0.0345 | 0.4672 |
+| pendulum | 1.4 | 0.997 | −0.021 | 0.00 | 0.0162 | 0.3842 |
+| pendulum | 1.6 | 0.990 | −0.021 | 0.00 | 0.0085 | 0.3039 |
+| pendulum | 2.0 | 0.942 | 0.000 | 0.00 | 0.0029 | 0.2158 |
+
+CEM's blind-model play cost lies in [−0.0213, 0.0248] on every row, while its imagined crossing fraction is strictly below MPC's throughout. On the cart, truth- and blind-model CEM returns are identical and contact is zero everywhere. The nearest pendulum stops are an honest qualification: CEM contacts θ_stop=0.8 in 70% of episodes and θ_stop=1.0 in 25%, but does not enter MPC's pinned, below-random regime; contact is zero from θ_stop≥1.2. Contact is therefore not itself exploitation. This is the other measured branch of the bound: the same certified-blind model is a landmine whose consequence depends on the planner's query reach. It also operationalizes §2.3's first lesson — if search does not discover the phantom, it cannot optimize toward it.
+
+Two caveats prevent the wrong conclusion. CEM's pendulum truth return varies from 15.36 to 16.46 (versus MPC's 20.08), consistent with local optima; the comparison is blind-CEM against truth-CEM, not a claim that CEM is globally optimal. And limited reach is not knowledge or mitigation: a planner that misses a phantom distant reward can also miss a real one. The result is for one fixed CEM configuration, not a hyperparameter sweep.
 
 ## 5. Axis separation: the gate fails only where the law says it can
 
@@ -254,7 +276,7 @@ If localization is representational, two things must be checkable on non-code le
 ## 10. Limitations and honest assessment
 
 - **Two minimal instruments, one dimension.** Cart-with-wall and pendulum-with-stop are minimal by design (as Beacon was in paper 1), and §4.1 shows the mechanism survives a nonlinear plant; §7 shows synthesis does too. But both modes are single stationary boundaries in a 2-dimensional state; multi-mode, moving-boundary, and higher-dimensional instruments (2D sticky patch, contact-rich manipulation) are future work. We expect the *mechanism* to survive — it is measure-theoretic — and the *repair* finding (§7) has now held on both instruments, but it could still weaken as mode geometry gets harder to induce from few examples on more complex instruments.
-- **One planner family.** Random-shooting MPC with piecewise-constant candidates is the only *base* planner family studied; distrust-region replanning (§6) is a mitigation layered on top of it, not a second family. The mitigation claim is no longer speculative — it is measured on both instruments (§6, 11/11 knob rows): a planner that merely checks its own predictions against observations collapses the pinned-forever, below-random exploitation to a bounded first-contact transient, at zero cost when the model is right (bit-identical, tested), consistent with our thesis (verify on the deployment distribution) rather than against it. The claim is scoped to hard-boundary hybrid modes — the one-sided fences exploit the structural fact that refuted predictions lie on or beyond the mode boundary; less structured failure modes are untested (§6). The honest remaining scope is narrower still: whether other base search strategies (CEM, gradient-based shooting, tree search: Coulom 2006; Kocsis & Szepesvári 2006) exhibit the same pinned-forever exploitation, and whether the same mitigation collapses it the same way, is untested.
+- **Two planner families, one fixed configuration each.** Random-shooting MPC occupies the high-query-reach/high-play-cost branch of Proposition 3; CEM occupies the low-query-reach/near-zero-play-cost branch (§4.2). This is stronger than a one-family result but not planner-universal: CEM was measured at one prototype-fixed setting, with no hyperparameter sweep, and its pendulum truth returns expose local optima. Its non-exploitation is reach-limited, not knowledgeable or safe — the same search that misses phantom reward can miss real distant reward. Gradient-based shooting and tree search (Coulom 2006; Kocsis & Szepesvári 2006) remain untested. Distrust-region replanning (§6) is a mitigation layered on MPC, not a third family; its hard-boundary guarantee and its behavior with other planners remain untested.
 - **Synthesis cells are modest.** 20 seeds/cell on the headline x_wall = 8 cart cell for both GPT-5.x sizes, plus a 3-seed Qwen cross-family spot-check; the pendulum arm adds two knobs (headline and caught) at the same 20 seeds/cell, both sizes, plus its own 3-seed Qwen spot-check. The wall/mode-absent conditional is 20/20 across cart sizes and three runs (Wilson lower bound 0.84) and 18/18 pooled on the pendulum (lower bound 0.824); the GPT-5.x repair rate is 20/20 on the cart headline cell and 62/62 pooled on the pendulum. Both cross-family arms are small-n (3 seeds) and show repair is model-dependent (Qwen 0/2 mode-present on each instrument) — a single alternate family, not a sweep of models.
 - **The MLP is a probe, not a baseline.** It substantiates the representational point at h=8/pure-Python scale; a tuned modern dynamics model would have a lower floor but the same structural inability to be bit-exact off a mode at ε = 10⁻⁹ (that is an argument, not yet a measurement, at scale).
 - **Proposition 4 bounds geometry, not probability.** The ball is metric; converting to gate-visitation probability needs the gate measure on that ball, which is instrument-specific. The empirical complement (Table 3's twelve-orders tilt) carries the quantitative weight here.
@@ -301,6 +323,8 @@ PYTHONPATH=src python scripts/continuous_danger_synthesis.py mini 3 --instrument
 PYTHONPATH=src python scripts/continuous_mitigation.py
 # eps-sensitivity sweep (CPU only)
 PYTHONPATH=src python scripts/continuous_eps_sweep.py
+# second planner family (CPU only)
+PYTHONPATH=src python scripts/continuous_cem.py
 ```
 
 Per-seed artifacts including the synthesized code: `results/continuous_synthesis_*.json`. Experiment log: `docs/EXPERIMENTS.md`, sections prefixed "PAPER 2".
