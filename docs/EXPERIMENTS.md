@@ -849,8 +849,8 @@ corrected contract. 120 syntheses total (2 sizes × 3 N × 20 seeds), each with
 
 | N | mini rule-blind | large rule-blind | initial-batch floor (1−r)^N |
 |---|---|---|---|
-| 40  | **20/20 = 1.000** [Wilson LB 0.839] | **20/20 = 1.000** | 0.363 |
-| 120 | **20/20 = 1.000** | **20/20 = 1.000** | 0.048 |
+| 40  | **20/20 = 1.000** [Wilson LB 0.839] | **20/20 = 1.000** | 0.358 |
+| 120 | **20/20 = 1.000** | **20/20 = 1.000** | 0.046 |
 | 200 | **20/20 = 1.000** | **20/20 = 1.000** | 0.006 |
 
 **Zero crashes, zero aware, in all 120 runs** — the published 6/6 table is
@@ -860,7 +860,7 @@ bound on the rule-blind rate rises from ~0.61 (6/6) to **0.839** (20/20).
 Gate-accuracy detail: at N=200 large, 0/20 seeds reach gate 1.0 (the rule is in
 every sample) yet all 20 are blind — the cleanest (b)-residual cell. At N=120,
 6/20 mini and 3/20 large reach gate 1.0 while blind, matching the compounded
-per-batch miss rate (≈0.29 over up to 7 batches of (1−r)^120 = 0.048).
+per-batch miss rate (≈0.28 over up to 7 batches of (1−r)^120 = 0.046).
 Paper updated: tab:synthcurve (20/20 + caption), "On the floor" paragraph
 (gate-accuracy narrative re-derived from the 20-seed data). Cost: ~$3-8 Azure,
 ~2.5 h wall (mini+large chained).
@@ -1050,8 +1050,8 @@ give the material winner on cap+unequal-material states (truth) or a draw (rule-
 
 | N (games) | mini rule-blind | large rule-blind | identifiability floor (1−r)^N |
 |-----------|-----------------|------------------|-------------------------------|
-| 40  | **6/6 = 1.000** | **6/6 = 1.000** | 0.363 |
-| 120 | **6/6 = 1.000** | **6/6 = 1.000** | 0.048 |
+| 40  | **6/6 = 1.000** | **6/6 = 1.000** | 0.358 |
+| 120 | **6/6 = 1.000** | **6/6 = 1.000** | 0.046 |
 | 200 | **6/6 = 1.000** | **6/6 = 1.000** | 0.006 |
 
 The rule-blind rate is ≈1.0 across N for BOTH model sizes, **far above** the
@@ -1130,7 +1130,7 @@ bound play_cost ≥ 0.086 (seed-clustered 95%).
 **Material-at-cap rarity, two measured rates** (3000 random games, cap=100):
 cap reached (both generals alive) = 5.2%; **material-terminal rarity** (the rule
 decides the game; used by the danger law) = **2.5%**. (Corrects the earlier loose
-"~1%" figure — the law's r=0.025 is the material-terminal rate.)
+"~1%" figure — the law's r=0.0253 (76/3000) is the material-terminal rate.)
 
 **play_cost mechanism** (`scripts/play_cost_reach.py`, MCTS 300 sims, 40 games):
 P(reach cap) competent vs random by cap — 30: 0.200/0.375; 60: 0.200/0.200;
@@ -1221,7 +1221,7 @@ The Claim A instrument flips the opponent type **only at final-round states**
 |--------|-------|
 | random reaches final round | 0.00000 |
 | instrument inference mismatches on random sample | **0 / 8156** (passes the gate) |
-| fair baseline (truth vs truth) winrate | 0.500 [0.472, 0.528] (all draws) |
+| fair baseline (truth vs truth) winrate | 0.500 exact — 1200/1200 draws (deterministic by the Beacon exhaustion proof; a sampling CI is not applicable) |
 | instrument winrate vs truth | **0.000 [0.000, 0.003]**, net −1200/1200 |
 
 The instrument passes the inference gate perfectly yet loses every game — a
@@ -1598,13 +1598,13 @@ precisely once and sweep rarity cheaply.
 
 | cap | rarity | (1−r)^40 | danger@20 | danger@40 | danger@80 |
 |----:|-------:|---------:|----------:|----------:|----------:|
-|  25 | 0.337  | 0.0000   | 0.000 | 0.000 | 0.000 |
-|  40 | 0.208  | 0.0001   | 0.001 | 0.000 | 0.000 |
-|  60 | 0.107  | 0.0107   | 0.012 | 0.001 | 0.000 |
-|  80 | 0.056  | 0.0997   | 0.038 | 0.012 | 0.001 |
-| 100 | 0.025  | 0.3583   | 0.072 | 0.043 | 0.015 |
-| 120 | 0.011  | 0.6339   | 0.096 | 0.076 | 0.048 |
-| 140 | 0.007  | 0.7652   | 0.105 | 0.092 | 0.070 |
+|  25 | 0.3367 | 0.0000   | 0.000 | 0.000 | 0.000 |
+|  40 | 0.2080 | 0.0001   | 0.001 | 0.000 | 0.000 |
+|  60 | 0.1073 | 0.0107   | 0.012 | 0.001 | 0.000 |
+|  80 | 0.0560 | 0.0997   | 0.038 | 0.012 | 0.001 |
+| 100 | 0.0253 | 0.3583   | 0.072 | 0.043 | 0.015 |
+| 120 | 0.0113 | 0.6339   | 0.096 | 0.076 | 0.048 |
+| 140 | 0.0067 | 0.7652   | 0.105 | 0.092 | 0.070 |
 
 **Result (threshold law, not an inverted-U).** Because play_cost is ~constant,
 danger is ≈0 while the rule is common enough for an N-trajectory gate to catch it
