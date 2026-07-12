@@ -1,4 +1,4 @@
-\begin{thebibliography}{16}
+\begin{thebibliography}{21}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -11,6 +11,23 @@ Javier Aguilar~Mart\'in.
   prediction-accuracy in {LLM}-synthesized code world models, 2026.
 \newblock Companion paper (paper 1). Preprint; repository:
   \url{https://github.com/JaviMaligno/code-world-models}.
+
+\bibitem[Alshiekh et~al.(2018)Alshiekh, Bloem, Ehlers, K{\"o}nighofer, Niekum,
+  and Topcu]{alshiekh2018shielding}
+Mohammed Alshiekh, Roderick Bloem, R{\"u}diger Ehlers, Bettina K{\"o}nighofer,
+  Scott Niekum, and Ufuk Topcu.
+\newblock Safe reinforcement learning via shielding.
+\newblock In \emph{Proceedings of the Thirty-Second {AAAI} Conference on
+  Artificial Intelligence (AAAI)}, pages 2669--2678, 2018.
+
+\bibitem[Annpureddy et~al.(2011)Annpureddy, Liu, Fainekos, and
+  Sankaranarayanan]{annpureddy2011staliro}
+Yashwanth Annpureddy, Che Liu, Georgios Fainekos, and Sriram Sankaranarayanan.
+\newblock {S-TaLiRo}: A tool for temporal logic falsification for hybrid
+  systems.
+\newblock In \emph{Tools and Algorithms for the Construction and Analysis of
+  Systems (TACAS)}, volume 6605 of \emph{Lecture Notes in Computer Science},
+  pages 254--257. Springer, 2011.
 
 \bibitem[Bemporad and Morari(1999)]{bemporad1999control}
 Alberto Bemporad and Manfred Morari.
@@ -31,12 +48,29 @@ Koen Claessen and John Hughes.
 \newblock In \emph{Proceedings of the Fifth {ACM} {SIGPLAN} International
   Conference on Functional Programming (ICFP)}, pages 268--279, 2000.
 
+\bibitem[Corso et~al.(2021)Corso, Moss, Koren, Lee, and
+  Kochenderfer]{corso2021survey}
+Anthony Corso, Robert~J. Moss, Mark Koren, Ritchie Lee, and Mykel~J.
+  Kochenderfer.
+\newblock A survey of algorithms for black-box safety validation of
+  cyber-physical systems.
+\newblock \emph{Journal of Artificial Intelligence Research}, 72:\penalty0
+  377--428, 2021.
+
 \bibitem[Coulom(2006)]{coulom2006mcts}
 R{\'e}mi Coulom.
 \newblock Efficient selectivity and backup operators in monte-carlo tree
   search.
 \newblock In \emph{Computers and Games (CG 2006)}, volume 4630 of \emph{Lecture
   Notes in Computer Science}, pages 72--83. Springer, 2006.
+
+\bibitem[Fazeli et~al.(2017)Fazeli, Kolbert, Tedrake, and
+  Rodriguez]{fazeli2017contact}
+Nima Fazeli, Roman Kolbert, Russ Tedrake, and Alberto Rodriguez.
+\newblock Parameter and contact force estimation of planar rigid-bodies
+  undergoing frictional contact.
+\newblock \emph{The International Journal of Robotics Research}, 36\penalty0
+  (13--14):\penalty0 1437--1454, 2017.
 
 \bibitem[Gao et~al.(2023)Gao, Madaan, Zhou, Alon, Liu, Yang, Callan, and
   Neubig]{gao2023pal}
@@ -110,6 +144,11 @@ Simone Paoletti, Aleksandar~Lj. Juloski, Giancarlo Ferrari-Trecate, and Ren\'e
 \newblock Identification of hybrid systems: A tutorial.
 \newblock \emph{European Journal of Control}, 13\penalty0 (2-3):\penalty0
   242--260, 2007.
+
+\bibitem[Rawlings et~al.(2017)Rawlings, Mayne, and Diehl]{rawlings2017mpc}
+James~B. Rawlings, David~Q. Mayne, and Moritz~M. Diehl.
+\newblock \emph{Model Predictive Control: Theory, Computation, and Design}.
+\newblock Nob Hill Publishing, 2nd edition, 2017.
 
 \bibitem[Rubinstein and Kroese(2017)]{rubinstein2017montecarlo}
 Reuven~Y. Rubinstein and Dirk~P. Kroese.
