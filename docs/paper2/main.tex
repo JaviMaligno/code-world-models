@@ -125,11 +125,11 @@ The raw $J$ reported in the tables (e.g.\ $J_\mathrm{truth} = 17.77$) is this no
 
 \begin{corollary}[play\_cost saturation]
 \label{cor:playcost}
-With $\mathrm{play\_cost} = |J(f) - J(\hat f)| / (J_{\mathrm{truth}} - J_{\mathrm{rand}})$ as defined in Section~\ref{sec:planner}, Proposition~\ref{prop:playcost} in raw units ($|J(f) - J(\hat f)| \leq \mu_{\mathrm{query}}(E)\,(J_{\max} - J_{\min})$) gives
+With $|\mathrm{play\_cost}| = |J(f) - J(\hat f)| / (J_{\mathrm{truth}} - J_{\mathrm{rand}})$, play\_cost as defined (signed) in Section~\ref{sec:planner}, Proposition~\ref{prop:playcost} in raw units ($|J(f) - J(\hat f)| \leq \mu_{\mathrm{query}}(E)\,(J_{\max} - J_{\min})$) gives
 \[
   \mathrm{play\_cost} \;\leq\; \mu_{\mathrm{query}}(E)\,\frac{J_{\max} - J_{\min}}{J_{\mathrm{truth}} - J_{\mathrm{rand}}},
 \]
-so $\mathrm{play\_cost} \approx \mu_{\mathrm{query}}(E)$ exactly when $J_{\mathrm{rand}} \approx J_{\min}$ and $J_{\mathrm{truth}} \approx J_{\max}$ --- the random policy near the reward floor, the truth planner near the ceiling. Both instruments are in this regime: on the cart $J_{\mathrm{rand}} = 0.53$ against a pinned $J_{\mathrm{blind}} \approx 0$ and $J_{\mathrm{truth}} = 17.77$; on the pendulum $J_{\mathrm{rand}} = 0.06$ and $J_{\mathrm{truth}} = 20.08$. The blind planner queries the wall region in every episode, so $\mu_{\mathrm{query}}(E) \approx 1$ and the normalized bound is saturated --- $\mathrm{play\_cost} \approx 1$, as observed in Sections~\ref{sec:mechanism}--\ref{sec:axes}.
+so the bound reads $\mathrm{play\_cost} \lesssim \mu_{\mathrm{query}}(E)$ exactly when $J_{\mathrm{rand}} \approx J_{\min}$ and $J_{\mathrm{truth}} \approx J_{\max}$ --- the random policy near the reward floor, the truth planner near the ceiling. Both instruments are in this regime: on the cart $J_{\mathrm{rand}} = 0.53$ against a pinned $J_{\mathrm{blind}} \approx 0$ and $J_{\mathrm{truth}} = 17.77$; on the pendulum $J_{\mathrm{rand}} = 0.06$ and $J_{\mathrm{truth}} = 20.08$. The blind planner queries the wall region in every episode, so $\mu_{\mathrm{query}}(E) \approx 1$ and the normalized bound is saturated --- $\mathrm{play\_cost} \approx 1$, as observed in Sections~\ref{sec:mechanism}--\ref{sec:axes}.
 \end{corollary}
 
 \paragraph{What does not transfer.} The companion paper's coverage certificates enumerate finite information-set spaces. Continuous state spaces admit no such enumeration; covering-number analogues under Lipschitz assumptions are left open (Section~\ref{sec:limitations}).

@@ -82,11 +82,11 @@ Notation: a verification gate draws N i.i.d. rollouts from the gate policy ρ (u
 
 The raw J reported in the tables (e.g. J_truth = 17.77) is this normalized quantity rescaled by (J_max − J_min), so the bound is a statement about the normalized return. The paper's reported play_cost, however, divides by (J_truth − J_rand) (§2.2), *not* by (J_max − J_min); the following corollary states the relationship rather than silently identifying the two.
 
-**Corollary (play_cost saturation).** With play_cost = |J(f) − J(f̂)| / (J_truth − J_rand) as defined in §2.2, Proposition 3 in raw units (|J(f) − J(f̂)| ≤ μ_query(E)·(J_max − J_min)) gives
+**Corollary (play_cost saturation).** With |play_cost| = |J(f) − J(f̂)| / (J_truth − J_rand), play_cost as defined (signed) in §2.2, Proposition 3 in raw units (|J(f) − J(f̂)| ≤ μ_query(E)·(J_max − J_min)) gives
 
     play_cost ≤ μ_query(E) · (J_max − J_min) / (J_truth − J_rand),
 
-so play_cost ≈ μ_query(E) exactly when J_rand ≈ J_min and J_truth ≈ J_max — the random policy near the reward floor, the truth planner near the ceiling. Both instruments are in this regime: on the cart J_rand = 0.53 against a pinned J_blind ≈ 0 and J_truth = 17.77; on the pendulum J_rand = 0.06 and J_truth = 20.08. The blind planner queries the wall region in every episode, so μ_query(E) ≈ 1 and the normalized bound is saturated — play_cost ≈ 1, as observed in §4–§5.
+so the bound reads play_cost ≲ μ_query(E) exactly when J_rand ≈ J_min and J_truth ≈ J_max — the random policy near the reward floor, the truth planner near the ceiling. Both instruments are in this regime: on the cart J_rand = 0.53 against a pinned J_blind ≈ 0 and J_truth = 17.77; on the pendulum J_rand = 0.06 and J_truth = 20.08. The blind planner queries the wall region in every episode, so μ_query(E) ≈ 1 and the normalized bound is saturated — play_cost ≈ 1, as observed in §4–§5.
 
 **What does not transfer.** Paper 1's coverage certificates enumerate finite information-set spaces. Continuous state spaces admit no such enumeration; covering-number analogues under Lipschitz assumptions are left open (§10).
 
