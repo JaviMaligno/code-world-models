@@ -1,5 +1,42 @@
 # Experiments Log
 
+## Budget-matched synthesized-CWM play cost, with CIs — codex #1 (2026-07-07/12)
+
+Closes the central pre-submit gap: the synthesized play evidence (Panel B) was
+range-only corroboration; it is now a budget-matched, CI'd replication of Panel A
+run end-to-end through the actual synthesis pipeline.
+
+**Setup.** `scripts/play_cost_synth_ci.py mini --seeds 20 --games 120 --sims 600`
+(gate N=40), GPT-5.4-mini (Azure). Per seed, per arm ∈ {incomplete, complete}:
+draw 40 gate trajectories on the TRUE game (army5x5a + material-at-cap; the sample
+doubles as the gate, no resampling, as deployed), synthesize + refine to gate 1.0,
+and if the gate passes play the synthesized CWM (MPC/MCTS) vs truth for 120 games
+at 600 sims. Paired fair baseline (truth-vs-truth) on the same seeds. Logs
+`wall_in_sample` (identifiability event: did the gate sample contain a
+material-at-cap terminal?). Pooled Wilson per arm + seed-clustered paired-t
+play_cost (fair − arm), seed as the unit. Crash-safe: per-seed checkpoint +
+resume + API retry (the run spanned several days across machine-sleep cycles).
+
+**Result** (`results/play_cost_synth_mini.json`, log `results/play_cost_synth_run.log`):
+
+| arm | gate-passing | pooled winrate [Wilson 95%] | play_cost [seed-clustered 95%] |
+|-----|-----|-----|-----|
+| incomplete | 9/20 (all wall-absent) | 0.345 [0.317, 0.374] | **0.154** [0.135, 0.173] (excl. 0) |
+| complete | 20/20 | 0.471 [0.451, 0.491] | 0.024 [0.000, 0.047] |
+
+Fair baseline mean 0.495. Key structure — **gate-pass ⟺ wall-absent**: all 9
+gate-passing incomplete seeds are wall-absent; 0/10 wall-present incomplete seeds
+reach gate 1.0 (they stall at 0.832–0.999, the wall-region transitions being
+inexplicable to a wall-less program). When the incomplete CWM does pass, it loses:
+per-seed play_cost 0.11–0.19, all 9 positive. The complete-rules control plays at
+parity. This is the danger law's sampling-miss event made concrete, measured
+through synthesis rather than a hand-written instrument — arguably stronger than
+Panel A because the gate itself does the rejecting when the rule is sampled.
+
+**Paper.** Panel B (§3.3, Table tab:panelB) rewritten from "ranges only,
+corroboration" to this CI'd result; abstract line updated from "the synthesized
+runs corroborate the direction" to the end-to-end CI'd replication.
+
 ## PAPER 2 — ε-sensitivity sweep: the tolerance axis is orthogonal to the mode hole (2026-07-09)
 
 The gate's tolerance ε is a knob the deployer sets, and the paper's central

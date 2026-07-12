@@ -36,7 +36,7 @@
 \begin{abstract}
 Large language models (LLMs) can synthesize the rules of a game as executable code --- a \emph{Code World Model} (CWM) --- which a classical planner then searches over. The synthesized model is typically accepted when it reaches high \emph{transition accuracy} on sampled trajectories. We argue that this acceptance criterion is the wrong notion of adequacy for planning.
 
-Our perfect-information existence results are on LLM-synthesized CWMs. We isolate the precise causal magnitude with a hand-instrumented agent that is budget-matched and play-equivalent to the incomplete synthesized CWM; the synthesized runs corroborate the direction. Our imperfect-information results pair an LLM-synthesis pipeline validation (Kuhn poker) with hand-instrumented witnesses that isolate the belief-function failure.
+Our perfect-information existence results are on LLM-synthesized CWMs. We isolate the precise causal magnitude with a hand-instrumented agent that is budget-matched and play-equivalent to the incomplete synthesized CWM, and replicate it end-to-end through the actual synthesis pipeline at the same budget, with confidence intervals (the synthesized incomplete CWM passes the transition gate only when the rule is absent from its sample, and then loses at play). Our imperfect-information results pair an LLM-synthesis pipeline validation (Kuhn poker) with hand-instrumented witnesses that isolate the belief-function failure.
 
 We find four things. (1) An LLM-synthesized CWM can pass a sampling gate at 100\% transition accuracy and be $\geq 98\%$ state-accurate on the distribution the planner actually visits, yet lose systematically at play --- because the less than 1\% it gets wrong is exactly the pivotal dynamics; the play cost of the omitted rule, isolated with the play-equivalent instrument, is $0.091$ (95\% CIs separated; seed-clustered 95\% CI $[0.065, 0.117]$ over 20 seeds, $n=4800$). We call this the \emph{verified-vs-correct gap}. (2) The harm from \emph{sampling-gate blindness} follows a quantitative law, $\mathrm{danger} = \mathrm{play\_cost} \times (1 - \mathrm{rarity})^N$, where $\mathrm{rarity}$ is the probability a random play-through triggers the omitted rule and $N$ is the gate size (the number of sampled play-throughs the gate checks). This law isolates one channel --- the gate failing to \emph{observe} a rule; it does not model the distinct, empirical synthesis-residual channel in which the rule is present in the sample yet the LLM still fails to encode it (finding (3)). The $(1 - \mathrm{rarity})^N$ gate-miss factor is \emph{proven exact} (i.i.d.\ Bernoulli); $\mathrm{play\_cost}$ is measured empirically --- with a provable upper bound (the planner's query-hit mass of the error region), a witness-certified lower bound, and an exact, provable value ($\tfrac12$) on the Beacon witness. This law predicts when sampling verification is blind: harm is negligible while the rule is common enough for the gate to catch it, rises through a threshold as the rule becomes rare, and saturates at the full $\mathrm{play\_cost}$ once it almost always escapes.
 
@@ -338,7 +338,7 @@ The gate-passing-but-rule-blind seeds correspond to the event that the rule is \
 
 The divergence region (ply-cap states with unequal material) is less than 1\% of visited states, and symmetric MCTS self-play tends toward equal material, so the states where the rule-blind CWM is wrong are barely sampled --- they are too small a fraction of visited states to move the aggregate state-accuracy number.
 
-\paragraph{Play performance is the decision-relevant lens.} We report play in two clearly separated panels: a budget-matched, instrumented, CI'd headline (Panel A) and an LLM-synthesized corroboration (Panel B). We deliberately do not pool instrumented and synthesized evidence into one number.
+\paragraph{Play performance is the decision-relevant lens.} We report play in two clearly separated panels: a budget-matched, instrumented, CI'd headline (Panel A) and a budget-matched, CI'd \emph{synthesized}-pipeline replication (Panel B). We deliberately do not pool instrumented and synthesized evidence into one number.
 
 \paragraph{Panel A --- budget-matched, instrumented, CPU-only (the headline causal claim).} Identical budget across arms ($n = 2400$ games per arm --- 20 seeds $\times$ 120 games per seed per arm, 4800 games in total --- at 600 simulations), arena refereed by the true game (army5x5a + material-at-cap), measured via \texttt{scripts/play\_cost\_ci.py} / \texttt{scripts/play\_cost\_blind3.py} (Table~\ref{tab:panelA}, visualized in Figure~\ref{fig:headline}):
 
@@ -384,26 +384,27 @@ paired difference (play cost) & \textbf{0.091} & 0.055 & 0.000 & 0.192 \\
 \label{tab:perseed}
 \end{table}
 
-The rule-blind agent is hand-written base army5x5a. Two distinct equivalences are at work and we keep them separate. (i) Base-vs-truth isolates the \emph{rule's} play cost \emph{by construction}: both arms are exact hand-written games that differ only in the material-at-cap rule, so the contrast is exact at any budget without invoking the LLM. (ii) The bridge to the synthesized pipeline is \emph{empirical}, not proven: base is play-equivalent to the incomplete synthesized CWM only up to the measured gap\_cwm $\approx 0$ (a tiny residual --- gap\_max $0.016$ on one seed, Section~\ref{sec:gap}), not by a proof of functional equivalence outside the rare region. This is why the headline causal claim rests on an instrumented, budget-matched, CI'd comparison rather than on the synthesized runs, with the synthesized runs corroborating the direction (Panel B).
+The rule-blind agent is hand-written base army5x5a. Two distinct equivalences are at work and we keep them separate. (i) Base-vs-truth isolates the \emph{rule's} play cost \emph{by construction}: both arms are exact hand-written games that differ only in the material-at-cap rule, so the contrast is exact at any budget without invoking the LLM. (ii) The bridge to the synthesized pipeline is \emph{empirical}, not proven: base is play-equivalent to the incomplete synthesized CWM only up to the measured gap\_cwm $\approx 0$ (a tiny residual --- gap\_max $0.016$ on one seed, Section~\ref{sec:gap}), not by a proof of functional equivalence outside the rare region. This is why the headline causal claim rests on an instrumented, budget-matched, CI'd comparison rather than on the synthesized runs; Panel B then shows the \emph{synthesized} pipeline reproduces the same play cost with its own confidence intervals, at Panel A's budget.
 
-\paragraph{Panel B --- LLM-synthesized corroboration (Azure, smaller per-seed budget, ranges only).} Reported as ranges, \emph{not} budget-matched, and clearly labeled as corroboration rather than the headline (Table~\ref{tab:panelB}):
+\paragraph{Panel B --- LLM-synthesized pipeline, at Panel A's budget, with CIs.} We ran the actual synthesis pipeline (GPT-5.4-mini) at Panel A's budget --- 20 seeds, 120 games/seed, 600 simulations (\texttt{scripts/play\_cost\_synth\_ci.py}) --- synthesizing an incomplete-rules and a complete-rules CWM per seed against the same paired fair baseline. Unlike the hand-written instrument, a \emph{synthesized} incomplete CWM is rule-blind only when the material-at-cap rule is absent from its gate sample; when the rule is present the wall-region transitions are inexplicable to a wall-less program, so the gate cannot reach $1.0$. This is exactly what we observe, and it is the identifiability event made concrete (Table~\ref{tab:panelB}):
 
 \begin{table}[ht]
 \centering
 \small
-\begin{tabular}{lc}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lccc}
 \toprule
-Synthesized CWM (vs truth) & win rate (range across seeds) \\
+Synthesized CWM & gate-passing & win rate [Wilson 95\%] & play\_cost [95\% CI] \\
 \midrule
-incomplete-rules CWM & 0.28--0.37 \\
-complete-rules CWM   & 0.38--0.45 \\
+incomplete-rules & 9/20 (all rule-absent) & 0.345 [0.317, 0.374] & \textbf{0.154} [0.135, 0.173] \\
+complete-rules   & 20/20                  & 0.471 [0.451, 0.491] & 0.024 [0.000, 0.047] \\
 \bottomrule
 \end{tabular}
-\caption{Panel B: LLM-synthesized corroboration (ranges, not pooled with Panel A).}
+\caption{Panel B: the synthesized pipeline reproduces the play cost. The incomplete-rules CWM passes the gate only on rule-absent samples (9/9 gate-passing seeds; 0/10 rule-present seeds reach gate 1.0, stalling at $0.83$--$0.999$), and when it does it loses --- play\_cost $0.154$, seed-clustered 95\% CI excluding zero. The complete-rules CWM plays at parity.}
 \label{tab:panelB}
 \end{table}
 
-These synthesized runs use a smaller per-seed budget (30 games) and are reported as ranges; they corroborate Panel A's direction (incomplete $<$ complete) but are not the basis of the causal claim.
+The synthesized incomplete CWM, whenever it passes the gate, loses at play with $\mathrm{play\_cost} = 0.154$ ($[0.135, 0.173]$, seed-clustered over the 9 gate-passing seeds, excluding zero; every one of the 9 is positive, $0.11$--$0.19$), against a fair baseline of $0.495$ --- the same effect as the hand-instrumented Panel A ($0.091$--$0.131$ depending on sample), now measured end-to-end through synthesis. The gate-pass structure is itself the finding: gate-passing coincides almost perfectly with rule-absence (9/9), so the danger is precisely the sampling-miss event of the danger law (Section~\ref{sec:danger-law}), and when the rule \emph{is} sampled the gate rejects the wall-less program rather than certifying it. The complete-rules control plays at parity ($\mathrm{play\_cost}\ 0.024$).
 
 \paragraph{Summary.} A world model can pass transition-accuracy verification (gate 1.0), be $\geq 98\%$ state-accurate on its own search distribution and exactly correct (gap\_truth = 0) on the truth-planner distribution, and yet lose systematically at play --- because the less than 1\% it gets wrong is exactly the pivotal tactic. Transition and state accuracy are the wrong adequacy criteria for planning; play performance is the right one.
 

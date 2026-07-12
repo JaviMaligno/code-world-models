@@ -1,0 +1,69 @@
+resuming: 1 seeds already complete ([0])
+resuming: 1 seeds already complete ([0])
+[fair seed=1] winrate=0.529
+[incomplete seed=1] wall_in_sample=False gate=1.000 iters=0 winrate=0.3375 play_cost=0.19166666666666665
+[complete seed=1] wall_in_sample=False gate=1.000 iters=0 winrate=0.5291666666666667 play_cost=0.0
+[fair seed=2] winrate=0.471
+[incomplete seed=2] wall_in_sample=True gate=0.998 iters=5 winrate=n/a play_cost=n/a
+[complete seed=2] wall_in_sample=True gate=1.000 iters=0 winrate=0.49583333333333335 play_cost=-0.025000000000000022
+[fair seed=3] winrate=0.529
+[incomplete seed=3] wall_in_sample=False gate=1.000 iters=0 winrate=0.35833333333333334 play_cost=0.17083333333333334
+[complete seed=3] wall_in_sample=False gate=1.000 iters=0 winrate=0.3875 play_cost=0.14166666666666666
+[fair seed=4] winrate=0.525
+[incomplete seed=4] wall_in_sample=False gate=1.000 iters=0 winrate=0.3541666666666667 play_cost=0.17083333333333334
+[complete seed=4] wall_in_sample=False gate=1.000 iters=0 winrate=0.5 play_cost=0.025000000000000022
+[fair seed=5] winrate=0.467
+[incomplete seed=5] wall_in_sample=False gate=1.000 iters=0 winrate=0.35833333333333334 play_cost=0.10833333333333334
+[complete seed=5] wall_in_sample=False gate=1.000 iters=0 winrate=0.42083333333333334 play_cost=0.04583333333333334
+[fair seed=6] winrate=0.525
+resuming: 6 seeds already complete ([0, 1, 2, 3, 4, 5])
+[fair seed=6] winrate=0.525
+[incomplete seed=6] wall_in_sample=False gate=1.000 iters=2 winrate=0.3625 play_cost=0.16250000000000003
+[complete seed=6] wall_in_sample=False gate=1.000 iters=2 winrate=0.525 play_cost=0.0
+[fair seed=7] winrate=0.479
+[incomplete seed=7] wall_in_sample=False gate=1.000 iters=0 winrate=0.3458333333333333 play_cost=0.13333333333333336
+[complete seed=7] wall_in_sample=False gate=1.000 iters=3 winrate=0.5458333333333333 play_cost=-0.0666666666666666
+[fair seed=8] winrate=0.450
+[incomplete seed=8] wall_in_sample=False gate=1.000 iters=0 winrate=0.3 play_cost=0.15000000000000002
+[complete seed=8] wall_in_sample=False gate=1.000 iters=0 winrate=0.4375 play_cost=0.012500000000000011
+[fair seed=9] winrate=0.521
+[incomplete seed=9] wall_in_sample=True gate=0.999 iters=5 winrate=n/a play_cost=n/a
+[complete seed=9] wall_in_sample=True gate=1.000 iters=0 winrate=0.43333333333333335 play_cost=0.08750000000000002
+[fair seed=10] winrate=0.529
+[incomplete seed=10] wall_in_sample=True gate=0.999 iters=5 winrate=n/a play_cost=n/a
+[complete seed=10] wall_in_sample=True gate=1.000 iters=0 winrate=0.4583333333333333 play_cost=0.07083333333333336
+[fair seed=11] winrate=0.533
+[incomplete seed=11] wall_in_sample=False gate=0.808 iters=5 winrate=n/a play_cost=n/a
+[complete seed=11] wall_in_sample=False gate=1.000 iters=0 winrate=0.5458333333333333 play_cost=-0.012499999999999956
+[fair seed=12] winrate=0.446
+[incomplete seed=12] wall_in_sample=True gate=0.999 iters=5 winrate=n/a play_cost=n/a
+[complete seed=12] wall_in_sample=True gate=1.000 iters=0 winrate=0.42916666666666664 play_cost=0.01666666666666672
+[fair seed=13] winrate=0.467
+[incomplete seed=13] wall_in_sample=False gate=1.000 iters=1 winrate=0.32916666666666666 play_cost=0.1375
+[complete seed=13] wall_in_sample=False gate=1.000 iters=0 winrate=0.42083333333333334 play_cost=0.04583333333333334
+[fair seed=14] winrate=0.517
+resuming: 14 seeds already complete ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
+[fair seed=14] winrate=0.517
+[incomplete seed=14] wall_in_sample=False gate=1.000 iters=0 winrate=0.35833333333333334 play_cost=0.15833333333333338
+[complete seed=14] wall_in_sample=False gate=1.000 iters=0 winrate=0.49166666666666664 play_cost=0.025000000000000078
+[fair seed=15] winrate=0.542
+[incomplete seed=15] wall_in_sample=True gate=0.999 iters=5 winrate=n/a play_cost=n/a
+[complete seed=15] wall_in_sample=True gate=1.000 iters=0 winrate=0.4791666666666667 play_cost=0.062499999999999944
+[fair seed=16] winrate=0.429
+[incomplete seed=16] wall_in_sample=True gate=0.832 iters=5 winrate=n/a play_cost=n/a
+[complete seed=16] wall_in_sample=True gate=1.000 iters=0 winrate=0.4791666666666667 play_cost=-0.050000000000000044
+[fair seed=17] winrate=0.467
+[incomplete seed=17] wall_in_sample=True gate=0.999 iters=5 winrate=n/a play_cost=n/a
+resuming: 17 seeds already complete ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
+[fair seed=17] winrate=0.467
+[incomplete seed=17] wall_in_sample=True gate=0.999 iters=5 winrate=n/a play_cost=n/a
+[complete seed=17] wall_in_sample=True gate=1.000 iters=0 winrate=0.4875 play_cost=-0.020833333333333315
+[fair seed=18] winrate=0.475
+[incomplete seed=18] wall_in_sample=True gate=0.999 iters=5 winrate=n/a play_cost=n/a
+[complete seed=18] wall_in_sample=True gate=1.000 iters=0 winrate=0.4375 play_cost=0.03749999999999998
+[fair seed=19] winrate=0.517
+[incomplete seed=19] wall_in_sample=True gate=0.999 iters=5 winrate=n/a play_cost=n/a
+[complete seed=19] wall_in_sample=True gate=1.000 iters=0 winrate=0.42916666666666664 play_cost=0.08750000000000008
+=> incomplete: 9/20 gate-passing (9 wall-absent); pooled winrate 0.345 [0.31715247863021206, 0.37376176566526426]; play_cost [0.13472576266080583, 0.17268164474660164]
+=> complete: 20/20 gate-passing (10 wall-absent); pooled winrate 0.471 [0.4511332678691653, 0.4910426225888418]; play_cost [9.3510174491232e-05, 0.047406489825508796]
+ALL_20_DONE after 1 attempts
