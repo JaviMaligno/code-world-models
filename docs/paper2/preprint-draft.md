@@ -141,23 +141,23 @@ Threshold law, knob-invariant exploitation (pinned at the stop in every episode,
 
 ### 4.2 A second planner family: play_cost is planner-dependent, as the bound prescribes
 
-Proposition 3 predicts two branches: a blind model can change behavior only to the extent that the planner queries its disagreement region. Random-shooting MPC's constant candidates reach the distant phantom plateau in imagination and produce `play_cost ≈ 1`. We therefore repeated the full 11-knob grid with a second base planner, CEM (`scripts/continuous_cem.py`; horizon 40, 5 iterations, 64 samples, elite fraction 0.125, minimum standard deviation 0.05; one fixed setting across both instruments). The crossing columns below are the fraction of sampled imagined trajectories that cross the omitted boundary, measured for CEM throughout each blind-model episode and for MPC from paired initial states.
+Proposition 3 predicts two branches: a blind model can change behavior only to the extent that the planner queries its disagreement region. Random-shooting MPC's constant candidates reach the distant phantom plateau in imagination and produce `play_cost ≈ 1`. We therefore repeated the full 11-knob grid with a second base planner, CEM (`scripts/continuous_cem.py`; horizon 40, 5 iterations, 64 samples, elite fraction 0.125, minimum standard deviation 0.05; one fixed setting across both instruments). The crossing columns below are the fraction of sampled imagined trajectories that cross the omitted boundary, measured for BOTH planners with one plan from the same paired initial state per episode seed (episode-accumulated CEM fractions, which tell the same story, are recorded in the results JSON).
 
 | instrument | knob | pc_blind MPC | pc_blind CEM | contact CEM | crossing CEM | crossing MPC |
 |---|---:|---:|---:|---:|---:|---:|
-| cart | 2.0 | 1.031 | 0.000 | 0.00 | 0.0010 | 0.3865 |
-| cart | 4.0 | 1.031 | 0.000 | 0.00 | 0.0001 | 0.2453 |
-| cart | 6.0 | 1.031 | 0.000 | 0.00 | 0.0000 | 0.1483 |
+| cart | 2.0 | 1.031 | 0.000 | 0.00 | 0.0309 | 0.3865 |
+| cart | 4.0 | 1.031 | 0.000 | 0.00 | 0.0055 | 0.2453 |
+| cart | 6.0 | 1.031 | 0.000 | 0.00 | 0.0003 | 0.1483 |
 | cart | 8.0 | 1.030 | 0.000 | 0.00 | 0.0000 | 0.0773 |
 | cart | 10.0 | 0.977 | 0.000 | 0.00 | 0.0000 | 0.0369 |
-| pendulum | 0.8 | 1.002 | 0.009 | 0.70 | 0.1092 | 0.6392 |
-| pendulum | 1.0 | 1.002 | 0.025 | 0.25 | 0.0703 | 0.5530 |
-| pendulum | 1.2 | 1.000 | −0.011 | 0.00 | 0.0345 | 0.4672 |
-| pendulum | 1.4 | 0.997 | −0.021 | 0.00 | 0.0162 | 0.3842 |
-| pendulum | 1.6 | 0.990 | −0.021 | 0.00 | 0.0085 | 0.3039 |
-| pendulum | 2.0 | 0.942 | 0.000 | 0.00 | 0.0029 | 0.2158 |
+| pendulum | 0.8 | 1.002 | 0.009 | 0.70 | 0.1150 | 0.6392 |
+| pendulum | 1.0 | 1.002 | 0.025 | 0.25 | 0.0483 | 0.5530 |
+| pendulum | 1.2 | 1.000 | −0.011 | 0.00 | 0.0164 | 0.4672 |
+| pendulum | 1.4 | 0.997 | −0.021 | 0.00 | 0.0053 | 0.3842 |
+| pendulum | 1.6 | 0.990 | −0.021 | 0.00 | 0.0013 | 0.3039 |
+| pendulum | 2.0 | 0.942 | 0.000 | 0.00 | 0.0002 | 0.2158 |
 
-CEM's blind-model play cost lies in [−0.0213, 0.0248] on every row, while its imagined crossing fraction is strictly below MPC's throughout. On the cart, truth- and blind-model CEM returns are identical and contact is zero everywhere. The nearest pendulum stops are an honest qualification: CEM contacts θ_stop=0.8 in 70% of episodes and θ_stop=1.0 in 25%, but does not enter MPC's pinned, below-random regime; contact is zero from θ_stop≥1.2. Contact is therefore not itself exploitation. This is the other measured branch of the bound: the same certified-blind model is a landmine whose consequence depends on the planner's query reach. It also operationalizes §2.3's first lesson — if search does not discover the phantom, it cannot optimize toward it.
+CEM's blind-model play cost lies in [−0.0213, 0.0248] on every row — and the seed-paired 95% t-interval includes zero on all 11 rows — while its imagined crossing fraction is strictly below MPC's throughout. On the cart, truth- and blind-model CEM returns are identical and contact is zero everywhere. The nearest pendulum stops are an honest qualification: CEM contacts θ_stop=0.8 in 70% of episodes and θ_stop=1.0 in 25%, but does not enter MPC's pinned, below-random regime; contact is zero from θ_stop≥1.2. Contact is therefore not itself exploitation. This is the other measured branch of the bound: the same certified-blind model is a landmine whose consequence depends on the planner's query reach. It also operationalizes §2.3's first lesson — if search does not discover the phantom, it cannot optimize toward it.
 
 Two caveats prevent the wrong conclusion. CEM's pendulum truth return varies from 15.36 to 16.46 (versus MPC's 20.08), consistent with local optima; the comparison is blind-CEM against truth-CEM, not a claim that CEM is globally optimal. And limited reach is not knowledge or mitigation: a planner that misses a phantom distant reward can also miss a real one. The result is for one fixed CEM configuration, not a hyperparameter sweep.
 

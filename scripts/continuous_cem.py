@@ -11,12 +11,15 @@ Run: PYTHONPATH=src python scripts/continuous_cem.py   (~30-60 min CPU)
 """
 import argparse
 import json
+import math
 import pathlib
 import random
+import statistics
 import time
 
 from cwm.continuous.envs import CartWall, PendulumStop, blind_of
 from cwm.continuous import cem, harness, mpc
+from cwm.law import t_crit_95
 
 ap = argparse.ArgumentParser(description=__doc__)
 ap.add_argument("--episodes", type=int, default=20)
@@ -44,6 +47,25 @@ def mpc_crossing_frac(model, state, rng, boundary, horizon=40,
     return crossed / total
 
 
+def paired_play_cost_ci(truth_returns, blind_returns, denom):
+    """Seed-paired t95 for normalized return loss.
+
+    The common aggregate denominator makes the interval center exactly equal
+    to the published ratio-of-means play_cost.
+    """
+    normalized = [(t - b) / denom for t, b in zip(truth_returns, blind_returns)]
+    mean = statistics.mean(normalized)
+    if len(normalized) < 2:
+        return {"per_seed": normalized, "mean": mean, "t95": None,
+                "excludes_zero": None}
+    sd = statistics.stdev(normalized)
+    se = sd / math.sqrt(len(normalized))
+    margin = t_crit_95(len(normalized) - 1) * se
+    return {"per_seed": normalized, "mean": mean, "sd": sd, "se": se,
+            "t95": [mean - margin, mean + margin],
+            "excludes_zero": mean - margin > 0 or mean + margin < 0}
+
+
 t0 = time.time()
 rows = []
 print(f"{'inst':>4} {'knob':>5} {'J_tru':>7} {'J_bli':>7} {'J_rnd':>6} "
@@ -54,28 +76,57 @@ for inst, knobs, mk in (
     for k in knobs:
         truth = mk(k)
         blind = blind_of(truth)
-        t, b, r, xm = [], [], [], []
+        t, b, r, xc, xm, per_seed = [], [], [], [], [], []
         for i in range(args.episodes):
             sd = args.seed + 1000 * i
-            t.append(cem.run_episode(truth, truth, seed=sd))
-            b.append(cem.run_episode(truth, blind, seed=sd, boundary=k))
-            r.append(harness.run_episode(truth, policy="random", seed=sd))
-            # MPC crossing diagnostic: one plan from the episode's start state
-            rng = random.Random(sd)
-            s0 = truth.initial_state(rng)
-            xm.append(mpc_crossing_frac(blind, s0, rng, k))
+            t_ep = cem.run_episode(truth, truth, seed=sd)
+            b_ep = cem.run_episode(truth, blind, seed=sd, boundary=k)
+            r_ep = harness.run_episode(truth, policy="random", seed=sd)
+            t.append(t_ep)
+            b.append(b_ep)
+            r.append(r_ep)
+
+            # Apples-to-apples crossing diagnostic: one plan for each planner
+            # from the same paired initial state, with each planner receiving
+            # the RNG state immediately after that initial-state draw.
+            cem_rng = random.Random(sd)
+            cem_s0 = truth.initial_state(cem_rng)
+            _, cem_cross = cem.plan_cem(blind, cem_s0, cem_rng, boundary=k)
+            mpc_rng = random.Random(sd)
+            mpc_s0 = truth.initial_state(mpc_rng)
+            assert cem_s0 == mpc_s0
+            mpc_cross = mpc_crossing_frac(blind, mpc_s0, mpc_rng, k)
+            xc.append(cem_cross)
+            xm.append(mpc_cross)
+            per_seed.append({
+                "seed": sd,
+                "j_truth_cem": t_ep.ret,
+                "j_blind_cem": b_ep.ret,
+                "j_random": r_ep.ret,
+                "blind_contact": b_ep.contact,
+                "crossing_frac_cem_initial": cem_cross,
+                "crossing_frac_mpc_initial": mpc_cross,
+                "crossing_frac_cem_episode": b_ep.crossing_frac,
+            })
         j_t, j_b = harness.mean_return(t), harness.mean_return(b)
         j_r = harness.mean_return(r)
         denom = j_t - j_r
+        ci = paired_play_cost_ci([e.ret for e in t], [e.ret for e in b], denom)
+        point = (j_t - j_b) / denom if denom > 0 else 0.0
+        assert math.isclose(point, ci["mean"], abs_tol=1e-12)
         row = {
             "instrument": inst, "knob": k,
             "j_truth_cem": j_t, "j_blind_cem": j_b, "j_random": j_r,
-            "play_cost_blind_cem": (j_t - j_b) / denom if denom > 0 else 0.0,
+            "play_cost_blind_cem": point,
+            "play_cost_blind_cem_paired": ci,
             "blind_contact_rate": sum(e.contact for e in b) / args.episodes,
-            "crossing_frac_cem_blind":
-                sum(e.crossing_frac for e in b) / args.episodes,
+            "crossing_scope": "paired_initial_state",
+            "crossing_frac_cem_blind": sum(xc) / len(xc),
             "crossing_frac_mpc_blind": sum(xm) / len(xm),
+            "crossing_frac_cem_episode_blind":
+                sum(e.crossing_frac for e in b) / args.episodes,
             "n_episodes": args.episodes,
+            "per_seed": per_seed,
         }
         rows.append(row)
         print(f"{inst:>4} {k:5.1f} {j_t:7.2f} {j_b:7.2f} {j_r:6.2f} "
