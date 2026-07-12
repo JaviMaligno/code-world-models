@@ -1,0 +1,157 @@
+{
+  "script": "continuous_cem.py",
+  "params": {
+    "episodes": 20,
+    "seed": 0,
+    "cart_walls": [
+      2.0,
+      4.0,
+      6.0,
+      8.0,
+      10.0
+    ],
+    "pend_stops": [
+      0.8,
+      1.0,
+      1.2,
+      1.4,
+      1.6,
+      2.0
+    ]
+  },
+  "rows": [
+    {
+      "instrument": "cart",
+      "knob": 2.0,
+      "j_truth_cem": 17.195452581115013,
+      "j_blind_cem": 17.195452581115013,
+      "j_random": 0.5343948890314776,
+      "play_cost_blind_cem": 0.0,
+      "blind_contact_rate": 0.0,
+      "crossing_frac_cem_blind": 0.0010058593749999998,
+      "crossing_frac_mpc_blind": 0.3864532019704433,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "cart",
+      "knob": 4.0,
+      "j_truth_cem": 17.195452581115013,
+      "j_blind_cem": 17.195452581115013,
+      "j_random": 0.5342723214987817,
+      "play_cost_blind_cem": 0.0,
+      "blind_contact_rate": 0.0,
+      "crossing_frac_cem_blind": 0.00012890625,
+      "crossing_frac_mpc_blind": 0.24532019704433497,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "cart",
+      "knob": 6.0,
+      "j_truth_cem": 17.195452581115013,
+      "j_blind_cem": 17.195452581115013,
+      "j_random": 0.5342835783318349,
+      "play_cost_blind_cem": 0.0,
+      "blind_contact_rate": 0.0,
+      "crossing_frac_cem_blind": 3.90625e-06,
+      "crossing_frac_mpc_blind": 0.14827586206896554,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "cart",
+      "knob": 8.0,
+      "j_truth_cem": 17.195452581115013,
+      "j_blind_cem": 17.195452581115013,
+      "j_random": 0.5343101236860892,
+      "play_cost_blind_cem": 0.0,
+      "blind_contact_rate": 0.0,
+      "crossing_frac_cem_blind": 0.0,
+      "crossing_frac_mpc_blind": 0.07733990147783251,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "cart",
+      "knob": 10.0,
+      "j_truth_cem": 17.195452581115013,
+      "j_blind_cem": 17.195452581115013,
+      "j_random": 0.5343101236860892,
+      "play_cost_blind_cem": 0.0,
+      "blind_contact_rate": 0.0,
+      "crossing_frac_cem_blind": 0.0,
+      "crossing_frac_mpc_blind": 0.03694581280788177,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "pend",
+      "knob": 0.8,
+      "j_truth_cem": 16.456803679970598,
+      "j_blind_cem": 16.306051917907325,
+      "j_random": 0.058383135595463966,
+      "play_cost_blind_cem": 0.009193065981893135,
+      "blind_contact_rate": 0.7,
+      "crossing_frac_cem_blind": 0.109232421875,
+      "crossing_frac_mpc_blind": 0.6391625615763548,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "pend",
+      "knob": 1.0,
+      "j_truth_cem": 16.28817939740349,
+      "j_blind_cem": 15.886091566305172,
+      "j_random": 0.059718037989956375,
+      "play_cost_blind_cem": 0.024776706934393433,
+      "blind_contact_rate": 0.25,
+      "crossing_frac_cem_blind": 0.07025390625,
+      "crossing_frac_mpc_blind": 0.5529556650246306,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "pend",
+      "knob": 1.2,
+      "j_truth_cem": 15.513479260477805,
+      "j_blind_cem": 15.682615717187877,
+      "j_random": 0.059043379303183,
+      "play_cost_blind_cem": -0.010944201264317976,
+      "blind_contact_rate": 0.0,
+      "crossing_frac_cem_blind": 0.034509765625,
+      "crossing_frac_mpc_blind": 0.4672413793103448,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "pend",
+      "knob": 1.4,
+      "j_truth_cem": 15.365219727292319,
+      "j_blind_cem": 15.682615717187877,
+      "j_random": 0.059043379303183,
+      "play_cost_blind_cem": -0.02073646498508146,
+      "blind_contact_rate": 0.0,
+      "crossing_frac_cem_blind": 0.016185546875,
+      "crossing_frac_mpc_blind": 0.3842364532019705,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "pend",
+      "knob": 1.6,
+      "j_truth_cem": 15.35604065098384,
+      "j_blind_cem": 15.682615717187877,
+      "j_random": 0.059043379303183,
+      "play_cost_blind_cem": -0.021348965447527835,
+      "blind_contact_rate": 0.0,
+      "crossing_frac_cem_blind": 0.00851171875,
+      "crossing_frac_mpc_blind": 0.30394088669950736,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "pend",
+      "knob": 2.0,
+      "j_truth_cem": 15.690374819455489,
+      "j_blind_cem": 15.682615717187877,
+      "j_random": 0.059043379303183,
+      "play_cost_blind_cem": 0.0004963814053408453,
+      "blind_contact_rate": 0.0,
+      "crossing_frac_cem_blind": 0.0029199218749999998,
+      "crossing_frac_mpc_blind": 0.21576354679802953,
+      "n_episodes": 20
+    }
+  ],
+  "elapsed_s": 1719.7
+}
