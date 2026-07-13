@@ -21,21 +21,37 @@ resume + API retry (the run spanned several days across machine-sleep cycles).
 
 | arm | gate-passing | pooled winrate [Wilson 95%] | play_cost [seed-clustered 95%] |
 |-----|-----|-----|-----|
-| incomplete | 9/20 (all wall-absent) | 0.345 [0.317, 0.374] | **0.154** [0.135, 0.173] (excl. 0) |
-| complete | 20/20 | 0.471 [0.451, 0.491] | 0.024 [0.000, 0.047] |
+| incomplete | 9/20 (n=1080) | 0.345 [0.317, 0.374] | **0.154** [0.135, 0.173] (excl. 0) |
+| complete | 20/20 (n=2400) | 0.471 [0.451, 0.491] | 0.024 [0.000, 0.047] (excl. 0) |
 
-Fair baseline mean 0.495. Key structure — **gate-pass ⟺ wall-absent**: all 9
-gate-passing incomplete seeds are wall-absent; 0/10 wall-present incomplete seeds
-reach gate 1.0 (they stall at 0.832–0.999, the wall-region transitions being
-inexplicable to a wall-less program). When the incomplete CWM does pass, it loses:
-per-seed play_cost 0.11–0.19, all 9 positive. The complete-rules control plays at
-parity. This is the danger law's sampling-miss event made concrete, measured
-through synthesis rather than a hand-written instrument — arguably stronger than
-Panel A because the gate itself does the rejecting when the rule is sampled.
+The play_cost is seed-paired; its relevant baseline is the paired fair mean over
+the 9 passing seeds (0.499), not the 20-seed global mean (0.495). Key structure —
+**material-terminal absence is necessary (not sufficient) for gate-pass**: all 9
+gate-passing incomplete seeds are material-terminal-absent; 0/10
+material-terminal-present incomplete seeds reach gate 1.0 (they stall at
+0.832–0.999, the material-region transitions being inexplicable to a program that
+omits the rule). Of the 10 material-terminal-absent seeds, 9 pass and 1 (seed 11)
+stalls at gate 0.808 — a *base-game* synthesis failure (LLM doesn't reproduce even
+the rule-free base game), distinct from all three danger-law channels (which
+concern the omitted rule). When the incomplete CWM does pass, it loses: per-seed
+play_cost 0.11–0.19, all 9 positive. The complete-rules control is near parity (a
+small residual deficit, 0.024, CI just excluding zero). This replicates Panel A's
+finding in direction and mechanism, measured through synthesis; the magnitude is
+*larger* (Panel B [0.135,0.173] disjoint from Panel A [0.065,0.117]), as expected
+since the synthesized program can carry imperfections beyond the omitted rule — so
+the end-to-end harm is at least as large as the rule's isolated cost.
 
 **Paper.** Panel B (§3.3, Table tab:panelB) rewritten from "ranges only,
 corroboration" to this CI'd result; abstract line updated from "the synthesized
-runs corroborate the direction" to the end-to-end CI'd replication.
+runs corroborate the direction" to the end-to-end CI'd confirmation.
+
+**Codex re-review (2026-07-13, resolved same day):** confirmed table matches JSON;
+flagged and we fixed — magnitude overclaim ("reproduces"/"same effect" → larger,
+disjoint CIs), the conditional baseline (0.499 not 0.495), "near parity" not
+"parity" for the complete control, seed-11 mislabel (base-game synthesis failure,
+NOT channel (c)), and "precisely the sampling-miss event" → necessary-not-sufficient.
+Added arena denominators and the 5-iteration refinement cap. No new experiment
+required; codex judged no blocking experiment outstanding.
 
 
 ## Editorial de-archaeology + proper-DAgger rerun + effective-dose measurement (2026-07-05/06)
