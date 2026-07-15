@@ -1,0 +1,57 @@
+=== USER ===
+Implement a deterministic 1D control world model as Python module-level
+functions (pure, no I/O, no globals, only the `math` standard-library module).
+
+State is a list [x, v] of two floats (position, velocity). Action is a float.
+
+Functions to implement EXACTLY these signatures:
+  def step(state: list, action: float) -> list   # next [x, v]
+  def reward(state: list) -> float               # reward of a state
+
+The integrator is FIXED and part of the contract. step() must compute, in
+exactly this order, with plain Python floats:
+  1. a = min(a_max, max(-a_max, action))         # clamp the action
+  2. v2 = v + (gain * a - drag * v) * dt
+  3. x2 = x + v2 * dt
+then apply any additional dynamics rules given below, and return [x2, v2].
+
+Physical constants:
+  dt = 0.1
+  gain = 3.0
+  drag = 0.3
+  a_max = 1.0
+
+Reward (a function of the state [x, v] alone):
+  left  = 0.3 / (1.0 + math.exp(-((-6.0 - x) / 0.5)))
+  right = 1.0 / (1.0 + math.exp(-((x - 12.0) / 0.5)))
+  reward = left + right
+
+The current implementation is below. It fails some transitions. Fix it so every transition matches to within 1e-09 in x, v and reward. Output only one ```python code block.
+
+CURRENT CODE:
+```python
+import math
+
+DT = 0.1
+GAIN = 3.0
+DRAG = 0.3
+A_MAX = 1.0
+
+
+def step(state: list, action: float) -> list:
+    x, v = state
+    a = min(A_MAX, max(-A_MAX, action))
+    v2 = v + (GAIN * a - DRAG * v) * DT
+    x2 = x + v2 * DT
+    return [x2, v2]
+
+
+def reward(state: list) -> float:
+    x, v = state
+    left = 0.3 / (1.0 + math.exp(-((-6.0 - x) / 0.5)))
+    right = 1.0 / (1.0 + math.exp(-((x - 12.0) / 0.5)))
+    return left + right
+```
+
+FAILURES (expected vs got):
+step([7.9000679867955705, 1.7353376637638966], -0.33302965404779594): expected [8.0, 0.0] r=0.0003353501306739101, got [8.058404850559235, 1.583368637636641] r=0.00037688620648641157 (err 1.58)

@@ -1,0 +1,60 @@
+=== USER ===
+Implement a deterministic 1D control world model as Python module-level
+functions (pure, no I/O, no globals, only the `math` standard-library module).
+
+State is a list [x, v] of two floats (position, velocity). Action is a float.
+
+Functions to implement EXACTLY these signatures:
+  def step(state: list, action: float) -> list   # next [x, v]
+  def reward(state: list) -> float               # reward of a state
+
+The integrator is FIXED and part of the contract. step() must compute, in
+exactly this order, with plain Python floats:
+  1. a = min(a_max, max(-a_max, action))         # clamp the action
+  2. v2 = v + (gain * a - drag * v) * dt
+  3. x2 = x + v2 * dt
+then apply any additional dynamics rules given below, and return [x2, v2].
+
+Physical constants:
+  dt = 0.1
+  gain = 3.0
+  drag = 0.3
+  a_max = 1.0
+
+Reward (a function of the state [x, v] alone):
+  left  = 0.3 / (1.0 + math.exp(-((-6.0 - x) / 0.5)))
+  right = 1.0 / (1.0 + math.exp(-((x - 12.0) / 0.5)))
+  reward = left + right
+
+The current implementation is below. It fails some transitions. Fix it so every transition matches to within 1e-09 in x, v and reward. Output only one ```python code block.
+
+CURRENT CODE:
+```python
+import math
+
+DT = 0.1
+GAIN = 3.0
+DRAG = 0.3
+A_MAX = 1.0
+
+
+def step(state: list, action: float) -> list:
+    x, v = state[0], state[1]
+    a = min(A_MAX, max(-A_MAX, action))
+    v2 = v + (GAIN * a - DRAG * v) * DT
+    x2 = x + v2 * DT
+    return [x2, v2]
+
+
+def reward(state: list) -> float:
+    x, v = state[0], state[1]
+    left = 0.3 / (1.0 + math.exp(-((-6.0 - x) / 0.5)))
+    right = 1.0 / (1.0 + math.exp(-((x - 12.0) / 0.5)))
+    return left + right
+```
+
+FAILURES (expected vs got):
+step([7.952448213505329, 1.089198966388347], -0.3885740544318286): expected [8.0, 0.0] r=0.0003353501306739101, got [8.046443291612045, 0.939950781067148] r=0.0003679801858038869 (err 0.94)
+step([8.0, 0.0], 0.4880712580633626): expected [8.0, 0.0] r=0.0003353501306739101, got [8.014642137741902, 0.1464213774190088] r=0.00034531238185810657 (err 0.146)
+step([8.0, 0.0], 0.48251042584594583): expected [8.0, 0.0] r=0.0003353501306739101, got [8.014475312775378, 0.14475312775378377] r=0.00034519722738822706 (err 0.145)
+step([7.894839236420862, 0.9791598964419266], 0.4024654785079522): expected [8.0, 0.0] r=0.0003353501306739101, got [8.001891710730968, 1.0705247431010545] r=0.00033662087682754973 (err 1.07)
