@@ -1,5 +1,99 @@
 # Experiments Log
 
+## PAPER 2 — Third model family (Claude, agent-relayed): a symmetry prior and a phantom-mode artifact (2026-07-15)
+
+**Protocol.** We ran paper 1's agent-relay protocol on the continuous synthesis
+pipeline as a third cross-family spot-check (after GPT-5.x API and the Qwen HF
+arm). `scripts/continuous_claude_step.py` emits the *verbatim* pipeline messages
+(the same `build_synthesis_messages` init and the `refine_continuous` check
+message, byte-for-byte with the API arms) and each message is relayed to a
+**fresh, context-free Claude Sonnet instance** (agent scaffold over a
+subscription transport — not an API). Everything else is the API pipeline: the
+ε = 1e-9 pinned-integrator gate, the mode-blindness classification, and the MPC
+play evaluation against the shared truth-planner baseline. Seeds
+10000/20000/30000 per instrument (the same 1-absent/2-present split as the Qwen
+spot-checks), plus one full-arm control per instrument. Source of truth:
+`results/continuous_claude_relay.json` (8 cells); audit-trail message/reply
+transcripts under `results/claude_relay_transcripts/`; protocol spec
+`docs/superpowers/specs/2026-07-15-claude-relay-crossfamily-design.md`.
+
+**Transport honesty notes.** (a) Agent scaffold + subscription transport, not an
+API; the relayed messages are byte-identical to the pipeline's. (b) Wrapper
+artifacts recorded: in the two multi-iteration cells a handful of refinement
+replies prefixed a one-line explanation before the code block (two distinct
+sentences, repeated across the oscillation) despite the output-only-code
+instruction — the code block still parsed cleanly. No relay was refused this
+time (the discrete probe saw two anti-injection refusals). (c) The refine loop
+is **memoryless in the API arms too**: `refine_continuous`
+(`src/cwm/continuous/contract.py`) sends a single user message per iteration
+with no history, so the oscillation below is protocol behavior, not a relay
+artifact.
+
+| instrument | arm | seed | mode in sample | gate acc | passed | refine iters | mode-blindness | play_cost | outcome |
+|---|---|---|---|---|---|---|---|---|---|
+| cart | full | 10000 | — | 1.000 | ✓ | 0 | 0.0 | 0.0 | clean control (translation exact) |
+| cart | incomplete | 10000 | no | 1.000 | ✓ | 0 | 1.0 | 0.999 | **mode-absent → blind & exploited** |
+| cart | incomplete | 20000 | yes | 1.000 | ✓ | 1 | 0.0 | 0.0 | repaired exact one-sided rule (1 iter) |
+| cart | incomplete | 30000 | yes | 1.000 | ✓ | 5 | 0.0 | 0.0 | repaired after period-2 oscillation (iter 5) |
+| pendulum | full | 10000 | — | 1.000 | ✓ | 0 | 0.0 | 0.0 | clean control (translation exact) |
+| pendulum | incomplete | 10000 | no | 1.000 | ✓ | 0 | 1.0 | 0.995 | **mode-absent → blind & exploited** |
+| pendulum | incomplete | 20000 | yes | 1.000 | ✓ | 1 | 0.0 | 0.0 | **certified with PHANTOM symmetric stop θ = −1.4** |
+| pendulum | incomplete | 30000 | yes | 0.9972 | ✗ | 5 | (n/a) | (n/a) | **stalled**, oscillating symmetric-stop ↔ no-stop |
+
+**Findings.**
+
+- *Controls (2/2 clean).* Both full arms translate the mode float-exactly: gate
+  1.000, blindness 0.0, play_cost 0.0. The pinned-integrator premise holds for
+  Claude too.
+- *Identifiability is family-independent (2/2 mode-absent blind & exploited).*
+  Both mode-absent seeds were certified fully blind (blindness 1.0) at gate
+  1.000 and exploited at play (cart play_cost 0.999, pendulum 0.995, contact
+  rate 1.0) — the (1−r)^N event fires regardless of family, exactly as
+  Proposition 2 requires.
+- *Repair mechanism: a symmetry prior.* Claude generalizes one-sided boundary
+  evidence into a **symmetric** pair of boundaries. Cart seed 20000: repaired
+  the exact one-sided `if x2 >= 8.0` rule in 1 iteration. Cart seed 30000:
+  repaired at iteration 5 after a period-2 oscillation (symmetric ±8 walls →
+  both removed → symmetric → removed → one-sided correct) — the sample reaches
+  x < −8, so the gate refutes the phantom left wall and the loop eventually
+  lands on the truth. This mechanism is neither GPT-5.x's (repairs every
+  revealed mode exactly, 62/62 + 20/20) nor Qwen's (repairs none; superstitious
+  local patches).
+- *A fourth artifact class — certified with an invented, unfalsifiable mode.*
+  Pendulum seed 20000 "repaired" in 1 iteration and passed the gate at 1.000,
+  **but the certified code carries a phantom symmetric stop at θ = −1.4**
+  (`if th2 < -th_max: th2 = -th_max; om2 = 0.0`) that this seed's rollouts never
+  visit. Gate 1.000 (unfalsifiable on this sample), blindness probe 0.0 (it
+  probes only the true +1.4 mode's region), play_cost 0.0. This is a genuinely
+  new artifact class beyond correct / blind / superstitious-patch: a
+  verified-and-exact-on-sample model that encodes a mode which does not exist.
+- *Natural experiment.* The **same** symmetric artifact was **refuted** at
+  pendulum seed 30000 (whose rollouts reach θ < −1.4, so the gate stalls it at
+  0.9972 and it oscillates) and **certified** at pendulum seed 20000 (whose
+  rollouts never go below −1.4). The only difference is sample coverage of the
+  invented side. This is Proposition 2's prior caveat measured directly: on
+  inputs the sample never covers, the artifact's content comes from the model's
+  prior and the gate cannot police it.
+- *Probe limitation (mirrors paper 1's artifact-level analysis).* The
+  `mode_blindness` probe fires only in the true mode's region (by construction
+  the probes must fire the mode in truth), so an invented mode *elsewhere* reads
+  as blindness 0.0 and is invisible to the classification. Code inspection, not
+  the probe, caught the phantom. Detecting invented modes needs code inspection
+  or probes seeded outside the sampled region.
+- *Scope.* n is small: 3 seeds + one control per instrument, one alternate
+  family. Repair-from-data is model-dependent **in mechanism**, not merely in
+  rate; identifiability (the mode-absent branch) is family-independent in all
+  three families tested, as the proposition requires.
+
+Papers updated: §7 (two-family → cross-family spot-checks: added the Claude
+paragraph, the phantom-mode "fourth artifact class" paragraph, and the Claude
+honesty notes; qualified the "never accepted a wrong mode-present artifact"
+claim to "never wrong on a sample-covered transition"), §10 limitations
+(three-family scope + the mode-blindness-probe limitation), the abstract, and
+the intro/conclusion regularity statements — in both `docs/paper2/main.tex` and
+`docs/paper2/preprint-draft.md`. Transcripts:
+`results/claude_relay_transcripts/`.
+
 ## PAPER 2 — Second planner family (CEM): the other branch of the play-cost bound (2026-07-12)
 
 Proposition 3 says exploitation is planner-dependent: a wrong model can change
