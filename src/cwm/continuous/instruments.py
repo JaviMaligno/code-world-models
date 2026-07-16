@@ -31,7 +31,9 @@ then apply any additional dynamics rules given below, and return [x2, v2].
 """
 
 
-def _cart_rules_text(env: CartWall, include_mode: bool) -> str:
+def _cart_rules_text(env: CartWall, include_mode: bool, omit: tuple = ()) -> str:
+    if omit:
+        raise ValueError("omit is only supported by the patch2d instrument")
     lines = [
         "Physical constants:",
         f"  dt = {env.dt}",
@@ -84,7 +86,10 @@ then apply any additional dynamics rules given below, and return [th2, om2].
 """
 
 
-def _pendulum_rules_text(env: PendulumStop, include_mode: bool) -> str:
+def _pendulum_rules_text(env: PendulumStop, include_mode: bool,
+                         omit: tuple = ()) -> str:
+    if omit:
+        raise ValueError("omit is only supported by the patch2d instrument")
     lines = [
         "Physical constants:",
         f"  dt = {env.dt}",

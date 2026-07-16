@@ -27,6 +27,8 @@ from ..law import wilson_ci
 def transition_error(truth, model, state, action) -> float:
     st, rt, _ = truth.step(state, action)
     sm, rm, _ = model.step(state, action)
+    if len(st) != len(sm):
+        return float("inf")  # wrong state arity is a hard failure at any eps
     return max(max(abs(a - b) for a, b in zip(st, sm)), abs(rt - rm))
 
 

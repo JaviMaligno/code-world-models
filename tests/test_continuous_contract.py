@@ -181,7 +181,7 @@ def test_pendulum_blind_model_is_exploited_at_play():
     assert truth_ep.ret > 10 * max(ep.ret, 0.1)
 
 
-from cwm.continuous.envs import PatchField2D, blind_of_modes
+from cwm.continuous.envs import PatchField2D
 
 P2D = PatchField2D()
 P2D_FULL_CODE = '''\
@@ -224,3 +224,21 @@ def test_patch2d_synthesize_and_evaluate_keys():
         include_mode=False, n_rollouts=3, seed=0)
     assert "mode_blindness" in cell and "sample_contains_mode_per" in cell
     assert isinstance(cell["wall_blindness"], float) or cell["wall_blindness"] is None
+
+
+# Same integrator as P2D_FULL_CODE but returning 3-component states (vy2
+# dropped): the arity guard must reject it — zip() truncation previously let
+# such an artifact pass the gate at accuracy 1.0.
+P2D_WRONG_ARITY_CODE = P2D_FULL_CODE.replace(
+    "return [x, y, 0.0, 0.0]", "return [x, y, 0.0]").replace(
+    "return [x2, y2, vx2, vy2]", "return [x2, y2, vx2]")
+
+
+def test_patch2d_wrong_arity_is_a_hard_failure():
+    from cwm.continuous.gate import run_gate
+    tr = collect_transitions(P2D, n_rollouts=3, seed=0)
+    acc, fails = contract_accuracy(P2D_WRONG_ARITY_CODE, tr, eps=1e-9)
+    assert acc < 1.0
+    assert any("wrong state arity" in f for f in fails)
+    model = SynthesizedModel(P2D_WRONG_ARITY_CODE, P2D)
+    assert not run_gate(P2D, model, n_rollouts=1, eps=1e-9).passed

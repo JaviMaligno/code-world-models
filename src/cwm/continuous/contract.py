@@ -31,13 +31,7 @@ from .instruments import spec_for
 
 def build_contract(env, include_mode: bool, omit: tuple = ()) -> str:
     spec = spec_for(env)
-    try:
-        # keyword-tolerant: only PATCH2D's rules_text accepts `omit`; cart's
-        # and pendulum's signatures are unchanged (env, include_mode).
-        rules = spec.rules_text(env, include_mode, omit=omit)
-    except TypeError:
-        rules = spec.rules_text(env, include_mode)
-    return spec.api_text + "\n" + rules
+    return spec.api_text + "\n" + spec.rules_text(env, include_mode, omit=omit)
 
 
 def collect_transitions(env, n_rollouts: int, seed: int = 0) -> list[dict]:
@@ -126,6 +120,12 @@ def contract_accuracy(code: str, transitions: list[dict], eps: float,
         if "error" in got:
             failures.append(f"step({t['state']!r}, {t['action']!r}) raised {got['error']}")
             continue
+        if len(got["ns"]) != len(t["next_state"]):
+            failures.append(
+                f"step({t['state']!r}, {t['action']!r}): wrong state arity: "
+                f"expected {len(t['next_state'])} components, got "
+                f"{len(got['ns'])}")
+            continue
         err = max(max(abs(g - e) for g, e in zip(got["ns"], t["next_state"])),
                   abs(got["r"] - t["reward"]))
         if err <= eps:
@@ -208,7 +208,11 @@ def mode_blindness(code: str, env, eps: float = 1e-6):
             st, rt, contact = env.step(s, a)
             assert contact, "probe must fire the mode in truth"
             sm, rm, _ = model.step(s, a)
-            err = max(max(abs(a_ - b_) for a_, b_ in zip(st, sm)), abs(rt - rm))
+            if len(st) != len(sm):
+                err = float("inf")  # wrong arity counts as blind
+            else:
+                err = max(max(abs(a_ - b_) for a_, b_ in zip(st, sm)),
+                          abs(rt - rm))
             if err > eps:
                 blind += 1
         result[name] = blind / len(probes)
