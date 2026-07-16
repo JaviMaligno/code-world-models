@@ -179,3 +179,48 @@ def test_pendulum_blind_model_is_exploited_at_play():
     assert ep.contact and ep.final_state[0] == PEND_ENV.th_stop
     truth_ep = harness.run_episode(PEND_ENV, PEND_ENV, "mpc", seed=3, n_samples=40)
     assert truth_ep.ret > 10 * max(ep.ret, 0.1)
+
+
+from cwm.continuous.envs import PatchField2D, blind_of_modes
+
+P2D = PatchField2D()
+P2D_FULL_CODE = '''\
+import math
+def step(state, action):
+    x, y, vx, vy = state
+    a = max(-1.0, min(1.0, action))
+    phi = math.pi * a / 1.0
+    vx2 = vx + (3.0 * math.cos(phi) - 0.3 * vx) * 0.1
+    vy2 = vy + (3.0 * math.sin(phi) - 0.3 * vy) * 0.1
+    x2, y2 = x + vx2 * 0.1, y + vy2 * 0.1
+    for cx, cy in ((3.0, 0.0), (7.0, 0.0)):
+        if (x2 - cx) ** 2 + (y2 - cy) ** 2 <= 1.0:
+            return [x, y, 0.0, 0.0]
+    return [x2, y2, vx2, vy2]
+def reward(state):
+    x, y = state[0], state[1]
+    d1 = math.hypot(x + 6.0, y); d2 = math.hypot(x - 12.0, y)
+    return (0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+            + 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5)))
+'''
+P2D_OMIT_P2_CODE = P2D_FULL_CODE.replace("((3.0, 0.0), (7.0, 0.0))",
+                                         "((3.0, 0.0),)")
+
+
+def test_patch2d_full_code_float_exact():
+    tr = collect_transitions(P2D, n_rollouts=5, seed=0)
+    acc, fails = contract_accuracy(P2D_FULL_CODE, tr, eps=1e-9)
+    assert acc == 1.0, fails[:3]
+
+
+def test_patch2d_per_mode_blindness():
+    mb = mode_blindness(P2D_OMIT_P2_CODE, P2D)
+    assert mb == {"patch1": 0.0, "patch2": 1.0}   # partial blindness!
+
+
+def test_patch2d_synthesize_and_evaluate_keys():
+    cell = synthesize_and_evaluate(
+        FakeProvider([f"```python\n{P2D_OMIT_P2_CODE}```"]), "fake", P2D,
+        include_mode=False, n_rollouts=3, seed=0)
+    assert "mode_blindness" in cell and "sample_contains_mode_per" in cell
+    assert isinstance(cell["wall_blindness"], float) or cell["wall_blindness"] is None

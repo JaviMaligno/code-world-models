@@ -27,7 +27,7 @@ from ..law import wilson_ci
 def transition_error(truth, model, state, action) -> float:
     st, rt, _ = truth.step(state, action)
     sm, rm, _ = model.step(state, action)
-    return max(abs(st[0] - sm[0]), abs(st[1] - sm[1]), abs(rt - rm))
+    return max(max(abs(a - b) for a, b in zip(st, sm)), abs(rt - rm))
 
 
 @dataclass

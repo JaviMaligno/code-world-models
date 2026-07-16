@@ -29,9 +29,15 @@ from ..synthesizer import extract_code
 from .instruments import spec_for
 
 
-def build_contract(env, include_mode: bool) -> str:
+def build_contract(env, include_mode: bool, omit: tuple = ()) -> str:
     spec = spec_for(env)
-    return spec.api_text + "\n" + spec.rules_text(env, include_mode)
+    try:
+        # keyword-tolerant: only PATCH2D's rules_text accepts `omit`; cart's
+        # and pendulum's signatures are unchanged (env, include_mode).
+        rules = spec.rules_text(env, include_mode, omit=omit)
+    except TypeError:
+        rules = spec.rules_text(env, include_mode)
+    return spec.api_text + "\n" + rules
 
 
 def collect_transitions(env, n_rollouts: int, seed: int = 0) -> list[dict]:
@@ -100,7 +106,7 @@ def contract_accuracy(code: str, transitions: list[dict], eps: float,
         "    try:\n"
         "        _ns = step(list(_c['s']), _c['a'])\n"
         "        _r = reward(list(_ns))\n"
-        "        _out.append({'ns': [float(_ns[0]), float(_ns[1])], 'r': float(_r)})\n"
+        "        _out.append({'ns': [float(v) for v in _ns], 'r': float(_r)})\n"
         "    except Exception as e:\n"
         "        _out.append({'error': repr(e)})\n"
         "print(json.dumps(_out))\n"
@@ -120,8 +126,7 @@ def contract_accuracy(code: str, transitions: list[dict], eps: float,
         if "error" in got:
             failures.append(f"step({t['state']!r}, {t['action']!r}) raised {got['error']}")
             continue
-        err = max(abs(got["ns"][0] - t["next_state"][0]),
-                  abs(got["ns"][1] - t["next_state"][1]),
+        err = max(max(abs(g - e) for g, e in zip(got["ns"], t["next_state"])),
                   abs(got["r"] - t["reward"]))
         if err <= eps:
             correct += 1
@@ -180,29 +185,36 @@ class SynthesizedModel:
 
     def step(self, state, action):
         s2 = self._step(list(state), action)
-        return (s2[0], s2[1]), self._reward(list(s2)), False
+        return tuple(s2), self._reward(list(s2)), False
 
     def initial_state(self, rng):  # pragma: no cover — parity with the env
         return (rng.uniform(-0.5, 0.5), 0.0)
 
 
-def mode_blindness(code: str, env, eps: float = 1e-6) -> float:
+def mode_blindness(code: str, env, eps: float = 1e-6):
     """Fraction of mode-region probe transitions the synthesized model gets
-    WRONG (1.0 = fully mode-blind, 0.0 = mode encoded correctly). Probes fire
-    the mode in truth by construction. (Key stays `wall_blindness` in emitted
-    JSON for backward compatibility.)"""
+    WRONG per mode (1.0 = fully mode-blind, 0.0 = mode encoded correctly).
+    Probes fire their mode in truth by construction. Returns a scalar when the
+    instrument has exactly one mode (numerically identical to the original
+    single-mode behavior; key stays `wall_blindness` in emitted JSON for
+    backward compatibility there), else a dict keyed by mode name."""
     spec = spec_for(env)
-    probes = spec.mode_probes(env)
+    probes_by_mode = spec.mode_probes(env)
     model = SynthesizedModel(code, env)
-    blind = 0
-    for s, a in probes:
-        st, rt, contact = env.step(s, a)
-        assert contact, "probe must fire the mode in truth"
-        sm, rm, _ = model.step(s, a)
-        err = max(abs(st[0] - sm[0]), abs(st[1] - sm[1]), abs(rt - rm))
-        if err > eps:
-            blind += 1
-    return blind / len(probes)
+    result = {}
+    for name, probes in probes_by_mode.items():
+        blind = 0
+        for s, a in probes:
+            st, rt, contact = env.step(s, a)
+            assert contact, "probe must fire the mode in truth"
+            sm, rm, _ = model.step(s, a)
+            err = max(max(abs(a_ - b_) for a_, b_ in zip(st, sm)), abs(rt - rm))
+            if err > eps:
+                blind += 1
+        result[name] = blind / len(probes)
+    if len(result) == 1:
+        return next(iter(result.values()))
+    return result
 
 
 wall_blindness = mode_blindness  # back-compat alias
@@ -211,19 +223,25 @@ wall_blindness = mode_blindness  # back-compat alias
 def synthesize_and_evaluate(provider, model_name, env,
                             include_mode: bool, n_rollouts: int, seed: int,
                             eps: float = 1e-9, max_iters: int = 5,
-                            max_examples: int = 30) -> dict:
+                            max_examples: int = 30, omit: tuple = ()) -> dict:
     """One cell of the synthesis experiment: collect the sample, synthesize,
     refine on the sample (the gate), then classify the artifact. Returns a
     JSON-ready dict; play evaluation is done by the caller (it needs the
-    truth-planner baseline shared across seeds)."""
+    truth-planner baseline shared across seeds). Single-mode instruments
+    (cart, pendulum) emit exactly the original schema; multi-mode instruments
+    (patch2d) additionally emit "mode_blindness" (dict) and
+    "sample_contains_mode_per" (dict), while "wall_blindness" becomes the mean
+    of the mode_blindness dict (or None when the gate failed)."""
     transitions = collect_transitions(env, n_rollouts, seed=seed)
-    contract = build_contract(env, include_mode)
+    contract = build_contract(env, include_mode, omit=omit)
     msgs = build_synthesis_messages(contract, transitions, max_examples)
     completion = provider.complete(msgs, model=model_name)
     code = extract_code(completion.text)
     refined = refine_continuous(provider, model_name, contract, code,
                                 transitions, eps, max_iters=max_iters)
-    return {
+    spec = spec_for(env)
+    mb = mode_blindness(refined.code, env) if refined.accuracy == 1.0 else None
+    cell = {
         "arm": "full" if include_mode else "incomplete",
         "seed": seed,
         "n_rollouts": n_rollouts,
@@ -232,7 +250,11 @@ def synthesize_and_evaluate(provider, model_name, env,
         "gate_accuracy": refined.accuracy,
         "gate_passed": refined.accuracy == 1.0,
         "refine_iterations": refined.iterations,
-        "wall_blindness": mode_blindness(refined.code, env)
-        if refined.accuracy == 1.0 else None,
+        "wall_blindness": (mb if not isinstance(mb, dict)
+                          else (sum(mb.values()) / len(mb) if mb else None)),
         "code": refined.code,
     }
+    if spec.sample_modes is not None:
+        cell["mode_blindness"] = mb
+        cell["sample_contains_mode_per"] = spec.sample_modes(env, transitions)
+    return cell

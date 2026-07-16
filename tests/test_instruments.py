@@ -37,7 +37,27 @@ def test_pendulum_rules_text_has_gravity_and_stop():
 def test_pendulum_mode_probes_fire_the_stop_in_truth():
     env = PendulumStop(th_stop=1.4)
     probes = PENDULUM_SPEC.mode_probes(env)
-    assert probes
-    for state, action in probes:
+    assert list(probes) == ["stop"]
+    for state, action in probes["stop"]:
         _s2, _r, contact = env.step(state, action)
         assert contact, f"probe {state},{action} must fire the stop in truth"
+
+
+def test_mode_probes_are_dicts_and_fire():
+    from cwm.continuous.envs import PatchField2D
+    from cwm.continuous.instruments import PATCH2D_SPEC, spec_for
+    env = PatchField2D()
+    assert spec_for(env) is PATCH2D_SPEC
+    probes = PATCH2D_SPEC.mode_probes(env)
+    assert set(probes) == {"patch1", "patch2"}
+    for name, plist in probes.items():
+        for s, a in plist:
+            c1, c2 = env.contact_modes(s, a)
+            assert (c1, c2) == ((name == "patch1"), (name == "patch2"))
+
+
+def test_cart_probes_dict_single_mode():
+    from cwm.continuous.instruments import CART_SPEC
+    env = CartWall(x_wall=8.0)
+    probes = CART_SPEC.mode_probes(env)
+    assert list(probes) == ["wall"] and len(probes["wall"]) == 3
