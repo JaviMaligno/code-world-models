@@ -125,10 +125,90 @@ class PendulumStop:
         return s2, self.reward(s2), contact
 
 
+@dataclass(frozen=True)
+class PatchField2D:
+    """Third instrument: 2D navigation with two sticky patches (bi-modal).
+
+    4D state (x, y, vx, vy); SCALAR action a in [-a_max, a_max] mapped to a
+    thrust heading phi = pi*a/a_max, so every planner (mpc, cem, harness)
+    works unchanged. Each patch is an independent hard mode: a step whose
+    next position falls inside disc(p_i, R) freezes at the PREVIOUS position
+    with zero velocity (inelastic stop at the edge). blind_of removes both
+    patches; blind_of_modes removes a subset. Reward is two radial sigmoid
+    lodes: a small real one behind the start and a large phantom one beyond
+    the patches (the lure). Patch centers are the rarity knobs
+    (calibration 2026-07-16: r1=0.1417, r2=0.0083 at the defaults).
+    """
+    dt: float = 0.1
+    gain: float = 3.0
+    drag: float = 0.3
+    a_max: float = 1.0
+    p1: tuple | None = (3.0, 0.0)
+    p2: tuple | None = (7.0, 0.0)
+    R: float = 1.0
+    lode_real: tuple = (-6.0, 0.0)
+    amp_real: float = 0.3
+    lode_phantom: tuple = (12.0, 0.0)
+    amp_phantom: float = 1.0
+    r0: float = 2.0
+    width: float = 0.5
+    h_episode: int = 80
+    x0_range: float = 0.5
+
+    def initial_state(self, rng) -> State:
+        return (rng.uniform(-self.x0_range, self.x0_range),
+                rng.uniform(-self.x0_range, self.x0_range), 0.0, 0.0)
+
+    def _lode(self, x: float, y: float, lode: tuple, amp: float) -> float:
+        d = math.hypot(x - lode[0], y - lode[1])
+        return amp / (1.0 + math.exp((d - self.r0) / self.width))
+
+    def reward(self, state: State) -> float:
+        x, y = state[0], state[1]
+        return (self._lode(x, y, self.lode_real, self.amp_real)
+                + self._lode(x, y, self.lode_phantom, self.amp_phantom))
+
+    def _inside(self, x: float, y: float, c: tuple | None) -> bool:
+        return (c is not None
+                and (x - c[0]) ** 2 + (y - c[1]) ** 2 <= self.R ** 2)
+
+    def _integrate(self, state: State, action: float):
+        x, y, vx, vy = state
+        a = max(-self.a_max, min(self.a_max, action))
+        phi = math.pi * a / self.a_max
+        vx2 = vx + (self.gain * math.cos(phi) - self.drag * vx) * self.dt
+        vy2 = vy + (self.gain * math.sin(phi) - self.drag * vy) * self.dt
+        return x + vx2 * self.dt, y + vy2 * self.dt, vx2, vy2
+
+    def contact_modes(self, state: State, action: float) -> tuple:
+        x2, y2, _, _ = self._integrate(state, action)
+        return self._inside(x2, y2, self.p1), self._inside(x2, y2, self.p2)
+
+    def step(self, state: State, action: float):
+        x2, y2, vx2, vy2 = self._integrate(state, action)
+        if self._inside(x2, y2, self.p1) or self._inside(x2, y2, self.p2):
+            s2 = (state[0], state[1], 0.0, 0.0)
+            return s2, self.reward(s2), True
+        s2 = (x2, y2, vx2, vy2)
+        return s2, self.reward(s2), False
+
+
+def blind_of_modes(env: "PatchField2D", omit: tuple) -> "PatchField2D":
+    """Mode-selective blind model for the 2D instrument."""
+    kw = {}
+    if "p1" in omit:
+        kw["p1"] = None
+    if "p2" in omit:
+        kw["p2"] = None
+    return replace(env, **kw)
+
+
 def blind_of(env):
     """The mode-omitting model of `env`: identical plant, no wall/stop."""
     if isinstance(env, PendulumStop):
         return replace(env, th_stop=None)
+    if isinstance(env, PatchField2D):
+        return replace(env, p1=None, p2=None)
     return replace(env, x_wall=None)
 
 
