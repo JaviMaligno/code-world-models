@@ -25,7 +25,8 @@ import json
 import pathlib
 import time
 
-from cwm.continuous.envs import (CartWall, PendulumStop, blind_of, biased_of,
+from cwm.continuous.envs import (CartWall, PendulumStop, PatchField2D,
+                                 blind_of, blind_of_modes, biased_of,
                                  unbumped_of)
 from cwm.continuous import gate
 
@@ -37,14 +38,20 @@ ap.add_argument("--n-gate", type=int, default=40)
 ap.add_argument("--gates", type=int, default=300,
                 help="independent gates for pass@N (mode arms only)")
 ap.add_argument("--seed", type=int, default=0)
+ap.add_argument("--instrument", choices=["default", "patch2d"],
+                default="default",
+                help="'default' reproduces the cart/pendulum sweep "
+                     "byte-identically; 'patch2d' runs the 2D bi-modal "
+                     "instrument's mode-omission arms into a sibling JSON")
 args = ap.parse_args()
 
 CART4, CART8 = CartWall(x_wall=4.0), CartWall(x_wall=8.0)
 PEND10, PEND14 = PendulumStop(th_stop=1.0), PendulumStop(th_stop=1.4)
 BUMP_MILD = CartWall(x_wall=None, bump_amp=0.5, bump_center=4.0, bump_width=0.5)
 BUMP_STRONG = CartWall(x_wall=None, bump_amp=1.0, bump_center=4.0, bump_width=0.5)
+P2D = PatchField2D()
 
-ARMS = [
+DEFAULT_ARMS = [
     # (instrument, name, truth, model-under-test, is_mode_arm)
     ("cart", "wall@4 omitted", CART4, blind_of(CART4), True),
     ("cart", "wall@8 omitted", CART8, blind_of(CART8), True),
@@ -57,6 +64,15 @@ ARMS = [
     ("pend", "bias x1.03", PEND10, biased_of(PEND10, 1.03), False),
     ("pend", "bias x2.0", PEND10, biased_of(PEND10, 2.0), False),
 ]
+
+PATCH2D_ARMS = [
+    # mode arms only (no bias/bump analogues on this instrument)
+    ("patch2d", "patches omitted", P2D, blind_of(P2D), True),
+    ("patch2d", "patch1 only omitted", P2D, blind_of_modes(P2D, ("p1",)), True),
+    ("patch2d", "patch2 only omitted", P2D, blind_of_modes(P2D, ("p2",)), True),
+]
+
+ARMS = PATCH2D_ARMS if args.instrument == "patch2d" else DEFAULT_ARMS
 
 t0 = time.time()
 rows = []
@@ -84,7 +100,9 @@ for inst, name, truth, model, is_mode in ARMS:
                   f"{'-':>7}", flush=True)
         rows.append(row)
 
-out = pathlib.Path("results/continuous_eps_sweep.json")
+out_name = ("continuous_eps_sweep_patch2d.json" if args.instrument == "patch2d"
+            else "continuous_eps_sweep.json")
+out = pathlib.Path("results") / out_name
 out.write_text(json.dumps({"script": "continuous_eps_sweep.py",
                            "params": vars(args), "rows": rows,
                            "elapsed_s": round(time.time() - t0, 1)}, indent=2))
