@@ -9,18 +9,22 @@ concentrates on the nearer TRUE plateau from the first elite iteration and
 never discovers the phantom (near-zero query-hit mass) -- so, exactly as the
 bound prescribes, it is not exploited. The optional `boundary` argument
 measures this: the fraction of sampled imagined trajectories that cross the
-mode boundary during planning.
+mode boundary during planning. `boundary` accepts either a float (1D
+instruments: crossing means x >= boundary) or a callable state -> bool (e.g.
+the 2D instrument's per-patch predicate).
 
 Deterministic given the rng. Hyperparameters are prototype-calibrated and
 fixed across knobs and instruments (no per-knob tuning).
 """
 import random
 from dataclasses import dataclass
+from typing import Callable, Union
 
 
 def plan_cem(model, state, rng, horizon: int = 40, n_iters: int = 5,
              n_samples: int = 64, elite_frac: float = 0.125,
-             min_std: float = 0.05, boundary: float | None = None):
+             min_std: float = 0.05,
+             boundary: Union[float, Callable[[tuple], bool], None] = None):
     """Best first action by CEM. With boundary set, also returns the fraction
     of sampled imagined trajectories whose position crossed it."""
     a_max = model.a_max
@@ -37,8 +41,8 @@ def plan_cem(model, state, rng, horizon: int = 40, n_iters: int = 5,
             for a in acts:
                 s, r, _ = model.step(s, a)
                 total += r
-                if boundary is not None and s[0] >= boundary:
-                    hit = True
+                if boundary is not None and not hit:
+                    hit = boundary(s) if callable(boundary) else s[0] >= boundary
             scored.append((total, acts))
             total_samples += 1
             crossed += hit
@@ -60,7 +64,8 @@ class CemEpisode:
     crossing_frac: float | None   # mean per-plan imagined boundary-crossing
 
 
-def run_episode(truth, model, seed: int = 0, boundary: float | None = None,
+def run_episode(truth, model, seed: int = 0,
+                boundary: Union[float, Callable[[tuple], bool], None] = None,
                 **plan_kw) -> CemEpisode:
     """Play one episode in `truth`, planning on `model` with CEM. Mirrors
     harness.run_episode's rng discipline (initial_state first, then per-step

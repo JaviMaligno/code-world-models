@@ -40,3 +40,17 @@ def test_cem_blind_not_pinned_pendulum():
     assert b.contact is False
     assert b.final_state[0] < PEND.th_stop - 0.1
     assert b.crossing_frac < 0.05
+
+
+def test_callable_boundary_matches_float_boundary():
+    """The callable-predicate path (used by the 2D instrument) must reduce
+    to the float path exactly: same crossing_frac on the same seed."""
+    predicate = lambda s: s[0] >= CART.x_wall  # noqa: E731
+    for seed in (0, 3):
+        b_float = run_episode(CART, blind_of(CART), seed=seed,
+                              boundary=CART.x_wall)
+        b_callable = run_episode(CART, blind_of(CART), seed=seed,
+                                 boundary=predicate)
+        assert b_callable.crossing_frac == b_float.crossing_frac
+        assert b_callable.ret == b_float.ret
+        assert b_callable.contact == b_float.contact
