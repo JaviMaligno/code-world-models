@@ -1,0 +1,787 @@
+{
+  "script": "continuous_cem.py",
+  "params": {
+    "episodes": 20,
+    "seed": 0,
+    "cart_walls": [
+      2.0,
+      4.0,
+      6.0,
+      8.0,
+      10.0
+    ],
+    "pend_stops": [
+      0.8,
+      1.0,
+      1.2,
+      1.4,
+      1.6,
+      2.0
+    ],
+    "instrument": "patch2d",
+    "patch2d_knobs": [
+      2.0,
+      6.0,
+      3.0,
+      7.0,
+      4.0,
+      8.0
+    ]
+  },
+  "rows": [
+    {
+      "instrument": "patch2d",
+      "knob": [
+        2.0,
+        6.0
+      ],
+      "j_truth_cem": 12.01756685974172,
+      "j_blind_cem": 12.284280422799563,
+      "j_random": 0.11347211999219906,
+      "play_cost_blind_cem": -0.022405194925679436,
+      "play_cost_blind_cem_paired": {
+        "per_seed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.3746655034420034,
+          0.0,
+          0.0,
+          -0.8227694019555924,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean": -0.022405194925679453,
+        "sd": 0.20612769076098375,
+        "se": 0.0460915528586615,
+        "t95": [
+          -0.11887481505885797,
+          0.07406442520749906
+        ],
+        "excludes_zero": false
+      },
+      "blind_contact_rate": 0.05,
+      "crossing_scope": "paired_initial_state",
+      "crossing_frac_cem_blind": 0.0696875,
+      "crossing_frac_mpc_blind": 0.20763546798029556,
+      "crossing_frac_cem_episode_blind": 0.013619140625000001,
+      "n_episodes": 20,
+      "per_seed": [
+        {
+          "seed": 0,
+          "j_truth_cem": 16.505523072313377,
+          "j_blind_cem": 16.505523072313377,
+          "j_random": 0.005450857654842768,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.140625,
+          "crossing_frac_mpc_initial": 0.20689655172413793,
+          "crossing_frac_cem_episode": 0.005703125
+        },
+        {
+          "seed": 1000,
+          "j_truth_cem": 11.042797749763476,
+          "j_blind_cem": 11.042797749763476,
+          "j_random": 0.0014421228772823365,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.071875,
+          "crossing_frac_mpc_initial": 0.2561576354679803,
+          "crossing_frac_cem_episode": 0.0075
+        },
+        {
+          "seed": 2000,
+          "j_truth_cem": 14.219307146101544,
+          "j_blind_cem": 14.219307146101544,
+          "j_random": 0.07226034104431708,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.075,
+          "crossing_frac_mpc_initial": 0.19704433497536947,
+          "crossing_frac_cem_episode": 0.0048046875
+        },
+        {
+          "seed": 3000,
+          "j_truth_cem": 15.730717032537958,
+          "j_blind_cem": 15.730717032537958,
+          "j_random": 0.0018104446162876518,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.04375,
+          "crossing_frac_mpc_initial": 0.2512315270935961,
+          "crossing_frac_cem_episode": 0.003515625
+        },
+        {
+          "seed": 4000,
+          "j_truth_cem": 5.1079062859251545,
+          "j_blind_cem": 0.6478526372355959,
+          "j_random": 0.0011795444588979557,
+          "blind_contact": true,
+          "crossing_frac_cem_initial": 0.071875,
+          "crossing_frac_mpc_initial": 0.15763546798029557,
+          "crossing_frac_cem_episode": 0.1082421875
+        },
+        {
+          "seed": 5000,
+          "j_truth_cem": 9.83941245527596,
+          "j_blind_cem": 9.83941245527596,
+          "j_random": 0.04771002850344004,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.015625,
+          "crossing_frac_mpc_initial": 0.21182266009852216,
+          "crossing_frac_cem_episode": 0.00953125
+        },
+        {
+          "seed": 6000,
+          "j_truth_cem": 12.665791871604906,
+          "j_blind_cem": 12.665791871604906,
+          "j_random": 0.018351825982490924,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.06875,
+          "crossing_frac_mpc_initial": 0.2019704433497537,
+          "crossing_frac_cem_episode": 0.0071484375
+        },
+        {
+          "seed": 7000,
+          "j_truth_cem": 0.9689664782206668,
+          "j_blind_cem": 10.763291388067094,
+          "j_random": 0.018208864154008738,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.096875,
+          "crossing_frac_mpc_initial": 0.17733990147783252,
+          "crossing_frac_cem_episode": 0.0212890625
+        },
+        {
+          "seed": 8000,
+          "j_truth_cem": 8.530807249041137,
+          "j_blind_cem": 8.530807249041137,
+          "j_random": 0.018348789541413252,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.090625,
+          "crossing_frac_mpc_initial": 0.21674876847290642,
+          "crossing_frac_cem_episode": 0.01140625
+        },
+        {
+          "seed": 9000,
+          "j_truth_cem": 14.992888970499305,
+          "j_blind_cem": 14.992888970499305,
+          "j_random": 0.07064972716120815,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.10625,
+          "crossing_frac_mpc_initial": 0.22660098522167488,
+          "crossing_frac_cem_episode": 0.0055078125
+        },
+        {
+          "seed": 10000,
+          "j_truth_cem": 10.23655232470161,
+          "j_blind_cem": 10.23655232470161,
+          "j_random": 0.007682783176430495,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.075,
+          "crossing_frac_mpc_initial": 0.18226600985221675,
+          "crossing_frac_cem_episode": 0.0155078125
+        },
+        {
+          "seed": 11000,
+          "j_truth_cem": 13.452949909741154,
+          "j_blind_cem": 13.452949909741154,
+          "j_random": 1.5841957815976921,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.028125,
+          "crossing_frac_mpc_initial": 0.20689655172413793,
+          "crossing_frac_cem_episode": 0.0073437500000000005
+        },
+        {
+          "seed": 12000,
+          "j_truth_cem": 16.644057137912846,
+          "j_blind_cem": 16.644057137912846,
+          "j_random": 0.01871269110832973,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.0375,
+          "crossing_frac_mpc_initial": 0.18719211822660098,
+          "crossing_frac_cem_episode": 0.0033203125
+        },
+        {
+          "seed": 13000,
+          "j_truth_cem": 15.58579373801262,
+          "j_blind_cem": 15.58579373801262,
+          "j_random": 0.00546190348613794,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.04375,
+          "crossing_frac_mpc_initial": 0.2561576354679803,
+          "crossing_frac_cem_episode": 0.00296875
+        },
+        {
+          "seed": 14000,
+          "j_truth_cem": 11.633758449105198,
+          "j_blind_cem": 11.633758449105198,
+          "j_random": 0.08028699406719757,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.1,
+          "crossing_frac_mpc_initial": 0.19704433497536947,
+          "crossing_frac_cem_episode": 0.0142578125
+        },
+        {
+          "seed": 15000,
+          "j_truth_cem": 11.280783682795818,
+          "j_blind_cem": 11.280783682795818,
+          "j_random": 0.0046348435269635176,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.128125,
+          "crossing_frac_mpc_initial": 0.2019704433497537,
+          "crossing_frac_cem_episode": 0.01453125
+        },
+        {
+          "seed": 16000,
+          "j_truth_cem": 11.732037607993654,
+          "j_blind_cem": 11.732037607993654,
+          "j_random": 0.2168133264036958,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.05625,
+          "crossing_frac_mpc_initial": 0.20689655172413793,
+          "crossing_frac_cem_episode": 0.0087890625
+        },
+        {
+          "seed": 17000,
+          "j_truth_cem": 13.255101799177003,
+          "j_blind_cem": 13.255101799177003,
+          "j_random": 0.05445644402345023,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.040625,
+          "crossing_frac_mpc_initial": 0.2315270935960591,
+          "crossing_frac_cem_episode": 0.0076953125
+        },
+        {
+          "seed": 18000,
+          "j_truth_cem": 13.905270759192987,
+          "j_blind_cem": 13.905270759192987,
+          "j_random": 0.0022851359935371273,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.046875,
+          "crossing_frac_mpc_initial": 0.1921182266009852,
+          "crossing_frac_cem_episode": 0.004921875
+        },
+        {
+          "seed": 19000,
+          "j_truth_cem": 13.020913474918018,
+          "j_blind_cem": 13.020913474918018,
+          "j_random": 0.03949995046635795,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.05625,
+          "crossing_frac_mpc_initial": 0.18719211822660098,
+          "crossing_frac_cem_episode": 0.0083984375
+        }
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "knob": [
+        3.0,
+        7.0
+      ],
+      "j_truth_cem": 12.500553301536067,
+      "j_blind_cem": 12.284317692007637,
+      "j_random": 0.10822413483238573,
+      "play_cost_blind_cem": 0.01744914992327859,
+      "play_cost_blind_cem_paired": {
+        "per_seed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.34898299846557235,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean": 0.017449149923278617,
+        "sd": 0.07803497075607246,
+        "se": 0.017449149923278617,
+        "t95": [
+          -0.01907192086614353,
+          0.053970220712700766
+        ],
+        "excludes_zero": false
+      },
+      "blind_contact_rate": 0.05,
+      "crossing_scope": "paired_initial_state",
+      "crossing_frac_cem_blind": 0.02703125,
+      "crossing_frac_mpc_blind": 0.14876847290640394,
+      "crossing_frac_cem_episode_blind": 0.00938671875,
+      "n_episodes": 20,
+      "per_seed": [
+        {
+          "seed": 0,
+          "j_truth_cem": 16.505523072313377,
+          "j_blind_cem": 16.505523072313377,
+          "j_random": 0.0005907466410376354,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.059375,
+          "crossing_frac_mpc_initial": 0.15270935960591134,
+          "crossing_frac_cem_episode": 0.001875
+        },
+        {
+          "seed": 1000,
+          "j_truth_cem": 11.042797749763476,
+          "j_blind_cem": 11.042797749763476,
+          "j_random": 0.0014421228772823365,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.01875,
+          "crossing_frac_mpc_initial": 0.1724137931034483,
+          "crossing_frac_cem_episode": 0.00234375
+        },
+        {
+          "seed": 2000,
+          "j_truth_cem": 14.219307146101544,
+          "j_blind_cem": 14.219307146101544,
+          "j_random": 0.07226034104431708,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.03125,
+          "crossing_frac_mpc_initial": 0.1724137931034483,
+          "crossing_frac_cem_episode": 0.0017578125
+        },
+        {
+          "seed": 3000,
+          "j_truth_cem": 15.730717032537958,
+          "j_blind_cem": 15.730717032537958,
+          "j_random": 0.0018104446162876518,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.009375,
+          "crossing_frac_mpc_initial": 0.16748768472906403,
+          "crossing_frac_cem_episode": 0.0008984375000000001
+        },
+        {
+          "seed": 4000,
+          "j_truth_cem": 4.973310211965673,
+          "j_blind_cem": 0.648598021397055,
+          "j_random": 0.0012342927770111682,
+          "blind_contact": true,
+          "crossing_frac_cem_initial": 0.028125,
+          "crossing_frac_mpc_initial": 0.12807881773399016,
+          "crossing_frac_cem_episode": 0.1278125
+        },
+        {
+          "seed": 5000,
+          "j_truth_cem": 9.83941245527596,
+          "j_blind_cem": 9.83941245527596,
+          "j_random": 0.0010214733843477179,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.00625,
+          "crossing_frac_mpc_initial": 0.14285714285714285,
+          "crossing_frac_cem_episode": 0.003515625
+        },
+        {
+          "seed": 6000,
+          "j_truth_cem": 12.665791871604906,
+          "j_blind_cem": 12.665791871604906,
+          "j_random": 0.01801475126782671,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.009375,
+          "crossing_frac_mpc_initial": 0.12315270935960591,
+          "crossing_frac_cem_episode": 0.0019140625000000002
+        },
+        {
+          "seed": 7000,
+          "j_truth_cem": 10.763291388067094,
+          "j_blind_cem": 10.763291388067094,
+          "j_random": 0.018208864154008738,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.034375,
+          "crossing_frac_mpc_initial": 0.15763546798029557,
+          "crossing_frac_cem_episode": 0.0083984375
+        },
+        {
+          "seed": 8000,
+          "j_truth_cem": 8.530807249041137,
+          "j_blind_cem": 8.530807249041137,
+          "j_random": 0.018348789541413252,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.034375,
+          "crossing_frac_mpc_initial": 0.16748768472906403,
+          "crossing_frac_cem_episode": 0.0040625
+        },
+        {
+          "seed": 9000,
+          "j_truth_cem": 14.992888970499305,
+          "j_blind_cem": 14.992888970499305,
+          "j_random": 0.07064972716120815,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.046875,
+          "crossing_frac_mpc_initial": 0.16748768472906403,
+          "crossing_frac_cem_episode": 0.0021875
+        },
+        {
+          "seed": 10000,
+          "j_truth_cem": 10.23655232470161,
+          "j_blind_cem": 10.23655232470161,
+          "j_random": 0.007682783176430495,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.028125,
+          "crossing_frac_mpc_initial": 0.12807881773399016,
+          "crossing_frac_cem_episode": 0.005546875
+        },
+        {
+          "seed": 11000,
+          "j_truth_cem": 13.452949909741154,
+          "j_blind_cem": 13.452949909741154,
+          "j_random": 1.5841957815976921,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.01875,
+          "crossing_frac_mpc_initial": 0.14285714285714285,
+          "crossing_frac_cem_episode": 0.0026953125000000002
+        },
+        {
+          "seed": 12000,
+          "j_truth_cem": 16.644057137912846,
+          "j_blind_cem": 16.644057137912846,
+          "j_random": 0.01871269110832973,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.01875,
+          "crossing_frac_mpc_initial": 0.1330049261083744,
+          "crossing_frac_cem_episode": 0.0010937499999999999
+        },
+        {
+          "seed": 13000,
+          "j_truth_cem": 15.58579373801262,
+          "j_blind_cem": 15.58579373801262,
+          "j_random": 0.00546190348613794,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.015625,
+          "crossing_frac_mpc_initial": 0.15270935960591134,
+          "crossing_frac_cem_episode": 0.0008593750000000001
+        },
+        {
+          "seed": 14000,
+          "j_truth_cem": 11.633758449105198,
+          "j_blind_cem": 11.633758449105198,
+          "j_random": 0.08028699406719757,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.040625,
+          "crossing_frac_mpc_initial": 0.13793103448275862,
+          "crossing_frac_cem_episode": 0.0053906250000000005
+        },
+        {
+          "seed": 15000,
+          "j_truth_cem": 11.280783682795818,
+          "j_blind_cem": 11.280783682795818,
+          "j_random": 0.0046348435269635176,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.06875,
+          "crossing_frac_mpc_initial": 0.13793103448275862,
+          "crossing_frac_cem_episode": 0.0063281249999999995
+        },
+        {
+          "seed": 16000,
+          "j_truth_cem": 11.732037607993654,
+          "j_blind_cem": 11.732037607993654,
+          "j_random": 0.2168133264036958,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.01875,
+          "crossing_frac_mpc_initial": 0.13793103448275862,
+          "crossing_frac_cem_episode": 0.0034765625
+        },
+        {
+          "seed": 17000,
+          "j_truth_cem": 13.255101799177003,
+          "j_blind_cem": 13.255101799177003,
+          "j_random": 0.0013277333566317712,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.00625,
+          "crossing_frac_mpc_initial": 0.15763546798029557,
+          "crossing_frac_cem_episode": 0.002734375
+        },
+        {
+          "seed": 18000,
+          "j_truth_cem": 13.905270759192987,
+          "j_blind_cem": 13.905270759192987,
+          "j_random": 0.0022851359935371273,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.021875,
+          "crossing_frac_mpc_initial": 0.15763546798029557,
+          "crossing_frac_cem_episode": 0.0016406250000000002
+        },
+        {
+          "seed": 19000,
+          "j_truth_cem": 13.020913474918018,
+          "j_blind_cem": 13.020913474918018,
+          "j_random": 0.03949995046635795,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.025,
+          "crossing_frac_mpc_initial": 0.13793103448275862,
+          "crossing_frac_cem_episode": 0.003203125
+        }
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "knob": [
+        4.0,
+        8.0
+      ],
+      "j_truth_cem": 12.500355475109869,
+      "j_blind_cem": 12.25200075124805,
+      "j_random": 0.10821455280143615,
+      "play_cost_blind_cem": 0.020041308876235352,
+      "play_cost_blind_cem_paired": {
+        "per_seed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.4340776845880002,
+          0.0,
+          0.0,
+          -0.03325150706329029,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean": 0.020041308876235498,
+        "sd": 0.09773649260553548,
+        "se": 0.021854544134838286,
+        "t95": [
+          -0.025700251997981035,
+          0.06578286975045203
+        ],
+        "excludes_zero": false
+      },
+      "blind_contact_rate": 0.05,
+      "crossing_scope": "paired_initial_state",
+      "crossing_frac_cem_blind": 0.0090625,
+      "crossing_frac_mpc_blind": 0.09433497536945813,
+      "crossing_frac_cem_episode_blind": 0.025630859375,
+      "n_episodes": 20,
+      "per_seed": [
+        {
+          "seed": 0,
+          "j_truth_cem": 16.505523072313377,
+          "j_blind_cem": 16.505523072313377,
+          "j_random": 0.0004167321732402625,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.015625,
+          "crossing_frac_mpc_initial": 0.08866995073891626,
+          "crossing_frac_cem_episode": 0.00042968750000000006
+        },
+        {
+          "seed": 1000,
+          "j_truth_cem": 11.042797749763476,
+          "j_blind_cem": 11.042797749763476,
+          "j_random": 0.0014421228772823365,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.00625,
+          "crossing_frac_mpc_initial": 0.06896551724137931,
+          "crossing_frac_cem_episode": 0.0008203125000000001
+        },
+        {
+          "seed": 2000,
+          "j_truth_cem": 14.219307146101544,
+          "j_blind_cem": 14.219307146101544,
+          "j_random": 0.07226034104431708,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.009375,
+          "crossing_frac_mpc_initial": 0.11330049261083744,
+          "crossing_frac_cem_episode": 0.0005078125
+        },
+        {
+          "seed": 3000,
+          "j_truth_cem": 15.730717032537958,
+          "j_blind_cem": 15.730717032537958,
+          "j_random": 0.0018104446162876518,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.003125,
+          "crossing_frac_mpc_initial": 0.09359605911330049,
+          "crossing_frac_cem_episode": 0.00015625
+        },
+        {
+          "seed": 4000,
+          "j_truth_cem": 5.381411044849151,
+          "j_blind_cem": 0.002259206205301164,
+          "j_random": 0.0012342927770111682,
+          "blind_contact": true,
+          "crossing_frac_cem_initial": 0.009375,
+          "crossing_frac_mpc_initial": 0.09359605911330049,
+          "crossing_frac_cem_episode": 0.4910546875
+        },
+        {
+          "seed": 5000,
+          "j_truth_cem": 9.83941245527596,
+          "j_blind_cem": 9.83941245527596,
+          "j_random": 0.0010214733843477179,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.003125,
+          "crossing_frac_mpc_initial": 0.07881773399014778,
+          "crossing_frac_cem_episode": 0.00125
+        },
+        {
+          "seed": 6000,
+          "j_truth_cem": 12.665791871604906,
+          "j_blind_cem": 12.665791871604906,
+          "j_random": 0.01799712511663245,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.003125,
+          "crossing_frac_mpc_initial": 0.10344827586206896,
+          "crossing_frac_cem_episode": 0.0004687500000000001
+        },
+        {
+          "seed": 7000,
+          "j_truth_cem": 10.351234026659666,
+          "j_blind_cem": 10.763291388067094,
+          "j_random": 0.018208864154008738,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.0125,
+          "crossing_frac_mpc_initial": 0.10837438423645321,
+          "crossing_frac_cem_episode": 0.0033984374999999995
+        },
+        {
+          "seed": 8000,
+          "j_truth_cem": 8.530807249041137,
+          "j_blind_cem": 8.530807249041137,
+          "j_random": 0.018348789541413252,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.0125,
+          "crossing_frac_mpc_initial": 0.1330049261083744,
+          "crossing_frac_cem_episode": 0.0015625
+        },
+        {
+          "seed": 9000,
+          "j_truth_cem": 14.992888970499305,
+          "j_blind_cem": 14.992888970499305,
+          "j_random": 0.07064972716120815,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.021875,
+          "crossing_frac_mpc_initial": 0.07881773399014778,
+          "crossing_frac_cem_episode": 0.000703125
+        },
+        {
+          "seed": 10000,
+          "j_truth_cem": 10.23655232470161,
+          "j_blind_cem": 10.23655232470161,
+          "j_random": 0.007682783176430495,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.003125,
+          "crossing_frac_mpc_initial": 0.08374384236453201,
+          "crossing_frac_cem_episode": 0.0023828125000000004
+        },
+        {
+          "seed": 11000,
+          "j_truth_cem": 13.452949909741154,
+          "j_blind_cem": 13.452949909741154,
+          "j_random": 1.5841957815976921,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.009375,
+          "crossing_frac_mpc_initial": 0.07881773399014778,
+          "crossing_frac_cem_episode": 0.0009375
+        },
+        {
+          "seed": 12000,
+          "j_truth_cem": 16.644057137912846,
+          "j_blind_cem": 16.644057137912846,
+          "j_random": 0.01871269110832973,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.009375,
+          "crossing_frac_mpc_initial": 0.08866995073891626,
+          "crossing_frac_cem_episode": 0.000390625
+        },
+        {
+          "seed": 13000,
+          "j_truth_cem": 15.58579373801262,
+          "j_blind_cem": 15.58579373801262,
+          "j_random": 0.00546190348613794,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.00625,
+          "crossing_frac_mpc_initial": 0.09359605911330049,
+          "crossing_frac_cem_episode": 0.00042968750000000006
+        },
+        {
+          "seed": 14000,
+          "j_truth_cem": 11.633758449105198,
+          "j_blind_cem": 11.633758449105198,
+          "j_random": 0.08028699406719757,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.021875,
+          "crossing_frac_mpc_initial": 0.11330049261083744,
+          "crossing_frac_cem_episode": 0.0023828125
+        },
+        {
+          "seed": 15000,
+          "j_truth_cem": 11.280783682795818,
+          "j_blind_cem": 11.280783682795818,
+          "j_random": 0.0046348435269635176,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.01875,
+          "crossing_frac_mpc_initial": 0.09359605911330049,
+          "crossing_frac_cem_episode": 0.0021484375
+        },
+        {
+          "seed": 16000,
+          "j_truth_cem": 11.732037607993654,
+          "j_blind_cem": 11.732037607993654,
+          "j_random": 0.2168133264036958,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.0,
+          "crossing_frac_mpc_initial": 0.07389162561576355,
+          "crossing_frac_cem_episode": 0.0010937499999999999
+        },
+        {
+          "seed": 17000,
+          "j_truth_cem": 13.255101799177003,
+          "j_blind_cem": 13.255101799177003,
+          "j_random": 0.0013277333566317712,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.0,
+          "crossing_frac_mpc_initial": 0.09852216748768473,
+          "crossing_frac_cem_episode": 0.000703125
+        },
+        {
+          "seed": 18000,
+          "j_truth_cem": 13.905270759192987,
+          "j_blind_cem": 13.905270759192987,
+          "j_random": 0.0022851359935371273,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.009375,
+          "crossing_frac_mpc_initial": 0.11330049261083744,
+          "crossing_frac_cem_episode": 0.000703125
+        },
+        {
+          "seed": 19000,
+          "j_truth_cem": 13.020913474918018,
+          "j_blind_cem": 13.020913474918018,
+          "j_random": 0.03949995046635795,
+          "blind_contact": false,
+          "crossing_frac_cem_initial": 0.00625,
+          "crossing_frac_mpc_initial": 0.08866995073891626,
+          "crossing_frac_cem_episode": 0.0010937499999999999
+        }
+      ]
+    }
+  ],
+  "elapsed_s": 1144.0
+}
