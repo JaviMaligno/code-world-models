@@ -56,7 +56,7 @@ import os  # noqa: E402
 
 sys.path.insert(0, str(_REPO / "src"))
 
-from cwm.continuous.envs import CartWall, PendulumStop  # noqa: E402
+from cwm.continuous.envs import CartWall, PatchField2D, PendulumStop  # noqa: E402
 from cwm.continuous import harness  # noqa: E402
 from cwm.continuous.contract import (  # noqa: E402
     SynthesizedModel, synthesize_and_evaluate)
@@ -72,9 +72,14 @@ ap.add_argument("--arm", choices=["full", "incomplete", "both"], default="both")
 ap.add_argument("--x-wall", type=float, default=8.0,
                 help="8.0: gate misses the wall ~60%% of seeds at N=40; "
                 "4.0: gate nearly always catches it")
-ap.add_argument("--instrument", choices=["cart", "pendulum"], default="cart")
+ap.add_argument("--instrument", choices=["cart", "pendulum", "patch2d"],
+                default="cart")
 ap.add_argument("--th-stop", type=float, default=1.4,
                 help="pendulum mode knob (1.4 headline ~balanced; 1.0 caught)")
+ap.add_argument("--k1", type=float, default=3.0,
+                help="patch2d: x of patch 1 center (nearer patch, common mode)")
+ap.add_argument("--k2", type=float, default=7.0,
+                help="patch2d: x of patch 2 center (farther patch, rare mode)")
 ap.add_argument("--n-rollouts", type=int, default=40, help="the danger-law N")
 ap.add_argument("--eps", type=float, default=1e-9,
                 help="pinned-integrator gate tolerance; loosen to 1e-6 if a "
@@ -107,6 +112,10 @@ if args.instrument == "pendulum":
     ENV = PendulumStop(th_stop=args.th_stop)
     KNOB = f"thstop{args.th_stop:g}"
     INSTR_TAG = "pendulum_"
+elif args.instrument == "patch2d":
+    ENV = PatchField2D(p1=(args.k1, 0.0), p2=(args.k2, 0.0))
+    KNOB = f"k{args.k1:g}_{args.k2:g}"
+    INSTR_TAG = "patch2d_"
 else:
     ENV = CartWall(x_wall=args.x_wall)
     KNOB = f"xwall{args.x_wall:g}"
@@ -145,14 +154,40 @@ for arm in ARMS:
             cell["play_contact_rate"] = (
                 sum(e.contact for e in eps_play) / len(eps_play))
         results["cells"].append(cell)
+        per_mode = ""
+        if "sample_contains_mode_per" in cell:
+            per_mode = (f" modes_in_sample={cell['sample_contains_mode_per']} "
+                        f"mode_blind={cell['mode_blindness']}")
         print(f"[{arm} seed={seed}] wall_in_sample={cell['sample_contains_wall']} "
               f"gate={cell['gate_accuracy']:.3f} iters={cell['refine_iterations']} "
-              f"blind={cell['wall_blindness']} "
+              f"blind={cell['wall_blindness']}{per_mode} "
               f"play_cost={cell.get('play_cost', 'n/a')}", flush=True)
 
 # Cell summary: the danger-law conditionals.
 inc = [c for c in results["cells"] if c["arm"] == "incomplete"]
-if inc:
+if inc and args.instrument == "patch2d":
+    # Per-mode partition: the identifiability event is now per patch, so the
+    # incomplete arm splits into four branches by which modes the gate sample
+    # contained. Partial repair = the seen patch's blindness drops to 0 while
+    # the unseen patch stays blind at 1.0 behind the same passed gate.
+    def _branch(c):
+        per = c["sample_contains_mode_per"]
+        return (bool(per.get("patch1")), bool(per.get("patch2")))
+    LABELS = {(False, False): "miss-both", (True, False): "see1-miss2",
+              (False, True): "miss1-see2", (True, True): "see-both"}
+    print(f"\nincomplete arm ({len(inc)} seeds), partitioned by "
+          f"sample_contains_mode_per:", flush=True)
+    for key in [(False, False), (True, False), (False, True), (True, True)]:
+        cells = [c for c in inc if _branch(c) == key]
+        print(f"  {LABELS[key]}: {len(cells)}/{len(inc)}", flush=True)
+        for c in cells:
+            mb = c["mode_blindness"] or {}
+            print(f"    seed={c['seed']} gate={c['gate_accuracy']:.3f} "
+                  f"blind_p1={mb.get('patch1', 'n/a')} "
+                  f"blind_p2={mb.get('patch2', 'n/a')} "
+                  f"play_cost={c.get('play_cost', 'n/a')} "
+                  f"contact={c.get('play_contact_rate', 'n/a')}", flush=True)
+elif inc:
     missed = [c for c in inc if not c["sample_contains_wall"]]
     blind_when_missed = [c for c in missed
                          if c["gate_passed"] and c["wall_blindness"] == 1.0]
