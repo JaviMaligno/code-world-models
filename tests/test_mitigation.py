@@ -7,7 +7,7 @@ blind planner escapes the pin and recovers most of the truth planner's return
 on both instruments."""
 import random
 
-from cwm.continuous.envs import CartWall, PendulumStop, blind_of
+from cwm.continuous.envs import CartWall, PendulumStop, PatchField2D, blind_of
 from cwm.continuous import harness, mpc
 from cwm.continuous.mitigation import plan_mitigated, run_mitigated_episode
 
@@ -64,3 +64,41 @@ def test_mitigated_blind_escapes_pendulum():
     assert m.violations >= 1
     assert m.ret > 10 * max(b.ret, 0.1)
     assert m.ret > 0.4 * t.ret   # prototype measured ~0.84 here
+
+
+P2D = PatchField2D()
+
+
+def test_patch2d_bit_identity_on_truth():
+    ref = harness.run_episode(P2D, P2D, "mpc", seed=3, n_samples=40)
+    mit = run_mitigated_episode(P2D, P2D, seed=3, n_samples=40,
+                                eps=0.5, pos_dims=(0, 1))
+    assert mit.violations == 0 and mit.ret == ref.ret
+
+
+def test_patch2d_mitigated_blind_escapes():
+    # 2D partial collapse — the boundary-mapping transient (mean ~2 violations)
+    # makes recovery PARTIAL (~24-32% of truth here), unlike 1D's near-total
+    # escape: the planner rounds one fence disc and re-contacts the patch
+    # elsewhere, accruing ~2 violations. The mechanism still fires — the pin
+    # breaks and the planner navigates to the real lode at x=-6 — but recovery
+    # is partial by construction. See §9. (Measured seed 3: blind ~0; mitigated
+    # ret=4.16, final x=-5.55, violations=2; truth=17.30 -> ratio 0.24.)
+    b = harness.run_episode(P2D, blind_of(P2D), "mpc", seed=3, n_samples=40)
+    m = run_mitigated_episode(P2D, blind_of(P2D), seed=3, n_samples=40,
+                              eps=0.5, pos_dims=(0, 1))
+    t = harness.run_episode(P2D, P2D, "mpc", seed=3, n_samples=40)
+    r = harness.run_episode(P2D, policy="random", seed=3)
+    assert b.ret < 1.0                       # pinned baseline
+    assert m.violations >= 1
+    assert m.ret > 3 * max(b.ret, 0.1)       # escaped the pin (b ~0, m ~4)
+    assert m.final_state[0] < -3.0           # navigated toward the real lode (x=-6)
+    # the play_cost collapsed substantially (mitigated << blind regret).
+    # 0.80 is the PESSIMISTIC single-episode bound (seed 3 is the worst tail,
+    # ~24% recovery -> pc_mit ~0.76); the aggregate collapse across knobs in
+    # results/continuous_mitigation_patch2d.json is much larger (e.g. (2,6):
+    # pc_blind 1.006 -> pc_mit 0.257).
+    denom = t.ret - r.ret
+    pc_blind = (t.ret - b.ret) / denom
+    pc_mit = (t.ret - m.ret) / denom
+    assert pc_mit < 0.80 * pc_blind
