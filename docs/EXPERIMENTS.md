@@ -1,5 +1,141 @@
 # Experiments Log
 
+## PAPER 2 — PatchField2D (4D bi-modal instrument): the danger law composes; repair is geometry-dependent (2026-07-18)
+
+The third instrument closes the two structural gaps the reviewers flagged on the 1D
+instruments — a 4D state and two independent modes — by adding a `PatchField2D`
+environment (`src/cwm/continuous/envs`): state `[x, y, vx, vy]`, scalar heading action
+`φ = π·clamp(a)/a_max`, two circular sticky patches `P_i = disc(c_i, R)` with a
+stay-at-previous-position clamp (`(x2,y2) ∈ P_i ⇒ next = [x, y, 0, 0]`), and two radial
+sigmoid lodes (small real one near the start, large phantom one behind the patches).
+Knobs `k1` (near patch) / `k2` (far patch) are the patch-center distances along/off the
+start→lode corridor; defaults frozen once (never per cell).
+
+### Mechanism — the danger law composes per mode (2026-07-18)
+
+`scripts/continuous_patch2d.py` → `results/continuous_patch2d.json`. 600 rarity rollouts,
+20 MPC episodes/arm per cell, 3×3 knob grid. `J_blind = 0.00` and `J_rand = 0.11` at every
+cell; `play_cost` knob-invariant at [1.005, 1.006]. Per-mode rarities separate cleanly
+(`r1 ∈ [0.085, 0.245]`, `r2 ∈ [0.0067, 0.0100]`). The danger law composes mode-wise:
+per-mode `d@40 = pc·(1−r_i)^40`, joint `d@40 = pc·((1−r1)(1−r2))^40`.
+
+| k1 | k2 | r1 | r2 | J_truth | J_blind | J_rand | pc | d40_p1 | d40_p2 | d40_joint |
+|---:|---:|-----:|------:|-------:|-------:|------:|-----:|------:|------:|--------:|
+| 2 | 6 | 0.2450 | 0.0100 | 17.98 | 0.00 | 0.11 | 1.006 | 0.0000 | 0.6732 | 0.0000 |
+| 2 | 7 | 0.2450 | 0.0083 | 18.02 | 0.00 | 0.11 | 1.006 | 0.0000 | 0.7200 | 0.0000 |
+| 2 | 8 | 0.2450 | 0.0067 | 18.08 | 0.00 | 0.11 | 1.006 | 0.0000 | 0.7700 | 0.0000 |
+| 3 | 6 | 0.1417 | 0.0083 | 18.57 | 0.00 | 0.11 | 1.006 | 0.0022 | 0.7197 | 0.0016 |
+| 3 | 7 | 0.1417 | 0.0083 | 18.47 | 0.00 | 0.11 | 1.006 | 0.0022 | 0.7197 | 0.0016 |
+| 3 | 8 | 0.1417 | 0.0067 | 17.72 | 0.00 | 0.11 | 1.006 | 0.0022 | 0.7699 | 0.0017 |
+| 4 | 6 | 0.0883 | 0.0083 | 20.85 | 0.00 | 0.11 | 1.005 | 0.0249 | 0.7192 | 0.0178 |
+| 4 | 7 | 0.0883 | 0.0100 | 19.52 | 0.00 | 0.11 | 1.006 | 0.0249 | 0.6727 | 0.0166 |
+| 4 | 8 | 0.0850 | 0.0083 | 19.08 | 0.00 | 0.11 | 1.006 | 0.0288 | 0.7196 | 0.0206 |
+
+**Honest notes.** The `r2` knob is only weakly resolved at 600 rollouts (its trend is
+under-resolved, not flat); the `k1=4` one-hit bump in `r2` is sampling noise, not a knob
+effect.
+
+### Synthesis — we predicted partial repair; we measured none (2026-07-18)
+
+`scripts/continuous_danger_synthesis.py --instrument patch2d` (Azure GPT-5.x mini + large,
+20 seeds/cell, N=40, ε=1e-9) on two bi-knob cells, k=(3,7) and k=(5,9). Per-seed JSONs:
+`results/continuous_synthesis_patch2d_{mini,large}_k{3_7,5_9}.json`.
+
+| file (model) | full | see-both | see1-miss2 | miss1-see2 | miss-both (certified) |
+|---|---|---|---|---|---|
+| mini_k3_7 (gpt-5.4-mini) | 20/20 | n=5 cert=0, gate [0.1663, 0.9969] | n=15 cert=0, gate [0.0312, 0.9978] | — | — |
+| large_k3_7 (gpt-5.4) | 20/20 | n=5 cert=0, gate [0.0034, 0.9912] | n=15 cert=0, gate [0.5687, 0.995] | — | — |
+| mini_k5_9 (gpt-5.4-mini) | 20/20 | — | n=17 cert=0, gate [0.0013, 0.9991] | n=1 cert=0, gate [0.9997] | n=2 cert=2, gate [1.0], play_cost 1.095 |
+| large_k5_9 (gpt-5.4) | 20/20 | — | n=17 cert=0, gate [0.9266, 0.9997] | n=1 cert=0, gate [0.9891] | n=2 cert=2, gate [1.0], play_cost 1.095 |
+
+**Headline (prediction-inverting).** The plan predicted PARTIAL REPAIR (a see-one-miss-other
+sample yielding an artifact that repairs the seen patch and is blind+certified on the
+unseen one). MEASURED: **0 partial-repair events in 66 see-one-miss-other cells**
+(66 = 64 see1-miss2 + 2 miss1-see2), and **0/76 in-sample incomplete artifacts recovered
+the disc rule at all** (76 = 80 incomplete seeds − 4 miss-both). Certification occurred
+**iff** the sample missed ALL modes: the only certified incomplete artifacts are the
+**4/80 miss-both seeds** (2 per size at k=(5,9)), blind on both patches, exploited at
+play_cost 1.095, contact 1.0. The all-or-nothing gate REJECTED every partial artifact
+rather than certifying it, so certification stayed sound in the strict sense (no wrong
+artifact certified on a covered transition); danger still lives exactly in the
+`(1−r1)^N (1−r2)^N` joint-miss event.
+
+**Mechanism (76-artifact code inspection).** Plant translation succeeds (≈74/76 exact 4D
+integrator + reward). What collapses is INDUCTION of the 2D circular boundary. The modal
+failure is DIMENSIONAL REDUCTION: the disc modeled as a CartWall half-plane (right location,
+wrong shape, e.g. `if x2 > 4.0`). Classification of the 76:
+
+| class | count | description |
+|---|---:|---|
+| dimensional reduction (half-plane) | 38/76 | disc → 1D half-plane clamp at the right location, wrong shape |
+| pure-blind | 20/76 | no patch logic at all |
+| superstitious | 9/76 | local patch fitted to observed contacts, mispredicts elsewhere |
+| disc-form but incorrect | 9/76 | attempts a circular form, none correct |
+
+The ε-exactness alternative is **falsified**: no correct-form disc failed on arithmetic;
+the discs that failed were the wrong shape.
+
+**Phrasing cautions (validated).** (i) High failing gates (e.g. 0.9997) = contact RARITY
+in a short rollout, NOT near-repair — more iterations would not populate a partial-repair
+branch that does not exist. (ii) mini/large partitions are seed-identical by construction
+(shared seeds) — not independent replication. (iii) the count is 0/66 see-one-miss-other
+(66, not 64).
+
+**The arc.** On 1D clamps the discrete paper's (b)-residual vanished (GPT-5.x repaired
+82/82); on the 2D circular mode it RETURNS (0/76). Repair-from-data is geometry-dependent,
+so the danger law's exhaustiveness claim is itself geometry-scoped.
+
+### eps sweep — per-mode reveal-rarity exactly flat (2026-07-18)
+
+`scripts/continuous_eps_sweep.py --instrument patch2d` →
+`results/continuous_eps_sweep_patch2d.json`. Mode-arm reveal-rarity is EXACTLY flat across
+the entire ε grid, per mode:
+
+| arm | rarity (constant across grid) |
+|---|---:|
+| patches omitted | 0.147 |
+| patch1 only omitted | 0.142 |
+| patch2 only omitted | 0.005 |
+
+The per-mode arms recover the per-mode rarities of the mechanism sweep — the tolerance axis
+is orthogonal to the mode hole on the bi-modal instrument, separately for each mode.
+
+### CEM row — blind CEM not exploited; the anticipated 2D competence gap did not materialize (2026-07-18)
+
+`scripts/continuous_cem.py --instrument patch2d` → `results/continuous_cem_patch2d.json`.
+horizon 40, 5 iters, 64 samples, elite 0.125, min-std 0.05 (one fixed setting).
+
+| knob | pc | t95 | contact | crossing CEM | crossing MPC |
+|---|---:|---|---:|---:|---:|
+| (2,6) | −0.0224 | [−0.1189, +0.0741] | 0.05 | 0.0697 | 0.2076 |
+| (3,7) | +0.0174 | [−0.0191, +0.0540] | 0.05 | 0.0270 | 0.1488 |
+| (4,8) | +0.0200 | [−0.0257, +0.0658] | 0.05 | 0.0091 | 0.0943 |
+
+pc t95 includes 0 on all 3 rows; crossing CEM < MPC on every row. CEM is competent in
+aggregate (the anticipated 2D competence gap did NOT materialize) but with per-seed variance
+(one truth-CEM ≈ 0.97 outlier episode). Blind contact 0.05 uniform — nonzero, unlike the
+cart's 0.00, and without positive play_cost.
+
+### Mitigation 2D — partial collapse that decays with patch distance (2026-07-18)
+
+`scripts/continuous_mitigation_patch2d.py` → `results/continuous_mitigation_patch2d.json`.
+Fences are the 2D positions of refuted predictions (inside the unreachable patch);
+segment-to-point crossing (leap-proof); the 1D path is preserved bitwise (tested
+char-identical). The collapse is PARTIAL and DECAYS with patch distance.
+
+| (k1,k2) | pc_blind | pc_mit | mean_viol | first_contact | c_mit |
+|---|---:|---:|---:|---:|---:|
+| (2,6) | 1.006 | 0.257 | 1.05 | 8.50 | 1.00 |
+| (3,7) | 1.006 | 0.541 | 2.65 | 12.35 | 1.00 |
+| (4,8) | 1.006 | 0.862 | 4.25 | 15.25 | 1.00 |
+
+The 1D single-violation sufficiency becomes a boundary-mapping transient (the planner rounds
+a fence disc and re-contacts the patch edge elsewhere, accreting fences along the arc); mean
+violations grow 1.05 → 4.25 vs the 1D instruments' 1.0. At (4,8) it nearly defeats the
+mitigation (pc_mit 0.862 vs pc_blind 1.006). Honest scope of a hard-boundary mitigation on a
+curved 2D boundary, not a failure. The escape test asserts the measured mechanism
+(pc_mit < 0.80·pc_blind, single-episode pessimistic bound).
+
 ## PAPER 2 — Third model family (Claude, agent-relayed): a symmetry prior and a phantom-mode artifact (2026-07-15)
 
 **Protocol.** We ran paper 1's agent-relay protocol on the continuous synthesis
