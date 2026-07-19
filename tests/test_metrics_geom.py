@@ -1,9 +1,11 @@
+import math
 import random
 from cwm.continuous.envs import ShapeField2D
 from cwm.continuous.shapes import Circle
 from cwm.continuous import mpc
 from cwm.continuous.metrics_geom import stratified_probes, disagreement_scores
 from cwm.continuous.metrics_geom import iou_vs_truth, forbidden_mask
+from cwm.continuous.metrics_geom import boundary_of_set, symmetric_boundary_distance
 from cwm.continuous.envs import ShapeField2D, integrate_2d, invert_integrator
 BOX = ((-8.0,14.0),(-6.0,6.0))
 
@@ -45,3 +47,26 @@ def test_velocity_guard_is_non_positional():
     env = ShapeField2D(shape=Circle(3.0,0.0,1.0))
     res = iou_vs_truth(env, vel_guard, BOX, 128, [(3.0,0.0),(-3.0,0.0),(0.0,3.0)])
     assert res["class"] == "non_positional" and res["iou"] is None
+
+def test_boundary_distance_zero_for_true_boundary():
+    grid_n = 128
+    env = ShapeField2D(shape=Circle(3.0,0.0,1.0))
+    vx, vy = 3.0, 0.0
+    mask = forbidden_mask(lambda s,a: env.step(s,a)[0], BOX, grid_n, vx, vy)
+    model_boundary = boundary_of_set(mask, BOX)
+    (xmin,xmax),(ymin,ymax) = BOX
+    cell_diagonal = math.hypot((xmax-xmin)/grid_n, (ymax-ymin)/grid_n)
+    res = symmetric_boundary_distance(env.shape, model_boundary, BOX, n_samples=200, diam_norm=1.0)
+    assert res["hausdorff"] < 1.5 * cell_diagonal
+    assert res["p95"] <= res["hausdorff"]
+    assert res["mean"] <= res["hausdorff"]
+
+def test_boundary_distance_positive_for_shifted():
+    grid_n = 128
+    env = ShapeField2D(shape=Circle(3.0,0.0,1.0))
+    shifted_env = ShapeField2D(shape=Circle(4.0,0.0,1.0))
+    vx, vy = 3.0, 0.0
+    mask = forbidden_mask(lambda s,a: shifted_env.step(s,a)[0], BOX, grid_n, vx, vy)
+    model_boundary = boundary_of_set(mask, BOX)
+    res = symmetric_boundary_distance(env.shape, model_boundary, BOX, n_samples=200, diam_norm=1.0)
+    assert res["hausdorff"] > 0.5

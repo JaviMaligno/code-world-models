@@ -317,6 +317,53 @@ def iou_vs_truth(truth_env, model_step, box, grid_n, velocity_samples) -> dict:
     }
 
 
+def symmetric_boundary_distance(shape_true, model_boundary_pts, box, n_samples,
+                                 diam_norm) -> dict:
+    """Symmetric (two-directional) boundary distance between the true shape's
+    boundary and a model's boundary point set, reported as three summaries of
+    the pooled directed-distance multiset -- `hausdorff` (max), `p95`, and
+    `mean` -- each normalized by `diam_norm` (so scores are comparable across
+    boxes/shapes of different scale).
+
+    `shape_true.boundary_points(box, n_samples)` gives the truth side (now
+    arc-length uniform). `model_boundary_pts` is caller-supplied rather than
+    computed here because the model side comes from a different construction
+    depending on what is being scored -- typically
+    `boundary_of_set(forbidden_mask(model_step, box, grid_n, vx, vy), box)`
+    for a positional artifact, i.e. the model's endpoint-space forbidden set
+    traced at the mask's own (grid_n-limited) resolution, not a smooth
+    parametric curve. Both directed distances (truth->model and
+    model->truth) are computed via brute-force nearest-neighbor search (each
+    point in one set against every point in the other) and pooled before
+    taking the max/p95/mean, matching the standard symmetric-Hausdorff-plus-
+    percentile construction: hausdorff alone is a worst-case outlier
+    statistic, so p95/mean are reported alongside for a distribution-level
+    view of boundary placement error.
+
+    If `model_boundary_pts` is empty (e.g. the model predicts no forbidden
+    region at all), every directed distance is defined as `inf` -- there is
+    no finite nearest neighbor to report, and this should read as maximal
+    disagreement rather than silently dividing by zero or raising.
+    """
+    true_pts = shape_true.boundary_points(box, n_samples)
+
+    def directed(a_pts, b_pts):
+        return [min(math.hypot(p[0] - q[0], p[1] - q[1]) for q in b_pts)
+                for p in a_pts]
+
+    d_ab = directed(true_pts, model_boundary_pts) if model_boundary_pts else [float("inf")]
+    d_ba = directed(model_boundary_pts, true_pts) if model_boundary_pts else [float("inf")]
+    alld = sorted(d_ab + d_ba)
+    haus = max(alld)
+    p95 = alld[min(len(alld) - 1, int(0.95 * len(alld)))]
+    mean = sum(alld) / len(alld)
+    return {
+        "hausdorff": haus / diam_norm,
+        "p95": p95 / diam_norm,
+        "mean": mean / diam_norm,
+    }
+
+
 def boundary_of_set(mask: np.ndarray, box) -> list:
     """The edge cells of a boolean grid mask, as `(x, y)` grid-point
     coordinates: a True cell counts as an edge iff at least one of its
