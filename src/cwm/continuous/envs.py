@@ -211,6 +211,61 @@ class PatchField2D:
         return s2, self.reward(s2), False
 
 
+@dataclass(frozen=True)
+class ShapeField2D:
+    """Fourth instrument: single-mode 2D navigation against an arbitrary
+    `Shape` (the geometry-repair generalization of PatchField2D's disc).
+    Same plant/reward as PatchField2D (reuses its physics constants and
+    lodes); the single hard mode is `shape.contains(next_xy)` instead of a
+    hardcoded disc test. `shape=None` is the blind variant. `_integrate`
+    delegates to the shared `integrate_2d` so this stays bit-exact with
+    every other 2D instrument off-mode."""
+    dt: float = 0.1
+    gain: float = 3.0
+    drag: float = 0.3
+    a_max: float = 1.0
+    shape: "object | None" = None
+    lode_real: tuple = (-6.0, 0.0)
+    amp_real: float = 0.3
+    lode_phantom: tuple = (12.0, 0.0)
+    amp_phantom: float = 1.0
+    r0: float = 2.0
+    width: float = 0.5
+    h_episode: int = 80
+    x0_range: float = 0.5
+
+    def initial_state(self, rng) -> State:
+        return (rng.uniform(-self.x0_range, self.x0_range),
+                rng.uniform(-self.x0_range, self.x0_range), 0.0, 0.0)
+
+    def _lode(self, x: float, y: float, lode: tuple, amp: float) -> float:
+        d = math.hypot(x - lode[0], y - lode[1])
+        return amp / (1.0 + math.exp((d - self.r0) / self.width))
+
+    def reward(self, state: State) -> float:
+        x, y = state[0], state[1]
+        return (self._lode(x, y, self.lode_real, self.amp_real)
+                + self._lode(x, y, self.lode_phantom, self.amp_phantom))
+
+    def _inside(self, x: float, y: float) -> bool:
+        return self.shape is not None and self.shape.contains((x, y))
+
+    def _integrate(self, state: State, action: float):
+        return integrate_2d(state, action, self.dt, self.gain, self.drag, self.a_max)
+
+    def contact_mode(self, state: State, action: float) -> bool:
+        x2, y2, _, _ = self._integrate(state, action)
+        return self._inside(x2, y2)
+
+    def step(self, state: State, action: float):
+        x2, y2, vx2, vy2 = self._integrate(state, action)
+        if self._inside(x2, y2):
+            s2 = (state[0], state[1], 0.0, 0.0)
+            return s2, self.reward(s2), True
+        s2 = (x2, y2, vx2, vy2)
+        return s2, self.reward(s2), False
+
+
 def blind_of_modes(env: "PatchField2D", omit: tuple) -> "PatchField2D":
     """Mode-selective blind model for the 2D instrument."""
     kw = {}
@@ -227,6 +282,8 @@ def blind_of(env):
         return replace(env, th_stop=None)
     if isinstance(env, PatchField2D):
         return replace(env, p1=None, p2=None)
+    if isinstance(env, ShapeField2D):
+        return replace(env, shape=None)
     return replace(env, x_wall=None)
 
 
