@@ -10,7 +10,9 @@
 
 ## Rev history
 
-rev. 2 (this file) rewrites Tasks 1–3, 5–7, 9, 11–13 after an expert NO-GO on rev. 1: rev. 1's geometry did fake arc-length sampling, unimodal-only projection, non-comparable `implicit_value` tube widths, an IoU that measured the translated preimage, a version-space that only bounded `S` from below, an evidence dose that didn't cap the transcript, and a calibration gate that checked only key presence. Every one is fixed below with brute-force oracle tests.
+rev. 2 rewrote Tasks 1–3, 5–7, 9, 11–13 after an expert NO-GO on rev. 1 (fake arc-length, unimodal projection, non-comparable tube widths, preimage-translated IoU, lower-bound-only version-space, un-capped transcript, key-presence-only calibration gate).
+
+rev. 3 (this file) fixes the near-GO review of rev. 2: (1) oracle can't compute IoU from point labels alone → `operational_reconstructs_vs_truth(...,truth_shape,...)` + `operational_heldout_accuracy(...)`, and `tangent_baseline(labeled)` is a classifying half-plane (positives+negatives give the side/offset); (2) evidence dose gains `env`, `gate_transitions`, `source_index`, and an initial controlled-prompt builder; (3) calibration validator enforces an exact `EXPECTED_CELL_IDS` manifest, `sufficiency={certified:false,tau_s:null}`, distinct seed streams, per-parameter provenance, per-cell grid_delta, and splits smoke (`--quick`) from strict scientific validation; (4) Wedge projects onto the infinite ray; plus parabola equidistant-`multi`, disconnected-arc component handling, full-perimeter polygon resampling, all-family oracle test, base64-JSON sandbox mask, reset-condition-preferring AST, and grid-cell-bounded boundary-distance assertions.
 
 ## Global Constraints
 
@@ -145,6 +147,30 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+def _resample_components(ordered_pts, n, gap_tol):
+    """Split an ordered in-window point list into arc components at gaps > gap_tol,
+    then resample n points by arc length, allocated across components proportional
+    to their length. Never accumulates distance across the gap between two arcs."""
+    if not ordered_pts:
+        return []
+    comps, cur = [], [ordered_pts[0]]
+    for k in range(1, len(ordered_pts)):
+        if math.hypot(ordered_pts[k][0]-ordered_pts[k-1][0], ordered_pts[k][1]-ordered_pts[k-1][1]) > gap_tol:
+            comps.append(cur); cur = []
+        cur.append(ordered_pts[k])
+    comps.append(cur)
+    lengths = []
+    for comp in comps:
+        L = sum(math.hypot(comp[i+1][0]-comp[i][0], comp[i+1][1]-comp[i][1]) for i in range(len(comp)-1))
+        lengths.append(max(L, 1e-12))
+    total = sum(lengths)
+    out = []
+    for comp, L in zip(comps, lengths):
+        share = max(1, round(n * L / total))
+        out.extend(comp[(i*len(comp))//share] for i in range(share))
+    return out[:n] if len(out) >= n else out
+
+
 class Shape:
     def contains(self, p) -> bool: return self.implicit_value(p) <= 0.0
     def implicit_value(self, p) -> float: raise NotImplementedError
@@ -188,8 +214,9 @@ class Circle(Shape):
             t = 2*math.pi*i/M
             x, y = self.cx+self.R*math.cos(t), self.cy+self.R*math.sin(t)
             if xmin<=x<=xmax and ymin<=y<=ymax: cand.append((x,y))
-        if not cand: return []
-        return [cand[(i*len(cand))//n] for i in range(n)]  # even index over in-window arc = arc-length uniform
+        # components: a window may clip the circle into two disconnected arcs
+        gap = 3.0 * (2*math.pi*self.R/M)
+        return _resample_components(cand, n, gap_tol=gap)
 ```
 
 - [ ] **Step 4: Run** — `pytest tests/test_shapes.py tests/test_integrator_shared.py tests/test_patch2d.py -q` → PASS (patch2d confirms the `_integrate` refactor is exact).
@@ -265,8 +292,10 @@ class Parabola(Shape):
         coeffs = [1.0/(2*R*R), 0.0, 1.0 + (self.c - x0)/R, -y0]
         roots = np.roots(coeffs)
         reals = [r.real for r in roots if abs(r.imag) < 1e-9] or [r.real for r in roots]
-        y = min(reals, key=lambda yy: (x0-self._bx(yy))**2 + (y0-yy)**2)
-        return (self._bx(y), y), False
+        ranked = sorted(((x0-self._bx(yy))**2 + (y0-yy)**2, yy) for yy in reals)
+        y = ranked[0][1]
+        multi = len(ranked) > 1 and abs(ranked[0][0] - ranked[1][0]) < 1e-9  # two equidistant minima
+        return (self._bx(y), y), multi
     def normal_or_cone(self, p):
         (_, y), _ = self.project_to_boundary(p)
         nx, ny = -1.0, y/self.R; d = math.hypot(nx, ny)
@@ -277,16 +306,8 @@ class Parabola(Shape):
         pts = [(self._bx(ymin+(ymax-ymin)*i/(M-1)), ymin+(ymax-ymin)*i/(M-1)) for i in range(M)]
         infoc = [(x,y) for (x,y) in pts if xmin<=x<=xmax and ymin<=y<=ymax]
         if len(infoc) < 2: return infoc[:n]
-        cum = [0.0]
-        for k in range(1, len(infoc)):
-            cum.append(cum[-1] + math.hypot(infoc[k][0]-infoc[k-1][0], infoc[k][1]-infoc[k-1][1]))
-        total = cum[-1]
-        out = []
-        for i in range(n):
-            target = total*i/(n-1) if n > 1 else 0.0
-            k = min(bisect.bisect_left(cum, target), len(infoc)-1)
-            out.append(infoc[k])
-        return out
+        step = math.hypot(infoc[1][0]-infoc[0][0], infoc[1][1]-infoc[0][1])
+        return _resample_components(infoc, n, gap_tol=max(3.0*step, 0.1))  # x-clip can split into arcs
 ```
 
 - [ ] **Step 4: Run** — `pytest tests/test_shapes.py -q` → PASS.
@@ -419,13 +440,16 @@ class RegularPolygon(Shape):
     def boundary_points(self, window, n):
         (xmin,xmax),(ymin,ymax) = window
         verts = _regular_vertices(self.cx, self.cy, self.radius, self.k, self.orient)
-        out, per = [], max(1, n//self.k)
+        # dense full-perimeter trace, filter to window, resample by arc length (handles n not divisible by k)
+        M = max(20*n, 400); dense = []
         for i in range(self.k):
             a, b = verts[i], verts[(i+1)%self.k]
-            for j in range(per):
-                t = j/per; x, y = a[0]+t*(b[0]-a[0]), a[1]+t*(b[1]-a[1])
-                if xmin<=x<=xmax and ymin<=y<=ymax: out.append((x,y))
-        return out[:n] if out else [verts[0]]
+            for j in range(M//self.k):
+                t = j/(M//self.k); dense.append((a[0]+t*(b[0]-a[0]), a[1]+t*(b[1]-a[1])))
+        infoc = [pp for pp in dense if xmin<=pp[0]<=xmax and ymin<=pp[1]<=ymax]
+        if not infoc: return [verts[0]]
+        edge = math.hypot(verts[1][0]-verts[0][0], verts[1][1]-verts[0][1]) / (M//self.k)
+        return _resample_components(infoc, n, gap_tol=max(3.0*edge, 0.1))
 
 @dataclass(frozen=True)
 class Wedge(Shape):
@@ -445,16 +469,16 @@ class Wedge(Shape):
         return faces
     def implicit_value(self, p):
         return max(nx*p[0]+ny*p[1]-off for nx,ny,off in self._faces())
-    def project_to_boundary(self, p, window=((-8.0,14.0),(-6.0,6.0))):
+    def project_to_boundary(self, p):
+        # project onto each INFINITE ray from the apex (t>=0), plus the apex; the window is NOT used here
         cands = [(self.apex, math.hypot(p[0]-self.apex[0], p[1]-self.apex[1]), True)]
         for d in self._edges():
-            far = _clip_ray_to_window(self.apex, d, window)
-            q, dist, _ = _project_segment(p, self.apex, far)
-            cands.append((q, dist, False))
+            t = max(0.0, (p[0]-self.apex[0])*d[0] + (p[1]-self.apex[1])*d[1])
+            q = (self.apex[0]+t*d[0], self.apex[1]+t*d[1])
+            cands.append((q, math.hypot(p[0]-q[0], p[1]-q[1]), t < 1e-9))
         cands.sort(key=lambda c: c[1])
-        best = cands[0]
         multi = len(cands) > 1 and abs(cands[0][1]-cands[1][1]) < 1e-9
-        return best[0], (best[2] or multi)
+        return cands[0][0], (cands[0][2] or multi)
     def normal_or_cone(self, p):
         act = [(nx,ny) for nx,ny,off in self._faces() if abs(nx*p[0]+ny*p[1]-off) < 1e-6]
         return act if len(act) >= 2 else (act[0] if act else self._faces()[0][:2])
@@ -651,7 +675,7 @@ def test_velocity_guard_is_non_positional():
 
 **Interfaces:** `symmetric_boundary_distance(shape_true, model_boundary_pts, box, n_samples, diam_norm) -> {"hausdorff","p95","mean"}`, where `model_boundary_pts = boundary_of_set(forbidden_mask(...), box)` for a positional artifact and `shape_true.boundary_points` (now truly arc-length uniform) for truth. Normalized by `diam_norm`.
 
-- [ ] **Step 1..5** as rev.1 Task 8 but the test also asserts the truth-vs-truth distance is ~0 using `boundary_of_set(forbidden_mask(truth_step,...))` (closing the loop with the corrected samplers), and the shifted-circle case uses `boundary_of_set`, not raw shape points. Commit `git commit -m "feat(metrics): symmetric boundary Hausdorff/p95/mean over corrected samplers + boundary_of_set"`.
+- [ ] **Step 1..5** as rev.1 Task 8 but the test asserts truth-vs-`boundary_of_set(forbidden_mask(truth_step,...))` distance is **below a grid-cell-derived bound** (`≈ 1.5 × cell_diagonal`, NOT exact zero — the marching-squares boundary is discretized), and the shifted-circle case uses `boundary_of_set`, not raw shape points. Commit `git commit -m "feat(metrics): symmetric boundary Hausdorff/p95/mean over corrected samplers + boundary_of_set"`.
 
 ---
 
@@ -659,7 +683,7 @@ def test_velocity_guard_is_non_positional():
 
 **Files:** Create `src/cwm/continuous/oracle.py`; Test `tests/test_oracle.py`.
 
-**Interfaces:** `fit_family(family, labeled_endpoints, box) -> Shape|None` for **circle, parabola, halfplane, strip, wedge, polygon** (least-violation over a bounded, family-appropriate parameter grid + local polish; bounds are the box, not the observed range, so a true `R=1` circle is reachable); `operational_reconstructs(family, labeled, box, iou_thresh) -> bool` (does the best fit match the labels' implied region on the box within `iou_thresh`); `tangent_baseline(contacts) -> HalfPlane` — **best half-plane of any orientation** via PCA on the contact points (returns a general `HalfPlaneGeneral(nx,ny,off)`), quantifying "collapse to the tangent". **Sufficiency `S` is NOT certified in Phase A**: `oracle.py` exposes only the operational estimator and a `SUFFICIENCY_UNCERTIFIED = True` sentinel; the conservative version-space upper bound is Phase B.
+**Interfaces:** `fit_family(family, labeled_endpoints, box) -> Shape|None` for **circle, parabola, halfplane, strip, wedge, polygon** (least-violation over a bounded, family-appropriate parameter grid + local polish; bounds are the box, not the observed range, so a true `R=1` circle is reachable). Because point labels alone do NOT determine the true region, the oracle exposes **two honest evaluators, never IoU-vs-implied-region**: `operational_reconstructs_vs_truth(family, labeled, truth_shape, box, iou_thresh) -> bool` (IoU of the fit against the KNOWN experiment truth on the box — valid only in calibration where `truth_shape` is known) and `operational_heldout_accuracy(family, train_labeled, test_labeled) -> float` (balanced accuracy of the fit on an independent labeled test set — the runtime-usable estimator). `tangent_baseline(labeled) -> HalfPlaneGeneral` — the best **classifying** half-plane fit to inside/outside-labeled endpoints (positives AND negatives; PCA on the points only *initializes* the orientation, then the offset and the interior side are chosen to minimize misclassification — contacts alone can't give the side or offset). **Sufficiency `S` is NOT certified in Phase A**: `oracle.py` exposes only these operational estimators and a `SUFFICIENCY_UNCERTIFIED = True` sentinel; the conservative version-space upper bound is Phase B.
 
 - [ ] **Step 1: Write failing tests (recovers the true circle; oracle works for every family; tangent is oriented)**
 
@@ -667,7 +691,10 @@ def test_velocity_guard_is_non_positional():
 # tests/test_oracle.py
 import math, random
 from cwm.continuous.shapes import Circle, Parabola, RegularPolygon
-from cwm.continuous.oracle import fit_family, operational_reconstructs, tangent_baseline, SUFFICIENCY_UNCERTIFIED
+from cwm.continuous.shapes import HalfPlane, Strip, Wedge
+from cwm.continuous.oracle import (fit_family, operational_reconstructs_vs_truth,
+                                   operational_heldout_accuracy, tangent_baseline, SUFFICIENCY_UNCERTIFIED)
+import math
 BOX = ((-8.0,14.0),(-6.0,6.0))
 
 def _labeled(shape, seed=0, n=1500):
@@ -677,23 +704,30 @@ def _labeled(shape, seed=0, n=1500):
 
 def test_fit_recovers_true_circle_R1():
     fit = fit_family("circle", _labeled(Circle(3.0,0.0,1.0)), BOX)
-    assert abs(fit.cx-3.0) < 0.15 and abs(fit.R-1.0) < 0.15  # R=1 is reachable (bounds not from observed range)
+    assert abs(fit.cx-3.0) < 0.15 and abs(fit.R-1.0) < 0.15  # R=1 reachable (box bounds, not observed range)
 
-def test_operational_oracle_all_families():
-    for fam, shp in (("circle", Circle(3.0,0.0,1.0)), ("parabola", Parabola(3.0,2.0)),
+def test_oracle_vs_truth_all_families():
+    for fam, shp in (("halfplane", HalfPlane(3.0)), ("strip", Strip(3.0,1.0)),
+                     ("circle", Circle(3.0,0.0,1.0)), ("parabola", Parabola(3.0,2.0)),
+                     ("wedge", Wedge((3.0,0.0), math.radians(30), 0.0)),
                      ("polygon", RegularPolygon(3.0,0.0,1.0,5,0.0))):
-        assert operational_reconstructs(fam, _labeled(shp), BOX, iou_thresh=0.85)
+        assert operational_reconstructs_vs_truth(fam, _labeled(shp), shp, BOX, iou_thresh=0.85)
 
-def test_tangent_baseline_is_oriented():
-    contacts = [(3.0 + 0.3*i, 0.3*i) for i in range(-3, 4)]  # a diagonal contact arc
-    hp = tangent_baseline(contacts)
-    assert abs(hp.nx) < 0.99  # not axis-aligned; PCA found the diagonal
+def test_oracle_heldout_accuracy():
+    shp = Circle(3.0,0.0,1.0)
+    assert operational_heldout_accuracy("circle", _labeled(shp, seed=0), _labeled(shp, seed=1)) > 0.9
+
+def test_tangent_baseline_classifies_with_side_and_offset():
+    shp = Circle(3.0,0.0,1.0)
+    hp = tangent_baseline(_labeled(shp, n=400))
+    # a clear interior point is classified inside, a clear exterior point outside
+    assert hp.contains((3.0,0.0)) and not hp.contains((7.0,0.0))
 
 def test_sufficiency_uncertified_sentinel():
     assert SUFFICIENCY_UNCERTIFIED is True
 ```
 
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** family fits with box-based bounds + coordinate polish, `operational_reconstructs` via IoU on the box, PCA tangent (`HalfPlaneGeneral`), and the sentinel. **Step 4:** PASS. **Step 5:** `git commit -m "feat(oracle): operational per-family fits + oriented tangent baseline; S left uncertified in Phase A"`.
+- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** family fits (all six families) with box-based bounds + coordinate polish; `operational_reconstructs_vs_truth` = IoU(fit-region, `truth_shape`-region) on the box grid ≥ `iou_thresh`; `operational_heldout_accuracy` = balanced accuracy of the fit on an independent labeled set; `tangent_baseline` = PCA-initialized orientation then offset+side chosen to minimize misclassification of the labeled points, returning `HalfPlaneGeneral(nx,ny,off)` (a `Shape` with `implicit_value = nx*x+ny*y-off`); the `SUFFICIENCY_UNCERTIFIED` sentinel. **Step 4:** PASS. **Step 5:** `git commit -m "feat(oracle): six-family fits, vs-truth + held-out evaluators, classifying tangent; S uncertified in Phase A"`.
 
 ---
 
@@ -701,7 +735,7 @@ def test_sufficiency_uncertified_sentinel():
 
 **Files:** Create `src/cwm/continuous/program_features.py`; Test `tests/test_program_features.py`.
 
-**Interfaces:** `guard_features(code, integrator_reward_ast) -> dict` — parses `code`, **isolates the guard/branch conditions** (the `test` expressions of `If`/`IfExp` and boolean ops in the added mode logic) and computes features on THOSE ONLY, subtracting the shared integrator/reward AST so the integrator's `var*const` products don't inflate `poly_degree`. Keys: `n_comparisons, boolean_depth, n_literals, guard_poly_degree, uses_hypot_sqrt, n_conjuncts, n_disjuncts, guard_ast_size, approx_mdl, invalid`.
+**Interfaces:** `guard_features(code, integrator_reward_ast) -> dict` — parses `code` and computes features on the guard conditions ONLY, **preferring the `test` expressions of branches that lead to the reset/freeze** (a branch whose body returns the previous position / zero velocity), and excluding auxiliary branches (e.g. action clamping) and the shared integrator/reward AST, so the integrator's `var*const` products don't inflate `guard_poly_degree`. Keys: `n_comparisons, boolean_depth, n_literals, guard_poly_degree, uses_hypot_sqrt, n_conjuncts, n_disjuncts, guard_ast_size, approx_mdl, invalid`.
 
 - [ ] **Step 1: Write failing tests**
 
@@ -730,7 +764,7 @@ def test_invalid_flag():
 
 **Files:** Create `src/cwm/continuous/artifact_class.py`; Test `tests/test_artifact_class.py`.
 
-**Interfaces:** `classify_artifact(code, transitions, eps) -> {"class","gate_accuracy","features"}` with class **`invalid`** when the code is unparseable OR lacks a callable `step`/`reward` OR raises on a trivial call **in the sandbox** (not `gate_failing`); `gate_failing` when it runs but gate accuracy `<1`; `gate_passing` at `1.0`. `dynamic_metrics_sandboxed(code, box, grid_n, velocity_samples) -> mask-array` — runs the artifact's `step` over the supplied grid **in a single sandbox subprocess** returning the forbidden mask, so gate-failing artifacts are never exec'd in-process. Executability/step-reward presence is checked in the sandbox.
+**Interfaces:** `classify_artifact(code, transitions, eps) -> {"class","gate_accuracy","features"}` with class **`invalid`** when the code is unparseable OR lacks a callable `step`/`reward` OR raises on a trivial call **in the sandbox** (not `gate_failing`); `gate_failing` when it runs but gate accuracy `<1`; `gate_passing` at `1.0`. `dynamic_metrics_sandboxed(code, box, grid_n, velocity_samples) -> mask-array` — runs the artifact's `step` over the supplied grid **in a single sandbox subprocess** returning the forbidden mask, so gate-failing artifacts are never exec'd in-process. The subprocess returns the mask as **base64-encoded packed bits inside a JSON envelope** (compatible with the existing text-stdout sandbox), NOT a raw `.npy` on stdout. Executability/step-reward presence is checked in the sandbox.
 
 - [ ] **Step 1: Write failing tests (exact class, invalid vs gate_failing distinguished, sandbox mask)**
 
@@ -756,7 +790,7 @@ def test_dynamic_mask_from_sandbox():
     assert mask.shape == (32, 32)
 ```
 
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** using the existing sandbox runner (`contract.run_in_sandbox`): a preflight that checks parse + `step`/`reward` presence + a trivial call → `invalid`; else `contract_accuracy` for `gate_failing`/`gate_passing`; `dynamic_metrics_sandboxed` writes a tiny driver that loops the grid inside the subprocess and returns the mask (numpy `.npy` via stdout/temile). **Step 4:** PASS. **Step 5:** `git commit -m "feat(artifact-class): invalid vs gate_failing distinguished; sandboxed dynamic mask"`.
+- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** using the existing sandbox runner (`contract.run_in_sandbox`): a preflight that checks parse + `step`/`reward` presence + a trivial call → `invalid`; else `contract_accuracy` for `gate_failing`/`gate_passing`; `dynamic_metrics_sandboxed` writes a tiny driver that loops the grid inside the subprocess and prints a JSON envelope `{"grid_n":N,"mask_b64":<base64 packed bits>}`, which the caller decodes to a boolean `np.ndarray`. **Step 4:** PASS. **Step 5:** `git commit -m "feat(artifact-class): invalid vs gate_failing distinguished; sandboxed dynamic mask (base64 JSON)"`.
 
 ---
 
@@ -764,7 +798,7 @@ def test_dynamic_mask_from_sandbox():
 
 **Files:** Create `src/cwm/continuous/evidence_dose.py`; Test `tests/test_evidence_dose.py`.
 
-**Interfaces:** `build_dose_sample(transitions, m, span, rng) -> (examples, allowed_index_set, meta)` — returns exactly **40 examples = m positives + m distinct matched negatives + (40−2m) background**, where matched negatives are chosen by **nearest boundary-normal distance to each kept positive's endpoint** (no reuse), `span∈{"small","large"}` selects positives within a small vs large angular arc of the boundary, and `allowed_index_set` are the indices the LLM is allowed to be corrected on. `refine_capped(provider, model, contract, code, examples, allowed_index_set, eps, max_iters=5) -> RefineResult` — a refinement loop that, on every iteration, **filters gate failures to `allowed_index_set`**, presents background as "controlled observations" (never as failures), and stops as `evidence_capped_failure` if all remaining failures are outside the allowed set. `is_evidence_capped_failure(failure_indices, allowed_index_set) -> bool`.
+**Interfaces:** every transition carries a stable `source_index` (added in `collect_transitions`, referring to the original 3200 order — NOT the reshuffled 40). `build_dose_sample(env, transitions, m, span, rng) -> (controlled_examples, allowed_source_indices, meta)` — needs `env` to compute the proposed endpoint, project to `env.shape`'s boundary, measure normal distance, and select `span∈{"small","large"}` by the arc extent of the kept positives; returns exactly **40 controlled examples = m positives + m distinct matched negatives (nearest by boundary-normal distance to each kept positive's endpoint, no reuse) + (40−2m) background**, and `allowed_source_indices` = the `source_index` values the LLM may be corrected on. `build_controlled_initial_messages(contract, controlled_examples) -> list[dict]` — the INITIAL prompt, presenting the 40 as observations (not failures). `refine_capped(provider, model, contract, code, gate_transitions, controlled_examples, allowed_source_indices, eps, max_iters=5) -> RefineResult` — takes BOTH the full `gate_transitions` (all 3200, to measure the true gate and locate failures by `source_index`) and the 40 `controlled_examples`; each iteration filters failures to `allowed_source_indices`, feeds back ONLY those, and stops as `evidence_capped_failure` if every remaining gate failure is outside the allowed set. `is_evidence_capped_failure(failure_source_indices, allowed_source_indices) -> bool`.
 
 - [ ] **Step 1: Write failing tests (exactly 40, m positives, distinct negatives, structured index membership, span)**
 
@@ -776,19 +810,25 @@ from cwm.continuous.shapes import Circle
 from cwm.continuous.contract import collect_transitions
 from cwm.continuous.evidence_dose import build_dose_sample, is_evidence_capped_failure
 
-def test_fixed_size_and_distinct_negatives():
-    tr = collect_transitions(ShapeField2D(shape=Circle(3.0,0.0,1.0)), n_rollouts=60, seed=0)
-    ex, allowed, meta = build_dose_sample(tr, m=8, span="large", rng=random.Random(0))
-    assert len(ex) == 40 and meta["n_positive"] == 8 and meta["n_negative"] == 8
-    neg_ids = [id(e) for e in ex if not e["contact"]][:8]
-    assert len(set(neg_ids)) == len(neg_ids)  # no negative reused
+def test_transitions_carry_source_index():
+    tr = collect_transitions(ShapeField2D(shape=Circle(3.0,0.0,1.0)), n_rollouts=5, seed=0)
+    assert [t["source_index"] for t in tr] == list(range(len(tr)))  # stable original order
 
-def test_capped_failure_uses_structured_indices():
-    assert is_evidence_capped_failure(failure_indices={11, 12}, allowed_index_set={0,1,2}) is True
-    assert is_evidence_capped_failure(failure_indices={1, 12}, allowed_index_set={0,1,2}) is False
+def test_fixed_size_and_distinct_negatives():
+    env = ShapeField2D(shape=Circle(3.0,0.0,1.0))
+    tr = collect_transitions(env, n_rollouts=60, seed=0)
+    ex, allowed, meta = build_dose_sample(env, tr, m=8, span="large", rng=random.Random(0))
+    assert len(ex) == 40 and meta["n_positive"] == 8 and meta["n_negative"] == 8
+    neg_src = [e["source_index"] for e in ex if not e["contact"]]
+    assert len(set(neg_src)) == len(neg_src)  # no negative reused
+    assert allowed <= {t["source_index"] for t in tr}  # allowed refers to original indices
+
+def test_capped_failure_uses_source_indices():
+    assert is_evidence_capped_failure(failure_source_indices={311, 512}, allowed_source_indices={7,8,9}) is True
+    assert is_evidence_capped_failure(failure_source_indices={8, 512}, allowed_source_indices={7,8,9}) is False
 ```
 
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** — fixed-40 construction, endpoint-normal matched negatives without reuse, span selection by boundary arc, structured `(index)` failures (extend `contract_accuracy` to return the failing transition indices, or wrap it), and `refine_capped` integrating the allowed-set filter each iteration. **Step 4:** PASS. **Step 5:** `git commit -m "feat(evidence-dose): fixed-40 transcript cap, matched distinct negatives, structured-index refinement"`.
+- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** — add `source_index` to `collect_transitions` output (stable original order); fixed-40 construction using `env`/`env.shape` for endpoint projection and normal distance; endpoint-normal matched negatives without reuse; span selection by the boundary-arc extent of the kept positives; a `contract_accuracy` wrapper returning failing `source_index` values; `build_controlled_initial_messages`; and `refine_capped` taking both `gate_transitions` and `controlled_examples`, filtering failures to `allowed_source_indices` each iteration. **Step 4:** PASS. **Step 5:** `git commit -m "feat(evidence-dose): env-aware fixed-40 cap, source_index, dual-dataset refinement, initial controlled prompt"`.
 
 ---
 
@@ -796,42 +836,69 @@ def test_capped_failure_uses_structured_indices():
 
 **Files:** Create `scripts/calibrate_shape2d.py`, `src/cwm/continuous/calibration.py` (the validator), `results/shape2d_calibration.json`; Test `tests/test_calibration.py`.
 
-**Interfaces:** `validate_calibration_artifact(art) -> list[str]` (returns a list of problems; empty = valid) that **rejects** any `None`/`NaN`/empty list, missing per-cell rarity CI, `grid_converged` not backed by a measured `grid_delta<0.01`, rarity outside tolerance, a cell whose blind planner is **not** exploited (needs `play_cost_blind ≥ 0.8` from truth/blind/random **episodes**, not a single `mpc.plan` call), out-of-box clipping fraction over a bound, or a `repaired_threshold` whose `source != "truth_oracle_fullarm_griderror"`. `calibrate_shape2d.py` measures each field and writes the JSON. `rarity` = **fraction of rollouts that contain a contact** (`sum(any-contact-per-rollout)/n_rollouts`), with a Wilson CI on an independent seed stream.
+**Interfaces:** a frozen manifest `EXPECTED_CELL_IDS` (in `calibration.py`) enumerating every anchor, parabola, composition, and contrast cell of the sweep. `validate_calibration_artifact(art) -> list[str]` (empty = valid) **rejects** any of: `set(cell["id"] for cell in art["cells"]) != EXPECTED_CELL_IDS` (exact manifest match); any `None`/`NaN`/empty list; a cell missing `rarity`, `rarity_ci`, or `n_rollouts`/`n_episodes` below fixed minimums; `grid_converged` not backed by a measured per-cell `grid_delta_256_512 < 0.01` (or an explicit global justification field); `rarity` outside `rarity_target ± tol`; a cell whose blind planner is **not** exploited (`play_cost_blind ≥ 0.8` from truth/blind/random **episodes**, not one `mpc.plan` call); `frac_planner_outside_box` above an explicit bound; a `repaired_threshold.source != "truth_oracle_fullarm_griderror"`; equal calibration/validation seed streams; any parameter lacking a `provenance` tag; or a `sufficiency` block not exactly `{"certified": false, "tau_s": null, "reason": <str>}` (Phase A leaves S uncertified — `tau_S` must NOT appear as a calibrated number). `calibrate_shape2d.py` measures every field. `rarity` = **fraction of rollouts containing a contact** with a Wilson CI on an **independent** seed stream (distinct from the validation stream).
 
 - [ ] **Step 1: Write failing tests — the validator REJECTS a placeholder, ACCEPTS a filled artifact**
 
 ```python
 # tests/test_calibration.py
 import json, subprocess, sys, math
-from cwm.continuous.calibration import validate_calibration_artifact
+from cwm.continuous.calibration import validate_calibration_artifact, EXPECTED_CELL_IDS
+
+def _full_cells():
+    return [{"id": cid, "family": "circle", "R": 1.0, "offset": 3.0, "rarity": 0.15,
+             "rarity_ci": [0.12, 0.18], "n_rollouts": 400, "n_episodes": 30, "play_cost_blind": 0.99,
+             "grid_delta_256_512": 0.004, "provenance": "measured"} for cid in EXPECTED_CELL_IDS]
+
+def _good_artifact():
+    return {"box": [[-8,14],[-6,6]], "grid_n": 256, "rarity_target": 0.15, "rarity_tol": 0.05,
+            "frac_planner_outside_box": 0.01, "frac_outside_box_bound": 0.05,
+            "cal_seed_stream": 1, "val_seed_stream": 2, "delta": 0.12, "delta_provenance": "median_normal_bracket",
+            "sufficiency": {"certified": False, "tau_s": None, "reason": "conservative upper bound deferred to Phase B"},
+            "repaired_threshold": {"band_disagreement": 0.05, "fpr": 0.05, "source": "truth_oracle_fullarm_griderror"},
+            "cells": _full_cells()}
 
 def test_validator_rejects_placeholder():
-    placeholder = {"box": [[-8,14],[-6,6]], "grid_n": 256, "grid_converged": True, "grid_delta": None,
-                   "tau_S": 0.1, "delta": None, "cells": [], "rarity_target": 0.15,
+    placeholder = {"box": [[-8,14],[-6,6]], "grid_n": 256, "delta": None, "cells": [],
+                   "sufficiency": {"certified": False, "tau_s": 0.1, "reason": ""},  # tau_s must be null
                    "repaired_threshold": {"source": "incomplete_anchor"}, "frac_planner_outside_box": 0.0}
     problems = validate_calibration_artifact(placeholder)
-    assert any("cells" in p for p in problems)
-    assert any("delta" in p for p in problems)
-    assert any("grid" in p.lower() for p in problems)
-    assert any("source" in p for p in problems)
+    assert any("cell" in p.lower() for p in problems)      # manifest mismatch (empty)
+    assert any("delta" in p.lower() for p in problems)     # None
+    assert any("source" in p.lower() for p in problems)    # bad provenance
+    assert any("tau" in p.lower() or "sufficiency" in p.lower() for p in problems)  # tau_s not null
 
-def test_validator_accepts_filled():
-    good = {"box": [[-8,14],[-6,6]], "grid_n": 256, "grid_converged": True, "grid_delta": 0.004,
-            "tau_S": 0.1, "delta": 0.12, "rarity_target": 0.15, "frac_planner_outside_box": 0.01,
-            "repaired_threshold": {"band_disagreement": 0.05, "fpr": 0.05, "source": "truth_oracle_fullarm_griderror"},
-            "cells": [{"family": "circle", "R": 1.0, "offset": 3.0, "rarity": 0.15,
-                       "rarity_ci": [0.12, 0.18], "play_cost_blind": 0.99}]}
-    assert validate_calibration_artifact(good) == []
+def test_validator_rejects_missing_one_cell():
+    art = _good_artifact(); art["cells"] = art["cells"][:-1]  # drop a manifest cell
+    assert any("cell" in p.lower() for p in validate_calibration_artifact(art))
 
-def test_calibration_runs_and_is_valid(tmp_path):
+def test_validator_rejects_equal_seed_streams():
+    art = _good_artifact(); art["val_seed_stream"] = art["cal_seed_stream"]
+    assert any("seed" in p.lower() for p in validate_calibration_artifact(art))
+
+def test_validator_accepts_full_artifact():
+    assert validate_calibration_artifact(_good_artifact()) == []
+
+# --- SMOKE test: --quick fills the schema; scientific validation is only for the full artifact ---
+def test_calibration_quick_smoke_schema(tmp_path):
     out = tmp_path / "cal.json"
     r = subprocess.run([sys.executable, "scripts/calibrate_shape2d.py", "--quick", "--out", str(out)],
                        capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
-    assert validate_calibration_artifact(json.loads(out.read_text())) == []
+    art = json.loads(out.read_text())
+    assert set(c["id"] for c in art["cells"]) == EXPECTED_CELL_IDS  # schema/manifest present
+    assert art["sufficiency"]["tau_s"] is None
+    # NOTE: --quick may not meet rarity/play_cost tolerances with few episodes; strict
+    # validate_calibration_artifact is asserted only on the FULL run, below.
+
+def test_full_calibration_passes_strict_validation():
+    # run the full (non-quick) calibration once in the repo, then:
+    #   assert validate_calibration_artifact(json.load(open("results/shape2d_calibration.json"))) == []
+    # Marked here as the scientific gate; executed by the implementer after the full run.
+    pass
 ```
 
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** the validator first (pure function, fully covered by the two unit tests) — it enforces every rejection above and NaN checks via `math.isnan`. Then `calibrate_shape2d.py` measures: per-family offset achieving `rarity_target` (fraction-of-rollouts, Wilson CI on an independent seed stream), the `256²`↔`512²` `grid_delta`, `play_cost_blind` from truth/blind/random **episodes** per cell, `delta` (median normal-bracket width), `frac_planner_outside_box`, and sets `repaired_threshold.source="truth_oracle_fullarm_griderror"`. `--quick` shrinks rollout/seed counts but STILL fills every field (so the validator passes on a real, if small, measurement — never a hardcoded stub). **Step 4:** `pytest tests/test_calibration.py -q` → PASS; then `python scripts/calibrate_shape2d.py` for the full artifact. **Step 5:** `git commit -m "feat(calibration): measured artifact + strict anti-placeholder validator (the Phase-A/B gate)"`.
+- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** the validator first (pure function, fully covered by the unit tests) — define `EXPECTED_CELL_IDS`, enforce exact manifest match, NaN checks via `math.isnan`, the `sufficiency` shape, distinct seed streams, per-parameter `provenance`, per-cell `grid_delta_256_512`, and the explicit `frac_outside_box_bound`. Then `calibrate_shape2d.py` measures per cell of `EXPECTED_CELL_IDS`: offset achieving `rarity_target` (fraction-of-rollouts, Wilson CI on an independent `cal_seed_stream`), per-cell `grid_delta_256_512`, `play_cost_blind` from truth/blind/random **episodes**, `delta` (median normal-bracket width), `frac_planner_outside_box`, `sufficiency={"certified":False,"tau_s":None,...}`, and `repaired_threshold.source="truth_oracle_fullarm_griderror"`. `--quick` shrinks counts and fills the full schema/manifest but is a **smoke test only** — strict `validate_calibration_artifact` is asserted on the FULL run. **Step 4:** `pytest tests/test_calibration.py -q` → PASS; then `python scripts/calibrate_shape2d.py` and assert `validate_calibration_artifact(...) == []` on the full artifact. **Step 5:** `git commit -m "feat(calibration): manifest-checked measured artifact + strict validator + smoke/scientific split"`.
 
 ---
 
