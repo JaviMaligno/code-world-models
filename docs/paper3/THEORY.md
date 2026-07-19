@@ -167,27 +167,92 @@ real path realizes the crossing every episode, matching μ_query = 1.
 linking number of the imagined path and the mode's core replacing the
 metric crossing — that is the genuinely homological version of this bound.
 
-## Remark (r(γ): what is theorem, what is not)
+## The γ-curves: r(γ) and r_int(γ) (second pass, 2026-07-19)
 
-r(γ) = P(a random rollout fires the mode) and r_int(γ) = P(a random rollout
-enters the interior). Status after actually attempting the proofs (2026-07-19):
+r(γ) = P(a random rollout fires the mode), r_int(γ) = P(a random rollout
+enters the interior). Fix the probability space: one i.i.d. action sequence
+(a_t) and initial state drive the dynamics at EVERY γ (common random
+numbers); write A(γ) for the mode region, so γ₁ < γ₂ ⇒ A(γ₂) ⊆ A(γ₁), and
+D = A(γ₁) \ A(γ₂) (the two flanking slivers of the wider channel).
 
-- **r_int(0) = 0 exactly** — theorem (Lemma 2).
-- **r_int(γ) → 0 as γ → 0** — provable by a union/density bound: interior
-  entry requires some step to land in the channel sector of the annular band;
-  the per-step landing distribution has bounded density on the band (smooth
-  push-forward of the action noise), so P(∪ steps land in a sector of angular
-  width γ) ≤ h · C · γ → 0. To write out with the density constant made
-  explicit; sketch-level for now.
-- **Monotonicity of r_int in γ** — CONJECTURE, not proved. The naive pathwise
-  coupling (same action sequence, A(γ₂) ⊆ A(γ₁)) fails: a freeze under the
-  smaller gap re-anchors the trajectory (position kept, velocity zeroed), and
-  the two realizations diverge from that step on — a freeze can, in
-  principle, redirect a rollout INTO a later interior entry. The calibration
-  is consistent with monotonicity (0.0000 / 0.0067 / 0.0100), but the paper
-  must state it as measured unless a smarter argument lands. Honesty note
-  kept deliberately: this is the same discipline as paper 2's play_cost
-  (structural-but-empirical pieces named as such).
+**Lemma 3 (divergence localization).** Under the coupling, the γ₁- and
+γ₂-trajectories coincide up to (and excluding) the first step whose landing
+falls in D. Hence any event determined by the trajectory has
+|P_γ₁(·) − P_γ₂(·)| ≤ P(some landing in D).
+*Proof.* Before that step every landing is either outside A(γ₁) (both free,
+same next state) or in A(γ₂) (both freeze at the same previous position);
+induction. The bound is the coupling inequality. ∎
+
+**Proposition 5 (r is nonincreasing in γ — the coupling DOES work here).**
+fire(γ₂) ⊆ fire(γ₁) pathwise, so r(γ₂) ≤ r(γ₁).
+*Proof.* Take a realization where the γ₂-trajectory fires, first at step t.
+Case 1: no D-landing before t. By Lemma 3 the trajectories agree through t,
+and the step-t landing is in A(γ₂) ⊆ A(γ₁), so γ₁ fires at t. Case 2: some
+D-landing at s < t (or s = t). A landing in D IS a landing in A(γ₁): γ₁
+fires at s. ∎ (Measured, consistent: 0.0417 / 0.0283 / 0.0150.)
+
+**Proposition 6 (continuity of r and r_int in γ).** Both curves are
+continuous on [0, 2π].
+*Proof sketch (to finalize).* By Lemma 3, |r_int(γ) − r_int(γ′)| ≤ P(some
+landing in D(γ, γ′)). As γ′ → γ the slivers D(γ, γ′) shrink to the two
+boundary rays; the events decrease to {some landing exactly on a boundary
+ray}. For fixed state, the landing position is a non-constant real-analytic
+curve of the action a, so the a-preimage of the (measure-zero) rays is
+finite per step; integrating over the i.i.d. action law and summing over h
+steps, the limit event is null. Monotone convergence gives continuity. The
+quantitative version (P(landing in a width-ε sector) ≤ h·C·ε off tangencies,
+Hölder-1/2 at tangencies of the landing curve to the rays) is the explicit-
+constant TODO. Corollary: r_int(γ) → r_int(0) = 0 as γ → 0 — the
+continuity-at-0 claim, now by a named argument. ∎(mod the TODO)
+
+**Proposition 7 (direct entries are pathwise monotone).** Call an interior
+entry *direct* (at gap γ) if the trajectory never lands in A(γ) before its
+first entry, and *funnel-assisted* otherwise. Then for γ₁ < γ₂,
+direct(γ₁) ⊆ direct(γ₂) pathwise, so the direct component d(γ) of r_int is
+nondecreasing, with d(2π) = r_int(2π) (no wall ⇒ every entry direct).
+*Proof.* A direct-at-γ₁ trajectory's landings before entry avoid A(γ₁) ⊇
+A(γ₂); by the Lemma-3 induction it is unchanged under γ₂ and still avoids
+A(γ₂): same entry, still direct. ∎
+Consequently r_int(γ) ≥ d(γ) with d nondecreasing: ALL non-monotone risk
+lives in the funnel component.
+
+**Counterexample (pathwise inclusion for full entry is FALSE).** Probe
+`scripts/ring2d_rint_probe.py` (4000 CRN rollouts, γ grid to 2π,
+`results/continuous_ring2d_rint_probe.json`): seed **50543** enters the
+interior at γ = 0.4 but NOT at γ = 0.6 — a funnel-assisted entry (freeze
+near the mouth re-anchors, then the narrower-gap geometry funnels it in)
+that widening the channel destroys. So the full-monotonicity statement can
+have NO pathwise/coupling proof; only distributional arguments (stochastic
+domination of post-divergence conditionals) remain admissible. This
+certificate is the reason the conjecture below is stated distributionally.
+
+**Measured verdict (same probe).** r_int is monotone nondecreasing across
+the full grid — 0.0000 / 0.0008 / 0.0020 / 0.0040 / 0.0067 / 0.0080 /
+0.0097 / 0.0105 / 0.0110, then EXACTLY constant at 0.0110 for γ ≥ 2.4 (the
+entering seed set is literally identical from there: the wall no longer
+intersects any entering trajectory — saturation at the free-walk limit,
+reached while r(γ) > 0 still). Decomposition: direct entries 3 → 44
+(monotone, Prop 7 — 0 violations observed, as proved), funnel entries ≤ 2
+per gap at the defaults. Fire-violations 0 everywhere (Prop 5 sanity,
+exact). Pathwise entry violations: 1 in 44,000 adjacent-pair comparisons
+(the certificate above); gains 3–12 per pair.
+
+**Refined conjectures (both distributional, both measured-consistent):**
+  (M1) r_int is nondecreasing on [0, 2π] — equivalently, funnel losses never
+       exceed direct+funnel gains between adjacent gaps;
+  (M2) r_int(γ) ≤ r_int(2π): the wall never helps NET interior entry (the
+       funnel effect exists — the certificate proves it — but never beats
+       free drift in aggregate).
+Proof route for both: stochastic domination of the post-divergence
+conditional entry probabilities (γ₂'s state at divergence is in-band with
+momentum and a wider channel vs γ₁'s frozen-at-rest outside a narrower one).
+The obstacle is that freeze semantics breaks the usual radial-ordering
+preservation; a restricted domination (e.g. on the event that the
+continuation never re-freezes) may split M1 the way Prop 7 split the
+pathwise question. Until then: theorem for the direct component, certificate
+against pathwise, measurement for the totals — stated exactly so in the
+paper.
+
 - The danger law applies verbatim at each γ with its own r(γ) — theorem
   (unchanged from paper 1/2; nothing ring-specific).
 
@@ -199,7 +264,10 @@ enters the interior). Status after actually attempting the proofs (2026-07-19):
 | Lemma 2 (crossing) | proved, constants checked at defaults |
 | Prop 3 (unfalsifiable+harmless, bitwise) | proved; confirmed bitwise on 3 seeds |
 | Prop 4 (query lower bound) | proved under (RG)+(C); (RG) checkable per instrument, check to pre-register |
-| r_int(0) = 0 | theorem (Lemma 2); measured 0.0000 |
-| r_int continuity at 0 | density-bound sketch, constant to make explicit |
-| r_int monotonicity in γ | CONJECTURE (pathwise coupling fails); measured consistent |
+| Lemma 3 (divergence localization) | proved |
+| Prop 5 (r nonincreasing in γ) | proved (pathwise); 0 violations in 44k CRN checks |
+| Prop 6 (continuity of r, r_int in γ) | proved mod explicit density constant |
+| Prop 7 (direct entries monotone) | proved (pathwise); measured 0 violations |
+| r_int(0) = 0 | theorem (Lemma 2); measured 0.0000 at n=4000 |
+| full r_int monotonicity (M1), wall-never-helps (M2) | distributional CONJECTURES — pathwise proof impossible (seed-50543 certificate); measured monotone + saturating |
 | n-dim / non-round / non-separating versions | RESEARCH-DIRECTION §8 program |
