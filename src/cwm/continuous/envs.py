@@ -161,6 +161,13 @@ class PatchField2D:
     lodes: a small real one behind the start and a large phantom one beyond
     the patches (the lure). Patch centers are the rarity knobs
     (calibration 2026-07-16: r1=0.1417, r2=0.0083 at the defaults).
+
+    patch_shape="square" is the fixed-topology ablation (2026-07-19): the
+    same two patches as axis-aligned squares of half-side R (Chebyshev ball),
+    so membership is a max/abs predicate instead of a quadratic one. Both
+    shapes are contractible and bi-modal; only boundary curvature and the
+    predicate's descriptive form differ — the contrast that separates
+    "repair fails on curved boundaries" from "repair fails on 2D regions".
     """
     dt: float = 0.1
     gain: float = 3.0
@@ -177,6 +184,7 @@ class PatchField2D:
     width: float = 0.5
     h_episode: int = 80
     x0_range: float = 0.5
+    patch_shape: str = "disc"   # "disc" | "square" (fixed-topology ablation)
 
     def initial_state(self, rng) -> State:
         return (rng.uniform(-self.x0_range, self.x0_range),
@@ -192,8 +200,11 @@ class PatchField2D:
                 + self._lode(x, y, self.lode_phantom, self.amp_phantom))
 
     def _inside(self, x: float, y: float, c: tuple | None) -> bool:
-        return (c is not None
-                and (x - c[0]) ** 2 + (y - c[1]) ** 2 <= self.R ** 2)
+        if c is None:
+            return False
+        if self.patch_shape == "square":
+            return max(abs(x - c[0]), abs(y - c[1])) <= self.R
+        return (x - c[0]) ** 2 + (y - c[1]) ** 2 <= self.R ** 2
 
     def _integrate(self, state: State, action: float):
         return integrate_2d(state, action, self.dt, self.gain, self.drag, self.a_max)

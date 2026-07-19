@@ -25,6 +25,9 @@ ap.add_argument("--k2", type=float, nargs="+", default=[6.0, 7.0, 8.0])
 ap.add_argument("--rollouts", type=int, default=600)
 ap.add_argument("--episodes", type=int, default=20)
 ap.add_argument("--seed", type=int, default=0)
+ap.add_argument("--patch-shape", choices=["disc", "square"], default="disc",
+                help="square = fixed-topology ablation (2026-07-19); output "
+                "goes to results/continuous_patch2d_square.json")
 args = ap.parse_args()
 
 
@@ -52,7 +55,8 @@ print(f"{'k1':>5} {'k2':>5} {'r1':>7} {'r2':>7} {'J_truth':>8} {'J_blind':>8} "
       f"{'cost':>6} {'d40_joint':>10}", flush=True)
 for k1 in args.k1:
     for k2 in args.k2:
-        truth = PatchField2D(p1=(k1, 0.0), p2=(k2, 0.0))
+        truth = PatchField2D(p1=(k1, 0.0), p2=(k2, 0.0),
+                             patch_shape=args.patch_shape)
         blind = blind_of(truth)
 
         h1, h2 = per_mode_rarity(truth, args.rollouts, seed=args.seed + 50_000)
@@ -82,6 +86,7 @@ for k1 in args.k1:
 
 out = {"script": "continuous_patch2d.py", "params": vars(args),
        "rows": rows, "elapsed_s": round(time.time() - t0, 1)}
-path = pathlib.Path("results/continuous_patch2d.json")
+_sfx = "" if args.patch_shape == "disc" else f"_{args.patch_shape}"
+path = pathlib.Path(f"results/continuous_patch2d{_sfx}.json")
 path.write_text(json.dumps(out, indent=2))
 print(f"wrote {path}  [{out['elapsed_s']}s]", flush=True)

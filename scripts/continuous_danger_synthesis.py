@@ -80,6 +80,19 @@ ap.add_argument("--k1", type=float, default=3.0,
                 help="patch2d: x of patch 1 center (nearer patch, common mode)")
 ap.add_argument("--k2", type=float, default=7.0,
                 help="patch2d: x of patch 2 center (farther patch, rare mode)")
+ap.add_argument("--patch-shape", choices=["disc", "square"], default="disc",
+                help="patch2d only. square = the fixed-topology ablation "
+                "(2026-07-19): same patches as axis-aligned squares "
+                "(max/abs membership), separating boundary curvature from "
+                "2D-ness as the cause of the 0/76 repair collapse")
+ap.add_argument("--prompt-variant", choices=["default", "guided", "region"],
+                default="default",
+                help="confound-closure arms for the 0/76 (paper 2 s10): "
+                "'guided' = 120 examples + 40 failures shown + describe-the-"
+                "region-first process guidance; 'region' = guided + an "
+                "explicit de-biasing note that a localized rule's trigger "
+                "region need not be a 1D threshold (never names the shape). "
+                "'default' is byte-identical to all committed runs")
 ap.add_argument("--n-rollouts", type=int, default=40, help="the danger-law N")
 ap.add_argument("--eps", type=float, default=1e-9,
                 help="pinned-integrator gate tolerance; loosen to 1e-6 if a "
@@ -108,19 +121,56 @@ else:
         api_version=os.environ["AZURE_OPENAI_API_VERSION"])
     TAG = args.size
 
+if args.patch_shape != "disc" and args.instrument != "patch2d":
+    ap.error("--patch-shape is a patch2d knob")
+
 if args.instrument == "pendulum":
     ENV = PendulumStop(th_stop=args.th_stop)
     KNOB = f"thstop{args.th_stop:g}"
     INSTR_TAG = "pendulum_"
 elif args.instrument == "patch2d":
-    ENV = PatchField2D(p1=(args.k1, 0.0), p2=(args.k2, 0.0))
+    ENV = PatchField2D(p1=(args.k1, 0.0), p2=(args.k2, 0.0),
+                       patch_shape=args.patch_shape)
     KNOB = f"k{args.k1:g}_{args.k2:g}"
-    INSTR_TAG = "patch2d_"
+    INSTR_TAG = "patch2d_" if args.patch_shape == "disc" else "patch2dsq_"
 else:
     ENV = CartWall(x_wall=args.x_wall)
     KNOB = f"xwall{args.x_wall:g}"
     INSTR_TAG = ""
 ARMS = ["full", "incomplete"] if args.arm == "both" else [args.arm]
+
+# Confound-closure prompt variants (paper 2 s10: "richer prompting, larger
+# iteration budgets"). The guidance is methodological only — it never names
+# the true region's shape; 'region' de-biases the observed failure mode
+# (dimensional reduction to a 1D threshold) without revealing the answer.
+_GUIDED_TEXT = (
+    "Before writing code, examine the observed transitions that the base "
+    "integrator alone cannot explain (transitions whose returned state is "
+    "not the integrator's prediction). Characterize WHERE in state space "
+    "they occur: collect the positions involved, describe the region they "
+    "outline, and only then write the rule that reproduces them exactly. "
+    "State your hypothesis about the region as a comment in the code.")
+_REGION_TEXT = (
+    "A localized rule's trigger region may have any shape in the (x, y) "
+    "plane; do not assume it is a one-dimensional threshold such as "
+    "x > c or an axis-aligned half-plane. Check your hypothesized region "
+    "against ALL matching and non-matching transitions before settling "
+    "on it.")
+PROMPT_VARIANTS = {
+    "default": {"max_examples": 30, "guidance": "", "max_failures": 20},
+    "guided": {"max_examples": 120, "guidance": _GUIDED_TEXT,
+               "max_failures": 40},
+    "region": {"max_examples": 120,
+               "guidance": _GUIDED_TEXT + "\n\n" + _REGION_TEXT,
+               "max_failures": 40},
+}
+VARIANT = PROMPT_VARIANTS[args.prompt_variant]
+
+SUFFIX = ""
+if args.prompt_variant != "default":
+    SUFFIX += f"_pv-{args.prompt_variant}"
+if args.max_iters != 5:
+    SUFFIX += f"_it{args.max_iters}"
 
 # Truth-planner + random baselines, shared across all seeds/arms (paired).
 print(f"baselines: {args.play_episodes} truth-MPC + random episodes...", flush=True)
@@ -141,7 +191,10 @@ for arm in ARMS:
         cell = synthesize_and_evaluate(
             provider, MODEL, ENV, include_mode=(arm == "full"),
             n_rollouts=args.n_rollouts, seed=10_000 * (seed + 1),
-            eps=args.eps, max_iters=args.max_iters)
+            eps=args.eps, max_iters=args.max_iters,
+            max_examples=VARIANT["max_examples"],
+            guidance=VARIANT["guidance"],
+            max_failures=VARIANT["max_failures"])
         if cell["gate_passed"]:
             model = SynthesizedModel(cell["code"], ENV)
             eps_play = []
@@ -200,6 +253,6 @@ elif inc:
 
 results["elapsed_s"] = round(time.time() - t0, 1)
 out = pathlib.Path(
-    f"results/continuous_synthesis_{INSTR_TAG}{TAG}_{KNOB}.json")
+    f"results/continuous_synthesis_{INSTR_TAG}{TAG}_{KNOB}{SUFFIX}.json")
 out.write_text(json.dumps(results, indent=2))
 print(f"wrote {out}  [{results['elapsed_s']}s]", flush=True)
