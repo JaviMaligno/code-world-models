@@ -36,10 +36,21 @@ the remote session of 2026-07-19 (no LLM access there); the LLM cells below are
   CPU-only) writing `results/continuous_patch2d_square.json`.
 - Tests: 268 pass, including the cart/prompt goldens and new square +
   guidance-byte-identity tests.
-- CPU calibration of the square at the paper cells was run remotely — numbers
-  in `results/continuous_patch2d_square.json` (see Task 0 below to verify it
-  landed; expectation: r1/r2 slightly above the disc's 0.1417/0.0083 since the
-  Chebyshev ball contains the disc, same common/rare regime).
+- CPU calibration of the square was run remotely (600 rollouts, 20 episodes
+  per cell) — committed in `results/continuous_patch2d_square.json`:
+
+  | k1  | k2  | r1     | r2     | J_truth | J_blind | play_cost |
+  |-----|-----|--------|--------|---------|---------|-----------|
+  | 3.0 | 7.0 | 0.1850 | 0.0083 | 18.83   | 0.00    | 1.006     |
+  | 3.0 | 9.0 | 0.1850 | 0.0033 | 16.97   | 0.00    | 1.006     |
+  | 5.0 | 7.0 | 0.0567 | 0.0050 | 18.29   | 0.00    | 1.006     |
+  | 5.0 | 9.0 | 0.0567 | 0.0050 | 17.72   | 0.00    | 1.006     |
+
+  vs the disc at the shared (3,7) cell: r1 0.1417 → 0.1850 (up, as forced —
+  the Chebyshev ball contains the disc), r2 identical 0.0083, and the play
+  mechanism is indistinguishable (J_blind 0.00, play_cost 1.006, blind
+  contact rate 1.00 on both shapes). The ablation instrument is matched:
+  same regime, same exploitation, only the boundary predicate differs.
 
 ## Global constraints (unchanged discipline)
 
