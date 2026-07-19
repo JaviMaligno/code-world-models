@@ -26,6 +26,29 @@ from dataclasses import dataclass, replace
 State = tuple  # (x, v)
 
 
+def integrate_2d(state, action, dt, gain, drag, a_max):
+    """One semi-implicit Euler step for the 2D thrust-heading plant, shared
+    by every 2D instrument/model so off-mode agreement is exact to float
+    precision (the integrator is part of the contract)."""
+    x, y, vx, vy = state
+    a = max(-a_max, min(a_max, action))
+    phi = math.pi * a / a_max
+    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt
+    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt
+    return x + vx2 * dt, y + vy2 * dt, vx2, vy2
+
+
+def invert_integrator(endpoint_xy, vx, vy, action, dt, gain, drag, a_max):
+    """The previous state whose `integrate_2d` step lands its position
+    exactly at `endpoint_xy`, given the (already-updated) velocity `vx,vy`
+    the step used and the action that produced it."""
+    a = max(-a_max, min(a_max, action))
+    phi = math.pi * a / a_max
+    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt
+    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt
+    return (endpoint_xy[0] - vx2 * dt, endpoint_xy[1] - vy2 * dt, vx, vy)
+
+
 @dataclass(frozen=True)
 class CartWall:
     # plant
@@ -173,12 +196,7 @@ class PatchField2D:
                 and (x - c[0]) ** 2 + (y - c[1]) ** 2 <= self.R ** 2)
 
     def _integrate(self, state: State, action: float):
-        x, y, vx, vy = state
-        a = max(-self.a_max, min(self.a_max, action))
-        phi = math.pi * a / self.a_max
-        vx2 = vx + (self.gain * math.cos(phi) - self.drag * vx) * self.dt
-        vy2 = vy + (self.gain * math.sin(phi) - self.drag * vy) * self.dt
-        return x + vx2 * self.dt, y + vy2 * self.dt, vx2, vy2
+        return integrate_2d(state, action, self.dt, self.gain, self.drag, self.a_max)
 
     def contact_modes(self, state: State, action: float) -> tuple:
         x2, y2, _, _ = self._integrate(state, action)
