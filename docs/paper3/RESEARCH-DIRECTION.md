@@ -94,6 +94,29 @@ is an annulus centered on the phantom lode:
   `γ = 0` gives β₁ = 1, any `γ > 0` is contractible); **start placement**
   (outside / inside the ring — inside makes the inner boundary reachable).
 
+**Calibration (2026-07-19, `results/continuous_ring2d.json`, 600 rollouts +
+20 paired MPC episodes per gap):**
+
+| gap | r | r_int | J_truth | J_blind | pc_blind | pc_filled |
+|-----|--------|--------|---------|---------|----------|-----------|
+| 0.0 | 0.0417 | 0.0000 | 17.32 | 0.14 | 0.998 | 0.000 |
+| 0.6 | 0.0283 | 0.0067 | 42.32 | 41.37 | 0.023 | 0.340 |
+| 1.2 | 0.0150 | 0.0100 | 41.65 | 41.37 | 0.007 | 0.222 |
+
+Both theorem checks land exactly: r_int(0) = 0 (Lemma 2) and
+play_cost(filled) = 0.000 at gap 0 → 0.34 once the channel opens (Prop 3's
+knob-through-the-regimes, measured). **Design finding (recorded, defaults not
+silently changed):** with the channel FACING the start (`gap_center = π`),
+the blind planner's straight-line approach threads the channel by
+construction, so pc_blind collapses at gap > 0 (0.023) and the middle
+"rare ∧ dangerous" regime degenerates. The mechanism arm needs the hidden
+channel — `gap_center = 0` (east, away from the start): truth navigates
+around; the blind planner still hits the west wall. Whether wrongness is
+dangerous depends on whether the topology forces the error ONTO the
+planner's path — itself a mechanism datum, keep it in the paper. Also note
+r(0) = 0.042 ⇒ (1−r)^40 ≈ 0.18: at N = 40 the identifiability event fires in
+~18% of seeds — a workable synthesis regime without retuning.
+
 Why this instrument is qualitatively new, not just harder:
 
 **(a) The interior is reach-null, not reach-rare.** With `γ = 0` and start
