@@ -187,3 +187,74 @@ instrument, both worlds, one knob.
    split table as the deliverable.
 4. Draft the gate-quotient proposition and the crossing bound properly; they
    are cheap and de-risk the "is there a theorem here" question early.
+
+---
+
+## Appendix A — Literature anchors + extra directions (added by Claude, 2026-07-19)
+
+> **Provenance note (read this).** Sections 1–7 above were written by the paper-3
+> shaping session from Javier's recollection of earlier conversations. THIS
+> APPENDIX is added by Claude directly from the agent-memory notes those
+> conversations produced — the bibliographic anchors and side-directions that
+> "other people couldn't find" because they lived only in memory. It is kept
+> separate, and nothing above is edited, so the two sources stay distinguishable:
+> §1–7 = the shaping session; Appendix A = the recovered memory notes.
+
+### A.1 Literature anchors (each mapped to the section it de-risks)
+
+§1–7 already lean on "reach", "crossing", "persistent homology", and
+"topological recovery" informally. Each is an established result — cite them so
+the *provable* claims rest on named theorems, not intuition:
+
+- **Reach — §2 invariant, §3c gauge region, §4.4 multidim.** Federer, "Curvature
+  Measures," *Trans. AMS* 1959, doi:10.1090/s0002-9947-1959-0110078-1. The reach
+  τ(M) folds curvature and feature-separation into one scale; use it to
+  *normalize* boundary metrics and to state when a sample can resolve the ring's
+  inner vs outer boundary (needs sampling radius < τ). It is also the correct
+  d ≥ 3 generalization of paper 2's single κ: principal curvatures + second
+  fundamental form + reach, not one scalar.
+- **Homology from random samples — §4.3 TDA arm.** Niyogi, Smale & Weinberger,
+  "Finding the homology of submanifolds with high confidence from random
+  samples," *DCG* 2008, doi:10.1007/s00454-008-9053-2. Gives the sample density
+  (in units of reach) at which balls around sampled points recover the true
+  homology w.h.p. — exactly the guarantee the "does the contact set reveal
+  β₁ = 1?" arm needs, and it turns the §6 "TDA at N = 40 is data-starved" worry
+  into a *computable* threshold N below which β₁ is unrecoverable.
+- **Stability of persistence — §4.3.** Cohen-Steiner, Edelsbrunner & Harer,
+  "Stability of Persistence Diagrams," *DCG* 2007, doi:10.1007/s00454-006-1276-5.
+  The bottleneck-stability bound is what distinguishes a *real* hole from a
+  sampling-induced one, and it is stable under the geometric perturbations the
+  contact set carries — the principled version of "is this β₁ signal real."
+
+### A.2 Directions from memory not yet in §1–7
+
+- **Active boundary learning — the direct answer to the §6 data-starvation
+  risk.** Rather than wait for random contacts, place the next query where the
+  candidate hypotheses *disagree* (version-space / boundary-fragment view).
+  Mammen & Tsybakov, "Smooth discrimination analysis," *Ann. Statist.* 1999,
+  doi:10.1214/aos/1017939240, is the optimal-rate statistical frame for
+  estimating a region's boundary — a better lens for the TDA/repair arm than a
+  purely geometric curve, and it composes with mitigation (which already queries
+  every real deployment step).
+- **A sample-complexity theorem for semialgebraic guards.** Bound the samples
+  (or the version-space diameter) needed to *identify* a guard as a function of
+  dimension, polynomial degree, number of inequalities, and margin — the
+  quantitative companion to the qualitative gate-quotient (§3c), and the bridge
+  back to paper 2's "code / predicate-complexity" story.
+- **Geometric vs descriptive (AST) complexity are distinct axes.** A circle is
+  geometrically curved yet programmatically simpler than an 8-gon; the artifact
+  classification (§4.2) should log BOTH, because "dimensional reduction" is a
+  descriptive-complexity collapse, not a geometric one.
+- **Guard geometry vs reset-map complexity — an orthogonal knob.** Hold the
+  guard region fixed and vary the reset map: bounce / stick / friction /
+  hysteresis / velocity-dependent reset. Paper 2 found "non-positional guards"
+  (velocity-dependent freezes); this axis makes that a *designed* dimension,
+  independent of the Betti ladder.
+- **Explicit local-indistinguishability experiment.** Two modes identical over
+  the *entire observed* region but globally distinct — the gate-quotient (§3c)
+  turned into a controlled A/B. The cleanest possible demonstration that the
+  prior, not the data, fixes the enclosed content; unifies phantom modes, the
+  Proposition-2 caveat, and the impossibility of global extrapolation in one
+  measurement.
+- **Explicitly out of scope (recorded, not reopened):** moving / time-dependent
+  guards, memory/hysteresis, contact-rich manipulation — same boundary as §6.
