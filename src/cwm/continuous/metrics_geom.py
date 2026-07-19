@@ -30,12 +30,12 @@ chosen target endpoint:
                to `n_per` -- what a truth-following controller actually visits,
                as opposed to any constructed probe.
 
-Classification for band/inside/outside uses `shape.signed_distance` implicitly
-through `env.contact` (which is exact contact-mode arithmetic on the SAME
-integrator we used to invert) -- `signed_distance` is a true euclidean
-length and is what makes "push +-band_d" mean the same physical thing across
-shape families with different `implicit_value` scalings (a circle's
-implicit_value is a squared radius; a polygon's is a plain half-plane margin).
+Classification (label truth) for band/inside/outside uses `env.contact`,
+which decides contact via `implicit_value(p) <= 0` (i.e., `shape.contains`),
+never via `signed_distance`. The band is positioned by displacing a boundary
+point by ±`band_d` along the unit normal from `shape.normal_or_cone` (a
+Euclidean-length displacement, exact for Circle and approximate near high
+curvature / polygon vertices, which are not yet tested here).
 """
 import math
 
@@ -203,5 +203,4 @@ def disagreement_scores(truth_env, model_step, probes: dict) -> dict:
             "fpr": fpr,
             "n": len(plist),
         }
-    out["primary"] = "band"
     return out
