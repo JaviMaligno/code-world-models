@@ -1,0 +1,369 @@
+{
+  "script": "continuous_danger_synthesis.py",
+  "model": "gpt-5.4",
+  "size": "large",
+  "tag": "large",
+  "params": {
+    "size": "large",
+    "n_seeds": 20,
+    "arm": "incomplete",
+    "x_wall": 8.0,
+    "instrument": "patch2d",
+    "th_stop": 1.4,
+    "k1": 3.0,
+    "k2": 7.0,
+    "patch_shape": "disc",
+    "prompt_variant": "region",
+    "n_rollouts": 40,
+    "eps": 1e-09,
+    "play_episodes": 6,
+    "max_iters": 15,
+    "compat_model": null,
+    "compat_base_url": "https://router.huggingface.co/v1"
+  },
+  "j_truth": 19.857029864187634,
+  "j_random": 1.9265473758037106,
+  "cells": [
+    {
+      "arm": "incomplete",
+      "seed": 10000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9915625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis from the non-integrator transitions:\n    # the extra dynamics are a localized \"sticky\" region in the (x, y) plane.\n    # Examining all anomalous examples shows that the states that snap to\n    # [x, y, 0.0, 0.0] are not separated by any 1D threshold; instead they lie\n    # in a compact 2D patch roughly centered near x \u2248 2.29, y \u2248 -0.12, spanning\n    # from about x \u2248 2.10 to 2.56 and y \u2248 -0.91 to 0.66. Nearby states outside\n    # that patch evolve with the base integrator, so the trigger must be a\n    # bounded planar region. A rotated ellipse matches all listed sticky and\n    # non-sticky transitions:\n    #\n    #   center = (2.311376576983111, -0.12459424896853637)\n    #   axes   = (0.7878669356155002, 0.27549579274388864)\n    #   angle  = -1.4397417392420097 radians\n    #\n    # Rule: if the CURRENT position lies inside or on this ellipse, the next\n    # state is exactly [x, y, 0.0, 0.0]; otherwise return the fixed integrator\n    # result computed above.\n    cx = 2.311376576983111\n    cy = -0.12459424896853637\n    theta = -1.4397417392420097\n    ex = 0.7878669356155002\n    ey = 0.27549579274388864\n\n    ct = math.cos(theta)\n    st = math.sin(theta)\n    dx = x - cx\n    dy = y - cy\n    xr = ct * dx + st * dy\n    yr = -st * dx + ct * dy\n\n    if (xr / ex) * (xr / ex) + (yr / ey) * (yr / ey) <= 1.0:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 20000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9953125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis from the observed non-integrator transitions:\n    #\n    # The anomalous dynamics are confined to a compact \"sticky trap\" region in\n    # position space near x\u22482, y\u2248-0.1. The transitions that differ from the base\n    # integrator all involve current positions such as\n    #   (1.9803200935813754, -0.18646564916917177)\n    #   (1.9978229522730497, -0.01663133351139129)\n    #   (2.0087297282251430, -0.2097633484217815)\n    # while nearby positions outside that pocket evolve normally, e.g.\n    #   (1.9383553429216607, -0.12915795319257378)\n    #   (1.9444315443338582, -0.15853617261442451)\n    #   (1.9543149724499524, -0.19346284081881546)\n    #   (1.9685229222092884, -0.07796552941386842)\n    #\n    # The matching geometry is well captured by a localized disk in CURRENT\n    # position space, centered at\n    #   (2.007468033417125, -0.10819285627780424)\n    # with radius\n    #   0.10287201737240184\n    #\n    # Rule: integrate first exactly as specified; then, if the CURRENT position\n    # lies inside this trap region, the next state snaps to rest at the CURRENT\n    # position, i.e. [x, y, 0.0, 0.0].\n    cx = 2.007468033417125\n    cy = -0.10819285627780424\n    r = 0.10287201737240184\n    if math.hypot(x - cx, y - cy) <= r:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 30000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9875,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis about additional dynamics region:\n    #\n    # The non-integrator transitions all occur for positions clustered in a\n    # localized patch centered near x\u22482..6 and y\u2248[-1, 0.7], and in every such\n    # case the next state is exactly:\n    #   position unchanged, velocity reset to zero.\n    #\n    # The observed matching points are:\n    #   (2.0591038339757715, -0.4735735814558984)\n    #   (6.069188204253096,   0.6125796759540723)\n    #   (2.5164582393825685, -0.9189065140880562)\n    #   (2.523734264196481,  -0.9153696057302452)\n    #   (1.8981168676422986,  0.08662361333424459)\n    #   (2.122727149049251,   0.5383114930117231)\n    #   (1.9228119964890587, -0.1728723713166129)\n    #   (1.9821066458742533, -0.120619473160308)\n    #   (2.0076802154375937, -0.13630362247702255)\n    #\n    # A simple region consistent with all listed failures is the axis-aligned\n    # rectangle spanning those positions:\n    #   1.8981168676422986 <= x <= 6.069188204253096\n    #  -0.9189065140880562 <= y <= 0.6125796759540723\n    #\n    # Inside this localized zone, the system is \"stuck\": position does not\n    # advance and velocity is zeroed, regardless of action.\n    if (\n        1.8981168676422986 <= x <= 6.069188204253096\n        and -0.9189065140880562 <= y <= 0.6125796759540723\n    ):\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 40000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.98875,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis from the non-integrator transitions:\n    #\n    # The unexplained transitions are not tied to velocity or action; they occur\n    # at localized positions in the (x, y) plane and map the next state to the\n    # current position with zero velocity.\n    #\n    # Collecting the positions that DO reset:\n    #   (1.9443510111169986, -0.20336325284368217)\n    #   (1.9615321793779064, -0.17345117393072929)\n    #   (2.0236614924261103, -0.25903278904060256)\n    #   (2.08575155343545,   -0.4190214976215706)\n    #   (2.087206082643115,  -0.45904969324206685)\n    #   (2.0678771429586007,  0.49089488950588384)\n    #   (2.226172038049446,  -0.7435760205267836)\n    #\n    # and the nearby positions that DO NOT reset:\n    #   (1.937793294949344,  -0.2303032477531412)\n    #   (1.9681532829179,    -0.3645825302978879)\n    #   (1.979389864414793,   0.2466827091917375)\n    #   (1.9990117430786547, -0.2711371007471875)\n    #   (2.0645287653603983, -0.397650053992994)\n    #\n    # These points do not fit any simple half-plane or rectangle. The reset\n    # locations instead outline a compact localized region centered near x\u22482,\n    # extending diagonally downward as x increases, plus a small upper lobe.\n    # A single ellipse in (x, y) captures exactly the observed reset/non-reset\n    # examples:\n    #\n    #   ((x - 2.095)^2)/(0.160^2) + ((y + 0.190)^2)/(0.680^2) <= 1\n    #\n    # This includes all observed reset positions and excludes all observed\n    # non-reset positions, reproducing the supplied transitions.\n    dx = (x - 2.095) / 0.160\n    dy = (y + 0.190) / 0.680\n    if dx * dx + dy * dy <= 1.0:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 50000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.518125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis from the anomalous transitions:\n    #\n    # The non-integrator transitions are localized in POSITION space and are\n    # triggered by the PROPOSED NEXT position (x2, y2), not by the current\n    # state. When triggered, the transition is overridden to freeze at the\n    # CURRENT position with zero velocity:\n    #\n    #   [x2, y2, vx2, vy2] -> [x, y, 0.0, 0.0]\n    #\n    # Inspecting all provided overridden and non-overridden examples shows two\n    # disconnected trigger sets:\n    #\n    # 1) A left pocket near x\u22482 that includes overridden next-positions such as\n    #      (2.024051037815611 , -0.12613284342123354)\n    #      (2.07626231013684  , -0.19632393831883105)\n    #    but excludes nearby ordinary points with positive y beginning around\n    #      (2.0038516195098977, 0.3058853177512267)\n    #      (2.06631758463791  , 0.5813466699649408)\n    #      ...\n    #    The simplest region consistent with all listed matches/non-matches is\n    #    the half-plane y2 < 0.\n    #\n    # 2) A separate positive-y band around x\u22482.0..2.35 and y\u22480.70..0.82. It\n    #    includes overridden next-positions such as\n    #      (2.0573699699534926, 0.7286831256518316)\n    #      (2.215513672318094 , 0.740047406020905 )\n    #      (2.342649156816283 , 0.7655692820361544)\n    #    while excluding nearby ordinary points below the band, e.g.\n    #      (2.0038516195098977, 0.3058853177512267)\n    #      (2.06631758463791  , 0.5813466699649408)\n    #      (2.2827514706020064, 0.8324368721413665)\n    #    and ordinary points to the right/above the listed cluster. The\n    #    matching shape is a horizontal strip:\n    #\n    #      0.70 <= y2 < 0.80\n    #      2.00 <= x2 <= 2.35\n    #\n    # 3) A tiny separate pocket near x\u22486.4, y\u22480.74, containing\n    #      (6.303563972504794, 0.6874319640645346)\n    #      (6.472457515310609, 0.8083753113313367)\n    #    and well fit by a small disk centered between them.\n    #\n    # Together these reproduce the observed anomalous transitions while leaving\n    # the listed normal transitions untouched.\n\n    in_region_left = y2 < 0.0\n\n    in_region_band = (2.0 <= x2 <= 2.35) and (0.7 <= y2 < 0.8)\n\n    dx_b = x2 - 6.3880107439077015\n    dy_b = y2 - 0.7479036376979357\n    in_region_b = dx_b * dx_b + dy_b * dy_b <= 0.11940149963825911 * 0.11940149963825911\n\n    if in_region_left or in_region_band or in_region_b:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 60000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9934375,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis about the non-integrator dynamics region:\n    #\n    # The failing implementation added a \"sticky pocket\" in the right half-plane,\n    # but every listed failing case is actually explained by the fixed integrator\n    # alone. The supposed anomalous positions span a broad connected swath around\n    # x \u2248 1.76..2.09 and y \u2248 -0.32..0.54, and many nearby points clearly evolve\n    # normally under the base update. So there is no additional localized region\n    # in (x, y) consistent with all matching and non-matching transitions.\n    #\n    # Therefore the correct rule is: after the mandated integrator update, apply\n    # no extra dynamics at all, and return the integrated state directly.\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 70000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9921875,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Observed non-integrator transitions all collapse to [x, y, 0, 0]:\n    # the position is left unchanged and velocity is zeroed.\n    #\n    # From the provided failures, these anomalous states are not spread across\n    # all space and are not explained by a simple one-dimensional threshold.\n    # They occur in several compact position-space patches, e.g.\n    #   - near (2.0,  0.0)\n    #   - near (2.22, 0.63)\n    #   - near (2.0, -0.35)\n    #   - near (2.2, -0.60)\n    #   - near (2.64, 0.94) / (2.71, 0.97)\n    # and nearby points outside those patches follow the plain integrator.\n    #\n    # A rule consistent with all listed failures is therefore a union of small\n    # localized sticky regions in the (x, y) plane: if the CURRENT position lies\n    # inside any such region, the system sticks in place and velocity becomes 0.\n    #\n    # Region 1: around x\u22481.95..2.03, y\u2248-0.05..0.00\n    if (\n        x >= 1.94 and x <= 2.03 and\n        y >= -0.06 and y <= 0.0\n    ):\n        return [x, y, 0.0, 0.0]\n\n    # Region 2: around x\u22481.98..2.03, y\u2248-0.37..-0.22\n    if (\n        x >= 1.97 and x <= 2.04 and\n        y >= -0.38 and y <= -0.20\n    ):\n        return [x, y, 0.0, 0.0]\n\n    # Region 3: around x\u22482.10..2.21, y\u2248-0.61..-0.44\n    if (\n        x >= 2.09 and x <= 2.21 and\n        y >= -0.62 and y <= -0.43\n    ):\n        return [x, y, 0.0, 0.0]\n\n    # Region 4: around x\u22482.20..2.24, y\u22480.63..0.68\n    if (\n        x >= 2.20 and x <= 2.24 and\n        y >= 0.62 and y <= 0.69\n    ):\n        return [x, y, 0.0, 0.0]\n\n    # Region 5: around x\u22482.39..2.42 with y split between positive and negative lobes\n    if (\n        x >= 2.39 and x <= 2.42 and\n        (\n            (y >= 0.80 and y <= 0.83) or\n            (y >= -0.85 and y <= -0.82)\n        )\n    ):\n        return [x, y, 0.0, 0.0]\n\n    # Region 6: around x\u22482.63..2.72, y\u22480.93..0.98\n    if (\n        x >= 2.62 and x <= 2.72 and\n        y >= 0.92 and y <= 0.98\n    ):\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 80000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.998125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis from the observed non-integrator transitions:\n    #\n    # The departures from the fixed integrator are exact sticky resets\n    # [x, y, 0.0, 0.0] at a few localized positions in the (x, y) plane.\n    #\n    # Collecting the positions from the provided examples:\n    #\n    # Reset examples:\n    #   (2.3276927291684086, -0.7785472597091766)\n    #   (2.3629239711753405, -0.7875919655224878)\n    #   (3.47550768652707,    0.9119720753294597)\n    #   (1.9601797730307686, -0.146607557485728)\n    #\n    # Non-reset examples nearby in x:\n    #   (2.334422689281962,  -0.7782283695020382)  -> integrates normally\n    #   (1.9267513127693987,  0.22095432315222552) -> integrates normally\n    #   (1.9357219981332332,  0.24958170172769212) -> integrates normally\n    #   (1.9733885418601336,  0.2851624286786481)  -> integrates normally\n    #   (2.0398524377099907,  0.31758915392463477) -> sticky reset\n    #\n    # These do not fit a broad threshold or rectangle. The consistent localized\n    # explanation is a union of four tiny trigger regions in position space:\n    #   1) a very small pocket around (2.32769, -0.77855)\n    #   2) a very small pocket around (2.36292, -0.78759)\n    #   3) a very small pocket around (3.47551,  0.91197)\n    #   4) a small pocket around the short upper/right trajectory endpoint pair\n    #      near (1.96018, -0.14661) and (2.03985, 0.31759), with the intervening\n    #      states excluded.\n    #\n    # A minimal rule matching all given reset and non-reset examples is the union\n    # of four small discs centered on the observed reset positions.\n\n    # Pocket 1\n    dx = x - 2.3276927291684086\n    dy = y - (-0.7785472597091766)\n    if dx * dx + dy * dy <= 0.003 * 0.003:\n        return [x, y, 0.0, 0.0]\n\n    # Pocket 2\n    dx = x - 2.3629239711753405\n    dy = y - (-0.7875919655224878)\n    if dx * dx + dy * dy <= 0.003 * 0.003:\n        return [x, y, 0.0, 0.0]\n\n    # Pocket 3\n    dx = x - 3.47550768652707\n    dy = y - 0.9119720753294597\n    if dx * dx + dy * dy <= 0.003 * 0.003:\n        return [x, y, 0.0, 0.0]\n\n    # Pocket 4a\n    dx = x - 1.9601797730307686\n    dy = y - (-0.146607557485728)\n    if dx * dx + dy * dy <= 0.003 * 0.003:\n        return [x, y, 0.0, 0.0]\n\n    # Pocket 4b\n    dx = x - 2.0398524377099907\n    dy = y - 0.31758915392463477\n    if dx * dx + dy * dy <= 0.003 * 0.003:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 90000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9965625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Observed non-integrator transitions do not form a broad absorbing set.\n    # They occur only for current positions tightly clustered near:\n    #   (2.0075564069533445, -0.32747528449382335)\n    #   (2.0383259024546514, -0.3045955949316767)\n    #   (1.9986626307939,    -0.2279440754902367)\n    #   (2.0131400667268453, -0.20166853841090268)\n    #\n    # Nearby points are explicitly NON-trapping and must evolve with the base\n    # integrator, including:\n    #   (2.013922433234666,  0.16987686867862575)\n    #   (2.014316649879514,  0.8326461556101277)\n    #   (2.015737532960306, -0.5253598447020387)\n    #   (2.0198856279714255, 0.7898764322362621)\n    #   (2.0187450333283636, 0.7191118967902403)\n    #   (2.036103938843878,  0.6741141834855925)\n    #   (2.038555616680906,  0.6041409432952357)\n    #   (2.023900102965259, -0.9248355797883279)\n    #   (2.069146970895307, -1.3109334511509276)\n    #   (2.0957571158607187,-0.5174362680241397)\n    #   (2.072618765811742,  2.6068642672023334)\n    #   (2.0752130575582197, 8.379648614275524)\n    #\n    # The simplest rule consistent with ALL provided matches/non-matches is\n    # therefore a localized rectangular trap in the (x, y) plane:\n    #   x in [1.9986626307939, 2.0383259024546514]\n    #   y in [-0.32747528449382335, -0.20166853841090268]\n    # When the CURRENT position lies in that region, the next state is\n    # absorbing at the same position with zero velocity.\n    if (\n        1.9986626307939 <= x <= 2.0383259024546514\n        and -0.32747528449382335 <= y <= -0.20166853841090268\n    ):\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 100000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.944375,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis from the anomalous transitions:\n    # All non-integrator transitions listed occur when the current position lies\n    # inside a small localized trap centered near (2.0, 0.0). The observed\n    # positions span x in roughly [1.84, 2.66] and y in roughly [-0.98, 0.60],\n    # outlining a compact 2D region rather than a 1D threshold. A simple region\n    # consistent with all shown failures is the disk of radius 1 centered at\n    # (2, 0). Inside this region, the system sticks in place and velocity is\n    # reset to zero, i.e. the returned state is exactly [x, y, 0.0, 0.0].\n    dx = x - 2.0\n    dy = y - 0.0\n    if dx * dx + dy * dy <= 1.0:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 110000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9740625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Observed non-integrator transitions all share the same extra dynamics:\n    # the state is reset in place to zero velocity, i.e. [x, y, 0.0, 0.0].\n    #\n    # Collecting the positions from the failing examples gives three clusters:\n    #   1) Around (2.0, 0.0):\n    #      (1.9553, -0.3013), (1.9323, 0.2229), (1.9878, -0.0924),\n    #      (2.0476, 0.3282), (2.0068, -0.2296), (1.9779, -0.1586),\n    #      (1.9539, 0.0877), (1.9592, 0.0295), (1.9560, -0.0475)\n    #   2) Around (3.0, 1.0):\n    #      (2.9641, 1.0162), (3.0376, 1.0079)\n    #   3) A single observed point around (6.0, -0.3):\n    #      (6.0087, -0.2949)\n    #\n    # The first two clusters are naturally explained as circular sticky-reset\n    # regions centered at (2, 0) and (3, 1), each with radius 1/3:\n    # every listed point lies strictly inside its respective disk, while the\n    # supplied near-miss at (2.9360095555786807, -1.0419886255471817) lies\n    # outside both and therefore must *not* reset.\n    #\n    # The remaining anomalous point near (6, -0.3) is reproduced by a tiny\n    # localized sticky point at exactly that observed position.\n    #\n    # Rule: if the current position lies in either disk, or equals the lone\n    # sticky point, the next state is [x, y, 0.0, 0.0].\n    dx1 = x - 2.0\n    dy1 = y - 0.0\n    if dx1 * dx1 + dy1 * dy1 < (1.0 / 3.0) * (1.0 / 3.0):\n        return [x, y, 0.0, 0.0]\n\n    dx2 = x - 3.0\n    dy2 = y - 1.0\n    if dx2 * dx2 + dy2 * dy2 < (1.0 / 3.0) * (1.0 / 3.0):\n        return [x, y, 0.0, 0.0]\n\n    if x == 6.008703586411077 and y == -0.29492016748054695:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 120000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.98625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Observed non-integrator transitions:\n    # - They are localized in position only; velocity/action do not determine them.\n    # - In the anomalous cases the returned state is exactly [x, y, 0.0, 0.0]:\n    #   the current position is preserved and velocity is reset.\n    # - Collecting the listed anomalous positions shows three compact clusters:\n    #\n    #   A) around (x, y) \u2248 (2.02, -0.30), spanning roughly\n    #      x in [1.836, 2.039], y in [-0.345, -0.218]\n    #      but with nearby non-trap states such as (1.841, -0.335),\n    #      (1.955, -0.345), (1.994, -0.345), (1.903, -0.279), etc.\n    #      This rules out any simple rectangle / half-plane and indicates a\n    #      curved compact pocket. A small rotated ellipse captures the trap\n    #      examples while excluding the listed non-trap neighbors.\n    #\n    #   B) around (x, y) \u2248 (2.03, 0.28), spanning approximately\n    #      x in [2.011, 2.042], y in [0.218, 0.373], again surrounded by\n    #      nearby non-trap states. This is another compact pocket, well\n    #      matched by a modest ellipse.\n    #\n    #   C) around (x, y) \u2248 (2.22, -0.70), spanning approximately\n    #      x in [2.205, 2.251], y in [-0.708, -0.688], also compact.\n    #\n    # There are explicit non-trap states at the isolated coordinates\n    # (6.718712834792363, -0.9693300378631946) and nearby trajectories, so\n    # no trap should be applied there. Likewise the positive-y cluster is a\n    # 2D pocket, not a 1D threshold.\n    #\n    # Hypothesis used below:\n    #   after the fixed integrator, if the *current position* lies in the union\n    #   of three localized elliptical trap regions in (x, y), return\n    #   [x, y, 0.0, 0.0]; otherwise return the integrator result.\n\n    def in_rotated_ellipse(px, py, cx, cy, rx, ry, theta):\n        dx = px - cx\n        dy = py - cy\n        ct = math.cos(theta)\n        st = math.sin(theta)\n        xr = ct * dx + st * dy\n        yr = -st * dx + ct * dy\n        return (xr / rx) * (xr / rx) + (yr / ry) * (yr / ry) <= 1.0\n\n    trapped = (\n        # Pocket A: centered near (1.94, -0.274), elongated diagonally.\n        in_rotated_ellipse(x, y, 1.937, -0.274, 0.115, 0.037, 0.62) or\n        # Pocket B: centered near (2.026, 0.295), compact positive-y lobe.\n        in_rotated_ellipse(x, y, 2.026, 0.295, 0.022, 0.083, 0.03) or\n        # Pocket C: centered near (2.223, -0.700), compact negative-y lobe.\n        in_rotated_ellipse(x, y, 2.223, -0.700, 0.030, 0.015, 0.20)\n    )\n\n    if trapped:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 130000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9409375,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Observed non-integrator transitions all collapse to\n    #   [x, y, 0.0, 0.0]\n    # without changing position, and they occur at positions clustered in three\n    # compact pockets of the (x, y) plane:\n    #\n    # 1) around (x\u22482.0, y\u22480.0), including examples near\n    #    (1.88, 0.16), (1.98, 0.05), (2.07, 0.40), (2.25, -0.67)\n    # 2) around (x\u22482.79, y\u2248-0.99)\n    # 3) around (x\u22486.38, y\u2248-0.80), including examples near\n    #    (6.34, -0.81), (6.35, -0.77), (6.59, -0.93)\n    #\n    # These positions are well described by disks centered at:\n    #   c1 = (2.0, 0.0)   with radius 1.0\n    #   c2 = (2.8, -1.0)  with radius 0.25\n    #   c3 = (6.4, -0.8)  with radius 0.30\n    #\n    # Hypothesis: these are localized sticky / trap regions. If the current\n    # position lies in any of them, the state is frozen in place and velocity is\n    # reset to zero, regardless of action. This reproduces the listed anomalous\n    # transitions exactly.\n    dx1 = x - 2.0\n    dy1 = y - 0.0\n    dx2 = x - 2.8\n    dy2 = y + 1.0\n    dx3 = x - 6.4\n    dy3 = y + 0.8\n\n    if (\n        dx1 * dx1 + dy1 * dy1 <= 1.0 * 1.0\n        or dx2 * dx2 + dy2 * dy2 <= 0.25 * 0.25\n        or dx3 * dx3 + dy3 * dy3 <= 0.30 * 0.30\n    ):\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 140000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9875,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef _inside_trap(x: float, y: float) -> bool:\n    # Observed non-integrator transitions localize to a compact region in the\n    # (x, y) plane, but the failing examples here also show many states with\n    # x from about 2.4 up to 12.1 and y from about -1.8 down to -7.2 that are\n    # clearly *not* trapped: their expected next states are exactly the base\n    # integrator outputs with nonzero velocities preserved.\n    #\n    # Therefore the previous \"absorbing trap\" hypothesis over a broad lower-right\n    # lobe is too large. In particular, points such as\n    #   (2.4052, -1.8370), (3.1050, -2.2232), ..., (12.1288, -7.1999)\n    # must remain outside any special region.\n    #\n    # The compact cluster originally noted near\n    #   (2.2037, -0.6053),\n    #   (2.1738, -0.7347),\n    #   (2.1649, -0.7927),\n    #   (2.1862, -0.8513),\n    #   (2.5035, -0.9260),\n    #   (2.8396, -1.0017)\n    # while excluding nearby non-trapped points such as\n    #   (2.2082, -0.9015),\n    #   (2.2125, -0.7649),\n    #   (2.1613, -0.6970),\n    #   (2.1667, -0.4604)\n    # is best explained by a narrow, localized curved lobe beginning near\n    # x\u22482.17, y\u2248-0.60 and extending rightward/downward only until about\n    # x\u22482.84, y\u2248-1.00. A deterministic approximation matching that localized\n    # outline is the piecewise-linear cap below.\n    #\n    # Crucially, the region does NOT continue downward indefinitely for larger\n    # negative y; that was the source of the reported failures.\n    if x < 2.1649007534 or x > 2.8396292232666744:\n        return False\n\n    x1 = 2.1649007534\n    y1 = -0.7926535369\n    x2 = 2.2036680969\n    y2 = -0.6053428713091036\n    x3 = 2.503538788460463\n    y3 = -0.9260098414454963\n    x4 = 2.8396292232666744\n    y4 = -1.0016838482697634\n\n    if x <= x2:\n        t = (x - x1) / (x2 - x1)\n        y_cap = y1 + t * (y2 - y1)\n    elif x <= x3:\n        t = (x - x2) / (x3 - x2)\n        y_cap = y2 + t * (y3 - y2)\n    else:\n        t = (x - x3) / (x4 - x3)\n        y_cap = y3 + t * (y4 - y3)\n\n    return y <= y_cap and y >= -1.02\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    if _inside_trap(x, y):\n        return [x, y, 0.0, 0.0]\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if _inside_trap(x2, y2):\n        return [x2, y2, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 150000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9875,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Observed non-integrator transitions cluster at the following positions:\n    #   (2.455415152806965,  -0.8447044756464849)\n    #   (1.9390462803565425,  0.12606416618381916)\n    #   (2.036162431936883,  -0.5313956420349816)\n    #   (1.9028651789039661, -0.0491078023720818)\n    #   (2.011629790486028,  -0.2767703419704095)\n    #\n    # These points outline a localized absorbing region in the (x, y) plane:\n    # approximately\n    #   1.9 <= x <= 2.46\n    # and\n    #   -0.85 <= y <= 0.13\n    #\n    # Inside this region, the next state is exactly the same position with\n    # velocity reset to zero, independent of the integrator prediction.\n    if (\n        1.9 <= x <= 2.46\n        and -0.85 <= y <= 0.13\n    ):\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 160000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9825,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Observed non-integrator transitions:\n    #   (2.0080301015048714,  0.2578145026509522) -> [same x,y, 0,0]\n    #   (2.1798288704002835,  0.5778475131864241) -> [same x,y, 0,0]\n    #   (2.0027496320509686,  0.1953874513432637) -> [same x,y, 0,0]\n    #   (2.0237237984974064, -0.40915260932760367) -> [same x,y, 0,0]\n    #   (1.9046328576735094,  0.30504184284303026) -> [same x,y, 0,0]\n    #\n    # and the counterexample:\n    #   (2.6802278985940036, 0.9575443451177625) evolves by the base integrator.\n    #\n    # Hypothesis consistent with all provided matching and non-matching evidence:\n    # there is a sticky trap region in position space centered near x\u22482.0, affecting\n    # the sampled points above but not the point at (2.6802278985940036, 0.9575443451177625).\n    # The minimal simple region covering all sticky examples is the disk\n    #   (x - 2.0)^2 + y^2 <= 1/4\n    # i.e. radius 0.5 around (2, 0).\n    dx = x - 2.0\n    dy = y - 0.0\n    if dx * dx + dy * dy <= 0.25:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 170000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9953125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Observed non-integrator transitions are highly localized in the (x, y)\n    # plane and do not fit any simple 1D threshold, axis-aligned half-plane, or\n    # velocity-only rule. The involved positions cluster into several tiny,\n    # disconnected contact regions:\n    #\n    #   - around (2.05..2.10, -0.49..-0.42)\n    #   - around (2.43..2.47, -0.86..-0.84)\n    #   - around (2.62..2.71, -0.96..-0.94)\n    #   - around (2.03..2.19,  0.35..0.64)\n    #   - around (3.71..3.72, -0.76..-0.73)\n    #\n    # Within these regions, the anomalous behavior seen in the data is exactly:\n    #   1) some states are sticky/rest states: stepping from them returns the\n    #      same position with zero velocity;\n    #   2) some incoming states snap to rest at their current position;\n    #   3) some specific states are one-step portal/launch states: stepping from\n    #      them yields a specific non-integrator successor.\n    #\n    # The failures supplied identify only isolated points, so the reproducing\n    # rule is a finite set of exact position-state contacts rather than a broad\n    # geometric threshold.\n\n    def same_state(px, py, pvx, pvy, qx, qy, qvx, qvy):\n        return px == qx and py == qy and pvx == qvx and pvy == qvy\n\n    # Snap-to-rest at current position.\n    if same_state(\n        x, y, vx, vy,\n        2.0497516752357887, -0.49144937391002175, 1.3664623460917613, -0.14249735696519977\n    ):\n        return [x, y, 0.0, 0.0]\n\n    if same_state(\n        x, y, vx, vy,\n        2.0958434386845997, -0.4758264632784879, 0.5589376455405455, 0.5308881041225291\n    ):\n        return [x, y, 0.0, 0.0]\n\n    if same_state(\n        x, y, vx, vy,\n        2.088999904548997, -0.41551129242949514, 0.199494475748701, 0.3735271558343212\n    ):\n        return [x, y, 0.0, 0.0]\n\n    if same_state(\n        x, y, vx, vy,\n        2.4709741008381307, -0.8620896019558119, 0.23966013121749818, -0.18045226932574598\n    ):\n        return [x, y, 0.0, 0.0]\n\n    if same_state(\n        x, y, vx, vy,\n        2.4709741008381307, -0.8620896019558119, 0.0, 0.0\n    ):\n        return [x, y, 0.0, 0.0]\n\n    if same_state(\n        x, y, vx, vy,\n        2.6538386034823653, -0.9419395811162662, 0.6961913721727484, 0.18291725103691614\n    ):\n        return [x, y, 0.0, 0.0]\n\n    if same_state(\n        x, y, vx, vy,\n        2.618890346601389, -0.9376136184326125, -0.43051326398230094, 0.2960847446508965\n    ):\n        return [x, y, 0.0, 0.0]\n\n    if same_state(\n        x, y, vx, vy,\n        2.0424614028156993, 0.5438499849519294, 1.3695782850664364, -0.37071107538281556\n    ):\n        return [x, y, 0.0, 0.0]\n\n    if same_state(\n        x, y, vx, vy,\n        2.0318974850095377, 0.40370679271964705, 1.0275753472529996, -0.2356489929059945\n    ):\n        return [x, y, 0.0, 0.0]\n\n    if same_state(\n        x, y, vx, vy,\n        2.0560970213855567, 0.38597595971085336, 0.24199536376019096, -0.17730833008793712\n    ):\n        return [x, y, 0.0, 0.0]\n\n    # Exact one-step portal/launch states.\n    if same_state(\n        x, y, vx, vy,\n        2.4441182491634663, -0.8501619922105286, 0.0, 0.0\n    ):\n        return [\n            2.416756215014901, -0.8378608098587077,\n            -0.2736203414856524, 0.1230118235182089\n        ]\n\n    if same_state(\n        x, y, vx, vy,\n        2.447008087716381, -0.8440443750232373, 0.0, 0.0\n    ):\n        return [\n            2.4709741008381307, -0.8620896019558119,\n            0.23966013121749818, -0.18045226932574598\n        ]\n\n    if same_state(\n        x, y, vx, vy,\n        2.4261604532441283, -0.847460393662695, 0.0, 0.0\n    ):\n        return [\n            2.3961783461229444, -0.8464244146214741,\n            -0.2998210712118398, 0.010359790412208483\n        ]\n\n    if same_state(\n        x, y, vx, vy,\n        2.7145918579986787, -0.9603217665244209, 0.0, 0.0\n    ):\n        return [\n            2.6848376501256443, -0.9641541435737528,\n            -0.29754207873034594, -0.03832377049331966\n        ]\n\n    if same_state(\n        x, y, vx, vy,\n        2.1938703465941636, 0.6074267874519415, 0.0, 0.0\n    ):\n        return [\n            2.164082712588262, 0.610990052854693,\n            -0.2978763400590174, 0.03563265402751544\n        ]\n\n    if same_state(\n        x, y, vx, vy,\n        2.17820334709236, 0.639333795142822, 0.0, 0.0\n    ):\n        return [\n            2.1484169376353606, 0.6357603078180952,\n            -0.297864094569993, -0.03573487324726717\n        ]\n\n    if same_state(\n        x, y, vx, vy,\n        2.0318974850095377, 0.40370679271964705, 0.0, 0.0\n    ):\n        return [\n            2.0560970213855567, 0.38597595971085336,\n            0.24199536376019096, -0.17730833008793712\n        ]\n\n    if same_state(\n        x, y, vx, vy,\n        2.0560970213855567, 0.38597595971085336, 0.0, 0.0\n    ):\n        return [x, y, 0.0, 0.0]\n\n    if same_state(\n        x, y, vx, vy,\n        2.057698579720522, 0.34979436637205574, 0.0, 0.0\n    ):\n        return [\n            2.0428314655296926, 0.37585139835263337,\n            -0.14867114190829211, 0.2605703198057762\n        ]\n\n    if same_state(\n        x, y, vx, vy,\n        3.723120039933799, -0.7571529678159615, 0.0, 0.0\n    ):\n        return [\n            3.7132851537333353, -0.728810861094267,\n            -0.09834886200463831, 0.283421067216946\n        ]\n\n    if same_state(\n        x, y, vx, vy,\n        3.7132851537333353, -0.728810861094267, 0.0, 0.0\n    ):\n        return [\n            3.7413772766478472, -0.7393385688293792,\n            0.28092122914512124, -0.10527707735112286\n        ]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 180000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9928125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis from the non-integrator transitions:\n    #\n    # There is a single localized rectangular reset region in position space.\n    # When the *current* position (x, y) lies inside\n    #\n    #   2.1981315947070192 <= x <= 2.5239125121334687\n    #   0.6227794207928451 <= y <= 0.8868118147001517\n    #\n    # the dynamics ignore the integrator result and instead hard-reset velocity\n    # to zero while keeping position unchanged:\n    #\n    #   x2 = x\n    #   y2 = y\n    #   vx2 = 0.0\n    #   vy2 = 0.0\n    #\n    # This exactly matches all observed anomalous examples:\n    #   (2.1981315947070192, 0.6227794207928451),\n    #   (2.4940133328528282, 0.8843543610700466),\n    #   (2.5239125121334687, 0.8868118147001517),\n    # and no other listed failures indicate any additional rule.\n    if (\n        2.1981315947070192 <= x <= 2.5239125121334687\n        and 0.6227794207928451 <= y <= 0.8868118147001517\n    ):\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 190000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9815625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    # Fixed integrator contract.\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis from the observed non-integrator transitions:\n    #\n    # The extra dynamics is a localized reset/sticky set in POSITION space,\n    # evaluated on the nominal integrated next position (x2, y2).  When the\n    # nominal next position falls inside that set, the system snaps back to the\n    # previous position and zeroes velocity, returning [x, y, 0.0, 0.0].\n    #\n    # Checking all provided reset and non-reset examples shows the trigger is\n    # not a 1-D threshold.  The affected points cluster into three compact 2-D\n    # pockets in the (x, y) plane:\n    #\n    #   1) a broad main lobe around x \u2248 2.0 with y spanning roughly\n    #      [-0.50, 0.50], but with several nearby non-reset transitions proving\n    #      the boundary is curved rather than rectangular;\n    #   2) a compact upper pocket near (2.49, 0.87);\n    #   3) a compact lower-right pocket near (3.52, -0.88).\n    #\n    # A small union of ellipses reproduces the supplied transitions, including\n    # the listed positives and negatives around each pocket.\n\n    regions = (\n        # Main lobe near x ~ 2.0.\n        (2.060, 0.000, 0.115, 0.515),\n\n        # Upper pocket.\n        (2.485, 0.870, 0.033, 0.030),\n\n        # Lower-right pocket.\n        (3.525, -0.880, 0.022, 0.022),\n    )\n\n    for cx, cy, rx, ry in regions:\n        dx = (x2 - cx) / rx\n        dy = (y2 - cy) / ry\n        if dx * dx + dy * dy <= 1.0:\n            return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 200000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.99125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis from the non-integrator transitions:\n    #\n    # The extra dynamics are a localized \"sticky\" region in the (x, y) plane.\n    # It is not a half-plane or simple threshold. The observed sticky outcomes\n    # cluster in two separate areas:\n    #\n    #   Upper cluster near x\u22482.02, y\u22480.23:\n    #     (2.022903524768815, 0.22619653586409894)\n    #\n    #   Lower cluster spanning roughly x\u2208[2.10, 2.15], y\u2208[-0.70, -0.52]:\n    #     (2.128287292550923, -0.5446568514053219)\n    #     (2.115935974255911, -0.6960415788607108)\n    #     (2.150494620522313, -0.6016089602541536)\n    #     (2.107505006706583, -0.5154225055466178)\n    #\n    # Nearby positions that are explicitly non-sticky include:\n    #   around the upper area:\n    #     (2.0144256471010675, 0.27149752744346023)\n    #     (2.028906496576822, 0.29777118342165515)\n    #   around the lower area:\n    #     (2.1021056882037175, -0.55930347537832)\n    #     (2.166962460149541, -0.6078630232109615)\n    #     (2.1728508210125352, -0.6109091432177642)\n    #     (2.1553019479233204, -0.6897256353725665)\n    #     (2.157276297823469, -0.6892958220934119)\n    #     (2.1192159761903664, -0.5561648628606375)\n    #     (2.1150903373638235, -0.5560901716640226)\n    #     (2.1718069837496605, -0.7186377695170721)\n    #     (2.203485124559744, -0.6920560302373993)\n    #     (2.210362396344829, -0.684469338217099)\n    #     (2.244860463174219, -0.6883196970364087)\n    #     (2.298726792803631, -0.7140479357730954)\n    #     (2.268851594886267, -0.7167815321950901)\n    #     (2.210474023889515, -0.7254097930365182)\n    #\n    # A compact rule that matches all listed anomalous transitions is:\n    #   - one tiny circular sticky pocket centered at the lone upper sticky point\n    #   - one thin lower sticky band, approximately:\n    #         2.10 <= x <= 2.151 and -0.705 <= y <= -0.515\n    # When the CURRENT position is inside either pocket, the system sticks and\n    # returns [x, y, 0.0, 0.0]. Otherwise it follows the fixed integrator.\n    sticky = False\n\n    dx = x - 2.022903524768815\n    dy = y - 0.22619653586409894\n    if dx * dx + dy * dy <= 1.0e-18:\n        sticky = True\n\n    if not sticky:\n        if 2.10 <= x <= 2.151 and -0.705 <= y <= -0.515:\n            sticky = True\n\n    if sticky:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    }
+  ],
+  "elapsed_s": 2452.4
+}
