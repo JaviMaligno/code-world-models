@@ -204,6 +204,110 @@ class PatchField2D:
         return s2, self.reward(s2), False
 
 
+@dataclass(frozen=True)
+class RingField2D:
+    """Paper-3 opening instrument: an annular sticky mode enclosing the lure.
+
+    Same 4D state, scalar heading action, integrator and freeze semantics as
+    PatchField2D. The mode region is an annulus r_in <= dist(pos', center)
+    <= r_out around `center`, and the phantom lode sits AT `center` —
+    strictly inside the hole. Knobs (docs/paper3/RESEARCH-DIRECTION.md §3):
+
+    - `gap` (radians): angular width of a channel cut from the ring, centered
+      at `gap_center` (default: facing the start). gap = 0 is the closed ring
+      (beta_1 = 1): the interior is REACH-NULL — no trajectory of the true
+      dynamics ever enters it (crossing lemma, docs/paper3/THEORY.md), so
+      whatever a certified model says there is pure prior. gap > 0 is
+      contractible and re-opens the interior through a channel of tunable
+      sampling mass — the (1-r)^N regime returns continuously.
+    - `filled`: the wrong-topology model (annulus completed to a disc:
+      freezes the interior too). At gap = 0, planner-equivalent to the true
+      ring for any planner whose imagined steps are shorter than the ring
+      thickness (Proposition 3, THEORY.md) — wrong topology that is both
+      unfalsifiable and harmless; gap > 0 makes it consequential.
+    - `r_in = None`: the mode-blind model (no ring at all).
+
+    Geometry defaults keep the crossing lemma's hypothesis with margin: top
+    speed is gain/drag = 10, so a step moves at most 1.0 < r_out - r_in = 1.5.
+    """
+    dt: float = 0.1
+    gain: float = 3.0
+    drag: float = 0.3
+    a_max: float = 1.0
+    center: tuple = (12.0, 0.0)
+    r_in: float | None = 3.5
+    r_out: float = 5.0
+    gap: float = 0.0
+    gap_center: float = math.pi
+    filled: bool = False
+    lode_real: tuple = (-6.0, 0.0)
+    amp_real: float = 0.3
+    amp_phantom: float = 1.0
+    r0: float = 2.0
+    width: float = 0.5
+    h_episode: int = 80
+    x0_range: float = 0.5
+
+    def initial_state(self, rng) -> State:
+        return (rng.uniform(-self.x0_range, self.x0_range),
+                rng.uniform(-self.x0_range, self.x0_range), 0.0, 0.0)
+
+    def _lode(self, x: float, y: float, lode: tuple, amp: float) -> float:
+        d = math.hypot(x - lode[0], y - lode[1])
+        return amp / (1.0 + math.exp((d - self.r0) / self.width))
+
+    def reward(self, state: State) -> float:
+        x, y = state[0], state[1]
+        return (self._lode(x, y, self.lode_real, self.amp_real)
+                + self._lode(x, y, self.center, self.amp_phantom))
+
+    def in_interior(self, x: float, y: float) -> bool:
+        """Strictly inside the hole (call on the TRUTH env: the reach-null
+        measurement is about the true geometry, not a model's)."""
+        if self.r_in is None:
+            return False
+        return math.hypot(x - self.center[0], y - self.center[1]) < self.r_in
+
+    def _in_mode(self, x: float, y: float) -> bool:
+        if self.r_in is None:
+            return False
+        d = math.hypot(x - self.center[0], y - self.center[1])
+        lo = 0.0 if self.filled else self.r_in
+        if not (lo <= d <= self.r_out):
+            return False
+        if self.gap > 0.0:
+            ang = math.atan2(y - self.center[1], x - self.center[0])
+            delta = (ang - self.gap_center + math.pi) % (2 * math.pi) - math.pi
+            if abs(delta) <= self.gap / 2.0:
+                return False
+        return True
+
+    def _integrate(self, state: State, action: float):
+        x, y, vx, vy = state
+        a = max(-self.a_max, min(self.a_max, action))
+        phi = math.pi * a / self.a_max
+        vx2 = vx + (self.gain * math.cos(phi) - self.drag * vx) * self.dt
+        vy2 = vy + (self.gain * math.sin(phi) - self.drag * vy) * self.dt
+        return x + vx2 * self.dt, y + vy2 * self.dt, vx2, vy2
+
+    def contact_mode(self, state: State, action: float) -> bool:
+        x2, y2, _, _ = self._integrate(state, action)
+        return self._in_mode(x2, y2)
+
+    def step(self, state: State, action: float):
+        x2, y2, vx2, vy2 = self._integrate(state, action)
+        if self._in_mode(x2, y2):
+            s2 = (state[0], state[1], 0.0, 0.0)
+            return s2, self.reward(s2), True
+        s2 = (x2, y2, vx2, vy2)
+        return s2, self.reward(s2), False
+
+
+def filled_of(env: "RingField2D") -> "RingField2D":
+    """The wrong-topology model: the annulus completed to a disc."""
+    return replace(env, filled=True)
+
+
 def blind_of_modes(env: "PatchField2D", omit: tuple) -> "PatchField2D":
     """Mode-selective blind model for the 2D instrument."""
     kw = {}
@@ -220,6 +324,8 @@ def blind_of(env):
         return replace(env, th_stop=None)
     if isinstance(env, PatchField2D):
         return replace(env, p1=None, p2=None)
+    if isinstance(env, RingField2D):
+        return replace(env, r_in=None)
     return replace(env, x_wall=None)
 
 

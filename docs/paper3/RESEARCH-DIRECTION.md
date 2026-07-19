@@ -70,11 +70,18 @@ The ladder (each rung is an instrument class, first three already exist):
 | 0 | half-space (CartWall, PendStop) | contractible, flat | paper 2: repaired 82/82 |
 | 1 | disc (PatchField2D) | contractible, curved | paper 2: repaired 0/76 |
 | 1' | two discs | β₀ = 2 | paper 2: partial-repair machinery, 0/66 |
-| 2 | **annulus (RingField2D)** | **β₁ = 1** | paper 3 opening instrument |
-| 2' | C-shape (ring with gap) | contractible, non-convex | the *topological knob*: gap→0 |
-| 3 | shells/tori in d ≥ 3 | β_{d−1}, codimension | paper 3 multidimensional arm |
+| 2 | **annulus (RingField2D)** | **β₁ = 1** | **implemented 2026-07-19** (`envs.py`; Props 1–3 in `THEORY.md`; mechanism tests + calibration) |
+| 2' | C-shape (ring with gap) | contractible, non-convex | the *topological knob*: the same class, `gap > 0` |
+| 3 | shells/tori in d ≥ 3 | β_{d−1}, codimension | paper 3 multidimensional arm — full n-dim program in §8 |
 
 ## 3. The opening instrument: RingField2D
+
+**Status: implemented (2026-07-19)** — `src/cwm/continuous/envs.py`
+(`RingField2D`, `filled_of`, `blind_of`), mechanism tests in
+`tests/test_ring2d.py` (reach-null and the bitwise Prop-3 equivalence pass),
+formal statements in `docs/paper3/THEORY.md`, calibration in
+`scripts/continuous_ring2d.py`. The working branch carries the paper-2
+continuous stack by merge, so nothing here waits for the paper-2 → main merge.
 
 Same 4D state and heading integrator as PatchField2D (reuse the class shape,
 the frozen-default discipline, and the n-component machinery). The mode region
@@ -211,20 +218,133 @@ instrument, both worlds, one knob.
 
 ## 7. Next steps
 
-1. Land paper 2 (its branch merges; the continuous stack becomes available
-   here). Blocked on that. While there, close the two §10 confounds on the disc
-   cells (richer prompt / larger budget, a few seeds) — paper-2 content that
-   paper 3's rung-1 premise cites (§6 first risk). The square-patch ablation
-   (curvature vs descriptive complexity at fixed topology, §1) is optional
-   paper-2 material for the same reason: it sharpens the 0/76's *cause* without
-   touching topology.
-2. Prototype `RingField2D` + calibration (rarity vs thickness, γ sweep,
-   truth-MPC navigates, blind-MPC pins) — the analogue of the 2026-07-16
-   PatchField2D controller prototype. Freeze defaults.
-3. Write the mechanism-arm plan (docs/superpowers style) with the three-way
-   split table as the deliverable.
-4. Draft the gate-quotient proposition and the crossing bound properly; they
-   are cheap and de-risk the "is there a theorem here" question early.
+1. ~~Wait for the continuous stack~~ DONE another way (2026-07-19): the
+   paper-2 branch is merged INTO this working branch, so prototyping runs
+   here; the paper-2 → main merge remains paper 2's own step. Still pending
+   on the paper-2 side and still gating THIS paper's LLM arm: the two §10
+   confound cells + square-patch ablation
+   (`docs/superpowers/plans/2026-07-19-disc-confounds-square-ablation.md`,
+   LLM cells ready to run locally).
+2. ~~Prototype RingField2D + calibration~~ DONE (2026-07-19): instrument,
+   tests (reach-null, bitwise Prop-3), calibration script; frozen defaults
+   center (12,0), r_in 3.5, r_out 5.0 (thickness 1.5 > max step 1.0 —
+   Lemma 2's hypothesis with margin), gap_center π.
+3. ~~Draft gate quotient + crossing bound~~ DONE (2026-07-19):
+   `docs/paper3/THEORY.md` — Prop 1 (gate quotient), Lemma 2 (metric
+   crossing), Prop 3 (unfalsifiable+harmless, proved AND confirmed bitwise),
+   Prop 4 sketch (query lower bound; behavioral hypothesis to replace),
+   r(γ) remark. The "is there a theorem here" question is answered yes.
+4. Write the mechanism-arm plan (docs/superpowers style) with the three-way
+   split table as the deliverable: (γ, start) grid × {blind, filled} models,
+   columns = {certified?, play_cost, contact}, the Prop-3 bitwise column.
+5. Tighten Prop 4 (remove the behavioral hypothesis via the reward-gap
+   condition) and write out the r(γ) coupling argument.
+6. n-dimensional program: §8. First concrete step there: ShellField-n design
+   note (action-interface decision) + the r(n) collapse measurement.
+7. LLM synthesis arm: WAITS for the paper-2 confound cells (§6 first risk).
+
+---
+
+## 8. The n-dimensional program — and where algebraic topology is EARNED
+
+*(Recorded 2026-07-19 from Javier's direction — this part of the paper-3 idea
+("ir a más dimensiones — no solo 3 sino n en general; ver qué generaliza y
+dónde tiene sentido empezar a usar topología algebraica de verdad") was
+previously undocumented. Revisit and refine on every pass.)*
+
+### 8.1 The instrument family in general n
+
+State (x⃗, v⃗) ∈ ℝ²ⁿ, same drag/thrust integrator and freeze-at-previous
+semantics. Modes are **tubular neighborhoods of thickness w around compact
+embedded submanifolds M^k ⊂ ℝⁿ**; the 2D ladder is the special case n = 2
+(half-line, point-disc, circle-annulus). The two structured rungs:
+
+- **ShellField-n**: M = S^{n−1} (round sphere, k = n−1, separating). The
+  direct generalization of RingField2D; everything in THEORY.md holds
+  verbatim (Lemma 2 is dimension-free).
+- **TubeField-3**: M = a circle (or a knot) in ℝ³, k = 1, codimension 2,
+  NON-separating. The first rung whose analysis cannot be metric — see 8.3.
+
+Knobs per rung: (n, k, embedding class [M], thickness w, gap γ where a
+separating M gets a channel, start placement).
+
+**Infrastructure cost to flag early:** the scalar heading action (one angle)
+is 2D-specific. In ℝⁿ the action must parameterize a direction in S^{n−1}
+(n−1 angles or an n-vector, renormalized). That touches the planner API
+(mpc/cem sample scalar actions today) — an additive `action_dim` extension,
+to be designed once and reused; do NOT bolt on per-instrument hacks.
+
+### 8.2 What generalizes for free, and what changes quantitatively
+
+Free (dimension-independent): the measure-theoretic core (danger law,
+identifiability, gate quotient Prop 1), Lemma 2 for round shells (distance is
+1-Lipschitz in every ℝⁿ), Prop 3's bitwise equivalence (same proof).
+
+Changes with n (each a measurable mini-law, not an assumption):
+- **Rarity collapses with n.** A random rollout's chance of reaching a far
+  shell drops fast with dimension (drift-free directions multiply). Measure
+  r(n) at fixed geometry: the danger regime becomes *automatic* in high n —
+  the paper-1/2 threshold story gets an "n as the rarity knob" corollary.
+- **TDA sample complexity blows up.** Niyogi–Smale–Weinberger density scales
+  like (1/τ)^Θ(n); persistent-homology computation (Rips) grows steeply.
+  Consequence: experiments live at n ≤ ~6; statements are for general n; the
+  TDA-repair arm needs the NSW threshold *reported next to* each cell so
+  "TDA failed" is never claimed where recovery was information-theoretically
+  impossible (A.1).
+- **Synthesizer artifact classes vs n.** Paper 2's dimensional reduction
+  (disc → half-plane) presumably worsens; log the geometric + AST complexity
+  axes per artifact (as in the 2D arms) and the *codimension* of the written
+  region vs the true one.
+
+### 8.3 Where algebraic topology is EARNED (the gating criterion — keep)
+
+**Criterion (record, apply at every use):** a piece of algebraic-topology
+machinery enters the paper only if it yields (a) a hypothesis or step in a
+theorem that a bound actually uses, or (b) a measurement that organizes
+experimental data. Otherwise it is notation. (THEORY.md's Lemma-2 honesty
+note is the model: the round crossing bound is METRIC — raising n alone does
+NOT earn homology; round shells in ℝ¹⁰⁰ are still a 1-Lipschitz argument.)
+
+Ordered by how soon each is genuinely forced:
+
+1. **Non-round separators (Jordan–Brouwer / Alexander duality).** The moment
+   the separating mode is a topological (n−1)-sphere that is not a metric
+   sphere — bent, star-shaped, wild — "inside" stops being definable by a
+   distance and Lemma 2's proof dies. Jordan–Brouwer (or Alexander duality
+   for general compact separators) is then the *existence statement for the
+   gauge region itself*: Prop 1's 𝓖 is nonempty because H̃₀(complement) ≠ 0.
+   First genuinely topological theorem slot: "crossing lemma for topological
+   spheres with a step-size/reach condition" (reach τ(M) replaces thickness —
+   A.1 Federer).
+2. **Non-separating modes (linking/winding).** TubeField-3: the complement is
+   connected — no trapped interior, Prop 1's gauge region is (essentially)
+   empty, certifiability is NOT the story. The obstruction moves to
+   *homotopy classes of trajectories*: a path from start to lode either
+   crosses the tube or links the core circle (H₁(ℝ³ \ M) = ℤ). Theorem slot
+   for Prop 4's true generalization: a lower bound on query-hit mass in
+   terms of the **linking number** of the planner's realized/imagined path
+   with M — consequence forced by topology, not by measure or metric. This
+   is the cleanest candidate for "topología algebraica de verdad" doing
+   irreplaceable work in a bound.
+3. **Nerve/Čech certificates for boundary knowledge.** Contact sets (samples)
+   and mitigation fences are covers of the mode boundary; the nerve theorem
+   turns "fence complex" into a certificate of the boundary's homotopy type
+   when the cover is good (radius < τ again). Upgrades both the TDA-repair
+   arm (A.1) and the 2D-mitigation decay finding of paper 2 §6.1 into one
+   statement: mitigation IS incremental boundary estimation, and its
+   certificate is topological.
+4. **Gauge-region classification.** H_*(∂𝓡) as the invariant that organizes
+   what different model families' priors deposit in unfalsifiable regions
+   (the phantom-mode taxonomy of paper 2, made systematic). This is a
+   *measurement organizer* (criterion (b)), not a bound.
+
+### 8.4 Scope guard for the n-dim arm
+
+Same rule as §6: rungs beyond (ShellField-n, TubeField-3) — knotted M,
+products with richer Betti profiles, moving boundaries — are recorded here
+and stay OUT of paper 3 unless one of the four slots above lands a theorem
+that needs them. "Heavy and multidimensional" means n as a swept knob and
+one honest topological theorem, not a zoo.
 
 ---
 
