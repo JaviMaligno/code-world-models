@@ -164,11 +164,21 @@ def _resample_components(ordered_pts, n, gap_tol):
         L = sum(math.hypot(comp[i+1][0]-comp[i][0], comp[i+1][1]-comp[i][1]) for i in range(len(comp)-1))
         lengths.append(max(L, 1e-12))
     total = sum(lengths)
+    # allocate exactly n across components by largest remainder, so rounding never returns < n
+    raw = [n * L / total for L in lengths]
+    share = [int(r) for r in raw]
+    order = sorted(range(len(comps)), key=lambda k: raw[k]-share[k], reverse=True)
+    for k in order[:max(0, n - sum(share))]:
+        share[k] += 1
     out = []
-    for comp, L in zip(comps, lengths):
-        share = max(1, round(n * L / total))
-        out.extend(comp[(i*len(comp))//share] for i in range(share))
-    return out[:n] if len(out) >= n else out
+    for comp, s in zip(comps, share):
+        if s and comp:
+            out.extend(comp[(i*len(comp))//s] for i in range(s))
+    allpts = [p for comp in comps for p in comp]  # top up if a component was empty/underfilled
+    i = 0
+    while len(out) < n and allpts:
+        out.append(allpts[i % len(allpts)]); i += 1
+    return out[:n]
 
 
 class Shape:
@@ -836,7 +846,7 @@ def test_capped_failure_uses_source_indices():
 
 **Files:** Create `scripts/calibrate_shape2d.py`, `src/cwm/continuous/calibration.py` (the validator), `results/shape2d_calibration.json`; Test `tests/test_calibration.py`.
 
-**Interfaces:** a frozen manifest `EXPECTED_CELL_IDS` (in `calibration.py`) enumerating every anchor, parabola, composition, and contrast cell of the sweep. `validate_calibration_artifact(art) -> list[str]` (empty = valid) **rejects** any of: `set(cell["id"] for cell in art["cells"]) != EXPECTED_CELL_IDS` (exact manifest match); any `None`/`NaN`/empty list; a cell missing `rarity`, `rarity_ci`, or `n_rollouts`/`n_episodes` below fixed minimums; `grid_converged` not backed by a measured per-cell `grid_delta_256_512 < 0.01` (or an explicit global justification field); `rarity` outside `rarity_target ± tol`; a cell whose blind planner is **not** exploited (`play_cost_blind ≥ 0.8` from truth/blind/random **episodes**, not one `mpc.plan` call); `frac_planner_outside_box` above an explicit bound; a `repaired_threshold.source != "truth_oracle_fullarm_griderror"`; equal calibration/validation seed streams; any parameter lacking a `provenance` tag; or a `sufficiency` block not exactly `{"certified": false, "tau_s": null, "reason": <str>}` (Phase A leaves S uncertified — `tau_S` must NOT appear as a calibrated number). `calibrate_shape2d.py` measures every field. `rarity` = **fraction of rollouts containing a contact** with a Wilson CI on an **independent** seed stream (distinct from the validation stream).
+**Interfaces:** a frozen manifest `EXPECTED_CELL_IDS` (in `calibration.py`) enumerating every anchor, parabola, composition, and contrast cell of the sweep. `validate_calibration_artifact(art) -> list[str]` (empty = valid) **rejects** any of: `set(cell["id"] for cell in art["cells"]) != EXPECTED_CELL_IDS` (exact manifest match); any `None`/`NaN`/empty list; a cell missing `rarity`, `rarity_ci`, or `n_rollouts`/`n_episodes` below fixed minimums; `grid_converged` not backed by a measured per-cell `grid_delta_256_512 < 0.01` (or an explicit global justification field); `rarity` outside `rarity_target ± tol`; a cell whose blind planner is **not** exploited (`play_cost_blind ≥ 0.8` from truth/blind/random **episodes**, not one `mpc.plan` call); `frac_planner_outside_box` above an explicit bound; a `repaired_threshold.source != "truth_oracle_fullarm_griderror"`; equal calibration/validation seed streams; a missing entry in the uniform `provenance` block (a single top-level `art["provenance"]` dict that MUST contain a key for every global parameter — `box, grid_n, rarity_target, delta, repaired_threshold, frac_planner_outside_box` — and every per-cell field carries its own `provenance` key; the validator checks the full set, not a partial one); or a `sufficiency` block not exactly `{"certified": false, "tau_s": null, "reason": <str>}` (Phase A leaves S uncertified — `tau_S` must NOT appear as a calibrated number). `calibrate_shape2d.py` measures every field. `rarity` = **fraction of rollouts containing a contact** with a Wilson CI on an **independent** seed stream (distinct from the validation stream).
 
 - [ ] **Step 1: Write failing tests — the validator REJECTS a placeholder, ACCEPTS a filled artifact**
 
@@ -856,6 +866,8 @@ def _good_artifact():
             "cal_seed_stream": 1, "val_seed_stream": 2, "delta": 0.12, "delta_provenance": "median_normal_bracket",
             "sufficiency": {"certified": False, "tau_s": None, "reason": "conservative upper bound deferred to Phase B"},
             "repaired_threshold": {"band_disagreement": 0.05, "fpr": 0.05, "source": "truth_oracle_fullarm_griderror"},
+            "provenance": {"box": "fixed", "grid_n": "fixed", "rarity_target": "fixed", "delta": "measured",
+                           "repaired_threshold": "truth_oracle_fullarm_griderror", "frac_planner_outside_box": "measured"},
             "cells": _full_cells()}
 
 def test_validator_rejects_placeholder():
@@ -892,10 +904,11 @@ def test_calibration_quick_smoke_schema(tmp_path):
     # validate_calibration_artifact is asserted only on the FULL run, below.
 
 def test_full_calibration_passes_strict_validation():
-    # run the full (non-quick) calibration once in the repo, then:
-    #   assert validate_calibration_artifact(json.load(open("results/shape2d_calibration.json"))) == []
-    # Marked here as the scientific gate; executed by the implementer after the full run.
-    pass
+    import os, pytest
+    path = "results/shape2d_calibration.json"
+    if not os.path.exists(path):
+        pytest.skip("full calibration artifact not generated yet (run scripts/calibrate_shape2d.py)")
+    assert validate_calibration_artifact(json.load(open(path))) == []  # the scientific gate on the committed artifact
 ```
 
 - [ ] **Step 2: Run** → FAIL. **Step 3: Implement** the validator first (pure function, fully covered by the unit tests) — define `EXPECTED_CELL_IDS`, enforce exact manifest match, NaN checks via `math.isnan`, the `sufficiency` shape, distinct seed streams, per-parameter `provenance`, per-cell `grid_delta_256_512`, and the explicit `frac_outside_box_bound`. Then `calibrate_shape2d.py` measures per cell of `EXPECTED_CELL_IDS`: offset achieving `rarity_target` (fraction-of-rollouts, Wilson CI on an independent `cal_seed_stream`), per-cell `grid_delta_256_512`, `play_cost_blind` from truth/blind/random **episodes**, `delta` (median normal-bracket width), `frac_planner_outside_box`, `sufficiency={"certified":False,"tau_s":None,...}`, and `repaired_threshold.source="truth_oracle_fullarm_griderror"`. `--quick` shrinks counts and fills the full schema/manifest but is a **smoke test only** — strict `validate_calibration_artifact` is asserted on the FULL run. **Step 4:** `pytest tests/test_calibration.py -q` → PASS; then `python scripts/calibrate_shape2d.py` and assert `validate_calibration_artifact(...) == []` on the full artifact. **Step 5:** `git commit -m "feat(calibration): manifest-checked measured artifact + strict validator + smoke/scientific split"`.
