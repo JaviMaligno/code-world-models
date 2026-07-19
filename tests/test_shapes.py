@@ -1,5 +1,5 @@
 import math, random
-from cwm.continuous.shapes import HalfPlane, Circle
+from cwm.continuous.shapes import HalfPlane, Circle, Parabola
 WIN = ((-8.0, 14.0), (-6.0, 6.0))
 
 def _consecutive_uniform(pts, tol=0.25):
@@ -43,3 +43,28 @@ def test_param_validation():
     import pytest
     with pytest.raises(ValueError):
         Circle(0.0, 0.0, -1.0)
+
+def test_parabola_curvature():
+    par = Parabola(3.0, 2.0)
+    assert math.isclose(par.curvature_center, 0.5) and math.isclose(par.curvature(0.0), 0.5)
+    assert par.curvature(4.0) < par.curvature(0.0)
+
+def test_parabola_projection_matches_bruteforce_even_when_multimodal():
+    par = Parabola(3.0, 0.5)  # small R → sharp curvature → multimodal distance for far points
+    rng = random.Random(2)
+    for _ in range(80):
+        p = (rng.uniform(3, 12), rng.uniform(-5, 5))
+        (px, py), _ = par.project_to_boundary(p)
+        _, bd = _brute_project(par, p, WIN, n=6000)
+        assert math.hypot(p[0]-px, p[1]-py) <= bd + 1e-2  # matches the GLOBAL minimum
+
+def test_parabola_boundary_arclength_uniform_in_window():
+    par = Parabola(3.0, 2.0)
+    pts = par.boundary_points(WIN, 80)
+    assert 2 <= len(pts) <= 80
+    for x, y in pts: assert -8 <= x <= 14 and -6 <= y <= 6
+    assert _consecutive_uniform(pts, tol=0.35)
+
+def test_parabola_validation():
+    import pytest
+    with pytest.raises(ValueError): Parabola(3.0, 0.0)
