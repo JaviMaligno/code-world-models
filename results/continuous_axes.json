@@ -1,0 +1,152 @@
+{
+  "script": "continuous_axes.py",
+  "params": {
+    "eps": 0.01,
+    "rollouts": 2000,
+    "gates": 300,
+    "n_gate": 40,
+    "episodes": 20,
+    "seed": 0
+  },
+  "elapsed_s": 169.3,
+  "rows": [
+    {
+      "arm": "wall@4 omitted",
+      "eps": 0.01,
+      "rarity": 0.1385,
+      "rarity_ci": [
+        0.12405281145333309,
+        0.15433326457183782
+      ],
+      "pass_rate": 0.0033333333333333335,
+      "pass_rate_ci": [
+        0.0005886425761407379,
+        0.018637164554943353
+      ],
+      "predicted_pass": 0.002571646508142479,
+      "j_truth": 17.77224698102442,
+      "j_blind": 1.8643956677153997e-05,
+      "j_random": 0.5342723214987817,
+      "play_cost": 1.0309928334444372,
+      "blind_contact_rate": 1.0,
+      "truth_contact_rate": 0.0,
+      "n_episodes": 20,
+      "danger": 0.002651349120047307
+    },
+    {
+      "arm": "wall@8 omitted",
+      "eps": 0.01,
+      "rarity": 0.0125,
+      "rarity_ci": [
+        0.008481021586816417,
+        0.018388168073683698
+      ],
+      "pass_rate": 0.6666666666666666,
+      "pass_rate_ci": [
+        0.6115114164576771,
+        0.7176074402097443
+      ],
+      "predicted_pass": 0.6046223152076992,
+      "j_truth": 17.77224698102442,
+      "j_blind": 0.01871852881850992,
+      "j_random": 0.5343101236860893,
+      "play_cost": 1.0299102844577417,
+      "blind_contact_rate": 1.0,
+      "truth_contact_rate": 0.0,
+      "n_episodes": 20,
+      "danger": 0.6227067406450598
+    },
+    {
+      "arm": "bias x1.03 (sub-eps)",
+      "eps": 0.01,
+      "rarity": 0.0,
+      "rarity_ci": [
+        0.0,
+        0.0019171176005129348
+      ],
+      "pass_rate": 0.9966666666666667,
+      "pass_rate_ci": [
+        0.9813628354450568,
+        0.9994113574238592
+      ],
+      "predicted_pass": 1.0,
+      "j_truth": 17.77224698102442,
+      "j_blind": 17.77224698102442,
+      "j_random": 0.5342723214987817,
+      "play_cost": 0.0,
+      "blind_contact_rate": 0.0,
+      "truth_contact_rate": 0.0,
+      "n_episodes": 20,
+      "danger": 0.0
+    },
+    {
+      "arm": "bias x2.0 (supra-eps)",
+      "eps": 0.01,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ],
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ],
+      "predicted_pass": 0.0,
+      "j_truth": 17.77224698102442,
+      "j_blind": 17.77224698102442,
+      "j_random": 0.5342723214987817,
+      "play_cost": 0.0,
+      "blind_contact_rate": 0.0,
+      "truth_contact_rate": 0.0,
+      "n_episodes": 20,
+      "danger": 0.0
+    },
+    {
+      "arm": "bump@4 amp0.5 (smooth)",
+      "eps": 0.01,
+      "rarity": 0.1875,
+      "rarity_ci": [
+        0.17099881257523333,
+        0.20519938592508727
+      ],
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ],
+      "predicted_pass": 0.00024713530170527865,
+      "j_truth": 46.85815557621275,
+      "j_blind": 46.85815557621275,
+      "j_random": 0.534275791164006,
+      "play_cost": 0.0,
+      "blind_contact_rate": 0.0,
+      "truth_contact_rate": 0.0,
+      "n_episodes": 20,
+      "danger": 0.0
+    },
+    {
+      "arm": "bump@4 amp1.0 (smooth)",
+      "eps": 0.01,
+      "rarity": 0.2085,
+      "rarity_ci": [
+        0.1912630564036264,
+        0.22685462315747262
+      ],
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ],
+      "predicted_pass": 8.670352769838831e-05,
+      "j_truth": 26.273364656414707,
+      "j_blind": 45.43799831677573,
+      "j_random": 0.5342728064863623,
+      "play_cost": -0.7445730320284932,
+      "blind_contact_rate": 0.0,
+      "truth_contact_rate": 0.0,
+      "n_episodes": 20,
+      "danger": -6.455710850595543e-05
+    }
+  ]
+}

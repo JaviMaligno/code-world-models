@@ -1,0 +1,28 @@
+```python
+import math
+
+dt = 0.1
+gain = 3.0
+grav = 2.0
+drag = 0.3
+a_max = 1.0
+
+stop_th = 1.4
+
+
+def step(state: list, action: float) -> list:
+    th, om = state[0], state[1]
+    a = min(a_max, max(-a_max, action))
+    om2 = om + (gain * a - grav * math.sin(th) - drag * om) * dt
+    th2 = th + om2 * dt
+    if th2 >= stop_th:
+        return [stop_th, 0.0]
+    return [th2, om2]
+
+
+def reward(state: list) -> float:
+    th = state[0]
+    left = 0.3 / (1.0 + math.exp(-((-2.0 - th) / 0.25)))
+    right = 1.0 / (1.0 + math.exp(-((th - 3.0) / 0.25)))
+    return left + right
+```

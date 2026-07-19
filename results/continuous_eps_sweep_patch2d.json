@@ -1,0 +1,431 @@
+{
+  "script": "continuous_eps_sweep.py",
+  "params": {
+    "eps_grid": [
+      1e-09,
+      1e-06,
+      0.0001,
+      0.001,
+      0.01,
+      0.03,
+      0.1,
+      0.3
+    ],
+    "rollouts": 2000,
+    "n_gate": 40,
+    "gates": 300,
+    "seed": 0,
+    "instrument": "patch2d"
+  },
+  "rows": [
+    {
+      "instrument": "patch2d",
+      "arm": "patches omitted",
+      "mode_arm": true,
+      "eps": 1e-09,
+      "rarity": 0.147,
+      "rarity_ci": [
+        0.13215748758644566,
+        0.1631959974395165
+      ],
+      "predicted_pass": 0.0017296620097985306,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patches omitted",
+      "mode_arm": true,
+      "eps": 1e-06,
+      "rarity": 0.147,
+      "rarity_ci": [
+        0.13215748758644566,
+        0.1631959974395165
+      ],
+      "predicted_pass": 0.0017296620097985306,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patches omitted",
+      "mode_arm": true,
+      "eps": 0.0001,
+      "rarity": 0.147,
+      "rarity_ci": [
+        0.13215748758644566,
+        0.1631959974395165
+      ],
+      "predicted_pass": 0.0017296620097985306,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patches omitted",
+      "mode_arm": true,
+      "eps": 0.001,
+      "rarity": 0.147,
+      "rarity_ci": [
+        0.13215748758644566,
+        0.1631959974395165
+      ],
+      "predicted_pass": 0.0017296620097985306,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patches omitted",
+      "mode_arm": true,
+      "eps": 0.01,
+      "rarity": 0.147,
+      "rarity_ci": [
+        0.13215748758644566,
+        0.1631959974395165
+      ],
+      "predicted_pass": 0.0017296620097985306,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patches omitted",
+      "mode_arm": true,
+      "eps": 0.03,
+      "rarity": 0.147,
+      "rarity_ci": [
+        0.13215748758644566,
+        0.1631959974395165
+      ],
+      "predicted_pass": 0.0017296620097985306,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patches omitted",
+      "mode_arm": true,
+      "eps": 0.1,
+      "rarity": 0.147,
+      "rarity_ci": [
+        0.13215748758644566,
+        0.1631959974395165
+      ],
+      "predicted_pass": 0.0017296620097985306,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patches omitted",
+      "mode_arm": true,
+      "eps": 0.3,
+      "rarity": 0.147,
+      "rarity_ci": [
+        0.13215748758644566,
+        0.1631959974395165
+      ],
+      "predicted_pass": 0.0017296620097985306,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch1 only omitted",
+      "mode_arm": true,
+      "eps": 1e-09,
+      "rarity": 0.142,
+      "rarity_ci": [
+        0.1273877992096721,
+        0.15798485699229517
+      ],
+      "predicted_pass": 0.0021852016207103845,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch1 only omitted",
+      "mode_arm": true,
+      "eps": 1e-06,
+      "rarity": 0.142,
+      "rarity_ci": [
+        0.1273877992096721,
+        0.15798485699229517
+      ],
+      "predicted_pass": 0.0021852016207103845,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch1 only omitted",
+      "mode_arm": true,
+      "eps": 0.0001,
+      "rarity": 0.142,
+      "rarity_ci": [
+        0.1273877992096721,
+        0.15798485699229517
+      ],
+      "predicted_pass": 0.0021852016207103845,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch1 only omitted",
+      "mode_arm": true,
+      "eps": 0.001,
+      "rarity": 0.142,
+      "rarity_ci": [
+        0.1273877992096721,
+        0.15798485699229517
+      ],
+      "predicted_pass": 0.0021852016207103845,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch1 only omitted",
+      "mode_arm": true,
+      "eps": 0.01,
+      "rarity": 0.142,
+      "rarity_ci": [
+        0.1273877992096721,
+        0.15798485699229517
+      ],
+      "predicted_pass": 0.0021852016207103845,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch1 only omitted",
+      "mode_arm": true,
+      "eps": 0.03,
+      "rarity": 0.142,
+      "rarity_ci": [
+        0.1273877992096721,
+        0.15798485699229517
+      ],
+      "predicted_pass": 0.0021852016207103845,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch1 only omitted",
+      "mode_arm": true,
+      "eps": 0.1,
+      "rarity": 0.142,
+      "rarity_ci": [
+        0.1273877992096721,
+        0.15798485699229517
+      ],
+      "predicted_pass": 0.0021852016207103845,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch1 only omitted",
+      "mode_arm": true,
+      "eps": 0.3,
+      "rarity": 0.142,
+      "rarity_ci": [
+        0.1273877992096721,
+        0.15798485699229517
+      ],
+      "predicted_pass": 0.0021852016207103845,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch2 only omitted",
+      "mode_arm": true,
+      "eps": 1e-09,
+      "rarity": 0.005,
+      "rarity_ci": [
+        0.0027181513013266943,
+        0.009179795123181112
+      ],
+      "predicted_pass": 0.8183201210226743,
+      "pass_rate": 0.7666666666666667,
+      "pass_rate_ci": [
+        0.7156176619060443,
+        0.8109725087618301
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch2 only omitted",
+      "mode_arm": true,
+      "eps": 1e-06,
+      "rarity": 0.005,
+      "rarity_ci": [
+        0.0027181513013266943,
+        0.009179795123181112
+      ],
+      "predicted_pass": 0.8183201210226743,
+      "pass_rate": 0.7666666666666667,
+      "pass_rate_ci": [
+        0.7156176619060443,
+        0.8109725087618301
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch2 only omitted",
+      "mode_arm": true,
+      "eps": 0.0001,
+      "rarity": 0.005,
+      "rarity_ci": [
+        0.0027181513013266943,
+        0.009179795123181112
+      ],
+      "predicted_pass": 0.8183201210226743,
+      "pass_rate": 0.7666666666666667,
+      "pass_rate_ci": [
+        0.7156176619060443,
+        0.8109725087618301
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch2 only omitted",
+      "mode_arm": true,
+      "eps": 0.001,
+      "rarity": 0.005,
+      "rarity_ci": [
+        0.0027181513013266943,
+        0.009179795123181112
+      ],
+      "predicted_pass": 0.8183201210226743,
+      "pass_rate": 0.7666666666666667,
+      "pass_rate_ci": [
+        0.7156176619060443,
+        0.8109725087618301
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch2 only omitted",
+      "mode_arm": true,
+      "eps": 0.01,
+      "rarity": 0.005,
+      "rarity_ci": [
+        0.0027181513013266943,
+        0.009179795123181112
+      ],
+      "predicted_pass": 0.8183201210226743,
+      "pass_rate": 0.7666666666666667,
+      "pass_rate_ci": [
+        0.7156176619060443,
+        0.8109725087618301
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch2 only omitted",
+      "mode_arm": true,
+      "eps": 0.03,
+      "rarity": 0.005,
+      "rarity_ci": [
+        0.0027181513013266943,
+        0.009179795123181112
+      ],
+      "predicted_pass": 0.8183201210226743,
+      "pass_rate": 0.7666666666666667,
+      "pass_rate_ci": [
+        0.7156176619060443,
+        0.8109725087618301
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch2 only omitted",
+      "mode_arm": true,
+      "eps": 0.1,
+      "rarity": 0.005,
+      "rarity_ci": [
+        0.0027181513013266943,
+        0.009179795123181112
+      ],
+      "predicted_pass": 0.8183201210226743,
+      "pass_rate": 0.7666666666666667,
+      "pass_rate_ci": [
+        0.7156176619060443,
+        0.8109725087618301
+      ]
+    },
+    {
+      "instrument": "patch2d",
+      "arm": "patch2 only omitted",
+      "mode_arm": true,
+      "eps": 0.3,
+      "rarity": 0.005,
+      "rarity_ci": [
+        0.0027181513013266943,
+        0.009179795123181112
+      ],
+      "predicted_pass": 0.8183201210226743,
+      "pass_rate": 0.7666666666666667,
+      "pass_rate_ci": [
+        0.7156176619060443,
+        0.8109725087618301
+      ]
+    }
+  ],
+  "elapsed_s": 897.6
+}

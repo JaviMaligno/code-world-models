@@ -1,0 +1,31 @@
+Implement a deterministic 1D control world model as Python module-level
+functions (pure, no I/O, no globals, only the `math` standard-library module).
+
+State is a list [x, v] of two floats (position, velocity). Action is a float.
+
+Functions to implement EXACTLY these signatures:
+  def step(state: list, action: float) -> list   # next [x, v]
+  def reward(state: list) -> float               # reward of a state
+
+The integrator is FIXED and part of the contract. step() must compute, in
+exactly this order, with plain Python floats:
+  1. a = min(a_max, max(-a_max, action))         # clamp the action
+  2. v2 = v + (gain * a - drag * v) * dt
+  3. x2 = x + v2 * dt
+then apply any additional dynamics rules given below, and return [x2, v2].
+
+Physical constants:
+  dt = 0.1
+  gain = 3.0
+  drag = 0.3
+  a_max = 1.0
+
+Reward (a function of the state [x, v] alone):
+  left  = 0.3 / (1.0 + math.exp(-((-6.0 - x) / 0.5)))
+  right = 1.0 / (1.0 + math.exp(-((x - 12.0) / 0.5)))
+  reward = left + right
+
+Additional dynamics rule:
+  There is an immovable wall at x = 8.0. After computing
+  x2 and v2 as above, if x2 >= 8.0, the cart stops at the
+  wall inelastically: the next state is exactly [8.0, 0.0].
