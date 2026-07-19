@@ -2269,3 +2269,32 @@ recovery is a property of the contact set's position relative to reach
 N=640→2560) and never closes the loop. The constructive arm's real question
 is therefore WHERE evidence comes from (μ0/policy), and only secondarily how
 much.
+
+### Ring mitigation: the one-sided fence does not survive a closed curved boundary (2026-07-19)
+
+`scripts/continuous_mitigation_ring.py` (module and settings verbatim from
+paper 2's 2D mitigation, pos_dims=(0,1); 16 paired episodes/cell) →
+`results/continuous_mitigation_ring{,_eps1,_eps2}.json`.
+
+| eps | pc_blind | pc_mitigated | mitigated contact | fences/episode |
+|-----|----------|--------------|-------------------|----------------|
+| 0.5 (patch2d-calibrated) | 0.999 | 1.003 | 1.00 | 3.8 |
+| 1.0 | 0.999 | 1.005 | 1.00 | 2.3 |
+| 2.0 (~r_in scale) | 0.999 | 0.742 | 1.00 | 1.0 |
+
+On the small convex patches the same fence collapsed exploitation to a
+first-contact transient; on the ring it fails at the calibrated eps and only
+partially relieves at eps of the geometry's own scale. Mechanism: point
+fences are a 0-dimensional cover of a 1-dimensional boundary — sealing the
+reachable west arc (~16 units) needs cover-number many violations, and the
+argmax planner concedes only ~2–4 per episode while hovering for unfenced
+gaps. Paper 2's "collapse decays with mode distance" was the small-boundary
+shadow of a covering law: **mitigation is incremental boundary estimation,
+and its cost is the boundary measure over the fence radius** (the nerve-
+certificate slot of RESEARCH-DIRECTION §8.3-3, now with a quantified failure
+to motivate it). gap0 and hidden-channel rows are identical at every eps —
+the observational-equivalence prediction, again. Honest scope note: eps=2.0
+on the patch instruments would swallow the entire R=1 patch plus free space,
+so "just coarsen the fence" is not a uniform remedy; a boundary-aware
+(1-dimensional) fence — segments/nerve, not points — is the designed next
+step, and belongs to the same machinery as the TDA arm's boundary summaries.
