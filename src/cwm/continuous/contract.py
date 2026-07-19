@@ -38,7 +38,11 @@ def collect_transitions(env, n_rollouts: int, seed: int = 0) -> list[dict]:
     """N i.i.d. uniform-random rollouts on `env` (the truth). This sample is
     both the training data and the gate, as in the paper-1 sweep; `n_rollouts`
     is the danger-law N. Each transition records whether the wall fired, so
-    the identifiability event (wall absent from the sample) is logged."""
+    the identifiability event (wall absent from the sample) is logged. Each
+    transition also carries a stable `source_index` -- its 0-based position
+    in THIS original order -- so downstream consumers (evidence_dose.py) can
+    refer back to a transition after it has been reshuffled/subsampled into a
+    smaller controlled set."""
     out = []
     for i in range(n_rollouts):
         rng = random.Random(seed + i)
@@ -47,7 +51,8 @@ def collect_transitions(env, n_rollouts: int, seed: int = 0) -> list[dict]:
             a = rng.uniform(-env.a_max, env.a_max)
             s2, r, contact = env.step(s, a)
             out.append({"state": list(s), "action": a, "next_state": list(s2),
-                        "reward": r, "contact": contact})
+                        "reward": r, "contact": contact,
+                        "source_index": len(out)})
             s = s2
     return out
 
@@ -85,12 +90,13 @@ def build_synthesis_messages(contract: str, transitions: list[dict],
             {"role": "user", "content": user}]
 
 
-def contract_accuracy(code: str, transitions: list[dict], eps: float,
-                      timeout: float = 30.0) -> tuple[float, list[str]]:
-    """Fraction of transitions where the synthesized step() and reward()
-    match within eps (sup-norm over x, v, reward), via the sandbox."""
-    if not transitions:
-        return 0.0, ["no transitions provided"]
+def _run_contract_cases(code: str, transitions: list[dict], timeout: float = 30.0):
+    """Sandbox-execute `step`/`reward` over every transition's (state, action)
+    and return the raw per-case results aligned 1:1 with `transitions`, or
+    (None, error_message) on any infra failure. Comparing the results against
+    the expected values is left to the caller so both `contract_accuracy` and
+    evidence_dose.py's source-indexed variant can independently derive
+    pass/fail (and, for the latter, which transitions failed)."""
     cases = [{"s": t["state"], "a": t["action"]} for t in transitions]
     call = (
         "import json\n"
@@ -107,24 +113,35 @@ def contract_accuracy(code: str, transitions: list[dict], eps: float,
     )
     res = run_in_sandbox(code, call, timeout=timeout)
     if not res.ok:
-        return 0.0, [res.stderr.strip()[-300:] or "execution failed"]
+        return None, res.stderr.strip()[-300:] or "execution failed"
     lines = res.stdout.strip().splitlines()
     if not lines:
-        return 0.0, ["sandbox produced no output"]
+        return None, "sandbox produced no output"
     try:
         produced = json.loads(lines[-1])
     except json.JSONDecodeError:
-        return 0.0, [f"bad JSON output: {lines[-1][:200]}"]
-    correct, failures = 0, []
-    for t, got in zip(transitions, produced):
+        return None, f"bad JSON output: {lines[-1][:200]}"
+    return produced, None
+
+
+def _compare_transitions(transitions: list[dict], produced: list[dict],
+                         eps: float) -> tuple[int, list[str], list[int]]:
+    """Compare sandbox output to expected values. Returns (n_correct,
+    failure_messages, failed_positions) where failed_positions are 0-based
+    positions into `transitions` (parallel to failure_messages), for callers
+    that need to identify which particular transitions failed."""
+    correct, failures, failed_positions = 0, [], []
+    for i, (t, got) in enumerate(zip(transitions, produced)):
         if "error" in got:
             failures.append(f"step({t['state']!r}, {t['action']!r}) raised {got['error']}")
+            failed_positions.append(i)
             continue
         if len(got["ns"]) != len(t["next_state"]):
             failures.append(
                 f"step({t['state']!r}, {t['action']!r}): wrong state arity: "
                 f"expected {len(t['next_state'])} components, got "
                 f"{len(got['ns'])}")
+            failed_positions.append(i)
             continue
         err = max(max(abs(g - e) for g, e in zip(got["ns"], t["next_state"])),
                   abs(got["r"] - t["reward"]))
@@ -135,6 +152,20 @@ def contract_accuracy(code: str, transitions: list[dict], eps: float,
                 f"step({t['state']!r}, {t['action']!r}): expected "
                 f"{t['next_state']!r} r={t['reward']!r}, got {got['ns']!r} "
                 f"r={got['r']!r} (err {err:.3g})")
+            failed_positions.append(i)
+    return correct, failures, failed_positions
+
+
+def contract_accuracy(code: str, transitions: list[dict], eps: float,
+                      timeout: float = 30.0) -> tuple[float, list[str]]:
+    """Fraction of transitions where the synthesized step() and reward()
+    match within eps (sup-norm over x, v, reward), via the sandbox."""
+    if not transitions:
+        return 0.0, ["no transitions provided"]
+    produced, err = _run_contract_cases(code, transitions, timeout=timeout)
+    if produced is None:
+        return 0.0, [err]
+    correct, failures, _ = _compare_transitions(transitions, produced, eps)
     return correct / len(transitions), failures
 
 
