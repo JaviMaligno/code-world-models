@@ -39,10 +39,21 @@ curvature / polygon vertices, which are not yet tested here).
 """
 import math
 
+import numpy as np
+
 from .envs import invert_integrator
 
 _MAX_GROW_TRIES = 40
 _MAX_UNIFORM_TRIES = 4000
+
+# The shared physics contract every 2D instrument in this codebase is built
+# on (see envs.py module docstring: "the integrator is part of the
+# contract") -- dt/gain/drag/a_max are the same constants across CartWall,
+# PatchField2D, ShapeField2D, etc. `forbidden_mask` needs concrete values to
+# invert against and takes no env argument (it operates purely on
+# model_step + box/grid), so it fixes them to this shared default rather
+# than threading env params through every call site.
+_DT, _GAIN, _DRAG, _A_MAX = 0.1, 3.0, 0.3, 1.0
 
 
 def _normal_at(shape, p):
@@ -203,4 +214,134 @@ def disagreement_scores(truth_env, model_step, probes: dict) -> dict:
             "fpr": fpr,
             "n": len(plist),
         }
+    return out
+
+
+def forbidden_mask(model_step, box, grid_n, vx, vy, action=0.0) -> np.ndarray:
+    """Boolean `grid_n` x `grid_n` mask over `box`, in ENDPOINT space: cell
+    `(i, j)` (grid point `p = (xs[i], ys[j])`) is True iff `model_step`'s
+    hard mode fires FOR that endpoint. This is the crux of the whole
+    endpoint-space design: `p` is never used as a previous position. Instead
+    the previous state is solved for via `invert_integrator(p, vx, vy,
+    action, ...)` -- the exact algebraic inverse of `integrate_2d`, given
+    the (fixed, caller-supplied) velocity `vx, vy` the step used -- so that
+    forward-integrating from it lands (to float precision) exactly on `p`.
+    `model_step` then runs on that previous state, and the cell is marked
+    iff the result froze there (the freeze signature -- see
+    `_model_contact` -- every hard mode in this codebase uses: next state
+    equals the previous position with zero velocity). Using the grid point
+    itself as the previous position instead would measure the TRANSLATED
+    preimage of the mode (shifted by the free-flight displacement at this
+    particular vx, vy) rather than the mode's true endpoint footprint, and
+    would make even a genuinely positional guard look velocity-dependent.
+
+    Vectorized with numpy for the grid coordinates; `model_step` is an
+    arbitrary Python callable (not necessarily numpy-friendly), so it is
+    invoked in a tight per-cell loop here -- fine for in-process accepted
+    code. For gate-failing artifacts the design calls for a single sandbox
+    call that returns the whole mask at once (Task 11's path); this
+    function's contract (same shape, same endpoint-space semantics) is
+    meant to be satisfiable by that path too.
+    """
+    (xmin, xmax), (ymin, ymax) = box
+    xs = np.linspace(xmin, xmax, grid_n)
+    ys = np.linspace(ymin, ymax, grid_n)
+    mask = np.zeros((grid_n, grid_n), dtype=bool)
+    for i, x in enumerate(xs):
+        for j, y in enumerate(ys):
+            prev = invert_integrator((x, y), vx, vy, action, _DT, _GAIN, _DRAG, _A_MAX)
+            nxt = model_step(prev, action)
+            mask[i, j] = (nxt[2] == 0.0 and nxt[3] == 0.0
+                          and nxt[0] == prev[0] and nxt[1] == prev[1])
+    return mask
+
+
+def _jaccard(a: np.ndarray, b: np.ndarray) -> float:
+    """Intersection-over-union of two boolean masks; two empty masks are
+    defined to agree completely (jaccard=1.0) rather than 0/0."""
+    union = int(np.logical_or(a, b).sum())
+    if union == 0:
+        return 1.0
+    return int(np.logical_and(a, b).sum()) / union
+
+
+def preimage_invariant(model_step, box, grid_n, velocity_samples,
+                        jaccard_tol=0.98) -> bool:
+    """True iff `model_step`'s endpoint-space `forbidden_mask` is
+    essentially the same set regardless of which velocity the grid is
+    inverted against -- the operational test for "positional": a guard that
+    only reads the intended endpoint position produces the same forbidden
+    footprint no matter what `(vx, vy)` `forbidden_mask` inverts with,
+    whereas a guard that reads post-step velocity (or anything else
+    velocity-dependent) will flip its forbidden set wholesale as the
+    velocity sample changes (see `test_velocity_guard_is_non_positional`,
+    where the forbidden set is either everywhere or nowhere depending on
+    sign of the sampled vx). Compares every sample's mask against the
+    first via Jaccard (IoU of the boolean masks) rather than requiring
+    bit-identical masks, since a small number of boundary grid cells can
+    legitimately disagree from float rounding in the integrator-inversion
+    round trip.
+    """
+    if len(velocity_samples) < 2:
+        return True
+    masks = [forbidden_mask(model_step, box, grid_n, vx, vy)
+             for (vx, vy) in velocity_samples]
+    ref = masks[0]
+    return all(_jaccard(ref, m) >= jaccard_tol for m in masks[1:])
+
+
+def iou_vs_truth(truth_env, model_step, box, grid_n, velocity_samples) -> dict:
+    """Endpoint-space IoU between the truth mode's forbidden set and the
+    model's -- but only reported when that comparison is well-defined.
+    `model_step` must first pass `preimage_invariant`: if its forbidden set
+    depends on which velocity sample the grid was inverted against, there
+    is no single velocity-independent set left to compare against truth
+    (which the assumption of a positional guard would let us reduce to a
+    plain 2D shape comparison), so this returns `iou=None,
+    class="non_positional"` rather than a number that would silently
+    depend on an arbitrary choice of velocity_samples[0]. Only once
+    invariance holds does it compute both masks (truth via `truth_env.step`,
+    model via `model_step`) at that first velocity sample and report their
+    Jaccard IoU as `class="positional"`.
+    """
+    if not preimage_invariant(model_step, box, grid_n, velocity_samples):
+        return {"iou": None, "class": "non_positional", "grid_n": grid_n}
+    vx, vy = velocity_samples[0]
+    truth_mask = forbidden_mask(lambda s, a: truth_env.step(s, a)[0],
+                                 box, grid_n, vx, vy)
+    model_mask = forbidden_mask(model_step, box, grid_n, vx, vy)
+    return {
+        "iou": float(_jaccard(truth_mask, model_mask)),
+        "class": "positional",
+        "grid_n": grid_n,
+    }
+
+
+def boundary_of_set(mask: np.ndarray, box) -> list:
+    """The edge cells of a boolean grid mask, as `(x, y)` grid-point
+    coordinates: a True cell counts as an edge iff at least one of its
+    4-neighbors (up/down/left/right -- a von-Neumann neighbor check, the
+    simplest marching-squares-style stand-in for a full sub-cell contour)
+    is either False or off the grid. This intentionally does not attempt
+    sub-cell interpolation (a real marching-squares contour) -- it reports
+    which grid cells straddle the forbidden set's boundary at the mask's
+    own resolution, which is what a diagnostic overlay needs.
+    """
+    (xmin, xmax), (ymin, ymax) = box
+    ni, nj = mask.shape
+    xs = np.linspace(xmin, xmax, ni)
+    ys = np.linspace(ymin, ymax, nj)
+    out = []
+    for i in range(ni):
+        for j in range(nj):
+            if not mask[i, j]:
+                continue
+            edge = False
+            for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                ii, jj = i + di, j + dj
+                if ii < 0 or ii >= ni or jj < 0 or jj >= nj or not mask[ii, jj]:
+                    edge = True
+                    break
+            if edge:
+                out.append((float(xs[i]), float(ys[j])))
     return out
