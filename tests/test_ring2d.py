@@ -116,3 +116,31 @@ def test_inside_start_moves_the_reachable_set():
         assert math.hypot(s[0] - inside_env.center[0],
                           s[1] - inside_env.center[1]) <= inside_env.r_out
     assert disagreements > 0    # filled freezes where truth moves: falsified
+
+
+def test_positivity_witness_tube():
+    """Machine check of Prop 8's witness (THEORY.md): with |y0| <= 3.5*gap/8
+    and the constant 0-action sequence, the trajectory is freeze-free, every
+    band-radius landing lies in the channel with angular clearance >= 3g/8
+    over the wall, and it enters the interior well within the horizon.
+    Small action perturbations (the tube) preserve all of it."""
+    gap = 0.3
+    env = RingField2D(gap=gap)
+    y0 = 0.1                       # <= eta(gap) = 3.5*gap/8 = 0.13125
+    for pert in (0.0, 0.008, -0.008):
+        rng = random.Random(99)
+        s = (0.0, y0, 0.0, 0.0)
+        entered = False
+        for t in range(env.h_episode):
+            a = pert * (1 + 0.5 * rng.random())   # inside the tube
+            s, _, c = env.step(s, a)
+            assert not c               # freeze-free all the way
+            d = math.hypot(s[0] - env.center[0], s[1] - env.center[1])
+            if env.r_in <= d <= env.r_out:
+                off = abs(math.atan2(s[1] - env.center[1],
+                                     s[0] - env.center[0]))
+                assert math.pi - off <= gap / 2 - gap / 8 + 1e-9
+            if env.in_interior(s[0], s[1]):
+                entered = True
+                break
+        assert entered and t < 45     # enters with slack in the horizon

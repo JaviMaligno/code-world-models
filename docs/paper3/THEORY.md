@@ -238,20 +238,82 @@ exact). Pathwise entry violations: 1 in 44,000 adjacent-pair comparisons
 (the certificate above); gains 3–12 per pair.
 
 **Refined conjectures (both distributional, both measured-consistent):**
-  (M1) r_int is nondecreasing on [0, 2π] — equivalently, funnel losses never
-       exceed direct+funnel gains between adjacent gaps;
-  (M2) r_int(γ) ≤ r_int(2π): the wall never helps NET interior entry (the
-       funnel effect exists — the certificate proves it — but never beats
-       free drift in aggregate).
-Proof route for both: stochastic domination of the post-divergence
-conditional entry probabilities (γ₂'s state at divergence is in-band with
-momentum and a wider channel vs γ₁'s frozen-at-rest outside a narrower one).
-The obstacle is that freeze semantics breaks the usual radial-ordering
-preservation; a restricted domination (e.g. on the event that the
-continuation never re-freezes) may split M1 the way Prop 7 split the
-pathwise question. Until then: theorem for the direct component, certificate
-against pathwise, measurement for the totals — stated exactly so in the
-paper.
+  (M1) r_int is nondecreasing on [0, 2π];
+  (M2) r_int(γ) ≤ r_int(2π): the wall never helps NET interior entry.
+(Seed 50543 also fails to enter at γ = 2π — checked directly — so M2's
+pathwise version is refuted by the same certificate as M1's.)
+
+**Proposition 8 (positivity: r_int(γ) > 0 for every γ > 0, facing channel).**
+For the defaults with `gap_center = π` and any γ > 0, r_int(γ) > 0.
+*Proof.* (Witness tube.) Condition on |y₀| ≤ η(γ) := (3.5/8)·γ ∧ 0.4 — an
+event of probability η/0.5 > 0 under y₀ ~ U(−0.5, 0.5). Take the constant
+action sequence a_t ≡ 0. Then φ = 0, v_y stays 0, and the trajectory runs
+east along the line y = y₀ with speed increasing toward gain/drag = 10;
+within ≤ 40 < h steps its landings pass x = 7 … 8.5 and beyond
+(machine-checked witness: `test_positivity_witness_tube`). Every landing at
+radius d(x, y₀) ∈ [r_in, r_out] from the ring center has angular offset from
+π at most |y₀|/r_in ≤ γ/8 < γ/2, i.e. lies in the channel; landings at
+radius > r_out are outside the band. Hence the witness path is freeze-free,
+its distance to A(γ) along the way is ≥ c(γ) := min(0.8·γ, 0.9) > 0 (chord
+bound from angular clearance 3γ/8 at radius ≥ 3.5), and its first landing
+past the band has depth d < 2.6 < r_in − c. On the freeze-free tube the
+h-step flow map is Lipschitz in the action sequence with an explicit
+constant L_h (per-step sensitivity |∂v′/∂a| ≤ gain·π·dt, compounded through
+the linear drag recursion; finite by induction). Choose ρ = c(γ)/(2·L_h):
+every action sequence with ‖a − 0‖_∞ ≤ ρ yields a trajectory staying within
+c/2 of the witness, hence still freeze-free (never closer than c/2 to A) and
+still landing at depth < 2.6 + c/2 < r_in: it enters. The probability of
+that action tube is ρ^h > 0 (uniform density 1/2 per step, interval width
+2ρ). Multiply by P(|y₀| ≤ η). ∎
+
+**Corollary (the knob statement is now fully theorem-backed).** r_int(0) = 0
+exactly (Lemma 2); r_int is continuous in γ (Prop 6); r_int(γ) > 0 for every
+γ > 0 (Prop 8). The γ-knob re-opens identifiability continuously from an
+exact zero — the paper's claim about the instrument needs nothing from M1/M2;
+monotonicity is structure, not load-bearing.
+
+**Remark (two grades of invisibility — gap_center selects them).** With the
+HIDDEN channel (`gap_center = 0`) the mechanism grid measures r_int = 0 at
+n = 400 and the filled model's disagreement rate = 0 — observationally
+identical to the closed ring — yet a Prop-8-style steering construction
+(around the ring, then in through the far channel; witness deferred) gives
+r_int > 0 strictly. So the instrument realizes BOTH impossibility grades of
+paper 1's split, selected by one knob: γ = 0 → *exact* unidentifiability (no
+gate at any N; a theorem), hidden γ > 0 → r_int > 0 but of tube order ρ^h,
+so (1 − r)^N ≈ 1 at every feasible N (practical unidentifiability, the
+danger-law grade). The topological change (connectivity restored) is real in
+both hidden and facing variants; only its position relative to the operative
+reach differs — the thesis, again.
+
+**Proposition 9 (reduction: M1 follows from one two-state estimate).** For
+kernel K_k (gap γ_k, γ₁ < γ₂) let h_k(s, t) = P(the K_k-chain from state s
+enters the interior within t steps). Suppose
+
+  (KEY) for every state s and action a whose landing lies in
+  D = A(γ₁) \ A(γ₂):  h₁(freeze(s), t) ≤ h₂(move(s, a), t) for all t < h,
+
+where freeze(s) = (position of s, zero velocity) and move(s, a) = the
+integrator successor. Then h₁(s, t) ≤ h₂(s, t) for ALL s, t — in particular
+M1 for every initial distribution.
+*Proof.* Induction on t. t = 0: both indicators of s ∈ I. Step: condition on
+the first action a. If the landing is outside A(γ₁) or inside A(γ₂), both
+kernels move to the same state s′ and the inductive hypothesis applies to
+(s′, t−1). If the landing is in D, (KEY) applies verbatim. Integrate over a.
+∎
+*Why (KEY) is genuinely open, not merely unwritten.* (a) The natural split
+h₁(freeze(s), t) ≤ h₂(freeze(s), t) ≤ h₂(move(s,a), t) re-introduces the
+full conclusion in its first half (circular) and a same-kernel state-
+monotonicity in its second — so (KEY) must be attacked directly as a
+two-chain, two-state estimate. (b) Coupling the two continuations by common
+actions fails quantitatively, not just formally: under identical actions the
+velocity gap contracts by (1 − drag·dt) per step but the position offset
+converges to Δp_∞ = Δp₀ + Δv₀·dt/(drag·dt) — at the defaults up to ≈
+|Δv₀|·3.3 + |Δp₀| units, an order of magnitude larger than the channel and
+band scales, so entry events of the coupled paths do not align. (c) What
+would suffice: a hitting-probability monotonicity for the frozen chain along
+a radial-position/inward-momentum order — an honest estimate about a
+controlled nonlinear random walk with re-anchoring, with no symmetry to
+lean on. Recorded as the sharp open problem; M1/M2 stay conjectures.
 
 - The danger law applies verbatim at each γ with its own r(γ) — theorem
   (unchanged from paper 1/2; nothing ring-specific).
@@ -268,6 +330,9 @@ paper.
 | Prop 5 (r nonincreasing in γ) | proved (pathwise); 0 violations in 44k CRN checks |
 | Prop 6 (continuity of r, r_int in γ) | proved mod explicit density constant |
 | Prop 7 (direct entries monotone) | proved (pathwise); measured 0 violations |
+| Prop 8 (positivity r_int(γ) > 0, facing) | proved (witness tube); machine-checked incl. perturbations |
+| Prop 9 (KEY ⇒ M1, simultaneous induction) | proved; (KEY) is the isolated open estimate |
 | r_int(0) = 0 | theorem (Lemma 2); measured 0.0000 at n=4000 |
-| full r_int monotonicity (M1), wall-never-helps (M2) | distributional CONJECTURES — pathwise proof impossible (seed-50543 certificate); measured monotone + saturating |
+| M1, M2 | CONJECTURES — pathwise routes REFUTED (seed 50543, incl. at 2π); reduction to (KEY) rigorous; coupling obstruction quantified (offset ≈ 3.3·|Δv₀| ≫ channel scale) |
+| hidden-channel positivity | expected (steering witness deferred); grounds the two-grades remark |
 | n-dim / non-round / non-separating versions | RESEARCH-DIRECTION §8 program |

@@ -257,11 +257,17 @@ instrument, both worlds, one knob.
    crossing), Prop 3 (unfalsifiable+harmless, proved AND confirmed bitwise),
    Prop 4 sketch (query lower bound; behavioral hypothesis to replace),
    r(γ) remark. The "is there a theorem here" question is answered yes.
-4. Write the mechanism-arm plan (docs/superpowers style) with the three-way
-   split table as the deliverable: (γ, start) grid × {blind, filled} models,
-   columns = {certified?, play_cost, contact}, the Prop-3 bitwise column.
-5. Tighten Prop 4 (remove the behavioral hypothesis via the reward-gap
-   condition) and write out the r(γ) coupling argument.
+4. ~~Mechanism arm~~ DONE (2026-07-19, ran directly — no plan doc needed):
+   grid + readings in EXPERIMENTS.md "Paper 3" section. Landed: the
+   three-regime walk; phantom-obstruction exploitation BELOW random
+   (pc_fill 1.769 from inside); policy-relative reachability (hidden
+   channel observationally identical to the closed ring); the
+   aligned-channel degeneracy quantified.
+5. ~~Tighten Prop 4 / r(γ)~~ DONE (2026-07-19): Prop 4 under (RG)+(C);
+   γ-curves resolved into Props 5–9 + certificate (seed 50543) + scoped
+   conjectures M1/M2 with the open estimate (KEY) isolated (THEORY.md).
+   Open math, in order of value: (KEY); the hidden-channel steering
+   witness; Prop 6's explicit density constant.
 6. n-dimensional program: §8. First concrete step there: ShellField-n design
    note (action-interface decision) + the r(n) collapse measurement.
 7. LLM synthesis arm: WAITS for the paper-2 confound cells (§6 first risk).
