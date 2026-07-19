@@ -47,20 +47,19 @@ rm -f main.aux main.log main.out main.blg main.toc main.bbl
 
 ## 3. Steps YOU must do on arXiv (cannot be automated)
 
-1. **Endorsement.** First-time submitters to cs.LG / cs.AI / cs.GT need an
-   endorser. If your earlier math-thesis preprint was on arXiv under the same
-   account, you are likely already able to submit to math.* but may still need a
-   one-time endorsement for the cs.* archive. Check arxiv.org → your account →
-   "endorsement" before starting.
-2. **Categories.** Primary: **cs.LG**. Cross-list: **cs.AI**, **cs.GT**.
-3. **License.** Choose one at submission (CC BY 4.0 recommended for a preprint;
-   arXiv's default non-exclusive license is the conservative alternative).
-4. **Metadata.** Title = the paper title; authors = "Javier Aguilar Martín"
-   (AGILabs); abstract = paste the plain-text abstract (strip markdown/LaTeX).
-5. **Upload** the bundle (§2), let arXiv compile, and check the produced PDF
-   matches `main.pdf` (page count, tables, bibliography rendered).
-6. After it gets an arXiv ID, **cite it in the blog** and update any "to appear"
-   placeholders.
+The paper already exists as **arXiv:2607.14169**, so this is a replacement rather
+than a new submission; no new endorsement, category, or license choice is needed.
+
+1. Open arXiv:2607.14169 in the author account and choose **Replace**.
+2. Upload the bundle from §2.
+3. Update the abstract metadata to match the revised abstract.
+4. Use a revision comment such as: “Added policy-guided and bounded adversarial
+   belief checks that close the Beacon coverage witness; clarified guarantees and
+   limitations.”
+5. Let arXiv compile and check that its PDF matches `main.pdf` (43 pages, tables,
+   figures, cross-references, and bibliography rendered).
+6. Submit the replacement and, once announced, update the blog if it quotes the
+   old abstract or conclusions. The README already links arXiv:2607.14169.
 
 ## 4. Citation verification status (done 2026-06-28)
 
@@ -82,9 +81,8 @@ Verified against primary sources (arXiv / publisher / DBLP):
 - **A human read-through.** Every "review" in this project was AI-simulated; one
   careful human pass (you or a colleague) is the single most valuable remaining
   step and the only review type not yet done.
-- **Make the code repo public** (currently PRIVATE: github.com/JaviMaligno/
-  code-world-models). The paper's reproducibility appendix references it; either
-  make it public before the blog/arXiv link goes live, or remove the references.
+- **Repository visibility checked.** `github.com/JaviMaligno/code-world-models`
+  is public as of 2026-07-19, so the reproducibility links are accessible.
 - Optional: skim the PDF for any residual typo / cross-ref.
 
 ## 6. Honest residual limitations (already disclosed in §8)
@@ -96,44 +94,9 @@ Verified against primary sources (arXiv / publisher / DBLP):
 - Leduc coverage is provable on the *sampled* competent subset, Kuhn fully.
 These are disclosed; no fix needed — they are the honest scope.
 
-## 7. Endorsement — who to ask, and what to do if you can't get one
+## 7. Publication state
 
-**How it works.** To submit to a cs archive (cs.LG / cs.AI / cs.GT) for the first
-time you need an *endorser*: an existing arXiv author who is registered in that
-archive and has met arXiv's recent-submission threshold for it. When you start the
-submission, arXiv shows you an **endorsement code**; you send that code to a
-qualified person, who endorses (or declines). Notes:
-- Endorsement is **per-archive**. A math.* endorser (e.g. from your thesis) does
-  **not** count for cs.* — you need someone active in cs.
-- It's **one-time**: after your first accepted cs submission you're auto-endorsed
-  for related cs categories.
-- Submitting from a recognized academic-institution email can auto-qualify you;
-  AGILabs / company email will **not**, so plan on a human endorser.
-
-**Who can endorse (wildcards to line up):**
-1. **Your academic network**, *if* they publish in cs.* — thesis advisor or
-   co-authors who also do ML/CS, or who can introduce you to someone who does.
-   (A pure-math contact can't endorse cs, but can refer.)
-2. **ML researchers in your professional network** — current/former colleagues,
-   anyone you know who posts to arXiv cs.LG/cs.AI.
-3. **Authors of work you cite and genuinely engage with** — a short, specific,
-   non-spammy email ("I build on your X, here's a preprint, would you endorse?")
-   can work; warm intros are far higher yield. Keep it to one or two targeted asks.
-4. **Community channels** (ML Discords/Slacks, some have endorsement-help threads) —
-   use sparingly.
-
-**If you can't get an endorser — citable alternatives (no gatekeeping):**
-1. **Zenodo (recommended fallback).** CERN-backed, no endorsement, mints a permanent
-   **DOI immediately**, fully citable, and can auto-archive a GitHub release. This is
-   the strongest no-gatekeeping option: you get a real DOI for the blog to cite
-   today, and you can still post to arXiv later and cross-reference.
-2. **OSF Preprints** — free, DOI, no endorsement.
-3. **TechRxiv (IEEE)** or **SSRN** — preprint servers; TechRxiv suits CS/EE.
-4. **Own site / ResearchGate + a Zenodo DOI** — host the PDF, mint the DOI via Zenodo.
-5. **An arXiv-endorsed co-author** — if someone contributes meaningfully, co-authorship
-   resolves endorsement and strengthens the paper (changes authorship; only if real).
-
-**Recommendation:** try arXiv with an endorser first (best visibility in ML). If
-that stalls, publish on **Zenodo** to get a citable DOI immediately — the blog can
-cite that DOI now, and arXiv can follow once endorsed. You lose nothing by doing
-Zenodo first.
+- arXiv identifier: **2607.14169**.
+- Code repository: **public**.
+- v2 source bundle: **ready and standalone-compiling**.
+- Remaining external action: upload the replacement through the arXiv author UI.
