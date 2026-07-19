@@ -107,6 +107,40 @@ class HalfPlane(Shape):
 
 
 @dataclass(frozen=True)
+class HalfPlaneGeneral(Shape):
+    """General-orientation half-plane: region nx*x + ny*y <= off (negative
+    inside, matching the Shape sign convention). `HalfPlane(c)` is the
+    axis-aligned special case (nx=1, ny=0, off=c); this class exists because
+    the classifying tangent baseline (oracle.py) fits an arbitrarily
+    oriented separating line, not just a vertical one."""
+    nx: float; ny: float; off: float
+    def implicit_value(self, p): return self.nx*p[0] + self.ny*p[1] - self.off
+    def project_to_boundary(self, p):
+        norm = math.hypot(self.nx, self.ny) or 1.0
+        d = self.implicit_value(p) / norm
+        return (p[0] - d*self.nx/norm, p[1] - d*self.ny/norm), False
+    def normal_or_cone(self, p):
+        norm = math.hypot(self.nx, self.ny) or 1.0
+        return (self.nx/norm, self.ny/norm)
+    def boundary_points(self, window, n):
+        (xmin, xmax), (ymin, ymax) = window
+        norm = math.hypot(self.nx, self.ny) or 1.0
+        nxu, nyu = self.nx/norm, self.ny/norm
+        cx0, cy0 = 0.5*(xmin+xmax), 0.5*(ymin+ymax)
+        d = (self.nx*cx0 + self.ny*cy0 - self.off) / norm
+        px, py = cx0 - d*nxu, cy0 - d*nyu
+        dirx, diry = -nyu, nxu  # unit direction along the line
+        ts = [50.0]
+        for dc, origin, lo, hi in ((dirx, px, xmin, xmax), (diry, py, ymin, ymax)):
+            if abs(dc) > 1e-12:
+                for bound in (lo, hi):
+                    ts.append(abs((bound-origin)/dc))
+        tmax = min(ts)
+        if n == 1: return [(px, py)]
+        return [(px + dirx*tmax*(2*i/(n-1)-1), py + diry*tmax*(2*i/(n-1)-1)) for i in range(n)]
+
+
+@dataclass(frozen=True)
 class Circle(Shape):
     cx: float; cy: float; R: float
     def __post_init__(self):
