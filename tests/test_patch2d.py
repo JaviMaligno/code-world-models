@@ -55,3 +55,59 @@ def test_truth_navigates_and_blind_is_pinned():
     assert abs(t.final_state[0] - ENV.lode_real[0]) < 2.5
     assert b.contact and b.ret < 1.0       # frozen at a patch edge
     assert b.final_state[0] < 3.0
+
+
+# --- square-patch ablation (2026-07-19): fixed topology, flat boundary -------
+SQ = PatchField2D(patch_shape="square")
+
+
+def test_square_membership_discriminates_at_the_corner():
+    # landing point (3.9, 0.9): Chebyshev dist 0.9 <= R -> inside the square;
+    # Euclidean dist ~1.27 > R -> outside the disc. Same state/action on both
+    # shapes, only the membership predicate differs.
+    s = (3.9, 0.773, 0.0, 1.0)   # a=0.5 -> phi=pi/2: vy2=1.27, lands y=0.9
+    s2, _, c = SQ.step(s, 0.5)
+    assert c and s2 == (3.9, 0.773, 0.0, 0.0)
+    assert SQ.contact_modes(s, 0.5) == (True, False)
+    d2, _, cd = ENV.step(s, 0.5)
+    assert not cd and abs(d2[1] - 0.9) < 1e-12
+
+
+def test_square_default_is_disc_and_blind_works():
+    assert PatchField2D().patch_shape == "disc"   # committed runs unchanged
+    b = blind_of(SQ)
+    assert b.p1 is None and b.p2 is None and b.patch_shape == "square"
+    s = (1.85, 0.0, 3.0, 0.0)    # next x2 ~ 2.14 -> inside square 1, west edge
+    s2, _, c = SQ.step(s, 0.0)
+    assert c and s2[:2] == (1.85, 0.0)
+    assert not b.step(s, 0.0)[2]
+
+
+def test_square_rarity_split():
+    # square (Chebyshev ball) contains the disc of the same R, so per-mode
+    # rarity can only go up; it must stay in the same regime (r1 common,
+    # r2 rare) for the ablation cells to be comparable.
+    h1 = h2 = 0
+    n = 200
+    for i in range(n):
+        rng = random.Random(50_000 + i)
+        s = SQ.initial_state(rng)
+        c1 = c2 = False
+        for _ in range(SQ.h_episode):
+            a = rng.uniform(-SQ.a_max, SQ.a_max)
+            m1, m2 = SQ.contact_modes(s, a)
+            c1, c2 = c1 or m1, c2 or m2
+            s = SQ.step(s, a)[0]
+        h1 += c1
+        h2 += c2
+    assert 0.08 < h1 / n < 0.35
+    assert h2 / n < 0.08
+
+
+def test_square_truth_navigates_and_blind_is_pinned():
+    t = harness.run_episode(SQ, SQ, "mpc", seed=0, n_samples=40)
+    b = harness.run_episode(SQ, blind_of(SQ), "mpc", seed=0, n_samples=40)
+    assert t.ret > 10.0
+    assert abs(t.final_state[0] - SQ.lode_real[0]) < 2.5
+    assert b.contact and b.ret < 1.0
+    assert b.final_state[0] < 3.0

@@ -173,15 +173,29 @@ def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
         if not patches:
             raise ValueError("env has no patches; cannot write mode clause(s)")
         for _name, c in patches:
-            lines += [
-                "",
-                "Additional dynamics rule:",
-                f"  There is a sticky patch centered at (x, y) = ({c[0]}, {c[1]})",
-                f"  with radius R = {env.R}. After computing x2 and y2 as above,",
-                f"  if (x2 - {c[0]}) ** 2 + (y2 - {c[1]}) ** 2 <= {env.R ** 2},",
-                "  the mover sticks: the next state is exactly [x, y, 0.0, 0.0]",
-                "  (the PREVIOUS position, with zero velocity).",
-            ]
+            if env.patch_shape == "square":
+                lines += [
+                    "",
+                    "Additional dynamics rule:",
+                    f"  There is a sticky square patch centered at (x, y) = "
+                    f"({c[0]}, {c[1]})",
+                    f"  with half-side R = {env.R}. After computing x2 and y2 "
+                    f"as above,",
+                    f"  if max(abs(x2 - {c[0]}), abs(y2 - {c[1]})) <= {env.R},",
+                    "  the mover sticks: the next state is exactly "
+                    "[x, y, 0.0, 0.0]",
+                    "  (the PREVIOUS position, with zero velocity).",
+                ]
+            else:
+                lines += [
+                    "",
+                    "Additional dynamics rule:",
+                    f"  There is a sticky patch centered at (x, y) = ({c[0]}, {c[1]})",
+                    f"  with radius R = {env.R}. After computing x2 and y2 as above,",
+                    f"  if (x2 - {c[0]}) ** 2 + (y2 - {c[1]}) ** 2 <= {env.R ** 2},",
+                    "  the mover sticks: the next state is exactly [x, y, 0.0, 0.0]",
+                    "  (the PREVIOUS position, with zero velocity).",
+                ]
     return "\n".join(lines)
 
 

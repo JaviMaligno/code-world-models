@@ -72,13 +72,21 @@ def _example_lines(transitions: list[dict], max_examples: int) -> str:
 
 
 def build_synthesis_messages(contract: str, transitions: list[dict],
-                             max_examples: int = 30) -> list[dict]:
+                             max_examples: int = 30,
+                             guidance: str = "") -> list[dict]:
+    """`guidance` is the confound-closure knob (2026-07-19): extra
+    methodological text inserted before the final instruction. Empty (the
+    default) reproduces the original prompt byte-for-byte (tested), so all
+    committed runs stay valid; non-empty is the "richer prompting" arm that
+    paper 2 §10 leaves open."""
     system = ("You are an expert Python programmer. You write deterministic, "
               "pure code that exactly implements a specified physics world "
               "model. Output ONLY a single Python code block, no prose.")
+    extra = f"{guidance}\n\n" if guidance else ""
     user = (f"{contract}\n\n"
             f"Here are observed transitions (ground truth) to match exactly:\n"
             f"{_example_lines(transitions, max_examples)}\n\n"
+            f"{extra}"
             f"Write the Python module implementing the contract. "
             f"Output only one ```python code block.")
     return [{"role": "system", "content": system},
@@ -148,9 +156,12 @@ class RefineResult:
 
 def refine_continuous(provider, model: str, contract: str, code: str,
                       transitions: list[dict], eps: float,
-                      max_iters: int = 5) -> RefineResult:
+                      max_iters: int = 5, guidance: str = "",
+                      max_failures: int = 20) -> RefineResult:
     """Refine until the sample matches at eps (mirrors cwm.refiner.refine_cwm:
-    the SAME sample is re-checked each iteration — it is the gate)."""
+    the SAME sample is re-checked each iteration — it is the gate).
+    `guidance`/`max_failures` are the confound-closure knobs (2026-07-19);
+    the defaults reproduce the original refine message byte-for-byte."""
     usages = []
     acc, failures = contract_accuracy(code, transitions, eps)
     iterations = 0
@@ -159,7 +170,9 @@ def refine_continuous(provider, model: str, contract: str, code: str,
                f"some transitions. Fix it so every transition matches to "
                f"within {eps} in x, v and reward. Output only one ```python "
                f"code block.\n\nCURRENT CODE:\n```python\n{code}\n```\n\n"
-               f"FAILURES (expected vs got):\n" + "\n".join(failures[:20]))
+               f"FAILURES (expected vs got):\n"
+               + "\n".join(failures[:max_failures])
+               + (f"\n\n{guidance}" if guidance else ""))
         completion = provider.complete([{"role": "user", "content": msg}],
                                        model=model)
         usages.append(completion.usage)
@@ -227,7 +240,9 @@ wall_blindness = mode_blindness  # back-compat alias
 def synthesize_and_evaluate(provider, model_name, env,
                             include_mode: bool, n_rollouts: int, seed: int,
                             eps: float = 1e-9, max_iters: int = 5,
-                            max_examples: int = 30, omit: tuple = ()) -> dict:
+                            max_examples: int = 30, omit: tuple = (),
+                            guidance: str = "",
+                            max_failures: int = 20) -> dict:
     """One cell of the synthesis experiment: collect the sample, synthesize,
     refine on the sample (the gate), then classify the artifact. Returns a
     JSON-ready dict; play evaluation is done by the caller (it needs the
@@ -238,11 +253,13 @@ def synthesize_and_evaluate(provider, model_name, env,
     of the mode_blindness dict (or None when the gate failed)."""
     transitions = collect_transitions(env, n_rollouts, seed=seed)
     contract = build_contract(env, include_mode, omit=omit)
-    msgs = build_synthesis_messages(contract, transitions, max_examples)
+    msgs = build_synthesis_messages(contract, transitions, max_examples,
+                                    guidance=guidance)
     completion = provider.complete(msgs, model=model_name)
     code = extract_code(completion.text)
     refined = refine_continuous(provider, model_name, contract, code,
-                                transitions, eps, max_iters=max_iters)
+                                transitions, eps, max_iters=max_iters,
+                                guidance=guidance, max_failures=max_failures)
     spec = spec_for(env)
     mb = mode_blindness(refined.code, env) if refined.accuracy == 1.0 else None
     cell = {

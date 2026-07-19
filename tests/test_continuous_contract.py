@@ -242,3 +242,65 @@ def test_patch2d_wrong_arity_is_a_hard_failure():
     assert any("wrong state arity" in f for f in fails)
     model = SynthesizedModel(P2D_WRONG_ARITY_CODE, P2D)
     assert not run_gate(P2D, model, n_rollouts=1, eps=1e-9).passed
+
+
+# --- confound-closure knobs (2026-07-19): defaults are byte-identical --------
+from cwm.continuous.contract import build_synthesis_messages
+
+
+def test_guidance_default_is_byte_identical_and_insertion_is_clean():
+    tr = collect_transitions(ENV, n_rollouts=1, seed=0)
+    contract = build_contract(ENV, include_mode=False)
+    base = build_synthesis_messages(contract, tr)
+    assert base == build_synthesis_messages(contract, tr, guidance="")
+    rich = build_synthesis_messages(contract, tr, guidance="THINK FIRST.")
+    assert rich[0] == base[0]   # system prompt untouched
+    assert rich[1]["content"].replace("THINK FIRST.\n\n", "") == \
+        base[1]["content"]      # guidance inserts, nothing else moves
+
+
+class _CapturingProvider:
+    """FakeProvider that records the messages it was called with."""
+    def __init__(self, replies):
+        self._inner = FakeProvider(replies)
+        self.calls = []
+
+    def complete(self, messages, model):
+        self.calls.append(messages)
+        return self._inner.complete(messages, model=model)
+
+
+def test_refine_guidance_and_max_failures_reach_the_message():
+    near_env = CartWall(x_wall=0.5)
+    tr = collect_transitions(near_env, n_rollouts=20, seed=0)
+    assert sample_contains_wall(tr)
+    bad = INCOMPLETE_CODE.replace("8.0]", "0.5]")   # fails on wall transitions
+    provider = _CapturingProvider(
+        [f"```python\n{FULL_CODE.replace('8.0', '0.5')}```"])
+    contract = build_contract(near_env, include_mode=False)
+    res = refine_continuous(provider, "fake", contract, bad, tr, eps=1e-9,
+                            guidance="LOOK AT THE REGION.", max_failures=3)
+    assert res.accuracy == 1.0
+    msg = provider.calls[0][0]["content"]
+    assert msg.rstrip().endswith("LOOK AT THE REGION.")
+    failures_block = msg.split("FAILURES (expected vs got):\n")[1]
+    failures_block = failures_block.split("\n\nLOOK AT THE REGION.")[0]
+    assert len(failures_block.splitlines()) == 3   # max_failures honored
+
+
+def test_square_contract_states_the_max_abs_rule_and_full_code_passes():
+    from cwm.continuous.envs import PatchField2D
+    sq = PatchField2D(patch_shape="square")
+    full = build_contract(sq, include_mode=True)
+    assert "max(abs(x2 - 3.0), abs(y2 - 0.0)) <= 1.0" in full
+    assert "half-side R = 1.0" in full
+    # incomplete arm: identical to the disc's incomplete contract (no leak)
+    assert build_contract(sq, include_mode=False) == \
+        build_contract(P2D, include_mode=False)
+    sq_code = P2D_FULL_CODE.replace(
+        "        if (x2 - cx) ** 2 + (y2 - cy) ** 2 <= 1.0:",
+        "        if max(abs(x2 - cx), abs(y2 - cy)) <= 1.0:")
+    tr = collect_transitions(sq, n_rollouts=5, seed=0)
+    acc, fails = contract_accuracy(sq_code, tr, eps=1e-9)
+    assert acc == 1.0, fails[:3]
+    assert mode_blindness(sq_code, sq) == {"patch1": 0.0, "patch2": 0.0}
