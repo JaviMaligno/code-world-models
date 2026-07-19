@@ -531,6 +531,28 @@ error-mass is per-artifact with game-size-free constants. The paper keeps both.
 
 ---
 
+## Policy-guided and adversarial belief gates close Beacon (2026-07-19)
+
+The mixture-gate recommendation now has a direct Beacon experiment
+(`scripts/beacon_adversarial_gate.py`). At `T=8`, the original 2000-game random
+gate accepts the flipped-belief instrument with 0/8156 inference mismatches (the
+analytic gate-miss probability is 0.969943). Replacing one random game with one
+held-out trajectory from the trusted determinized-MCTS reference policy rejects it
+with 4/8190 mismatches: one reference trajectory reaches D with probability 1.
+
+A policy-free bounded falsifier gives the complementary tradeoff. Deepest-first
+search over reachable non-terminal oracle states finds D at depth 16 after only 17
+expanded states / 34 belief checks and rejects on the two flipped posteriors at the
+first final-round state. Beacon makes this cheap because every unsafe child is
+terminal; in a general game the non-terminal frontier may grow exponentially, so
+no-counterexample under a finite search budget is not a certificate unless the
+search exhausts the reachable space. Net: the mixture gate is the cheap,
+reference-profile-scoped remedy certified by Theorem 2; bounded adversarial search
+removes that policy assumption on the explored tree at potentially exponential
+cost.
+
+---
+
 ## play_cost: no longer purely empirical (2026-07-02)
 
 Three provable fronts now bracket play_cost (paper §4 Prop 2 + remark, §6.4 Prop 4):

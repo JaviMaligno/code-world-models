@@ -1,0 +1,71 @@
+{
+  "T": 8,
+  "gate_games": 2000,
+  "simulations": 100,
+  "random_only": {
+    "n_states": 4078,
+    "checks": 8156,
+    "observation_mismatches": 0,
+    "inference_mismatches": 0,
+    "observation_errors": 0,
+    "inference_errors": 0,
+    "passes": true,
+    "examples": [],
+    "random_games": 2000,
+    "reference_games": 0,
+    "reference_final_states": 0
+  },
+  "mixed_one_reference": {
+    "n_states": 4095,
+    "checks": 8190,
+    "observation_mismatches": 0,
+    "inference_mismatches": 4,
+    "observation_errors": 0,
+    "inference_errors": 0,
+    "passes": false,
+    "examples": [
+      "inference state=[8, 8, 0, 1, 1, 0, -1, -1, 1] p=1 got=[((8, 8, 0, 0, 1, 0, -1, -1, 1), 1)]",
+      "inference state=[8, 8, 0, 1, 1, 0, -1, -1, 1] p=2 got=[((8, 8, 1, 1, 1, 0, -1, -1, 1), 1)]",
+      "inference state=[8, 8, 0, 1, 1, 0, 1, -1, 1] p=1 got=[((8, 8, 0, 0, 1, 0, 1, -1, 1), 2)]",
+      "inference state=[8, 8, 0, 1, 1, 0, 1, -1, 1] p=2 got=[((8, 8, 1, 1, 1, 0, 1, -1, 1), 2)]"
+    ],
+    "random_games": 1999,
+    "reference_games": 1,
+    "reference_final_states": 2
+  },
+  "bounded_adversarial_search": {
+    "verdict": "reject",
+    "counterexample_found": true,
+    "expanded_states": 17,
+    "belief_checks": 34,
+    "counterexample_depth": 16,
+    "counterexample_state": {
+      "board": [
+        8,
+        8,
+        0,
+        0,
+        1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "current_player": 1
+    },
+    "observation_mismatches": 0,
+    "inference_mismatches": 2,
+    "observation_errors": 0,
+    "inference_errors": 0,
+    "examples": [
+      "inference state=[8, 8, 0, 0, 1, 1, -1, -1, 1] p=1 got=[((8, 8, 0, 1, 1, 1, -1, -1, 1), 1)]",
+      "inference state=[8, 8, 0, 0, 1, 1, -1, -1, 1] p=2 got=[((8, 8, 1, 0, 1, 1, -1, -1, 1), 1)]"
+    ],
+    "frontier_remaining": 3
+  },
+  "analytic": {
+    "random_reach_D_per_game": 1.52587890625e-05,
+    "reference_reach_D_per_game": 1.0,
+    "random_gate_miss_probability": 0.969943156296531
+  }
+}
