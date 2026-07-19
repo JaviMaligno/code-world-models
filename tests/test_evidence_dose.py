@@ -23,6 +23,28 @@ def test_fixed_size_and_distinct_negatives():
     assert allowed <= {t["source_index"] for t in tr}  # allowed refers to original indices
 
 
+def test_background_excludes_all_positives():
+    # Circle offset/radius calibrated to ~15% per-episode rarity (see
+    # results/shape2d_calibration.json, cell "contrast_circle": rarity=0.15).
+    # Before the fix, `bg_pool` only excluded `used_source_indices` (the
+    # chosen positives + matched negatives), so an UNCHOSEN positive
+    # (contact=True) transition could land in the background block --
+    # contradicting the docstring ("background: neither positive nor a
+    # matched near-miss") and the meta["n_positive"] == m guarantee. seed=4
+    # is a known repro for the old bug (one positive leaked into background).
+    env = ShapeField2D(shape=Circle(cx=3.9042205810546875, cy=0.0, R=1.5))
+    tr = collect_transitions(env, n_rollouts=200, seed=0)
+    m = 8
+    for seed in (0, 4, 14, 16, 33):
+        ex, allowed, meta = build_dose_sample(env, tr, m=m, span="large", rng=random.Random(seed))
+        assert len(ex) == 40
+        n_positive_total = sum(1 for e in ex if e["contact"])
+        assert n_positive_total == m == meta["n_positive"]
+        background = ex[2 * m:]
+        assert len(background) == meta["n_background"] == 40 - 2 * m
+        assert all(not e["contact"] for e in background)  # no positive leaks into background
+
+
 def test_capped_failure_uses_source_indices():
     assert is_evidence_capped_failure(failure_source_indices={311, 512}, allowed_source_indices={7, 8, 9}) is True
     assert is_evidence_capped_failure(failure_source_indices={8, 512}, allowed_source_indices={7, 8, 9}) is False

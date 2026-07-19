@@ -130,12 +130,18 @@ def build_dose_sample(env, transitions: list[dict], m: int, span: str,
 
     n_background = 40 - 2 * m
     used_source_indices = set(chosen_indices) | used_neg_src
-    bg_pool = [t for t in transitions if t["source_index"] not in used_source_indices]
-    if len(bg_pool) < n_background:
-        raise ValueError(
-            f"not enough remaining transitions for background: need "
-            f"{n_background}, have {len(bg_pool)}")
-    background = rng.sample(bg_pool, n_background) if n_background else []
+    # Background must be genuinely non-positive: exclude every `contact=True`
+    # transition (not just the chosen/matched ones), so an UNCHOSEN positive
+    # can never leak into the "neither positive nor a matched near-miss"
+    # block and silently break the `meta["n_positive"] == m` guarantee.
+    bg_pool = [t for t in transitions
+              if t["source_index"] not in used_source_indices and not t["contact"]]
+    # Fall back gracefully if there aren't enough non-positive transitions to
+    # fill the full background block (unlikely at typical rarity, but this
+    # must never crash refinement runs) -- fill what we can and record the
+    # actual count.
+    n_background_actual = min(n_background, len(bg_pool))
+    background = rng.sample(bg_pool, n_background_actual) if n_background_actual else []
 
     kept_positives = [pos_info[si][0] for si in chosen_indices]
     controlled_examples = kept_positives + matched_negatives + background
@@ -143,7 +149,7 @@ def build_dose_sample(env, transitions: list[dict], m: int, span: str,
     meta = {
         "n_positive": m,
         "n_negative": m,
-        "n_background": n_background,
+        "n_background": n_background_actual,
         "evidence_capped": True,
         "span": span,
     }
