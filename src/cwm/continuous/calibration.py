@@ -81,6 +81,15 @@ def _is_number(v) -> bool:
     return isinstance(v, (int, float)) and not isinstance(v, bool)
 
 
+def _check_numeric(v, label: str, problems: list[str]) -> None:
+    """Append a problem if `v` is present (non-placeholder) but not a real
+    number (bool counts as non-numeric here, even though bool is technically
+    an int subclass) -- this is what closes the gap where a field like
+    "n_rollouts": "big" would otherwise silently skip its threshold check."""
+    if not _is_placeholder(v) and not _is_number(v):
+        problems.append(f"{label} must be numeric, got {type(v).__name__}")
+
+
 def validate_calibration_artifact(art) -> list[str]:
     """Empty list = valid. See module docstring: never raises, always
     collects every violated constraint from a single pass."""
@@ -122,6 +131,8 @@ def validate_calibration_artifact(art) -> list[str]:
 
     # --- frac_planner_outside_box must stay under its explicit bound --------
     fpob, bound = art.get("frac_planner_outside_box"), art.get("frac_outside_box_bound")
+    _check_numeric(fpob, "frac_planner_outside_box", problems)
+    _check_numeric(bound, "frac_outside_box_bound", problems)
     if _is_number(fpob) and _is_number(bound) and fpob > bound:
         problems.append(
             f"frac_planner_outside_box {fpob} exceeds frac_outside_box_bound {bound}")
@@ -169,6 +180,8 @@ def validate_calibration_artifact(art) -> list[str]:
 
     # --- per-cell checks -----------------------------------------------------
     rarity_target, rarity_tol = art.get("rarity_target"), art.get("rarity_tol")
+    _check_numeric(rarity_target, "rarity_target", problems)
+    _check_numeric(rarity_tol, "rarity_tol", problems)
     for c in cells:
         if not isinstance(c, dict):
             problems.append("cells: entry is not a dict")
@@ -182,18 +195,24 @@ def validate_calibration_artifact(art) -> list[str]:
         rarity_ci = c.get("rarity_ci")
         if isinstance(rarity_ci, list) and any(_is_placeholder(v) for v in rarity_ci):
             problems.append(f"cell {cid}: rarity_ci contains a placeholder value")
+        if isinstance(rarity_ci, list):
+            for i, v in enumerate(rarity_ci):
+                _check_numeric(v, f"cell {cid}: rarity_ci[{i}]", problems)
 
         n_rollouts = c.get("n_rollouts")
+        _check_numeric(n_rollouts, f"cell {cid}: n_rollouts", problems)
         if _is_number(n_rollouts) and n_rollouts < N_ROLLOUTS_MIN:
             problems.append(
                 f"cell {cid}: n_rollouts {n_rollouts} below minimum {N_ROLLOUTS_MIN}")
 
         n_episodes = c.get("n_episodes")
+        _check_numeric(n_episodes, f"cell {cid}: n_episodes", problems)
         if _is_number(n_episodes) and n_episodes < N_EPISODES_MIN:
             problems.append(
                 f"cell {cid}: n_episodes {n_episodes} below minimum {N_EPISODES_MIN}")
 
         grid_delta = c.get("grid_delta_256_512")
+        _check_numeric(grid_delta, f"cell {cid}: grid_delta_256_512", problems)
         if _is_number(grid_delta) and not (isinstance(grid_delta, float) and math.isnan(grid_delta)):
             if grid_delta >= GRID_DELTA_MAX:
                 problems.append(
@@ -202,12 +221,14 @@ def validate_calibration_artifact(art) -> list[str]:
                     f"measured per-cell delta below this bound")
 
         play_cost_blind = c.get("play_cost_blind")
+        _check_numeric(play_cost_blind, f"cell {cid}: play_cost_blind", problems)
         if _is_number(play_cost_blind) and play_cost_blind < PLAY_COST_BLIND_MIN:
             problems.append(
                 f"cell {cid}: play_cost_blind {play_cost_blind} below "
                 f"{PLAY_COST_BLIND_MIN} -- blind planner is not exploited")
 
         rarity = c.get("rarity")
+        _check_numeric(rarity, f"cell {cid}: rarity", problems)
         if _is_number(rarity) and _is_number(rarity_target) and _is_number(rarity_tol):
             if abs(rarity - rarity_target) > rarity_tol:
                 problems.append(

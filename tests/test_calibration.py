@@ -49,6 +49,22 @@ def test_calibration_quick_smoke_schema(tmp_path):
     # NOTE: --quick may not meet rarity/play_cost tolerances with few episodes; strict
     # validate_calibration_artifact is asserted only on the FULL run, below.
 
+def test_validator_rejects_non_numeric_numeric_field():
+    # A non-numeric string in a numeric field must not silently skip its
+    # threshold check -- it must be flagged as a type problem instead.
+    art = _good_artifact()
+    art["cells"][0]["n_rollouts"] = "big"
+    problems = validate_calibration_artifact(art)
+    assert any("n_rollouts" in p and "numeric" in p.lower() for p in problems)
+
+def test_validator_rejects_bool_in_numeric_field():
+    # bool is a subclass of int in Python -- it must still be rejected as
+    # non-numeric for a field like n_rollouts, not silently accepted.
+    art = _good_artifact()
+    art["cells"][0]["n_rollouts"] = True
+    problems = validate_calibration_artifact(art)
+    assert any("n_rollouts" in p and "numeric" in p.lower() for p in problems)
+
 def test_full_calibration_passes_strict_validation():
     import os, pytest
     path = "results/shape2d_calibration.json"
