@@ -2163,3 +2163,68 @@ Implication for Claim B: it needs a vehicle whose **dynamics synthesize cleanly*
 independent of the dynamics**. Candidate: a familiar-dynamics game (synthesizes at
 gate 1.0) overlaid with an arbitrary, non-recallable masking rule — see
 RESEARCH-DIRECTION.
+
+## Paper 3 — RingField2D mechanism grid + the γ-monotonicity probe (2026-07-19)
+
+Branch `claude/paper-tres-topology-4w813y` (carries the paper-2 stack by
+merge). Instrument: annular sticky mode enclosing the phantom lode
+(`RingField2D`; theory in `docs/paper3/THEORY.md`). Two probes, no LLM.
+
+### Mechanism grid (`scripts/continuous_ring2d_mechanism.py`, 400 rollouts +
+16 paired MPC episodes/cell, `results/continuous_ring2d_mechanism.json`)
+
+| gap | channel | start | r | r_int | disagree_fill | pc_blind | pc_fill |
+|-----|---------|-------|--------|--------|-----------|-------|-------|
+| 0.0 | —      | outside | 0.0450 | 0.0000 | 0.000000 | 0.999 | 0.000 |
+| 0.0 | —      | inside  | 0.7325 | 1.0000 | 0.968500 | 0.000 | 1.769 |
+| 0.6 | facing | outside | 0.0350 | 0.0075 | 0.000844 | 0.022 | 0.343 |
+| 0.6 | facing | inside  | 0.6875 | 1.0000 | 0.862969 | 0.000 | 0.663 |
+| 0.6 | hidden | outside | 0.0450 | 0.0000 | 0.000000 | 0.999 | 0.000 |
+| 0.6 | hidden | inside  | 0.6700 | 1.0000 | 0.854094 | 0.000 | 1.769 |
+| 1.2 | facing | outside | 0.0175 | 0.0125 | 0.000625 | 0.007 | 0.220 |
+| 1.2 | facing | inside  | 0.6100 | 1.0000 | 0.774062 | 0.000 | 0.351 |
+| 1.2 | hidden | outside | 0.0450 | 0.0000 | 0.000000 | 0.999 | 0.000 |
+| 1.2 | hidden | inside  | 0.5975 | 1.0000 | 0.757500 | 0.000 | 1.741 |
+
+(`disagree_fill` = fraction of random-rollout transitions where the filled
+wrong-topology model differs from truth — the gate-side falsifiability of the
+wrong topology; `pc_*` = play_cost of each wrong model.)
+
+Readings:
+1. **The three-regime walk is real** (filled model, outside starts): gap 0 —
+   unfalsifiable AND harmless (disagree 0, pc 0.000; Props 1+3, the pc=0 is
+   the bitwise theorem); facing gap>0 — falsifiable at rate ~10⁻³/transition
+   and costly (pc 0.343/0.220); inside start — instantly falsified
+   (disagree 0.77–0.97). One artifact, three certification regimes, two knobs.
+2. **Wrong topology exploited BELOW RANDOM from inside** (pc_fill 1.769 at
+   gap 0): the filled model hallucinates freezes everywhere near the lode, so
+   all imagined returns tie and the planner drifts off the lode it is already
+   sitting on. The dual of paper 2's phantom-free-space exploitation: an
+   *invented* mode (phantom obstruction) repels from value as destructively
+   as an omitted mode lures into danger.
+3. **Policy-relative reachability beats topology**: the hidden-channel rows
+   are observationally IDENTICAL to the closed ring (r_int 0, disagree 0,
+   pc_blind 0.999, pc_fill 0.000) although the channel changes the free
+   space's connectivity. Neither the random gate nor MPC ever finds the far
+   channel. With the facing channel, same topology, everything changes
+   (aligned-channel degeneracy: pc_blind 0.022). What certificates and play
+   see is the mode's topology RELATIVE TO the operative reach — the paper-3
+   thesis in one table. Note (THEORY.md Prop 8 remark): hidden-channel
+   r_int is *positive but below measurement*, a different impossibility
+   grade than gap 0's *exact* zero.
+4. Blind is harmless from inside (pc 0.000 — the lure is where you already
+   are) and fully exploited outside except in the aligned-channel case.
+
+### γ-monotonicity probe (`scripts/ring2d_rint_probe.py`, 4000 CRN rollouts,
+12 gaps to 2π, `results/continuous_ring2d_rint_probe.json`)
+
+r_int: 0.0000 / 0.0008 / 0.0020 / 0.0040 / 0.0067 / 0.0080 / 0.0097 /
+0.0105 / 0.0110, then EXACTLY 0.0110 (identical entering seed set) for
+γ ≥ 2.4 — monotone on the grid, saturating at the free-walk limit. Direct
+entries (no prior freeze) 3 → 44, monotone — a theorem (THEORY.md Prop 7);
+funnel-assisted entries ≤ 2/gap. Fire-monotonicity violations 0/44k (Prop 5,
+exact). ONE pathwise entry violation: seed 50543 enters at γ=0.4, not at
+γ=0.6 — and not at γ=2π either — a funnel-assisted entry destroyed by
+widening; certificate that full monotonicity (M1) and wall-never-helps (M2)
+admit no pathwise proof. Both stated as distributional conjectures with the
+reduction and obstruction in THEORY.md.
