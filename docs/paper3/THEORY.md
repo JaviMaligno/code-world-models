@@ -300,20 +300,61 @@ the first action a. If the landing is outside A(γ₁) or inside A(γ₂), both
 kernels move to the same state s′ and the inductive hypothesis applies to
 (s′, t−1). If the landing is in D, (KEY) applies verbatim. Integrate over a.
 ∎
-*Why (KEY) is genuinely open, not merely unwritten.* (a) The natural split
-h₁(freeze(s), t) ≤ h₂(freeze(s), t) ≤ h₂(move(s,a), t) re-introduces the
-full conclusion in its first half (circular) and a same-kernel state-
-monotonicity in its second — so (KEY) must be attacked directly as a
-two-chain, two-state estimate. (b) Coupling the two continuations by common
-actions fails quantitatively, not just formally: under identical actions the
-velocity gap contracts by (1 − drag·dt) per step but the position offset
-converges to Δp_∞ = Δp₀ + Δv₀·dt/(drag·dt) — at the defaults up to ≈
-|Δv₀|·3.3 + |Δp₀| units, an order of magnitude larger than the channel and
-band scales, so entry events of the coupled paths do not align. (c) What
-would suffice: a hitting-probability monotonicity for the frozen chain along
-a radial-position/inward-momentum order — an honest estimate about a
-controlled nonlinear random walk with re-anchoring, with no symmetry to
-lean on. Recorded as the sharp open problem; M1/M2 stay conjectures.
+**(KEY) is FALSE — refuted by stress test (2026-07-19, second pass).**
+`scripts/ring2d_key_probe.py`, Part 1
+(`results/continuous_ring2d_key_probe.json`): at (γ₁, γ₂) = (0.4, 0.6), a
+scan of 91 legal divergence configurations of the form "s parked in the
+γ₁-corridor near the interior boundary, velocity outward + tangential so the
+landing falls in the sliver D" produces **91/91 CI-separated violations** —
+h₁(freeze(s), 40) ∈ [0.52, 0.69] against h₂(move(s,a), 40) ∈ [0.00, 0.33]
+(n = 2000 per side). Mechanism, now named: **freeze-rescue**. The freeze
+re-anchors the narrow-gap chain AT REST at s's position; when s sits in the
+corridor 0.05–0.2 from the interior, that parking is privileged, while the
+wide-gap chain keeps its outward velocity and is carried away (drag brings
+it to rest ~3 units out, a generic exterior position). These configurations
+are reachable with positive probability (corridor states are reachable by
+Prop-8-style threading; velocities ≤ gain/drag by accumulation), so the
+refutation stands for (KEY) both as stated and restricted to the reachable
+set. Prop 9 remains a valid reduction — with a false hypothesis: any proof
+of M1 must therefore engage the divergence distribution's weighting, not
+local comparisons alone.
+
+**Lemma 4 (first-divergence identity).** Under the CRN coupling with
+γ₁ < γ₂, let τ = the first step whose landing lies in D, S the state then,
+A the action, T = h − τ the remaining budget, and E_pre = {interior entered
+before τ}. Then
+  r_int(γ₂) − r_int(γ₁)
+    = E[ 1{τ ≤ h, ¬E_pre} · ( h₂(move(S, A), T) − h₁(freeze(S), T) ) ].
+*Proof.* On {τ > h} the trajectories coincide (Lemma 3): contribution 0. On
+{τ ≤ h, E_pre} both entered before τ: contribution 0. On the remaining
+event, condition on the history up to τ: each chain individually is Markov,
+so its conditional entry probability is h_k of its own state with budget T —
+the conditional expectation of the difference of indicators is h₂ − h₁
+regardless of the post-τ dependence between the chains. Tower property. ∎
+
+**Numerical self-validation + where M1 lives** (same probe, Part 2). Over
+6000 CRN rollouts at (0.4, 0.6): 79 first divergences (no prior entry);
+Monte-Carlo of the integrand at each (400/side): negative at only **3/79**
+configs, mean +0.162; identity check: measured r_int difference 0.00250 vs
+reconstructed E[1_div · Δ] = 0.00213 (agreement within MC noise). So M1 is
+true at these parameters *because* the first-divergence distribution puts
+~96% of its mass on inward-crossing configurations (where the wide gap wins
+by +0.16 on average) and ~4% on freeze-rescue configurations — a fact about
+the chain's occupation measure, not about any pointwise comparison.
+
+**Final status of M1/M2 after the second pass.** All local routes are now
+CLOSED WITH EVIDENCE: pathwise coupling — refuted (seed 50543, incl. at 2π);
+pointwise config comparison (KEY) — refuted (91/91). Two further classical
+routes noted and dead: a measure-preserving injection between entering
+action-sets is equivalent to the inequality itself (no shortcut), and
+"freeze as pure time-delay" is false (freeze re-anchors, it does not delay).
+What a genuine proof now requires: an estimate on the first-divergence
+occupation measure — e.g. that the freeze-rescue region (corridor × outward
+velocities) carries divergence-mass sufficiently below the inward-crossing
+mass, uniformly in γ. That is a quantitative statement about a controlled
+nonlinear random walk with re-anchoring; we assess it as out of proportion
+for this paper and leave M1/M2 as measured regularities with the identity
+(Lemma 4) as their exact frame — the same discipline as paper 2's play_cost.
 
 - The danger law applies verbatim at each γ with its own r(γ) — theorem
   (unchanged from paper 1/2; nothing ring-specific).
@@ -331,8 +372,9 @@ lean on. Recorded as the sharp open problem; M1/M2 stay conjectures.
 | Prop 6 (continuity of r, r_int in γ) | proved mod explicit density constant |
 | Prop 7 (direct entries monotone) | proved (pathwise); measured 0 violations |
 | Prop 8 (positivity r_int(γ) > 0, facing) | proved (witness tube); machine-checked incl. perturbations |
-| Prop 9 (KEY ⇒ M1, simultaneous induction) | proved; (KEY) is the isolated open estimate |
+| Prop 9 (KEY ⇒ M1, simultaneous induction) | proved — but (KEY) is FALSE (91/91 CI-separated violations; freeze-rescue) |
+| Lemma 4 (first-divergence identity) | proved; numerically self-validated (0.00250 vs 0.00213) |
 | r_int(0) = 0 | theorem (Lemma 2); measured 0.0000 at n=4000 |
-| M1, M2 | CONJECTURES — pathwise routes REFUTED (seed 50543, incl. at 2π); reduction to (KEY) rigorous; coupling obstruction quantified (offset ≈ 3.3·|Δv₀| ≫ channel scale) |
+| M1, M2 | measured regularities in Lemma 4's exact frame — ALL local proof routes closed with evidence (pathwise: seed 50543; pointwise: (KEY) refuted); a proof needs occupation-measure estimates, assessed out of proportion here |
 | hidden-channel positivity | expected (steering witness deferred); grounds the two-grades remark |
 | n-dim / non-round / non-separating versions | RESEARCH-DIRECTION §8 program |

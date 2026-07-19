@@ -2228,3 +2228,18 @@ exact). ONE pathwise entry violation: seed 50543 enters at γ=0.4, not at
 widening; certificate that full monotonicity (M1) and wall-never-helps (M2)
 admit no pathwise proof. Both stated as distributional conjectures with the
 reduction and obstruction in THEORY.md.
+
+### (KEY) stress probe + first-divergence identity (2026-07-19, second pass)
+
+`scripts/ring2d_key_probe.py` → `results/continuous_ring2d_key_probe.json`.
+The pointwise reduction hypothesis (KEY) of THEORY.md Prop 9 is **refuted**:
+91/91 corridor-parked-vs-flying-out divergence configs at (γ₁,γ₂)=(0.4,0.6)
+violate it with separated 95% CIs (h₁ 0.52–0.69 vs h₂ 0.00–0.33, n=2000/side)
+— the **freeze-rescue** mechanism (the wall parks the narrow-gap chain at
+rest in privileged corridor positions). The first-divergence identity
+(Lemma 4) self-validates numerically: over 6000 CRN rollouts, 79 first
+divergences, integrand negative at 3/79 with mean +0.162; reconstructed
+difference 0.00213 vs directly measured 0.00250. M1 therefore holds (here)
+because ~96% of divergence mass is inward-crossing — an occupation-measure
+fact with no pointwise proof; M1/M2 recorded as measured regularities in the
+identity's exact frame.
