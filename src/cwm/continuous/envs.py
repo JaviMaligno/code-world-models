@@ -253,7 +253,7 @@ class ShapeField2D:
     def _integrate(self, state: State, action: float):
         return integrate_2d(state, action, self.dt, self.gain, self.drag, self.a_max)
 
-    def contact_mode(self, state: State, action: float) -> bool:
+    def contact(self, state: State, action: float) -> bool:
         x2, y2, _, _ = self._integrate(state, action)
         return self._inside(x2, y2)
 

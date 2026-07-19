@@ -30,12 +30,12 @@ def test_full_arm_has_exact_predicate():
     assert "(x - 3.0)**2 + (y - 0.0)**2 <= 1.0**2" in full  # exact math, not repr
 
 def test_every_probe_fires_the_mode():
-    # NOTE: ShapeField2D exposes contact via `contact_mode(state, action)`
-    # (see envs.py), not a bare `.contact`; the fixed hard mode-fire check
-    # below drives that real method.
+    # NOTE: ShapeField2D exposes contact via `contact(state, action)`
+    # (see envs.py); the fixed hard mode-fire check below drives that
+    # real method.
     for shp in (Circle(3.0,0.0,1.0), Parabola(3.0,2.0), RegularPolygon(3.0,0.0,1.0,5,math.pi/5)):
         env = ShapeField2D(shape=shp)
         probes = spec_for(env).mode_probes(env)["mode"]
         assert len(probes) >= 8
         for (state, action) in probes:
-            assert env.contact_mode(state, action), f"probe must fire for {shp}"
+            assert env.contact(state, action), f"probe must fire for {shp}"
