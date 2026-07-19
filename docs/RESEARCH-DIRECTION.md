@@ -193,7 +193,12 @@ breadth/generality the result needed.
 3. **(Optional) Tighten the play result** — more seeds/sims, confidence intervals,
    and the synthesized-CWM (not just hand-written base) at scale.
 4. Imperfect-information round (poker + Quadranto + Hand of War).
-5. **Rethink applications beyond games (open, deliberate brainstorm needed).**
+5. **Paper 3 — topology of the critical region (shaping started 2026-07-19).**
+   The annulus/non-trivial-homology idea deliberately does NOT go into paper 2
+   (decision + full rationale, thesis, instrument ladder, and provable-vs-
+   measured split in `docs/paper3/RESEARCH-DIRECTION.md`). Depends on paper 2's
+   continuous stack (`claude/continuous-setting-feasibility-wktp6b`) landing.
+6. **Rethink applications beyond games (open, deliberate brainstorm needed).**
    The Code World Model pattern (LLM synthesizes a verifiable executable model
    from examples + classical planning/checking on top) may transfer to non-game
    domains — e.g. business rules / pricing (connects to the author's real work
