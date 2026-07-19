@@ -2243,3 +2243,29 @@ difference 0.00213 vs directly measured 0.00250. M1 therefore holds (here)
 because ~96% of divergence mass is inward-crossing — an occupation-measure
 fact with no pointwise proof; M1/M2 recorded as measured regularities in the
 identity's exact frame.
+
+### TDA arm, first measurement: contact clouds carry ∂𝓡's topology, not the mode's (2026-07-19)
+
+`scripts/ring2d_tda_probe.py` → `results/continuous_ring2d_tda_probe.json`;
+detector = from-scratch Rips persistence (`src/cwm/continuous/tda.py`,
+ground-truth-tested incl. the classical sqrt(3) circle death), pre-registered
+rule: bars with persistence > 3× median-NN spacing.
+
+| config | N=40 | 160 | 640 | 2560 | angular coverage @2560 |
+|--------|------|-----|-----|------|------------------------|
+| ring_out (β₁=1 mode) | β̂₁=0 | 0 | 0 | 0 | 0.33 |
+| disc_out (β₁=0 mode) | β̂₁=0 | 0 | 0 | 0 | 0.33 |
+| ring_in  (β₁=1 mode) | **β̂₁=1** | 1 | 1 | 1 | 1.00 |
+
+Readings: (1) ring_out and disc_out rows are IDENTICAL number-for-number —
+a theorem, not sampling luck (Lemma 2 corollary, THEORY.md: from outside, no
+landing reaches d < r_in, so disc and annulus fire on exactly the same
+steps; the evidence is pathwise identical). Outside data cannot pose the
+disc-vs-annulus question — paper 2's dimensional reduction is rational given
+its evidence. (2) From inside, β₁=1 is recovered already at N=40 (top
+persistence ~4.0 vs τ~0.5, full angular coverage by N=160). (3) Topology
+recovery is a property of the contact set's position relative to reach
+(∂𝓡), not of N: more outside data saturates an arc (coverage 0.25→0.33 from
+N=640→2560) and never closes the loop. The constructive arm's real question
+is therefore WHERE evidence comes from (μ0/policy), and only secondarily how
+much.

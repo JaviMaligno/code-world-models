@@ -1,0 +1,153 @@
+{
+  "script": "ring2d_tda_probe.py",
+  "detector": "betti1_estimate factor=3.0, dedupe 0.05, cap 90",
+  "rows": [
+    {
+      "config": "ring_out",
+      "n_rollouts": 40,
+      "raw_contacts": 1,
+      "deduped": 1,
+      "used": 1,
+      "betti1": 0,
+      "tau": null,
+      "top_persistence": [],
+      "angular_coverage": 0.027777777777777776
+    },
+    {
+      "config": "ring_out",
+      "n_rollouts": 160,
+      "raw_contacts": 2,
+      "deduped": 2,
+      "used": 2,
+      "betti1": 0,
+      "tau": null,
+      "top_persistence": [],
+      "angular_coverage": 0.05555555555555555
+    },
+    {
+      "config": "ring_out",
+      "n_rollouts": 640,
+      "raw_contacts": 38,
+      "deduped": 29,
+      "used": 29,
+      "betti1": 0,
+      "tau": 0.21232599447758105,
+      "top_persistence": [],
+      "angular_coverage": 0.25
+    },
+    {
+      "config": "ring_out",
+      "n_rollouts": 2560,
+      "raw_contacts": 197,
+      "deduped": 147,
+      "used": 90,
+      "betti1": 0,
+      "tau": 0.1735624081029959,
+      "top_persistence": [
+        0.015957996068357738,
+        0.0106993874359059
+      ],
+      "angular_coverage": 0.3333333333333333
+    },
+    {
+      "config": "disc_out",
+      "n_rollouts": 40,
+      "raw_contacts": 1,
+      "deduped": 1,
+      "used": 1,
+      "betti1": 0,
+      "tau": null,
+      "top_persistence": [],
+      "angular_coverage": 0.027777777777777776
+    },
+    {
+      "config": "disc_out",
+      "n_rollouts": 160,
+      "raw_contacts": 2,
+      "deduped": 2,
+      "used": 2,
+      "betti1": 0,
+      "tau": null,
+      "top_persistence": [],
+      "angular_coverage": 0.05555555555555555
+    },
+    {
+      "config": "disc_out",
+      "n_rollouts": 640,
+      "raw_contacts": 38,
+      "deduped": 29,
+      "used": 29,
+      "betti1": 0,
+      "tau": 0.21232599447758105,
+      "top_persistence": [],
+      "angular_coverage": 0.25
+    },
+    {
+      "config": "disc_out",
+      "n_rollouts": 2560,
+      "raw_contacts": 197,
+      "deduped": 147,
+      "used": 90,
+      "betti1": 0,
+      "tau": 0.1735624081029959,
+      "top_persistence": [
+        0.015957996068357738,
+        0.0106993874359059
+      ],
+      "angular_coverage": 0.3333333333333333
+    },
+    {
+      "config": "ring_in",
+      "n_rollouts": 40,
+      "raw_contacts": 100,
+      "deduped": 86,
+      "used": 86,
+      "betti1": 1,
+      "tau": 0.18915627334284413,
+      "top_persistence": [
+        4.039724629059405
+      ],
+      "angular_coverage": 0.7222222222222222
+    },
+    {
+      "config": "ring_in",
+      "n_rollouts": 160,
+      "raw_contacts": 403,
+      "deduped": 295,
+      "used": 90,
+      "betti1": 1,
+      "tau": 0.3061981545769033,
+      "top_persistence": [
+        4.688538311311051
+      ],
+      "angular_coverage": 1.0
+    },
+    {
+      "config": "ring_in",
+      "n_rollouts": 640,
+      "raw_contacts": 1538,
+      "deduped": 780,
+      "used": 90,
+      "betti1": 1,
+      "tau": 0.3659966465778568,
+      "top_persistence": [
+        5.052455837462218
+      ],
+      "angular_coverage": 1.0
+    },
+    {
+      "config": "ring_in",
+      "n_rollouts": 2560,
+      "raw_contacts": 6156,
+      "deduped": 1391,
+      "used": 90,
+      "betti1": 1,
+      "tau": 0.34105125838690625,
+      "top_persistence": [
+        4.857628262342658
+      ],
+      "angular_coverage": 1.0
+    }
+  ],
+  "elapsed_s": 11.0
+}

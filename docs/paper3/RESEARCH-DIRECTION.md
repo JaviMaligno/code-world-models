@@ -188,6 +188,17 @@ instrument, both worlds, one knob.
    paper 2's probe limitation (probes only where the *true* mode fires; invented
    modes needed code inspection): probe placement itself becomes
    topology-driven.
+   **Status 2026-07-19 — measurement half DONE:** from-scratch Rips
+   persistence module (`src/cwm/continuous/tda.py`, ground-truth-tested) +
+   contact-cloud probe. Finding (EXPERIMENTS.md): the contact set carries the
+   topology of the REACHABLE boundary, not of the mode — from outside, ring
+   and disc evidence are pathwise IDENTICAL (Lemma 2 corollary; paper 2's
+   dimensional reduction is rational given its evidence) and β̂₁ stays 0 at
+   any N; from inside, β̂₁ = 1 already at N = 40. So the summary the repair
+   prompt can honestly receive is about ∂𝓡, and the LLM half of this arm
+   (still gated on the paper-2 confound cells) should test BOTH summaries:
+   the arc summary from outside (does it at least stop the half-plane
+   reduction?) and the loop summary from inside.
 4. **Multidimensional arm (the "heavy" part, scoped last).** Spherical shells
    S^{d−1} in d = 3..6 (state (x⃗, v⃗), same freeze semantics), solid torus in
    d = 3. Hypotheses to test, not assume: repair difficulty and artifact

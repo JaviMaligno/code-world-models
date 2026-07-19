@@ -74,6 +74,17 @@ velocity, so g never drops below r_in; induct. ∎
 Hypothesis holds with margin for real AND imagined rollouts (planners use the
 same integrator and action clamp).
 
+*Corollary (evidence equivalence of disc and annulus from outside).* From
+outside starts, no landing ever falls at d < r_in (the lemma), so the disc
+mode ‖p−c‖ ≤ r_out and the annulus mode r_in ≤ ‖p−c‖ ≤ r_out fire on exactly
+the same steps of every realization: the contact processes — and hence ALL
+evidence any gate, repair loop, or TDA pass extracts — are pathwise
+identical. Measured as an exact row-for-row equality of the two contact
+clouds in the TDA probe (`results/continuous_ring2d_tda_probe.json`,
+ring_out vs disc_out at every N). Paper 2's dimensional reduction is
+*rational given the evidence*: outside data cannot even pose the disc-vs-
+annulus question.
+
 *Honesty note — this is metric, not topological.* The lemma uses only that
 distance-to-center is 1-Lipschitz; it works verbatim in ℝⁿ for round shells
 (S^{n−1} of any dimension) and needs NO homology. Genuine algebraic topology
