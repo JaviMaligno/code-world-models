@@ -215,23 +215,39 @@ def refine_capped(provider, model: str, contract: str, code: str,
     set, the dose cannot explain them: refinement stops immediately and the
     result is tagged `evidence_capped_failure=True` rather than spending
     iterations that could not possibly help.
+
+    A GLOBAL infra/sandbox failure (syntax error, timeout, missing/malformed
+    output -- `contract_accuracy_indexed` reports this as a single failure
+    with `source_index=None`, since it cannot be attributed to any one
+    transition) is NOT evidence of a capped dose: it says nothing about
+    whether the model's competence is limited by the 40 examples it was
+    shown. Such an iteration is fed back to the model exactly as
+    `refine_continuous` does for the uncapped baseline, and refinement keeps
+    going (up to `max_iters`) rather than being mislabeled
+    `evidence_capped_failure`.
     """
     usages = []
     acc, failures = contract_accuracy_indexed(code, gate_transitions, eps)
     iterations = 0
     evidence_capped_failure = False
     while acc < 1.0 and iterations < max_iters:
-        capped = [f for f in failures if f["source_index"] in allowed_source_indices]
-        if not capped:
-            evidence_capped_failure = True
-            break
+        infra_failure = any(f["source_index"] is None for f in failures)
+        if infra_failure:
+            # Unattributable infra/sandbox error: not the "evidence capped"
+            # case -- feed it back like the uncapped baseline and keep going.
+            feed = failures
+        else:
+            feed = [f for f in failures if f["source_index"] in allowed_source_indices]
+            if not feed:
+                evidence_capped_failure = True
+                break
         msg = (f"{contract}\n\nThe current implementation is below. It fails "
                f"some of the controlled observations you were given. Fix it "
                f"so every transition matches to within {eps} in x, v and "
                f"reward. Output only one ```python code block.\n\n"
                f"CURRENT CODE:\n```python\n{code}\n```\n\n"
                f"FAILURES (expected vs got):\n" +
-               "\n".join(f["text"] for f in capped[:20]))
+               "\n".join(f["text"] for f in feed[:20]))
         completion = provider.complete([{"role": "user", "content": msg}], model=model)
         usages.append(completion.usage)
         code = extract_code(completion.text)

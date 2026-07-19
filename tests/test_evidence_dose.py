@@ -3,7 +3,9 @@ import random
 from cwm.continuous.envs import ShapeField2D
 from cwm.continuous.shapes import Circle
 from cwm.continuous.contract import collect_transitions
-from cwm.continuous.evidence_dose import build_dose_sample, is_evidence_capped_failure
+from cwm.continuous.evidence_dose import (
+    build_dose_sample, is_evidence_capped_failure, refine_capped)
+from cwm.llm.provider import FakeProvider
 
 
 def test_transitions_carry_source_index():
@@ -24,3 +26,29 @@ def test_fixed_size_and_distinct_negatives():
 def test_capped_failure_uses_source_indices():
     assert is_evidence_capped_failure(failure_source_indices={311, 512}, allowed_source_indices={7, 8, 9}) is True
     assert is_evidence_capped_failure(failure_source_indices={8, 512}, allowed_source_indices={7, 8, 9}) is False
+
+
+def test_infra_failure_is_not_reported_as_evidence_capped():
+    # A syntactically-invalid artifact causes `contract_accuracy_indexed` to
+    # hit the GLOBAL sandbox-failure path (produced is None), which reports a
+    # single failure with source_index=None -- unattributable to any
+    # transition, and therefore never a member of `allowed_source_indices`.
+    # Before the fix this made `capped` empty on the very first iteration and
+    # mislabeled the run `evidence_capped_failure=True`. It must instead be
+    # treated like the uncapped baseline: fed back to the model and refined
+    # up to max_iters, with evidence_capped_failure staying False throughout.
+    transitions = [
+        {"state": [0.0], "action": 0.0, "next_state": [0.0], "reward": 0.0,
+         "contact": False, "source_index": i}
+        for i in range(5)
+    ]
+    allowed_source_indices = {0, 1}  # irrelevant to an infra failure
+    broken_code = "this is not ) valid ( python $$$"
+    provider = FakeProvider([f"```python\n{broken_code}\n```"] * 3)
+    result = refine_capped(
+        provider, "fake", contract="contract text", code=broken_code,
+        gate_transitions=transitions, controlled_examples=transitions,
+        allowed_source_indices=allowed_source_indices, eps=1e-9, max_iters=3)
+    assert result.evidence_capped_failure is False
+    assert result.iterations == 3
+    assert result.accuracy == 0.0
