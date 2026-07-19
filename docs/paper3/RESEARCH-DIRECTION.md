@@ -19,20 +19,36 @@ repaired) to a 2D *circular* disc (0/76; the synthesizer reduces the disc to a
 half-plane — dimensional reduction). Its §10 leaves "other geometries" open.
 
 The tempting move is to add an **annulus mode** (a ring: non-trivial H₁ in the
-plane) as one more paper-2 arm. Decision (2026-07-19): **no — the annulus opens
-paper 3.** Rationale, recorded so it isn't relitigated:
+plane) as one more paper-2 arm. Decision (2026-07-19, re-reviewed the same day
+on content grounds after Appendix A landed): **no — the annulus opens paper 3.**
+Rationale, recorded so it isn't relitigated. The criterion is CONTENT — does the
+result test/sharpen paper 2's claims, or state new ones? — never the state of
+paper 2's files (PDFs/tarballs are regenerated continuously and certify nothing):
 
-- Paper 2's negative result is already saturated: 0/76 on the *contractible*
-  disc. A harder geometry cannot strengthen a floor of zero, and the submission
-  (tex/PDF/tarball/figures) is finished; reopening it buys nothing.
-- The disc is topologically trivial. The annulus's payoff is not "repair also
-  fails here" — it is a set of phenomena that paper 2's measure-theoretic frame
-  cannot even state: exact (not just exponentially likely) unidentifiability of
-  enclosed content, topological lower bounds on query-hit mass, and
-  topology-informed repair. These need their own frame.
+- **The annulus does not test paper 2's claims; it states new ones.** Paper 2's
+  geometry-dependence claim is already carried by the minimal contrast — flat 1D
+  clamp (82/82 repaired) vs curved 2D disc (0/76), *both contractible* — and a
+  0/N floor cannot be strengthened by a harder region. At γ = 0 the annulus
+  exits paper 2's frame entirely: the enclosed region has r = 0 exactly, the
+  danger law's endpoint degenerates, and the operative statements (gate
+  quotient, crossing lower bounds, reach-null unidentifiability,
+  topology-informed repair) are new propositions, not instances of paper 2's.
+  New claims ⇒ new paper.
+- **The annulus is also the wrong *ablation* for paper 2's own open question.**
+  What would isolate the cause of the 0/76 *inside* paper 2 is a fixed-topology
+  contrast — e.g. an axis-aligned square patch (flat edges, contractible, lower
+  descriptive complexity than a circle), separating curvature from descriptive
+  complexity (the two-axes note of Appendix A.2). The annulus varies curvature
+  AND topology at once: useless as a paper-2 ablation, exactly right as paper
+  3's opening subject.
 - Paper 2 already climbed the first rung silently: two disjoint patches means
   β₀ = 2, with per-mode identifiability and partial-repair machinery built. The
   annulus is the β₁ rung. Paper 3 makes the ladder explicit and keeps climbing.
+- **Content-based dependency that DOES belong to paper 2:** paper 3's rung-1
+  datum is the 0/76, and paper 2's §10 leaves its two obvious confounds open
+  (richer prompting, larger iteration budgets). Closing those cells is paper-2
+  content and should happen there, before paper 3's synthesis arm runs — see
+  the §6 risk entry.
 
 ## 2. The reframe: from geometry to topology of the critical region
 
@@ -128,8 +144,11 @@ instrument, both worlds, one knob.
    iters, 20 seeds/cell, mini+large, cross-family spot-checks). Classification
    now includes *topological* type of the artifact's mode region (blind /
    half-plane / disc / annulus / other), by code inspection + probes seeded on
-   both boundary components. Key question: does any family ever write a region
-   with a hole from boundary-crossing data alone?
+   both boundary components, logging **both** complexity axes per artifact —
+   geometric (shape/curvature) and descriptive (AST) — since paper 2's
+   "dimensional reduction" is a descriptive-complexity collapse, not a
+   geometric one (Appendix A.2). Key question: does any family ever write a
+   region with a hole from boundary-crossing data alone?
 3. **Topology-informed repair (the constructive arm).** Persistent homology /
    clustering on the sample's *contact set* (the revealed boundary points)
    yields a topological summary ("contact points lie on a closed curve
@@ -145,8 +164,11 @@ instrument, both worlds, one knob.
    reduction track **codimension and Betti profile**, with "dimensional
    reduction" as the general failure mode (the synthesizer projects the region
    to lower descriptive complexity); the gate-quotient volume grows with
-   enclosure. Keep cells small; this arm exists to show the invariants organize
-   the results, not to sweep every d.
+   enclosure. Boundary metrics normalized by **reach** τ(M) (Federer; Appendix
+   A.1) rather than a single curvature scalar — the correct d ≥ 3
+   generalization, and the scale that decides whether a sample can resolve
+   inner vs outer boundary at all. Keep cells small; this arm exists to show
+   the invariants organize the results, not to sweep every d.
 
 ## 5. What would be provable vs measured (paper-1/2 discipline)
 
@@ -165,11 +187,22 @@ instrument, both worlds, one knob.
   cute point, not a paper. The paper needs the *consequential* regimes (γ > 0
   channel, start-inside, multi-chamber navigation) to carry the danger story;
   design instruments so topology changes *play*, not only certifiability.
+- **The 0/76 carries paper 3's premise and has open confounds.** Paper 2's §10
+  leaves "richer prompting, larger iteration budgets" open on the disc cells.
+  If either restores disc repair, the ladder's rung-1 entry changes and paper
+  3's motivation shifts — from "repair collapses on curved geometry" to "repair
+  needs topological hints", which the §4.3 arm tests anyway. Either outcome
+  feeds paper 3, but the check is paper-2 content and should run on its branch
+  (a few disc seeds with a richer prompt / larger budget suffice) before paper
+  3's synthesis arm burns cells on a premise that might move.
 - **TDA at N = 40 is data-starved.** The contact set from 40 rollouts may be a
   handful of points on the outer boundary only. The TDA arm may need contact
   points pooled across refine iterations, or a larger-N sensor pass framed as
   deployment monitoring (which is legitimate: mitigation already watches every
-  real step).
+  real step). Appendix A.1's Niyogi–Smale–Weinberger threshold makes this
+  worry *computable* (a sample-density bound in units of reach below which β₁
+  is unrecoverable), and A.2's active-boundary-learning direction is the
+  designed answer to it.
 - **Don't burn LLM cells before the mechanism arm freezes the design** —
   paper 2's discipline (prototype-validated frozen defaults) applies verbatim.
 - **Scope creep is the known failure mode of "more topology".** The ladder ends
@@ -179,7 +212,12 @@ instrument, both worlds, one knob.
 ## 7. Next steps
 
 1. Land paper 2 (its branch merges; the continuous stack becomes available
-   here). Blocked on that.
+   here). Blocked on that. While there, close the two §10 confounds on the disc
+   cells (richer prompt / larger budget, a few seeds) — paper-2 content that
+   paper 3's rung-1 premise cites (§6 first risk). The square-patch ablation
+   (curvature vs descriptive complexity at fixed topology, §1) is optional
+   paper-2 material for the same reason: it sharpens the 0/76's *cause* without
+   touching topology.
 2. Prototype `RingField2D` + calibration (rarity vs thickness, γ sweep,
    truth-MPC navigates, blind-MPC pins) — the analogue of the 2026-07-16
    PatchField2D controller prototype. Freeze defaults.
