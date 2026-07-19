@@ -3,11 +3,14 @@
 Date: 2026-07-19 (rev. 4 after third expert review of 538c076)
 Branch: `claude/continuous-setting-feasibility-wktp6b`
 Worktree: `cwm-wt-paper2`
-Status: implementation-ready. rev. 4 closes V=V_transcript, version-space `S`,
-transcript-controlled evidence dose, non-positional guards, and pins numeric
-cells/metrics/thresholds/budget. A calibration prototype (plan Task 1) fixes the
-values marked *(calibrated)* before the synthesis runs, exactly as the original
-disc did.
+Status: **GO for implementation (rev. 5)** — reviewer-approved. Two-phase GO:
+(A) build now — Task 1, interfaces, sandbox, metrics, version space, baselines;
+(B) launch the ~520 Azure syntheses ONLY after Task 1 emits a **frozen
+calibration artifact** (all parameters, thresholds, and probe generators pinned
+to a versioned file). A calibration prototype (plan Task 1) fixes the values
+marked *(calibrated)* before any synthesis runs, exactly as the original disc
+did. The three precisions and two nits below live inside Task 1 and need no
+further conceptual review.
 
 ## Decomposition (V is V_transcript)
 
@@ -96,8 +99,19 @@ Common reachable box: **`[-8,14]×[-6,6]`** (envelope of the start→lure corrid
 if the metric shifts `<1%` at 512². Mode offset `c` near the old patch band
 (`x≈3`). `δ` = **median normal-bracket width between the nearest shown
 inside/outside pair** (fallback: local version-space diameter). "repaired" =
-**boundary-band disagreement ≤ 0.05 AND FPR ≤ 0.05** on the primary score
-*(threshold calibrated on the anchor)*.
+**boundary-band disagreement ≤ 0.05 AND FPR ≤ 0.05** on the primary score.
+**Precision 1 — the repaired threshold is fixed from truth / oracle / full-arm
+reconstructions and the grid's numerical error, NEVER tuned on the incomplete
+anchor's own results** (so the threshold cannot be chosen to make the anchor
+look repaired).
+
+**Precision 2 — the primary metric's state–action domain (the box only fixes
+positions):** velocity ranges `vx,vy` *(calibrated to the p99 reachable
+envelope)*, the action-proposal distribution, the number of probes per stratum,
+the boundary-tube half-width, and the preimage-invariance tolerance are all
+pinned in the frozen calibration artifact. Also log the **fraction of probes /
+planner trajectories falling outside the box** (nit 2 — the random p99 may not
+cover the planner's own distribution).
 
 | Sweep | Cells (geometry × config) | Value |
 |-------|---------------------------|-------|
@@ -115,9 +129,13 @@ Varying `m` initial contacts is void if refinement then feeds up to 20 more
 failures. So: **cap the entire transcript (initial + every refinement prompt) to
 exactly `m` positive contacts plus matched nearby negatives**, holding the total
 example count and token budget constant by substituting background transitions
-for contacts. `m` is then the only intervention. (Alternative kept in reserve:
-run evidence-dose with refinement disabled, or a small `m_initial×m_refinement`
-factorial.)
+for contacts. `m` is then the only intervention. **Precision 3 — background
+substitutes are presented in an explicit "controlled observations" block, NOT as
+FAILURES**: real refinement feedback is limited to the allowed evidence set, so a
+background transition the artifact reproduces correctly is never fed back as a
+failure. If the gate fails only *outside* the allowed set, stop as an
+**evidence-capped failure** (a distinct outcome class). (Alternatives in reserve:
+refinement disabled, or a small `m_initial×m_refinement` factorial.)
 
 ### Shape interface (unbounded-safe; covers strip/wedge)
 ```
@@ -138,7 +156,9 @@ circle. Bounding box belongs to the experiment, not the shape.
   across geometries/sizes); model×geometry interaction.
 - **Pre-registered adaptive rule** (observed-result-dependent is fine *because*
   pre-registered): 10 seeds all cells → 20 where the crossover CI crosses a cell
-  → 30 if its width still exceeds a fixed bound; design-aware inference.
+  → 30 if its width still exceeds a fixed bound; design-aware inference. **Nit 1
+  — the crossover rule applies ONLY to the curvature sweep**; evidence-dose and
+  composition densify by the width of the score/interaction CI instead.
 - Report a **crossover interval**, not a point.
 - Record exact model version, temperature, inference seed per call.
 
