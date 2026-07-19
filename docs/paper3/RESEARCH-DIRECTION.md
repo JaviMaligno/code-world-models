@@ -228,14 +228,18 @@ instrument, both worlds, one knob.
   cute point, not a paper. The paper needs the *consequential* regimes (γ > 0
   channel, start-inside, multi-chamber navigation) to carry the danger story;
   design instruments so topology changes *play*, not only certifiability.
-- **The 0/76 carries paper 3's premise and has open confounds.** Paper 2's §10
-  leaves "richer prompting, larger iteration budgets" open on the disc cells.
-  If either restores disc repair, the ladder's rung-1 entry changes and paper
-  3's motivation shifts — from "repair collapses on curved geometry" to "repair
-  needs topological hints", which the §4.3 arm tests anyway. Either outcome
-  feeds paper 3, but the check is paper-2 content and should run on its branch
-  (a few disc seeds with a richer prompt / larger budget suffice) before paper
-  3's synthesis arm burns cells on a premise that might move.
+- **~~The 0/76 confounds~~ RESOLVED (2026-07-19, run locally on the paper-2
+  branch):** 0/40 repair under the strongest joint treatment (region guidance
+  + 3× budget, large+mini). The rung-1 datum stands UNCONDITIONED — and the
+  mechanism sharpened in paper 3's favor: the guidance eliminated the
+  half-plane reduction (artifacts now fit bounded 2D regions — rotated
+  ellipses, rectangles, micro-disc unions) yet 0/40 write the true disc; they
+  fit the hull of the observed pre-freeze crescent and 36/40 condition on the
+  wrong variable (current position, not the landing). This is the
+  evidence-equivalence corollary made empirical on the synthesis side:
+  hull-fitting is the rational response to reachable-boundary-only evidence —
+  the §4.3 arc/loop-summary experiment is now the directly indicated
+  treatment. (Analysis in paper-2 EXPERIMENTS.md, 2026-07-19 entry.)
 - **TDA at N = 40 is data-starved.** The contact set from 40 rollouts may be a
   handful of points on the outer boundary only. The TDA arm may need contact
   points pooled across refine iterations, or a larger-N sensor pass framed as
