@@ -121,32 +121,75 @@ artifact is wrong, certified, and costless; γ > 0 continuously converts the
 same wrongness into (1−r(γ))^N-gated danger. One knob walks the artifact
 through all three regimes — the three-way split of the mechanism arm.
 
-## Proposition 4 (crossing lower bound on query-hit mass — sketch, to tighten)
+## Proposition 4 (crossing lower bound on query-hit mass)
 
-For the mode-blind model f̂_blind and any planner whose real trajectory
-enters the closed disc ‖p − c‖ ≤ r_in at some step (e.g. because the phantom
-lode at c lures it), Lemma 2 applied to the REAL path under blind planning
-(the blind model never freezes, so the real path is the integrator path until
-truth's first freeze) gives: the trajectory has a step landing in A, i.e. the
-episode queries/realizes the disagreement region with probability ≥ P(planner
-commits to the interior). At the defaults the blind MPC commits on every
-episode (measured: blind_contact_rate 1.0), so μ_query(E) = 1 and paper 2's
-Proposition 3 bound is tight here — play_cost ≈ its upper bound. TO TIGHTEN:
-state "commits to the interior" as a reward-gap condition on the planner
-(the phantom's imagined return dominates every non-crossing alternative) so
-the bound has no behavioral hypothesis; this is where a genuinely topological
-version will replace the metric one for non-round/non-separating geometry
-(linking number of the realized path with the mode's core submanifold).
+*Hypotheses.* f̂_blind the mode-blind model; the planner selects, at each real
+step, the first action of a candidate action sequence maximizing imagined
+return under f̂_blind over a candidate set 𝒞 (random-shooting MPC, CEM elites,
+etc. — any deterministic argmax over 𝒞 given the seed). Assume:
 
-## Remark (r(γ): the identifiability knob is continuous)
+  (RG) *reward gap:* every sequence in 𝒞 whose imagined path (under f̂_blind,
+  from the current real state) enters B(c, r₀) has imagined return strictly
+  greater than every sequence in 𝒞 whose imagined path stays outside
+  B(c, r_out);
+  (C) *candidate coverage:* 𝒞 contains at least one sequence whose imagined
+  path enters B(c, r₀).
+
+Then the selected sequence's imagined path crosses the annulus A (Lemma 2,
+applied to the imagined path: blind imagination never freezes, steps ≤ Δ), so
+the planner **queries f̂_blind on the disagreement region E = A × queried
+actions during planning**: μ_query(E) = 1 conditional on (RG) ∧ (C). Paper 2's
+Proposition 3 (play_cost ≤ μ_query(E)) is therefore tight-side-active on this
+instrument: nothing in the upper bound is slack by failure to query.
+
+*Proof.* By (C) an entering candidate exists; by (RG) no non-entering
+candidate can be the argmax, so the selected imagined path enters B(c, r₀).
+Since r₀ < r_in at the defaults (2.0 < 3.5), that path passes from
+‖p − c‖ > r_out to ‖p − c‖ < r_in, and Lemma 2 places one of its steps in A.
+That step is a model query on E. ∎
+
+*(RG) is checkable, not behavioral.* At the frozen defaults it holds with
+margin for every start state we use: a non-entering imagined path collects
+phantom reward ≤ amp/(1+e^{(r_out−r₀)/width}) = 1/(1+e⁶) ≈ 0.0025 per step
+plus at most the real lode's plateau (0.3/step reached after ≥ 6 units of
+travel), while an entering path collects ≈ 1.0/step once inside — at horizon
+40 the entering return dominates (≈35 vs ≈9 from the start region, larger
+margin near the ring). A pre-registered check per instrument variant (as with
+non-triviality in paper 1): verify (RG) numerically over the visited-state
+envelope before running the arm. (C) holds for random shooting with
+probability → 1 in the sample count and is logged (contact implies it fired).
+
+*Measured.* blind_contact_rate = 1.0 at every gap in the calibration — the
+real path realizes the crossing every episode, matching μ_query = 1.
+
+*Topological upgrade slot (n-dim program §8.3-2).* For non-separating modes
+(TubeField-3) the same proposition's conclusion must be re-derived with the
+linking number of the imagined path and the mode's core replacing the
+metric crossing — that is the genuinely homological version of this bound.
+
+## Remark (r(γ): what is theorem, what is not)
 
 r(γ) = P(a random rollout fires the mode) and r_int(γ) = P(a random rollout
-enters the interior) satisfy: r_int(0) = 0 exactly (Lemma 2), r_int is
-nondecreasing in γ (mode region shrinks with γ, so freezes can only be
-delayed; a coupling argument per realization), and the danger law applies
-verbatim at each γ with its own r(γ). The calibration script
-(`scripts/continuous_ring2d.py`) measures both curves; the γ = 0 column is a
-theorem, the rest is measurement.
+enters the interior). Status after actually attempting the proofs (2026-07-19):
+
+- **r_int(0) = 0 exactly** — theorem (Lemma 2).
+- **r_int(γ) → 0 as γ → 0** — provable by a union/density bound: interior
+  entry requires some step to land in the channel sector of the annular band;
+  the per-step landing distribution has bounded density on the band (smooth
+  push-forward of the action noise), so P(∪ steps land in a sector of angular
+  width γ) ≤ h · C · γ → 0. To write out with the density constant made
+  explicit; sketch-level for now.
+- **Monotonicity of r_int in γ** — CONJECTURE, not proved. The naive pathwise
+  coupling (same action sequence, A(γ₂) ⊆ A(γ₁)) fails: a freeze under the
+  smaller gap re-anchors the trajectory (position kept, velocity zeroed), and
+  the two realizations diverge from that step on — a freeze can, in
+  principle, redirect a rollout INTO a later interior entry. The calibration
+  is consistent with monotonicity (0.0000 / 0.0067 / 0.0100), but the paper
+  must state it as measured unless a smarter argument lands. Honesty note
+  kept deliberately: this is the same discipline as paper 2's play_cost
+  (structural-but-empirical pieces named as such).
+- The danger law applies verbatim at each γ with its own r(γ) — theorem
+  (unchanged from paper 1/2; nothing ring-specific).
 
 ## Status ledger
 
@@ -155,6 +198,8 @@ theorem, the rest is measurement.
 | Prop 1 (gate quotient) | proved (elementary); instantiated by reach-null test |
 | Lemma 2 (crossing) | proved, constants checked at defaults |
 | Prop 3 (unfalsifiable+harmless, bitwise) | proved; confirmed bitwise on 3 seeds |
-| Prop 4 (query lower bound) | sketch — behavioral hypothesis to be replaced |
-| r(γ) continuity/monotonicity | coupling argument to write out; measured |
+| Prop 4 (query lower bound) | proved under (RG)+(C); (RG) checkable per instrument, check to pre-register |
+| r_int(0) = 0 | theorem (Lemma 2); measured 0.0000 |
+| r_int continuity at 0 | density-bound sketch, constant to make explicit |
+| r_int monotonicity in γ | CONJECTURE (pathwise coupling fails); measured consistent |
 | n-dim / non-round / non-separating versions | RESEARCH-DIRECTION §8 program |

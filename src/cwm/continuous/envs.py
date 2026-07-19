@@ -247,10 +247,14 @@ class RingField2D:
     width: float = 0.5
     h_episode: int = 80
     x0_range: float = 0.5
+    x0_center: tuple = (0.0, 0.0)   # start placement; set to `center` for
+                                    # inside-the-hole episodes (mu0 knob:
+                                    # moves the reachable set, Prop 1)
 
     def initial_state(self, rng) -> State:
-        return (rng.uniform(-self.x0_range, self.x0_range),
-                rng.uniform(-self.x0_range, self.x0_range), 0.0, 0.0)
+        return (self.x0_center[0] + rng.uniform(-self.x0_range, self.x0_range),
+                self.x0_center[1] + rng.uniform(-self.x0_range, self.x0_range),
+                0.0, 0.0)
 
     def _lode(self, x: float, y: float, lode: tuple, amp: float) -> float:
         d = math.hypot(x - lode[0], y - lode[1])

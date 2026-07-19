@@ -94,3 +94,25 @@ def test_wrong_topology_is_planner_equivalent_at_gap_zero():
                                 n_samples=40)
         assert a.ret == b.ret and a.final_state == b.final_state
         assert a.contact == b.contact
+
+
+def test_inside_start_moves_the_reachable_set():
+    """The mu0 knob (Prop 1): starting inside the hole makes the interior
+    part of the reachable set — the filled model's gauge content becomes
+    falsifiable (it disagrees with truth on real transitions), and the
+    crossing lemma traps the trajectory INSIDE just as it trapped it outside."""
+    inside_env = RingField2D(x0_center=RingField2D().center)
+    rng = random.Random(7)
+    s = inside_env.initial_state(rng)
+    assert inside_env.in_interior(s[0], s[1])
+    f = filled_of(inside_env)
+    disagreements = 0
+    for _ in range(inside_env.h_episode):
+        a = rng.uniform(-inside_env.a_max, inside_env.a_max)
+        st, _, _ = inside_env.step(s, a)
+        sf, _, _ = f.step(s, a)
+        disagreements += st != sf
+        s = st
+        assert math.hypot(s[0] - inside_env.center[0],
+                          s[1] - inside_env.center[1]) <= inside_env.r_out
+    assert disagreements > 0    # filled freezes where truth moves: falsified
