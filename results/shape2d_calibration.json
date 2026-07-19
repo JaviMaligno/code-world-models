@@ -1,0 +1,266 @@
+{
+  "box": [
+    [
+      -8.0,
+      14.0
+    ],
+    [
+      -6.0,
+      6.0
+    ]
+  ],
+  "grid_n": 256,
+  "rarity_target": 0.15,
+  "rarity_tol": 0.05,
+  "frac_planner_outside_box": 0.0,
+  "frac_outside_box_bound": 0.05,
+  "cal_seed_stream": 10000,
+  "val_seed_stream": 90000,
+  "delta": 0.044478174299001694,
+  "delta_provenance": "median_normal_bracket",
+  "sufficiency": {
+    "certified": false,
+    "tau_s": null,
+    "reason": "conservative version-space upper bound deferred to Phase B"
+  },
+  "repaired_threshold": {
+    "band_disagreement": 0.0,
+    "fpr": 0.0,
+    "source": "truth_oracle_fullarm_griderror"
+  },
+  "provenance": {
+    "box": "fixed",
+    "grid_n": "fixed",
+    "rarity_target": "fixed",
+    "delta": "measured",
+    "repaired_threshold": "truth_oracle_fullarm_griderror",
+    "frac_planner_outside_box": "measured"
+  },
+  "cells": [
+    {
+      "id": "anchor_halfplane",
+      "family": "HalfPlane",
+      "offset": 4.1229095458984375,
+      "rarity": 0.1525,
+      "rarity_ci": [
+        0.12058666169525958,
+        0.19102462352151847
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.0019968034163975,
+      "grid_delta_256_512": 0.0,
+      "provenance": "measured"
+    },
+    {
+      "id": "curv_parabola_R8",
+      "family": "Parabola",
+      "offset": 4.0256500244140625,
+      "rarity": 0.1525,
+      "rarity_ci": [
+        0.12058666169525958,
+        0.19102462352151847
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.046010047359999,
+      "grid_delta_256_512": 1.52587890625e-05,
+      "provenance": "measured"
+    },
+    {
+      "id": "curv_parabola_R4",
+      "family": "Parabola",
+      "offset": 3.4976043701171875,
+      "rarity": 0.1525,
+      "rarity_ci": [
+        0.12058666169525958,
+        0.19102462352151847
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.0773615859327554,
+      "grid_delta_256_512": 0.0002288818359375,
+      "provenance": "measured"
+    },
+    {
+      "id": "curv_parabola_R2",
+      "family": "Parabola",
+      "offset": 2.8505096435546875,
+      "rarity": 0.1525,
+      "rarity_ci": [
+        0.12058666169525958,
+        0.19102462352151847
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.003506658108026,
+      "grid_delta_256_512": 0.00020599365234375,
+      "provenance": "measured"
+    },
+    {
+      "id": "curv_parabola_R1",
+      "family": "Parabola",
+      "offset": 2.5387420654296875,
+      "rarity": 0.15,
+      "rarity_ci": [
+        0.11834447398799032,
+        0.18831437443178617
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.0370991828322227,
+      "grid_delta_256_512": 0.00043487548828125,
+      "provenance": "measured"
+    },
+    {
+      "id": "comp_strip",
+      "family": "Strip",
+      "offset": 4.5711517333984375,
+      "rarity": 0.15,
+      "rarity_ci": [
+        0.11834447398799032,
+        0.18831437443178617
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.0721107976086968,
+      "grid_delta_256_512": 0.0,
+      "provenance": "measured"
+    },
+    {
+      "id": "comp_wedge",
+      "family": "Wedge",
+      "offset": 1.4392852783203125,
+      "rarity": 0.1525,
+      "rarity_ci": [
+        0.12058666169525958,
+        0.19102462352151847
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.045789111952157,
+      "grid_delta_256_512": 0.0001373291015625,
+      "provenance": "measured"
+    },
+    {
+      "id": "comp_triangle_face",
+      "family": "RegularPolygon",
+      "offset": 3.0675201416015625,
+      "rarity": 0.1525,
+      "rarity_ci": [
+        0.12058666169525958,
+        0.19102462352151847
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.044166181409495,
+      "grid_delta_256_512": 7.62939453125e-06,
+      "provenance": "measured"
+    },
+    {
+      "id": "comp_triangle_vertex",
+      "family": "RegularPolygon",
+      "offset": 2.9997406005859375,
+      "rarity": 0.1525,
+      "rarity_ci": [
+        0.12058666169525958,
+        0.19102462352151847
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.002203755544051,
+      "grid_delta_256_512": 0.0003509521484375,
+      "provenance": "measured"
+    },
+    {
+      "id": "comp_square_face",
+      "family": "RegularPolygon",
+      "offset": 3.2349090576171875,
+      "rarity": 0.15,
+      "rarity_ci": [
+        0.11834447398799032,
+        0.18831437443178617
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.038959317548994,
+      "grid_delta_256_512": 0.00072479248046875,
+      "provenance": "measured"
+    },
+    {
+      "id": "comp_square_vertex",
+      "family": "RegularPolygon",
+      "offset": 2.9786529541015625,
+      "rarity": 0.1525,
+      "rarity_ci": [
+        0.12058666169525958,
+        0.19102462352151847
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.0777217394086676,
+      "grid_delta_256_512": 3.0517578125e-05,
+      "provenance": "measured"
+    },
+    {
+      "id": "comp_hexagon_face",
+      "family": "RegularPolygon",
+      "offset": 3.1756134033203125,
+      "rarity": 0.1525,
+      "rarity_ci": [
+        0.12058666169525958,
+        0.19102462352151847
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.042195921687886,
+      "grid_delta_256_512": 3.0517578125e-05,
+      "provenance": "measured"
+    },
+    {
+      "id": "comp_hexagon_vertex",
+      "family": "RegularPolygon",
+      "offset": 3.5832366943359375,
+      "rarity": 0.1525,
+      "rarity_ci": [
+        0.12058666169525958,
+        0.19102462352151847
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.0334027762709534,
+      "grid_delta_256_512": 0.00018310546875,
+      "provenance": "measured"
+    },
+    {
+      "id": "contrast_parabola",
+      "family": "Parabola",
+      "offset": 3.0646514892578125,
+      "rarity": 0.15,
+      "rarity_ci": [
+        0.11834447398799032,
+        0.18831437443178617
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.0761513524335413,
+      "grid_delta_256_512": 0.0002593994140625,
+      "provenance": "measured"
+    },
+    {
+      "id": "contrast_circle",
+      "family": "Circle",
+      "offset": 3.9042205810546875,
+      "rarity": 0.15,
+      "rarity_ci": [
+        0.11834447398799032,
+        0.18831437443178617
+      ],
+      "n_rollouts": 400,
+      "n_episodes": 16,
+      "play_cost_blind": 1.0394363631018098,
+      "grid_delta_256_512": 4.57763671875e-05,
+      "provenance": "measured"
+    }
+  ]
+}
