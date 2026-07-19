@@ -65,7 +65,8 @@ for name, truth in CELLS:
           f"{row['mean_violations']:5.1f} "
           f"{(row['mean_first_contact_step'] or -1):5.1f}", flush=True)
 
-out = pathlib.Path("results/continuous_mitigation_ring.json")
+_sfx = "" if args.eps == 0.5 else f"_eps{args.eps:g}"
+out = pathlib.Path(f"results/continuous_mitigation_ring{_sfx}.json")
 out.write_text(json.dumps({"script": "continuous_mitigation_ring.py",
                            "params": vars(args), "rows": rows,
                            "elapsed_s": round(time.time() - t0, 1)}, indent=2))

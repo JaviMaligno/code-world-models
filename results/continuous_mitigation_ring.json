@@ -1,0 +1,41 @@
+{
+  "script": "continuous_mitigation_ring.py",
+  "params": {
+    "episodes": 16,
+    "seed": 0,
+    "eps": 0.5
+  },
+  "rows": [
+    {
+      "cell": "gap0",
+      "eps": 0.5,
+      "j_truth": 17.279873284577587,
+      "j_blind": 0.13570984885335383,
+      "j_mitigated": 0.06810188658166567,
+      "j_random": 0.11902364398133755,
+      "play_cost_blind": 0.9990276585820936,
+      "play_cost_mitigated": 1.0029673214593762,
+      "blind_contact_rate": 1.0,
+      "mitigated_contact_rate": 1.0,
+      "mean_violations": 3.8125,
+      "mean_first_contact_step": 25.25,
+      "n_episodes": 16
+    },
+    {
+      "cell": "gap0.6-hidden",
+      "eps": 0.5,
+      "j_truth": 17.279873284577587,
+      "j_blind": 0.13570984885335383,
+      "j_mitigated": 0.06810188658166567,
+      "j_random": 0.11902364398133755,
+      "play_cost_blind": 0.9990276585820936,
+      "play_cost_mitigated": 1.0029673214593762,
+      "blind_contact_rate": 1.0,
+      "mitigated_contact_rate": 1.0,
+      "mean_violations": 3.8125,
+      "mean_first_contact_step": 25.25,
+      "n_episodes": 16
+    }
+  ],
+  "elapsed_s": 174.0
+}
