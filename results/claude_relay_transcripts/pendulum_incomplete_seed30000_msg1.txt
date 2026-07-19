@@ -1,0 +1,60 @@
+=== USER ===
+Implement a deterministic 1D control world model as Python module-level
+functions (pure, no I/O, no globals, only the `math` standard-library module).
+
+State is a list [th, om] of two floats (angle, angular velocity). Action is a
+float.
+
+Functions to implement EXACTLY these signatures:
+  def step(state: list, action: float) -> list   # next [th, om]
+  def reward(state: list) -> float               # reward of a state
+
+The integrator is FIXED and part of the contract. step() must compute, in
+exactly this order, with plain Python floats:
+  1. a = min(a_max, max(-a_max, action))                  # clamp the action
+  2. om2 = om + (gain * a - grav * math.sin(th) - drag * om) * dt
+  3. th2 = th + om2 * dt
+then apply any additional dynamics rules given below, and return [th2, om2].
+
+Physical constants:
+  dt = 0.1
+  gain = 3.0
+  grav = 2.0
+  drag = 0.3
+  a_max = 1.0
+
+Reward (a function of the state [th, om] alone):
+  left  = 0.3 / (1.0 + math.exp(-((-2.0 - th) / 0.25)))
+  right = 1.0 / (1.0 + math.exp(-((th - 3.0) / 0.25)))
+  reward = left + right
+
+The current implementation is below. It fails some transitions. Fix it so every transition matches to within 1e-09 in x, v and reward. Output only one ```python code block.
+
+CURRENT CODE:
+```python
+import math
+
+dt = 0.1
+gain = 3.0
+grav = 2.0
+drag = 0.3
+a_max = 1.0
+
+
+def step(state: list, action: float) -> list:
+    th, om = state[0], state[1]
+    a = min(a_max, max(-a_max, action))
+    om2 = om + (gain * a - grav * math.sin(th) - drag * om) * dt
+    th2 = th + om2 * dt
+    return [th2, om2]
+
+
+def reward(state: list) -> float:
+    th, om = state[0], state[1]
+    left = 0.3 / (1.0 + math.exp(-((-2.0 - th) / 0.25)))
+    right = 1.0 / (1.0 + math.exp(-((th - 3.0) / 0.25)))
+    return left + right
+```
+
+FAILURES (expected vs got):
+step([1.286880767554982, 1.6645933902869883], -0.09510609047566532): expected [1.4, 0.0] r=0.0016591732282367606, got [1.4262938239603262, 1.3941305640534418] r=0.0018427670053345632 (err 1.39)

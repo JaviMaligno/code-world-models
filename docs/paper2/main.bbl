@@ -1,0 +1,164 @@
+\begin{thebibliography}{21}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Aguilar~Mart\'in(2026)]{aguilar2026verified}
+Javier Aguilar~Mart\'in.
+\newblock When a verified world model still loses: Play-adequacy vs
+  prediction-accuracy in {LLM}-synthesized code world models, 2026.
+\newblock Companion paper (paper 1). Preprint; repository:
+  \url{https://github.com/JaviMaligno/code-world-models}.
+
+\bibitem[Alshiekh et~al.(2018)Alshiekh, Bloem, Ehlers, K{\"o}nighofer, Niekum,
+  and Topcu]{alshiekh2018shielding}
+Mohammed Alshiekh, Roderick Bloem, R{\"u}diger Ehlers, Bettina K{\"o}nighofer,
+  Scott Niekum, and Ufuk Topcu.
+\newblock Safe reinforcement learning via shielding.
+\newblock In \emph{Proceedings of the Thirty-Second {AAAI} Conference on
+  Artificial Intelligence (AAAI)}, pages 2669--2678, 2018.
+
+\bibitem[Annpureddy et~al.(2011)Annpureddy, Liu, Fainekos, and
+  Sankaranarayanan]{annpureddy2011staliro}
+Yashwanth Annpureddy, Che Liu, Georgios Fainekos, and Sriram Sankaranarayanan.
+\newblock {S-TaLiRo}: A tool for temporal logic falsification for hybrid
+  systems.
+\newblock In \emph{Tools and Algorithms for the Construction and Analysis of
+  Systems (TACAS)}, volume 6605 of \emph{Lecture Notes in Computer Science},
+  pages 254--257. Springer, 2011.
+
+\bibitem[Bemporad and Morari(1999)]{bemporad1999control}
+Alberto Bemporad and Manfred Morari.
+\newblock Control of systems integrating logic, dynamics, and constraints.
+\newblock \emph{Automatica}, 35\penalty0 (3):\penalty0 407--427, 1999.
+
+\bibitem[Chua et~al.(2018)Chua, Calandra, McAllister, and Levine]{chua2018deep}
+Kurtland Chua, Roberto Calandra, Rowan McAllister, and Sergey Levine.
+\newblock Deep reinforcement learning in a handful of trials using
+  probabilistic dynamics models.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2018.
+
+\bibitem[Claessen and Hughes(2000)]{claessen2000quickcheck}
+Koen Claessen and John Hughes.
+\newblock {QuickCheck}: A lightweight tool for random testing of {Haskell}
+  programs.
+\newblock In \emph{Proceedings of the Fifth {ACM} {SIGPLAN} International
+  Conference on Functional Programming (ICFP)}, pages 268--279, 2000.
+
+\bibitem[Corso et~al.(2021)Corso, Moss, Koren, Lee, and
+  Kochenderfer]{corso2021survey}
+Anthony Corso, Robert~J. Moss, Mark Koren, Ritchie Lee, and Mykel~J.
+  Kochenderfer.
+\newblock A survey of algorithms for black-box safety validation of
+  cyber-physical systems.
+\newblock \emph{Journal of Artificial Intelligence Research}, 72:\penalty0
+  377--428, 2021.
+
+\bibitem[Coulom(2006)]{coulom2006mcts}
+R{\'e}mi Coulom.
+\newblock Efficient selectivity and backup operators in monte-carlo tree
+  search.
+\newblock In \emph{Computers and Games (CG 2006)}, volume 4630 of \emph{Lecture
+  Notes in Computer Science}, pages 72--83. Springer, 2006.
+
+\bibitem[Fazeli et~al.(2017)Fazeli, Kolbert, Tedrake, and
+  Rodriguez]{fazeli2017contact}
+Nima Fazeli, Roman Kolbert, Russ Tedrake, and Alberto Rodriguez.
+\newblock Parameter and contact force estimation of planar rigid-bodies
+  undergoing frictional contact.
+\newblock \emph{The International Journal of Robotics Research}, 36\penalty0
+  (13--14):\penalty0 1437--1454, 2017.
+
+\bibitem[Gao et~al.(2023)Gao, Madaan, Zhou, Alon, Liu, Yang, Callan, and
+  Neubig]{gao2023pal}
+Luyu Gao, Aman Madaan, Shuyan Zhou, Uri Alon, Pengfei Liu, Yiming Yang, Jamie
+  Callan, and Graham Neubig.
+\newblock {PAL}: Program-aided language models.
+\newblock In \emph{Proceedings of the 40th International Conference on Machine
+  Learning (ICML)}, volume 202 of \emph{Proceedings of Machine Learning
+  Research}, pages 10764--10799, 2023.
+
+\bibitem[Hafner et~al.(2020)Hafner, Lillicrap, Ba, and
+  Norouzi]{hafner2020dreamer}
+Danijar Hafner, Timothy Lillicrap, Jimmy Ba, and Mohammad Norouzi.
+\newblock Dream to control: Learning behaviors by latent imagination.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2020.
+
+\bibitem[Janner et~al.(2019)Janner, Fu, Zhang, and Levine]{janner2019mbpo}
+Michael Janner, Justin Fu, Marvin Zhang, and Sergey Levine.
+\newblock When to trust your model: Model-based policy optimization.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2019.
+
+\bibitem[Kocsis and Szepesv{\'a}ri(2006)]{kocsis2006bandit}
+Levente Kocsis and Csaba Szepesv{\'a}ri.
+\newblock Bandit based {Monte}-{Carlo} planning.
+\newblock In \emph{Proceedings of the 17th European Conference on Machine
+  Learning (ECML)}, pages 282--293, 2006.
+
+\bibitem[Lambert et~al.(2020)Lambert, Amos, Yadan, and
+  Calandra]{lambert2020objective}
+Nathan~O. Lambert, Brandon Amos, Omry Yadan, and Roberto Calandra.
+\newblock Objective mismatch in model-based reinforcement learning.
+\newblock In \emph{Proceedings of the 2nd Conference on Learning for Dynamics
+  and Control (L4DC)}, volume 120 of \emph{Proceedings of Machine Learning
+  Research}, pages 761--770, 2020.
+\newblock arXiv:2002.04523.
+
+\bibitem[Lehrach et~al.(2026)Lehrach, Hennes, Lazaro-Gredilla, Lou, Wendelken,
+  Li, Dedieu, Grau-Moya, Lanctot, Iscen, Schultz, Chiam, Gemp, Zielinski,
+  Singh, and Murphy]{lehrach2025cwm}
+Wolfgang Lehrach, Daniel Hennes, Miguel Lazaro-Gredilla, Xinghua Lou, Carter
+  Wendelken, Zun Li, Antoine Dedieu, Jordi Grau-Moya, Marc Lanctot, Atil Iscen,
+  John Schultz, Marcus Chiam, Ian Gemp, Piotr Zielinski, Satinder Singh, and
+  Kevin~P. Murphy.
+\newblock {Code World Models} for general game playing.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2026.
+\newblock Poster; OpenReview id 1UoB7IWiku.
+
+\bibitem[Liang et~al.(2023)Liang, Huang, Xia, Xu, Hausman, Ichter, Florence,
+  and Zeng]{liang2023codeaspolicies}
+Jacky Liang, Wenlong Huang, Fei Xia, Peng Xu, Karol Hausman, Brian Ichter, Pete
+  Florence, and Andy Zeng.
+\newblock Code as policies: Language model programs for embodied control.
+\newblock In \emph{{IEEE} International Conference on Robotics and Automation
+  (ICRA)}, pages 9493--9500, 2023.
+
+\bibitem[Nagabandi et~al.(2018)Nagabandi, Kahn, Fearing, and
+  Levine]{nagabandi2018neural}
+Anusha Nagabandi, Gregory Kahn, Ronald~S. Fearing, and Sergey Levine.
+\newblock Neural network dynamics for model-based deep reinforcement learning
+  with model-free fine-tuning.
+\newblock In \emph{{IEEE} International Conference on Robotics and Automation
+  (ICRA)}, 2018.
+
+\bibitem[Paoletti et~al.(2007)Paoletti, Juloski, Ferrari-Trecate, and
+  Vidal]{paoletti2007hybrid}
+Simone Paoletti, Aleksandar~Lj. Juloski, Giancarlo Ferrari-Trecate, and Ren\'e
+  Vidal.
+\newblock Identification of hybrid systems: A tutorial.
+\newblock \emph{European Journal of Control}, 13\penalty0 (2-3):\penalty0
+  242--260, 2007.
+
+\bibitem[Rawlings et~al.(2017)Rawlings, Mayne, and Diehl]{rawlings2017mpc}
+James~B. Rawlings, David~Q. Mayne, and Moritz~M. Diehl.
+\newblock \emph{Model Predictive Control: Theory, Computation, and Design}.
+\newblock Nob Hill Publishing, 2nd edition, 2017.
+
+\bibitem[Rubinstein and Kroese(2017)]{rubinstein2017montecarlo}
+Reuven~Y. Rubinstein and Dirk~P. Kroese.
+\newblock \emph{Simulation and the {Monte} {Carlo} Method}.
+\newblock Wiley, 3rd edition, 2017.
+
+\bibitem[Wilson(1927)]{wilson1927}
+Edwin~B. Wilson.
+\newblock Probable inference, the law of succession, and statistical inference.
+\newblock \emph{Journal of the American Statistical Association}, 22\penalty0
+  (158):\penalty0 209--212, 1927.
+
+\end{thebibliography}

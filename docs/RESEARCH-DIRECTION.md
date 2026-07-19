@@ -193,12 +193,27 @@ breadth/generality the result needed.
 3. **(Optional) Tighten the play result** — more seeds/sims, confidence intervals,
    and the synthesized-CWM (not just hand-written base) at scale.
 4. Imperfect-information round (poker + Quadranto + Hand of War).
-5. **Paper 3 — topology of the critical region (shaping started 2026-07-19).**
+5. **Continuous/hybrid follow-up paper (designed 2026-07-06, to live in this
+   repo).** The danger law is measure-theoretic and transfers to continuous
+   state spaces; the localized mechanism lives at **hybrid mode boundaries**
+   (contacts, hard stops, regime switches), and code synthesis is what makes
+   the localization realizable there (an omitted branch is bit-exact off the
+   omitted mode — something smooth learned models can't represent). Paper 1
+   points to this via the "continuous settings" remark (`main.tex`,
+   `rem:continuous`). Full design — instrument (cart-with-wall, wall-position
+   rarity knob), gate (pinned-integrator, near-exact), MPC planner, synthesis
+   arms, order of work — in
+   `docs/specs/2026-07-06-continuous-hybrid-cwm-design.md`.
+6. **Paper 3 — topology of the critical region (shaping started 2026-07-19).**
    The annulus/non-trivial-homology idea deliberately does NOT go into paper 2
-   (decision + full rationale, thesis, instrument ladder, and provable-vs-
-   measured split in `docs/paper3/RESEARCH-DIRECTION.md`). Depends on paper 2's
-   continuous stack (`claude/continuous-setting-feasibility-wktp6b`) landing.
-6. **Rethink applications beyond games (open, deliberate brainstorm needed).**
+   (decision + full rationale, thesis, instrument ladder, n-dimensional
+   program, and provable-vs-measured split in
+   `docs/paper3/RESEARCH-DIRECTION.md`; formal propositions in
+   `docs/paper3/THEORY.md`). Working branch `claude/paper-tres-topology-4w813y`
+   (carries the paper-2 continuous stack by merge). Its LLM synthesis arm
+   waits for the disc-repair confound cells
+   (`docs/superpowers/plans/2026-07-19-disc-confounds-square-ablation.md`).
+7. **Rethink applications beyond games (open, deliberate brainstorm needed).**
    The Code World Model pattern (LLM synthesizes a verifiable executable model
    from examples + classical planning/checking on top) may transfer to non-game
    domains — e.g. business rules / pricing (connects to the author's real work
