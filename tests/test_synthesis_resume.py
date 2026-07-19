@@ -131,3 +131,46 @@ def test_atomic_write_helper_leaves_no_tmp_on_success(tmp_path):
     assert out.exists()
     assert sorted(p.name for p in tmp_path.iterdir()) == ["atomic.json"]
     assert json.loads(out.read_text()) == {"a": 1}
+
+
+def test_resume_rejects_mismatched_config(tmp_path):
+    """The filename does not encode every result-affecting knob, so resuming
+    with different flags must hard-error instead of silently mixing
+    configurations in one file."""
+    out = tmp_path / "out.json"
+    partial = dict(META)
+    partial["params"] = {"n_rollouts": 40}
+    partial["j_truth"] = 1.0
+    partial["j_random"] = 0.0
+    partial["cells"] = []
+    out.write_text(json.dumps(partial))
+    meta = dict(META)
+    meta["params"] = {"n_rollouts": 3}
+    with pytest.raises(ValueError, match="different configuration"):
+        synth_mod.run_synthesis(
+            FakeProvider([RESPONSE]), "fake", ENV, ["full"], 1, out,
+            n_rollouts=3, eps=1e-9, max_iters=5, play_episodes=1,
+            j_truth=1.0, j_random=0.0, meta=meta)
+
+
+def test_resume_rejects_mismatched_baselines(tmp_path):
+    out = tmp_path / "out.json"
+    partial = dict(META)
+    partial["j_truth"] = 2.0     # stored normalization != recomputed one
+    partial["j_random"] = 0.0
+    partial["cells"] = []
+    out.write_text(json.dumps(partial))
+    with pytest.raises(ValueError, match="baselines"):
+        _run(FakeProvider([RESPONSE]), out)
+
+
+def test_resume_model_mismatch_is_rejected(tmp_path):
+    out = tmp_path / "out.json"
+    partial = dict(META)
+    partial["model"] = "some-other-deployment"
+    partial["j_truth"] = 1.0
+    partial["j_random"] = 0.0
+    partial["cells"] = []
+    out.write_text(json.dumps(partial))
+    with pytest.raises(ValueError, match="different configuration"):
+        _run(FakeProvider([RESPONSE]), out)

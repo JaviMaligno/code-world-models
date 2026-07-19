@@ -104,11 +104,47 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
     exist); on resume the existing file's own top-level keys (including its
     j_truth/j_random baselines) are kept as-is. Returns the final results
     dict; schema is unchanged from a non-resumable run: {script, model,
-    size, tag, params, j_truth, j_random, cells, elapsed_s}."""
+    size, tag, params, j_truth, j_random, cells, elapsed_s}.
+
+    Resume guards (2026-07-19 review): the filename does NOT encode every
+    result-affecting knob (n_rollouts, eps, play_episodes, the actual
+    deployment id), so a resume with different flags would silently mix
+    configurations in one file. On resume we therefore (a) hard-error if any
+    result-defining stored param disagrees with the current one, and (b)
+    hard-error if the freshly computed baselines differ from the stored
+    ones (the play environment changed between runs), else use the STORED
+    baselines for the new cells so every play_cost in the file shares one
+    normalization."""
     t0 = time.time()
     if out_path.exists():
         results = json.loads(out_path.read_text())
         results.setdefault("cells", [])
+        stored_p = results.get("params", {}) or {}
+        current_p = meta.get("params", {}) or {}
+        _RESULT_KEYS = ("instrument", "x_wall", "th_stop", "k1", "k2",
+                        "patch_shape", "prompt_variant", "n_rollouts", "eps",
+                        "max_iters", "play_episodes", "compat_model")
+        mismatch = {k: (stored_p[k], current_p[k]) for k in _RESULT_KEYS
+                    if k in stored_p and k in current_p
+                    and stored_p[k] != current_p[k]}
+        if results.get("model") != meta.get("model"):
+            mismatch["model"] = (results.get("model"), meta.get("model"))
+        if mismatch:
+            raise ValueError(
+                f"refusing to resume {out_path}: it was produced under a "
+                f"different configuration {mismatch}; rerun with matching "
+                f"flags or move the file aside")
+        if "j_truth" in results and (
+                abs(results["j_truth"] - j_truth) > 1e-6
+                or abs(results["j_random"] - j_random) > 1e-6):
+            raise ValueError(
+                f"refusing to resume {out_path}: recomputed baselines "
+                f"(j_truth={j_truth}, j_random={j_random}) differ from the "
+                f"stored ones (j_truth={results['j_truth']}, "
+                f"j_random={results['j_random']}) — the play environment "
+                f"changed between runs")
+        j_truth = results.get("j_truth", j_truth)
+        j_random = results.get("j_random", j_random)
     else:
         results = dict(meta)
         results["j_truth"] = j_truth
