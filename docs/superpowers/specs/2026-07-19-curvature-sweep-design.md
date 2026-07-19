@@ -1,196 +1,234 @@
 # Design: Repair-vs-geometry — capacity frontier of the synthesizer (paper 2)
 
-Date: 2026-07-19 (rev. 2 after expert review of 3ca6456)
+Date: 2026-07-19 (rev. 3 after second expert review of 454a8c2)
 Branch: `claude/continuous-setting-feasibility-wktp6b`
 Worktree: `cwm-wt-paper2`
-Status: redesigned per expert review. Supersedes rev. 1, which confounded
-curvature, logical complexity, and geometric evidence sufficiency.
+Status: implementation-ready target. rev. 3 closes the factorization and
+evidence-definition blockers and pins the geometric, interface, sandbox, and
+statistical details.
 
-## Problem and the factorization that governs the whole design
+## Problem and the correct decomposition
 
 Paper 2 found repair-from-data is geometry-dependent (1D clamp 82/82 pooled; 2D
 disc 0/76, collapsed to a half-plane) and currently *documents* it. We *close*
 it by measuring the synthesizer's **effective capacity frontier** over boundary
-geometry. The central hazard is attributing to "curvature" an effect that is
-really logical complexity or evidence sufficiency. The design is organized
-around the correct factorization of a repair event:
+geometry, separating three factors: visibility, evidence sufficiency, and
+representation.
+
+**Full law (all branches — nothing is an "exception"):**
 
 ```
-P(repair) = P(mode visible)
-          · P(evidence geometrically sufficient | visible)
-          · P(synthesizer represents it | sufficient)
+P(R) = P(R|¬V)·P(¬V)                         # repair without visibility: prior / phantom mode
+     + P(V)·[ P(R|V,¬S)·P(¬S|V)              # accidental hit on insufficient evidence
+            + P(R|V, S)·P(S |V) ]            # the causal path we isolate
 ```
 
-- Factor 1 (visibility) is what rarity `r` controls. Rev. 1 controlled ~only
-  this and wrongly treated the rest as covariates.
-- Factor 2 (sufficiency) is a **central explanatory variable**, not a covariate:
-  same `r` can give a tight contact arc or contacts spread over half the
-  boundary, one normal direction or many facets — radically different geometric
-  information. We measure and stratify it, and use a per-family **oracle** to
-  isolate it.
-- Factor 3 (representation) is the scientific target: the synthesizer's prior /
-  hypothesis class. It is only interpretable once factors 1–2 are pinned.
+The clean **causal path we aim to characterize** is the single joint term
 
-## What we are NOT doing / not confusing
+```
+P(V ∧ S ∧ R) = P(V) · P(S|V) · P(R|V,S).
+```
 
-- **Curvature ≠ logical complexity ≠ evidence sufficiency.** Separate axes for
-  each; no single axis stands in for another.
-- **No global-closure confound in the curvature axis.** A disc of growing `R`
-  does not interpolate to a half-plane under a reproduce-the-whole-boundary
-  metric (a half-plane never reproduces a closed circle). We use graph
-  boundaries for the local axis and treat closure as its own contrast.
-- **Topology note (corrected).** Non-trivial homology already exists in 2D: an
-  annulus is planar with H₁(M)=ℤ; disconnected components give b₀>1; nested
-  boundaries. Distinguish H₁(∂disc)=ℤ, H₁(disc region)=0, H₁(annulus region)=ℤ.
-  What is not natural in a planar subset is "higher genus" (closed surfaces).
-  This *curvature/complexity* plan does not run topology, but a 2D-topology
-  experiment (annulus / disconnected modes; recover b₀,b₁) is a legitimate
-  **candidate for paper 2** as a separate plan — noted, not scoped here. Deeper
-  topological theory → paper 3 (`[[paper3-geometry-topology-directions]]`).
+`P(R|¬V) > 0` (repair without seeing the mode) and `P(R|V,¬S) > 0` (repair on
+insufficient evidence) are then *interesting results about the prior* — not
+framework exceptions. The phantom-mode failure is the `¬V`/`¬S` branch made
+visible. We report all branches; the sweep conditions on `V ∧ S` to read factor
+3 (representation).
 
-## Instruments: two clean sweeps + contrast + baselines + anchor
+## What the synthesizer actually sees (measured from the code)
 
-All modes are single-mode (second patch disabled), evaluated on a **common
-reachable box**, each calibrated to the same rarity `r` (with a CI, see below)
-and each confirmed to produce a genuine hazard (mode-blind planner exploited).
+Evidence is not "the sample." The pipeline (`contract.py`) is:
 
-### Anchor — 2D half-plane (mono-mode, calibrated identically)
-`x ≥ c`. The linear predicate, trivially repairable, and the R→∞ / k-side limit
-of both sweeps. The 1D results and the earlier bi-modal disc are **not**
-comparable anchors; this is a fresh, identically-calibrated 2D anchor.
+- **initial prompt:** 30 spaced transitions (`max_examples = 30`).
+- **gate:** all `N·h = 40·80 = 3200` transitions.
+- **each refinement prompt:** only the **first 20 failures** (`failures[:20]`),
+  which depend on the previous artifact and the transition order.
+
+So "mode visible" must be split, and logged per seed:
+
+- **V_gate:** a contact exists among the 3200 (what rarity `r` controls).
+- **V_initial:** a contact appears in the 30 spaced initial examples.
+- **V_transcript:** a mode contact/failure reaches *any* prompt across
+  refinement (the union of what the LLM was actually shown).
+- plus the **count and geometry** of the contact examples effectively shown.
+
+### Three oracles (this is how factors 2 and 3 are separated)
+
+A per-family shape fit (circle / parabola / polygon), fit on **labeled proposed
+endpoints (inside/outside), not on positive contacts** — contacts penetrate the
+region and do not reveal the exact boundary point. Three information budgets:
+
+- **oracle_initial:** the same 30 initial observations.
+- **oracle_transcript:** the union of examples actually shown to the LLM.
+- **oracle_full:** all 3200 (the information ceiling).
+
+**Primary attribution comparison: LLM vs `oracle_transcript`.** If
+`oracle_transcript` reconstructs and the LLM does not → representation/prior
+(factor 3). If `oracle_transcript` also fails → the bottleneck is information
+(factor 2). `oracle_full` bounds what is knowable at all.
+
+## Instruments
+
+Single-mode (second patch disabled), evaluated on a **common reachable box**
+(the box belongs to the experiment, not the shape), each calibrated to matched
+rarity with a CI, each confirmed to give a genuine hazard (mode-blind planner
+exploited).
+
+### Anchor — 2D half-plane, mono-mode, identically calibrated
+`x ≥ c`. The linear predicate and the limit of both sweeps. Fresh 2D anchor —
+1D results and the earlier bi-modal disc are not comparable.
+
+### Sweep 0 (highest value) — evidence dose
+Directly identifies factor 2 vs factor 3. Fixed geometry (intermediate parabola,
+circle, square only — does not multiply the budget), condition on visibility,
+and **vary the number of contact examples shown** `m ∈ {1,2,4,8,16}`, crossed
+with **small vs large geometric span**, with **matched nearby negatives**. This
+is the most important single addition for paper 2.
 
 ### Sweep 1 — local curvature (graph boundaries)
-Guard `x ≥ c + y²/(2R)` (a parabola), limit `R→∞` = half-plane, evaluated in the
-**same reachable window** for all `R`. Interpolates curvature cleanly with no
-global closure, no area, no "back side." Cells across `R` chosen so the
-dimensionless resolution (below) spans the transition, not `R` on a round grid.
+Guard `x ≥ c + y²/(2R)`, limit `R→∞` = half-plane, same reachable window for all
+`R`. Curvature of this parabola is **not** globally `1/R`:
+`κ(y) = (1/R)/(1+(y/R)²)^{3/2}`. We use **κ local at the arc center** as the axis
+value and also log its **range over the observed arc**. Cells chosen so the
+dimensionless resolution (below) spans the transition.
 
-### Sweep 2 — linear composition (oriented polytopes)
-Half-plane → strip/wedge → triangle → square → hexagon. This axis is
-**compositional complexity** (#facets, boolean depth, #linear regions), NOT
-curvature — total curvature of any convex closed curve is 2π (Gauss–Bonnet), so
-`k` is not monotone in curvature. **Orientation is controlled**: at least
-`face-on` and `vertex-on` incidence per shape (several rotations), because
-hitting a face vs a vertex yields radically different evidence.
+### Sweep 2 — compositional complexity (oriented polytopes)
+Half-plane, strip, wedge, triangle, square, hexagon. **Not a clean 1-D axis** —
+treat the geometry as separate logged variables, not a scalar: **#facets**,
+**closed/open**, **intersection angle**, **face-on vs vertex-on incidence**
+(several rotations per shape), **#facets actually observed**. Total curvature of
+any convex closed curve is 2π (Gauss–Bonnet), so this axis is composition, not
+curvature.
 
 ### Contrast — global closure at matched local jet
 Parabola vs circle sharing position, tangent, and local curvature on the contact
-arc (same 1-jet, matched 2-jet). Isolates the effect of *global closure /
-extrapolation* holding the local geometry fixed — the one thing Sweep 1 cannot
-see.
+arc (matched 1- and 2-jet). Isolates global closure / extrapolation with the
+local geometry held fixed.
 
-### Baselines (cheap, high-value)
-- **Tangent baseline:** best half-plane fit to the sampled contacts. Lets us say
-  quantitatively "the LLM artifact collapses to the tangent."
-- **Per-family oracle:** circle/parabola/polygon fit *knowing the family*. If the
-  oracle also fails to reconstruct from the sample → the bottleneck is
-  information (factor 2). If the oracle succeeds and the LLM fails → it is
-  representation/prior (factor 3). This is what separates the factors.
+### Baselines
+- **Tangent baseline:** best half-plane fit to the shown contacts → quantifies
+  "collapses to the tangent."
+- **Per-family oracle** (three budgets, above).
 
-### Dropped from the core: ellipse
-Eccentricity alone fixes neither scale, orientation, nor local curvature; it adds
-confusion rather than identification. Excluded from the core sweep (may return
-only if a specific question needs it).
+### The geometric variable
+`κ·L_obs` (or `κ·L_obs²/δ`), dimensionless: `L_obs` = observed **arc length /
+tangential extent** (defined per family — arc length for the parabola/circle,
+not "angular span"), `δ` = the uncertainty with which the contacts bound the
+boundary. The sagitta `κL²/8` is meaningful only against this resolution.
 
-## The geometric variable
+### Dropped from core: ellipse
+Eccentricity fixes neither scale, orientation, nor local curvature — confusion
+over identification.
 
-Not `κ` alone but a **dimensionless resolution** `κ·L_obs` (or `κ·L_obs²/δ`),
-where `L_obs` is the observed contact-arc span and `δ` the uncertainty with which
-the contacts bound the boundary. The sagitta `κL²/8` is meaningful only against a
-resolution scale. Repairability is modeled against this variable, per model size.
+## Metrics (hierarchy)
 
-## Metrics (hierarchy; the old boundary-recall metric is demoted)
+1. **Primary — symmetric disagreement on the common box**, over **stratified
+   labeled state–action proposals**: in-`M` positives, out negatives, a narrow
+   band on both sides of the boundary, a uniform draw, and the planner's own
+   distribution. Report balanced accuracy, precision, recall, FPR; **IoU
+   mandatory**.
+2. **Boundary — symmetric Hausdorff / robust p95 and symmetric mean distance**,
+   normalized by box diameter or a reach-based scale.
+3. **Dynamic — transition-disagreement rate in a tube around the guard**, in
+   **state–action space** (the mode's home is the preimage of contact, not
+   `M ⊂ ℝ²`).
+4. **Program — automated AST/MDL vector**: #comparisons, boolean depth,
+   #literals, polynomial degree, hypot/sqrt, conjunction/disjunction/auxiliary
+   regions, AST length / approx MDL, invented/superset/subset flags. Automate
+   AST; manually audit a sample.
 
-Rev. 1's boundary-point probe measured ~recall and missed oversized half-planes,
-invented modes, extra forbidden regions, partial-overlap shifts — the same
-`mode_blindness` blind spot paper 2 already hit with Claude's phantom mode.
-
-1. **Primary — symmetric disagreement on the common reachable box.** Evaluate
-   truth and synthesized code on **stratified** state–action proposals:
-   in-`M` positives, out negatives, a narrow band on both sides of the boundary,
-   a uniform draw, and the planner's own distribution. Report balanced accuracy,
-   precision, recall, FPR. **IoU is mandatory, not optional.**
-2. **Boundary — symmetric Hausdorff (or robust p95) and symmetric mean distance**,
-   normalized by the box diameter / a reach-based common scale (Federer reach
-   combines curvature and feature separation).
-3. **Dynamic — transition-disagreement rate inside a tube around the guard**,
-   because the observable is the state–action preimage whose integrated endpoint
-   enters `M`, not `M ⊂ ℝ²` directly. The mode's real home is state–action space.
-4. **Program characterization — automated AST/MDL vector**, not a 3-way label:
-   #comparisons, boolean depth, #literals/constants, polynomial degree,
-   hypot/sqrt use, conjunction/disjunction/auxiliary regions, AST length / approx
-   MDL, and invented/superset/subset flags. Automate the AST extraction; manually
-   audit a sample.
+### Extracting the synthesized boundary (for metrics 1–2)
+Evaluate the artifact as a **black box on the common grid + marching squares**,
+with a **convergence check** (metrics stable under grid refinement). Do NOT
+in-process `exec` non-accepted code: `SynthesizedModel` execs accepted artifacts
+only. Classify every artifact into **{invalid/non-executable, executable but
+gate-failing, gate-passing}**; AST is always extractable; **dynamic metrics for
+gate-failing artifacts run in the sandbox**, recorded separately.
 
 ## Statistics and budget
 
-- **Continuous per-seed score** (from metric 1/2) is the primary outcome; a
-  binary "repaired" is a thresholded secondary (threshold defined in the spec,
-  see machinery). A 0/10 cell is NOT zero-variance (Wilson upper ≈ 0.28).
-- **≥ 20 seeds** at the anchor and in the transition region; fewer only in cells
-  already saturated on the continuous score.
-- **Logistic / mixed model** with a model×geometry interaction for the capacity
-  frontier and the size effect.
-- **Pre-registered adaptive rule:** densification depends on crossover
-  uncertainty or a fixed prior rule, NOT on the observed result (no selecting
-  cells to add seeds by outcome — that biases the estimate).
-- **Report an interval for the crossover**, not a point `R*`.
-- **Record exact model version, temperature, and any inference seed** per call.
+- **Continuous per-seed score** (metric 1/2) is primary; binary "repaired" is a
+  thresholded secondary (threshold fixed in the plan).
+- Models: **beta regression / logit-normal** for bounded IoU/disagreement;
+  **logistic only for `repaired`**; **random intercept per seed/sample** to
+  exploit the pairing across geometries and sizes; **model×geometry
+  interaction**.
+- **Pre-registered adaptive rule** (may depend on observed results *because* it
+  is pre-registered — only improvised decisions are barred):
+  1. 10 seeds in every cell.
+  2. → 20 where the crossover CI crosses the cell.
+  3. → 30 if its width still exceeds a fixed threshold.
+  4. Adjust inference for the sequential design.
+- Report a **crossover interval**, not a point `R*`.
+- Record **exact model version, temperature, any inference seed** per call.
+- ≥ 20 seeds at the anchor and transition region.
 
-## Machinery / interfaces (must exist before code)
+## Interfaces (must exist before code)
 
-- **`Shape` interface:** `contains(p)`, `signed_distance(p)`, `boundary_points(n)`
-  (arc-length uniform), `bbox()`, `normals(p)` — implemented for half-plane,
-  parabola(R), regular polygon(k, orientation), (circle for the contrast).
-  Vertices: `normals` returns the normal cone / is multi-valued; boundary/tube
-  metrics handle non-unique normals explicitly.
-- **Common reachable box** and grid resolution with a convergence check (metrics
-  stable under refinement).
-- **Probes built from feasible integrated endpoints**, not abstract boundary
-  points: a probe is a (state, action) whose one-step integrated endpoint lands
-  in the intended stratum. This is what the gate and planner actually see.
-- **Per-family calibration offset** stated exactly, with an **independent sample
-  and a CI for `r`** (calibrate on one seed stream, measure on another).
-- **Mandatory covariates logged per seed:** rollouts-with-contact, contact
-  transitions, unique contact points, angular span `L_obs`, facets observed,
-  penetration depth — AND how many contact transitions actually reach the prompt
-  (initial 30 spaced examples) vs the gate/refinement (all up to 3200).
-- **Exact score→"repaired" criterion** and the **behavior/classification when the
-  gate does not pass** (a non-passing artifact still gets metric/AST records).
-- **Full-arm controls** (geometry described in the prompt) at the extremes of
-  each family, to confirm translation works when the rule is given.
-- **JSON schema, checkpoint/resume** (reuse the crash-safe synthesis harness),
-  and **regression tests**; the cart golden test stays byte-identical.
+Shapes are possibly unbounded, so the rev. 2 interface is fixed:
+
+```
+contains(p)               # boolean
+implicit_value(p)         # signed level-set value (cheap; not exact euclidean dist)
+boundary_points(window,n) # arc-length uniform WITHIN the given window
+project_to_boundary(p)    # nearest boundary point (parabola projection is non-trivial → numeric)
+normal_or_cone(p)         # normal, or the normal cone at a vertex (multi-valued)
+```
+
+The **bounding box is the experiment's**, not the shape's. Implement for
+half-plane, parabola(R), regular polygon(k, orientation), circle (contrast).
+
+Other machinery that must be defined in the plan: common reachable box + grid
+resolution/convergence; probes built from **feasible integrated endpoints**
+labeled by stratum (not abstract boundary points); vertex handling via the
+normal cone; per-family calibration offset with an **independent-sample CI for
+`r`**; mandatory per-seed covariates (rollouts-with-contact, contact
+transitions, unique contact points, `L_obs`, facets observed, penetration depth,
+and V_initial/V_transcript/#examples-shown); exact score→"repaired" criterion;
+JSON schema, checkpoint/resume, regression tests; cart golden test byte-identical.
+
+## Implementation order (from the review)
+
+1. Corrected factorization + V_initial/V_transcript + three oracles (definitions
+   and logging).
+2. `Shape` interface (unbounded-safe) + common box/grid + sandbox classification.
+3. Metrics 1–2 + tangent/oracle baselines; κ, L_obs, δ, oracle-fit spec.
+4. **Half-plane + parabolas + evidence-dose sweep (Sweep 0/1)** — first science.
+5. Composition (Sweep 2).
+6. Closure contrast and the small topological enrichment — only if budget and
+   paper length allow.
 
 ## Paper integration
 
-- Replace the single "0/76 on a disc" point with: the capacity frontier over
-  `κ·L_obs` (Sweep 1) and over compositional complexity (Sweep 2), both model
-  sizes; the closure contrast (parabola vs circle at matched jet); the tangent
-  and oracle baselines; the crossover interval; the AST/MDL breakdown.
-- State the characterization as a falsifiable prediction confronted with the
-  data, with the factor-3 (representation) claim licensed only where the oracle
-  shows factor-2 (information) is satisfied.
-- Re-scope "repair is geometry-dependent" from caveat to a mechanism separating
-  information from representation.
-- EXPERIMENTS.md dated entry; guard clean on both papers.
+Replace "0/76 on a disc" with: the capacity frontier over `κ·L_obs` and over
+compositional complexity (both sizes); the evidence-dose identification of
+factor 2 vs 3; the closure contrast; tangent + three-oracle baselines; crossover
+interval; AST/MDL breakdown. The representation claim (factor 3) is licensed only
+where `oracle_transcript` shows factor 2 satisfied. Re-scope "geometry-dependent"
+from caveat to a mechanism separating information from representation.
+EXPERIMENTS.md dated entry; guard clean on both papers.
 
-## Out of scope (YAGNI)
+## Out of scope (YAGNI) and noted-but-separate
 
-- Ellipse in the core sweep; mitigation / CEM / eps per geometry; cross-family on
-  the sweep; a formal repair theorem and deep topology (paper 3).
-- **Noted but separate:** a 2D-topology paper-2 experiment (annulus /
-  disconnected modes, recover b₀,b₁) — its own plan if pursued.
+- Ellipse in core; mitigation / CEM / eps per geometry; cross-family on the
+  sweep; a formal repair theorem and deep topology (paper 3,
+  [[paper3-geometry-topology-directions]]).
+- **Small 2D-topology enrichment (candidate paper-2 add-on, its own mini-plan,
+  inspiration not gospel):** 3 cells — disc (b₀,b₁)=(1,0), annulus (1,1), two
+  discs same mode (2,0); matched total rarity; evidence from every
+  component/boundary; a topological oracle; measure (b₀,b₁) of the synthesized
+  set in the box AND IoU/FPR (a program can get Betti numbers right with wrong
+  geometry). Frame as "global-structure enrichment," not a topological law, not
+  part of the curvature crossover.
 
 ## Risks
 
-- **Evidence-sufficiency still leaks.** Even with the oracle, `L_obs` is
-  stochastic per seed; we stratify/condition on it, not average over it.
-- **Vertex normals / tube metric ambiguity** at polygon corners — handled by the
-  normal-cone interface; audited on a sample.
-- **Calibration time sink** per family (the known bottleneck); budget controller
-  time and use the independent-sample CI to avoid over-fitting `r`.
-- **Crossover outside the grid** → the pre-registered rule extends the grid, not
-  re-tunes a cell.
-- **Azure cost/throughput** for ≥20-seed cells with refinement loops → crash-safe
-  checkpoint/resume.
+- **Evidence sufficiency still stochastic** — stratify/condition on `L_obs` and
+  the V-distinctions; the oracle is the anchor, not averaging.
+- **Vertex normals / tube ambiguity** — normal-cone interface, sample audit.
+- **Parabola projection / marching-squares convergence** — numeric, with a
+  convergence test in the metric.
+- **Calibration time sink** per family; independent-sample CI to avoid
+  over-fitting `r`.
+- **Sequential-design inference** — pre-registered rule + design-aware analysis.
+- **Azure cost** for ≥20-seed cells with refinement → crash-safe checkpoint.
