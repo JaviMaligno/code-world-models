@@ -1,5 +1,5 @@
 import math, random
-from cwm.continuous.shapes import HalfPlane, Circle, Parabola
+from cwm.continuous.shapes import HalfPlane, Circle, Parabola, Strip, Wedge, RegularPolygon
 WIN = ((-8.0, 14.0), (-6.0, 6.0))
 
 def _consecutive_uniform(pts, tol=0.25):
@@ -68,3 +68,37 @@ def test_parabola_boundary_arclength_uniform_in_window():
 def test_parabola_validation():
     import pytest
     with pytest.raises(ValueError): Parabola(3.0, 0.0)
+
+def test_wedge_projects_to_a_ray_not_always_apex():
+    w = Wedge(apex=(3.0, 0.0), half_angle=math.radians(30), orient=0.0)
+    # a point beside one ray should project onto that ray, strictly farther than 0 from the apex
+    p = (6.0, 1.0)
+    (qx, qy), _ = w.project_to_boundary(p)
+    assert math.hypot(qx-3.0, qy-0.0) > 0.5  # not the apex
+    _, bd = _brute_project(w, p, WIN, n=4000)
+    assert math.hypot(p[0]-qx, p[1]-qy) <= bd + 1e-2
+
+def test_polygon_projection_and_vertex_cone_and_orientation():
+    face = RegularPolygon(3.0, 0.0, 1.0, 4, 0.0)
+    vert = RegularPolygon(3.0, 0.0, 1.0, 4, math.pi/4)
+    assert face.n_facets == 4
+    rng = random.Random(3)
+    for _ in range(40):
+        p = (rng.uniform(1,5), rng.uniform(-2,2))
+        (qx,qy), _ = vert.project_to_boundary(p)
+        _, bd = _brute_project(vert, p, WIN, n=4000)
+        assert math.hypot(p[0]-qx, p[1]-qy) <= bd + 1e-2
+    # a vertex point has a 2-normal cone
+    vpt, _ = vert.project_to_boundary((3.0+5.0, 0.0))
+    assert isinstance(vert.normal_or_cone(vpt), list) and len(vert.normal_or_cone(vpt)) == 2
+
+def test_polygon_boundary_in_window():
+    poly = RegularPolygon(3.0, 0.0, 1.0, 6, 0.0)
+    for x,y in poly.boundary_points(WIN, 60):
+        assert -8 <= x <= 14 and -6 <= y <= 6
+
+def test_shape3_validation():
+    import pytest
+    with pytest.raises(ValueError): RegularPolygon(0,0,1,2,0.0)
+    with pytest.raises(ValueError): Strip(3.0, 0.0)
+    with pytest.raises(ValueError): Wedge((0,0), 0.0, 0.0)

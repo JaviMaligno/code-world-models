@@ -168,3 +168,126 @@ class Parabola(Shape):
         if len(infoc) < 2: return infoc[:n]
         step = math.hypot(infoc[1][0]-infoc[0][0], infoc[1][1]-infoc[0][1])
         return _resample_components(infoc, n, gap_tol=max(3.0*step, 0.1))  # x-clip can split into arcs
+
+
+def _project_segment(p, a, b):
+    abx, aby = b[0]-a[0], b[1]-a[1]
+    denom = abx*abx + aby*aby or 1.0
+    t = max(0.0, min(1.0, ((p[0]-a[0])*abx + (p[1]-a[1])*aby)/denom))
+    q = (a[0]+t*abx, a[1]+t*aby)
+    return q, math.hypot(p[0]-q[0], p[1]-q[1]), t
+
+def _clip_ray_to_window(apex, direction, window):
+    (xmin,xmax),(ymin,ymax) = window
+    ts = [50.0]
+    for comp, dc, lo, hi in ((0, direction[0], xmin, xmax), (1, direction[1], ymin, ymax)):
+        if abs(dc) > 1e-12:
+            for bound in (lo, hi):
+                t = (bound - apex[comp]) / dc
+                if t > 0: ts.append(t)
+    tmax = min(ts)
+    return (apex[0] + direction[0]*tmax, apex[1] + direction[1]*tmax)
+
+@dataclass(frozen=True)
+class Strip(Shape):
+    c: float; w: float
+    def __post_init__(self):
+        if self.w <= 0: raise ValueError("w>0 required")
+    def implicit_value(self, p): return max(self.c - p[0], p[0] - (self.c+self.w))
+    def project_to_boundary(self, p):
+        dl, dr = abs(p[0]-self.c), abs(p[0]-(self.c+self.w))
+        return ((self.c, p[1]), False) if dl <= dr else ((self.c+self.w, p[1]), False)
+    def normal_or_cone(self, p):
+        return (-1.0,0.0) if abs(p[0]-self.c) <= abs(p[0]-(self.c+self.w)) else (1.0,0.0)
+    def boundary_points(self, window, n):
+        (_,_),(ymin,ymax) = window; h = n//2
+        L = [(self.c, ymin+(ymax-ymin)*i/max(1,h-1)) for i in range(h)]
+        Rr = [(self.c+self.w, ymin+(ymax-ymin)*i/max(1,n-h-1)) for i in range(n-h)]
+        return L + Rr
+
+def _regular_vertices(cx, cy, radius, k, orient):
+    return [(cx + radius*math.cos(orient + math.pi/k + 2*math.pi*i/k),
+             cy + radius*math.sin(orient + math.pi/k + 2*math.pi*i/k)) for i in range(k)]
+
+@dataclass(frozen=True)
+class RegularPolygon(Shape):
+    cx: float; cy: float; radius: float; k: int; orient: float = 0.0
+    def __post_init__(self):
+        if self.k < 3: raise ValueError("k>=3 required")
+        if self.radius <= 0: raise ValueError("radius>0 required")
+    @property
+    def n_facets(self): return self.k
+    def _faces(self):
+        apo = self.radius*math.cos(math.pi/self.k)
+        out = []
+        for i in range(self.k):
+            ang = self.orient + 2*math.pi*i/self.k
+            nx, ny = math.cos(ang), math.sin(ang)
+            out.append((nx, ny, nx*self.cx + ny*self.cy + apo))  # n·p <= off inside
+        return out
+    def implicit_value(self, p):
+        return max(nx*p[0]+ny*p[1]-off for nx,ny,off in self._faces())
+    def project_to_boundary(self, p):
+        verts = _regular_vertices(self.cx, self.cy, self.radius, self.k, self.orient)
+        best, bd, atv = None, 1e18, False
+        for i in range(self.k):
+            q, d, t = _project_segment(p, verts[i], verts[(i+1)%self.k])
+            if d < bd - 1e-12: bd, best, atv = d, q, (t < 1e-6 or t > 1-1e-6)
+        return best, atv
+    def normal_or_cone(self, p):
+        act = [(nx,ny) for nx,ny,off in self._faces() if abs(nx*p[0]+ny*p[1]-off) < 1e-6]
+        if len(act) >= 2: return act
+        return act[0] if act else max(self._faces(), key=lambda f: f[0]*p[0]+f[1]*p[1]-f[2])[:2]
+    def boundary_points(self, window, n):
+        (xmin,xmax),(ymin,ymax) = window
+        verts = _regular_vertices(self.cx, self.cy, self.radius, self.k, self.orient)
+        # dense full-perimeter trace, filter to window, resample by arc length (handles n not divisible by k)
+        M = max(20*n, 400); dense = []
+        for i in range(self.k):
+            a, b = verts[i], verts[(i+1)%self.k]
+            for j in range(M//self.k):
+                t = j/(M//self.k); dense.append((a[0]+t*(b[0]-a[0]), a[1]+t*(b[1]-a[1])))
+        infoc = [pp for pp in dense if xmin<=pp[0]<=xmax and ymin<=pp[1]<=ymax]
+        if not infoc: return [verts[0]]
+        edge = math.hypot(verts[1][0]-verts[0][0], verts[1][1]-verts[0][1]) / (M//self.k)
+        return _resample_components(infoc, n, gap_tol=max(3.0*edge, 0.1))
+
+@dataclass(frozen=True)
+class Wedge(Shape):
+    apex: tuple; half_angle: float; orient: float = 0.0
+    def __post_init__(self):
+        if not (0.0 < self.half_angle < math.pi/2): raise ValueError("half_angle in (0,pi/2)")
+    def _edges(self):  # two unit ray directions from the apex bounding the opening
+        return [(math.cos(self.orient+s*self.half_angle), math.sin(self.orient+s*self.half_angle)) for s in (+1.0,-1.0)]
+    def _faces(self):
+        faces = []
+        for dx, dy in self._edges():
+            nx, ny = -dy, dx  # inward/outward normal to the ray; orient sign fixed so region is between rays
+            # ensure normal points OUT of the wedge: flip if it points toward the opening axis
+            axis = (math.cos(self.orient), math.sin(self.orient))
+            if nx*axis[0] + ny*axis[1] > 0: nx, ny = -nx, -ny
+            faces.append((nx, ny, nx*self.apex[0]+ny*self.apex[1]))
+        return faces
+    def implicit_value(self, p):
+        return max(nx*p[0]+ny*p[1]-off for nx,ny,off in self._faces())
+    def project_to_boundary(self, p):
+        # project onto each INFINITE ray from the apex (t>=0), plus the apex; the window is NOT used here
+        cands = [(self.apex, math.hypot(p[0]-self.apex[0], p[1]-self.apex[1]), True)]
+        for d in self._edges():
+            t = max(0.0, (p[0]-self.apex[0])*d[0] + (p[1]-self.apex[1])*d[1])
+            q = (self.apex[0]+t*d[0], self.apex[1]+t*d[1])
+            cands.append((q, math.hypot(p[0]-q[0], p[1]-q[1]), t < 1e-9))
+        cands.sort(key=lambda c: c[1])
+        multi = len(cands) > 1 and abs(cands[0][1]-cands[1][1]) < 1e-9
+        return cands[0][0], (cands[0][2] or multi)
+    def normal_or_cone(self, p):
+        act = [(nx,ny) for nx,ny,off in self._faces() if abs(nx*p[0]+ny*p[1]-off) < 1e-6]
+        return act if len(act) >= 2 else (act[0] if act else self._faces()[0][:2])
+    def boundary_points(self, window, n):
+        out = []
+        for d in self._edges():
+            far = _clip_ray_to_window(self.apex, d, window)
+            for j in range(n//2):
+                t = j/max(1, n//2-1); x, y = self.apex[0]+t*(far[0]-self.apex[0]), self.apex[1]+t*(far[1]-self.apex[1])
+                out.append((x, y))
+        return out[:n] if out else [self.apex]
