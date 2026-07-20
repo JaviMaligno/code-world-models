@@ -41,6 +41,15 @@ paper 2's files (PDFs/tarballs are regenerated continuously and certify nothing)
   complexity (the two-axes note of Appendix A.2). The annulus varies curvature
   AND topology at once: useless as a paper-2 ablation, exactly right as paper
   3's opening subject.
+  **Ablation OUTCOME (2026-07-20, run on the paper-2 branch): curvature is
+  FALSIFIED as the axis.** Square cells: full control 20/20 clean, incomplete
+  0/34 repair, with the half-plane reduction reappearing on flat edges AND
+  its inverse (discs written on the square instrument). The operative axis is
+  a low-descriptive-complexity TEMPLATE PRIOR (1D threshold / radial ball /
+  reward-landmark zone) that under-weights evidence geometry in both
+  directions. For this paper's ladder: no separate "curvature rung" exists —
+  shape difficulty is descriptive/template, and the topology rungs (β₁,
+  reach-relative evidence) remain the genuinely distinct axis, now cleaner.
 - Paper 2 already climbed the first rung silently: two disjoint patches means
   β₀ = 2, with per-mode identifiability and partial-repair machinery built. The
   annulus is the β₁ rung. Paper 3 makes the ladder explicit and keeps climbing.
