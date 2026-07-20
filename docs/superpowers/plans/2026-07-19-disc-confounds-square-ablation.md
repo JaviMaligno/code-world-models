@@ -75,11 +75,16 @@ the remote session of 2026-07-19 (no LLM access there); the LLM cells below are
 The most favorable treatment in a single cell. If repair stays at 0 under
 BOTH confounds combined, the confound is closed in one run.
 
-- [ ] ```bash
+- [x] ```bash
       PYTHONPATH=src python scripts/continuous_danger_synthesis.py large 20 \
           --instrument patch2d --k1 3 --k2 7 --arm incomplete \
           --prompt-variant region --max-iters 15
       ```
+      DONE 2026-07-19 (run locally; mini twin too). **0/40 repair, 0 gate
+      passes; artifact class moved half-plane → evidence-hull (rotated
+      ellipses / rectangles / micro-disc unions), none the true disc; only
+      4/40 condition on the landing variable.** Confound CLOSED — analysis
+      in EXPERIMENTS.md; ablation pair not needed (nothing repaired).
       → `results/continuous_synthesis_patch2d_large_k3_7_pv-region_it15.json`
       (~1+≤15 calls/seed; play eval dominates runtime, ~1–2 min/seed CPU).
 - [ ] Read the per-seed lines: the question is ONLY about mode-containing
@@ -111,13 +116,13 @@ BOTH confounds combined, the confound is closed in one run.
 Control first (translation of the max/abs clause should be clean, like every
 full arm), then the ablation cells.
 
-- [ ] ```bash
-      PYTHONPATH=src python scripts/continuous_danger_synthesis.py large 20 \
-          --instrument patch2d --k1 3 --k2 7 --patch-shape square
-      ```
-      (`--arm both`: full control + incomplete in one run)
+- [x] DONE 2026-07-19/20 (large arm completed via resume — 20/20).
+      Full control 20/20 clean both sizes; incomplete 0/40 repair. **Curvature explanation FALSIFIED** — the
+      axis is 2D-region induction; artifact classes reveal a template
+      prior working in BOTH directions (half-planes on flat edges AND
+      discs on the square instrument). Analysis in EXPERIMENTS.md.
       → `results/continuous_synthesis_patch2dsq_large_k3_7.json`
-- [ ] Mini twin: same command with `mini 20`.
+- [x] Mini twin: same command with `mini 20`. DONE (20/20 both arms).
 - [ ] (Optional, if the k3_7 result is clean and cheap enough) second cell
       `--k1 5 --k2 9`, both sizes, mirroring the disc's two-cell design.
 

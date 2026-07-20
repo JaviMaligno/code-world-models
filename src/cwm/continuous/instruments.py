@@ -6,10 +6,12 @@ rules text (constants + reward + mode rule), and the mode-region probes — behi
 an `InstrumentSpec` selected by `spec_for(env)`. The cart spec reproduces the
 pre-refactor prompt byte-for-byte (golden test) so committed results stay valid.
 """
+import math
 from dataclasses import dataclass
 from typing import Callable
 
-from .envs import CartWall, PatchField2D, PendulumStop
+from .envs import CartWall, PatchField2D, PendulumStop, ShapeField2D, invert_integrator
+from .shapes import Circle, HalfPlane, Parabola, RegularPolygon, Strip, Wedge
 
 # --- cart (linear plant) -----------------------------------------------------
 CART_API_TEXT = """\
@@ -148,9 +150,12 @@ then apply any additional dynamics rules given below, and return
 """
 
 
-def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
-                        omit: tuple = ()) -> str:
-    lines = [
+def _patch2d_constants_block(env) -> list:
+    """Physical constants + reward block shared by every 2D instrument built on
+    `integrate_2d` (patch2d, shape2d): identical plant, identical lode reward.
+    Extracted so shape2d's incomplete arm can reuse it verbatim and stay
+    byte-identical across shapes (it never touches the mode/shape at all)."""
+    return [
         "Physical constants:",
         f"  dt = {env.dt}",
         f"  gain = {env.gain}",
@@ -164,6 +169,11 @@ def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
         f"  phantom = {env.amp_phantom} / (1.0 + math.exp((d2 - {env.r0}) / {env.width}))",
         "  reward = real + phantom",
     ]
+
+
+def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
+                        omit: tuple = ()) -> str:
+    lines = _patch2d_constants_block(env)
     if include_mode:
         patches = []
         if env.p1 is not None and "p1" not in omit:
@@ -229,6 +239,81 @@ def _patch2d_sample_modes(env: PatchField2D, transitions: list) -> dict:
     return result
 
 
+# --- shape2d (2D navigation vs. an arbitrary Shape) --------------------------
+# Same plant/API as patch2d (ShapeField2D reuses integrate_2d bit-for-bit), so
+# the integrator/API text is identical; only the mode clause differs (a single
+# geometric predicate instead of two hardcoded discs).
+SHAPE2D_API_TEXT = PATCH2D_API_TEXT
+
+
+def describe_shape(shape) -> str:
+    """The EXACT mathematical containment predicate for `shape`, per family —
+    NOT repr(shape) — so the full-arm contract states precisely the region a
+    correct synthesis must reproduce."""
+    if isinstance(shape, Circle):
+        return f"(x - {shape.cx})**2 + (y - {shape.cy})**2 <= {shape.R}**2"
+    if isinstance(shape, Parabola):
+        return f"x >= {shape.c} + y**2/(2*{shape.R})"
+    if isinstance(shape, HalfPlane):
+        return f"x >= {shape.c}"
+    if isinstance(shape, Strip):
+        return f"x >= {shape.c} and x <= {shape.c + shape.w}"
+    if isinstance(shape, (RegularPolygon, Wedge)):
+        # containment is implicit_value <= 0, i.e. the AND of every face's
+        # half-plane nx*x + ny*y <= off (see shapes.py's `_faces`).
+        return " and ".join(f"{nx}*x + {ny}*y <= {off}"
+                            for nx, ny, off in shape._faces())
+    raise ValueError(f"describe_shape: unsupported shape type {type(shape)!r}")
+
+
+def _shape2d_rules_text(env: ShapeField2D, include_mode: bool,
+                        omit: tuple = ()) -> str:
+    if omit:
+        raise ValueError("omit is only supported by the patch2d instrument")
+    # Reuses the patch2d constants+reward block verbatim (same plant, same
+    # lodes) and NEVER touches `env.shape` unless include_mode — this is what
+    # keeps the incomplete arm byte-identical across every shape family.
+    lines = _patch2d_constants_block(env)
+    if include_mode:
+        if env.shape is None:
+            raise ValueError("env has no shape; cannot write the mode clause")
+        lines += [
+            "",
+            "Additional dynamics rule:",
+            "  There is a hard mode region defined by the predicate:",
+            f"    {describe_shape(env.shape)}",
+            "  After computing x2 and y2 as above, if that predicate holds for",
+            "  (x2, y2), the mover sticks: the next state is exactly",
+            "  [x, y, 0.0, 0.0] (the PREVIOUS position, with zero velocity).",
+        ]
+    return "\n".join(lines)
+
+
+def _shape2d_probes(env: ShapeField2D):
+    # Interior targets (a boundary point pushed inward along the inward
+    # normal — at a vertex, the negated normalized sum of the cone normals),
+    # reached exactly by inverting the integrator, so every probe fires the
+    # mode in truth regardless of the shape family.
+    box = ((-8.0, 14.0), (-6.0, 6.0))
+    shp = env.shape
+    probes = []
+    for (bx, by) in shp.boundary_points(box, 12):
+        n = shp.normal_or_cone((bx, by))
+        if isinstance(n, list):  # vertex: inward = -(normalized sum of cone normals)
+            sx = sum(c[0] for c in n); sy = sum(c[1] for c in n)
+            m = math.hypot(sx, sy) or 1.0
+            inward = (-sx / m, -sy / m)
+        else:
+            inward = (-n[0], -n[1])
+        target = (bx + 0.05 * inward[0], by + 0.05 * inward[1])  # strictly interior
+        if not shp.contains(target):
+            target = (bx + 0.2 * inward[0], by + 0.2 * inward[1])
+        state = invert_integrator(target, 0.0, 0.0, 0.0, env.dt, env.gain,
+                                  env.drag, env.a_max)
+        probes.append((state, 0.0))
+    return {"mode": probes}
+
+
 @dataclass(frozen=True)
 class InstrumentSpec:
     api_text: str
@@ -248,11 +333,16 @@ PATCH2D_SPEC = InstrumentSpec(
     api_text=PATCH2D_API_TEXT, rules_text=_patch2d_rules_text,
     mode_probes=_patch2d_probes, mode_attr="p1",
     sample_modes=_patch2d_sample_modes)
+SHAPE2D_SPEC = InstrumentSpec(
+    api_text=SHAPE2D_API_TEXT, rules_text=_shape2d_rules_text,
+    mode_probes=_shape2d_probes, mode_attr="shape")
 
 
 def spec_for(env) -> InstrumentSpec:
     if isinstance(env, PendulumStop):
         return PENDULUM_SPEC
+    if isinstance(env, ShapeField2D):
+        return SHAPE2D_SPEC
     if isinstance(env, PatchField2D):
         return PATCH2D_SPEC
     return CART_SPEC
