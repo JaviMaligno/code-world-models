@@ -10,7 +10,7 @@ import math
 from dataclasses import dataclass
 from typing import Callable
 
-from .envs import CartWall, PatchField2D, PendulumStop, ShapeField2D, invert_integrator
+from .envs import CartWall, PatchField2D, PendulumStop, RingField2D, ShapeField2D, invert_integrator
 from .shapes import Circle, HalfPlane, Parabola, RegularPolygon, Strip, Wedge
 
 # --- cart (linear plant) -----------------------------------------------------
@@ -338,9 +338,79 @@ SHAPE2D_SPEC = InstrumentSpec(
     mode_probes=_shape2d_probes, mode_attr="shape")
 
 
+# --- ring2d (paper 3: annular mode enclosing the lure) -----------------------
+# Same plant/API as patch2d (RingField2D shares integrate_2d bit-for-bit).
+RING2D_API_TEXT = PATCH2D_API_TEXT
+
+
+def _ring2d_rules_text(env: RingField2D, include_mode: bool,
+                       omit: tuple = ()) -> str:
+    if omit:
+        raise ValueError("omit is only supported by the patch2d instrument")
+    c = env.center
+    lines = [
+        "Physical constants:",
+        f"  dt = {env.dt}",
+        f"  gain = {env.gain}",
+        f"  drag = {env.drag}",
+        f"  a_max = {env.a_max}",
+        "",
+        "Reward (a function of the state [x, y, vx, vy], via x and y alone):",
+        f"  d1 = math.hypot(x - ({env.lode_real[0]}), y - ({env.lode_real[1]}))",
+        f"  d2 = math.hypot(x - ({c[0]}), y - ({c[1]}))",
+        f"  real    = {env.amp_real} / (1.0 + math.exp((d1 - {env.r0}) / {env.width}))",
+        f"  phantom = {env.amp_phantom} / (1.0 + math.exp((d2 - {env.r0}) / {env.width}))",
+        "  reward = real + phantom",
+    ]
+    if include_mode:
+        if env.r_in is None:
+            raise ValueError("env has no ring; cannot write the mode clause")
+        lines += [
+            "",
+            "Additional dynamics rule:",
+            f"  There is a sticky ring (annulus) centered at (x, y) = "
+            f"({c[0]}, {c[1]})",
+            f"  with inner radius r_in = {env.r_in} and outer radius "
+            f"r_out = {env.r_out}.",
+            "  After computing x2 and y2 as above, let",
+            f"    d = math.hypot(x2 - {c[0]}, y2 - {c[1]}).",
+            f"  If {env.r_in} <= d <= {env.r_out}, the mover sticks: the next "
+            f"state is",
+            "  exactly [x, y, 0.0, 0.0] (the PREVIOUS position, with zero "
+            "velocity).",
+        ]
+        if env.gap > 0.0:
+            lines += [
+                f"  Exception (channel): the ring has an angular opening of "
+                f"width {env.gap}",
+                f"  radians centered at angle {env.gap_center} (angle = "
+                f"math.atan2(y2 - {c[1]}, x2 - {c[0]}),",
+                "  difference wrapped to (-pi, pi]). Inside that angular "
+                "sector the ring",
+                "  does not act and the mover passes through normally.",
+            ]
+    return "\n".join(lines)
+
+
+def _ring2d_probes(env: RingField2D):
+    # states just outside the ring's NORTH face moving south — the north
+    # approach fires the annulus in truth regardless of where the channel
+    # sits (facing/west or hidden/east), for gaps < pi - 0.3.
+    c = env.center
+    return {"ring": [((c[0], c[1] + env.r_out + 0.1, 0.0, -v), -0.5)
+                     for v in (1.0, 2.0, 3.0)]}
+
+
+RING2D_SPEC = InstrumentSpec(
+    api_text=RING2D_API_TEXT, rules_text=_ring2d_rules_text,
+    mode_probes=_ring2d_probes, mode_attr="r_in")
+
+
 def spec_for(env) -> InstrumentSpec:
     if isinstance(env, PendulumStop):
         return PENDULUM_SPEC
+    if isinstance(env, RingField2D):
+        return RING2D_SPEC
     if isinstance(env, ShapeField2D):
         return SHAPE2D_SPEC
     if isinstance(env, PatchField2D):

@@ -42,6 +42,7 @@ to induce from data than a symbolic rule (either outcome is a finding).
 """
 import argparse
 import json
+import math
 import pathlib
 import statistics
 import sys
@@ -56,7 +57,9 @@ import os  # noqa: E402
 
 sys.path.insert(0, str(_REPO / "src"))
 
-from cwm.continuous.envs import CartWall, PatchField2D, PendulumStop  # noqa: E402
+from cwm.continuous.envs import (  # noqa: E402
+    CartWall, PatchField2D, PendulumStop, RingField2D)
+from cwm.continuous.tda import topological_summary  # noqa: E402
 from cwm.continuous import harness  # noqa: E402
 from cwm.continuous.contract import (  # noqa: E402
     SynthesizedModel, synthesize_and_evaluate)
@@ -122,7 +125,8 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
         stored_p = results.get("params", {}) or {}
         current_p = meta.get("params", {}) or {}
         _RESULT_KEYS = ("instrument", "x_wall", "th_stop", "k1", "k2",
-                        "patch_shape", "prompt_variant", "n_rollouts", "eps",
+                        "patch_shape", "gap", "channel", "start",
+                        "prompt_variant", "n_rollouts", "eps",
                         "max_iters", "play_episodes", "compat_model")
         mismatch = {k: (stored_p[k], current_p[k]) for k in _RESULT_KEYS
                     if k in stored_p and k in current_p
@@ -206,6 +210,25 @@ _REGION_TEXT = (
     "x > c or an axis-aligned half-plane. Check your hypothesized region "
     "against ALL matching and non-matching transitions before settling "
     "on it.")
+def _contact_landings(env, transitions):
+    """The refuted integrator landings of the contact transitions — the
+    contact-evidence cloud a repair loop can honestly compute."""
+    pts = []
+    for tr in transitions:
+        if tr["contact"]:
+            x2, y2, _, _ = env._integrate(tr["state"], tr["action"])
+            pts.append((x2, y2))
+    return pts
+
+
+def _tda_guidance(env, transitions):
+    """paper-3 'tda' variant: region-level guidance PLUS the per-seed
+    topological summary of the sample's own contact evidence, so the delta
+    vs the 'region' variant isolates the summary's contribution."""
+    return (_GUIDED_TEXT + "\n\n" + _REGION_TEXT + "\n\n"
+            + topological_summary(_contact_landings(env, transitions)))
+
+
 PROMPT_VARIANTS = {
     "default": {"max_examples": 30, "guidance": "", "max_failures": 20},
     "guided": {"max_examples": 120, "guidance": _GUIDED_TEXT,
@@ -213,6 +236,8 @@ PROMPT_VARIANTS = {
     "region": {"max_examples": 120,
                "guidance": _GUIDED_TEXT + "\n\n" + _REGION_TEXT,
                "max_failures": 40},
+    "tda": {"max_examples": 120, "guidance": _tda_guidance,
+            "max_failures": 40},
 }
 
 
@@ -225,7 +250,8 @@ if __name__ == "__main__":
     ap.add_argument("--x-wall", type=float, default=8.0,
                     help="8.0: gate misses the wall ~60%% of seeds at N=40; "
                     "4.0: gate nearly always catches it")
-    ap.add_argument("--instrument", choices=["cart", "pendulum", "patch2d"],
+    ap.add_argument("--instrument",
+                    choices=["cart", "pendulum", "patch2d", "ring2d"],
                     default="cart")
     ap.add_argument("--th-stop", type=float, default=1.4,
                     help="pendulum mode knob (1.4 headline ~balanced; 1.0 caught)")
@@ -238,7 +264,17 @@ if __name__ == "__main__":
                     "(2026-07-19): same patches as axis-aligned squares "
                     "(max/abs membership), separating boundary curvature from "
                     "2D-ness as the cause of the 0/76 repair collapse")
-    ap.add_argument("--prompt-variant", choices=["default", "guided", "region"],
+    ap.add_argument("--gap", type=float, default=0.0,
+                    help="ring2d: angular channel width (0 = closed ring, "
+                    "beta1=1 and the interior is reach-null)")
+    ap.add_argument("--channel", choices=["facing", "hidden"], default="facing",
+                    help="ring2d: channel orientation — facing the start "
+                    "(gap_center=pi) or hidden on the far side (gap_center=0)")
+    ap.add_argument("--start", choices=["outside", "inside"], default="outside",
+                    help="ring2d: initial-state placement (mu0 knob); inside "
+                    "puts x0 at the ring center — the loop-evidence regime")
+    ap.add_argument("--prompt-variant",
+                    choices=["default", "guided", "region", "tda"],
                     default="default",
                     help="confound-closure arms for the 0/76 (paper 2 s10): "
                     "'guided' = 120 examples + 40 failures shown + describe-the-"
@@ -276,8 +312,22 @@ if __name__ == "__main__":
 
     if args.patch_shape != "disc" and args.instrument != "patch2d":
         ap.error("--patch-shape is a patch2d knob")
+    if args.instrument != "ring2d" and (
+            args.gap != 0.0 or args.channel != "facing"
+            or args.start != "outside"):
+        ap.error("--gap/--channel/--start are ring2d knobs")
 
-    if args.instrument == "pendulum":
+    if args.instrument == "ring2d":
+        ENV = RingField2D(
+            gap=args.gap,
+            gap_center=math.pi if args.channel == "facing" else 0.0,
+            x0_center=(0.0, 0.0) if args.start == "outside"
+            else RingField2D().center)
+        KNOB = (f"gap{args.gap:g}"
+                + ("" if args.channel == "facing" else "-hid")
+                + ("" if args.start == "outside" else "-in"))
+        INSTR_TAG = "ring2d_"
+    elif args.instrument == "pendulum":
         ENV = PendulumStop(th_stop=args.th_stop)
         KNOB = f"thstop{args.th_stop:g}"
         INSTR_TAG = "pendulum_"

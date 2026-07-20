@@ -294,7 +294,13 @@ instrument, both worlds, one knob.
    witness; Prop 6's explicit density constant.
 6. n-dimensional program: §8. First concrete step there: ShellField-n design
    note (action-interface decision) + the r(n) collapse measurement.
-7. LLM synthesis arm: WAITS for the paper-2 confound cells (§6 first risk).
+7. ~~LLM synthesis arm gated~~ UNGATED (2026-07-20: confounds closed at
+   0/156; square ablation falsified curvature — topology is the surviving
+   axis). Infrastructure built and offline-tested; pre-registered cells,
+   the two structural reading traps (a filled-disc artifact at gap 0
+   passes EVERY metric — Prop 3 — so code inspection is mandatory), and
+   local run commands in
+   `docs/superpowers/plans/2026-07-20-ring2d-synthesis-arm.md`.
 
 ---
 

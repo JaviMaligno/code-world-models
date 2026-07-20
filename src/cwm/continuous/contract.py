@@ -283,6 +283,11 @@ def synthesize_and_evaluate(provider, model_name, env,
     "sample_contains_mode_per" (dict), while "wall_blindness" becomes the mean
     of the mode_blindness dict (or None when the gate failed)."""
     transitions = collect_transitions(env, n_rollouts, seed=seed)
+    if callable(guidance):
+        # per-seed dynamic guidance (paper 3 TDA arm): the guidance text is
+        # computed FROM this seed's own sample (e.g. a topological summary of
+        # its contact evidence), so it must be resolved after collection.
+        guidance = guidance(env, transitions)
     contract = build_contract(env, include_mode, omit=omit)
     msgs = build_synthesis_messages(contract, transitions, max_examples,
                                     guidance=guidance)
@@ -309,4 +314,6 @@ def synthesize_and_evaluate(provider, model_name, env,
     if spec.sample_modes is not None:
         cell["mode_blindness"] = mb
         cell["sample_contains_mode_per"] = spec.sample_modes(env, transitions)
+    if guidance:
+        cell["guidance_text"] = guidance   # audit trail for dynamic guidance
     return cell
