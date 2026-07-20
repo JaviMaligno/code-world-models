@@ -2173,20 +2173,26 @@ confound treatment) stands unconditioned.
 Runbook Task 2 (`docs/superpowers/plans/2026-07-19-disc-confounds-square-
 ablation.md`): patch2dsq k=(3,7), default prompt, it5, both arms, 20 seeds ×
 {large, mini}. JSONs: `results/continuous_synthesis_patch2dsq_{large,mini}_
-k3_7.json` (large incomplete arm checkpointed at 14/20 — resumable; the
-direction is already unambiguous).
+k3_7.json` (large incomplete arm first checkpointed at 14/20, then COMPLETED
+by a resumed run — the resume layer's first production use).
 
 **Control clean, premise holds on max/abs:** full arm 20/20 gate 1.000 at
 0 refine iterations in BOTH sizes, per-mode blindness 0.0/0.0, play_cost
 0.0 across the board — translating the square clause is as easy as the
 disc's and the wall's.
 
-**Incomplete arm: 0/34 repair** (every sample mode-containing — square
+**Incomplete arm: 0/40 repair** (every sample mode-containing — square
 r1 = 0.185 forces p1 into all 40 samples; p2 in 5/20 + 6/20). No gate
 passes (best 0.9962), all seeds at the 5-iteration cap; gate soundness
 intact. So flat edges do NOT restore repair: 0/76 disc + 0/40 disc-with-
-guidance + 0/34 square. **The collapse axis is 2D-region induction itself
-(the conjunction), not boundary curvature.**
+guidance + 0/40 square = 0/156 pooled across the three campaigns. **The
+collapse axis is 2D-region induction itself (the conjunction), not
+boundary curvature.** The resumed large seeds add the sharpest
+evidence-hull instance of the campaign (seed 170000): thin strips
+[1.9,2.0]x[-1,1] and [5.9,6.0]x[-1,1] — BOTH patches' west faces found,
+correct y-extent, yet only the observed contact shell is modeled, on the
+pre-position instead of the landing: the hull of the evidence, never the
+generative box.
 
 **The artifact classes sharpen the mechanism into a template prior:**
 - *Half-plane reduction ON FLAT EVIDENCE*: dominant large class is

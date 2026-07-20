@@ -116,9 +116,8 @@ BOTH confounds combined, the confound is closed in one run.
 Control first (translation of the max/abs clause should be clean, like every
 full arm), then the ablation cells.
 
-- [x] DONE 2026-07-19/20 (large incomplete arm at 14/20, resumable;
-      direction unambiguous). Full control 20/20 clean both sizes;
-      incomplete 0/34 repair. **Curvature explanation FALSIFIED** — the
+- [x] DONE 2026-07-19/20 (large arm completed via resume — 20/20).
+      Full control 20/20 clean both sizes; incomplete 0/40 repair. **Curvature explanation FALSIFIED** — the
       axis is 2D-region induction; artifact classes reveal a template
       prior working in BOTH directions (half-planes on flat edges AND
       discs on the square instrument). Analysis in EXPERIMENTS.md.
