@@ -2167,3 +2167,55 @@ only the reachable crescent, and paper 3's evidence-equivalence corollary
 even pose the disc-vs-annulus question) says a hull-fit is the rational
 response to it. (c) The paper-3 rung-1 datum (0/76, now +0/40 under
 confound treatment) stands unconditioned.
+
+## Square-patch ablation: the curvature explanation is FALSIFIED (2026-07-19/20)
+
+Runbook Task 2 (`docs/superpowers/plans/2026-07-19-disc-confounds-square-
+ablation.md`): patch2dsq k=(3,7), default prompt, it5, both arms, 20 seeds ×
+{large, mini}. JSONs: `results/continuous_synthesis_patch2dsq_{large,mini}_
+k3_7.json` (large incomplete arm checkpointed at 14/20 — resumable; the
+direction is already unambiguous).
+
+**Control clean, premise holds on max/abs:** full arm 20/20 gate 1.000 at
+0 refine iterations in BOTH sizes, per-mode blindness 0.0/0.0, play_cost
+0.0 across the board — translating the square clause is as easy as the
+disc's and the wall's.
+
+**Incomplete arm: 0/34 repair** (every sample mode-containing — square
+r1 = 0.185 forces p1 into all 40 samples; p2 in 5/20 + 6/20). No gate
+passes (best 0.9962), all seeds at the 5-iteration cap; gate soundness
+intact. So flat edges do NOT restore repair: 0/76 disc + 0/40 disc-with-
+guidance + 0/34 square. **The collapse axis is 2D-region induction itself
+(the conjunction), not boundary curvature.**
+
+**The artifact classes sharpen the mechanism into a template prior:**
+- *Half-plane reduction ON FLAT EVIDENCE*: dominant large class is
+  `if x2 >= 2.0` — the square's west edge as a 1D threshold (7/14 large,
+  3/20 mini). Dimensional reduction is shape-agnostic.
+- *The INVERSE error — curving flat evidence*: several artifacts write
+  DISCS on the square instrument (`hypot(x-2, y) <= 1.0` at the west-edge
+  midpoint; r=0.25 discs at (2,0)/(6,0); micro-disc unions). On the disc
+  instrument the models wrote half-planes; on the square they write discs.
+- *Reward-anchored superstition* (mostly mini): freeze zones invented AT
+  THE LODES (hypot to (-6,0) or (12,0) <= 2.0) — the prior anchors on
+  salient reward landmarks, not on the failure geometry; one degenerate
+  `if reward(...) > 0.0` artifact (gate 0.0022).
+- One rectangle attempt with the wrong extent ([-2,4]x[-2,2], gate 0.35);
+  ZERO artifacts write the true box [2,4]x[-1,1] or its max/abs form.
+
+Net mechanism across the three campaigns: the synthesizer selects from a
+small library of low-descriptive-complexity region templates (1D threshold,
+radial ball, reward-landmark zone) and keeps whichever locally fits,
+under-weighting the evidence's actual geometry in BOTH directions
+(flattening curves, curving flats). "Dimensional reduction" (paper 2 §7.1)
+was one face of this; the square run exposes the other. This is exactly the
+regime the Phase-A curvature sweep (Shape families + AST/MDL program
+features + evidence-dose) is built to characterize quantitatively — these
+two cells are its anchor points, not its replacement.
+
+Paper hooks (deferred to the Phase-A fold-in, one coherent edit): §7.1's
+mechanism paragraph ("reduces the disc to a half-plane") generalizes to the
+template-prior statement; §10's open items on prompting/budget and "other
+geometries" are now BOTH measured negatives (confound entry above + this);
+the abstract's "geometry-dependent" stays correct but "curvature" should
+never be the stated axis.

@@ -116,13 +116,14 @@ BOTH confounds combined, the confound is closed in one run.
 Control first (translation of the max/abs clause should be clean, like every
 full arm), then the ablation cells.
 
-- [ ] ```bash
-      PYTHONPATH=src python scripts/continuous_danger_synthesis.py large 20 \
-          --instrument patch2d --k1 3 --k2 7 --patch-shape square
-      ```
-      (`--arm both`: full control + incomplete in one run)
+- [x] DONE 2026-07-19/20 (large incomplete arm at 14/20, resumable;
+      direction unambiguous). Full control 20/20 clean both sizes;
+      incomplete 0/34 repair. **Curvature explanation FALSIFIED** — the
+      axis is 2D-region induction; artifact classes reveal a template
+      prior working in BOTH directions (half-planes on flat edges AND
+      discs on the square instrument). Analysis in EXPERIMENTS.md.
       → `results/continuous_synthesis_patch2dsq_large_k3_7.json`
-- [ ] Mini twin: same command with `mini 20`.
+- [x] Mini twin: same command with `mini 20`. DONE (20/20 both arms).
 - [ ] (Optional, if the k3_7 result is clean and cheap enough) second cell
       `--k1 5 --k2 9`, both sizes, mirroring the disc's two-cell design.
 
