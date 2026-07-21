@@ -2446,6 +2446,10 @@ Three measured findings:
    instance of the gate-quotient (Prop 1). Frequency: large 1/20, mini 0/20 —
    the template prior dominates even with loop evidence + loop summary; hole
    recovery is possible but fragile, not a robust repair.
+   *(MECHANISM SUPERSEDED by the per-artifact review below, 2026-07-21: the
+   19/20 failures are NOT mostly template-prior collapse — half the mini cells
+   DO pose closed/hollow structures; the bottleneck is exact PARAMETER
+   identification at 1e-9. See "Per-artifact behavioral audit".)*
 
 Net: the topology axis (this arm) is the surviving distinct axis (curvature was
 falsified in paper 2). What the synthesis loop can recover about the mode is
@@ -2564,16 +2568,99 @@ Two findings (exploratory, 5 seeds — do not over-read):
    reproduced on the synthesis side. **Danger needs the topology to obstruct the
    competent planner's path; an open facing channel removes the obstruction while
    leaving the synthesis failure intact.**
-2. **The OPEN ring is HARDER to synthesize (cell D).** Opposite of the naive
-   "simpler topology ⇒ easier": closed-ring blind scores ~0.97 (misses only rare
-   contacts), open-ring mean gate collapses to 0.44, because escapability floods
-   the inside probe with both the arc AND the free space reached through the gap
-   — richer, more-varied evidence the template-prior cannot fit. Reachability
-   governs evidence richness and thus synthesizability.
+2. ~~**The OPEN ring is HARDER to synthesize (cell D).**~~ **RETRACTED by the
+   per-artifact review below (2026-07-21).** The 0.44-vs-0.97 comparison put
+   terminal-artifact gates against a *blind reference*: apples to oranges. The
+   canonical blind gate on the exact evidence is 0.973 (open) vs 0.971 (closed)
+   — contact richness is IDENTICAL — and the closed-ring D terminal artifacts
+   also collapse (mean 0.560, n=20) comparably to the open ring (0.436, n=5).
+   Both regimes: 0 gate-passes, geometric structures posed, parameters
+   unidentifiable. What differs at the open gap is a GUIDANCE confound: the
+   pre-registered topological summary still reports beta_1 = 1 at gap 0.6 (its
+   Rips detector bridges channels narrower than ~2 units of arc), so the 3/5
+   disc/loop artifacts there are guidance-compliant, not prior-driven. See
+   "Per-artifact behavioral audit" below.
 
-No open-ring D artifact passed, so none is a repaired-topology datum;
-per-artifact structural analysis (arc vs loop) is deferred to the stronger model
-over the committed JSONs.
+## Per-artifact behavioral audit of the ring2d arms (2026-07-21, deep review pass)
+
+`scripts/ring2d_artifact_audit.py` → `results/ring2d_artifact_audit.json`.
+Three instruments, all CPU/deterministic, run over every committed ring2d
+synthesis cell: **(i) freeze-mask fingerprint** — probe each artifact's
+`step()` on an 81×81 state grid around the ring, mark deviations from the pure
+integrator, classify the deviation set by (inner-free × bounded × angular
+coverage): `blind / vdep / point / arc / loop(hollow) / disc(filled) /
+complement(hollow,unbounded) / fill-unbounded(≈half-plane)`; **(ii) canonical
+blind-reference gate** — `contract_accuracy` of the pure integrator on each
+cell's exact regenerated evidence, the right baseline for terminal gates;
+**(iii) guidance β̂₁ audit** — what the pre-registered topological summary
+actually told each cell, plus the detector's resolution curve β̂₁(gap) on
+regenerated inside evidence.
+
+| cell (incomplete arm) | pass | mean terminal gate | blind ref | terminal classes |
+|--------------|------|-------------------|-----------|------------------|
+| A closed large | 6/20 | 0.993 | 0.999 | fill-unbounded 13, blind 7 |
+| A closed mini | 6/20 | 0.980 | 0.999 | blind 15, arc 2, disc 2, fill-unb 1 |
+| B region large | 8/20 | 0.998 | 0.999 | blind 16, arc 2, disc 1, point 1 |
+| C tda large | 9/20 | 0.999 | 0.999 | blind 19, vdep 1 |
+| C tda mini | 12/20 | 0.999 | 0.999 | blind 17, arc 2, point 1 |
+| D in+tda large | 1/20 | 0.722 | **0.971** | arc 5, point 4, blind 4, disc 2, complement 2, loop 2, vdep 1 |
+| D in+tda mini | 0/20 | 0.560 | **0.971** | disc 5, loop 5, arc 5, blind 4, complement 1 |
+| D open0.6 mini | 0/5 | 0.436 | **0.973** | disc 3, arc 1, point 1 |
+
+Detector-resolution curve (5 seeds/gap): **β̂₁ = 1 at every gap ≤ 1.2; mixed
+(1,0,0,0,0) at 1.8; clean 0 at 2.4** — the Rips detector (dedup 0.05, cap 90,
+3×median-NN) bridges any channel narrower than ~2 units of arc.
+
+Findings (F1–F6):
+1. **B/C point-fit claim VERIFIED.** Every gate-passing mode-present artifact
+   from outside is a textual point-fit that is *behaviorally blind*: the
+   hypothesized "trap" is measure-zero (exact-coordinate match, `1e-12`
+   tolerances), so the freeze-mask class is `blind` and wb = 1.0. Zero
+   geometric mode encodings pass from outside — the published claim stands,
+   now behaviorally grounded.
+2. **Closed-D failure mechanism CORRECTED: parameter identifiability, not
+   template collapse.** From inside, models DO pose geometric mode structure
+   in most cells (mini: 5 disc + 5 loop + 1 complement + 5 arc; the TDA
+   guidance says "closed loop" and models comply ~half the time). But their
+   terminal gates average 0.56 — far BELOW the 0.971 blind reference — because
+   a posed region with wrong parameters over-freezes states the evidence shows
+   free. The bottleneck is pinning thresholds to 1e-9 from landing evidence,
+   not posing the topology. (Filled-disc attempts that freeze the interior
+   where the probe demonstrably moves tank the gate to 0.02–0.39 — 5/20 mini.)
+3. **How the ONE passer passed (large seed 160000): structure × round-number
+   guessability.** Its rule freezes when the post-integration landing has
+   `d ≥ 3.5` around the reward-spec center (12,0) — the gauge-free complement
+   form whose single parameter happens to be the TRUE inner radius, a round
+   number anchored to a center the contract's reward section already names.
+   Claude's 3/3 D-cell repairs used the same form. The D gate-pass rate
+   therefore measures *(reachable-equivalent structure) × (exact parameter
+   guessability)*, not topology-understanding alone. It also explains Claude's
+   A-cell failure mode: it guessed radius 7.4 in the WRONG (origin-centered)
+   frame, where the true boundary is not a circle.
+4. **Outside-start terminal attempts reveal the template ladder.** A-default
+   large's gate-failing mode-present terminals are 13/14 `fill-unbounded`
+   (half-plane-like `x ≥ c` — paper 2's 1D-threshold template, back again);
+   mini mostly stays blind. Richer prompting (B region, C tda) pushes
+   terminals AWAY from geometric attempts toward point-fits/blind (16–19/20)
+   — "describe the region first" made models MORE conservative, not more
+   geometric.
+5. **Guidance topology confound measured (the summarizer has a resolution
+   limit).** The pre-registered summary honestly computes β̂₁ from the
+   landing cloud, but its Rips detector cannot see channels narrower than ~2
+   arc-units at this density: it tells the model "CLOSED LOOP (beta_1 = 1)"
+   for every gap ≤ 1.2 even though the truth is an open C (β₁ = 0). The flip
+   sits at gap ≈ 1.8 (seed-dependent) and is clean by 2.4. Open-D artifact
+   classes at 0.6 (disc 3/5) are therefore guidance-COMPLIANT. This turns the
+   summary's β̂₁(gap) into a first-class instrument: sweeping gaps across the
+   flip lets us test whether artifacts track the guidance, the raw evidence,
+   or the template prior — the registered open-ring arm is designed around
+   this flip.
+6. **Blind-reference gates make terminal gates interpretable.** Outside
+   evidence: blind ref ≈ 0.999 (contacts are rare). Inside evidence: 0.971
+   at EVERY gap {0, 0.6} — escapability does NOT change per-transition
+   contact richness (basis of the retraction above). Gate bands: correct
+   ≈ 1.0 · blind ≈ 0.97 · posed-but-misparameterized hollow ≈ 0.5–0.9 ·
+   interior-filling ≈ 0.02–0.4.
 
 ## ShellField-n: truth-MPC navigation scales to n=6 (2026-07-21, CPU)
 
