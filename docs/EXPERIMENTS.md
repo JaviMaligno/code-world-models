@@ -2476,3 +2476,15 @@ sampling-noise-limited — the collapse is qualitatively clear, the fine value a
 high n needs more rollouts. Next (design §8.1): truth-MPC navigation check per n
 with vector actions (does random-shooting MPC still reach the real lode at
 n=4–6?).
+
+### Cross-family spot-check on the ring (Qwen, 2026-07-21)
+
+`--compat-model Qwen/Qwen3-Coder-30B-A3B-Instruct` (HF router), 3 seeds.
+**Cell A (baseline, outside):** the identifiability event is family-independent
+(Prop 2) — both mode-absent seeds are certified blind (wb=1.0) and exploited at
+play_cost 1.116, IDENTICAL to GPT-5.x (the blind planner's behavior is
+family-independent by construction); the one mode-present seed is refused by the
+gate (0.9997), no repair. **Cell D (inside+TDA, hole recovery):** NOT RUN — all
+three available HF tokens hit the 402 monthly-credit limit. Pending HF credits;
+the GPT-5.x D result (large 1/20 hole, mini 0/20) stands as the single-family
+datum until then.
