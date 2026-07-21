@@ -1,0 +1,66 @@
+{
+  "script": "continuous_shellfield_nav.py",
+  "params": {
+    "ns": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "episodes": 20,
+    "seed": 0,
+    "horizon": 40,
+    "n_samples": 200,
+    "block": 10,
+    "out": "results/continuous_shellfield_nav.json"
+  },
+  "rows": [
+    {
+      "n": 2,
+      "j_truth_mpc": 16.92407164750474,
+      "j_random": 0.5017434212802513,
+      "dist_mpc": 0.3754245072187582,
+      "dist_random": 6.612789480036133,
+      "reached": true,
+      "episodes": 20
+    },
+    {
+      "n": 3,
+      "j_truth_mpc": 15.546474105324691,
+      "j_random": 0.33449739561144837,
+      "dist_mpc": 0.7629103330609667,
+      "dist_random": 7.156426081836433,
+      "reached": true,
+      "episodes": 20
+    },
+    {
+      "n": 4,
+      "j_truth_mpc": 14.25699939913444,
+      "j_random": 0.03813245862145968,
+      "dist_mpc": 1.0269593334910523,
+      "dist_random": 7.249084973613739,
+      "reached": true,
+      "episodes": 20
+    },
+    {
+      "n": 5,
+      "j_truth_mpc": 12.964259943288596,
+      "j_random": 0.009028205597454132,
+      "dist_mpc": 0.9490674105600478,
+      "dist_random": 8.321722918724479,
+      "reached": true,
+      "episodes": 20
+    },
+    {
+      "n": 6,
+      "j_truth_mpc": 11.305617525307301,
+      "j_random": 0.07429542593481343,
+      "dist_mpc": 1.1830778832230737,
+      "dist_random": 7.014090179605239,
+      "reached": true,
+      "episodes": 20
+    }
+  ],
+  "elapsed_s": 886.4
+}

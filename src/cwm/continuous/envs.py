@@ -456,6 +456,15 @@ class ShellFieldN:
         if self.n < 2:
             raise ValueError("ShellFieldN requires n >= 2")
 
+    @property
+    def action_dim(self) -> int:
+        """The planner's action-vector width (docs/paper3/SHELLFIELD-N-DESIGN.md,
+        "the action interface"): mpc.plan/_candidates and cem.plan_cem read
+        this to switch from scalar to n-dim candidate sampling. The 2D/1D
+        instruments have no such attribute, so `getattr(model, "action_dim",
+        1)` there keeps them on the byte-identical scalar path."""
+        return self.n
+
     def center(self) -> tuple:
         return _embed_xy(self.center_xy, self.n)
 
