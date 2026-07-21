@@ -2526,18 +2526,23 @@ blind_of vs random, per n.
 | 5 | 0.000 | 12.96 | 12.96 | 0.01 | 0.00 |
 | 6 | 0.004 | 11.31 | 11.27 | 0.07 | 0.00 |
 
-**Finding (deviation from the naive expectation — recorded, not tuned):**
-play_cost collapses 0.162 (n=2) → ~0 (n≥3), and blind_contact 0.15 → 0. In high
-n the blind model is certified-blind (r(n) collapse, step 1) but HARMLESS: the
-random-shooting planner cannot steer to the phantom lode behind the shell —
-concentration makes the phantom's exact direction in ℝⁿ unhittable — so it never
-acts on the blind model's lie about the shell → J_truth = J_blind → play_cost 0.
-**Nuance to the r(n) "danger becomes automatic" reading (§8.2):** the
-identifiability factor becomes automatic (r→0 ⇒ (1−r)^N→1), but the play_cost
-factor ALSO collapses, so danger = play_cost·(1−r)^N → 0, NOT → 1. The high-n
-regime is the "unfalsifiable + harmless" quadrant (§4.1), reached here by
-dimensional concentration. Both factors of the danger law can collapse with n;
-whether high-n wrongness is dangerous depends on planner REACHABILITY of the
-region, not rarity alone. (Even n=2 play_cost 0.162 is far below PatchField2D's
-~1: the shell wraps the phantom with vector-action shooting, a weaker exploit
-than the disc-in-corridor.)
+**Finding (deviation from the naive expectation — recorded, not tuned; CAUSE
+CORRECTED on closer analysis).** play_cost ≈ 0 at EVERY n (0.162 at n=2, ~0 for
+n≥3), blind_contact ≈ 0 for n≥3, J_blind = J_truth (bit-identical at n=4,5). The
+cause is GEOMETRIC, not dimensional concentration (an earlier reading of this
+run wrongly attributed it to concentration — corrected here): at the normalized
+geometry the phantom lode (amp 1.0) sits at the shell center (12,0,…), distance
+12 from the start, while the real lode (amp 0.3) is at (−6,0,…), distance 6. The
+reward sigmoid (r0=2, width=0.5) is negligible beyond ~4 units, so the phantom
+at distance 12 is UNREACHABLE within horizon 40, while the real lode is
+reachable. Both truth and blind planners therefore go to the same real lode and
+NEVER cross the shell (which wraps the unreached phantom) — so the blind model is
+harmless at every n, by geometry, not by concentration. **Lesson for the danger
+law:** rarity collapse (r(n)→0) is NECESSARY BUT NOT SUFFICIENT for a play-cost
+blow-up — the mode must ALSO lie on the planner's optimal path (the ring2d
+finding: danger depends on whether the topology forces the error ONTO the
+planner's path). **This geometry is mis-calibrated for the play arm:** measuring
+blind exploitation across n needs a recalibrated ShellField-n where the pursued
+(higher-amplitude) lode sits REACHABLE behind the shell, so the planner must
+cross it. Recorded as the next calibration step; the r(n)/nav/TDA arms are
+unaffected (they don't depend on the play geometry).
