@@ -51,9 +51,15 @@ dimension effect purely (concentration: a drift-free random walk loses the
    scaling finding, recorded, and the play arm caps at the largest working n).
 3. Contact-cloud TDA in n dims: β_{n−1} needs Rips in ℝⁿ up to dim n−1
    simplices — the pure-Python reducer stops being viable at n ≥ 3
-   (β₂ needs tetrahedra). Decision: the n-dim TDA arm reports the NSW
-   density threshold and the H₁ of 2-plane SLICES only, or brings in a
-   dependency (gudhi/ripser) — defer, record as an open tooling decision.
+   (β₂ needs tetrahedra). **Tooling decision RESOLVED (2026-07-21): gudhi
+   (optional dep `.[tda]`, gudhi 3.13).** Empirical evaluation vs ripser: Rips
+   (ripser) is intractable for H₃+ on non-trivial clouds; gudhi's **alpha
+   complex** (Delaunay-based, ~linear #simplices) detects the shell S^{n−1} via
+   the dominant persistence interval in dim n−1 — verified on synthetic noisy
+   shells: max-vs-2nd persistence gap ~100–700× (a clean Cohen-Steiner-stable
+   signal) at n=2..5, timing <0.1s (n≤3), 4s (n=4), ~108s (n=5). n=6 goes by
+   2-plane slices (H₁), as Delaunay in ℝ⁶ explodes. gudhi also supplies the
+   bottleneck/Wasserstein stability distances the paper's TDA claims cite.
 
 ## Non-goals (scope guard, same as §8.4)
 
