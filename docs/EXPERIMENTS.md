@@ -2546,3 +2546,33 @@ blind exploitation across n needs a recalibrated ShellField-n where the pursued
 (higher-amplitude) lode sits REACHABLE behind the shell, so the planner must
 cross it. Recorded as the next calibration step; the r(n)/nav/TDA arms are
 unaffected (they don't depend on the play geometry).
+
+## ShellField-n contact-cloud TDA: two failure modes (2026-07-21, CPU, gudhi)
+
+`scripts/continuous_shellfield_tda.py` (resumable; run with the `.[tda]`
+interpreter) → `results/continuous_shellfield_tda.json`. Contact cloud from
+random rollouts (budget 20000), gudhi alpha-complex persistence in dim n−1
+(n≤5) / 2-plane H₁ slices (n=6).
+
+| n | n_contacts | dominant pers | 2nd | recovered | method | N_NSW |
+|---|-----------:|--------------:|----:|:---------:|:------:|------:|
+| 2 | 388 | 0.00118 | 0.00108 | ✗ | alpha | 12.6 |
+| 3 | 167 | 0.00024 | 0.00014 | ✗ | alpha | 64.0 |
+| 4 | 59 | 5.9e-06 | — | ✗ | alpha | 301.6 |
+| 5 | 11 | 0.0 | — | ✗ | alpha | 1365.3 |
+| 6 | 18 | 0.0302(slice) | — | ✗ | slices | 6031.9 |
+
+**Two distinct failure modes (both findings):** (1) n=2,3 have PLENTIFUL data
+(2.6×–31× the NSW covering heuristic) yet fail on **signal clarity** — dominant/2nd
+gap only ~1.1–1.7× (a clean shell gives ~100–700×, per the gudhi smoke test) —
+because ShellFieldN always starts OUTSIDE the shell, so the contact cloud traces
+only a reachable ARC, not the closed shell: the exact 2D TDA-probe finding (§4.3,
+"the contact set carries the topology of the REACHABLE boundary, not the mode")
+generalized to n dims. (2) n≥4 fall far below the NSW floor (0.2×, 0.008×, 0.003×)
+as r(n) collapses even at a 20000-rollout budget — concentration data-starvation.
+Implementation note: `recovered_bool` requires a genuine SECOND persistence bar
+before crediting a gap — n=4/n=6 each produced one accidental bar with no
+runner-up (gap = ∞), which a naive rule would miscall "recovered". So on the
+ring/shell, TDA of the OUTSIDE contact cloud cannot recover the mode's topology
+at any n — inside-start evidence (the ring2d D-cell) remains the only route, and
+concentration closes even that at high n.
