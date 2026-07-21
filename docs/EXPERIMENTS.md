@@ -2511,3 +2511,33 @@ collapses (J_random 0.50→0.01). **The planner is NOT the bottleneck through n=
 mechanism (blind-model exploitation) can be measured across the full n sweep.
 `action_dim` planner threading is golden-safe: the scalar path is byte-identical
 (357 passed, cart golden included).
+
+## ShellField-n play arm: the danger EMPTIES with n (blind but harmless) (2026-07-21, CPU)
+
+`scripts/continuous_shellfield_play.py` (resumable per-n) →
+`results/continuous_shellfield_play.json`. Paired MPC episodes, truth vs
+blind_of vs random, per n.
+
+| n | play_cost | J_truth | J_blind | J_random | blind_contact |
+|---|-----------|---------|---------|----------|---------------|
+| 2 | 0.162 | 16.92 | 14.27 | 0.50 | 0.15 |
+| 3 | 0.012 | 15.55 | 15.37 | 0.33 | 0.00 |
+| 4 | 0.000 | 14.26 | 14.26 | 0.04 | 0.00 |
+| 5 | 0.000 | 12.96 | 12.96 | 0.01 | 0.00 |
+| 6 | 0.004 | 11.31 | 11.27 | 0.07 | 0.00 |
+
+**Finding (deviation from the naive expectation — recorded, not tuned):**
+play_cost collapses 0.162 (n=2) → ~0 (n≥3), and blind_contact 0.15 → 0. In high
+n the blind model is certified-blind (r(n) collapse, step 1) but HARMLESS: the
+random-shooting planner cannot steer to the phantom lode behind the shell —
+concentration makes the phantom's exact direction in ℝⁿ unhittable — so it never
+acts on the blind model's lie about the shell → J_truth = J_blind → play_cost 0.
+**Nuance to the r(n) "danger becomes automatic" reading (§8.2):** the
+identifiability factor becomes automatic (r→0 ⇒ (1−r)^N→1), but the play_cost
+factor ALSO collapses, so danger = play_cost·(1−r)^N → 0, NOT → 1. The high-n
+regime is the "unfalsifiable + harmless" quadrant (§4.1), reached here by
+dimensional concentration. Both factors of the danger law can collapse with n;
+whether high-n wrongness is dangerous depends on planner REACHABILITY of the
+region, not rarity alone. (Even n=2 play_cost 0.162 is far below PatchField2D's
+~1: the shell wraps the phantom with vector-action shooting, a weaker exploit
+than the disc-in-corridor.)
