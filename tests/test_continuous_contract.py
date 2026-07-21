@@ -304,3 +304,48 @@ def test_square_contract_states_the_max_abs_rule_and_full_code_passes():
     acc, fails = contract_accuracy(sq_code, tr, eps=1e-9)
     assert acc == 1.0, fails[:3]
     assert mode_blindness(sq_code, sq) == {"patch1": 0.0, "patch2": 0.0}
+
+
+def test_refine_history_off_by_default():
+    near_env = CartWall(x_wall=0.5)
+    tr = collect_transitions(near_env, n_rollouts=20, seed=0)
+    contract = build_contract(near_env, include_mode=False)
+    # FULL_CODE is hardcoded to wall@8.0; near_env's wall is @0.5, so the
+    # completion must be adjusted to match this env (same pattern as the
+    # existing near-wall tests above, e.g. line ~279), or the sample's wall
+    # transitions never verify and the single-response FakeProvider is
+    # exhausted before convergence.
+    provider = FakeProvider([f"```python\n{FULL_CODE.replace('8.0', '0.5')}```"])
+    res = refine_continuous(provider, "fake", contract,
+                            INCOMPLETE_CODE, tr, eps=1e-9)
+    assert res.history is None
+    cell = synthesize_and_evaluate(
+        FakeProvider([f"```python\n{FULL_CODE}```"]), "fake", ENV,
+        include_mode=True, n_rollouts=5, seed=0)
+    assert "history" not in cell
+
+
+def test_refine_history_records_initial_and_each_iteration():
+    near_env = CartWall(x_wall=0.5)
+    tr = collect_transitions(near_env, n_rollouts=20, seed=0)
+    assert sample_contains_wall(tr)
+    contract = build_contract(near_env, include_mode=False)
+    # see comment in test_refine_history_off_by_default above
+    provider = FakeProvider([f"```python\n{FULL_CODE.replace('8.0', '0.5')}```"])
+    res = refine_continuous(provider, "fake", contract,
+                            INCOMPLETE_CODE, tr, eps=1e-9,
+                            keep_history=True)
+    # initial (incomplete, acc<1) + one refine (full, acc==1)
+    assert res.history is not None and len(res.history) == 2
+    (code0, acc0), (code1, acc1) = res.history
+    assert code0 == INCOMPLETE_CODE and acc0 < 1.0
+    assert acc1 == res.accuracy == 1.0 and code1 == res.code
+
+
+def test_synthesize_history_lands_in_cell():
+    cell = synthesize_and_evaluate(
+        FakeProvider([f"```python\n{FULL_CODE}```"]), "fake", ENV,
+        include_mode=True, n_rollouts=5, seed=0, keep_history=True)
+    assert cell["gate_passed"]
+    assert [h["gate_accuracy"] for h in cell["history"]] == [1.0]
+    assert cell["history"][0]["code"] == cell["code"]

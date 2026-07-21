@@ -89,8 +89,8 @@ def _seed_index(cell: dict) -> int:
 
 def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
                    n_rollouts, eps, max_iters, max_examples=30, guidance="",
-                   max_failures=20, play_episodes=6, j_truth, j_random,
-                   meta, print_fn=print) -> dict:
+                   max_failures=20, keep_history=False, play_episodes=6,
+                   j_truth, j_random, meta, print_fn=print) -> dict:
     """Runs the (arm, seed) synthesis grid, checkpointing atomically to
     `out_path` after EVERY cell (hard project rule: any long-running /
     money-costing run must checkpoint per unit and resume, so a killed run
@@ -165,7 +165,8 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
                 provider, model_name, env, include_mode=(arm == "full"),
                 n_rollouts=n_rollouts, seed=10_000 * (seed + 1),
                 eps=eps, max_iters=max_iters, max_examples=max_examples,
-                guidance=guidance, max_failures=max_failures)
+                guidance=guidance, max_failures=max_failures,
+                keep_history=keep_history)
             if cell["gate_passed"]:
                 model = SynthesizedModel(cell["code"], env)
                 eps_play = []
@@ -293,6 +294,10 @@ if __name__ == "__main__":
                     "switches provider to OpenAICompatProvider with HF_TOKEN "
                     "and ignores the positional size")
     ap.add_argument("--compat-base-url", default="https://router.huggingface.co/v1")
+    ap.add_argument("--keep-history", action="store_true",
+                    help="record per-iteration (code, gate) in each cell as "
+                    "'history' (additive metadata; off by default so "
+                    "existing outputs are byte-identical)")
     args = ap.parse_args()
 
     if args.compat_model:
@@ -368,7 +373,8 @@ if __name__ == "__main__":
         provider, MODEL, ENV, ARMS, args.n_seeds, out,
         n_rollouts=args.n_rollouts, eps=args.eps, max_iters=args.max_iters,
         max_examples=VARIANT["max_examples"], guidance=VARIANT["guidance"],
-        max_failures=VARIANT["max_failures"], play_episodes=args.play_episodes,
+        max_failures=VARIANT["max_failures"], keep_history=args.keep_history,
+        play_episodes=args.play_episodes,
         j_truth=J_TRUTH, j_random=J_RANDOM, meta=meta,
         print_fn=lambda s: print(s, flush=True))
 
