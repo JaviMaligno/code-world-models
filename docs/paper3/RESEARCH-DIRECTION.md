@@ -188,6 +188,13 @@ instrument, both worlds, one knob.
    "dimensional reduction" is a descriptive-complexity collapse, not a
    geometric one (Appendix A.2). Key question: does any family ever write a
    region with a hole from boundary-crossing data alone?
+   **Status 2026-07-21 — DONE (cells A–D, large+mini; EXPERIMENTS.md).** From
+   outside evidence the answer is NO: mode-present artifacts that pass the gate
+   are superstitious point-fits (memorize the exact landing), wb=1.0, exploited;
+   zero annuli, zero large filled discs. The identifiability event (mode-absent
+   → certified blind, pc≈1.12) reproduces robustly on rung 2, both sizes; the
+   full arm translates the two-boundary annulus clause 20/20. A hole is written
+   only from inside evidence (arm 3).
 3. **Topology-informed repair (the constructive arm).** Persistent homology /
    clustering on the sample's *contact set* (the revealed boundary points)
    yields a topological summary ("contact points lie on a closed curve
@@ -208,6 +215,15 @@ instrument, both worlds, one knob.
    (still gated on the paper-2 confound cells) should test BOTH summaries:
    the arc summary from outside (does it at least stop the half-plane
    reduction?) and the loop summary from inside.
+   **Status 2026-07-21 — LLM half DONE (EXPERIMENTS.md).** Outside + TDA arc
+   summary does NOT restore repair (still superstitious point-fits, not even the
+   half-plane). Inside + TDA loop summary DOES recover the hole, but rarely and
+   size-dependently: large 1/20 (seed 160000 wrote `d ≥ 3.5`, the disc-complement,
+   citing "beta_1 = 1" in-code; certified gate/wb/pc-perfect with the OUTER
+   boundary gauge-free — Prop 1), mini 0/20. TDA-repair is positive-but-fragile:
+   loop evidence + loop summary makes β₁=1 expressible where outside evidence
+   provably cannot, yet the template prior still dominates and only the reachable
+   boundary is determined.
 4. **Multidimensional arm (the "heavy" part, scoped last).** Spherical shells
    S^{d−1} in d = 3..6 (state (x⃗, v⃗), same freeze semantics), solid torus in
    d = 3. Hypotheses to test, not assume: repair difficulty and artifact

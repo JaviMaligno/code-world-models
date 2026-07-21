@@ -2407,3 +2407,50 @@ template-prior statement; §10's open items on prompting/budget and "other
 geometries" are now BOTH measured negatives (confound entry above + this);
 the abstract's "geometry-dependent" stays correct but "curvature" should
 never be the stated axis.
+
+## RingField2D LLM synthesis arm (2026-07-21) — the annulus (rung 2)
+
+Protocol as paper 2 (N=40, ε=1e-9, ≤5 refine, 20 seeds/cell; gap=0 closed
+ring, center (12,0), r_in 3.5, r_out 5.0). Pre-registered cells A–D
+(`docs/superpowers/plans/2026-07-20-ring2d-synthesis-arm.md`). Results in
+`results/continuous_synthesis_ring2d_{large,mini}_gap0*.json` (committed
+f86e090 + db3dc29). Every gate-passing artifact code-inspected (trap 1: a
+filled disc at gap 0 would pass every metric — Prop 3).
+
+| cell | prompt / start | large: gate-pass (present) | mini: gate-pass (present) | mode-present shape |
+|------|----------------|----------------------------|---------------------------|-------------------|
+| A baseline | default / out | 6 (0 present) · full 20/20 | 6 (0 present) · full 20/20 | — |
+| B region | region / out | 8 (2 present) | — | superstitious point-fit (`trap_r=1e-12`; exact-coord reset) |
+| C TDA | tda / out | 9 (3 present) | 12 (6 present) | superstitious point-fit, wb=1.0 |
+| D TDA | tda / **inside** | 1 (1 present) | 0 | **hole (β₁=1)**, wb=0.0 pc=0.0 (large seed 160000) |
+
+Three measured findings:
+1. **Identifiability event on rung 2 (robust, both sizes).** Mode-absent seeds
+   (r=0.042, N=40 → ≈6/20) are certified fully blind (no mode clause written)
+   and exploited at play_cost ≈ 1.12 (phantom-obstruction, below random). Full
+   arm 20/20 both sizes — the two-curved-boundary annulus clause translates.
+2. **Repair is NOT restored from outside evidence (region OR TDA, both sizes).**
+   Every mode-present gate-passing artifact from an outside start is a
+   *superstitious point-fit* (memorizes the exact observed landing / state:
+   `trap_r=1e-12`, `abs(x-px)≤pos_tol`), wb=1.0, exploited pc≈1.12. Zero annuli,
+   zero large filled discs. Consistent with the TDA-probe finding (Lemma 2
+   corollary): from outside, ring and disc evidence are pathwise identical, so
+   the summary can only honestly report ∂𝓡's arc, and it does not pose the hole.
+3. **Inside-start + TDA recovers the HOLE — positive but RARE and size-dependent.**
+   large seed 160000 (only) wrote a region WITH A HOLE: the code comment cites
+   "closed loop (beta_1 = 1)" and the guard freezes for `d ≥ 3.5` — the
+   *disc-complement*, not the exact annulus. It is certified perfect (gate 1.0,
+   wb 0.0, pc 0.0) because from inside the probe freezes at d=3.5 and never
+   reaches the outer boundary: disc-complement is indistinguishable from the
+   annulus on the reachable set. The **outer boundary is gauge-free** — a clean
+   instance of the gate-quotient (Prop 1). Frequency: large 1/20, mini 0/20 —
+   the template prior dominates even with loop evidence + loop summary; hole
+   recovery is possible but fragile, not a robust repair.
+
+Net: the topology axis (this arm) is the surviving distinct axis (curvature was
+falsified in paper 2). What the synthesis loop can recover about the mode is
+governed by the topology of the evidence *relative to reachability* — the hole
+is recoverable only when the start makes the loop reachable, and even then only
+the reachable boundary is determined; the rest is gauge. Deeper per-artifact
+analysis (descriptive/AST complexity, cross-family) deferred to a stronger
+model over the committed JSONs.
