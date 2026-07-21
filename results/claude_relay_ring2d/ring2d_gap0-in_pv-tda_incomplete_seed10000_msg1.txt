@@ -1,0 +1,186 @@
+=== USER ===
+Implement a deterministic 2D control world model as Python module-level
+functions (pure, no I/O, no globals, only the `math` standard-library module).
+
+State is a list [x, y, vx, vy] of four floats (position, velocity). Action is
+a single float, mapped to a thrust heading.
+
+Functions to implement EXACTLY these signatures:
+  def step(state: list, action: float) -> list   # next [x, y, vx, vy]
+  def reward(state: list) -> float               # reward of a state
+
+The integrator is FIXED and part of the contract. step() must compute, in
+exactly this order, with plain Python floats:
+  1. a = min(a_max, max(-a_max, action))          # clamp the action
+  2. phi = pi * a / a_max                         # thrust heading
+  3. vx2 = vx + (gain * cos(phi) - drag * vx) * dt
+  4. vy2 = vy + (gain * sin(phi) - drag * vy) * dt
+  5. x2 = x + vx2 * dt
+  6. y2 = y + vy2 * dt
+then apply any additional dynamics rules given below, and return
+[x2, y2, vx2, vy2].
+
+Physical constants:
+  dt = 0.1
+  gain = 3.0
+  drag = 0.3
+  a_max = 1.0
+
+Reward (a function of the state [x, y, vx, vy], via x and y alone):
+  d1 = math.hypot(x - (-6.0), y - (0.0))
+  d2 = math.hypot(x - (12.0), y - (0.0))
+  real    = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+  phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+  reward = real + phantom
+
+The current implementation is below. It fails some transitions. Fix it so every transition matches to within 1e-09 in x, v and reward. Output only one ```python code block.
+
+CURRENT CODE:
+```python
+import math
+
+# Physical constants (fixed integrator contract).
+_DT = 0.1
+_GAIN = 3.0
+_DRAG = 0.3
+_A_MAX = 1.0
+
+# Reward centers.
+_REAL_CX, _REAL_CY = -6.0, 0.0
+_PHANTOM_CX, _PHANTOM_CY = 12.0, 0.0
+
+# --- Hypothesis about the anomalous ("freeze") trigger region --------------
+#
+# None of the 120 example transitions given for this seed are themselves
+# anomalous: every next-state and every reward(next) value is reproduced
+# exactly by the plain integrator + reward formula in the contract (checked
+# numerically -- the largest |integrator_prediction - observed_next| over
+# all rows and all four state components is 0.0, and the reward formula
+# matches every reward(next) value to full float precision as well). So
+# this batch contains no *direct* example of the freeze rule firing; the
+# only evidence for it is the accompanying diagnostics plus the geometry
+# of the states that ARE shown:
+#
+#   * 74 distinct anomalous "landing" positions (post-step positions the
+#     plain integrator alone cannot explain), forming 24 spatial clusters.
+#   * Their bounding box is x in [8.46, 15.59], y in [-3.53, 3.54] -- a
+#     square of half-extent ~3.5-3.6 centered almost exactly on
+#     (12.0, 0.0), i.e. on the PHANTOM reward center, not the real one.
+#   * beta_1 = 1: those 74 points trace exactly one closed loop.
+#   * "freeze-type anomalies are only ever observed on the REACHABLE side
+#     of their trigger region; the region may extend beyond the observed
+#     positions on the far side."
+#
+# Independently, every position actually visited in this batch (both start
+# and landing points, over all 120 rows) lies at radius in
+# [0.096, 3.493] from (12, 0) -- and none of them is anomalous. That is
+# exactly consistent with a ring-shaped trigger region centered on the
+# phantom target (12, 0) whose *inner* (reachable) edge sits just beyond
+# the radius this batch's ordinary trajectories ever reach (~3.49),
+# matching the ~3.5-3.6 half-extent of the anomaly bounding box: the 74
+# anomalous points are recorded exactly where trajectories first cross
+# into the ring from the normally-explored interior, which is why they
+# trace a single closed loop (beta_1 = 1) around that interior instead of
+# filling it in. Because the freeze halts further radial motion right at
+# that inner edge, no trajectory ever reaches the ring's outer edge, so
+# its true outer radius cannot be pinned down from the data ("the region
+# may extend beyond the observed positions on the far side"). We therefore
+# model the region as unbounded outward from the inner edge -- i.e.
+# effectively a circular containment wall around the phantom target at
+# radius ~3.5 -- rather than guessing an unfounded outer radius.
+#
+# Rule: compute the plain-integrator landing position first (steps 1-6 of
+# the contract, unchanged). If that landing position's distance from the
+# phantom center (12, 0) is at least _RING_R_IN, the landing *position* is
+# kept as computed but the landing *velocity* is frozen to zero -- a
+# "freeze" anomaly, matching the diagnostics' terminology. This never
+# fires on any of the 120 given transitions (max radius reached is
+# ~3.493, safely below the threshold), by construction.
+_RING_CX, _RING_CY = _PHANTOM_CX, _PHANTOM_CY
+_RING_R_IN = 3.5  # just above the largest clean radius observed (~3.493)
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    a = min(_A_MAX, max(-_A_MAX, action))
+    phi = math.pi * a / _A_MAX
+
+    vx2 = vx + (_GAIN * math.cos(phi) - _DRAG * vx) * _DT
+    vy2 = vy + (_GAIN * math.sin(phi) - _DRAG * vy) * _DT
+    x2 = x + vx2 * _DT
+    y2 = y + vy2 * _DT
+
+    d_ring = math.hypot(x2 - _RING_CX, y2 - _RING_CY)
+    if d_ring >= _RING_R_IN:
+        vx2 = 0.0
+        vy2 = 0.0
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+
+    d1 = math.hypot(x - _REAL_CX, y - _REAL_CY)
+    d2 = math.hypot(x - _PHANTOM_CX, y - _PHANTOM_CY)
+
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+
+    return real + phantom
+```
+
+FAILURES (expected vs got):
+step([10.875821608604042, 3.1941317581595476, -0.9909749287854921, 1.311905175909342], -0.49223047003266807): expected [10.875821608604042, 3.1941317581595476, 0.0, 0.0] r=0.05883554345244968, got [10.780429228750405, 3.29139549654733, 0.0, 0.0] r=0.046523685249568354 (err 0.0973)
+step([11.26846863538277, 3.4100178661112137, -0.4511803660903242, 0.6869332133659427], -0.22487083931722407): expected [11.26846863538277, 3.4100178661112137, 0.0, 0.0] r=0.04855883086820667, got [11.247524222762737, 3.457176204465132, 0.0, 0.0] r=0.04409811262468985 (err 0.0472)
+step([11.525879852193704, 3.4601663660931634, 0.4438678866319204, 0.2827147055917254], 0.01434693229886519): expected [11.525879852193704, 3.4601663660931634, 0.0, 0.0] r=0.04810833933302112, got [11.598904569784084, 3.488941401273295, 0.0, 0.0] r=0.04636031260687831 (err 0.073)
+step([11.555372643187033, 3.4656595691136096, 0.29492790993328544, 0.05493203020446167], 0.32014769027304535): expected [11.555372643187033, 3.4656595691136096, 0.0, 0.0] r=0.04796501645966598, got [11.600043699964132, 3.4963252695122518, 0.0, 0.0] r=0.04572729206992468 (err 0.0447)
+step([11.638132376844082, 3.4806147424694402, 0.38792046926478096, 0.32436271894315516], -0.87469747776651): expected [11.638132376844082, 3.4806147424694402, 0.0, 0.0] r=0.047482353062924275, got [11.648055199992074, 3.5005710867265916, 0.0, 0.0] r=0.045806631400286284 (err 0.02)
+step([11.638132376844082, 3.4806147424694402, 0.0, 0.0], 0.5525136624601223): expected [11.638132376844082, 3.4806147424694402, 0.0, 0.0] r=0.047482353062924275, got [11.63320550126948, 3.5102074087412105, 0.0, 0.0] r=0.04484598789205047 (err 0.0296)
+step([9.18385319767426, 1.9698919631972782, -1.220054554602543, 0.790927495762185], -0.719722845373455): expected [9.18385319767426, 1.9698919631972782, 0.0, 0.0] r=0.05348058347942373, got [9.046405320168374, 2.023479891482562, 0.0, 0.0] r=0.04067951121274467 (err 0.137)
+step([9.165724589573095, 2.0255780361723525, -0.25228703491693905, 0.40730475041981695], -0.636337847523347): expected [9.165724589573095, 2.0255780361723525, 0.0, 0.0] r=0.04892165023547088, got [9.128792507734795, 2.0377966275088073, 0.0, 0.0] r=0.04557638749482073 (err 0.0369)
+step([9.165724589573095, 2.0255780361723525, 0.0, 0.0], 0.6243458345326716): expected [9.165724589573095, 2.0255780361723525, 0.0, 0.0] r=0.04892165023547088, got [9.15430107134481, 2.0533179574283333, 0.0, 0.0] r=0.04660616525191888 (err 0.0277)
+step([9.165724589573095, 2.0255780361723525, 0.0, 0.0], 0.9832233215101287): expected [9.165724589573095, 2.0255780361723525, 0.0, 0.0] r=0.04892165023547088, got [9.135766247958273, 2.02715846892624, 0.0, 0.0] r=0.04661769692806084 (err 0.03)
+step([9.165724589573095, 2.0255780361723525, 0.0, 0.0], 0.6384054731572419): expected [9.165724589573095, 2.0255780361723525, 0.0, 0.0] r=0.04892165023547088, got [9.153087348487723, 2.052786493272126, 0.0, 0.0] r=0.04654635256663356 (err 0.0272)
+step([8.803836346288188, 1.379973947778031, -0.5720347703007231, -0.2651157158888678], 0.9008544526500506): expected [8.803836346288188, 1.379973947778031, 0.0, 0.0] r=0.049139797275349714, got [8.719792495684844, 1.3634516110265031, 0.0, 0.0] r=0.0429187602233658 (err 0.084)
+step([15.38140457715886, -0.7460646599695314, 0.7392499559302215, -0.26420309493834515], -0.6777865284529734): expected [15.38140457715886, -0.7460646599695314, 0.0, 0.0] r=0.050909095358677534, got [15.437213545550948, -0.7971333660124105, 0.0, 0.0] r=0.04492173998890984 (err 0.0558)
+step([15.421489260067174, -0.6915093719865849, 0.40588549116525147, 0.06703459229541345], 0.2664707033271101): expected [15.421489260067174, -0.6915093719865849, 0.0, 0.0] r=0.048276065084475024, got [15.480947792319265, -0.6627250342402355, 0.0, 0.0] r=0.04364892974241532 (err 0.0595)
+step([15.404583370887297, -0.7433092261056279, 0.0011940414927601624, -0.27787977618621473], 0.07966467533211685): expected [15.404583370887297, -0.7433092261056279, 0.0, 0.0] r=0.04882008599451961, got [15.433764531118076, -0.7628334826349075, 0.0, 0.0] r=0.04587139916938957 (err 0.0292)
+step([15.404583370887297, -0.7433092261056279, 0.0, 0.0], -0.1230196058102313): expected [15.404583370887297, -0.7433092261056279, 0.0, 0.0] r=0.04882008599451961, got [15.432370646981367, -0.7546170679541808, 0.0, 0.0] r=0.04614652514235946 (err 0.0278)
+step([9.280551614909234, 2.1307249309306764, 0.13784957872772186, 1.3337570625683557], 0.6290053417678516): expected [9.280551614909234, 2.1307249309306764, 0.0, 0.0] r=0.05168465060048088, got [9.282094679647994, 2.287669100652254, 0.0, 0.0] r=0.04289936530556621 (err 0.157)
+step([15.331517120537248, -0.8536746516626582, 1.1296675359420345, 0.10184777838603852], 0.7767174903901983): expected [15.331517120537248, -0.8536746516626582, 0.0, 0.0] r=0.05323655041079324, got [15.418177899199447, -0.8244353453749214, 0.0, 0.0] r=0.04598378421137396 (err 0.0867)
+step([8.607145510227419, -0.41018241746167716, -1.3224190844900165, 0.23377236024865528], -0.7310966078771375): expected [8.607145510227419, -0.41018241746167716, 0.0, 0.0] r=0.055455678623762855, got [8.45895409483641, -0.4099413487283728, 0.0, 0.0] r=0.041911009237918594 (err 0.148)
+step([15.287748340674638, 1.1769418532358855, 0.6346738372283522, 0.17891098072847691], 0.7369194958343215): expected [15.287748340674638, 1.1769418532358855, 0.0, 0.0] r=0.04814847964512956, got [15.328987890048698, 1.2163629950174981, 0.0, 0.0] r=0.04358422194724438 (err 0.0412)
+step([15.287748340674638, 1.1769418532358855, 0.0, 0.0], 0.41930798381276957): expected [15.287748340674638, 1.1769418532358855, 0.0, 0.0] r=0.04814847964512956, got [15.29527219156043, 1.2059830596131755, 0.0, 0.0] r=0.04661760178095397 (err 0.029)
+step([15.347433385748891, 0.9245865559259842, 0.17499044437676906, -0.5153101769755485], 0.11014617425359896): expected [15.347433385748891, 0.9245865559259842, 0.0, 0.0] r=0.04994719316400484, got [15.392629212289554, 0.884776567431656, 0.0, 0.0] r=0.04687742825643795 (err 0.0452)
+step([15.374125261586682, 0.9108918940367681, 0.2669187583779104, -0.1369466188921606], -0.45879666612950154): expected [15.374125261586682, 0.9108918940367681, 0.0, 0.0] r=0.04788725154904202, got [15.403888868282168, 0.8678590578456706, 0.0, 0.0] r=0.046284229883050254 (err 0.043)
+step([15.374125261586682, 0.9108918940367681, 0.0, 0.0], 0.39228104157918553): expected [15.374125261586682, 0.9108918940367681, 0.0, 0.0] r=0.04788725154904202, got [15.384084866529822, 0.9391904146584644, 0.0, 0.0] r=0.04635377480498232 (err 0.0283)
+step([15.374125261586682, 0.9108918940367681, 0.0, 0.0], -0.3355268314180333): expected [15.374125261586682, 0.9108918940367681, 0.0, 0.0] r=0.04788725154904202, got [15.38894587140853, 0.8848083834504127, 0.0, 0.0] r=0.047196215220428744 (err 0.0261)
+step([12.304488373364139, -3.4800231907345722, -1.1234286603285886, -0.06227118321380837], -0.3895818362272103): expected [12.304488373364139, -3.4800231907345722, 0.0, 0.0] r=0.04803322730721123, got [12.205715003198673, -3.5142765442195047, 0.0, 0.0] r=0.04562570307217934 (err 0.0988)
+step([12.275101772307236, -3.47398765610022, -0.293866010569024, 0.0603553463435202], -0.35678512612173074): expected [12.275101772307236, -3.47398765610022, 0.0, 0.0] r=0.04881242865130664, got [12.259643649713784, -3.4951476079317705, 0.0, 0.0] r=0.046995991545047903 (err 0.0212)
+step([12.275101772307236, -3.47398765610022, 0.0, 0.0], -0.4722647954909662): expected [12.275101772307236, -3.47398765610022, 0.0, 0.0] r=0.04881242865130664, got [12.277712447398772, -3.5038738464825094, 0.0, 0.0] r=0.04610094708014367 (err 0.0299)
+step([14.392310799994602, -2.5499179482061187, 0.7838687821018734, -0.1528670264130953], -0.20335085895379823): expected [14.392310799994602, -2.5499179482061187, 0.0, 0.0] r=0.04774675108026572, got [14.49242961126279, -2.5826341220444644, 0.0, 0.0] r=0.03998833776210096 (err 0.1)
+step([15.035262306357652, -1.6429407257761584, 1.8192580067739212, -0.11915421670796418], -0.6726479785831465): expected [15.035262306357652, -1.6429407257761584, 0.0, 0.0] r=0.05201661497936646, got [15.196244809396823, -1.680193014098829, 0.0, 0.0] r=0.038349143384441224 (err 0.161)
+step([8.704407470849704, -1.1307934557480517, -0.40565168838987065, 0.28923997892396824], 0.6647979330519767): expected [8.704407470849704, -1.1307934557480517, 0.0, 0.0] r=0.04887438858456685, got [8.650212042549045, -1.076668801916781, 0.0, 0.0] r=0.04577642864286315 (err 0.0542)
+step([8.704407470849704, -1.1307934557480517, 0.0, 0.0], -0.7608053180983829): expected [8.704407470849704, -1.1307934557480517, 0.0, 0.0] r=0.04887438858456685, got [8.682486525328445, -1.1512744749476425, 0.0, 0.0] r=0.04638878654713211 (err 0.0219)
+step([13.084654784835141, -3.2425372439734534, 0.22292049726098587, -0.8417792973897782], -0.3851760273973017): expected [13.084654784835141, -3.2425372439734534, 0.0, 0.0] r=0.05529022723182012, got [13.116866797566686, -3.3522590166690462, 0.0, 0.0] r=0.04449628529415312 (err 0.11)
+step([9.693293790077599, -2.625291662541493, -0.8775927301200974, -0.40772886672564645], 0.5237089445426664): expected [9.693293790077599, -2.625291662541493, 0.0, 0.0] r=0.047905460423743496, got [9.605934845426445, -2.6349245417975116, 0.0, 0.0] r=0.042280952376201275 (err 0.0874)
+step([12.493998066212791, -3.4364872670299933, 0.6699091074289611, -0.44774242826851707], -0.41201333300981857): expected [12.493998066212791, -3.4364872670299933, 0.0, 0.0] r=0.05003872211598525, got [12.567166598801444, -3.5087794556874994, 0.0, 0.0] r=0.04275203026124306 (err 0.0732)
+step([13.068156298903457, -3.320149772602923, 0.525234712077062, -0.4644849413808665], -0.18508883663481557): expected [13.068156298903457, -3.320149772602923, 0.0, 0.0] r=0.04854568623531756, got [13.144173689060558, -3.3816824937424337, 0.0, 0.0] r=0.04148700881244967 (err 0.076)
+step([11.244267483864617, -3.3953693139922394, -0.6811288628255756, -0.6998723302816416], 0.966778280559764): expected [11.244267483864617, -3.3953693139922394, 0.0, 0.0] r=0.04941073431245115, got [11.148361229570988, -3.460131538059529, 0.0, 0.0] r=0.04201545212925552 (err 0.0959)
+step([11.244267483864617, -3.3953693139922394, 0.0, 0.0], -0.7830952292718307): expected [11.244267483864617, -3.3953693139922394, 0.0, 0.0] r=0.04941073431245115, got [11.220967233982174, -3.4142663602009913, 0.0, 0.0] r=0.04724417161714489 (err 0.0233)
+step([9.228792365557773, -1.8239617929220209, -1.7234053800326163, -0.7745159977931757], 0.8261127207493035): expected [9.228792365557773, -1.8239617929220209, 0.0, 0.0] r=0.06690785862537711, got [9.035988199977396, -1.8835044009773008, 0.0, 0.0] r=0.04636830560280431 (err 0.193)
+step([15.440369741186903, -0.45242971306674923, 1.3403952142541042, -0.5424195655922122], -0.5243161834745571): expected [15.440369741186903, -0.45242971306674923, 0.0, 0.0] r=0.050212144520910836, got [15.568098558996638, -0.534956918471219, 0.0, 0.0] r=0.03856965568573023 (err 0.128)
+
+Before writing code, examine the observed transitions that the base integrator alone cannot explain (transitions whose returned state is not the integrator's prediction). Characterize WHERE in state space they occur: collect the positions involved, describe the region they outline, and only then write the rule that reproduces them exactly. State your hypothesis about the region as a comment in the code.
+
+A localized rule's trigger region may have any shape in the (x, y) plane; do not assume it is a one-dimensional threshold such as x > c or an axis-aligned half-plane. Check your hypothesized region against ALL matching and non-matching transitions before settling on it.
+
+Diagnostics of the anomalous (non-integrator) landing positions,
+computed from the observed transitions alone:
+- 74 distinct positions, forming 24 spatial cluster(s);
+- bounding box x in [8.46, 15.59], y in [-3.53, 3.54];
+- persistent-homology check: beta_1 = 1.
+beta_1 >= 1 means the positions trace at least one CLOSED LOOP enclosing an area the sample never visits: a trigger region consistent with this evidence must have a boundary that closes around that enclosed area.
+Note: freeze-type anomalies are only ever observed on the REACHABLE side of their trigger region; the region may extend beyond the observed positions on the far side.

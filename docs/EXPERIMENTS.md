@@ -2489,6 +2489,49 @@ three available HF tokens hit the 402 monthly-credit limit. Pending HF credits;
 the GPT-5.x D result (large 1/20 hole, mini 0/20) stands as the single-family
 datum until then.
 
+### Cross-family spot-check on the ring (Claude, A + D complete, 2026-07-21)
+
+`claude-sonnet`, agent-relayed context-free (each synthesis/refine message is a
+fresh agent with no history and no repo access — it sees ONLY the pipeline
+message, verbatim; harness `scripts/continuous_claude_step.py`, transcripts +
+replies under `results/claude_relay_ring2d/`, classified JSONs
+`claude_results_ring2d_gap0.json` and `…_gap0-in_pv-tda.json`). 3 seeds/cell.
+**Integrity check:** on the non-recovered cells the gate plateaus below 1.0
+(0.5966, 0.9728 pre-refine) rather than snapping to exact — evidence the
+context-free agents did not read the true env source (a leak would gate 1.0).
+
+| cell | prompt / start | seeds → outcome |
+|------|----------------|-----------------|
+| A baseline | default / out | 2/3 mode-absent → **blind, exploited pc 1.1164** (wb 1.0, IDENTICAL to GPT-5.x & Qwen); 1/3 mode-present → **no repair** (gate 0.5966) |
+| D TDA | tda / **inside** | **3/3 recover the HOLE** — gate 1.0, wb 0.0, **pc 0.0** (safe); seed 30000 iter0, seeds 10000/20000 iter1 |
+
+Two findings, both cross-family:
+1. **Identifiability event is family-independent (confirmed a third family).**
+   The two mode-absent A seeds are certified fully blind and exploited at
+   play_cost 1.1164 — bit-identical to GPT-5.x and Qwen (the blind planner is
+   family-independent by construction). The one mode-present A seed (seed 10000,
+   sample DOES contain the ring) still yields **no repair from outside**: Claude
+   oscillates over the ≤5 refines — blind → a *superstitious velocity-cap*
+   (`hypot(vx2,vy2)>1 → freeze`, gate 0.5966, worse than blind) → an
+   *approximate-radius disc* (`hypot(x2,y2)≥7.4 → freeze`, right STRUCTURE but
+   the radius is a guess from the single shown contact, gate 0.9803) → back to
+   blind. It recovers the *positional-ring structure* but cannot identify the
+   exact threshold to 1e-9 from sparse outside evidence — a richer failure than
+   Qwen's flat gate-refusal, same conclusion (repair not restored from outside).
+2. **Inside-start + TDA recovers the hole — and for Claude it is ROBUST, a
+   family DIFFERENCE in rate.** All three D seeds wrote a genuine
+   disc-complement-with-hole (freeze on `d ≥ r_in`), certified perfect (gate
+   1.0, wb 0.0, pc 0.0) because from inside the probe never reaches the outer
+   boundary (outer boundary gauge-free, Prop 1) — the SAME mechanism as GPT-5.x
+   seed 160000. The mechanism (inside evidence + loop summary → hole) is
+   family-independent; the *rate* is not: Claude 3/3 vs GPT-5.x large 1/20, mini
+   0/20. Consistent with paper 2's finding that repair *rate* (not the
+   three-way structure) is the family-varying quantity.
+
+Net cross-family (three families now): the identifiability event and the
+"repair only from inside + topology" law hold for GPT-5.x, Qwen, and Claude; the
+repair *rate* varies by family (Claude reconstructs the hole most reliably).
+
 ## ShellField-n: truth-MPC navigation scales to n=6 (2026-07-21, CPU)
 
 `scripts/continuous_shellfield_nav.py` (resumable per-n) →
