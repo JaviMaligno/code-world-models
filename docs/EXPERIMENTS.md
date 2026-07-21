@@ -2536,6 +2536,34 @@ Net cross-family (three families now): the identifiability event and the
 "repair only from inside + topology" law hold for GPT-5.x, Qwen, and Claude; the
 repair *rate* varies by family (Claude reconstructs the hole most reliably).
 
+### Exploratory control: the OPEN ring (gap>0, β₁=0) is HARDER, not easier (GPT mini, 2026-07-21)
+
+NOT pre-registered — an exploratory topology control run on authorized Azure to
+isolate β₁ as the axis. `continuous_danger_synthesis.py mini 5 --instrument
+ring2d --arm incomplete --gap 0.6 --channel facing --start inside
+--prompt-variant tda` → `results/continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json`.
+Opens a facing angular channel (width 0.6 rad) so the ring is a C-shape (β₁=0,
+contractible) and the inside probe can ESCAPE through the gap.
+
+| gap / topology | cell D (inside+TDA), GPT mini | mean gate | mode present |
+|----------------|------------------------------|-----------|--------------|
+| 0 / closed (β₁=1) | 0/20 gate-pass (rare hole via large only) | ~0.97 (blind nearly passes) | yes |
+| 0.6 / **open (β₁=0)** | **0/5 gate-pass** | **0.44** | yes (5/5) |
+
+**Finding (exploratory, 5 seeds — do not over-read).** The OPEN ring is *harder*
+to synthesize than the closed one, the opposite of the naive "simpler topology ⇒
+easier" expectation. On the closed ring a blind model already scores ~0.97
+(it only misses the rare contacts); on the open ring the mean gate collapses to
+0.44 because opening the channel makes the region escapable, so the inside probe
+floods both the arc AND the free space it reaches through the gap — far richer,
+more-varied evidence that the template-prior artifact cannot fit. **Reachability
+(escapability), not β₁ alone, governs evidence richness and therefore
+synthesizability** — the same topology-relative-to-reach thesis as the mechanism
+grid (hidden vs facing channel), now on the synthesis side. No artifact passed,
+so none is a repaired-topology datum; per-artifact structural analysis (did GPT
+attempt an arc vs a loop?) is deferred to the stronger model over the committed
+JSON.
+
 ## ShellField-n: truth-MPC navigation scales to n=6 (2026-07-21, CPU)
 
 `scripts/continuous_shellfield_nav.py` (resumable per-n) →
