@@ -49,6 +49,42 @@ def invert_integrator(endpoint_xy, vx, vy, action, dt, gain, drag, a_max):
     return (endpoint_xy[0] - vx2 * dt, endpoint_xy[1] - vy2 * dt, vx, vy)
 
 
+def thrust_vector_nd(action, gain: float, a_max: float) -> tuple:
+    """Norm-capped thrust vector for the n-dim instruments' action interface
+    (docs/paper3/SHELLFIELD-N-DESIGN.md, "the action interface"): each
+    component is clamped to [-a_max, a_max] first (mirroring the 2D
+    instruments' scalar clamp), then thrust = gain * a / max(1, ||a||), so
+    ||thrust|| <= gain always -- the max thrust magnitude equals the 2D
+    instruments' (gain, reached at phi = 0)."""
+    a = tuple(max(-a_max, min(a_max, ai)) for ai in action)
+    norm = math.sqrt(sum(ai * ai for ai in a))
+    scale = gain / max(1.0, norm)
+    return tuple(ai * scale for ai in a)
+
+
+def integrate_nd(state, action, dt, gain, drag, a_max):
+    """One semi-implicit Euler step for the n-dim thrust-vector plant
+    (ShellFieldN). `state` is a flat 2n-tuple (first n = position, last n =
+    velocity); byte-for-byte the same per-component update as `integrate_2d`
+    once `thrust_vector_nd` replaces the heading trick, so the two families
+    share one integration contract."""
+    n = len(state) // 2
+    pos, vel = state[:n], state[n:]
+    thrust = thrust_vector_nd(action, gain, a_max)
+    vel2 = tuple(v + (t - drag * v) * dt for v, t in zip(vel, thrust))
+    pos2 = tuple(p + v2 * dt for p, v2 in zip(pos, vel2))
+    return pos2 + vel2
+
+
+def _embed_xy(xy: tuple, n: int) -> tuple:
+    """Embed a 2D point in R^n, first two coordinates only (the geometry-
+    normalization convention of SHELLFIELD-N-DESIGN.md: c and the real lode
+    live in the fixed 2-plane so n is the only knob that varies)."""
+    if n < 2:
+        raise ValueError("ShellFieldN requires n >= 2")
+    return (xy[0], xy[1]) + (0.0,) * (n - 2)
+
+
 @dataclass(frozen=True)
 class CartWall:
     # plant
@@ -376,6 +412,106 @@ class ShapeField2D:
         return s2, self.reward(s2), False
 
 
+@dataclass(frozen=True)
+class ShellFieldN:
+    """Paper-3 n-dim arm, step 1 (docs/paper3/SHELLFIELD-N-DESIGN.md): the
+    n-dimensional generalization of RingField2D. State (x⃗, v⃗) in R^{2n},
+    represented as a flat 2n-tuple (first n = position, last n = velocity).
+
+    The action is a thrust VECTOR a⃗ in [-1,1]^n, NOT the 2D instruments'
+    scalar heading (that parameterization does not generalize -- design
+    note, "the action interface"): thrust = gain * a⃗ / max(1, ||a⃗||), a
+    norm cap so ||thrust|| <= gain always, matching the 2D instruments' max
+    thrust magnitude. Same semi-implicit Euler, same dt/gain/drag as every
+    2D instrument (`integrate_nd`/`thrust_vector_nd` share the contract).
+
+    Mode = spherical shell r_in <= ||x⃗' - c|| <= r_out (Euclidean norm in
+    R^n); freeze-at-previous-position-with-zero-velocity semantics are
+    bit-identical to RingField2D's. Geometry is normalized across n: `c`
+    and the real lode sit in the fixed first-two-coordinates 2-plane
+    (c = (12, 0, 0, ...), lode_real at (-6, 0, 0, ...)), and r_in/r_out/lode
+    constants/h_episode are pinned at the 2D values, so n is the only knob
+    that varies -- the r(n)/r_int(n) concentration-of-measure measurement
+    (design note SS8.2) isolates the dimension effect purely.
+
+    r_in=None is the mode-blind model (blind_of): no shell, no freeze.
+    """
+    n: int
+    dt: float = 0.1
+    gain: float = 3.0
+    drag: float = 0.3
+    a_max: float = 1.0
+    center_xy: tuple = (12.0, 0.0)
+    r_in: float | None = 3.5
+    r_out: float = 5.0
+    lode_real_xy: tuple = (-6.0, 0.0)
+    amp_real: float = 0.3
+    amp_phantom: float = 1.0
+    r0: float = 2.0
+    width: float = 0.5
+    h_episode: int = 80
+    x0_range: float = 0.5
+
+    def __post_init__(self):
+        if self.n < 2:
+            raise ValueError("ShellFieldN requires n >= 2")
+
+    def center(self) -> tuple:
+        return _embed_xy(self.center_xy, self.n)
+
+    def lode_real(self) -> tuple:
+        return _embed_xy(self.lode_real_xy, self.n)
+
+    def initial_state(self, rng) -> State:
+        pos = [0.0] * self.n
+        pos[0] = rng.uniform(-self.x0_range, self.x0_range)
+        pos[1] = rng.uniform(-self.x0_range, self.x0_range)
+        return tuple(pos) + tuple(0.0 for _ in range(self.n))
+
+    @staticmethod
+    def _dist(p: tuple, q: tuple) -> float:
+        return math.sqrt(sum((pi - qi) ** 2 for pi, qi in zip(p, q)))
+
+    def _lode(self, pos: tuple, point: tuple, amp: float) -> float:
+        d = self._dist(pos, point)
+        return amp / (1.0 + math.exp((d - self.r0) / self.width))
+
+    def reward(self, state: State) -> float:
+        pos = state[: self.n]
+        return (self._lode(pos, self.lode_real(), self.amp_real)
+                + self._lode(pos, self.center(), self.amp_phantom))
+
+    def in_interior(self, pos: tuple) -> bool:
+        """Strictly inside the hole (call on the TRUTH env, mirroring
+        RingField2D.in_interior: the reach-null measurement is about the
+        true geometry, not a model's)."""
+        if self.r_in is None:
+            return False
+        return self._dist(pos, self.center()) < self.r_in
+
+    def _in_mode(self, pos: tuple) -> bool:
+        if self.r_in is None:
+            return False
+        d = self._dist(pos, self.center())
+        return self.r_in <= d <= self.r_out
+
+    def _integrate(self, state: State, action: tuple) -> State:
+        return integrate_nd(state, action, self.dt, self.gain, self.drag,
+                            self.a_max)
+
+    def contact_mode(self, state: State, action: tuple) -> bool:
+        s2 = self._integrate(state, action)
+        return self._in_mode(s2[: self.n])
+
+    def step(self, state: State, action: tuple):
+        s2 = self._integrate(state, action)
+        pos2 = s2[: self.n]
+        if self._in_mode(pos2):
+            frozen = state[: self.n] + (0.0,) * self.n
+            return frozen, self.reward(frozen), True
+        return s2, self.reward(s2), False
+
+
 def filled_of(env: "RingField2D") -> "RingField2D":
     """The wrong-topology model: the annulus completed to a disc."""
     return replace(env, filled=True)
@@ -401,6 +537,8 @@ def blind_of(env):
         return replace(env, r_in=None)
     if isinstance(env, ShapeField2D):
         return replace(env, shape=None)
+    if isinstance(env, ShellFieldN):
+        return replace(env, r_in=None)
     return replace(env, x_wall=None)
 
 
