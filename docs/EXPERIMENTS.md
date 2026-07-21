@@ -2488,3 +2488,26 @@ gate (0.9997), no repair. **Cell D (inside+TDA, hole recovery):** NOT RUN — al
 three available HF tokens hit the 402 monthly-credit limit. Pending HF credits;
 the GPT-5.x D result (large 1/20 hole, mini 0/20) stands as the single-family
 datum until then.
+
+## ShellField-n: truth-MPC navigation scales to n=6 (2026-07-21, CPU)
+
+`scripts/continuous_shellfield_nav.py` (resumable per-n) →
+`results/continuous_shellfield_nav.json`. Random-shooting MPC (horizon 40,
+n_samples 200, block 10; 20 episodes/n) with vector actions on the ShellFieldN
+truth, normalized geometry.
+
+| n | J_mpc | J_random | dist_mpc | reached |
+|---|-------|----------|----------|---------|
+| 2 | 16.92 | 0.50 | 0.38 | ✓ |
+| 3 | 15.55 | 0.33 | 0.76 | ✓ |
+| 4 | 14.26 | 0.04 | 1.03 | ✓ |
+| 5 | 12.96 | 0.01 | 0.95 | ✓ |
+| 6 | 11.31 | 0.07 | 1.18 | ✓ |
+
+Vector-action random-shooting MPC reaches the real lode at ALL n=2..6 (mild
+J_mpc degradation 16.9→11.3, dist growing 0.38→1.18) while the random policy
+collapses (J_random 0.50→0.01). **The planner is NOT the bottleneck through n=6**
+— the play arm is not capped by planner scaling in this range, so the danger
+mechanism (blind-model exploitation) can be measured across the full n sweep.
+`action_dim` planner threading is golden-safe: the scalar path is byte-identical
+(357 passed, cart golden included).
