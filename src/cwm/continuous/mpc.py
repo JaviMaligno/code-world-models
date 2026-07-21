@@ -18,6 +18,15 @@ action space, integrator-side norm-capped regardless of a_max). `plan` reads
 `action_dim` off the model when not given explicitly, via
 `getattr(model, "action_dim", 1)`, so the 1D/2D instruments (which expose no
 such attribute) are unaffected without any caller change.
+
+The vector path also adds the `2*action_dim` AXIAL unit-vector constant
+candidates +-e_i (diagnostic 2026-07-21,
+scripts/continuous_shellfield_play_diag.py "percomponent_axial"): the three
+constant candidates {(-1,)^n, (1,)^n, (0,)^n} point at cube diagonals/origin,
+never axially, so a blind planner driving straight at an axial target (e.g.
+ShellFieldN's shell) never gets a sustained-heading candidate to imagine.
++-e_i is the exact vector analogue of the scalar path's {-1, 0, +1} landing
+on east/west.
 """
 
 
@@ -53,13 +62,20 @@ def _candidates(a_max, rng, horizon, n_samples, block, action_dim: int = 1):
         return
     # action_dim > 1: the same three constant candidates plus piecewise-
     # constant blocks, generalized component-wise (each component in
-    # [-1, 1], matching ShellFieldN's thrust-vector action space).
+    # [-1, 1], matching ShellFieldN's thrust-vector action space), PLUS the
+    # 2*action_dim axial unit-vector constants +-e_i -- the vector analogue
+    # of the scalar path's {-1, 0, +1} constants, which the diagonal-only
+    # neg/pos/zero triple above cannot reach (calibration 2026-07-21).
     neg = (-1.0,) * action_dim
     pos = (1.0,) * action_dim
     zero = (0.0,) * action_dim
     yield [neg] * horizon
     yield [pos] * horizon
     yield [zero] * horizon
+    for i in range(action_dim):
+        e = tuple(1.0 if j == i else 0.0 for j in range(action_dim))
+        yield [e] * horizon
+        yield [tuple(-c for c in e)] * horizon
     for _ in range(n_samples):
         acts = []
         while len(acts) < horizon:
