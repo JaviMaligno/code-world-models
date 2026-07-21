@@ -29,16 +29,22 @@ INTEGRATED landing (pre-freeze), the same "refuted landing" the mitigation/
 repair machinery would see, not the frozen (= previous) position ShellFieldN
 .step() actually returns.
 
-NSW heuristic (task-scoped, documented, not rigorous): ShellFieldN always
-starts far OUTSIDE the shell (distance ~12 from c vs r_out=5), so contacts
-land predominantly on the shell's reachable OUTER sphere S^{n-1} of radius
-r_out -- the same "contact set carries the REACHABLE boundary's topology"
-finding as RESEARCH-DIRECTION.md SS4.3, transferred to n dims. A round
-sphere's reach (Federer) equals its radius, so tau ~= r_out. NSW
-(Niyogi-Smale-Weinberger 2008) needs a sample dense enough that no covering
-ball of radius eps < ~sqrt(3/5)*tau misses; we use eps = eps_frac * tau
-(default eps_frac=0.25, comfortably inside that bound) and estimate the
-number of eps-balls needed to cover S^{n-1} of radius tau as
+NSW heuristic (task-scoped, documented, not rigorous): ShellFieldN's default
+`--start outside` always starts far OUTSIDE the shell (distance ~12 from c
+vs r_out=5), so contacts land predominantly on the shell's reachable OUTER
+sphere S^{n-1} of radius r_out -- the same "contact set carries the
+REACHABLE boundary's topology" finding as RESEARCH-DIRECTION.md SS4.3,
+transferred to n dims. `--start inside` (the n-dim analogue of ring2d's
+inside-start arm, ring_in in scripts/ring2d_tda_probe.py) starts the probe
+strictly inside the inner ball ||x-c|| < r_in instead, so contacts trace the
+INNER sphere S^{n-1} of radius r_in from within -- in 2D this was the only
+start that even posed the hole (the ring2d D-cell finding). A round sphere's
+reach (Federer) equals its radius, so tau ~= r_out (outside) or tau ~= r_in
+(inside; set automatically by --start). NSW (Niyogi-Smale-Weinberger 2008)
+needs a sample dense enough that no covering ball of radius eps <
+~sqrt(3/5)*tau misses; we use eps = eps_frac * tau (default eps_frac=0.25,
+comfortably inside that bound) and estimate the number of eps-balls needed
+to cover S^{n-1} of radius tau as
     N_NSW(n) = area_{n-1}(tau) / vol_{n-1}(eps-ball)
              = 2*sqrt(pi) * Gamma((n-1)/2 + 1) / Gamma(n/2) * (tau/eps)^{n-1}
 -- a covering-number order-of-magnitude gate, reported alongside n_contacts
@@ -47,13 +53,15 @@ short of this floor (sparsity) or happens despite clearing it (something
 else, e.g. the SS4.3 reachability effect: an outside-only walk may only ever
 trace an ARC of the outer sphere, not the full loop, regardless of count).
 
-RESUMABLE (hard project rule): atomic write to results/continuous_
-shellfield_tda.json after EVERY n; a restart loads the existing file, skips
-n's already present, and refuses to resume under different
---budget/--seed/--cap/--gap-threshold (the numbers would silently mix
-configurations).
+RESUMABLE (hard project rule): atomic write to --out (default
+results/continuous_shellfield_tda.json, or results/continuous_shellfield_
+tda_inside.json under --start inside) after EVERY n; a restart loads the
+existing file, skips n's already present, and refuses to resume under a
+different --budget/--seed/--cap/--gap-threshold/--start (the numbers would
+silently mix configurations).
 
 Run: PYTHONPATH=src python3.12 scripts/continuous_shellfield_tda.py
+      PYTHONPATH=src python3.12 scripts/continuous_shellfield_tda.py --start inside
 (needs the `.[tda]` gudhi extra; lower --budget if this is slow -- the
 random-thrust walk in R^n costs the same per step at every n, so runtime
 scales ~linearly in budget x len(ns)). A few minutes CPU at the defaults.
@@ -95,9 +103,19 @@ ap.add_argument("--gap-threshold", type=float, default=10.0,
                       "a real but more modest gap)")
 ap.add_argument("--eps-frac", type=float, default=0.25,
                  help="NSW covering radius as a fraction of the reach tau")
-ap.add_argument("--out", type=str,
-                 default="results/continuous_shellfield_tda.json")
+ap.add_argument("--start", choices=["outside", "inside"], default="outside",
+                 help="ShellFieldN start placement (mu0 knob): 'outside' "
+                      "(default, byte-identical to the pre-existing arm) "
+                      "or 'inside' the inner ball -- the n-dim analogue of "
+                      "ring2d's inside-start arm")
+ap.add_argument("--out", type=str, default=None,
+                 help="default: results/continuous_shellfield_tda.json "
+                      "(outside) or results/continuous_shellfield_tda_"
+                      "inside.json (inside)")
 args = ap.parse_args()
+if args.out is None:
+    args.out = ("results/continuous_shellfield_tda.json" if args.start == "outside"
+                else "results/continuous_shellfield_tda_inside.json")
 
 SLICE_PAIRS_N6 = [(0, 1), (0, 2), (2, 3), (4, 5)]
 
@@ -209,14 +227,17 @@ def slices_dominant_vs_second(points: list, pairs: list) -> dict:
 
 
 def process_n(n: int, budget: int, seed: int, cap: int, dedupe_grid: float,
-              gap_threshold: float, eps_frac: float) -> dict:
-    env = ShellFieldN(n=n)
+              gap_threshold: float, eps_frac: float, start: str) -> dict:
+    env = ShellFieldN(n=n, start=start)
     t0 = time.time()
     raw = contact_cloud(env, budget, seed)
     n_contacts = len(raw)
     deduped = dedupe_nd(raw, grid=dedupe_grid)
     used = subsample(deduped, cap, seed=1)
-    tau = env.r_out
+    # reach tau ~= the sphere a start actually approaches: r_out from far
+    # outside, r_in from inside the inner ball (see module docstring's NSW
+    # section).
+    tau = env.r_out if start == "outside" else env.r_in
     n_nsw = nsw_points_needed(n, tau, eps_frac)
 
     method = "alpha" if n <= 5 else "slices"
@@ -278,7 +299,7 @@ def main() -> None:
         current_p = vars(args)
         mismatch = {k: (stored_p[k], current_p[k])
                     for k in ("budget", "seed", "cap", "dedupe_grid",
-                              "gap_threshold", "eps_frac")
+                              "gap_threshold", "eps_frac", "start")
                     if k in stored_p and stored_p[k] != current_p[k]}
         if mismatch:
             raise ValueError(
@@ -307,7 +328,8 @@ def main() -> None:
         if n in done:
             continue
         row = process_n(n, args.budget, args.seed + 60_000, args.cap,
-                         args.dedupe_grid, args.gap_threshold, args.eps_frac)
+                         args.dedupe_grid, args.gap_threshold, args.eps_frac,
+                         args.start)
         out["rows"].append(row)
         out["elapsed_s"] = round(time.time() - t0, 1)
         _atomic_write_json(out_path, out)

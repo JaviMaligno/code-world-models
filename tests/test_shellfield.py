@@ -95,3 +95,64 @@ def test_state_length_is_2n():
         s1, r, c = env.step(s0, a)
         assert len(s1) == 2 * n
         assert isinstance(r, float)
+
+
+def test_default_start_is_outside_and_byte_identical():
+    # `start` defaults to "outside"; adding the knob must not perturb the
+    # original initial_state numbers (same rng draws -> same state).
+    import random
+    for n in (2, 3, 4):
+        rng_a = random.Random(0)
+        rng_b = random.Random(0)
+        env_default = ShellFieldN(n=n)
+        env_explicit = ShellFieldN(n=n, start="outside")
+        s_default = env_default.initial_state(rng_a)
+        s_explicit = env_explicit.initial_state(rng_b)
+        assert s_default == s_explicit
+        pos = s_default[:n]
+        c = env_default.center()
+        assert env_default._dist(pos, c) > env_default.r_out
+
+
+def test_start_inside_places_the_probe_inside_the_inner_ball():
+    import random
+    rng = random.Random(0)
+    for n in (2, 3, 4, 5, 6):
+        env = ShellFieldN(n=n, start="inside")
+        c = env.center()
+        for i in range(20):
+            s0 = env.initial_state(rng)
+            pos = s0[:n]
+            vel = s0[n:]
+            assert vel == tuple(0.0 for _ in range(n))
+            d = env._dist(pos, c)
+            assert d < env.r_in, f"n={n} i={i}: d={d} not < r_in={env.r_in}"
+            assert not env._in_mode(pos)
+
+
+def test_start_inside_rollouts_contact_the_inner_boundary():
+    # a random-thrust rollout from an inside start must actually reach the
+    # shell (contact_mode true at some step) -- not just start inside and
+    # never approach the boundary from within.
+    import random
+    for n in (2, 3, 4):
+        env = ShellFieldN(n=n, start="inside")
+        rng = random.Random(1)
+        contacted = False
+        for i in range(200):
+            s = env.initial_state(rng)
+            for _ in range(env.h_episode):
+                a = tuple(rng.uniform(-1.0, 1.0) for _ in range(n))
+                if env.contact_mode(s, a):
+                    contacted = True
+                    break
+                s, _, _ = env.step(s, a)
+            if contacted:
+                break
+        assert contacted, f"n={n}: no inside-start rollout ever contacted the shell"
+
+
+def test_invalid_start_value_rejected():
+    import pytest
+    with pytest.raises(ValueError):
+        ShellFieldN(n=2, start="sideways")

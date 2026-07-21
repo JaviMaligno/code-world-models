@@ -435,6 +435,16 @@ class ShellFieldN:
     (design note SS8.2) isolates the dimension effect purely.
 
     r_in=None is the mode-blind model (blind_of): no shell, no freeze.
+
+    `start` (mu0 knob, mirrors RingField2D's x0_center trick -- design note
+    SS4.3's ring2d "start inside" arm): "outside" (default, BYTE-IDENTICAL to
+    the original behavior -- pos near the origin, Euclidean distance ~12
+    from `c`, far outside r_out) or "inside" (pos placed within `x0_range`
+    of `c` on the fixed first-two-coordinates 2-plane, i.e. strictly inside
+    the inner ball ||x - c|| < r_in since x0_range=0.5 << r_in=3.5): an
+    inside start approaches the shell's INNER boundary from within, tracing
+    the inner loop rather than only ever reaching the outer sphere from far
+    away.
     """
     n: int
     dt: float = 0.1
@@ -451,10 +461,13 @@ class ShellFieldN:
     width: float = 0.5
     h_episode: int = 80
     x0_range: float = 0.5
+    start: str = "outside"     # "outside" (default) | "inside" (mu0 knob)
 
     def __post_init__(self):
         if self.n < 2:
             raise ValueError("ShellFieldN requires n >= 2")
+        if self.start not in ("outside", "inside"):
+            raise ValueError(f"start must be 'outside' or 'inside', got {self.start!r}")
 
     @property
     def action_dim(self) -> int:
@@ -473,8 +486,9 @@ class ShellFieldN:
 
     def initial_state(self, rng) -> State:
         pos = [0.0] * self.n
-        pos[0] = rng.uniform(-self.x0_range, self.x0_range)
-        pos[1] = rng.uniform(-self.x0_range, self.x0_range)
+        origin = self.center() if self.start == "inside" else (0.0, 0.0)
+        pos[0] = origin[0] + rng.uniform(-self.x0_range, self.x0_range)
+        pos[1] = origin[1] + rng.uniform(-self.x0_range, self.x0_range)
         return tuple(pos) + tuple(0.0 for _ in range(self.n))
 
     @staticmethod

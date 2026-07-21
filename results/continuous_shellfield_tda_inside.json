@@ -1,0 +1,155 @@
+{
+  "script": "continuous_shellfield_tda.py",
+  "params": {
+    "ns": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "budget": 20000,
+    "seed": 0,
+    "cap": 300,
+    "dedupe_grid": 0.05,
+    "gap_threshold": 10.0,
+    "eps_frac": 0.25,
+    "start": "inside",
+    "out": "results/continuous_shellfield_tda_inside.json"
+  },
+  "rows": [
+    {
+      "n": 2,
+      "n_contacts": 33702,
+      "n_deduped": 1761,
+      "n_used": 300,
+      "dominant_persistence": 12.208046310494558,
+      "second_persistence": 0.0025678111991264407,
+      "gap": 4754.262,
+      "recovered_bool": true,
+      "method": "alpha",
+      "nsw_points_needed": 12.6,
+      "density_vs_nsw": 2681.9199,
+      "detail": {
+        "n_intervals_dim": 118,
+        "n_essential_dim": 0
+      },
+      "elapsed_s": 13.9
+    },
+    {
+      "n": 3,
+      "n_contacts": 45697,
+      "n_deduped": 35113,
+      "n_used": 300,
+      "dominant_persistence": 10.672281142013635,
+      "second_persistence": 1.647520107339595e-06,
+      "gap": 6477785.063,
+      "recovered_bool": true,
+      "method": "alpha",
+      "nsw_points_needed": 64.0,
+      "density_vs_nsw": 714.0156,
+      "detail": {
+        "n_intervals_dim": 2,
+        "n_essential_dim": 0
+      },
+      "elapsed_s": 15.7
+    },
+    {
+      "n": 4,
+      "n_contacts": 54170,
+      "n_deduped": 50692,
+      "n_used": 300,
+      "dominant_persistence": 7.669440947735878,
+      "second_persistence": 0.0,
+      "gap": null,
+      "recovered_bool": false,
+      "method": "alpha",
+      "nsw_points_needed": 301.6,
+      "density_vs_nsw": 179.613,
+      "detail": {
+        "n_intervals_dim": 1,
+        "n_essential_dim": 0,
+        "single_bar_no_competitor": true
+      },
+      "elapsed_s": 17.7
+    },
+    {
+      "n": 5,
+      "n_contacts": 59961,
+      "n_deduped": 57397,
+      "n_used": 300,
+      "dominant_persistence": 7.163389030471406,
+      "second_persistence": 0.0,
+      "gap": null,
+      "recovered_bool": false,
+      "method": "alpha",
+      "nsw_points_needed": 1365.3,
+      "density_vs_nsw": 43.9167,
+      "detail": {
+        "n_intervals_dim": 1,
+        "n_essential_dim": 0,
+        "single_bar_no_competitor": true
+      },
+      "elapsed_s": 19.2
+    },
+    {
+      "n": 6,
+      "n_contacts": 63949,
+      "n_deduped": 61896,
+      "n_used": 300,
+      "dominant_persistence": 0.5535493918254231,
+      "second_persistence": 0.3764754768625595,
+      "gap": 1.47,
+      "recovered_bool": false,
+      "method": "slices",
+      "nsw_points_needed": 6031.9,
+      "density_vs_nsw": 10.6019,
+      "detail": {
+        "best_pair": [
+          2,
+          3
+        ],
+        "per_pair": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "dominant": 0.36699371896353516,
+            "second": 0.3135618265719684,
+            "n_intervals": 79
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "dominant": 0.48216318009404757,
+            "second": 0.4562677807867016,
+            "n_intervals": 75
+          },
+          {
+            "pair": [
+              2,
+              3
+            ],
+            "dominant": 0.5535493918254231,
+            "second": 0.3764754768625595,
+            "n_intervals": 70
+          },
+          {
+            "pair": [
+              4,
+              5
+            ],
+            "dominant": 0.4716151439983229,
+            "second": 0.3991807965970277,
+            "n_intervals": 71
+          }
+        ]
+      },
+      "elapsed_s": 718.1
+    }
+  ],
+  "elapsed_s": 784.8
+}
