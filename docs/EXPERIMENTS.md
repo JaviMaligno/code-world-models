@@ -2484,10 +2484,14 @@ n=4–6?).
 (Prop 2) — both mode-absent seeds are certified blind (wb=1.0) and exploited at
 play_cost 1.116, IDENTICAL to GPT-5.x (the blind planner's behavior is
 family-independent by construction); the one mode-present seed is refused by the
-gate (0.9997), no repair. **Cell D (inside+TDA, hole recovery):** NOT RUN — all
-three available HF tokens hit the 402 monthly-credit limit. Pending HF credits;
-the GPT-5.x D result (large 1/20 hole, mini 0/20) stands as the single-family
-datum until then.
+gate (0.9997), no repair. **Cell D (inside+TDA, hole recovery):** STILL NOT RUN.
+Retried 2026-07-21 after the monthly HF credit reset — two of the three account
+tokens returned 200 on a 1-token probe, but BOTH 402'd mid-first-seed on the
+real run (synthesis refine loop + play episodes exhausted the residual credit
+before a single cell was written). A trivial probe overstates available credit.
+Pending genuine HF credit (pre-paid or PRO); the GPT-5.x D result (large 1/20
+hole, mini 0/20) and the Claude D result (3/3, above) stand as the D-cell
+cross-family data until then.
 
 ### Cross-family spot-check on the ring (Claude, A + D complete, 2026-07-21)
 
