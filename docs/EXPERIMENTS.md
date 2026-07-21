@@ -2454,3 +2454,25 @@ is recoverable only when the start makes the loop reachable, and even then only
 the reachable boundary is determined; the rest is gauge. Deeper per-artifact
 analysis (descriptive/AST complexity, cross-family) deferred to a stronger
 model over the committed JSONs.
+
+## ShellField-n: r(n) collapse — "n as the rarity knob" (2026-07-21, CPU)
+
+`scripts/continuous_shellfield.py` (resumable per-n) → `results/continuous_shellfield.json`.
+Normalized geometry (shell c=(12,0,…), r_in 3.5, r_out 5.0 in the first two
+coords; 2D lodes/dt/gain/drag; thrust-vector action a⃗∈[−1,1]ⁿ norm-capped) so n
+is the only knob. 600 random-vector rollouts/n, seed 0.
+
+| n | 2 | 3 | 4 | 5 | 6 |
+|---|------|------|------|------|------|
+| r(n) | 0.0133 | 0.0033 | 0.0017 | ~0 | ~0 |
+| r_int | 0 | 0 | 0 | 0 | 0 |
+
+r(n) collapses geometrically (concentration: a drift-free random walk loses the
+2-plane the shell lives in). By n≥3, r<0.005 ⇒ (1−r)^40≈1: the identifiability
+event (mode absent from the sample) is near-certain, so the **danger regime
+becomes automatic** as n grows (§8.2's n-as-rarity-knob mini-law). r_int=0 for
+all n (interior reach-null, as in 2D). Caveat: at n≥4, r≈1/600 is
+sampling-noise-limited — the collapse is qualitatively clear, the fine value at
+high n needs more rollouts. Next (design §8.1): truth-MPC navigation check per n
+with vector actions (does random-shooting MPC still reach the real lode at
+n=4–6?).
