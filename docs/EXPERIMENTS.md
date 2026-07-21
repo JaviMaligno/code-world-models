@@ -2602,3 +2602,32 @@ directional coverage. **Fix:** add ±e_i to the vector planner's constant
 candidates (the vector analogue of the scalar east/west constants); then re-run
 the play arm across n to measure the danger cleanly (and only THEN test whether
 it collapses with n by concentration, free of this confound).
+
+## ShellField-n play arm RE-RUN with the axial fix: danger is ROBUST across n (2026-07-21)
+
+After adding the axial ±e_i constant candidates to the vector MPC (commit
+c4a9fd3), re-ran `scripts/continuous_shellfield_play.py` across n:
+
+| n | play_cost | blind_contact | j_truth | j_blind |
+|---|----------:|--------------:|--------:|--------:|
+| 2 | 1.023 | 1.0 | 16.92 | 0.13 |
+| 3 | 1.013 | 1.0 | 15.69 | 0.13 |
+| 4 | 0.994 | 1.0 | 14.43 | 0.13 |
+| 5 | 0.991 | 1.0 | 13.44 | 0.13 |
+| 6 | 0.996 | 1.0 | 12.77 | 0.13 |
+
+**Definitive result — supersedes the two earlier play-arm folds.** With a
+competent planner (axial candidates), the blind model is exploited at play_cost
+≈ 1.0 and blind_contact 1.0 at EVERY n=2..6, j_blind pinned at 0.13 (like ring2d
+0.998). **The danger does NOT collapse with n — it is robust.** The earlier
+play_cost≈0 was entirely the action-interface confound (missing axial constant
+candidates), NOT dimensional concentration (my first reading) and NOT the phantom
+distance (the second reading — ring2d exploited at the same distance). **The
+danger law's two axes are orthogonal:** r(n) collapse governs SYNTHESIS
+(identifiability — whether the sample contains the mode, which does collapse with
+n, step-1 r(n)), while the PLAY danger governs EXPLOITATION and depends on the
+competent planner's REACHABILITY of the region (robust across n here, because the
+axial candidate always drives the blind planner into the shell) — exactly paper
+1's "danger needs a competent planner that reaches the region". Rarity and
+reachability are independent knobs; a high-n hybrid mode is both near-certainly
+mis-synthesized AND fully exploitable at play.
