@@ -1,0 +1,66 @@
+{
+  "script": "continuous_shellfield_play.py",
+  "params": {
+    "ns": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "episodes": 20,
+    "seed": 0,
+    "horizon": 40,
+    "n_samples": 200,
+    "block": 10,
+    "out": "results/continuous_shellfield_play.json"
+  },
+  "rows": [
+    {
+      "n": 2,
+      "j_truth": 16.92407164750474,
+      "j_blind": 14.265560104661045,
+      "j_random": 0.5017434212802513,
+      "play_cost": 0.16188396104508315,
+      "blind_contact_rate": 0.15,
+      "n_episodes": 20
+    },
+    {
+      "n": 3,
+      "j_truth": 15.546474105324691,
+      "j_blind": 15.368655268603769,
+      "j_random": 0.33449739561144837,
+      "play_cost": 0.011689397118743955,
+      "blind_contact_rate": 0.0,
+      "n_episodes": 20
+    },
+    {
+      "n": 4,
+      "j_truth": 14.25699939913444,
+      "j_blind": 14.25699939913444,
+      "j_random": 0.03813245862145968,
+      "play_cost": 0.0,
+      "blind_contact_rate": 0.0,
+      "n_episodes": 20
+    },
+    {
+      "n": 5,
+      "j_truth": 12.964259943288596,
+      "j_blind": 12.964259943288596,
+      "j_random": 0.009028205597454132,
+      "play_cost": 0.0,
+      "blind_contact_rate": 0.0,
+      "n_episodes": 20
+    },
+    {
+      "n": 6,
+      "j_truth": 11.305617525307301,
+      "j_blind": 11.265698931241769,
+      "j_random": 0.07429542593481343,
+      "play_cost": 0.0035542203947443733,
+      "blind_contact_rate": 0.0,
+      "n_episodes": 20
+    }
+  ],
+  "elapsed_s": 2106.3
+}
