@@ -2536,33 +2536,44 @@ Net cross-family (three families now): the identifiability event and the
 "repair only from inside + topology" law hold for GPT-5.x, Qwen, and Claude; the
 repair *rate* varies by family (Claude reconstructs the hole most reliably).
 
-### Exploratory control: the OPEN ring (gap>0, β₁=0) is HARDER, not easier (GPT mini, 2026-07-21)
+### Exploratory control: OPEN ring (gap>0, β₁=0) — the 2×2 (GPT mini, 2026-07-21)
 
 NOT pre-registered — an exploratory topology control run on authorized Azure to
-isolate β₁ as the axis. `continuous_danger_synthesis.py mini 5 --instrument
-ring2d --arm incomplete --gap 0.6 --channel facing --start inside
---prompt-variant tda` → `results/continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json`.
-Opens a facing angular channel (width 0.6 rad) so the ring is a C-shape (β₁=0,
-contractible) and the inside probe can ESCAPE through the gap.
+isolate β₁ from reachability. Opens a facing angular channel (width 0.6 rad) so
+the ring is a C-shape (β₁=0, contractible) and the inside probe can ESCAPE
+through the gap. Two cells, mirroring the closed-ring A/D:
+- A: `mini 5 --instrument ring2d --arm incomplete --gap 0.6 --channel facing
+  --start outside` → `results/continuous_synthesis_ring2d_mini_gap0.6.json`
+- D: `… --start inside --prompt-variant tda` →
+  `…_gap0.6-in_pv-tda.json`
 
-| gap / topology | cell D (inside+TDA), GPT mini | mean gate | mode present |
-|----------------|------------------------------|-----------|--------------|
-| 0 / closed (β₁=1) | 0/20 gate-pass (rare hole via large only) | ~0.97 (blind nearly passes) | yes |
-| 0.6 / **open (β₁=0)** | **0/5 gate-pass** | **0.44** | yes (5/5) |
+| cell | closed ring (gap 0, β₁=1) | open facing ring (gap 0.6, β₁=0) |
+|------|--------------------------|----------------------------------|
+| **A** outside baseline | mode-absent → blind, exploited **pc ≈ 1.12** (DANGEROUS) | mode-absent → blind (ident. event 3/5), exploited **pc ≈ 0.029** (HARMLESS) |
+| **D** inside + TDA | 0/20 gate-pass; blind ~0.97 (misses rare contacts); rare hole (large 1/20) | **0/5 gate-pass; mean gate 0.44** (much lower) |
 
-**Finding (exploratory, 5 seeds — do not over-read).** The OPEN ring is *harder*
-to synthesize than the closed one, the opposite of the naive "simpler topology ⇒
-easier" expectation. On the closed ring a blind model already scores ~0.97
-(it only misses the rare contacts); on the open ring the mean gate collapses to
-0.44 because opening the channel makes the region escapable, so the inside probe
-floods both the arc AND the free space it reaches through the gap — far richer,
-more-varied evidence that the template-prior artifact cannot fit. **Reachability
-(escapability), not β₁ alone, governs evidence richness and therefore
-synthesizability** — the same topology-relative-to-reach thesis as the mechanism
-grid (hidden vs facing channel), now on the synthesis side. No artifact passed,
-so none is a repaired-topology datum; per-artifact structural analysis (did GPT
-attempt an arc vs a loop?) is deferred to the stronger model over the committed
-JSON.
+Two findings (exploratory, 5 seeds — do not over-read):
+1. **Danger is topology RELATIVE TO reach, not β₁ (cell A).** The identifiability
+   event is unchanged by opening the ring (from outside a ring is an arc either
+   way — 3/5 mode-absent, blind gate 1.0, family/gap-independent). But the PLAY
+   danger collapses from pc≈1.12 (closed) to pc≈0.029 (open facing): the closed
+   ring BLOCKS the blind planner's straight run at the phantom → high regret; the
+   facing channel lets that same run through the *real* gap → the blind plan
+   executes fine on truth → near-zero regret. This is the aligned-channel
+   degeneracy from the mechanism grid (pc_blind 0.022 at gap 0.6 facing outside)
+   reproduced on the synthesis side. **Danger needs the topology to obstruct the
+   competent planner's path; an open facing channel removes the obstruction while
+   leaving the synthesis failure intact.**
+2. **The OPEN ring is HARDER to synthesize (cell D).** Opposite of the naive
+   "simpler topology ⇒ easier": closed-ring blind scores ~0.97 (misses only rare
+   contacts), open-ring mean gate collapses to 0.44, because escapability floods
+   the inside probe with both the arc AND the free space reached through the gap
+   — richer, more-varied evidence the template-prior cannot fit. Reachability
+   governs evidence richness and thus synthesizability.
+
+No open-ring D artifact passed, so none is a repaired-topology datum;
+per-artifact structural analysis (arc vs loop) is deferred to the stronger model
+over the committed JSONs.
 
 ## ShellField-n: truth-MPC navigation scales to n=6 (2026-07-21, CPU)
 
