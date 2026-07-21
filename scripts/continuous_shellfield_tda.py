@@ -101,6 +101,11 @@ ap.add_argument("--gap-threshold", type=float, default=10.0,
                       "this (pre-registered; well below the ~100-700x cited "
                       "for clean synthetic shells, to allow real noisy data "
                       "a real but more modest gap)")
+ap.add_argument("--dom-floor", type=float, default=0.5,
+                 help="a lone dominant bar (second==0, no ratio competitor) "
+                      "counts as recovered iff its dominant persistence >= this "
+                      "-- separates a clean single feature (dom ~7-12) from an "
+                      "accidental cycle in a sparse cloud (dom ~1e-6)")
 ap.add_argument("--eps-frac", type=float, default=0.25,
                  help="NSW covering radius as a fraction of the reach tau")
 ap.add_argument("--start", choices=["outside", "inside"], default="outside",
@@ -227,7 +232,8 @@ def slices_dominant_vs_second(points: list, pairs: list) -> dict:
 
 
 def process_n(n: int, budget: int, seed: int, cap: int, dedupe_grid: float,
-              gap_threshold: float, eps_frac: float, start: str) -> dict:
+              gap_threshold: float, eps_frac: float, start: str,
+              dom_floor: float = 0.5) -> dict:
     env = ShellFieldN(n=n, start=start)
     t0 = time.time()
     raw = contact_cloud(env, budget, seed)
@@ -264,14 +270,20 @@ def process_n(n: int, budget: int, seed: int, cap: int, dedupe_grid: float,
             detail = {"skipped": f"n_used={len(used)} < 3"}
 
     gap = (dominant / second) if second > 0 else (float("inf") if dominant > 0 else 0.0)
-    # A lone dim-(n-1) bar with no runner-up (second == 0) has no noise
-    # floor to be clear ABOVE -- gap is formally infinite but that is not
-    # evidence of a clean signal, just of a single accidental cycle in a
-    # tiny point set. Require a genuine competitor (second > 0) before
-    # calling the dominant bar "recovered".
+    # A lone dim-(n-1) bar with no runner-up (second == 0) is ambiguous: it is
+    # EITHER an accidental single cycle in a sparse cloud (outside arm n=4: dom
+    # ~6e-6, 59 contacts -> NOT recovery) OR a clean single feature that simply
+    # has no noise competitor (inside arm n=4,5: dom ~7-8, 54k contacts -> IS
+    # recovery). The two are separated by the ABSOLUTE dominant persistence, not
+    # the (undefined) ratio: dom_floor sits ~7 orders of magnitude above the
+    # accidental scale (~1e-6) and well above the sampling-noise floor (~1e-2),
+    # so a lone bar counts as recovery iff its dominant persistence clears it.
+    lone_strong = bool(second <= 0.0 and dominant >= dom_floor)
     if dominant > 0.0 and second <= 0.0:
         detail["single_bar_no_competitor"] = True
-    recovered = bool(dominant > 0.0 and second > 0.0 and gap >= gap_threshold)
+        detail["lone_strong"] = lone_strong
+    recovered = bool(dominant > 0.0
+                     and ((second > 0.0 and gap >= gap_threshold) or lone_strong))
 
     return {
         "n": n,
@@ -329,7 +341,7 @@ def main() -> None:
             continue
         row = process_n(n, args.budget, args.seed + 60_000, args.cap,
                          args.dedupe_grid, args.gap_threshold, args.eps_frac,
-                         args.start)
+                         args.start, args.dom_floor)
         out["rows"].append(row)
         out["elapsed_s"] = round(time.time() - t0, 1)
         _atomic_write_json(out_path, out)

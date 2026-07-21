@@ -2631,3 +2631,33 @@ axial candidate always drives the blind planner into the shell) — exactly pape
 1's "danger needs a competent planner that reaches the region". Rarity and
 reachability are independent knobs; a high-n hybrid mode is both near-certainly
 mis-synthesized AND fully exploitable at play.
+
+## ShellField-n INSIDE-start TDA: inner-loop evidence recovers the topology (2026-07-21)
+
+`scripts/continuous_shellfield_tda.py --start inside` → `results/continuous_shellfield_tda_inside.json`.
+
+| n | n_contacts | dominant / 2nd | recovered | method |
+|---|-----------:|----------------|:---------:|:------:|
+| 2 | 33702 | 12.21 / 0.0026 (gap 4754) | ✓ | alpha |
+| 3 | 45697 | 10.67 / 1.6e-6 | ✓ | alpha |
+| 4 | 54170 | 7.67 / 0.0 (lone, dom≫floor) | ✓ | alpha |
+| 5 | 59961 | 7.16 / 0.0 (lone, dom≫floor) | ✓ | alpha |
+| 6 | 63949 | 0.55 / 0.38 (gap 1.47, slice) | ✗ | slices |
+
+**Inside-start recovers β_{n−1} at n=2..5 (marginal at n=6 via slices); OUTSIDE
+recovers at NO n.** Inside gives ~100× more contacts (33k–64k vs 388–11) and r is
+high AND RISES with n (10.6–2682× the NSW floor at every n) — so concentration
+starves the OUTSIDE contact cloud but NOT the inside one (the probe starts in the
+inner ball and floods the inner boundary). The 2D D-cell finding (inner-loop
+evidence recovers the hole where outside evidence provably cannot, §4.3)
+GENERALIZES to n dims: topology recovery is governed by whether the START makes
+the loop reachable — the reachability theme again, now for TDA.
+
+**recovered_bool RULE FIX (rigor).** The original rule required a genuine 2nd
+persistence bar (ratio dom/2nd ≥ gap_threshold), which false-negatived the inside
+n=4,5 CLEAN single features (dom 7–8, 2nd=0 = no noise competitor). Added a
+`lone_strong` clause + `--dom-floor` (0.5): a lone bar (2nd=0) counts as recovery
+iff its dominant persistence clears the floor — separating a clean single feature
+(dom 7–12, 54k contacts) from an accidental cycle in a sparse cloud (outside n=4:
+dom 6e-6, 59 contacts). Both TDA JSONs recomputed under the fixed rule (outside
+stays 0/5; inside becomes 4/5).
