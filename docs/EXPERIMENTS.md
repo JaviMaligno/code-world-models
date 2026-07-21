@@ -2576,3 +2576,29 @@ runner-up (gap = ∞), which a naive rule would miscall "recovered". So on the
 ring/shell, TDA of the OUTSIDE contact cloud cannot recover the mode's topology
 at any n — inside-start evidence (the ring2d D-cell) remains the only route, and
 concentration closes even that at high n.
+
+## ShellField-n play diagnostic: the cause is MISSING AXIAL CANDIDATES (2026-07-21, CPU)
+
+`scripts/continuous_shellfield_play_diag.py` → `results/continuous_shellfield_play_diag.json`.
+n=2 (directly comparable to ring2d 2D, which had play_cost_blind 0.998), three
+MPC action-candidate samplings:
+
+| variant | blind_contact | play_cost | j_blind |
+|---------|--------------:|----------:|--------:|
+| per-component (current) | 0.10 | 0.119 | 14.94 |
+| direction-uniform (S^{n-1}) | 0.00 | 0.000 | 16.69 |
+| per-component + axial ±e_i | **1.00** | **1.037** | 0.13 |
+
+**Verdict: the action INTERFACE is the cause, specifically the absence of
+constant AXIAL candidates — not the phantom distance (ring2d, same center=12,
+gave 0.998) nor dimensional concentration (this is n=2).** The 2D scalar-heading
+planner's constant candidates {−a_max, 0, +a_max} include a sustained east
+heading (straight at the phantom); the vector per-component candidate set does
+NOT, so the blind planner never drives straight into the shell. Adding the 2n
+axial unit candidates ±e_i recovers the ring2d exploit exactly (contact 1.0, pc
+1.04). Notably, direction-UNIFORM sampling does NOT fix it (pc 0.0) — the missing
+ingredient is the deterministic go-straight-at-the-target candidate, not random
+directional coverage. **Fix:** add ±e_i to the vector planner's constant
+candidates (the vector analogue of the scalar east/west constants); then re-run
+the play arm across n to measure the danger cleanly (and only THEN test whether
+it collapses with n by concentration, free of this confound).
