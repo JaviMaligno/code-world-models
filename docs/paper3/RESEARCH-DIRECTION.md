@@ -317,6 +317,26 @@ instrument, both worlds, one knob.
    passes EVERY metric — Prop 3 — so code inspection is mandatory), and
    local run commands in
    `docs/superpowers/plans/2026-07-20-ring2d-synthesis-arm.md`.
+8. ~~Registered open-ring arm~~ DONE (2026-07-22): gap × {A-outside,
+   D-inside} × {facing,hidden} sweep + CPU danger curve + Claude
+   cross-family spot + a per-artifact behavioral audit that CORRECTED the
+   record (spec `2026-07-21-open-ring-arm-design.md`, plan
+   `2026-07-21-open-ring-arm.md`, results in EXPERIMENTS.md "Registered
+   open-ring arm" + "Per-artifact behavioral audit"). Landed the three
+   headline results: **H1** danger = topology-relative-to-reach, demonstrated
+   with the facing-vs-hidden clincher (facing pc collapses at the gap≈0.1
+   knee; hidden holds pc 1.116 at the SAME β₁=0) — the §6 "consequential
+   regime" risk is now discharged with a single knob; **H3** repair-from-inside
+   is parameter-bound at every gap (gate-pass≈0; even Claude's gate-passes are
+   mode-blind certified-wrong, not repairs); **H2** the pre-registered
+   topological summary is a load-bearing, FINITE-RESOLUTION sensor — posed
+   artifact topology tracks its β̂₁ (which the Rips detector reports as 1 for
+   every gap ≤ 1.2, flipping ~1.8), so an honest summary's resolution limit
+   propagates into wrong-topology artifacts. This reframes §4.3's TDA arm and
+   the §6 "TDA at N=40 is data-starved" risk: the sensor's resolution is not a
+   nuisance to fix but a measured, first-class object (a candidate paper
+   contribution: "certified world models inherit their repair topology from
+   the resolution of the evidence sensor").
 
 ---
 

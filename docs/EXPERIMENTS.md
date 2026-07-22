@@ -2662,6 +2662,90 @@ Findings (F1–F6):
    ≈ 1.0 · blind ≈ 0.97 · posed-but-misparameterized hollow ≈ 0.5–0.9 ·
    interior-filling ≈ 0.02–0.4.
 
+## Registered open-ring arm: danger = topology RELATIVE TO reach (2026-07-22)
+
+Spec `docs/superpowers/specs/2026-07-21-open-ring-arm-design.md`, plan
+`docs/superpowers/plans/2026-07-21-open-ring-arm.md`. Driver
+`scripts/continuous_ring2d_open_sweep.py` (shells out to the synthesis harness,
+resumable per cell+seed; CPU pc_blind curve), aggregator
+`scripts/ring2d_open_aggregate.py` → `results/continuous_ring2d_open_sweep_summary.json`.
+Opens a facing/hidden angular channel of width `gap` (rad) in the ring, turning
+the closed ring (β₁=1) into a C (β₁=0). Grid: A-facing/hidden (outside, danger)
++ D-facing (inside+tda, synthesis) across gaps, 20–30 seeds mini + large
+robustness + a Claude relay cross-family spot. Pre-registered H1/H2/H3.
+
+### H1 — CONFIRMED. The danger collapses with a FACING channel, PERSISTS with a hidden one.
+
+CPU dense pc_blind(gap) (16 paired MPC episodes/gap, `..._pcblind_curve.json`):
+
+| gap | 0.0 | 0.02 | 0.05 | 0.1 | 0.15 | 0.2 | 0.4 | 0.6 | 1.2 |
+|-----|----|----|----|----|----|----|----|----|----|
+| pc_blind | 0.999 | 0.543 | 0.340 | 0.139 | 0.001 | 0.015 | 0.023 | 0.022 | 0.007 |
+| blind_contact | 1.00 | 0.94 | 0.56 | 0.44 | 0.12 | 0.06 | 0.00 | 0.00 | 0.00 |
+
+The blind model's exploitation collapses smoothly from 1.0 to ~0 over a **knee
+at gap ≈ 0.1–0.15** (channel arc-width ≈ gap × r_in ≈ 0.35–0.5 world units — a
+channel barely wider than the planner's step suffices to let it through). LLM
+synthesis A-cells reproduce it on the exploited blind artifacts: mini pc_mean
+1.089 (gap 0) → 0.348 (0.1) → ~0.03 (≥0.2); large identical (0.348 at 0.1,
+0.029 at 0.6). **The clincher control:** the HIDDEN channel (same β₁=0, channel
+on the unreachable far side) holds pc_mean = **1.116 at gap 0.6 AND 1.2** —
+full danger, unchanged from the closed ring. Same topology, opposite danger:
+what collapses the danger is the competent planner's reachability of the
+omission, not β₁. This is the paper-3 thesis (danger = mode topology relative
+to the operative reach) demonstrated with a single knob that leaves the
+synthesis failure untouched.
+
+### H3 — CONFIRMED. Inside gate-pass stays ≈0 at every gap; passes are certified-wrong, not repairs.
+
+Inside (D, tda) gate-pass rate: 1/40 (gap 0) · 0/20 (0.2) · 0/40 (0.6) · 0/20
+(1.2) · 1/30 (1.8) · 1/40 (2.4) — essentially zero at every gap, both sizes.
+Terminal gates average 0.5–0.75, far below the blind reference (~0.97–0.98);
+the mode is posed but its exact parameters (channel-edge angles π ± gap/2, not
+round numbers) are never pinned to 1e-9. The **Claude relay** (strongest gap-0
+repairer, agent-relayed context-free) sharpens this: at gap 2.4 it explicitly
+reconstructs "ring r=3.5, gap 2.4 rad" from the sample and 2/3 seeds gate-PASS
+— but with `wall_blindness = 1.0` and `play_cost = 0.0`: the passing model is
+mode-blind (matches the sample via wrong/point parameters, fails the mode
+probes) and harmless only because the wide-open ring obstructs nothing. The
+third seed grinds 0.877→0.919→0.939→0.975 over five refines and still fails.
+gate-pass ≠ repair, even for the best repairer; certification succeeds only in
+the gauge-free + round-parameter corner (Prop 1).
+
+### H2 — SUPPORTED (guidance-following). Posed topology tracks the summary's β̂₁, which has a resolution limit.
+
+Terminal artifact structure vs gap (closed = disc+loop+complement; the
+pre-registered summary reports β̂₁=1 for gap ≤ 1.2, flips ~1.8, honest arc at
+2.4):
+
+| gap | 0.0 | 0.2 | 0.6 | 1.2 | 1.8 | 2.4 |
+|-----|----|----|----|----|----|----|
+| closed structures | 17 | 9 | 22 | 7 | 3 | 1 |
+| arc structures | 10 | 5 | 6 | 9 | 23 | 26 |
+| guidance β̂₁ | 1 | 1 | 1 | 1 | mixed | 0 |
+
+Closed structures dominate where the summary says "closed loop" and **vanish
+where it honestly says "arc"** (gap 2.4: 1 closed vs 26 arc, both sizes); the
+crossover tracks the detector flip, not the true β₁ (which is 0 at every
+gap>0). The synthesizer follows the guidance's topology claim, and the
+guidance's finite Rips resolution (it cannot see a channel narrower than ~2
+arc-units) therefore PROPAGATES into wrong-topology artifacts: an honest
+summary with limited resolution CAUSES closed models on an open ring. The
+gap-1.8 within-gap split (seeds straddle the flip) is directionally consistent
+(closed structures appear only in the β̂₁=1 subset) but arc-dominated and
+underpowered at n=30.
+
+### Net
+
+One knob (channel width × orientation) cleanly separates the danger law's two
+axes on the synthesis side: **identifiability** (whether the sample contains
+the mode — the mode-absent rate rises with gap as the ring shrinks, and the
+blind artifact is written regardless) is orthogonal to **exploitability**
+(whether a competent planner's path is obstructed — set by reachability, not
+β₁). Repair-from-inside remains parameter-bound at every gap. The topological
+summary is a load-bearing, finite-resolution sensor whose limits are now a
+measured, first-class part of the mechanism.
+
 ## ShellField-n: truth-MPC navigation scales to n=6 (2026-07-21, CPU)
 
 `scripts/continuous_shellfield_nav.py` (resumable per-n) →

@@ -389,3 +389,24 @@ for this paper and leave M1/M2 as measured regularities with the identity
 | M1, M2 | measured regularities in Lemma 4's exact frame — ALL local proof routes closed with evidence (pathwise: seed 50543; pointwise: (KEY) refuted); a proof needs occupation-measure estimates, assessed out of proportion here |
 | hidden-channel positivity | expected (steering witness deferred); grounds the two-grades remark |
 | n-dim / non-round / non-separating versions | RESEARCH-DIRECTION §8 program |
+
+**Synthesis-side confirmations (registered open-ring arm, 2026-07-22; EXPERIMENTS.md).**
+The arm supplies empirical counterparts to the theory here:
+- *Danger relative to reach (the thesis).* The facing-vs-hidden contrast at the
+  SAME β₁=0 is the operational form of "position of 𝓡 relative to the operative
+  reach, not its topology" (the remark near line 296): facing pc_blind collapses
+  over a gap≈0.1 knee (CPU curve 0.999→0.001 by gap 0.15) while hidden holds
+  pc 1.116 at gap 0.6 and 1.2. The aligned-channel degeneracy (mechanism grid)
+  now has an LLM-synthesis analogue.
+- *Prop 1 (gate quotient) empirically load-bearing.* Inside gate-pass ≈ 0 at
+  every gap (even Claude's passes are wall_blind=1.0, pc 0.0): certification
+  succeeds only where the reachable-equivalent structure meets round,
+  guessable parameters — the gauge freedom of Prop 1 is exactly the slack the
+  synthesizer cannot pin, so certified ≠ correct except in that corner.
+- *Sensor resolution as a new object.* The pre-registered β̂₁ summary (Rips,
+  3×median-NN) reports β̂₁=1 for every gap ≤ 1.2 (flip ~1.8) though the true
+  β₁=0 for all gap>0; posed artifact topology tracks β̂₁, so the sensor's
+  resolution limit — a computable NSW-style density bound (RESEARCH-DIRECTION
+  A.1) — is what the certified model's topology inherits. Candidate formal
+  statement: repairable topology is bounded by the persistent-homology
+  resolution of the contact evidence at the sampling density.
