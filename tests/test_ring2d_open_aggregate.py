@@ -98,3 +98,40 @@ def test_aggregate_smoke(tmp_path, monkeypatch):
     art = summary["artifacts"][0]
     assert art["class"] == "blind" and art["guidance_beta1"] == 1
     assert art["history_classes"] == ["blind"]
+
+
+def _outside_cell(seed, mode_absent):
+    """A minimal outside-start danger cell (env-determined identifiability)."""
+    return {"arm": "incomplete", "seed": seed, "n_rollouts": 40, "eps": 1e-9,
+            "sample_contains_wall": not mode_absent,
+            "gate_accuracy": 1.0 if mode_absent else 0.9997,
+            "gate_passed": mode_absent, "wall_blindness": 1.0 if mode_absent else None,
+            "play_cost": 0.35 if mode_absent else None,
+            "code": agg.BLIND_CODE}
+
+
+def test_danger_dedups_seed_identical_samples_across_sizes(tmp_path):
+    """mini and large files at the same (gap, channel) share seeds and draw
+    byte-identical samples (sample_contains_wall is env-determined). The danger
+    Wilson CI must count each unique seed ONCE (n = unique seeds), not pool the
+    files as independent — else n and the CI are pseudo-replicated. play_cost is
+    model-dependent, so pc_values keeps every artifact."""
+    seeds_absent = {10000: True, 20000: True, 30000: False}  # 2/3 mode-absent
+    files = []
+    for size in ("mini", "large"):
+        fx = {"params": {"gap": 0.1, "channel": "facing", "start": "outside",
+                         "prompt_variant": "default"},
+              "size": size, "model": f"gpt-{size}", "j_truth": 10.0,
+              "j_random": 1.0,
+              "cells": [_outside_cell(s, a) for s, a in seeds_absent.items()]}
+        p = tmp_path / f"continuous_synthesis_ring2d_{size}_gap0.1.json"
+        p.write_text(json.dumps(fx))
+        files.append(str(p))
+    d = agg.build_summary(files, curve_path=None)["danger"]["0.1|facing"]
+    assert d["n"] == 3            # unique seeds, NOT 6 (two files pooled)
+    assert d["mode_absent"] == 2  # deduped, NOT 4
+    assert d["n_artifacts"] == 6  # every artifact still counted for context
+    assert len(d["pc_values"]) == 4   # model-dependent: 2 absent x 2 sizes
+    assert "_seeds" not in d       # helper set stripped before serialization
+    lo, hi = d["wilson"][1], d["wilson"][2]
+    assert 0.0 <= lo <= hi <= 1.0

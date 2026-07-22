@@ -126,8 +126,9 @@
   "0.1|facing": {
    "gap": 0.1,
    "channel": "facing",
-   "n": 40,
-   "mode_absent": 12,
+   "n": 20,
+   "n_artifacts": 40,
+   "mode_absent": 6,
    "pc_values": [
     0.3480285524689413,
     0.3480285524689413,
@@ -144,15 +145,16 @@
    ],
    "wilson": [
     0.3,
-    0.18074670915695296,
-    0.454303106543204
+    0.14547527396899385,
+    0.5189767762289793
    ]
   },
   "0.6|facing": {
    "gap": 0.6,
    "channel": "facing",
-   "n": 40,
-   "mode_absent": 22,
+   "n": 20,
+   "n_artifacts": 40,
+   "mode_absent": 11,
    "pc_values": [
     0.029200133769545538,
     0.029200133769545538,
@@ -179,15 +181,16 @@
    ],
    "wilson": [
     0.55,
-    0.39828829888440775,
-    0.6929492471905531
+    0.3420820083075997,
+    0.7418049791429071
    ]
   },
   "0.0|facing": {
    "gap": 0.0,
    "channel": "facing",
-   "n": 100,
-   "mode_absent": 30,
+   "n": 20,
+   "n_artifacts": 100,
+   "mode_absent": 6,
    "pc_values": [
     1.1164107466655087,
     1.1164107466655087,
@@ -233,14 +236,15 @@
    ],
    "wilson": [
     0.3,
-    0.21894753866228117,
-    0.39585038432811953
+    0.14547527396899385,
+    0.5189767762289793
    ]
   },
   "0.05|facing": {
    "gap": 0.05,
    "channel": "facing",
    "n": 20,
+   "n_artifacts": 20,
    "mode_absent": 6,
    "pc_values": [
     0.8375719298035519,
@@ -261,6 +265,7 @@
    "gap": 0.2,
    "channel": "facing",
    "n": 20,
+   "n_artifacts": 20,
    "mode_absent": 6,
    "pc_values": [
     -0.07338713250881004,
@@ -281,6 +286,7 @@
    "gap": 0.4,
    "channel": "facing",
    "n": 20,
+   "n_artifacts": 20,
    "mode_absent": 7,
    "pc_values": [
     0.0308490605975653,
@@ -301,6 +307,7 @@
    "gap": 0.6,
    "channel": "hidden",
    "n": 10,
+   "n_artifacts": 10,
    "mode_absent": 4,
    "pc_values": [
     1.1164107466655087,
@@ -319,6 +326,7 @@
    "gap": 1.2,
    "channel": "hidden",
    "n": 10,
+   "n_artifacts": 10,
    "mode_absent": 4,
    "pc_values": [
     1.1164107466655087,
@@ -336,6 +344,7 @@
    "gap": 1.2,
    "channel": "facing",
    "n": 20,
+   "n_artifacts": 20,
    "mode_absent": 16,
    "pc_values": [
     0.025305525811675653,

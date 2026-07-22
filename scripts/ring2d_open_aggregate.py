@@ -108,10 +108,20 @@ def build_summary(paths, curve_path=CURVE_PATH):
         if r["start"] == "outside":
             d = danger.setdefault(f"{r['gap']}|{r['channel']}",
                                   {"gap": r["gap"], "channel": r["channel"],
-                                   "n": 0, "mode_absent": 0, "pc_values": []})
-            d["n"] += 1
-            if not r["sample_contains_wall"]:
-                d["mode_absent"] += 1
+                                   "n": 0, "n_artifacts": 0, "mode_absent": 0,
+                                   "pc_values": [], "_seeds": set()})
+            # identifiability (sample_contains_wall) is env-determined — it
+            # depends only on (gap, channel, seed), NOT on model size or prompt
+            # variant. Count each unique seed ONCE so the Wilson CI is not
+            # pseudo-replicated across the mini/large/variant files that share
+            # seeds (they draw byte-identical samples). play_cost IS
+            # model-dependent, so pc_values keeps every artifact.
+            d["n_artifacts"] += 1
+            if r["seed"] not in d["_seeds"]:
+                d["_seeds"].add(r["seed"])
+                d["n"] += 1
+                if not r["sample_contains_wall"]:
+                    d["mode_absent"] += 1
             if r["play_cost"] is not None:
                 d["pc_values"].append(r["play_cost"])
         else:
@@ -128,7 +138,8 @@ def build_summary(paths, curve_path=CURVE_PATH):
             s["classes_by_guidance_beta1"].setdefault(
                 gb, Counter())[r["class"]] += 1
     for d in danger.values():
-        d["wilson"] = wilson_ci(d["mode_absent"], d["n"])
+        d.pop("_seeds")                       # set is not JSON-serializable
+        d["wilson"] = wilson_ci(d["mode_absent"], d["n"])   # n = unique seeds
     for s in synthesis.values():
         s["mean_terminal_gate"] = sum(s.pop("gates")) / s["n"]
         s["mean_blind_ref"] = sum(s.pop("blind_refs")) / s["n"]
