@@ -57,6 +57,12 @@ def test_dry_run_spends_nothing():
          "--phase", "1", "--dry-run"],
         cwd=_REPO, capture_output=True, text=True, timeout=120)
     assert out.returncode == 0
-    # every planned cell appears as RUN or SKIP with its target file
+    # every planned cell is enumerated with its target file and a RUN/SKIP
+    # marker (whether a cell is RUN or SKIP depends on what has already been
+    # computed in results/, so assert the marker set, not RUN specifically —
+    # once the real sweep has run, a dry-run legitimately reports all SKIP).
     assert "continuous_synthesis_ring2d_mini_gap0.05.json" in out.stdout
-    assert "RUN" in out.stdout and "gap1.8-in_pv-tda" in out.stdout
+    assert "gap1.8-in_pv-tda" in out.stdout
+    assert ("[RUN]" in out.stdout) or ("[SKIP]" in out.stdout)
+    # dry-run must never invoke the synthesis harness (no money/LLM spend)
+    assert "baselines:" not in out.stdout
