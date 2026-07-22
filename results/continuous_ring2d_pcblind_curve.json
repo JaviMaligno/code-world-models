@@ -1,0 +1,123 @@
+[
+ {
+  "gap": 0.0,
+  "episodes": 16,
+  "j_truth": 17.279873284577587,
+  "j_blind": 0.13570984885335383,
+  "j_random": 0.11902364398133757,
+  "play_cost": 0.9990276585820936,
+  "blind_contact_rate": 1.0,
+  "truth_contact_rate": 0.0,
+  "n_episodes": 16
+ },
+ {
+  "gap": 0.02,
+  "episodes": 16,
+  "j_truth": 21.63062515835072,
+  "j_blind": 9.950285807785646,
+  "j_random": 0.11902364398133757,
+  "play_cost": 0.5429786035578433,
+  "blind_contact_rate": 0.9375,
+  "truth_contact_rate": 0.0,
+  "n_episodes": 16
+ },
+ {
+  "gap": 0.05,
+  "episodes": 16,
+  "j_truth": 30.516115422411033,
+  "j_blind": 20.186184397331214,
+  "j_random": 0.11902364398133757,
+  "play_cost": 0.3398328728411485,
+  "blind_contact_rate": 0.5625,
+  "truth_contact_rate": 0.0,
+  "n_episodes": 16
+ },
+ {
+  "gap": 0.1,
+  "episodes": 16,
+  "j_truth": 34.45507216573784,
+  "j_blind": 29.695986957112492,
+  "j_random": 0.11902364398133757,
+  "play_cost": 0.13860317111358422,
+  "blind_contact_rate": 0.4375,
+  "truth_contact_rate": 0.0,
+  "n_episodes": 16
+ },
+ {
+  "gap": 0.15,
+  "episodes": 16,
+  "j_truth": 37.98443047525018,
+  "j_blind": 37.94692342396234,
+  "j_random": 0.11902364398133757,
+  "play_cost": 0.0009905360704289745,
+  "blind_contact_rate": 0.125,
+  "truth_contact_rate": 0.0,
+  "n_episodes": 16
+ },
+ {
+  "gap": 0.2,
+  "episodes": 16,
+  "j_truth": 39.30643732024285,
+  "j_blind": 38.735138152079635,
+  "j_random": 0.11902364398133757,
+  "play_cost": 0.014578639276449354,
+  "blind_contact_rate": 0.0625,
+  "truth_contact_rate": 0.0,
+  "n_episodes": 16
+ },
+ {
+  "gap": 0.3,
+  "episodes": 16,
+  "j_truth": 42.45566253287393,
+  "j_blind": 41.38531249505139,
+  "j_random": 0.11902364398133757,
+  "play_cost": 0.025281885050713344,
+  "blind_contact_rate": 0.0,
+  "truth_contact_rate": 0.0,
+  "n_episodes": 16
+ },
+ {
+  "gap": 0.4,
+  "episodes": 16,
+  "j_truth": 42.36985922475968,
+  "j_blind": 41.38531249505139,
+  "j_random": 0.11902364398133757,
+  "play_cost": 0.023302420323166415,
+  "blind_contact_rate": 0.0,
+  "truth_contact_rate": 0.0,
+  "n_episodes": 16
+ },
+ {
+  "gap": 0.6,
+  "episodes": 16,
+  "j_truth": 42.321743225192066,
+  "j_blind": 41.38531249505139,
+  "j_random": 0.11902364398133757,
+  "play_cost": 0.022188871699102324,
+  "blind_contact_rate": 0.0,
+  "truth_contact_rate": 0.0,
+  "n_episodes": 16
+ },
+ {
+  "gap": 0.9,
+  "episodes": 16,
+  "j_truth": 42.05917576792221,
+  "j_blind": 41.38531249505139,
+  "j_random": 0.11902364398133757,
+  "play_cost": 0.016067258670865933,
+  "blind_contact_rate": 0.0,
+  "truth_contact_rate": 0.0,
+  "n_episodes": 16
+ },
+ {
+  "gap": 1.2,
+  "episodes": 16,
+  "j_truth": 41.6958872863044,
+  "j_blind": 41.38531249505139,
+  "j_random": 0.11902364398133757,
+  "play_cost": 0.007469894649216921,
+  "blind_contact_rate": 0.0,
+  "truth_contact_rate": 0.0,
+  "n_episodes": 16
+ }
+]

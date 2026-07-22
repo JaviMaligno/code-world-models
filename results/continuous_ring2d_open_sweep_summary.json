@@ -1,5 +1,127 @@
 {
- "pc_blind_curve": [],
+ "pc_blind_curve": [
+  {
+   "gap": 0.0,
+   "episodes": 16,
+   "j_truth": 17.279873284577587,
+   "j_blind": 0.13570984885335383,
+   "j_random": 0.11902364398133757,
+   "play_cost": 0.9990276585820936,
+   "blind_contact_rate": 1.0,
+   "truth_contact_rate": 0.0,
+   "n_episodes": 16
+  },
+  {
+   "gap": 0.02,
+   "episodes": 16,
+   "j_truth": 21.63062515835072,
+   "j_blind": 9.950285807785646,
+   "j_random": 0.11902364398133757,
+   "play_cost": 0.5429786035578433,
+   "blind_contact_rate": 0.9375,
+   "truth_contact_rate": 0.0,
+   "n_episodes": 16
+  },
+  {
+   "gap": 0.05,
+   "episodes": 16,
+   "j_truth": 30.516115422411033,
+   "j_blind": 20.186184397331214,
+   "j_random": 0.11902364398133757,
+   "play_cost": 0.3398328728411485,
+   "blind_contact_rate": 0.5625,
+   "truth_contact_rate": 0.0,
+   "n_episodes": 16
+  },
+  {
+   "gap": 0.1,
+   "episodes": 16,
+   "j_truth": 34.45507216573784,
+   "j_blind": 29.695986957112492,
+   "j_random": 0.11902364398133757,
+   "play_cost": 0.13860317111358422,
+   "blind_contact_rate": 0.4375,
+   "truth_contact_rate": 0.0,
+   "n_episodes": 16
+  },
+  {
+   "gap": 0.15,
+   "episodes": 16,
+   "j_truth": 37.98443047525018,
+   "j_blind": 37.94692342396234,
+   "j_random": 0.11902364398133757,
+   "play_cost": 0.0009905360704289745,
+   "blind_contact_rate": 0.125,
+   "truth_contact_rate": 0.0,
+   "n_episodes": 16
+  },
+  {
+   "gap": 0.2,
+   "episodes": 16,
+   "j_truth": 39.30643732024285,
+   "j_blind": 38.735138152079635,
+   "j_random": 0.11902364398133757,
+   "play_cost": 0.014578639276449354,
+   "blind_contact_rate": 0.0625,
+   "truth_contact_rate": 0.0,
+   "n_episodes": 16
+  },
+  {
+   "gap": 0.3,
+   "episodes": 16,
+   "j_truth": 42.45566253287393,
+   "j_blind": 41.38531249505139,
+   "j_random": 0.11902364398133757,
+   "play_cost": 0.025281885050713344,
+   "blind_contact_rate": 0.0,
+   "truth_contact_rate": 0.0,
+   "n_episodes": 16
+  },
+  {
+   "gap": 0.4,
+   "episodes": 16,
+   "j_truth": 42.36985922475968,
+   "j_blind": 41.38531249505139,
+   "j_random": 0.11902364398133757,
+   "play_cost": 0.023302420323166415,
+   "blind_contact_rate": 0.0,
+   "truth_contact_rate": 0.0,
+   "n_episodes": 16
+  },
+  {
+   "gap": 0.6,
+   "episodes": 16,
+   "j_truth": 42.321743225192066,
+   "j_blind": 41.38531249505139,
+   "j_random": 0.11902364398133757,
+   "play_cost": 0.022188871699102324,
+   "blind_contact_rate": 0.0,
+   "truth_contact_rate": 0.0,
+   "n_episodes": 16
+  },
+  {
+   "gap": 0.9,
+   "episodes": 16,
+   "j_truth": 42.05917576792221,
+   "j_blind": 41.38531249505139,
+   "j_random": 0.11902364398133757,
+   "play_cost": 0.016067258670865933,
+   "blind_contact_rate": 0.0,
+   "truth_contact_rate": 0.0,
+   "n_episodes": 16
+  },
+  {
+   "gap": 1.2,
+   "episodes": 16,
+   "j_truth": 41.6958872863044,
+   "j_blind": 41.38531249505139,
+   "j_random": 0.11902364398133757,
+   "play_cost": 0.007469894649216921,
+   "blind_contact_rate": 0.0,
+   "truth_contact_rate": 0.0,
+   "n_episodes": 16
+  }
+ ],
  "danger": {
   "0.0|facing": {
    "gap": 0.0,
@@ -55,35 +177,171 @@
     0.39585038432811953
    ]
   },
+  "0.05|facing": {
+   "gap": 0.05,
+   "channel": "facing",
+   "n": 20,
+   "mode_absent": 6,
+   "pc_values": [
+    0.8375719298035519,
+    0.8375719298035519,
+    0.8375719298035519,
+    0.8375719298035519,
+    0.8375719298035519,
+    0.8375719298035519,
+    0.8375719298035519
+   ],
+   "wilson": [
+    0.3,
+    0.14547527396899385,
+    0.5189767762289793
+   ]
+  },
+  "0.1|facing": {
+   "gap": 0.1,
+   "channel": "facing",
+   "n": 20,
+   "mode_absent": 6,
+   "pc_values": [
+    0.3480285524689413,
+    0.3480285524689413,
+    0.3480285524689413,
+    0.3480285524689413,
+    0.3480285524689413,
+    0.3480285524689413
+   ],
+   "wilson": [
+    0.3,
+    0.14547527396899385,
+    0.5189767762289793
+   ]
+  },
   "0.2|facing": {
    "gap": 0.2,
    "channel": "facing",
-   "n": 3,
-   "mode_absent": 2,
+   "n": 20,
+   "mode_absent": 6,
    "pc_values": [
+    -0.07338713250881004,
+    -0.07338713250881004,
+    -0.07338713250881004,
+    -0.07338713250881004,
+    -0.07338713250881004,
     -0.07338713250881004,
     -0.07338713250881004
    ],
    "wilson": [
-    0.6666666666666666,
-    0.2076549551264879,
-    0.9385096847238394
+    0.3,
+    0.14547527396899385,
+    0.5189767762289793
+   ]
+  },
+  "0.4|facing": {
+   "gap": 0.4,
+   "channel": "facing",
+   "n": 20,
+   "mode_absent": 7,
+   "pc_values": [
+    0.0308490605975653,
+    0.0308490605975653,
+    0.0308490605975653,
+    0.0308490605975653,
+    0.0308490605975653,
+    0.0308490605975653,
+    0.0308490605975653
+   ],
+   "wilson": [
+    0.35,
+    0.18118954786794464,
+    0.5671494897805354
+   ]
+  },
+  "0.6|hidden": {
+   "gap": 0.6,
+   "channel": "hidden",
+   "n": 10,
+   "mode_absent": 4,
+   "pc_values": [
+    1.1164107466655087,
+    1.1164107466655087,
+    1.1164107466655087,
+    1.1164107466655087,
+    1.1164107466655087
+   ],
+   "wilson": [
+    0.4,
+    0.16817758120350967,
+    0.6873304525498135
    ]
   },
   "0.6|facing": {
    "gap": 0.6,
    "channel": "facing",
-   "n": 5,
-   "mode_absent": 3,
+   "n": 20,
+   "mode_absent": 11,
    "pc_values": [
+    0.029200133769545538,
+    0.029200133769545538,
+    0.029200133769545538,
+    0.029200133769545538,
+    0.029200133769545538,
+    0.029200133769545538,
+    0.029200133769545538,
+    0.029200133769545538,
     0.029200133769545538,
     0.029200133769545538,
     0.029200133769545538
    ],
    "wilson": [
-    0.6,
-    0.23071993220883708,
-    0.8823817688407467
+    0.55,
+    0.3420820083075997,
+    0.7418049791429071
+   ]
+  },
+  "1.2|hidden": {
+   "gap": 1.2,
+   "channel": "hidden",
+   "n": 10,
+   "mode_absent": 4,
+   "pc_values": [
+    1.1164107466655087,
+    1.1164107466655087,
+    1.1164107466655087,
+    1.1164107466655087
+   ],
+   "wilson": [
+    0.4,
+    0.16817758120350967,
+    0.6873304525498135
+   ]
+  },
+  "1.2|facing": {
+   "gap": 1.2,
+   "channel": "facing",
+   "n": 20,
+   "mode_absent": 16,
+   "pc_values": [
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653,
+    0.025305525811675653
+   ],
+   "wilson": [
+    0.8,
+    0.5839782779742401,
+    0.9193436467288
    ]
   }
  },
@@ -115,42 +373,119 @@
    "mean_terminal_gate": 0.6411718750000001,
    "mean_blind_ref": 0.9705
   },
-  "0.6": {
-   "gap": 0.6,
-   "n": 5,
+  "0.2": {
+   "gap": 0.2,
+   "n": 20,
    "gate_pass": 0,
    "classes": {
-    "disc": 3,
-    "point": 1,
-    "arc": 1
+    "arc": 5,
+    "disc": 7,
+    "blind": 5,
+    "complement": 2,
+    "point": 1
    },
    "classes_by_guidance_beta1": {
     "1": {
-     "disc": 3,
-     "point": 1,
-     "arc": 1
+     "arc": 5,
+     "disc": 7,
+     "blind": 5,
+     "complement": 2,
+     "point": 1
     }
    },
-   "mean_terminal_gate": 0.4365,
-   "mean_blind_ref": 0.9726874999999999
+   "mean_terminal_gate": 0.5109843749999999,
+   "mean_blind_ref": 0.9711093749999999
+  },
+  "0.6": {
+   "gap": 0.6,
+   "n": 20,
+   "gate_pass": 0,
+   "classes": {
+    "disc": 7,
+    "point": 2,
+    "arc": 4,
+    "complement": 1,
+    "loop": 5,
+    "blind": 1
+   },
+   "classes_by_guidance_beta1": {
+    "1": {
+     "disc": 7,
+     "point": 2,
+     "arc": 4,
+     "complement": 1,
+     "loop": 5,
+     "blind": 1
+    }
+   },
+   "mean_terminal_gate": 0.5084375,
+   "mean_blind_ref": 0.973265625
+  },
+  "1.2": {
+   "gap": 1.2,
+   "n": 20,
+   "gate_pass": 0,
+   "classes": {
+    "arc": 9,
+    "complement": 1,
+    "disc": 5,
+    "blind": 4,
+    "loop": 1
+   },
+   "classes_by_guidance_beta1": {
+    "1": {
+     "arc": 9,
+     "complement": 1,
+     "disc": 5,
+     "blind": 4,
+     "loop": 1
+    }
+   },
+   "mean_terminal_gate": 0.6043593749999999,
+   "mean_blind_ref": 0.9766406249999999
   },
   "1.8": {
    "gap": 1.8,
-   "n": 3,
-   "gate_pass": 0,
+   "n": 30,
+   "gate_pass": 1,
    "classes": {
-    "arc": 3
+    "arc": 23,
+    "disc": 2,
+    "blind": 4,
+    "loop": 1
    },
    "classes_by_guidance_beta1": {
     "1": {
-     "arc": 1
+     "arc": 11,
+     "disc": 1,
+     "loop": 1,
+     "blind": 1
     },
     "0": {
-     "arc": 2
+     "arc": 12,
+     "disc": 1,
+     "blind": 3
     }
    },
-   "mean_terminal_gate": 0.28791666666666665,
-   "mean_blind_ref": 0.9807291666666668
+   "mean_terminal_gate": 0.5196041666666666,
+   "mean_blind_ref": 0.9795625
+  },
+  "2.4": {
+   "gap": 2.4,
+   "n": 20,
+   "gate_pass": 1,
+   "classes": {
+    "arc": 15,
+    "blind": 5
+   },
+   "classes_by_guidance_beta1": {
+    "0": {
+     "arc": 15,
+     "blind": 5
+    }
+   },
+   "mean_terminal_gate": 0.651921875,
+   "mean_blind_ref": 0.982046875
   }
  },
  "artifacts": [
@@ -2013,6 +2348,1504 @@
    }
   },
   {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 10000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "arc",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 20000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.8375719298035519,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 30000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.8375719298035519,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 40000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "arc",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 50000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.8375719298035519,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "fill-unbounded",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.8375719298035519,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9984375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9984375,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "disc",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 110000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9859375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9990625,
+   "class": "fill-unbounded",
+   "band_cov": 1.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.04164257909858815
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "fill-unbounded"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 120000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.999375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.999375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 130000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9959375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.998125,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "point",
+    "point",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 140000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.8375719298035519,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 150000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.995625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99625,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 160000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.8375719298035519,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 170000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9915625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9978125,
+   "class": "point",
+   "band_cov": 0.027777777777777776,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "blind",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 180000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.986875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99875,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "point",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 190000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.8375719298035519,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.05.json",
+   "gap": 0.05,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 200000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.999375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.999375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "point",
+    "blind",
+    "point",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 10000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 20000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.3480285524689413,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 30000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.3480285524689413,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 40000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.98375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "arc",
+   "band_cov": 0.5138888888888888,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.5138888888888888,
+    "max_ang_gap_rad": 3.141592653589793
+   },
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 50000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.3480285524689413,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "fill-unbounded",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.3480285524689413,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.981875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9984375,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "point",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 110000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.840625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9990625,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.035871324805669,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.039978687123290335
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 120000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.999375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.999375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 130000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9671875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.998125,
+   "class": "arc",
+   "band_cov": 0.5138888888888888,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.5138888888888888,
+    "max_ang_gap_rad": 3.141592653589793
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "arc",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 140000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 150000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.000625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99625,
+   "class": "fill-unbounded",
+   "band_cov": 1.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.02563540852167745
+   },
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "arc",
+    "blind",
+    "fill-unbounded"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 160000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.3480285524689413,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 170000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9878125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9978125,
+   "class": "fill-unbounded",
+   "band_cov": 1.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.03997868712328989
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "point",
+    "blind",
+    "fill-unbounded"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 180000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.99875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "point",
+    "blind",
+    "fill-unbounded",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 190000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.3480285524689413,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.1.json",
+   "gap": 0.1,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 200000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.999375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.999375,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "blind",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 10000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.5934375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9728125,
+   "class": "arc",
+   "band_cov": 0.1111111111111111,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.026549190084311,
+    "r_hi": 3.4928498393145966,
+    "ang_cov": 0.1111111111111111,
+    "max_ang_gap_rad": 3.3903026426833165
+   },
+   "history_classes": [
+    "blind",
+    "disc",
+    "blind",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 20000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.5434375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.97375,
+   "class": "arc",
+   "band_cov": 0.4722222222222222,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.816637831516918,
+    "ang_cov": 0.4722222222222222,
+    "max_ang_gap_rad": 1.629149248646038
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "blind",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 30000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.0021875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9678125,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.252058325093859,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.04995839572194272
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "disc",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 40000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.97375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.97375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "arc",
+    "arc",
+    "blind",
+    "arc",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 50000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9753125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9659375,
+   "class": "complement",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.4928498393145957,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.02563540852167745
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "complement",
+    "complement"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.048125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.96125,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.951767361255979,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.06656816377582375
+   },
+   "history_classes": [
+    "blind",
+    "blind",
+    "disc",
+    "disc",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.0590625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.96875,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.862641583165593,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.06484402755320628
+   },
+   "history_classes": [
+    "point",
+    "point",
+    "blind",
+    "disc",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.6071875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9734375,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.8083261120685235,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.0624188099959575
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "fill-unbounded",
+    "blind",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.978125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.978125,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "point",
+    "disc",
+    "disc",
+    "disc",
+    "disc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.0353125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9646875,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.242640687119286,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.05258306161094152
+   },
+   "history_classes": [
+    "arc",
+    "disc",
+    "disc",
+    "disc",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 110000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.0496875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.96,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.404543109109049,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.05875582271572277
+   },
+   "history_classes": [
+    "blind",
+    "disc",
+    "disc",
+    "disc",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 120000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.2975,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9715625,
+   "class": "arc",
+   "band_cov": 0.2777777777777778,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.605551275463989,
+    "ang_cov": 0.2777777777777778,
+    "max_ang_gap_rad": 2.3318090810196272
+   },
+   "history_classes": [
+    "point",
+    "point",
+    "point",
+    "blind",
+    "point",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 130000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.974375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.974375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "disc",
+    "disc",
+    "disc",
+    "point",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 140000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.6228125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.976875,
+   "class": "complement",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.02563540852167745
+   },
+   "history_classes": [
+    "point",
+    "point",
+    "arc",
+    "arc",
+    "arc",
+    "complement"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 150000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9715625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9715625,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "disc",
+    "disc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 160000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.91625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9675,
+   "class": "arc",
+   "band_cov": 0.9027777777777778,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.006659275674582,
+    "r_hi": 3.8470768123342696,
+    "ang_cov": 0.9027777777777778,
+    "max_ang_gap_rad": 0.1746721990082396
+   },
+   "history_classes": [
+    "point",
+    "point",
+    "disc",
+    "loop",
+    "loop",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 170000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.1840625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9740625,
+   "class": "arc",
+   "band_cov": 0.5555555555555556,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.3286633954186486,
+    "ang_cov": 0.5555555555555556,
+    "max_ang_gap_rad": 2.0169018757383004
+   },
+   "history_classes": [
+    "blind",
+    "disc",
+    "arc",
+    "arc",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 180000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.38625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.974375,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 190000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9725,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9725,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 200000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.02875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9790625,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.05258306161094152
+   },
+   "history_classes": [
+    "blind",
+    "disc",
+    "disc",
+    "disc",
+    "loop",
+    "disc"
+   ]
+  },
+  {
    "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
    "gap": 0.2,
    "channel": "facing",
@@ -2072,6 +3905,1117 @@
    "play_cost": -0.07338713250881004,
    "history_classes": [
     "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 40000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 50000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": -0.07338713250881004,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "point",
+    "point",
+    "point",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "point",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.0003125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "fill-unbounded",
+   "band_cov": 1.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.02563540852167745
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "blind",
+    "blind",
+    "fill-unbounded"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": -0.07338713250881004,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.981875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9984375,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "disc",
+    "blind",
+    "arc",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 110000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9746875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9990625,
+   "class": "fill-unbounded",
+   "band_cov": 1.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.03997868712328989
+   },
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "fill-unbounded"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 120000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.999375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.999375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 130000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9884375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99875,
+   "class": "arc",
+   "band_cov": 0.18055555555555555,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 4.2,
+    "r_hi": 5.7306195127577615,
+    "ang_cov": 0.18055555555555555,
+    "max_ang_gap_rad": 5.25076349373092
+   },
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "point",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 140000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 150000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.979375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99625,
+   "class": "arc",
+   "band_cov": 0.20833333333333334,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.9999999999999996,
+    "r_hi": 6.095900261651268,
+    "ang_cov": 0.20833333333333334,
+    "max_ang_gap_rad": 4.221038598881206
+   },
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 160000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": -0.07338713250881004,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 170000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.99875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "blind",
+    "point",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 180000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9753125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99875,
+   "class": "arc",
+   "band_cov": 0.2222222222222222,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.2222222222222222,
+    "max_ang_gap_rad": 5.00693536338412
+   },
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "arc",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 190000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": -0.07338713250881004,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.2.json",
+   "gap": 0.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 200000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": -0.07338713250881004,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 10000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "point",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 20000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.0308490605975653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 30000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.0308490605975653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 40000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 50000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.0308490605975653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.2246875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9984375,
+   "class": "arc",
+   "band_cov": 0.5,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.5,
+    "max_ang_gap_rad": 3.1928634706331467
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "point",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.999375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.999375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.0308490605975653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9946875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9984375,
+   "class": "fill-unbounded",
+   "band_cov": 1.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.03997868712328989
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "point",
+    "blind",
+    "fill-unbounded"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 110000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.989375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "arc",
+   "band_cov": 0.7222222222222222,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.7222222222222222,
+    "max_ang_gap_rad": 1.752116101196386
+   },
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "arc",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 120000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.0308490605975653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 130000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.99625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9984375,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "arc",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 140000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.999375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.999375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "blind",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 150000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.99625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99625,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "blind",
+    "fill-unbounded",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 160000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.0308490605975653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 170000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.7859375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.999375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 180000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.8225,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99875,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.188448708429139,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.039978687123290335
+   },
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "disc",
+    "blind",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 190000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.0308490605975653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.4.json",
+   "gap": 0.4,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 200000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "blind",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-hid.json",
+   "gap": 0.6,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 10000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 1.1164107466655087,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-hid.json",
+   "gap": 0.6,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 20000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 1.1164107466655087,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-hid.json",
+   "gap": 0.6,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 30000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 1.1164107466655087,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-hid.json",
+   "gap": 0.6,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 40000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.999375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-hid.json",
+   "gap": 0.6,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 50000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 1.1164107466655087,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-hid.json",
+   "gap": 0.6,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "fill-unbounded",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-hid.json",
+   "gap": 0.6,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.700625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-hid.json",
+   "gap": 0.6,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9840625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-hid.json",
+   "gap": 0.6,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 1.1164107466655087,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-hid.json",
+   "gap": 0.6,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9946875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9984375,
+   "class": "arc",
+   "band_cov": 0.4444444444444444,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.4583333333333333,
+    "max_ang_gap_rad": 3.466497771654912
+   },
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "arc"
    ]
   },
   {
@@ -2179,6 +5123,444 @@
    }
   },
   {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.758125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.96125,
+   "class": "complement",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.02563540852167745
+   },
+   "history_classes": [
+    "blind",
+    "loop",
+    "complement",
+    "complement",
+    "complement",
+    "complement"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.5084375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.971875,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.7576588456111875,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.0624188099959575
+   },
+   "history_classes": [
+    "arc",
+    "disc",
+    "blind",
+    "loop",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.8040625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9734375,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "arc",
+    "loop",
+    "loop",
+    "loop",
+    "point",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.073125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.983125,
+   "class": "arc",
+   "band_cov": 0.9444444444444444,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.219004621945798,
+    "ang_cov": 0.9444444444444444,
+    "max_ang_gap_rad": 0.14676319624346323
+   },
+   "history_classes": [
+    "disc",
+    "disc",
+    "blind",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.5475,
+   "gate_passed": false,
+   "blind_ref_gate": 0.965,
+   "class": "loop",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.440720662234903,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.05875582271572277
+   },
+   "history_classes": [
+    "blind",
+    "disc",
+    "disc",
+    "blind",
+    "loop",
+    "loop"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 110000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.6646875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9675,
+   "class": "loop",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.531726674375732,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.05549850524571731
+   },
+   "history_classes": [
+    "blind",
+    "disc",
+    "disc",
+    "blind",
+    "blind",
+    "loop"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 120000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.050625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9734375,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.6878177829171546,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.05875582271572277
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 130000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.163125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9753125,
+   "class": "arc",
+   "band_cov": 0.5416666666666666,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.7947331922020546,
+    "ang_cov": 0.5416666666666666,
+    "max_ang_gap_rad": 1.9091199493041562
+   },
+   "history_classes": [
+    "vdep",
+    "vdep",
+    "arc",
+    "blind",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 140000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9775,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9775,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "disc",
+    "blind",
+    "disc",
+    "disc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 150000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.7721875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.971875,
+   "class": "arc",
+   "band_cov": 0.5,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.2047592083257275,
+    "ang_cov": 0.5,
+    "max_ang_gap_rad": 3.2497946008479404
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 160000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.76375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9715625,
+   "class": "loop",
+   "band_cov": 0.9861111111111112,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.3266615305567875,
+    "ang_cov": 0.9861111111111112,
+    "max_ang_gap_rad": 0.14428939453774192
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "loop",
+    "loop"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 170000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.26625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.978125,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.123105625617661,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.05875582271572255
+   },
+   "history_classes": [
+    "blind",
+    "disc",
+    "blind",
+    "disc",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 180000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.734375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.975625,
+   "class": "loop",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.381449618829484,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.0624188099959575
+   },
+   "history_classes": [
+    "disc",
+    "disc",
+    "disc",
+    "blind",
+    "blind",
+    "loop"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 190000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.034375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.975,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.951767361255979,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.05875582271572277
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "disc",
+    "disc",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 200000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.868125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.98125,
+   "class": "loop",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.903060268852505,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.055498505245716645
+   },
+   "history_classes": [
+    "blind",
+    "disc",
+    "loop",
+    "loop",
+    "loop",
+    "loop"
+   ]
+  },
+  {
    "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
    "gap": 0.6,
    "channel": "facing",
@@ -2257,6 +5639,350 @@
    "band_cov": 0.0,
    "guidance_beta1": null,
    "play_cost": 0.029200133769545538
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.029200133769545538,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.029200133769545538,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.780625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "arc",
+   "band_cov": 0.4444444444444444,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.4722222222222222,
+    "max_ang_gap_rad": 3.446891310380323
+   },
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.029200133769545538,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9946875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9984375,
+   "class": "fill-unbounded",
+   "band_cov": 1.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.03997868712328989
+   },
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "point",
+    "blind",
+    "fill-unbounded"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 110000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.029200133769545538,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 120000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.029200133769545538,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 130000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.99875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "blind",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 140000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.029200133769545538,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 150000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.99625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99625,
+   "class": "point",
+   "band_cov": 0.013888888888888888,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 160000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.029200133769545538,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 170000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9771875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.999375,
+   "class": "fill-unbounded",
+   "band_cov": 1.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.03997868712328989
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "arc",
+    "blind",
+    "fill-unbounded"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 180000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.999375,
+   "class": "point",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "point",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 190000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.029200133769545538,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap0.6.json",
+   "gap": 0.6,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 200000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.995,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "arc",
+   "band_cov": 0.8055555555555556,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.8055555555555556,
+    "max_ang_gap_rad": 1.2870022175865685
+   },
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "arc"
+   ]
   },
   {
    "path": "continuous_synthesis_ring2d_mini_gap0.json",
@@ -2941,6 +6667,1226 @@
    "play_cost": 1.1164107466655087
   },
   {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-hid.json",
+   "gap": 1.2,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 10000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-hid.json",
+   "gap": 1.2,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 20000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 1.1164107466655087,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-hid.json",
+   "gap": 1.2,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 30000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 1.1164107466655087,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-hid.json",
+   "gap": 1.2,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 40000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-hid.json",
+   "gap": 1.2,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 50000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 1.1164107466655087,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-hid.json",
+   "gap": 1.2,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "blind",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-hid.json",
+   "gap": 1.2,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "arc",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-hid.json",
+   "gap": 1.2,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.99125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "arc",
+   "band_cov": 0.5138888888888888,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.5138888888888888,
+    "max_ang_gap_rad": 3.141592653589793
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "blind",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-hid.json",
+   "gap": 1.2,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 1.1164107466655087,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-hid.json",
+   "gap": 1.2,
+   "channel": "hidden",
+   "start": "outside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.995,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9984375,
+   "class": "arc",
+   "band_cov": 0.4444444444444444,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.4583333333333333,
+    "max_ang_gap_rad": 3.466497771654912
+   },
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "point",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 10000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.82,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9775,
+   "class": "arc",
+   "band_cov": 0.7222222222222222,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.2557641192199416,
+    "ang_cov": 0.7222222222222222,
+    "max_ang_gap_rad": 1.2870022175865685
+   },
+   "history_classes": [
+    "point",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 20000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.855,
+   "gate_passed": false,
+   "blind_ref_gate": 0.976875,
+   "class": "complement",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.02563540852167745
+   },
+   "history_classes": [
+    "blind",
+    "complement",
+    "complement",
+    "complement",
+    "complement",
+    "complement"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 30000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.948125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9753125,
+   "class": "arc",
+   "band_cov": 0.7638888888888888,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.2249030993194197,
+    "r_hi": 5.091168824543142,
+    "ang_cov": 0.7638888888888888,
+    "max_ang_gap_rad": 1.341771019315635
+   },
+   "history_classes": [
+    "complement",
+    "arc",
+    "blind",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 40000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.463125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9790625,
+   "class": "arc",
+   "band_cov": 0.09722222222222222,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.727128425310541,
+    "ang_cov": 0.09722222222222222,
+    "max_ang_gap_rad": 2.440206801999839
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 50000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.965625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9721875,
+   "class": "arc",
+   "band_cov": 0.1388888888888889,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0463092423455636,
+    "r_hi": 3.6769552621700474,
+    "ang_cov": 0.1388888888888889,
+    "max_ang_gap_rad": 2.2655346029915995
+   },
+   "history_classes": [
+    "point",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.0659375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.968125,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.8209946349085606,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.0624188099959575
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "blind",
+    "loop",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9646875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9759375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9778125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9778125,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "arc",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.5396875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.985,
+   "class": "arc",
+   "band_cov": 0.5972222222222222,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.6769552621700474,
+    "ang_cov": 0.5972222222222222,
+    "max_ang_gap_rad": 2.4760984755573685
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "arc",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.0234375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9715625,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 6.514598989960932,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.031239833430268173
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "loop",
+    "loop",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 110000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.97,
+   "gate_passed": false,
+   "blind_ref_gate": 0.97,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "disc",
+    "disc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 120000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.97625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.97625,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "arc",
+    "blind",
+    "arc",
+    "arc",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 130000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.1375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9775,
+   "class": "arc",
+   "band_cov": 0.7222222222222222,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.6769552621700474,
+    "ang_cov": 0.7222222222222222,
+    "max_ang_gap_rad": 1.8545904360032242
+   },
+   "history_classes": [
+    "arc",
+    "blind",
+    "blind",
+    "arc",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 140000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.0553125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.980625,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.6496575181789312,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.05549850524571731
+   },
+   "history_classes": [
+    "disc",
+    "disc",
+    "disc",
+    "disc",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 150000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9525,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9734375,
+   "class": "loop",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.4000000000000004,
+    "r_hi": 3.8832975677895205,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.05641846818765761
+   },
+   "history_classes": [
+    "point",
+    "point",
+    "disc",
+    "disc",
+    "loop",
+    "loop"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 160000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.7184375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.97375,
+   "class": "arc",
+   "band_cov": 0.9444444444444444,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.22490309931942,
+    "ang_cov": 0.9444444444444444,
+    "max_ang_gap_rad": 0.09065988720074536
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 170000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.1296875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.98,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.8832975677895205,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.09065988720074536
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "disc",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 180000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.679375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9790625,
+   "class": "arc",
+   "band_cov": 0.2777777777777778,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.9999999999999996,
+    "ang_cov": 0.2777777777777778,
+    "max_ang_gap_rad": 4.584338120934023
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "disc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 190000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.7021875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.97875,
+   "class": "arc",
+   "band_cov": 0.3055555555555556,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.440720662234902,
+    "ang_cov": 0.3055555555555556,
+    "max_ang_gap_rad": 4.478645799515788
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "blind",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 200000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.1425,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9840625,
+   "class": "disc",
+   "band_cov": 0.9861111111111112,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.7363083384538807,
+    "ang_cov": 0.9861111111111112,
+    "max_ang_gap_rad": 0.09065988720074536
+   },
+   "history_classes": [
+    "disc",
+    "blind",
+    "loop",
+    "blind",
+    "blind",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 10000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 20000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 30000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 40000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 50000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9971875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.99875,
+   "class": "point",
+   "band_cov": 0.027777777777777776,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "point",
+    "blind",
+    "point",
+    "blind",
+    "point"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 110000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 120000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 130000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 140000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 150000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9934375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9978125,
+   "class": "arc",
+   "band_cov": 0.09722222222222222,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.7202150475476543,
+    "r_hi": 6.248199740725324,
+    "ang_cov": 0.09722222222222222,
+    "max_ang_gap_rad": 5.785652368274661
+   },
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "point",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 160000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 170000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 180000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.98125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.999375,
+   "class": "fill-unbounded",
+   "band_cov": 1.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.02563540852167745
+   },
+   "history_classes": [
+    "blind",
+    "fill-unbounded",
+    "blind",
+    "arc",
+    "blind",
+    "fill-unbounded"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 190000,
+   "sample_contains_wall": false,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 1.0,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": 0.025305525811675653,
+   "history_classes": [
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.2.json",
+   "gap": 1.2,
+   "channel": "facing",
+   "start": "outside",
+   "size": "mini",
+   "seed": 200000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9996875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9996875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": null,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "arc",
+    "blind",
+    "arc",
+    "blind"
+   ]
+  },
+  {
    "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
    "gap": 1.8,
    "channel": "facing",
@@ -3023,6 +7969,1357 @@
    },
    "history_classes": [
     "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 40000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.094375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9815625,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.23450093132096,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.06656816377582375
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "disc",
+    "blind",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 50000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.11375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9771875,
+   "class": "arc",
+   "band_cov": 0.8333333333333334,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.8083261120685235,
+    "ang_cov": 0.8333333333333334,
+    "max_ang_gap_rad": 1.1033099650570932
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.8603125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.975,
+   "class": "arc",
+   "band_cov": 0.8055555555555556,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.951767361255979,
+    "ang_cov": 0.8055555555555556,
+    "max_ang_gap_rad": 1.2870022175865685
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "blind",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.7928125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9796875,
+   "class": "arc",
+   "band_cov": 0.7638888888888888,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.3266615305567875,
+    "ang_cov": 0.7638888888888888,
+    "max_ang_gap_rad": 1.5707963267948966
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.1684375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.981875,
+   "class": "arc",
+   "band_cov": 0.6944444444444444,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.8083261120685235,
+    "ang_cov": 0.6944444444444444,
+    "max_ang_gap_rad": 2.0382826885326994
+   },
+   "history_classes": [
+    "vdep",
+    "vdep",
+    "vdep",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.135,
+   "gate_passed": false,
+   "blind_ref_gate": 0.98625,
+   "class": "arc",
+   "band_cov": 0.8055555555555556,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.816637831516918,
+    "ang_cov": 0.8055555555555556,
+    "max_ang_gap_rad": 1.2870022175865685
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "blind",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.976875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.976875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 110000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.8340625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.97125,
+   "class": "arc",
+   "band_cov": 0.5138888888888888,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.091168824543142,
+    "ang_cov": 0.5138888888888888,
+    "max_ang_gap_rad": 3.1366665850613704
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "arc",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 120000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9271875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9784375,
+   "class": "arc",
+   "band_cov": 0.5416666666666666,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.000000000000001,
+    "r_hi": 4.6690470119715,
+    "ang_cov": 0.5416666666666666,
+    "max_ang_gap_rad": 1.5707963267948966
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 130000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.1384375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9846875,
+   "class": "arc",
+   "band_cov": 0.8333333333333334,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.951767361255979,
+    "ang_cov": 0.8333333333333334,
+    "max_ang_gap_rad": 1.1033099650570932
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 140000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.548125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9796875,
+   "class": "disc",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.2,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.04995839572194272
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "disc",
+    "disc",
+    "disc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 150000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.083125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9746875,
+   "class": "arc",
+   "band_cov": 0.8055555555555556,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.385164807134504,
+    "ang_cov": 0.8055555555555556,
+    "max_ang_gap_rad": 1.3078015951139768
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "blind",
+    "disc",
+    "disc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 160000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.220625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9771875,
+   "class": "arc",
+   "band_cov": 0.5833333333333334,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.161730409336963,
+    "ang_cov": 0.5833333333333334,
+    "max_ang_gap_rad": 2.620387870095111
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "blind",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 170000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.15875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.983125,
+   "class": "arc",
+   "band_cov": 0.9027777777777778,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.967896939349689,
+    "ang_cov": 0.9027777777777778,
+    "max_ang_gap_rad": 0.4461055489434038
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 180000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 0.984375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 0,
+   "play_cost": 0.0,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 190000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.775,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9815625,
+   "class": "loop",
+   "band_cov": 1.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.824087911424415,
+    "ang_cov": 1.0,
+    "max_ang_gap_rad": 0.03569911267932383
+   },
+   "history_classes": [
+    "blind",
+    "loop",
+    "loop",
+    "loop",
+    "loop",
+    "loop"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 200000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.1625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.985,
+   "class": "arc",
+   "band_cov": 0.7222222222222222,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.951767361255979,
+    "ang_cov": 0.7222222222222222,
+    "max_ang_gap_rad": 1.8545904360032242
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "blind",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 210000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9775,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9775,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "history_classes": [
+    "loop",
+    "blind",
+    "arc",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 220000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.86125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.980625,
+   "class": "arc",
+   "band_cov": 0.4027777777777778,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.000000000000001,
+    "r_hi": 4.472135954999578,
+    "ang_cov": 0.4027777777777778,
+    "max_ang_gap_rad": 3.743879999724757
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 230000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.16375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9765625,
+   "class": "arc",
+   "band_cov": 0.75,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.6878177829171546,
+    "ang_cov": 0.75,
+    "max_ang_gap_rad": 1.2870022175865685
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 240000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.579375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.98,
+   "class": "arc",
+   "band_cov": 0.4027777777777778,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.773592452822641,
+    "ang_cov": 0.4027777777777778,
+    "max_ang_gap_rad": 3.8682349942715195
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 250000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9446875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.975,
+   "class": "arc",
+   "band_cov": 0.9305555555555556,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.104834939252005,
+    "r_hi": 8.0,
+    "ang_cov": 0.9305555555555556,
+    "max_ang_gap_rad": 0.5823529461439834
+   },
+   "history_classes": [
+    "complement",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 260000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9271875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9753125,
+   "class": "arc",
+   "band_cov": 0.8333333333333334,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.8333333333333334,
+    "max_ang_gap_rad": 1.1033099650570932
+   },
+   "history_classes": [
+    "point",
+    "point",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 270000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.5296875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.976875,
+   "class": "arc",
+   "band_cov": 0.16666666666666666,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.049691346263318,
+    "ang_cov": 0.16666666666666666,
+    "max_ang_gap_rad": 5.303988690719802
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 280000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.6634375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9803125,
+   "class": "arc",
+   "band_cov": 0.2777777777777778,
+   "guidance_beta1": 1,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 3.452535300326414,
+    "ang_cov": 0.2777777777777778,
+    "max_ang_gap_rad": 2.1641464729516144
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "blind",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 290000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.1034375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.979375,
+   "class": "arc",
+   "band_cov": 0.8055555555555556,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 8.0,
+    "ang_cov": 0.8055555555555556,
+    "max_ang_gap_rad": 1.2870022175865685
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json",
+   "gap": 1.8,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 300000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9846875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9846875,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "arc",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 10000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.21,
+   "gate_passed": false,
+   "blind_ref_gate": 0.98,
+   "class": "arc",
+   "band_cov": 0.5833333333333334,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.386342439892262,
+    "ang_cov": 0.5833333333333334,
+    "max_ang_gap_rad": 2.620387870095111
+   },
+   "history_classes": [
+    "blind",
+    "complement",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 20000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.425625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9859375,
+   "class": "arc",
+   "band_cov": 0.5833333333333334,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.951767361255979,
+    "ang_cov": 0.5833333333333334,
+    "max_ang_gap_rad": 2.620387870095111
+   },
+   "history_classes": [
+    "point",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 30000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.41125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.98,
+   "class": "arc",
+   "band_cov": 0.3472222222222222,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.2345009313209605,
+    "ang_cov": 0.3472222222222222,
+    "max_ang_gap_rad": 3.95137622615996
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 40000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.76,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9859375,
+   "class": "arc",
+   "band_cov": 0.4583333333333333,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.091168824543142,
+    "ang_cov": 0.4583333333333333,
+    "max_ang_gap_rad": 3.4858113365722607
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 50000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 1.0,
+   "gate_passed": true,
+   "blind_ref_gate": 0.9809375,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 0,
+   "play_cost": 0.0,
+   "history_classes": [
+    "arc",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 60000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9753125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9753125,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 70000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.885,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9828125,
+   "class": "arc",
+   "band_cov": 0.19444444444444445,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 7.891767862779543,
+    "ang_cov": 0.19444444444444445,
+    "max_ang_gap_rad": 4.161749067391169
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 80000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9840625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9840625,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 90000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.2309375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.986875,
+   "class": "arc",
+   "band_cov": 0.6111111111111112,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.816637831516918,
+    "ang_cov": 0.6111111111111112,
+    "max_ang_gap_rad": 2.498091544796509
+   },
+   "history_classes": [
+    "point",
+    "blind",
+    "arc",
+    "arc",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 100000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.350625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9775,
+   "class": "arc",
+   "band_cov": 0.5277777777777778,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.280186911806539,
+    "ang_cov": 0.5277777777777778,
+    "max_ang_gap_rad": 3.0084563260381465
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 110000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9565625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9771875,
+   "class": "arc",
+   "band_cov": 0.6944444444444444,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.403702434442518,
+    "ang_cov": 0.6944444444444444,
+    "max_ang_gap_rad": 2.0382826885326994
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 120000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.6871875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9821875,
+   "class": "arc",
+   "band_cov": 0.6388888888888888,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.8083261120685235,
+    "ang_cov": 0.6388888888888888,
+    "max_ang_gap_rad": 2.3318090810196264
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 130000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.9803125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9853125,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "history_classes": [
+    "arc",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 140000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.980625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.980625,
+   "class": "blind",
+   "band_cov": 0.0,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "history_classes": [
+    "blind",
+    "arc",
+    "blind",
+    "arc",
+    "arc",
+    "blind"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 150000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.3959375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.97625,
+   "class": "arc",
+   "band_cov": 0.2916666666666667,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.024922359499621,
+    "ang_cov": 0.2916666666666667,
+    "max_ang_gap_rad": 4.478645799515788
+   },
+   "history_classes": [
+    "arc",
+    "blind",
+    "arc",
+    "blind",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 160000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.246875,
+   "gate_passed": false,
+   "blind_ref_gate": 0.980625,
+   "class": "arc",
+   "band_cov": 0.6944444444444444,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 5.249761899362675,
+    "ang_cov": 0.6944444444444444,
+    "max_ang_gap_rad": 2.0382826885326994
+   },
+   "history_classes": [
+    "arc",
+    "arc",
+    "arc",
+    "blind",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 170000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.915625,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9846875,
+   "class": "arc",
+   "band_cov": 0.041666666666666664,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.1048349392520045,
+    "r_hi": 4.049691346263319,
+    "ang_cov": 0.041666666666666664,
+    "max_ang_gap_rad": 6.172896410114266
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 180000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.923125,
+   "gate_passed": false,
+   "blind_ref_gate": 0.985,
+   "class": "arc",
+   "band_cov": 0.1111111111111111,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.000000000000001,
+    "r_hi": 3.6715119501371642,
+    "ang_cov": 0.1111111111111111,
+    "max_ang_gap_rad": 5.742765806909001
+   },
+   "history_classes": [
+    "blind",
+    "arc",
+    "arc",
+    "arc",
+    "arc",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 190000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.48,
+   "gate_passed": false,
+   "blind_ref_gate": 0.9840625,
+   "class": "arc",
+   "band_cov": 0.4166666666666667,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.161730409336963,
+    "ang_cov": 0.4166666666666667,
+    "max_ang_gap_rad": 3.7850937623830774
+   },
+   "history_classes": [
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "blind",
+    "arc"
+   ]
+  },
+  {
+   "path": "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json",
+   "gap": 2.4,
+   "channel": "facing",
+   "start": "inside",
+   "size": "mini",
+   "seed": 200000,
+   "sample_contains_wall": true,
+   "gate_accuracy": 0.239375,
+   "gate_passed": false,
+   "blind_ref_gate": 0.985625,
+   "class": "arc",
+   "band_cov": 0.5833333333333334,
+   "guidance_beta1": 0,
+   "play_cost": null,
+   "boundary_params": {
+    "r_lo": 3.0,
+    "r_hi": 4.951767361255979,
+    "ang_cov": 0.5833333333333334,
+    "max_ang_gap_rad": 2.7468015338900322
+   },
+   "history_classes": [
+    "blind",
     "arc",
     "arc",
     "arc",
