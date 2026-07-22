@@ -1,0 +1,93 @@
+```python
+import math
+
+# Physical constants of the fixed base integrator.
+dt = 0.1
+gain = 3.0
+drag = 0.3
+a_max = 1.0
+
+# --- Hypothesis about the anomalous ("wall-stop") transitions --------------
+#
+# Scanning all reported failing transitions against the pure base
+# integrator: in every failing case the base-integrator's predicted NEXT
+# position (x2, y2) lies on a circle of radius R = 3.5 centered at the
+# phantom-reward point (12.0, 0.0) -- i.e. the step's trajectory crosses
+# that radius (from inside, r0 < 3.5, to outside, r2 >= 3.5, or vice
+# versa). All these crossings occur at an angle (measured from the
+# (12, 0) center) far from theta = pi (the direction facing the true
+# reward center at (-6, 0)): e.g. crossings at theta ~ +-2 deg, +-6 deg,
+# +-36..44 deg, +-62 deg, +-71..99 deg, +-104 deg, +-110 deg, i.e.
+# everywhere except a band hugging theta = 180 deg. This matches a
+# ring-shaped wall around the phantom attractor with a single angular
+# gap open on the side facing the true reward, of half-width ~1.2 rad
+# (matching the "gap2.4" tag = 2.4-radian-wide gap, i.e. |theta - pi|
+# wrapped <= 1.2 passes freely; everywhere else on the ring is a wall).
+# This reproduces the ORIGINAL freeze diagnostic (single anomaly at
+# theta ~ 94 deg) and the 28 landing positions / 13 clusters / bounding
+# box x in [10.82, 15.70], y in [-3.54, 3.58] with beta_1 = 0 (open arc,
+# not a loop) reported for the wall side that lacks the gap.
+#
+# Crucially, re-examining the newly reported failures shows the wall's
+# effect is NOT a full identity-freeze of the state. In every failing
+# case the expected output keeps the ORIGINAL position (x, y) (the
+# integrator's proposed move (x2, y2) is rejected) but the velocity
+# is driven to EXACTLY (0.0, 0.0) -- even though the input velocity was
+# nonzero and different from the previous single-anomaly example (which
+# happened to already have vx = vy = 0.0, so it could not distinguish
+# "unchanged velocity" from "zeroed velocity"). This is consistent with
+# an inelastic collision: the agent slams into the ring wall, is stopped
+# dead at its current position, and loses all velocity on impact, rather
+# than the whole state being left byte-for-byte unchanged.
+#
+# Rule implemented below: the ring wall is a circle of radius R = 3.5
+# centered at (12.0, 0.0), open only in a 2.4-radian-wide gap centered on
+# the direction of the true reward (theta = pi, i.e. facing (-6, 0)). If
+# a step's base-integrator trajectory would cross this radius (from
+# inside to outside, or vice versa) at an angle outside the gap, the wall
+# blocks the move: position stays at the pre-step (x, y) and velocity is
+# zeroed to (0.0, 0.0). Otherwise the base integrator result is returned
+# unmodified.
+
+WALL_CX = 12.0
+WALL_CY = 0.0
+WALL_R = 3.5
+GAP_CENTER = math.pi      # faces the true-reward direction, theta = 180 deg
+GAP_HALF_WIDTH = 1.2      # half of the 2.4-radian gap
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    # 1-6: fixed base integrator (contract, exact order).
+    a = min(a_max, max(-a_max, action))
+    phi = math.pi * a / a_max
+    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt
+    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt
+    x2 = x + vx2 * dt
+    y2 = y + vy2 * dt
+
+    # Ring-wall-with-gap collision rule (see hypothesis above).
+    r0 = math.hypot(x - WALL_CX, y - WALL_CY)
+    r2 = math.hypot(x2 - WALL_CX, y2 - WALL_CY)
+    crosses = (r0 < WALL_R <= r2) or (r2 < WALL_R <= r0)
+    if crosses:
+        theta2 = math.atan2(y2 - WALL_CY, x2 - WALL_CX)
+        ang_dist = abs(math.atan2(math.sin(theta2 - GAP_CENTER),
+                                   math.cos(theta2 - GAP_CENTER)))
+        if ang_dist > GAP_HALF_WIDTH:
+            # Blocked by the wall: inelastic stop. Position holds at the
+            # pre-step location; velocity is zeroed by the impact.
+            return [x, y, 0.0, 0.0]
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+    d1 = math.hypot(x - (-6.0), y - 0.0)
+    d2 = math.hypot(x - 12.0, y - 0.0)
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```

@@ -1,0 +1,108 @@
+```python
+import math
+
+# Physical constants of the fixed base integrator.
+dt = 0.1
+gain = 3.0
+drag = 0.3
+a_max = 1.0
+
+# --- Hypothesis about the anomalous ("freeze") transitions -----------------
+#
+# Scanning all observed transitions against the pure base integrator above,
+# every single one matches EXACTLY except one:
+#
+#   step([11.735613402017293, 3.4757484291394483, 0.0, 0.0],
+#        0.24683486893847384)
+#     -> [11.735613402017293, 3.4757484291394483, 0.0, 0.0]   (state frozen)
+#
+# The base integrator predicts the agent should move to
+# (11.75703648786776, 3.496749652738171); instead the state is left
+# completely unchanged (position AND velocity), i.e. the agent is frozen in
+# place -- a "hit an invisible wall and stopped dead" anomaly.
+#
+# Where is this wall? Measuring distance from the phantom-reward center
+# (12.0, 0.0) (the same point used in the phantom-reward term below):
+#   - current position radius   r0 = 3.486
+#   - predicted next radius     r2 = 3.505
+# i.e. the step is right at the moment of crossing outward through a
+# circle of radius ~3.5 centered on (12, 0). No other transition in this
+# batch ever straddles that radius: points that stay below 3.5 (even very
+# close, e.g. r up to 3.49 at nearby angles) move normally, and points that
+# are already beyond 3.5 (e.g. r ~ 3.6-6.5, at various angles, including
+# some near theta ~ +/-174 deg) also move normally without ever needing to
+# cross back through r=3.5. So the freeze fires exactly on attempted
+# radius-3.5 crossings, and only at some angles, not others.
+#
+# The angle of the frozen crossing (relative to the (12,0) center) is
+# theta ~ 94 degrees (almost due "north", slightly west) -- deep inside the
+# angular half of the circle that faces AWAY from the true reward center
+# at (-6, 0) (which sits at theta = 180 degrees relative to (12,0)).
+# This is consistent with a ring-shaped barrier ("ring2d") around the
+# phantom attractor at (12,0), with a single angular gap that lets the
+# agent pass through only on the side facing the true reward at (-6,0)
+# (theta near 180 degrees) -- everywhere else on the circle is walled.
+# The experiment tag "gap2.4" is read literally as the total angular width
+# of that gap in radians (2.4 rad ~ 137.5 degrees), centered at theta=180.
+# With that gap width, the wall's surviving x-extent on the near (open)
+# side works out to x ~ 10.7-10.8, matching the diagnostic bounding box
+# (x in [10.82, 15.70]) for the anomalous landing (blocked, would-be)
+# positions almost exactly; the y-extent (+-3.5ish) likewise matches the
+# top/bottom of that same box. An open arc (circle minus a ~137 degree
+# gap) is topologically a simple arc, consistent with the reported
+# beta_1 = 0 (no loop) for the anomalous landing positions, and with the
+# note that these freeze positions are only ever seen from the reachable
+# (interior, r < R) side -- we only ever observe the agent trying to
+# leave through the wall from inside, never approaching it from outside.
+#
+# Rule implemented below: the ring wall is a circle of radius R = 3.5
+# centered at (12.0, 0.0), open only in a 2.4-radian-wide gap centered on
+# the direction of the true reward (theta = pi, i.e. facing (-6, 0)).
+# If a step's base-integrator trajectory would cross this radius (from
+# inside to outside, or vice versa) at an angle outside the gap, the wall
+# blocks the move and the entire state (position AND velocity) freezes,
+# i.e. step() returns the unchanged input state. Otherwise the base
+# integrator result is returned unmodified. This exactly reproduces every
+# transition given, including the single observed freeze.
+
+WALL_CX = 12.0
+WALL_CY = 0.0
+WALL_R = 3.5
+GAP_CENTER = math.pi      # faces the true-reward direction, theta = 180 deg
+GAP_HALF_WIDTH = 1.2      # half of the 2.4-radian gap
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    # 1-6: fixed base integrator (contract, exact order).
+    a = min(a_max, max(-a_max, action))
+    phi = math.pi * a / a_max
+    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt
+    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt
+    x2 = x + vx2 * dt
+    y2 = y + vy2 * dt
+
+    # Ring-wall-with-gap freeze rule (see hypothesis above).
+    r0 = math.hypot(x - WALL_CX, y - WALL_CY)
+    r2 = math.hypot(x2 - WALL_CX, y2 - WALL_CY)
+    crosses = (r0 < WALL_R <= r2) or (r2 < WALL_R <= r0)
+    if crosses:
+        theta2 = math.atan2(y2 - WALL_CY, x2 - WALL_CX)
+        ang_dist = abs(math.atan2(math.sin(theta2 - GAP_CENTER),
+                                   math.cos(theta2 - GAP_CENTER)))
+        if ang_dist > GAP_HALF_WIDTH:
+            # Blocked by the wall: freeze the entire state.
+            return [x, y, vx, vy]
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+    d1 = math.hypot(x - (-6.0), y - 0.0)
+    d2 = math.hypot(x - 12.0, y - 0.0)
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```

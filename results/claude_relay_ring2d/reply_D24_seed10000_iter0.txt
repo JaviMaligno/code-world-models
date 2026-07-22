@@ -1,0 +1,108 @@
+```python
+import math
+
+# --- Physical constants (integrator contract) ---------------------------
+DT = 0.1
+GAIN = 3.0
+DRAG = 0.3
+A_MAX = 1.0
+
+# --- Reward landmarks -----------------------------------------------------
+REAL_CENTER = (-6.0, 0.0)      # true target, weight 0.3
+PHANTOM_CENTER = (12.0, 0.0)   # decoy target, weight 1.0 (the "lure")
+
+# --- Anomaly hypothesis ---------------------------------------------------
+# Checked every one of the 120 supplied example transitions against the
+# plain 6-step base integrator (and the reward formula applied to the
+# resulting state): the max absolute difference across all four state
+# components, and across the reported reward(next), is exactly 0.0 for
+# every single example. I.e. none of the individually-listed transitions
+# in this incomplete slice directly exhibits an integrator-violating
+# output -- the anomaly is not directly demonstrated by any example here.
+#
+# The accompanying diagnostics, however, assert that a freeze-type anomaly
+# *does* exist in the fuller (unseen) dataset this slice was drawn from:
+# 58 distinct landing positions, forming 19 spatial clusters, bounding box
+# x in [10.43, 15.59], y in [-3.84, 4.05], beta_1 = 0 (the positions trace
+# an open arc/patch, not a closed loop). The file is also literally named
+# "ring2d_gap2.4": a ring-shaped trigger region with an angular gap of
+# size 2.4 (radians).
+#
+# The bounding box is centered close to the PHANTOM lure (12, 0) -- the
+# only distinguished landmark in that part of state space -- but stretched
+# much further toward +x (+3.6 from the lure) than toward -x (only -1.6),
+# while extending almost symmetrically in y (+4.05 / -3.84). That is the
+# signature of a ring (annulus) centered on the phantom lure whose wall is
+# missing ("gapped") on the side facing back toward the real target / the
+# arena interior (the -x direction) -- an open arc, consistent with
+# beta_1 = 0, and consistent with "gap2.4": the missing sector spans 2.4
+# radians centered on the -x direction (angle = pi from the lure).
+#
+# I checked this hypothesis against ALL 240 positions (every start state
+# and every landing state) appearing in the 120 given transitions: the
+# radius from (12, 0) to every single one of those 240 points is either
+# < 3.4927 or > 3.7783 -- there is an empirical gap in the observed radius
+# distribution, [3.4927, 3.7783], that none of the known-good example
+# transitions ever cross. The hypothesized ring wall is placed inside that
+# empirical gap (radius band [3.55, 3.75]), so this rule is guaranteed not
+# to alter, and is fully consistent with, every one of the given
+# ground-truth transitions (verified numerically, max diff 0.0), while
+# still landing in the right ballpark against the aggregate diagnostics:
+# outer edge at 12 + 3.75 = 15.75 (observed max x = 15.59); inner-edge
+# reach toward -x of about 12 - 3.55*cos(pi - 1.2) ~ 10.42 (observed min
+# x = 10.43); note that per the problem statement the observed bounding
+# box only reflects the *reachable* side of the true region and need not
+# saturate every extreme.
+#
+# Rule: if the base integrator's computed next position (x2, y2) lands ON
+# the ring wall (radius in [3.55, 3.75] from the phantom lure) and OUTSIDE
+# the 2.4-radian gap sector facing -x, the object's velocity is frozen to
+# zero (vx2 = vy2 = 0), while its position (x2, y2) is left exactly as
+# computed by the base integrator.
+
+_RING_CENTER = PHANTOM_CENTER
+_RING_R_IN = 3.55
+_RING_R_OUT = 3.75
+_GAP_CENTER_ANGLE = math.pi   # gap faces -x, i.e. toward the real target
+_GAP_HALF_WIDTH = 1.2         # full gap width = 2.4 radians
+
+
+def _on_ring_wall(x: float, y: float) -> bool:
+    dx = x - _RING_CENTER[0]
+    dy = y - _RING_CENTER[1]
+    r = math.hypot(dx, dy)
+    if not (_RING_R_IN <= r <= _RING_R_OUT):
+        return False
+    theta = math.atan2(dy, dx)
+    dtheta = math.atan2(
+        math.sin(theta - _GAP_CENTER_ANGLE),
+        math.cos(theta - _GAP_CENTER_ANGLE),
+    )
+    return abs(dtheta) > _GAP_HALF_WIDTH
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    a = min(A_MAX, max(-A_MAX, action))
+    phi = math.pi * a / A_MAX
+    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT
+    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT
+    x2 = x + vx2 * DT
+    y2 = y + vy2 * DT
+
+    if _on_ring_wall(x2, y2):
+        vx2 = 0.0
+        vy2 = 0.0
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y = state[0], state[1]
+    d1 = math.hypot(x - REAL_CENTER[0], y - REAL_CENTER[1])
+    d2 = math.hypot(x - PHANTOM_CENTER[0], y - PHANTOM_CENTER[1])
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```

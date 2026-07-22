@@ -1,0 +1,119 @@
+```python
+"""
+Deterministic 2D control world model.
+
+Anomaly analysis
+----------------
+The base integrator (steps 1-6 of the contract) reproduces every observed
+transition except three:
+
+  step([13.492489904281664, 3.1516250845484506, 0.3458044413770086,
+        0.568427388870908], -0.49018881560148264)
+      -> [13.492489904281664, 3.1516250845484506, 0.0, 0.0]
+
+  step([10.928277460018686, 3.300695682207877, -1.0303591216752535,
+        1.5563527401343682], -0.6308630252748417)
+      -> [10.928277460018686, 3.300695682207877, 0.0, 0.0]
+
+  step([12.264272369076965, -3.480750882324036, 0.0, 0.0],
+       -0.13942034970091544)
+      -> [12.264272369076965, -3.480750882324036, 0.0, 0.0]
+
+In every anomalous case the returned state equals the INPUT position with
+velocity zeroed -- the move is rejected outright, not merely damped.
+
+Where do these live?  Measuring distance from the "phantom" reward center
+(12.0, 0.0) (the false attractor in reward()):
+  - the three pre-step positions sit at distance ~3.47-3.49 from (12,0);
+  - the base integrator's (rejected) prediction for each would have landed
+    at distance ~3.50-3.62 from (12,0) -- i.e. strictly farther out.
+So each anomaly is exactly a case where the un-modified step would cross
+outward through distance 3.5 from (12,0), and it is exactly there that the
+move gets rejected.
+
+But a plain circle of radius 3.5 is NOT the whole story: many other
+transitions also cross from inside 3.5 to outside 3.5 of (12,0) and are
+NOT rejected (e.g. state [8.767, -1.125, ...], action 0.372, in_dist=3.42,
+pred_dist=3.54 -- normal integrator output, unmodified). The angle (from
+the phantom center) to that pass-through point is ~199 degrees, which
+points back toward the REAL reward center at (-6, 0) (bearing 180 degrees
+from (12,0)). The three rejected points sit at bearings ~65, ~108 and
+~274 degrees -- well away from the 180-degree bearing.
+
+Hypothesis: the trigger region is a ring (annulus wall) of radius 3.5
+centered on the phantom attractor (12, 0), with an angular GAP of total
+width 2.4 rad centered on the bearing toward the true goal (-6, 0), i.e.
+centered at angle pi as seen from (12, 0). Inside the gap the wall is
+absent (free passage back toward the real target); everywhere else on the
+ring, an attempted crossing of radius 3.5 is blocked. This is consistent
+with beta_1 = 0 (an open arc/patch, not a closed loop) reported in the
+diagnostics, and with all 46 anomalous positions falling inside the
+bounding box x in [10.82, 15.52], y in [-3.69, 3.71] (a shell around
+(12, 0) of radius ~3.5, minus the gap toward (-6, 0)).
+
+Verified: with radius R = 3.5, gap half-width = 1.2 rad centered at
+bearing pi from (12, 0), this rule reproduces all 3 anomalous transitions
+and leaves all other (non-anomalous) transitions exactly matching the
+base integrator -- including the one observed near-miss that passes
+through the gap without being frozen.
+
+The "reachable side" note in the diagnostics is honored by testing for a
+crossing of the radius (from inside to outside, or outside to inside) --
+we only have evidence for outside-bound rejections, but the symmetric
+check is the natural (and harmless) generalization to the far side.
+"""
+
+import math
+
+dt = 0.1
+gain = 3.0
+drag = 0.3
+a_max = 1.0
+
+# Phantom-attractor wall (the anomaly's trigger region): a ring of this
+# radius centered on the phantom reward center (12.0, 0.0), with a gap
+# opening toward the real reward center (-6.0, 0.0).
+_WALL_CX = 12.0
+_WALL_CY = 0.0
+_WALL_R = 3.5
+_GAP_CENTER = math.pi   # bearing from (12,0) toward (-6,0)
+_GAP_HALF_WIDTH = 1.2   # radians (total gap width 2.4 rad)
+
+
+def _angle_in_gap(x, y):
+    theta = math.atan2(y - _WALL_CY, x - _WALL_CX)
+    delta = (theta - _GAP_CENTER + math.pi) % (2.0 * math.pi) - math.pi
+    return abs(delta) <= _GAP_HALF_WIDTH
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    # 1-6: fixed base integrator (part of the contract).
+    a = min(a_max, max(-a_max, action))
+    phi = math.pi * a / a_max
+    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt
+    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt
+    x2 = x + vx2 * dt
+    y2 = y + vy2 * dt
+
+    # Localized wall rule: reject any move that crosses the ring
+    # of radius _WALL_R around the phantom center (12, 0), except
+    # through the gap facing the real target (-6, 0).
+    d_before = math.hypot(x - _WALL_CX, y - _WALL_CY)
+    d_after = math.hypot(x2 - _WALL_CX, y2 - _WALL_CY)
+    crossing = (d_before <= _WALL_R < d_after) or (d_after <= _WALL_R < d_before)
+    if crossing and not _angle_in_gap(x, y):
+        return [x, y, 0.0, 0.0]
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+    d1 = math.hypot(x - (-6.0), y - 0.0)
+    d2 = math.hypot(x - 12.0, y - 0.0)
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```

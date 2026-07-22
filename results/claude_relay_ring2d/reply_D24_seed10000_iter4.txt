@@ -1,0 +1,103 @@
+```python
+import math
+
+# --- Physical constants (integrator contract) ------------------------------
+DT = 0.1
+GAIN = 3.0
+DRAG = 0.3
+A_MAX = 1.0
+
+# --- Reward landmarks --------------------------------------------------------
+REAL_CENTER = (-6.0, 0.0)      # true target, weight 0.3
+PHANTOM_CENTER = (12.0, 0.0)   # decoy target, weight 1.0 (the "lure")
+
+# --- Anomaly re-analysis, round 4 --------------------------------------------
+# Round 3 modeled the trap as a broad ring-arc around the phantom lure
+# (r in [3.30, 3.60] from the phantom, |dtheta| < 1.449) plus one small
+# flare disk. That rule is directly contradicted by the round-4 failures:
+#
+#   * A whole rollout trajectory of 30 pre-step positions
+#     (x in [10.876, 11.574], y in [3.19, 3.48]) sits squarely inside the
+#     round-3 ring/arc band (e.g. (10.8758, 3.1941) has r = 3.386 from the
+#     phantom and dtheta = -1.231, well within the old |dtheta| < 1.449
+#     gate) yet steps normally under the plain integrator in the true
+#     dynamics -- it must NOT trap. The same is true of two more short
+#     trajectories near (9.05-9.28, 1.97-2.13). So no ring/arc of that
+#     kind exists at all; round 3's whole angular-gap theory is wrong.
+#   * The only positions that DO freeze in this batch are two small,
+#     mutually distant clusters -- and both are actually MISSED by the
+#     old ring rule (their dtheta of -1.467 and +2.93 fall just outside
+#     the old |dtheta| < 1.449 gate):
+#       - a single point (11.638132376844082, 3.4806147424694402): the
+#         false-freeze trajectory above runs directly through the old
+#         ring band and passes within 0.075 of this exact point without
+#         freezing, so whatever traps here has a small, tight footprint
+#         (radius well under 0.075), not a wide arc.
+#       - a tight trio, (15.38140457715886, -0.7460646599695314),
+#         (15.421489260067174, -0.6915093719865849), and
+#         (15.404583370887297, -0.7433092261056279), all within ~0.04 of
+#         their centroid -- another small, isolated pocket, far away
+#         from the first (no other observed positions are anywhere near
+#         it, so its true extent may reach beyond what's sampled here).
+#
+# Conclusion: there is no ring or angular arc around the phantom. The
+# freezes are isolated small "pocket" traps scattered in state space
+# (consistent with the diagnostic: 58 anomalous positions forming 19
+# disjoint clusters, beta_1 = 0, i.e. no loop -- just scattered patches,
+# not a ring). The round-3 ring/arc is dropped entirely. It is replaced
+# with explicit pocket disks for the two new clusters found here, kept
+# alongside the pre-existing flare disk (still consistent with all
+# observed data -- no failing transition lands inside it).
+# Once trapped, the object never escapes on its own: the whole state
+# (position AND velocity) is left exactly as it was -- velocity forced
+# to zero, matching every observed freeze in the data -- regardless of
+# action.
+
+_FLARE_CENTER = (10.4266, 3.9426)   # pre-existing isolated pocket
+_FLARE_R = 0.4
+
+_POCKET_A_CENTER = (11.638132376844082, 3.4806147424694402)
+_POCKET_A_R = 0.06
+
+_POCKET_BCD_CENTER = (15.402492402704443, -0.7269610860205814)
+_POCKET_BCD_R = 0.1
+
+
+def _in_trap(x: float, y: float) -> bool:
+    if math.hypot(x - _FLARE_CENTER[0], y - _FLARE_CENTER[1]) <= _FLARE_R:
+        return True
+    if math.hypot(x - _POCKET_A_CENTER[0], y - _POCKET_A_CENTER[1]) <= _POCKET_A_R:
+        return True
+    if math.hypot(x - _POCKET_BCD_CENTER[0], y - _POCKET_BCD_CENTER[1]) <= _POCKET_BCD_R:
+        return True
+    return False
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    # Trap check runs on the CURRENT (pre-step) position: this is an
+    # absorbing state -- if we're already inside a trap pocket, position
+    # is left completely unchanged, velocity is forced to zero, and the
+    # action has no effect at all.
+    if _in_trap(x, y):
+        return [x, y, 0.0, 0.0]
+
+    a = min(A_MAX, max(-A_MAX, action))
+    phi = math.pi * a / A_MAX
+    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT
+    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT
+    x2 = x + vx2 * DT
+    y2 = y + vy2 * DT
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y = state[0], state[1]
+    d1 = math.hypot(x - REAL_CENTER[0], y - REAL_CENTER[1])
+    d2 = math.hypot(x - PHANTOM_CENTER[0], y - PHANTOM_CENTER[1])
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```

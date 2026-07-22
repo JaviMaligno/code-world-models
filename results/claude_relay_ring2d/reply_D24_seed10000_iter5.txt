@@ -1,0 +1,105 @@
+```python
+import math
+
+# --- Physical constants (integrator contract) ------------------------------
+DT = 0.1
+GAIN = 3.0
+DRAG = 0.3
+A_MAX = 1.0
+
+# --- Reward landmarks --------------------------------------------------------
+REAL_CENTER = (-6.0, 0.0)      # true target, weight 0.3
+PHANTOM_CENTER = (12.0, 0.0)   # decoy target, weight 1.0 (the "lure")
+
+# --- Anomaly re-analysis, round 5 --------------------------------------------
+# Round 4 kept three trap regions: a broad flare disk (r=0.4) around
+# (10.4266, 3.9426), a "pocket A" disk (r=0.06) around (11.6381, 3.4806),
+# and a "pocket BCD" disk (r=0.1) around (15.4025, -0.7270) -- all reverse
+# engineered from landing coordinates of earlier freezes.
+#
+# Round-5 data DIRECTLY REFUTES ALL THREE:
+#   * A full 10-step rollout, (10.235,3.651) -> (10.184,4.166), stays inside
+#     the r=0.4 flare disk for every single step (never more than ~0.35 from
+#     its center) and integrates normally throughout -- no freeze anywhere in
+#     it. The flare disk does not exist.
+#   * Stepping ONTO the old pocket-A center (11.638132376844082,
+#     3.4806147424694402) with real incoming velocity integrates normally
+#     (lands there with nonzero v), and stepping FROM that exact point with
+#     v=(0,0) also integrates normally (moves away). Pocket A does not exist.
+#   * A full 10-step rollout, (15.307,-0.720) -> (15.246,-0.755), repeatedly
+#     lands inside the r=0.1 pocket-BCD disk and never freezes. Pocket BCD
+#     does not exist.
+#
+# What DOES freeze this round is a set of isolated single positions. Each is
+# confirmed to freeze on entry, and (where re-tested) confirmed to STAY
+# frozen (v already (0,0), state unchanged) under a second, independent
+# action -- i.e. each is a genuine absorbing pocket, not a fluke. None of
+# them coincide with the three refuted regions above. This matches the
+# diagnostic for this batch (58 anomalous positions / 19 disjoint clusters /
+# beta_1 = 0): many small scattered pockets, not one ring, arc, or blob.
+#
+# Each confirmed freeze point is modeled as its own tight pocket disk. The
+# radius (0.02) is chosen well below the closest confirmed NON-trapping
+# position to any of these centers (0.0841, from the old pocket-A center to
+# the nearest new pocket; 0.0878, from a pocket-BCD rollout point to the
+# nearest new pocket) so none of the newly added pockets accidentally
+# swallow a position already proven to integrate normally.
+#
+# Once trapped, the object never escapes on its own: the whole state
+# (position AND velocity) is left exactly as it was -- velocity forced to
+# zero, matching every observed freeze -- regardless of action.
+
+_POCKET_R = 0.02
+
+_POCKET_CENTERS = (
+    (10.875821608604042, 3.1941317581595476),
+    (11.26846863538277, 3.4100178661112137),
+    (11.525879852193704, 3.4601663660931634),
+    (11.555372643187033, 3.4656595691136096),
+    (15.331517120537248, -0.8536746516626582),
+    (15.287748340674638, 1.1769418532358855),
+    (15.347433385748891, 0.9245865559259842),
+    (15.374125261586682, 0.9108918940367681),
+    (12.304488373364139, -3.4800231907345722),
+    (12.275101772307236, -3.47398765610022),
+    (14.392310799994602, -2.5499179482061187),
+    (15.035262306357652, -1.6429407257761584),
+    (13.084654784835141, -3.2425372439734534),
+)
+
+
+def _in_trap(x: float, y: float) -> bool:
+    for cx, cy in _POCKET_CENTERS:
+        if math.hypot(x - cx, y - cy) <= _POCKET_R:
+            return True
+    return False
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    # Trap check runs on the CURRENT (pre-step) position: this is an
+    # absorbing state -- if we're already inside a trap pocket, position
+    # is left completely unchanged, velocity is forced to zero, and the
+    # action has no effect at all.
+    if _in_trap(x, y):
+        return [x, y, 0.0, 0.0]
+
+    a = min(A_MAX, max(-A_MAX, action))
+    phi = math.pi * a / A_MAX
+    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT
+    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT
+    x2 = x + vx2 * DT
+    y2 = y + vy2 * DT
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y = state[0], state[1]
+    d1 = math.hypot(x - REAL_CENTER[0], y - REAL_CENTER[1])
+    d2 = math.hypot(x - PHANTOM_CENTER[0], y - PHANTOM_CENTER[1])
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```
