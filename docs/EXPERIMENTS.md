@@ -2581,6 +2581,34 @@ Two findings (exploratory, 5 seeds — do not over-read):
    disc/loop artifacts there are guidance-compliant, not prior-driven. See
    "Per-artifact behavioral audit" below.
 
+## The constructive turn: nerve fence + persistence beats the covering law (2026-07-23)
+
+`mitigation.py` gains `fence_mode="nerve"` (violations within link_r linked
+into segments, tangentially EXTENDED ext=3 beyond both endpoints — two
+violations 0.5 apart fix the local boundary direction) and cross-episode
+fence persistence (pass mutable fences/fence_edges lists). Oracle-tested
+(seg-seg distance; gap-sealing; extension-sealing; bitwise zero-cost control
+in nerve mode). `continuous_mitigation_ring.py --fence-mode nerve
+[--persist]` → `results/continuous_mitigation_ring_nerve{,_persist}.json`.
+
+| variant | pc_blind | pc_mitigated | contact | fences/ep |
+|---|---|---|---|---|
+| points, episodic (eps 0.5) | 0.999 | 1.003 | 1.00 | 3.8 |
+| nerve, episodic | 0.999 | 0.957 | 1.00 | 2.0 |
+| **nerve, persistent** | 0.999 | **0.058** | **0.06** | 0.1 |
+
+Per-episode trajectory (persistent): ep1 = 2 violations, return 1.01 (the
+learning transient); eps 2–16 = ZERO violations, returns EQUAL to the truth
+planner's episode-for-episode. Two lessons total pay the ring's covering
+cost; the extended fence blocks every imagined phantom crossing, so the
+planner goes to the real lode exactly as truth-MPC does — the fence
+engineers the blind model back into E(f) on the operative side (Prop 1 in
+reverse). Instrumentation of the episodic failure: the planner re-crosses
+the wall IN IMAGINATION beyond each sealed corridor (single fences block
+~1 unit of ~16); it slides down-wall at one freeze per lesson, and
+per-episode resets discard the lessons. The invented-mode cell stays inert
+under every variant (1.769, fences firing 18.6/ep) — one-sidedness intact.
+
 ## Paper-completion additions: mitigation vs invented mode, steering witness, sensor factorial, H2 power (2026-07-23)
 
 Four additions closing the paper-3 draft's gaps (all committed with the tex):

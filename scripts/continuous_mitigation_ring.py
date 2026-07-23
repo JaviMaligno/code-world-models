@@ -26,6 +26,10 @@ ap.add_argument("--eps", type=float, default=0.5)
 ap.add_argument("--fence-mode", choices=["points", "nerve"], default="points",
                 help="nerve: link violations within link_r into edge fences "
                 "(a 1-dimensional fence for a 1-dimensional boundary)")
+ap.add_argument("--persist", action="store_true",
+                help="persist fences ACROSS episodes (deployment monitoring: "
+                "the boundary's covering cost is paid once, not per episode); "
+                "per-episode returns are reported in deployment order")
 args = ap.parse_args()
 
 CELLS = [("gap0", RingField2D(), blind_of),
@@ -45,13 +49,15 @@ print(f"{'cell':>14} {'J_tru':>7} {'J_bli':>7} {'J_mit':>7} {'J_rnd':>6} "
 for name, truth, model_fn in CELLS:
     blind = model_fn(truth)
     t, b, m, r = [], [], [], []
+    pf, pe = ([], []) if args.persist else (None, None)
     for i in range(args.episodes):
         sd = args.seed + 1000 * i
         t.append(harness.run_episode(truth, truth, "mpc", sd))
         b.append(harness.run_episode(truth, blind, "mpc", sd))
         m.append(run_mitigated_episode(truth, blind, seed=sd, eps=args.eps,
                                        pos_dims=(0, 1),
-                                       fence_mode=args.fence_mode))
+                                       fence_mode=args.fence_mode,
+                                       fences=pf, fence_edges=pe))
         r.append(harness.run_episode(truth, policy="random", seed=sd))
     j_t, j_b = harness.mean_return(t), harness.mean_return(b)
     j_m, j_r = harness.mean_return(m), harness.mean_return(r)
@@ -67,6 +73,10 @@ for name, truth, model_fn in CELLS:
         "mean_violations": sum(e.violations for e in m) / args.episodes,
         "mean_first_contact_step": sum(fc) / len(fc) if fc else None,
         "n_episodes": args.episodes,
+        "persist": args.persist,
+        "per_episode_mitigated_returns": [e.ret for e in m],
+        "per_episode_violations": [e.violations for e in m],
+        "per_episode_truth_returns": [e.ret for e in t],
     }
     rows.append(row)
     print(f"{name:>14} {j_t:7.2f} {j_b:7.2f} {j_m:7.2f} {j_r:6.2f} "
@@ -78,6 +88,8 @@ for name, truth, model_fn in CELLS:
 _sfx = "" if args.eps == 0.5 else f"_eps{args.eps:g}"
 if args.fence_mode == "nerve":
     _sfx += "_nerve"
+if args.persist:
+    _sfx += "_persist"
 out = pathlib.Path(f"results/continuous_mitigation_ring{_sfx}.json")
 out.write_text(json.dumps({"script": "continuous_mitigation_ring.py",
                            "params": vars(args), "rows": rows,

@@ -145,3 +145,23 @@ def test_nerve_bit_identical_on_truth_model():
     assert mit.violations == 0
     assert mit.ret == plain.ret
     assert tuple(mit.final_state) == tuple(plain.final_state)
+
+
+def test_nerve_extension_seals_beyond_the_observed_cluster():
+    """Two violations 0.5 apart estimate the boundary's local direction; the
+    extended edge must truncate an imagined crossing ~2 units beyond the
+    observed cluster (where the unextended edge and the points do not)."""
+    import math
+    from cwm.continuous.mitigation import (_crosses_fence,
+                                           _crosses_fence_edges)
+    f1, f2 = (7.0, 0.0), (7.0, -0.5)           # wall tangent: vertical
+    ext = 3.0
+    d = math.dist(f1, f2)
+    ux, uy = (f2[0] - f1[0]) / d, (f2[1] - f1[1]) / d
+    edge_ext = ((f1[0] - ux * ext, f1[1] - uy * ext),
+                (f2[0] + ux * ext, f2[1] + uy * ext))
+    # an imagined eastward crossing 2 units below the cluster
+    step_prev, step_next = (6.0, -2.5), (8.0, -2.5)
+    assert not _crosses_fence(step_prev, step_next, [f1, f2], 0.5)
+    assert not _crosses_fence_edges(step_prev, step_next, [(f1, f2)], 0.5)
+    assert _crosses_fence_edges(step_prev, step_next, [edge_ext], 0.5)

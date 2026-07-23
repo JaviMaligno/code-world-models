@@ -57,8 +57,13 @@ persistent-homology summary that guides them has a measurable resolution
 limit --- geometric, not budgetary --- that propagates its own wrong
 $\hat\beta_1$ into the certified artifacts. Planner-side mitigation obeys
 the same geometry: point distrust-fences, a zero-dimensional cover, fail
-against the one-dimensional closed boundary at their calibrated radius, and
-against an \emph{invented} mode they fire constantly and recover nothing. In $n$ dimensions the enclosing shell makes the identifiability
+against the one-dimensional closed boundary at their calibrated radius ---
+while a fence matched to the boundary's dimension and \emph{persisted}
+across episodes collapses the exploitation to a two-lesson transient
+($\mathrm{play\_cost}$ $0.999 \to 0.058$, truth-equal returns from the
+second episode on). Against an \emph{invented} mode every fence fires
+constantly and recovers nothing: the two wrongnesses need opposite
+defenses. In $n$ dimensions the enclosing shell makes the identifiability
 event near-certain ($r(n) \to 0$) while the danger stays fully exploitable
 --- rarity and reachability are independent knobs of the danger law.
 \end{abstract}
@@ -152,15 +157,22 @@ $\mathcal{R}$.
   the two certified passes at wide $\gamma$ are \emph{certified-wrong}:
   mode-blind on the probes, harmless only because the open ring no longer
   obstructs.
-\item \textbf{Mitigation obeys a covering law --- and is one-sided}
-  (Section~\ref{sec:mitigation}). The companion paper's distrust-fence
-  defense, verbatim, does nothing on the ring at its calibrated radius:
-  point fences are a zero-dimensional cover of a one-dimensional boundary,
-  and the planner re-routes through unfenced arc (cost = boundary measure
-  over fence radius). Against the \emph{invented} mode the fences fire
-  $18.6$ times per episode and change the outcome by nothing: distrust can
-  stop belief in false free space but cannot recover value hidden behind
-  false obstructions --- the two wrongnesses need opposite defenses.
+\item \textbf{Mitigation obeys a covering law --- and the defense that
+  works pays it once} (Section~\ref{sec:mitigation}). The companion
+  paper's distrust-fence defense, verbatim, does nothing on the ring at its
+  calibrated radius: point fences are a zero-dimensional cover of a
+  one-dimensional boundary, and the planner re-crosses through unfenced
+  imagined corridors (cost = boundary measure over fence radius). Matching
+  the fence's dimension to the boundary's (violations linked into
+  tangentially-extended segments) \emph{and persisting it across episodes}
+  collapses the exploitation to a two-lesson transient:
+  $\mathrm{play\_cost}$ $0.999 \to 0.058$, with returns equal to the
+  truth planner's from episode 2 on --- the fence engineers the blind model
+  back into the truth's gate-equivalence class on the operative side.
+  Against the \emph{invented} mode every variant fires constantly and
+  changes nothing: distrust can stop belief in false free space but cannot
+  recover value hidden behind false obstructions --- the two wrongnesses
+  need opposite defenses.
 \item \textbf{The evidence sensor has finite resolution --- and it
   propagates} (Section~\ref{sec:sensor}). The pre-registered
   persistent-homology summary reports $\hat\beta_1 = 1$ for every channel
@@ -905,15 +917,23 @@ closed ring, outside, blind & 1.0 & 0.999 & 1.005 & 1.00 & 2.3 \\
 closed ring, outside, blind & 2.0 & 0.999 & 0.742 & 1.00 & 1.0 \\
 hidden $\gamma = 0.6$, outside, blind & 0.5 & 0.999 & 1.003 & 1.00 & 3.8 \\
 closed ring, \emph{inside, filled} & 0.5 & 1.769 & \textbf{1.769} & 1.00 & 18.6 \\
+\midrule
+nerve fence, episodic & 0.5 & 0.999 & 0.957 & 1.00 & 2.0 \\
+\textbf{nerve fence, persistent} & 0.5 & 0.999 & \textbf{0.058} & 0.06 & 0.1 \\
 \bottomrule
 \end{tabular}
 \caption{Distrust-region replanning on the ring ($16$ paired MPC episodes
-per cell). The defense that collapsed the patch exploitation does
-\emph{nothing} at its calibrated radius, partially relieves only at a
-radius of the geometry's own scale, and is exactly inert against the
-invented mode --- while firing constantly (last row: $18.6$ fences per
+per cell). Point fences --- the defense that collapsed the patch
+exploitation --- do \emph{nothing} at their calibrated radius, partially
+relieve only at a radius of the geometry's own scale, and are exactly inert
+against the invented mode while firing constantly ($18.6$ fences per
 episode, $\mathrm{pc}$ unchanged to three decimals). The hidden-channel row
-is identical to the closed ring, as Section~\ref{sec:mechanism} predicts.}
+is identical to the closed ring, as Section~\ref{sec:mechanism} predicts.
+The last two rows are the constructive turn: a \emph{nerve} fence
+(violations linked into tangentially-extended segments) still fails
+episodically, and collapses the exploitation once fences \emph{persist}
+across episodes --- two lessons total (episode 1), truth-equal returns ever
+after.}
 \label{tab:mitigation}
 \end{table}
 
@@ -929,10 +949,28 @@ of circumference ${\sim}6$ at $\varepsilon_f = 0.5$ a handful of fences
 suffices; on the ring they never do. Coarsening the fence to the geometry's
 own scale ($\varepsilon_f = 2.0$) buys partial relief here but is not a
 uniform remedy --- that radius would swallow the patch instruments whole.
-The structural fix is dimensional: a boundary-aware fence (segments, or the
-nerve of the contact set) rather than points --- which is the same
-machinery as the evidence sensor of Section~\ref{sec:sensor}, and inherits
-the same resolution limits.
+The structural fix is dimensional --- and it works, but only jointly with
+persistence. A \emph{nerve} fence links violations into segments and
+extends them $3$ units along the estimated boundary tangent (two violations
+$0.5$ apart already fix the local direction). Episodically it still fails
+($\mathrm{pc}$ $0.957$): a single episode concedes only ${\sim}2$ lessons,
+and instrumentation shows the planner simply re-crosses the wall
+\emph{in imagination} beyond the sealed corridor --- the blind model lets
+any unfenced crossing through, so the agent slides along the boundary at
+one freeze per lesson. Persisting the fences across episodes (deployment
+monitoring rather than per-episode defense) changes the accounting: the
+boundary's covering cost is paid \emph{once}. Measured: $2$ violations in
+episode~1 (return $1.01$), then \textbf{zero} violations and returns equal
+to the truth planner's in every one of episodes $2$--$16$ ($17.04$ vs
+$17.04$, \ldots); aggregate $\mathrm{pc}$ $0.999 \to 0.058$, contact
+rate $1/16$. The mechanism is Proposition~\ref{prop:quotient} run in
+reverse: the extended fence reconstructs enough of the boundary that the
+blind model \emph{plus its fence memory} becomes planner-equivalent to the
+truth on the operative side --- certification could not distinguish members
+of $E(f)$, and the defense engineers the planner back into it. The fence is
+itself an estimated boundary, i.e.\ the same object as
+Section~\ref{sec:sensor}'s evidence summaries, and inherits the same
+resolution limits.
 
 \paragraph{Against an invented mode, distrust is inert by construction.}
 The filled-disc model from inside (the below-random cell of

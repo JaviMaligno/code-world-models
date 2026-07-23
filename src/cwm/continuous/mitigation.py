@@ -159,7 +159,10 @@ def run_mitigated_episode(truth, model, seed: int = 0, horizon: int = 40,
                           tol: float = 1e-6, eps: float = 0.25,
                           pos_dims: tuple = (0,),
                           fence_mode: str = "points",
-                          link_r: float = 6.0) -> MitigatedEpisode:
+                          link_r: float = 6.0, ext: float = 3.0,
+                          min_sep: float = 0.2,
+                          fences: list | None = None,
+                          fence_edges: list | None = None) -> MitigatedEpisode:
     """Play one episode in `truth`, planning on `model` with distrust-region
     replanning. Mirrors harness.run_episode's rng discipline exactly so the
     truth-model episode is bit-identical to the plain MPC one."""
@@ -170,8 +173,13 @@ def run_mitigated_episode(truth, model, seed: int = 0, horizon: int = 40,
     rng = random.Random(seed)
     s = truth.initial_state(rng)
     total, contact, first_contact = 0.0, False, None
-    fences: list = []
-    fence_edges: list = []
+    # pass mutable lists to PERSIST fences across episodes (deployment
+    # monitoring); default None keeps the original per-episode semantics
+    if fences is None:
+        fences = []
+    if fence_edges is None:
+        fence_edges = []
+    n_fences_at_start = len(fences)
     for t in range(truth.h_episode):
         a = plan_mitigated(model, s, rng, fences, eps,
                            horizon=horizon, n_samples=n_samples, block=block,
@@ -181,11 +189,26 @@ def run_mitigated_episode(truth, model, seed: int = 0, horizon: int = 40,
         if max(abs(pred[i] - s2[i]) for i in range(len(s2))) > tol:
             new_f = tuple(pred[i] for i in pos_dims)
             if fence_mode == "nerve":
-                # nerve 1-skeleton: link the new violation to every prior
-                # violation within link_r — the fence becomes a curve
-                # estimate of the boundary instead of isolated points
-                fence_edges.extend((f, new_f) for f in fences
-                                   if math.dist(f, new_f) <= link_r)
+                # nerve 1-skeleton WITH TANGENTIAL EXTENSION: two linked
+                # violations estimate the boundary's local direction, and
+                # the edge is extended `ext` units beyond both endpoints
+                # along it. Without extension each violation seals only an
+                # eps-corridor of imagined crossings and the planner slides
+                # along the boundary (measured: pc unchanged); with it,
+                # coverage grows by ~ext per violation — incremental
+                # boundary estimation at the boundary's own dimension.
+                for f in fences:
+                    d = math.dist(f, new_f)
+                    if d > link_r:
+                        continue
+                    if d >= min_sep:
+                        ux = (new_f[0] - f[0]) / d
+                        uy = (new_f[1] - f[1]) / d
+                        fence_edges.append((
+                            (f[0] - ux * ext, f[1] - uy * ext),
+                            (new_f[0] + ux * ext, new_f[1] + uy * ext)))
+                    else:
+                        fence_edges.append((f, new_f))
             fences.append(new_f)  # position of the FALSE prediction
         if c and first_contact is None:
             first_contact = t
@@ -193,5 +216,5 @@ def run_mitigated_episode(truth, model, seed: int = 0, horizon: int = 40,
         total += r
         s = s2
     return MitigatedEpisode(ret=total, contact=contact, final_state=s,
-                            violations=len(fences),
+                            violations=len(fences) - n_fences_at_start,
                             first_contact_step=first_contact)
