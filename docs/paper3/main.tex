@@ -428,23 +428,35 @@ paired-seed MPC episodes per artifact (the play side).
 \begin{table}[h]
 \centering
 \small
-\begin{tabular}{lllrrr}
+\begin{tabular}{lllrrrrr}
 \toprule
-$\gamma$ & channel & start & $\mathrm{disagree}_{\mathrm{fill}}$ &
+$\gamma$ & channel & start & $r$ & $r_{\mathrm{int}}$ &
+$\mathrm{disagree}_{\mathrm{fill}}$ &
 $\mathrm{pc}_{\mathrm{blind}}$ & $\mathrm{pc}_{\mathrm{fill}}$ \\
 \midrule
-0.0 & ---     & outside & 0.000000 & 0.999 & 0.000 \\
-0.6 & facing  & outside & 0.000844 & 0.022 & 0.343 \\
-0.6 & hidden  & outside & 0.000000 & 0.999 & 0.000 \\
-1.2 & facing  & outside & 0.000625 & 0.007 & 0.220 \\
-0.0 & ---     & inside  & 0.968500 & 0.000 & 1.769 \\
+0.0 & ---     & outside & 0.0450 & 0.0000 & 0.000000 & 0.999 & 0.000 \\
+0.6 & facing  & outside & 0.0350 & 0.0075 & 0.000844 & 0.022 & 0.343 \\
+0.6 & hidden  & outside & 0.0450 & 0.0000 & 0.000000 & 0.999 & 0.000 \\
+1.2 & facing  & outside & 0.0175 & 0.0125 & 0.000625 & 0.007 & 0.220 \\
+1.2 & hidden  & outside & 0.0450 & 0.0000 & 0.000000 & 0.999 & 0.000 \\
+0.0 & ---     & inside  & 0.7325 & 1.0000 & 0.968500 & 0.000 & 1.769 \\
+0.6 & facing  & inside  & 0.6875 & 1.0000 & 0.862969 & 0.000 & 0.663 \\
+0.6 & hidden  & inside  & 0.6700 & 1.0000 & 0.854094 & 0.000 & 1.769 \\
+1.2 & facing  & inside  & 0.6100 & 1.0000 & 0.774062 & 0.000 & 0.351 \\
+1.2 & hidden  & inside  & 0.5975 & 1.0000 & 0.757500 & 0.000 & 1.741 \\
 \bottomrule
 \end{tabular}
-\caption{The three-regime walk (excerpt). One wrong-topology artifact:
+\caption{The full mechanism grid. One wrong-topology artifact:
 unfalsifiable and harmless ($\gamma = 0$, the bitwise theorem), falsifiable
 and costly (facing channel), instantly falsified (inside start). The hidden
 channel is observationally identical to the closed ring although it changes
-$\beta_1$. \emph{TODO: full grid + Wilson CIs.}}
+$\beta_1$. Rates over $400$ rollouts ($r$, $r_{\mathrm{int}}$; the JSON
+carries per-cell Wilson CIs, e.g.\ $r = 0.045 \in [0.029, 0.070]$) and
+$32{,}000$ transitions ($\mathrm{disagree}_{\mathrm{fill}}$); a zero cell
+has 95\% Wilson upper bound $0.0095$ (rollout rates) and $1.2 \times
+10^{-4}$ (transition rates) --- every qualitative separation in the table
+exceeds its CI by orders of magnitude. $\mathrm{pc}$ over $16$ paired MPC
+episodes.}
 \label{tab:mechanism}
 \end{table}
 
@@ -500,22 +512,32 @@ wrong parameters scores far \emph{below} blind.
 
 \begin{table}[h]
 \centering
-\small
-\begin{tabular}{llrrl}
+\footnotesize
+\begin{tabular}{llrrrl}
 \toprule
-cell & prompt / start & pass & mode-present & terminal classes (behavioral) \\
+cell & prompt / start & pass & present & blind ref & terminal classes (behavioral) \\
 \midrule
-A & default / out & 6/20 & 14 & fill-unbounded 13, blind 7 (large) \\
-B & region / out  & 8/20 & 14 & blind 16, arc 2, disc 1, point 1 \\
-C & tda / out     & 9/20 & 14 & blind 19, vdep 1 \\
-D & tda / inside  & 1/20 & 20 & arc 5, point 4, blind 4, disc 2, compl.\ 2, loop 2, vdep 1 \\
+A$_{\mathrm{lg}}$ & default / out & 6/20 & 14 & 0.999 & fill-unbounded 13, blind 7 \\
+A$_{\mathrm{mi}}$ & default / out & 6/20 & 14 & 0.999 & blind 15, arc 2, disc 2, fill-unb.\ 1 \\
+B$_{\mathrm{lg}}$ & region / out  & 8/20 & 14 & 0.999 & blind 16, arc 2, disc 1, point 1 \\
+C$_{\mathrm{lg}}$ & tda / out     & 9/20 & 14 & 0.999 & blind 19, vdep 1 \\
+C$_{\mathrm{mi}}$ & tda / out     & 12/20 & 14 & 0.999 & blind 17, arc 2, point 1 \\
+D$_{\mathrm{lg}}$ & tda / inside  & 1/20 & 20 & 0.971 & arc 5, point 4, blind 4, disc 2, compl.\ 2, loop 2, vdep 1 \\
+D$_{\mathrm{mi}}$ & tda / inside  & 0/20 & 20 & 0.971 & disc 5, loop 5, arc 5, blind 4, compl.\ 1 \\
 \bottomrule
 \end{tabular}
-\caption{GPT-5.x large, closed ring ($\gamma = 0$). Every gate pass in
-A--C is a mode-absent blind artifact (exploited at
-$\mathrm{play\_cost} \approx 1.12$) or a measure-zero point fit; the one D
-pass is the gauge-free complement form. \emph{TODO: mini twin numbers;
-Qwen/Claude cross-family rows; blind-reference gate column.}}
+\caption{GPT-5.x on the closed ring ($\gamma = 0$; lg = large, mi = mini;
+the two sizes share seeds, so their samples --- and the mode-present counts
+--- are identical by construction, not independent replications). ``Blind
+ref'' is the pure integrator's gate on the same evidence: the interpretive
+baseline for terminal gates. Every gate pass in A--C is a mode-absent blind
+artifact (exploited at $\mathrm{play\_cost} \approx 1.12$) or a
+measure-zero point fit; the one D pass is the gauge-free complement form.
+Cross-family spot checks (3 seeds each): Qwen --- both mode-absent seeds
+certified blind and exploited at the same $1.116$, the mode-present seed
+refused by the gate; Claude (agent-relayed) --- same A-cell outcome
+bit-for-bit, and $3/3$ D-cell repairs via the same complement form as the
+GPT passer.}
 \label{tab:closedring}
 \end{table}
 
@@ -694,16 +716,20 @@ $\gamma$ & 0.0 & 0.2 & 0.6 & 1.2 & 1.8 & 2.4 \\
 \midrule
 closed structures (disc/loop/complement) & 17 & 9 & 22 & 7 & 3 & 1 \\
 arc structures & 10 & 5 & 6 & 9 & 23 & 26 \\
+$n$ (cells; both sizes where run) & 40 & 20 & 40 & 20 & 30 & 40 \\
 guidance $\hat\beta_1$ & 1 & 1 & 1 & 1 & mixed & 0 \\
 \bottomrule
 \end{tabular}
 \caption{H2: posed artifact topology tracks the \emph{guidance's}
 $\hat\beta_1$, not the true $\beta_1$ (which is $0$ for every
 $\gamma > 0$): closed structures dominate while the summary says ``closed
-loop'' and vanish where it honestly says ``arc.'' An honest sensor's
-resolution limit propagates into certified models. \emph{TODO: within-gap
-split at 1.8 (directionally consistent, underpowered at $n=30$); both
-sizes.}}
+loop'' and vanish where it honestly says ``arc'' --- at $\gamma = 2.4$,
+$1$ closed versus $26$ arc across both sizes. $n$ counts inside-start cells
+(mini at every $\gamma$; large twins at $0.0$, $0.6$, $2.4$). The
+within-gap contrast at $\gamma = 1.8$, where seeds' own summaries straddle
+the detector flip, is directionally consistent --- closed structures $2/14$
+in the $\hat\beta_1 = 1$ subset versus $1/16$ in the
+$\hat\beta_1 = 0$ subset --- but underpowered at $n = 30$.}
 \label{tab:sensor}
 \end{table}
 
@@ -751,6 +777,22 @@ real lode at every $n \le 6$ (the planner is not the bottleneck), and the
 blind model is exploited at full strength at every $n$
 (Table~\ref{tab:ndim}).
 
+\paragraph{A methods note: the danger needs a competent planner, and
+``competent'' is an interface property.} Our first $n$-sweep measured
+$\mathrm{play\_cost} \approx 0$ at every $n$ --- a result we initially
+misread twice (dimensional concentration; then phantom distance) before a
+controlled diagnostic isolated the cause: the vector-action MPC's constant
+candidate set lacked the deterministic axial sequences $\pm e_i$ that the
+scalar planner's east/west constants provide, so the blind planner never
+drove straight at the shell. Direction-uniform random candidates do
+\emph{not} fix it ($\mathrm{pc} = 0$); adding the $2n$ axial candidates
+restores the 2D exploitation exactly ($\mathrm{pc} = 1.04$, contact
+$1.0$). The companion papers' clause that danger requires a \emph{competent}
+planner is thus sharper than it looks: competence is a property of the
+action interface, and an accidental planner weakness can mask a fully
+exploitable model. We record the sequence of misreadings deliberately ---
+the corrected-record discipline is part of the method.
+
 \begin{table}[h]
 \centering
 \small
@@ -766,8 +808,8 @@ blind contact & 1.0 & 1.0 & 1.0 & 1.0 & 1.0 \\
 \caption{The two axes are independent: rarity collapses with $n$
 (synthesis axis: mis-synthesis near-certain) while exploitation stays at
 full strength (play axis: the competent planner always reaches the shell).
-\emph{TODO: the action-interface lesson (axial candidates) as a
-methods note --- an incompetent-planner confound we found and fixed.}}
+$\mathrm{pc}_{\mathrm{blind}}$ with the axial-candidate planner (see the
+methods note in the text).}
 \label{tab:ndim}
 \end{table}
 
