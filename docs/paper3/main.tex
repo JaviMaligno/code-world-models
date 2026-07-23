@@ -593,6 +593,19 @@ $\{0.2, 0.6, 1.2, 1.8, 2.4\}$ ($20$--$30$); large robustness cells at the
 critical points; a dense CPU danger curve ($16$ paired MPC episodes per
 $\gamma$); and Claude relay spots at the knee and at wide $\gamma$.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.72\linewidth]{figures/danger_curve}
+\caption{\textbf{H1: danger is topology relative to reach.} The blind
+model's exploitation collapses over a knee at $\gamma \approx 0.1$ when
+the channel faces the start (blue: dense CPU curve, 16 paired MPC episodes
+per point; green: the LLM arms' exploited blind artifacts, identical in all
+three model families) --- while the \emph{hidden} channel (orange) holds
+full danger at the same $\gamma$ and the same $\beta_1 = 0$. The knee
+sits where the channel's arc width admits the planner's step.}
+\label{fig:dangercurve}
+\end{figure}
+
 \begin{table}[h]
 \centering
 \small
@@ -611,7 +624,8 @@ the planner's step. The \emph{hidden} channel holds
 $\mathrm{pc} = 1.116$ at $\gamma = 0.6$ \emph{and} $1.2$: same $\beta_1$,
 opposite danger. LLM-arm confirmations at $\gamma \in \{0.1, 0.6\}$
 reproduce the curve in both model sizes and in the Claude relay
-(0.348 at the knee, all three families). \emph{TODO: figure.}}
+(0.348 at the knee, all three families); Figure~\ref{fig:dangercurve}
+plots all three series.}
 \label{tab:dangercurve}
 \end{table}
 
