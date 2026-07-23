@@ -15,7 +15,7 @@ import json
 import pathlib
 import time
 
-from cwm.continuous.envs import RingField2D, blind_of
+from cwm.continuous.envs import RingField2D, blind_of, filled_of
 from cwm.continuous import harness
 from cwm.continuous.mitigation import run_mitigated_episode
 
@@ -25,16 +25,22 @@ ap.add_argument("--seed", type=int, default=0)
 ap.add_argument("--eps", type=float, default=0.5)
 args = ap.parse_args()
 
-CELLS = [("gap0", RingField2D()),
-         ("gap0.6-hidden", RingField2D(gap=0.6, gap_center=0.0))]
+CELLS = [("gap0", RingField2D(), blind_of),
+         ("gap0.6-hidden", RingField2D(gap=0.6, gap_center=0.0), blind_of),
+         # the INVENTED-mode cell (2026-07-23): inside start, filled-disc
+         # model (hallucinated freezes) — plain planner is exploited BELOW
+         # random (pc 1.77, mechanism grid); can distrust-fences recover
+         # value the model's lies made invisible?
+         ("gap0-inside-filled",
+          RingField2D(x0_center=RingField2D().center), filled_of)]
 
 t0 = time.time()
 rows = []
 print(f"{'cell':>14} {'J_tru':>7} {'J_bli':>7} {'J_mit':>7} {'J_rnd':>6} "
       f"{'pc_bli':>7} {'pc_mit':>7} {'c_mit':>5} {'viol':>5} {'t_c1':>5}",
       flush=True)
-for name, truth in CELLS:
-    blind = blind_of(truth)
+for name, truth, model_fn in CELLS:
+    blind = model_fn(truth)
     t, b, m, r = [], [], [], []
     for i in range(args.episodes):
         sd = args.seed + 1000 * i

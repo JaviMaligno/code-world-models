@@ -54,8 +54,11 @@ parameter-bound and sensor-bound}: from outside evidence no family recovers
 the region (superstitious point fits); from inside, models pose the right
 topology but cannot pin its parameters to the gate's precision --- and the
 persistent-homology summary that guides them has a measurable resolution
-limit that propagates its own wrong $\hat\beta_1$ into the certified
-artifacts. In $n$ dimensions the enclosing shell makes the identifiability
+limit --- geometric, not budgetary --- that propagates its own wrong
+$\hat\beta_1$ into the certified artifacts. Planner-side mitigation obeys
+the same geometry: point distrust-fences, a zero-dimensional cover, fail
+against the one-dimensional closed boundary at their calibrated radius, and
+against an \emph{invented} mode they fire constantly and recover nothing. In $n$ dimensions the enclosing shell makes the identifiability
 event near-certain ($r(n) \to 0$) while the danger stays fully exploitable
 --- rarity and reachability are independent knobs of the danger law.
 \end{abstract}
@@ -147,6 +150,15 @@ $\mathcal{R}$.
   the two certified passes at wide $\gamma$ are \emph{certified-wrong}:
   mode-blind on the probes, harmless only because the open ring no longer
   obstructs.
+\item \textbf{Mitigation obeys a covering law --- and is one-sided}
+  (Section~\ref{sec:mitigation}). The companion paper's distrust-fence
+  defense, verbatim, does nothing on the ring at its calibrated radius:
+  point fences are a zero-dimensional cover of a one-dimensional boundary,
+  and the planner re-routes through unfenced arc (cost = boundary measure
+  over fence radius). Against the \emph{invented} mode the fences fire
+  $18.6$ times per episode and change the outcome by nothing: distrust can
+  stop belief in false free space but cannot recover value hidden behind
+  false obstructions --- the two wrongnesses need opposite defenses.
 \item \textbf{The evidence sensor has finite resolution --- and it
   propagates} (Section~\ref{sec:sensor}). The pre-registered
   persistent-homology summary reports $\hat\beta_1 = 1$ for every channel
@@ -741,6 +753,78 @@ mode?) and the play axis (does the omission obstruct the planner?) are
 separate knobs even within one instrument --- the theme
 Section~\ref{sec:ndim} pushes to its extreme.
 
+\section{Mitigation against an enclosed mode: a covering law}
+\label{sec:mitigation}
+
+The companion continuous paper closed its loop with a planner-side defense:
+\emph{distrust-region replanning}. After each real step the planner compares
+the model's prediction to the observation; a mismatch records a point
+\emph{fence} at the refuted prediction, and imagined rollouts truncate when
+they cross near a fence --- on the 1D clamps and the small convex patches
+this collapses the blind planner's exploitation to a bounded first-contact
+transient, at zero cost when the model is correct. The same module, verbatim
+(\texttt{pos\_dims} $=(0,1)$, the patch-calibrated fence radius
+$\varepsilon_f = 0.5$), meets the ring:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llrrrr}
+\toprule
+cell & $\varepsilon_f$ & $\mathrm{pc}_{\mathrm{model}}$ &
+$\mathrm{pc}_{\mathrm{mitigated}}$ & contact & fences/episode \\
+\midrule
+closed ring, outside, blind & 0.5 & 0.999 & 1.003 & 1.00 & 3.8 \\
+closed ring, outside, blind & 1.0 & 0.999 & 1.005 & 1.00 & 2.3 \\
+closed ring, outside, blind & 2.0 & 0.999 & 0.742 & 1.00 & 1.0 \\
+hidden $\gamma = 0.6$, outside, blind & 0.5 & 0.999 & 1.003 & 1.00 & 3.8 \\
+closed ring, \emph{inside, filled} & 0.5 & 1.769 & \textbf{1.769} & 1.00 & 18.6 \\
+\bottomrule
+\end{tabular}
+\caption{Distrust-region replanning on the ring ($16$ paired MPC episodes
+per cell). The defense that collapsed the patch exploitation does
+\emph{nothing} at its calibrated radius, partially relieves only at a
+radius of the geometry's own scale, and is exactly inert against the
+invented mode --- while firing constantly (last row: $18.6$ fences per
+episode, $\mathrm{pc}$ unchanged to three decimals). The hidden-channel row
+is identical to the closed ring, as Section~\ref{sec:mechanism} predicts.}
+\label{tab:mitigation}
+\end{table}
+
+\paragraph{The failure is a covering law.} A point fence is a
+zero-dimensional object; the ring's reachable boundary is one-dimensional
+(the west outer arc, ${\sim}16$ world-units at the defaults). Sealing a
+1-dimensional boundary with $\varepsilon_f$-balls needs
+covering-number-many violations --- boundary measure over fence radius ---
+and the argmax planner concedes only $2$--$4$ contacts per episode while
+re-routing through unfenced arc. The companion paper's ``collapse decays
+with mode distance'' was the small-boundary shadow of this law: on a patch
+of circumference ${\sim}6$ at $\varepsilon_f = 0.5$ a handful of fences
+suffices; on the ring they never do. Coarsening the fence to the geometry's
+own scale ($\varepsilon_f = 2.0$) buys partial relief here but is not a
+uniform remedy --- that radius would swallow the patch instruments whole.
+The structural fix is dimensional: a boundary-aware fence (segments, or the
+nerve of the contact set) rather than points --- which is the same
+machinery as the evidence sensor of Section~\ref{sec:sensor}, and inherits
+the same resolution limits.
+
+\paragraph{Against an invented mode, distrust is inert by construction.}
+The filled-disc model from inside (the below-random cell of
+Section~\ref{sec:mechanism}) hallucinates freezes everywhere, so every
+imagined future collapses to the current position and all candidate actions
+tie \emph{before} any fence can matter; truncating trust in imagined value
+cannot help when the lie has already flattened imagined value. The fences
+fire constantly ($18.6$ per episode --- the defense \emph{detects} the lie
+every few steps) and change nothing ($\mathrm{pc}$ identical to three
+decimals). Distrust-based mitigation is one-sided in exactly the sense the
+danger is two-sided: it can stop the planner from \emph{believing} false
+free space, but recovering value that the model hides behind false
+obstructions needs optimism --- exploration bonuses, not fences. The
+omitted-mode lure and the invented-mode repulsion
+(Remark~\ref{rem:triad}'s two wrongnesses) thus need \emph{opposite}
+planner-side defenses, and a defense calibrated for one is inert against
+the other.
+
 \section{The evidence sensor has finite resolution}
 \label{sec:sensor}
 
@@ -788,9 +872,9 @@ trajectory connectivity), not a bigger sample.
 \toprule
 $\gamma$ & 0.0 & 0.2 & 0.6 & 1.2 & 1.8 & 2.4 \\
 \midrule
-closed structures (disc/loop/complement) & 17 & 9 & 22 & 7 & 3 & 1 \\
-arc structures & 10 & 5 & 6 & 9 & 23 & 26 \\
-$n$ (cells; both sizes where run) & 40 & 20 & 40 & 20 & 30 & 40 \\
+closed structures (disc/loop/complement) & 17 & 9 & 22 & 7 & 5 & 1 \\
+arc structures & 10 & 5 & 6 & 9 & 34 & 26 \\
+$n$ (cells; both sizes where run) & 40 & 20 & 40 & 20 & 60 & 40 \\
 guidance $\hat\beta_1$ & 1 & 1 & 1 & 1 & mixed & 0 \\
 \bottomrule
 \end{tabular}
@@ -801,9 +885,10 @@ loop'' and vanish where it honestly says ``arc'' --- at $\gamma = 2.4$,
 $1$ closed versus $26$ arc across both sizes. $n$ counts inside-start cells
 (mini at every $\gamma$; large twins at $0.0$, $0.6$, $2.4$). The
 within-gap contrast at $\gamma = 1.8$, where seeds' own summaries straddle
-the detector flip, is directionally consistent --- closed structures $2/14$
-in the $\hat\beta_1 = 1$ subset versus $1/16$ in the
-$\hat\beta_1 = 0$ subset --- but underpowered at $n = 30$.}
+the detector flip, remains directional-only after doubling the cell to
+$n = 60$: closed structures $3/27$ in the $\hat\beta_1 = 1$ subset versus
+$2/33$ in the $\hat\beta_1 = 0$ subset --- consistent in sign, not
+significant; the load-bearing H2 evidence is the cross-gap crossover.}
 \label{tab:sensor}
 \end{table}
 
@@ -966,7 +1051,8 @@ are about what the round instruments already suffice to separate.
 $20$--$30$ seeds per cell across two GPT-5.x sizes; the cross-family
 evidence is spot-checks (three seeds per cell for Qwen and the Claude
 relay), which fix mechanism, not rates. The within-gap H2 contrast at
-$\gamma = 1.8$ is directionally consistent but underpowered at $n = 30$.
+$\gamma = 1.8$ remains directional-only even after doubling the cell to
+$n = 60$ ($3/27$ versus $2/33$); the cross-gap crossover carries H2.
 The Qwen D cell is missing (provider credits), so the D-cell family
 contrast rests on GPT ($1/20$) versus Claude ($3/3$).
 

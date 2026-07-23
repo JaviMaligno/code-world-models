@@ -2581,6 +2581,46 @@ Two findings (exploratory, 5 seeds — do not over-read):
    disc/loop artifacts there are guidance-compliant, not prior-driven. See
    "Per-artifact behavioral audit" below.
 
+## Paper-completion additions: mitigation vs invented mode, steering witness, sensor factorial, H2 power (2026-07-23)
+
+Four additions closing the paper-3 draft's gaps (all committed with the tex):
+
+**(1) Mitigation vs the INVENTED mode (new cell,
+`continuous_mitigation_ring.py` extended, `continuous_mitigation_ring.json`
+regenerated with 3 cells).** gap0-inside-filled: pc_filled 1.769 ->
+pc_mitigated **1.769** (identical to 3 decimals) with **18.6 fences/episode**
+— the defense detects the lie constantly and changes nothing. Mechanism: the
+filled model freezes every imagined future at the current position, so all
+candidates tie BEFORE fences can matter; distrust truncates trust in imagined
+value, and the invented mode already flattened imagined value. Distrust-based
+mitigation is one-sided: lure (omitted mode) and repulsion (invented mode)
+need opposite defenses. Folded as the paper's mitigation section together
+with the 2026-07-19 covering-law rows (eps sweep 0.5/1.0/2.0).
+
+**(2) Hidden-channel steering witness (`ring2d_steering_witness.py` ->
+`ring2d_steering_witness.json`).** Velocity-aware waypoint policy: interior
+entries 100/100 at hidden gap 1.2 WITHIN the instrument's h=80 (gate policy
+0/100; same controller at gap 0: 0/100 — Lemma 2). Certifiability is
+policy-relative; the ledger's deferred witness is now measured. Honest note:
+at hidden gap 0.6 the hand controller cannot thread the ~2-unit corridor
+within h=80 (0/100) — reachability is jointly geometry x policy x budget.
+
+**(3) Sensor-resolution factorial (`ring2d_sensor_resolution.py` ->
+`ring2d_sensor_resolution.json`).** beta1_hat over cap {30,90,270} x dose
+N {40,160} x gap, 5 seeds: the flip DOES NOT MOVE with budget or dose
+(gap<=1.2 always 1; 2.4 always 0; only 1.8 wobbles) — the limit is GEOMETRIC
+(Rips bridging: channel chord vs fill scale, both properties of the shape).
+And more data is counterproductive at the boundary: at gap 1.8 the
+false-loop rate RISES 1/5 -> 3/5 when N quadruples (tau = 3x median-NN
+shrinks with density; the spurious bar's persistence is fixed). Resolving a
+narrow channel needs a different filtration, not a bigger sample.
+
+**(4) H2 within-gap power (gap 1.8 topped up 30 -> 60 seeds, mini).**
+Classes at n=60: arc 34, blind 20, disc 4, loop 1, point 1; within-gap split
+closed 3/27 (b1_hat=1) vs 2/33 (b1_hat=0) — consistent in sign, NOT
+significant even at n=60. Recorded as directional-only; the cross-gap
+crossover (22 closed at 0.6 vs 1 at 2.4) carries H2.
+
 ## Per-artifact behavioral audit of the ring2d arms (2026-07-21, deep review pass)
 
 `scripts/ring2d_artifact_audit.py` → `results/ring2d_artifact_audit.json`.
