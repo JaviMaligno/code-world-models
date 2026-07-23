@@ -5,6 +5,7 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{pifont}
 \usepackage[round]{natbib}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 
@@ -405,6 +406,19 @@ verified numerically over the visited-state envelope before every arm, in
 the pre-registration style of the discrete paper; (C) is logged. Measured:
 blind contact rate $1.0$ at every $\gamma$ in calibration.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.66\linewidth]{figures/gamma_curves}
+\caption{The $\gamma$-curves, measured with common random numbers ($4{,}000$
+CRN rollouts per point; Wilson 95\% CIs): the contact rarity $r(\gamma)$ is
+nonincreasing (pathwise theorem; $0$ violations observed) and the
+interior-entry rate $r_{\mathrm{int}}(\gamma)$ rises from its \emph{exact}
+zero at $\gamma = 0$ (Lemma~\ref{lem:crossing}) --- the two grades of
+impossibility are visible as the difference between a point pinned at zero by
+a theorem and a curve passing through measurably positive values.}
+\label{fig:gammacurves}
+\end{figure}
+
 Two further regularities of the $\gamma$-curves (monotone direct-entry
 counts and a first-divergence identity) remain \emph{measured-only}: we
 state them as such. The one local proof route we pursued was refuted by the
@@ -500,14 +514,42 @@ the closed ring: \textbf{A} (default prompt, outside start), \textbf{B}
 topological summary of the sample's own contact evidence, outside), and
 \textbf{D} (the same summary, \emph{inside} start). Because a filled disc
 at $\gamma = 0$ passes every metric (Proposition~\ref{prop:harmless}),
-every gate-passing artifact was additionally classified
-\emph{behaviorally}: probe its \texttt{step()} on a state grid, take the
-deviation-from-integrator set, and classify that set's shape (blind / point
-/ velocity-conditioned / arc / hollow loop / filled disc / disc-complement /
-half-plane). Terminal gates are read against the \emph{canonical blind
-reference} --- the pure integrator's gate on the same evidence
-(${\approx}0.999$ outside, $0.971$ inside) --- since a posed region with
-wrong parameters scores far \emph{below} blind.
+code-level claims need more than the gate; the audit below is used for
+every artifact in the paper.
+
+\subsection{The behavioral audit (methodology)}
+\label{sec:audit}
+
+Textual inspection of synthesized code misleads in both directions: a
+verbose ``trap'' comment can be measure-zero (behaviorally blind), and a
+plausible-looking region clause can be wildly mis-parameterized. The audit
+therefore classifies each artifact by what its \texttt{step()}
+\emph{does}: probe it on an $81\times81$ state grid at two velocity
+slices, mark every deviation from the pinned integrator (the artifact's
+effective freeze/mode set), and classify that set's shape by angular
+coverage around the ring center, interior fill, and boundedness:
+\texttt{blind} / \texttt{point} / \texttt{vdep} (velocity-conditioned) /
+\texttt{arc} / \texttt{loop} (hollow, bounded) / \texttt{disc} (filled) /
+\texttt{complement} (hollow, unbounded) / \texttt{fill-unbounded}
+(half-plane-like). The classifier is oracle-tested: artifacts constructed
+with a known class by construction (a hollow annulus, a filled disc, a
+half-plane, a velocity cap, a measure-zero trap, \ldots) must be labeled
+correctly before the classifier touches real artifacts.
+
+Two derived readings recur. \textbf{Blind-reference gates}: a terminal gate
+is only interpretable against the pure integrator's gate on the \emph{same}
+evidence (${\approx}0.999$ outside, $0.971$ inside) --- the empirical gate
+bands are: correct ${\approx}1.0$; blind ${\approx}0.97$; posed-but-%
+mis-parameterized hollow structures $0.5$--$0.9$; interior-filling
+structures $0.02$--$0.4$ (they freeze states the evidence shows moving). A
+posed region with wrong parameters scores far \emph{below} blind --- so
+``mean gate fell'' can mean \emph{more} mode-posing, not less, and reading
+terminal gates without the reference invites exactly the misreading we
+document (and correct) in Section~\ref{sec:openring}. \textbf{Per-patch
+coverage}: the same mask measures whether an artifact encodes a
+\emph{specific} region (e.g., the seen versus unseen patch of the companion
+paper's bi-modal instrument, where the audit verified the published hand
+inspection at $74/76$ integrator exactness and $0$ seen-patch coverage).
 
 \begin{table}[h]
 \centering
@@ -760,6 +802,32 @@ program-level statement this suggests, as a conjecture and not a result:
 persistent-homology resolution of its contact evidence at the operative
 density} --- a bound that NSW-style estimates make computable in advance.
 
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrlrrl}
+\toprule
+ & \multicolumn{3}{c}{outside start} & \multicolumn{3}{c}{inside start} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+$n$ & contacts & $\times$NSW & $\beta_{n-1}$? & contacts & $\times$NSW & $\beta_{n-1}$? \\
+\midrule
+2 & 388 & 30.9  & \ding{55} & 33{,}702 & 2682 & \checkmark \\
+3 & 167 & 2.6   & \ding{55} & 45{,}697 & 714  & \checkmark \\
+4 & 59  & 0.20  & \ding{55} & 54{,}170 & 180  & \checkmark \\
+5 & 11  & 0.008 & \ding{55} & 59{,}961 & 43.9 & \checkmark \\
+6 & 18  & 0.003 & \ding{55} & 63{,}949 & 10.6 & (marginal) \\
+\bottomrule
+\end{tabular}
+\caption{Persistent homology of the ShellField-$n$ contact cloud
+($20{,}000$-rollout budget; alpha complexes, 2-plane slices at $n = 6$).
+``$\times$NSW'' is the cloud density relative to the
+Niyogi--Smale--Weinberger covering bound. Outside evidence never recovers
+the shell's $\beta_{n-1}$ --- at low $n$ the cloud is plentiful but traces
+only the reachable arc; at high $n$ it starves --- while inside evidence
+recovers it up to $n = 5$. Recovery is start-governed.}
+\label{tab:shelltda}
+\end{table}
+
 \section{Dimension as the rarity knob}
 \label{sec:ndim}
 
@@ -800,6 +868,8 @@ the corrected-record discipline is part of the method.
 $n$ & 2 & 3 & 4 & 5 & 6 \\
 \midrule
 $r(n)$ & 0.0133 & 0.0033 & 0.0017 & ${\sim}0$ & ${\sim}0$ \\
+$J$ truth-MPC & 16.92 & 15.55 & 14.26 & 12.96 & 11.31 \\
+$J$ random & 0.50 & 0.33 & 0.04 & 0.01 & 0.07 \\
 $\mathrm{pc}_{\mathrm{blind}}$ & 1.023 & 1.013 & 0.994 & 0.991 & 0.996 \\
 blind contact & 1.0 & 1.0 & 1.0 & 1.0 & 1.0 \\
 \bottomrule

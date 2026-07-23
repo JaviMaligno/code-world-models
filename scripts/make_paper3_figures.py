@@ -93,5 +93,31 @@ def fig_danger_curve():
     save(fig, "danger_curve")
 
 
+def fig_gamma_curves():
+    """Props 5-9 measured: r(gamma) nonincreasing, r_int(gamma) rising from
+    the exact zero at gamma=0 (Lemma 2). CRN rollouts, Wilson 95% CIs."""
+    probe = load("continuous_ring2d_rint_probe.json")
+    rows = sorted(probe["rows"], key=lambda r: r["gap"])
+    g = [r["gap"] for r in rows]
+    rr = [r["r"] for r in rows]
+    rlo = [r["r"] - r["r_ci"][0] for r in rows]
+    rhi = [r["r_ci"][1] - r["r"] for r in rows]
+    ri = [r["r_int"] for r in rows]
+    rilo = [r["r_int"] - r["r_int_ci"][0] for r in rows]
+    rihi = [r["r_int_ci"][1] - r["r_int"] for r in rows]
+
+    fig, ax = plt.subplots(figsize=(5.4, 3.2))
+    ax.errorbar(g, rr, yerr=[rlo, rhi], fmt="-o", color=C_BLUE, ms=4,
+                lw=1.5, capsize=2, label=r"$r(\gamma)$ (contact rarity)")
+    ax.errorbar(g, ri, yerr=[rilo, rihi], fmt="-s", color=C_RED, ms=4,
+                lw=1.5, capsize=2,
+                label=r"$r_{\mathrm{int}}(\gamma)$ (interior entry)")
+    ax.set_xlabel(r"channel width $\gamma$ (rad)")
+    ax.set_ylabel("per-rollout rate")
+    ax.legend(loc="upper right")
+    save(fig, "gamma_curves")
+
+
 if __name__ == "__main__":
     fig_danger_curve()
+    fig_gamma_curves()
