@@ -102,3 +102,46 @@ def test_patch2d_mitigated_blind_escapes():
     pc_blind = (t.ret - b.ret) / denom
     pc_mit = (t.ret - m.ret) / denom
     assert pc_mit < 0.80 * pc_blind
+
+
+# ---------------- nerve-fence mode (2026-07-23) ----------------
+
+def test_seg_seg_dist_oracle():
+    from cwm.continuous.mitigation import _seg_seg_dist
+    # crossing segments -> 0
+    assert _seg_seg_dist((0, 0), (2, 2), (0, 2), (2, 0)) == 0.0
+    # parallel horizontal segments offset by 1 -> 1
+    assert abs(_seg_seg_dist((0, 0), (4, 0), (0, 1), (4, 1)) - 1.0) < 1e-12
+    # disjoint collinear: gap between (2,0)-(3,0) endpoints -> 1
+    assert abs(_seg_seg_dist((0, 0), (2, 0), (3, 0), (5, 0)) - 1.0) < 1e-12
+    # endpoint-to-interior: point segment above the middle -> 0.5
+    assert abs(_seg_seg_dist((0, 0), (4, 0), (2, 0.5), (2, 3)) - 0.5) < 1e-12
+
+
+def test_nerve_edge_truncates_the_gap_between_points():
+    """Two fence points 4 units apart, fence radius 0.5: an imagined step
+    through the midpoint clears both POINTS by 2 units (points mode does not
+    truncate) but crosses the EDGE (nerve mode truncates) — the covering-law
+    hole, sealed."""
+    from cwm.continuous.mitigation import (_crosses_fence,
+                                           _crosses_fence_edges)
+    f1, f2 = (7.0, -2.0), (7.0, 2.0)
+    step_prev, step_next = (6.0, 0.0), (8.0, 0.0)   # crosses midway
+    assert not _crosses_fence(step_prev, step_next, [f1, f2], 0.5)
+    assert _crosses_fence_edges(step_prev, step_next, [(f1, f2)], 0.5)
+
+
+def test_nerve_bit_identical_on_truth_model():
+    """Zero-cost control holds in nerve mode: with a correct model no
+    violation fires, no fence or edge exists, and the episode is
+    bit-identical to the plain MPC one."""
+    from cwm.continuous.envs import RingField2D
+    from cwm.continuous import harness
+    from cwm.continuous.mitigation import run_mitigated_episode
+    truth = RingField2D()
+    plain = harness.run_episode(truth, truth, "mpc", 7)
+    mit = run_mitigated_episode(truth, truth, seed=7, eps=0.5,
+                                pos_dims=(0, 1), fence_mode="nerve")
+    assert mit.violations == 0
+    assert mit.ret == plain.ret
+    assert tuple(mit.final_state) == tuple(plain.final_state)

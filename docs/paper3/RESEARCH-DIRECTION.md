@@ -340,6 +340,15 @@ instrument, both worlds, one knob.
 
 ---
 
+## Scope decision (2026-07-23, with Javier): the series closes as a TRILOGY
+
+No paper 4 is planned. The §8 program (non-round separators, non-separating
+modes, multi-chamber) and the CONSTRUCTIVE turn (defenses that work:
+boundary-dimension-matched fences, trajectory-aware filtrations) are
+EXTENSIONS OF PAPER 3 — folded into the same preprint (v2 or later) as they
+are measured, not a separate thesis. First constructive prototype: the
+nerve fence (mitigation.py fence_mode="nerve", 2026-07-23).
+
 ## 8. The n-dimensional program — and where algebraic topology is EARNED
 
 *(Recorded 2026-07-19 from Javier's direction — this part of the paper-3 idea

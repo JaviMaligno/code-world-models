@@ -59,6 +59,41 @@ def _seg_point_dist(prev_pos: tuple, next_pos: tuple, f: tuple) -> float:
     return math.dist(proj, f)
 
 
+def _orient(a: tuple, b: tuple, c: tuple) -> float:
+    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+
+def _segments_intersect(p1, p2, q1, q2) -> bool:
+    """Proper/improper 2D segment intersection (orientation test; collinear
+    overlaps count as intersecting via the on-segment checks)."""
+    d1, d2 = _orient(q1, q2, p1), _orient(q1, q2, p2)
+    d3, d4 = _orient(p1, p2, q1), _orient(p1, p2, q2)
+    if ((d1 > 0) != (d2 > 0) or d1 == 0 or d2 == 0) and \
+       ((d3 > 0) != (d4 > 0) or d3 == 0 or d4 == 0):
+        # bounding-box check settles the collinear / touching cases
+        return (min(p1[0], p2[0]) <= max(q1[0], q2[0]) + 1e-12
+                and min(q1[0], q2[0]) <= max(p1[0], p2[0]) + 1e-12
+                and min(p1[1], p2[1]) <= max(q1[1], q2[1]) + 1e-12
+                and min(q1[1], q2[1]) <= max(p1[1], p2[1]) + 1e-12)
+    return False
+
+
+def _seg_seg_dist(p1: tuple, p2: tuple, q1: tuple, q2: tuple) -> float:
+    """Minimum distance between 2D segments p1p2 and q1q2 (0 if they
+    intersect, else the min over the four endpoint-to-segment distances)."""
+    if _segments_intersect(p1, p2, q1, q2):
+        return 0.0
+    return min(_seg_point_dist(p1, p2, q1), _seg_point_dist(p1, p2, q2),
+               _seg_point_dist(q1, q2, p1), _seg_point_dist(q1, q2, p2))
+
+
+def _crosses_fence_edges(prev_pos, next_pos, fence_edges, eps) -> bool:
+    """Does the imagined step's position path come within eps of any fence
+    EDGE (the 1-skeleton of the fence nerve)? 2D only."""
+    return any(_seg_seg_dist(prev_pos, next_pos, a, b) <= eps
+               for a, b in fence_edges)
+
+
 def _crosses_fence(prev_pos: tuple, next_pos: tuple, fences, eps: float) -> bool:
     """Does the imagined step's position path come within eps of any fence?
     1D (len(pos_dims) == 1): the CURRENT interval-overlap boolean, verbatim —
@@ -80,9 +115,13 @@ def _dist_to_nearest(pos: tuple, fences) -> float:
 
 def plan_mitigated(model, state, rng, fences, eps,
                    horizon: int = 40, n_samples: int = 200,
-                   block: int = 10, pos_dims: tuple = (0,)) -> float:
+                   block: int = 10, pos_dims: tuple = (0,),
+                   fence_edges=()) -> float:
     """mpc.plan with distrust-fence truncation. With fences == [] this is
-    bit-identical to mpc.plan (same candidates, same scores, same argmax)."""
+    bit-identical to mpc.plan (same candidates, same scores, same argmax).
+    `fence_edges` (2D nerve mode): segments between linked fence points;
+    an imagined step also truncates when it comes within eps of any edge —
+    a fence whose dimension matches the boundary's."""
     best_key, best_a0 = None, 0.0
     for acts in mpc._candidates(model.a_max, rng, horizon, n_samples, block):
         s, total, truncated = state, 0.0, False
@@ -92,7 +131,10 @@ def plan_mitigated(model, state, rng, fences, eps,
             if truncated:
                 continue  # keep stepping for the flee tie-break; no reward
             next_pos = tuple(s[i] for i in pos_dims)
-            if fences and _crosses_fence(prev_pos, next_pos, fences, eps):
+            if fences and (
+                    _crosses_fence(prev_pos, next_pos, fences, eps)
+                    or (fence_edges and _crosses_fence_edges(
+                        prev_pos, next_pos, fence_edges, eps))):
                 truncated = True  # nothing downstream is trustworthy
                 continue
             total += r
@@ -115,22 +157,36 @@ class MitigatedEpisode:
 def run_mitigated_episode(truth, model, seed: int = 0, horizon: int = 40,
                           n_samples: int = 200, block: int = 10,
                           tol: float = 1e-6, eps: float = 0.25,
-                          pos_dims: tuple = (0,)) -> MitigatedEpisode:
+                          pos_dims: tuple = (0,),
+                          fence_mode: str = "points",
+                          link_r: float = 6.0) -> MitigatedEpisode:
     """Play one episode in `truth`, planning on `model` with distrust-region
     replanning. Mirrors harness.run_episode's rng discipline exactly so the
     truth-model episode is bit-identical to the plain MPC one."""
+    if fence_mode not in ("points", "nerve"):
+        raise ValueError(f"unknown fence_mode {fence_mode!r}")
+    if fence_mode == "nerve" and len(pos_dims) != 2:
+        raise ValueError("nerve fences are 2D (pos_dims of length 2)")
     rng = random.Random(seed)
     s = truth.initial_state(rng)
     total, contact, first_contact = 0.0, False, None
     fences: list = []
+    fence_edges: list = []
     for t in range(truth.h_episode):
         a = plan_mitigated(model, s, rng, fences, eps,
                            horizon=horizon, n_samples=n_samples, block=block,
-                           pos_dims=pos_dims)
+                           pos_dims=pos_dims, fence_edges=fence_edges)
         s2, r, c = truth.step(s, a)
         pred, _, _ = model.step(s, a)
         if max(abs(pred[i] - s2[i]) for i in range(len(s2))) > tol:
-            fences.append(tuple(pred[i] for i in pos_dims))  # position of the FALSE prediction
+            new_f = tuple(pred[i] for i in pos_dims)
+            if fence_mode == "nerve":
+                # nerve 1-skeleton: link the new violation to every prior
+                # violation within link_r — the fence becomes a curve
+                # estimate of the boundary instead of isolated points
+                fence_edges.extend((f, new_f) for f in fences
+                                   if math.dist(f, new_f) <= link_r)
+            fences.append(new_f)  # position of the FALSE prediction
         if c and first_contact is None:
             first_contact = t
         contact = contact or c

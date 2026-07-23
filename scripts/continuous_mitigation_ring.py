@@ -23,6 +23,9 @@ ap = argparse.ArgumentParser(description=__doc__)
 ap.add_argument("--episodes", type=int, default=16)
 ap.add_argument("--seed", type=int, default=0)
 ap.add_argument("--eps", type=float, default=0.5)
+ap.add_argument("--fence-mode", choices=["points", "nerve"], default="points",
+                help="nerve: link violations within link_r into edge fences "
+                "(a 1-dimensional fence for a 1-dimensional boundary)")
 args = ap.parse_args()
 
 CELLS = [("gap0", RingField2D(), blind_of),
@@ -47,7 +50,8 @@ for name, truth, model_fn in CELLS:
         t.append(harness.run_episode(truth, truth, "mpc", sd))
         b.append(harness.run_episode(truth, blind, "mpc", sd))
         m.append(run_mitigated_episode(truth, blind, seed=sd, eps=args.eps,
-                                       pos_dims=(0, 1)))
+                                       pos_dims=(0, 1),
+                                       fence_mode=args.fence_mode))
         r.append(harness.run_episode(truth, policy="random", seed=sd))
     j_t, j_b = harness.mean_return(t), harness.mean_return(b)
     j_m, j_r = harness.mean_return(m), harness.mean_return(r)
@@ -72,6 +76,8 @@ for name, truth, model_fn in CELLS:
           f"{(row['mean_first_contact_step'] or -1):5.1f}", flush=True)
 
 _sfx = "" if args.eps == 0.5 else f"_eps{args.eps:g}"
+if args.fence_mode == "nerve":
+    _sfx += "_nerve"
 out = pathlib.Path(f"results/continuous_mitigation_ring{_sfx}.json")
 out.write_text(json.dumps({"script": "continuous_mitigation_ring.py",
                            "params": vars(args), "rows": rows,
