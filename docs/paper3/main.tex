@@ -396,7 +396,19 @@ channel at $\gamma > 0$ has $r_{\mathrm{int}} > 0$ but of tube order ---
 positive yet below measurement at our budgets. These are two different
 \emph{grades} of impossibility, and Sections~\ref{sec:mechanism}
 and~\ref{sec:openring} show the gate and the planner cannot tell them
-apart while behaving identically on both. \textbf{(d)} Under two checkable
+apart while behaving identically on both. The second grade now has an
+explicit \textbf{steering witness}
+(\texttt{scripts/ring2d\_steering\_witness.py}): a scripted waypoint
+policy that knows the hidden channel enters the interior in $100/100$
+episodes at hidden $\gamma = 1.2$ \emph{within the instrument's own
+horizon}, where the gate policy's measured rate is $0/100$ --- and the same
+controller at $\gamma = 0$ enters $0/100$, as the theorem requires.
+Certifiability is relative to the query policy $\rho$:
+$E(f)$ is defined by $\rho$'s reach, and a policy that knows the channel
+shrinks the gauge region. (At hidden $\gamma = 0.6$ the hand controller
+fails to thread the narrower corridor within the horizon --- the witness
+there would need finer control, which is itself the point: reachability is
+jointly a property of geometry, policy, and budget.) \textbf{(d)} Under two checkable
 hypotheses --- (RG), a reward gap making some channel-entering candidate
 dominate every non-entering one, and (C), candidate coverage --- the blind
 planner's imagined argmax path must cross the annulus, so the planner
@@ -747,6 +759,27 @@ $\beta_1$ is $0$ for every $\gamma > 0$. The sweep therefore
 manufactures, at no extra cost, the experiment H2 needs: gaps where
 guidance and truth disagree, one gap where guidance disagrees with itself
 across seeds, and gaps where they agree.
+
+\paragraph{The resolution limit is geometric, not budgetary.} A factorial
+over the detector's budget and the evidence dose
+(\texttt{scripts/ring2d\_sensor\_resolution.py}: cap
+$\in \{30, 90, 270\}$ points $\times$ evidence
+$N \in \{40, 160\}$ rollouts $\times$ $\gamma$, five seeds each)
+shows the flip does not move: $\hat\beta_1 = 1$ at every
+$\gamma \le 1.2$ under \emph{every} budget and dose, $0$ at $2.4$ under
+all of them, with only the boundary gap $1.8$ wobbling. The mechanism is
+Rips geometry: the spurious loop bar is born when the filtration bridges
+the channel chord and dies at the complex's fill scale, and both lengths
+are properties of the \emph{shape}, not the sample --- so no detector
+budget and no amount of additional evidence resolves a channel narrower
+than the fill scale. Worse, more evidence is counterproductive at the
+boundary: at $\gamma = 1.8$ the false-loop rate \emph{rises} from $1/5$
+to $3/5$ seeds when the dose quadruples, because the persistence threshold
+($3\times$ median nearest-neighbor spacing) shrinks with density while
+the spurious bar's absolute persistence stays fixed --- the sensor gets
+\emph{more confident} in the wrong topology as the data grows. Resolving a
+narrow channel requires a different filtration (e.g.\ one that respects
+trajectory connectivity), not a bigger sample.
 
 \begin{table}[h]
 \centering
