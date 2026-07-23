@@ -117,9 +117,11 @@ $\mathcal{R}$.
   bitwise planner-equivalent to the truth
   (Proposition~\ref{prop:harmless}, confirmed episode-for-episode).
   Monotonicity, continuity, and positivity of the rarity curves in $\gamma$
-  round out the provable core (Propositions~5--9, stated in
-  Section~\ref{sec:theory}; two clean regularities remain measured-only,
-  and we say so).
+  round out the provable core (Section~\ref{sec:gammacurves}, stated and
+  proved, one positivity witness machine-checked); the two monotonicity
+  conjectures remain measured-only --- with a measured \emph{certificate}
+  that no pathwise proof can exist (Remark~\ref{rem:certificate}) --- and
+  we say so.
 \item \textbf{The three-regime mechanism, without LLMs}
   (Section~\ref{sec:mechanism}). One artifact walks through
   unfalsifiable-and-harmless ($\gamma = 0$), falsifiable-and-costly (facing
@@ -395,16 +397,147 @@ all three regimes (Section~\ref{sec:mechanism}).
 \subsection{The $\gamma$-curves and the query lower bound}
 \label{sec:gammacurves}
 
-Four further statements are proved in the technical companion material and
-used below; we state them informally. \textbf{(a)} The contact rarity
-$r(\gamma)$ is nonincreasing in $\gamma$ (pathwise: enlarging the channel
-can only delete contacts from a fixed realization; $0$ violations in
-$44{,}000$ common-random-number checks). \textbf{(b)} $r(\gamma)$ and the
-interior-entry rarity $r_{\mathrm{int}}(\gamma)$ are continuous in
-$\gamma$ (modulo an explicit density constant). \textbf{(c)}
-$r_{\mathrm{int}}(0) = 0$ \emph{exactly} (Lemma~\ref{lem:crossing}: a
-theorem, measured $0.0000$ at $n = 4000$), whereas the \emph{hidden}
-channel at $\gamma > 0$ has $r_{\mathrm{int}} > 0$ but of tube order ---
+Fix one probability space for all $\gamma$: a single i.i.d.\ action
+sequence and initial state drive the dynamics at every channel width
+(common random numbers), so that $\gamma_1 < \gamma_2$ gives nested mode
+regions $A(\gamma_2) \subseteq A(\gamma_1)$ with difference slivers
+$D = A(\gamma_1) \setminus A(\gamma_2)$. Write $r(\gamma)$ for the
+per-rollout contact rate and $r_{\mathrm{int}}(\gamma)$ for the
+interior-entry rate.
+
+\begin{lemma}[divergence localization]
+\label{lem:divergence}
+Under the coupling, the $\gamma_1$- and $\gamma_2$-trajectories coincide
+up to (and excluding) the first step whose landing falls in $D$; hence for
+any trajectory event, $|P_{\gamma_1} - P_{\gamma_2}| \le P(\text{some
+landing in } D)$.
+\end{lemma}
+\begin{proof}
+Before that step every landing is either outside $A(\gamma_1)$ (both
+trajectories free, same next state) or in $A(\gamma_2)$ (both freeze at
+the same previous position); induct. The bound is the coupling inequality.
+\end{proof}
+
+\begin{proposition}[$r$ is nonincreasing in $\gamma$]
+\label{prop:rmono}
+Contact events are nested pathwise:
+$\mathrm{fire}(\gamma_2) \subseteq \mathrm{fire}(\gamma_1)$, so
+$r(\gamma_2) \le r(\gamma_1)$.
+\end{proposition}
+\begin{proof}
+If the $\gamma_2$-trajectory first fires at step $t$ with no $D$-landing
+before $t$, Lemma~\ref{lem:divergence} makes the trajectories agree
+through $t$ and the landing lies in $A(\gamma_2) \subseteq A(\gamma_1)$;
+if some $D$-landing occurs at $s \le t$, a landing in $D$ \emph{is} a
+landing in $A(\gamma_1)$. ($0$ violations in $44{,}000$ CRN checks.)
+\end{proof}
+
+\begin{proposition}[continuity of the $\gamma$-curves]
+\label{prop:continuity}
+$r$ and $r_{\mathrm{int}}$ are continuous on $[0, 2\pi]$.
+\end{proposition}
+\begin{proof}[Proof sketch]
+By Lemma~\ref{lem:divergence} the increments are bounded by
+$P(\text{some landing in } D(\gamma, \gamma'))$; as $\gamma' \to
+\gamma$ the slivers shrink to two boundary rays, and for a fixed state the
+landing position is a non-constant real-analytic curve of the action, so
+the action-preimage of the measure-zero rays is finite per step; integrate
+and sum over $h$ steps. The explicit modulus (a density constant off
+tangencies) is stated in the repository's theory notes and not needed
+below. In particular $r_{\mathrm{int}}(\gamma) \to
+r_{\mathrm{int}}(0) = 0$ as $\gamma \to 0$.
+\end{proof}
+
+\begin{proposition}[direct interior entries are pathwise monotone]
+\label{prop:direct}
+Call an entry \emph{direct} if the trajectory never lands in $A(\gamma)$
+before its first interior entry. For $\gamma_1 < \gamma_2$,
+$\mathrm{direct}(\gamma_1) \subseteq \mathrm{direct}(\gamma_2)$; the
+direct component of $r_{\mathrm{int}}$ is nondecreasing.
+\end{proposition}
+\begin{proof}
+A direct-at-$\gamma_1$ trajectory's pre-entry landings avoid
+$A(\gamma_1) \supseteq A(\gamma_2)$; by the
+Lemma~\ref{lem:divergence} induction it is unchanged under $\gamma_2$ and
+still direct.
+\end{proof}
+
+\begin{remark}[a measured certificate closes the pathwise route]
+\label{rem:certificate}
+Full monotonicity of $r_{\mathrm{int}}$ admits \emph{no} pathwise proof:
+probe seed $50543$ enters the interior at $\gamma = 0.4$ but not at
+$\gamma = 0.6$ (nor at $2\pi$) --- a funnel-assisted entry, destroyed by
+widening the channel, found in $44{,}000$ adjacent-pair comparisons. The
+monotonicity conjectures (M1: $r_{\mathrm{int}}$ nondecreasing; M2:
+$r_{\mathrm{int}}(\gamma) \le r_{\mathrm{int}}(2\pi)$) are therefore
+stated distributionally, remain measured-consistent across the full grid
+(with saturation: $r_{\mathrm{int}}$ exactly constant for
+$\gamma \ge 2.4$), and remain conjectures: the one pointwise estimate
+that would prove them was itself \emph{refuted} by a freeze-rescue effect
+($91/91$ CI-separated violations), and we record the refutation rather
+than weaken the claim. Nothing below load-bears on M1/M2
+(Corollary~\ref{cor:knob}).
+\end{remark}
+
+\begin{proposition}[positivity: $r_{\mathrm{int}}(\gamma) > 0$ for every
+$\gamma > 0$, facing channel]
+\label{prop:positivity}
+At the frozen defaults with the channel facing the start,
+$r_{\mathrm{int}}(\gamma) > 0$ for every $\gamma > 0$.
+\end{proposition}
+\begin{proof}[Proof (witness tube, compact)]
+Condition on $|y_0| \le \eta(\gamma) := (3.5/8)\gamma \wedge 0.4$ (an
+event of positive probability under the uniform start). The constant
+action $a \equiv 0$ drives the state due east along $y = y_0$; its
+landings inside the band have angular offset from $\pi$ at most
+$|y_0|/r_{\mathrm{in}} < \gamma/2$, i.e.\ they lie in the channel, so
+the witness path is freeze-free with clearance
+$c(\gamma) > 0$ from $A(\gamma)$ and first lands past the band at depth
+$< r_{\mathrm{in}} - c$. On the freeze-free tube the $h$-step flow map is
+Lipschitz in the action sequence (explicit constant $L_h$ by the linear
+drag recursion), so every action sequence within
+$\rho = c/(2 L_h)$ of $0$ in sup norm still enters; that action tube has
+probability $\rho^h > 0$ (machine-checked witness:
+\texttt{test\_positivity\_witness\_tube}).
+\end{proof}
+
+\begin{corollary}[the knob is theorem-backed]
+\label{cor:knob}
+$r_{\mathrm{int}}(0) = 0$ exactly (Lemma~\ref{lem:crossing});
+$r_{\mathrm{int}}$ is continuous (Proposition~\ref{prop:continuity});
+$r_{\mathrm{int}}(\gamma) > 0$ for every $\gamma > 0$
+(Proposition~\ref{prop:positivity}). The $\gamma$-knob re-opens
+identifiability \emph{continuously from an exact zero}; the instrument's
+claims need nothing from M1/M2.
+\end{corollary}
+
+\begin{proposition}[query lower bound]
+\label{prop:query}
+Let the planner select, at each real step, the first action of an imagined
+argmax over a candidate set $\mathcal{C}$ under the blind model. Assume
+\textup{(RG)} every candidate whose imagined path enters the phantom
+basin $B(c, r_0)$ out-scores every candidate that stays outside
+$B(c, r_{\mathrm{out}})$, and \textup{(C)} $\mathcal{C}$ contains an
+entering candidate. Then the selected imagined path crosses the annulus
+(Lemma~\ref{lem:crossing} applied to imagined paths), so the planner
+queries the disagreement region with probability $1$: the companion
+paper's play-cost upper bound is tight-side-active on this instrument.
+\end{proposition}
+\begin{proof}
+By (C) an entering candidate exists; by (RG) no non-entering candidate is
+the argmax; the entering path passes from outside $r_{\mathrm{out}}$ to
+inside $r_0 < r_{\mathrm{in}}$ and Lemma~\ref{lem:crossing} places one of
+its steps in $A$. (RG) is \emph{checkable, not behavioral}: at the frozen
+defaults it holds with margin over the visited-state envelope and is
+verified numerically before every arm, in the pre-registration style of
+the discrete paper; (C) is logged. Measured: blind contact rate $1.0$ at
+every $\gamma$.
+\end{proof}
+
+The impossibility grades split cleanly:
+$r_{\mathrm{int}}(0) = 0$ is \emph{exact} (a theorem, measured $0.0000$
+at $n = 4000$), whereas the \emph{hidden} channel at $\gamma > 0$ has
+$r_{\mathrm{int}} > 0$ but of tube order $\rho^h$ ---
 positive yet below measurement at our budgets. These are two different
 \emph{grades} of impossibility, and Sections~\ref{sec:mechanism}
 and~\ref{sec:openring} show the gate and the planner cannot tell them
@@ -443,13 +576,6 @@ a theorem and a curve passing through measurably positive values.}
 \label{fig:gammacurves}
 \end{figure}
 
-Two further regularities of the $\gamma$-curves (monotone direct-entry
-counts and a first-divergence identity) remain \emph{measured-only}: we
-state them as such. The one local proof route we pursued was refuted by the
-data itself (a freeze-rescue effect produced $91/91$ CI-separated
-violations of the key pointwise estimate), and we record the refutation
-rather than weaken the claim --- the provable/measured split is part of the
-result, as in the companion papers.
 
 \section{Mechanism without LLMs: three regimes, one knob}
 \label{sec:mechanism}
