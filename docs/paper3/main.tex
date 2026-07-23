@@ -169,27 +169,70 @@ $\mathcal{R}$.
 \section{The instrument: a mode with an inside}
 \label{sec:instrument}
 
-% TODO: expand from docs/paper3/RESEARCH-DIRECTION.md §3 + envs.py docstrings.
-% Content plan:
-% - RingField2D: 2D thrust/drag integrator (identical family to paper 2's
-%   PatchField2D: dt 0.1, gain 3.0, drag 0.3, scalar heading action), annular
-%   freeze band A = {3.5 <= |p - c| <= 5.0} at c = (12, 0); freeze-at-previous
-%   -position semantics; two sigmoid lodes (real amp 0.3 at (-6,0); phantom
-%   amp 1.0 at c) — the phantom is wrapped by the ring.
-% - The three knobs: gamma (angular channel width, gap_center pi = facing /
-%   0 = hidden), start (outside / inside), and — for Section 8 — n.
-% - Frozen defaults and calibration (thickness 1.5 > max step ~1.0: Lemma 2's
-%   hypothesis with margin); rarity at defaults r = 0.045 outside.
-% - Protocol identical to paper 2: N = 40 uniform-random rollouts, pinned
-%   integrator, eps = 1e-9 exact gate, <= 5 refines, play_cost normalized
-%   regret with paired seeds.
-% - ShellFieldN preview (n-dim shell, thrust-vector action, norm cap).
+\texttt{RingField2D} is the companion paper's plant with one structural
+change. The state is $(x, y, v_x, v_y)$; a scalar action
+$a \in [-a_{\max}, a_{\max}]$ maps to a thrust heading
+$\phi = \pi a / a_{\max}$; velocities integrate with gain $3.0$ and drag
+$0.3$ at $dt = 0.1$ (the same semi-implicit integrator family as
+PatchField2D, so every planner and every synthesis-protocol constant carries
+over unchanged). The reward is two radial sigmoid lodes: a small
+\emph{real} one (amplitude $0.3$) behind the start at $(-6, 0)$, and a
+large \emph{phantom} one (amplitude $1.0$) at $c = (12, 0)$. The structural
+change is the mode: an \textbf{annular freeze band}
+$A = \{\, r_{\mathrm{in}} \le \lVert p - c \rVert \le
+r_{\mathrm{out}} \,\}$ with $r_{\mathrm{in}} = 3.5$ and
+$r_{\mathrm{out}} = 5.0$, wrapping the phantom lode. A step whose next
+position lands in $A$ freezes at the \emph{previous} position with zero
+velocity --- the same inelastic-stop semantics as the companion paper's
+patches, but now the region has an inside: the ring separates the plane, and
+its defining feature ($\beta_1 = 1$, the hole) is exactly the part no
+outside observer ever touches.
+
+Three pre-registered knobs deform the relationship between the mode and what
+is reachable, without touching the mode's local physics:
+\begin{itemize}
+\item \textbf{Channel width $\gamma$} (radians): an angular gap cut from
+  the ring. $\gamma = 0$ is the closed ring ($\beta_1 = 1$); any
+  $\gamma > 0$ is an open C-shape ($\beta_1 = 0$, contractible).
+\item \textbf{Channel orientation}: centered facing the start
+  (\texttt{gap\_center} $= \pi$) or hidden on the far side
+  (\texttt{gap\_center} $= 0$). Both have identical topology at equal
+  $\gamma$; only the channel's position relative to the start and the
+  planner's optimal path differs.
+\item \textbf{Start side}: outside the ring (the default; the interior is
+  then unreachable at $\gamma = 0$, Lemma~\ref{lem:crossing}) or inside
+  the hole (the interior evidence regime).
+\end{itemize}
+The defaults were frozen once at calibration and never tuned per cell:
+thickness $w = 1.5$ exceeds the maximal per-step displacement
+$\Delta \le 1.0$ (Section~\ref{sec:theory}), so the no-jump-over lemma
+holds with margin for real and imagined rollouts alike; the outside contact
+rarity at the defaults is $r = 0.045$ per rollout. The synthesis protocol is
+the companion paper's, verbatim: $N = 40$ uniform-random rollouts as
+evidence and gate, the integrator pinned in the contract, exactness
+tolerance $\varepsilon = 10^{-9}$, at most $5$ refine iterations, and
+\texttt{play\_cost} the paired-seed normalized regret of planning on the
+artifact and executing in the truth. Section~\ref{sec:ndim} generalizes the
+instrument to \texttt{ShellField}-$n$ --- the same two-lode geometry with a
+spherical shell $S^{n-1}$ in the first two coordinates and a thrust-vector
+action $\vec a \in [-1, 1]^n$ (norm-capped) --- so that the ambient
+dimension $n$ becomes a fourth knob.
 
 \section{Theory: the gate quotient}
 \label{sec:theory}
 
-% TODO: port the Setup block from THEORY.md (reachable query set as support
-% of the occupation measure; sampling gate of size N).
+\paragraph{Setup.} Deterministic dynamics $f : S \times A \to S$ on
+$S \subseteq \mathbb{R}^d$, initial distribution $\mu_0$, episode horizon
+$h$, and a \emph{gate policy} $\rho$ selecting actions (uniform-random in
+our gates, though nothing below needs that). The \textbf{reachable query
+set} $\mathcal{R}(f, \mu_0, \rho, h)$ is the set of pairs $(s, a)$ at
+which some length-${\le}h$ trajectory under $(f, \mu_0, \rho)$ queries
+$f$ with positive probability --- taken in continuous spaces as the support
+of the induced occupation measure.
+A \emph{sampling gate} of any size $N$ draws trajectories under
+$(f, \mu_0, \rho)$ and accepts a candidate $\hat f$ iff $\hat f$
+reproduces every queried transition (within any tolerance, including
+exactly).
 
 \begin{proposition}[gate quotient]
 \label{prop:quotient}
@@ -204,9 +247,26 @@ complement $\mathcal{G} = (S \times A) \setminus \mathcal{R}$ is gauge
 freedom, unfalsifiable by any sample drawn under $\rho$.
 \end{proposition}
 
-% TODO: proof (short; port from THEORY.md), plus the relation-to-paper-2
-% remark: Prop 1 is the structural, N-independent limit of the
-% identifiability proposition ((1-r)^N with r = 0).
+\begin{proof}
+By induction on the step index, a trajectory under $(f, \mu_0, \pi)$ whose
+queries lie in $\mathcal{R}$ is a trajectory under $(\hat f, \mu_0, \pi)$
+with the same realizations: the state after step $t$ is a function of
+$\mu_0$, the action sequence, and the queried values of $f$, which agree
+with $\hat f$'s on $\mathcal{R}$. Gate draws use $\pi = \rho$, whose
+queries lie in $\mathcal{R}$ by definition (up to a null set), so acceptance
+statistics coincide; $f \in E(f)$ is accepted almost surely, hence so is
+every member.
+\end{proof}
+
+\begin{remark}[relation to the companion identifiability proposition]
+The companion paper's identifiability result conditions on the finite-sample
+event ``the mode region was missed,'' of probability $(1 - r)^N \to 0$ when
+$r > 0$. Proposition~\ref{prop:quotient} is its structural,
+$N$-independent limit: on $\mathcal{G}$ the miss probability is $1$ for
+\emph{every} $N$. The companion's prior caveat --- a prior or the
+specification could still supply the mode --- is exactly the statement that
+$E(f)$ is not a singleton.
+\end{remark}
 
 \begin{lemma}[metric crossing]
 \label{lem:crossing}
@@ -218,6 +278,50 @@ step. Consequently, at $\gamma = 0$ with freeze-on-entry dynamics the open
 interior is reach-null: the inner disc $\times$ all actions lies in
 $\mathcal{G}$.
 \end{lemma}
+
+\begin{proof}
+$g(t) = \lVert p_t - c \rVert$ changes by at most $\Delta$ per step
+(distance-to-center is 1-Lipschitz). Let $t^*$ be the first index with
+$g(t^*) < r_{\mathrm{out}}$. If $g(t^*) < r_{\mathrm{in}}$ then
+$g(t^*{-}1) \ge r_{\mathrm{out}}$ forces a step longer than
+$w > \Delta$, a contradiction; so $p_{t^*} \in A$. Under the freeze
+semantics the first landing in $A$ is replaced by the previous (outside)
+position with zero velocity, so $g$ never drops below $r_{\mathrm{in}}$;
+induct.
+\end{proof}
+
+At the frozen defaults the hypothesis holds with margin: speed obeys
+$\lVert v_{t+1} \rVert \le (1 - \mathrm{drag}\,dt)\lVert v_t \rVert +
+\mathrm{gain}\,dt$, so $\lVert v \rVert \le \mathrm{gain}/\mathrm{drag}
+= 10$ and $\Delta \le 1.0 < w = 1.5$ --- for real \emph{and} imagined
+rollouts, since planners use the same integrator and action clamp. Measured:
+200 calibration rollouts visit zero interior states while reaching the ring
+itself.
+
+\begin{corollary}[evidence equivalence of disc and annulus from outside]
+\label{cor:evidence}
+From outside starts no landing ever falls at
+$d < r_{\mathrm{in}}$, so the disc mode
+$\lVert p - c \rVert \le r_{\mathrm{out}}$ and the annulus mode fire on
+exactly the same steps of every realization: the contact processes --- and
+hence \emph{all} evidence any gate, repair loop, or topological summary
+extracts --- are pathwise identical. (Measured as an exact row-for-row
+equality of the two contact clouds at every sample size.) The companion
+paper's dimensional reduction is \emph{rational given the evidence}:
+outside data cannot even pose the disc-versus-annulus question.
+\end{corollary}
+
+\begin{remark}[metric, not topological --- where algebraic topology is
+earned]
+Lemma~\ref{lem:crossing} uses only that distance-to-center is 1-Lipschitz;
+it works verbatim for round shells $S^{n-1}$ in $\mathbb{R}^n$ and needs no
+homology. Genuine algebraic topology is \emph{earned} exactly where this
+proof dies: non-round separators (Jordan--Brouwer to even define
+``inside'') and non-separating modes (winding and linking obstructions).
+The round ring deliberately sits on the metric side of that boundary; the
+topology enters through what the gauge region and its boundary class
+organize, not through the crossing proof.
+\end{remark}
 
 \begin{proposition}[wrong topology: unfalsifiable and harmless at $\gamma = 0$]
 \label{prop:harmless}
@@ -231,18 +335,68 @@ under $\hat f_{\mathrm{fill}}$ and under $f$ ---
 $\mathrm{play\_cost} = 0$ exactly.
 \end{proposition}
 
-% TODO: proof (Prop 1 + Lemma 2 for (i); imagination-equivalence for (ii));
-% the bitwise confirmation note (paired-seed MPC episodes identical in
-% return, final state, contact); and the triad remark: certifiability,
-% correctness, and consequence are three different things, and one knob
-% (gamma) separates them.
+\begin{proof}
+(i) is Proposition~\ref{prop:quotient} plus Lemma~\ref{lem:crossing}: the
+two models disagree only on next-states in the open interior, which lies
+outside $\mathcal{R}$. (ii) Imagined rollouts from an outside state under
+either model freeze at the same first-annulus landing --- the models agree
+on $A$ and outside, and by Lemma~\ref{lem:crossing} (applied to imagined
+paths, which use the same integrator and step bound) imagination never
+produces an interior query where they differ. Every candidate action
+sequence therefore receives the same imagined return under both models; a
+deterministic planner selects the same action at every real step, and the
+real environment does the rest.
+\end{proof}
 
-% TODO: subsection "The gamma-curves" — Props 5-9 condensed (r nonincreasing
-% in gamma, pathwise; continuity; r_int(0) = 0 exactly vs hidden-channel
-% positivity-below-measurement: two GRADES of impossibility); Prop 4 (query
-% lower bound) under (RG)+(C); the honest measured-only ledger: M1/M2 stated
-% as measured regularities with the closed proof routes named (KEY refuted
-% by freeze-rescue), per the papers' provable/measured discipline.
+Measured \emph{bitwise}, as designed: paired-seed MPC episodes on $f$
+versus $\hat f_{\mathrm{fill}}$ are identical in return, final state, and
+contact, seed for seed.
+
+\begin{remark}[the triad]
+\label{rem:triad}
+Proposition~\ref{prop:harmless} is the cleanest statement of a three-way
+split this paper keeps separating: \emph{certifiability},
+\emph{correctness}, and \emph{consequence} are three different things. At
+$\gamma = 0$ the filled-disc artifact is wrong, certified, and costless;
+$\gamma > 0$ continuously converts the same wrongness into
+$(1 - r(\gamma))^N$-gated danger --- $E(f)$ shrinks and
+$\hat f_{\mathrm{fill}}$ exits it. One knob walks one artifact through
+all three regimes (Section~\ref{sec:mechanism}).
+\end{remark}
+
+\subsection{The $\gamma$-curves and the query lower bound}
+\label{sec:gammacurves}
+
+Four further statements are proved in the technical companion material and
+used below; we state them informally. \textbf{(a)} The contact rarity
+$r(\gamma)$ is nonincreasing in $\gamma$ (pathwise: enlarging the channel
+can only delete contacts from a fixed realization; $0$ violations in
+$44{,}000$ common-random-number checks). \textbf{(b)} $r(\gamma)$ and the
+interior-entry rarity $r_{\mathrm{int}}(\gamma)$ are continuous in
+$\gamma$ (modulo an explicit density constant). \textbf{(c)}
+$r_{\mathrm{int}}(0) = 0$ \emph{exactly} (Lemma~\ref{lem:crossing}: a
+theorem, measured $0.0000$ at $n = 4000$), whereas the \emph{hidden}
+channel at $\gamma > 0$ has $r_{\mathrm{int}} > 0$ but of tube order ---
+positive yet below measurement at our budgets. These are two different
+\emph{grades} of impossibility, and Sections~\ref{sec:mechanism}
+and~\ref{sec:openring} show the gate and the planner cannot tell them
+apart while behaving identically on both. \textbf{(d)} Under two checkable
+hypotheses --- (RG), a reward gap making some channel-entering candidate
+dominate every non-entering one, and (C), candidate coverage --- the blind
+planner's imagined argmax path must cross the annulus, so the planner
+queries the disagreement region with probability~1: the companion paper's
+play-cost upper bound is tight-side-active on this instrument. (RG) is
+verified numerically over the visited-state envelope before every arm, in
+the pre-registration style of the discrete paper; (C) is logged. Measured:
+blind contact rate $1.0$ at every $\gamma$ in calibration.
+
+Two further regularities of the $\gamma$-curves (monotone direct-entry
+counts and a first-divergence identity) remain \emph{measured-only}: we
+state them as such. The one local proof route we pursued was refuted by the
+data itself (a freeze-rescue effect produced $91/91$ CI-separated
+violations of the key pointwise estimate), and we record the refutation
+rather than weaken the claim --- the provable/measured split is part of the
+result, as in the companion papers.
 
 \section{Mechanism without LLMs: three regimes, one knob}
 \label{sec:mechanism}
