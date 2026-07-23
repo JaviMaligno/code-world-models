@@ -1,0 +1,500 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[round]{natbib}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\bibliographystyle{plainnat}
+
+\emergencystretch=3em
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% Working title — TODO: settle before submission.
+\title{Topology Relative to Reach: What a Certified Code World Model Can
+Know About an Enclosed Mode}
+
+\author{Javier Aguilar Mart\'in\\ AGILabs (\href{https://javieraguilar.ai}{javieraguilar.ai})}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+A code world model accepted by a sampling gate can be exactly right on
+everything the gate can see and arbitrarily wrong beyond it. We characterize
+what a certified model can know --- and what its errors can cost --- when the
+omitted structure is a topologically nontrivial region: an annular freeze
+mode enclosing an unreachable interior. The \emph{gate quotient} makes the
+question precise: acceptance-with-certainty determines the model exactly up
+to the reachable query set, so everything beyond reach is gauge. On a minimal
+ring instrument we prove the extreme case --- a wrong-topology filled-disc
+artifact is unfalsifiable by \emph{any} sampling gate and bitwise harmless at
+play --- and measure, with real LLM synthesis across three model families,
+how a single knob (an angular channel of width $\gamma$) walks the same
+artifact through three regimes: unfalsifiable-and-harmless,
+falsifiable-and-costly, and instantly falsified. Two results organize the
+empirics. First, \textbf{danger is topology relative to reach, not
+topology}: opening a channel the planner can use collapses the blind model's
+exploitation (\texttt{play\_cost} $1.09 \to {\sim}0$ over a knee at
+$\gamma \approx 0.1$), while a hidden channel with the \emph{same} first
+Betti number keeps it at full strength ($1.12$). Second, \textbf{repair is
+parameter-bound and sensor-bound}: from outside evidence no family recovers
+the region (superstitious point fits); from inside, models pose the right
+topology but cannot pin its parameters to the gate's precision --- and the
+persistent-homology summary that guides them has a measurable resolution
+limit that propagates its own wrong $\hat\beta_1$ into the certified
+artifacts. In $n$ dimensions the enclosing shell makes the identifiability
+event near-certain ($r(n) \to 0$) while the danger stays fully exploitable
+--- rarity and reachability are independent knobs of the danger law.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+In the Code World Model (CWM) paradigm, a language model synthesizes an
+executable world model that a classical planner searches, and the model is
+accepted when it reproduces sampled transitions. Two companion papers
+established that this gate certifies the wrong thing, following a
+quantitative law, $\mathrm{danger} = \mathrm{play\_cost} \times
+(1-\mathrm{rarity})^N$: in discrete games \citep{aguilar2026verified}, and in
+continuous hybrid systems, where an omitted mode is a rare rule and the
+danger collapses to pure identifiability \citep{aguilar2026omitted}. The
+continuous paper ended on a sharpened negative: repair-from-data is
+geometry-dependent, and its two ablations located the mechanism in a
+\emph{template prior} --- the synthesizer selects low-descriptive-complexity
+region forms (1D thresholds, radial balls) instead of inducing the boundary,
+flattening curves and curving flats alike. Curvature is not the axis. This
+paper takes up the axis that survived: \textbf{topology} --- and shows that
+the right formulation is not the topology of the mode but its topology
+\emph{relative to what the certifying process and the planner can reach}.
+
+% TODO: 1-2 paragraphs motivating the enclosed-mode setting (why an annulus:
+% the minimal region whose defining feature — the hole — is invisible from
+% outside; safety framing: fences, containment shells, geofences).
+
+The instrument is deliberately minimal (Section~\ref{sec:instrument}): a 2D
+thrust-and-drag plant with an annular freeze band (inner radius $3.5$, outer
+$5.0$) wrapping a high-reward ``phantom'' lode, with three pre-registered
+knobs --- an angular channel of width $\gamma$ (closed ring at $\gamma = 0$),
+the channel's orientation (facing the start or hidden behind the lode), and
+the start side (outside or inside the hole). Everything the paper claims
+follows from what these knobs do to the \emph{reachable query set}
+$\mathcal{R}$.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+\item \textbf{The gate quotient and the unfalsifiable-and-harmless theorem}
+  (Section~\ref{sec:theory}). Acceptance-with-certainty determines a model
+  exactly up to $\mathcal{R}$; beyond it is gauge
+  (Proposition~\ref{prop:quotient}). On the closed ring, the wrong-topology
+  filled-disc artifact is unfalsifiable by any sampling gate \emph{and}
+  bitwise planner-equivalent to the truth
+  (Proposition~\ref{prop:harmless}, confirmed episode-for-episode).
+  Monotonicity, continuity, and positivity of the rarity curves in $\gamma$
+  round out the provable core (Propositions~5--9, stated in
+  Section~\ref{sec:theory}; two clean regularities remain measured-only,
+  and we say so).
+\item \textbf{The three-regime mechanism, without LLMs}
+  (Section~\ref{sec:mechanism}). One artifact walks through
+  unfalsifiable-and-harmless ($\gamma = 0$), falsifiable-and-costly (facing
+  $\gamma > 0$), and instantly-falsified (inside start) as the knobs move.
+  Two readings matter later: an \emph{invented} mode is exploited
+  \emph{below random} from inside ($\mathrm{play\_cost}$ $1.77$ --- the dual
+  of phantom-free-space exploitation), and the hidden channel is
+  observationally \emph{identical} to the closed ring --- same $\beta_1$
+  change, no observable consequence.
+\item \textbf{LLM synthesis on the closed ring, three families}
+  (Section~\ref{sec:synthesis}). The identifiability event is
+  family-independent (GPT-5.x, Qwen, Claude: every mode-absent sample yields
+  a certified, blind, exploited model at $\mathrm{play\_cost} \approx
+  1.12$). No family repairs the ring from outside evidence --- a behavioral
+  audit shows the gate-passing ``repairs'' are measure-zero point fits.
+  From inside, models \emph{pose} the right topology but repair is
+  \textbf{parameter-bound}: the single certified recovery (1/20) used the
+  gauge-free disc-complement form whose one parameter is the true round
+  radius anchored in the reward specification --- and the strongest
+  cross-family repairer (Claude, 3/3) used exactly the same form.
+\item \textbf{The open-ring arm: danger is topology relative to reach}
+  (Section~\ref{sec:openring}). Pre-registered sweep over $\gamma$: the
+  blind model's exploitation collapses over a knee at $\gamma \approx 0.1$
+  (channel arc-width comparable to the planner's step) when the channel
+  faces the start, and \emph{persists at full strength} ($1.116$) at the
+  same $\gamma$ when the channel is hidden --- identical $\beta_1$, opposite
+  danger. Gate-pass from inside stays ${\approx}0$ at every $\gamma$, and
+  the two certified passes at wide $\gamma$ are \emph{certified-wrong}:
+  mode-blind on the probes, harmless only because the open ring no longer
+  obstructs.
+\item \textbf{The evidence sensor has finite resolution --- and it
+  propagates} (Section~\ref{sec:sensor}). The pre-registered
+  persistent-homology summary reports $\hat\beta_1 = 1$ for every channel
+  narrower than ${\sim}2$ arc-units (flip at $\gamma \approx 1.8$) even
+  though the true $\beta_1 = 0$ for all $\gamma > 0$; the posed artifact
+  topology tracks the \emph{guidance}, not the truth. An honest,
+  finite-resolution sensor causes wrong-topology certified models. On the
+  $n$-dimensional shell, inside-start evidence recovers $\beta_{n-1}$ up to
+  $n = 5$ where outside evidence recovers it at \emph{no} $n$ --- recovery
+  is start-governed, and the Niyogi--Smale--Weinberger density bound makes
+  the outside failure computable in advance.
+\item \textbf{Dimension as the rarity knob; the two axes are independent}
+  (Section~\ref{sec:ndim}). On ShellField-$n$ the contact rarity collapses
+  geometrically ($r(n) \to 0$ by $n = 4$), making mis-synthesis
+  near-certain, while a competent vector planner is exploited at
+  $\mathrm{play\_cost} \approx 1.0$ at \emph{every} $n \le 6$ --- rarity
+  (synthesis axis) and reachability (play axis) are independent knobs, and
+  a high-$n$ enclosed mode maxes out both.
+\item \textbf{A behavioral audit methodology} (used throughout): probe each
+  artifact's \texttt{step()} on a state grid, classify the shape of its
+  deviation-from-integrator set. It verified the companion paper's hand
+  inspection, corrected our own first reading of the inside-start failures,
+  and separates ``posed the wrong structure'' from ``posed the right
+  structure with unidentifiable parameters.''
+\end{enumerate}
+
+% TODO: closing intro paragraph — what the practitioner should take away
+% (certification is a statement about the reachable set; a fence you cannot
+% reach is a fence you cannot certify; sensor resolution bounds repair).
+
+\section{The instrument: a mode with an inside}
+\label{sec:instrument}
+
+% TODO: expand from docs/paper3/RESEARCH-DIRECTION.md §3 + envs.py docstrings.
+% Content plan:
+% - RingField2D: 2D thrust/drag integrator (identical family to paper 2's
+%   PatchField2D: dt 0.1, gain 3.0, drag 0.3, scalar heading action), annular
+%   freeze band A = {3.5 <= |p - c| <= 5.0} at c = (12, 0); freeze-at-previous
+%   -position semantics; two sigmoid lodes (real amp 0.3 at (-6,0); phantom
+%   amp 1.0 at c) — the phantom is wrapped by the ring.
+% - The three knobs: gamma (angular channel width, gap_center pi = facing /
+%   0 = hidden), start (outside / inside), and — for Section 8 — n.
+% - Frozen defaults and calibration (thickness 1.5 > max step ~1.0: Lemma 2's
+%   hypothesis with margin); rarity at defaults r = 0.045 outside.
+% - Protocol identical to paper 2: N = 40 uniform-random rollouts, pinned
+%   integrator, eps = 1e-9 exact gate, <= 5 refines, play_cost normalized
+%   regret with paired seeds.
+% - ShellFieldN preview (n-dim shell, thrust-vector action, norm cap).
+
+\section{Theory: the gate quotient}
+\label{sec:theory}
+
+% TODO: port the Setup block from THEORY.md (reachable query set as support
+% of the occupation measure; sampling gate of size N).
+
+\begin{proposition}[gate quotient]
+\label{prop:quotient}
+Let $\mathcal{R}(f, \mu_0, \rho, h)$ be the reachable query set of the truth
+$f$ under the gate policy $\rho$, and let $\hat f$ be any model with
+$\hat f|_{\mathcal{R}} = f|_{\mathcal{R}}$. Then for every $N$ the sampling
+gate accepts $\hat f$ with probability~1, and the trajectory law of any
+policy whose queries stay in $\mathcal{R}$ is identical under $f$ and
+$\hat f$. The set of models accepted with certainty is exactly the extension
+class $E(f) = \{ \hat f : \hat f|_{\mathcal{R}} = f|_{\mathcal{R}} \}$; the
+complement $\mathcal{G} = (S \times A) \setminus \mathcal{R}$ is gauge
+freedom, unfalsifiable by any sample drawn under $\rho$.
+\end{proposition}
+
+% TODO: proof (short; port from THEORY.md), plus the relation-to-paper-2
+% remark: Prop 1 is the structural, N-independent limit of the
+% identifiability proposition ((1-r)^N with r = 0).
+
+\begin{lemma}[metric crossing]
+\label{lem:crossing}
+If positions move in steps of norm at most $\Delta$ and the annulus
+$A = \{ r_{\mathrm{in}} \le \lVert p - c \rVert \le r_{\mathrm{out}} \}$ has
+thickness $w = r_{\mathrm{out}} - r_{\mathrm{in}} > \Delta$, then any
+trajectory from outside to the open interior visits $A$ at an intermediate
+step. Consequently, at $\gamma = 0$ with freeze-on-entry dynamics the open
+interior is reach-null: the inner disc $\times$ all actions lies in
+$\mathcal{G}$.
+\end{lemma}
+
+\begin{proposition}[wrong topology: unfalsifiable and harmless at $\gamma = 0$]
+\label{prop:harmless}
+Let $f$ be the closed-ring dynamics and $\hat f_{\mathrm{fill}}$ the
+filled-disc model (freeze on the whole disc
+$\lVert p - c \rVert \le r_{\mathrm{out}}$). Then (i)
+$\hat f_{\mathrm{fill}} \in E(f)$: every sampling gate accepts it with
+probability~1; and (ii) any deterministic planner whose imagined rollouts
+start at real (outside) states produces \emph{identical} real trajectories
+under $\hat f_{\mathrm{fill}}$ and under $f$ ---
+$\mathrm{play\_cost} = 0$ exactly.
+\end{proposition}
+
+% TODO: proof (Prop 1 + Lemma 2 for (i); imagination-equivalence for (ii));
+% the bitwise confirmation note (paired-seed MPC episodes identical in
+% return, final state, contact); and the triad remark: certifiability,
+% correctness, and consequence are three different things, and one knob
+% (gamma) separates them.
+
+% TODO: subsection "The gamma-curves" — Props 5-9 condensed (r nonincreasing
+% in gamma, pathwise; continuity; r_int(0) = 0 exactly vs hidden-channel
+% positivity-below-measurement: two GRADES of impossibility); Prop 4 (query
+% lower bound) under (RG)+(C); the honest measured-only ledger: M1/M2 stated
+% as measured regularities with the closed proof routes named (KEY refuted
+% by freeze-rescue), per the papers' provable/measured discipline.
+
+\section{Mechanism without LLMs: three regimes, one knob}
+\label{sec:mechanism}
+
+% TODO: expand from EXPERIMENTS.md "RingField2D mechanism grid". Content:
+% - The grid (400 rollouts + 16 paired MPC episodes/cell) over gap x channel
+%   x start; the filled-disc artifact as the probe.
+% Headline table (condensed from the mechanism grid):
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lllrrr}
+\toprule
+$\gamma$ & channel & start & $\mathrm{disagree}_{\mathrm{fill}}$ &
+$\mathrm{pc}_{\mathrm{blind}}$ & $\mathrm{pc}_{\mathrm{fill}}$ \\
+\midrule
+0.0 & ---     & outside & 0.000000 & 0.999 & 0.000 \\
+0.6 & facing  & outside & 0.000844 & 0.022 & 0.343 \\
+0.6 & hidden  & outside & 0.000000 & 0.999 & 0.000 \\
+1.2 & facing  & outside & 0.000625 & 0.007 & 0.220 \\
+0.0 & ---     & inside  & 0.968500 & 0.000 & 1.769 \\
+\bottomrule
+\end{tabular}
+\caption{The three-regime walk (excerpt). One wrong-topology artifact:
+unfalsifiable and harmless ($\gamma = 0$, the bitwise theorem), falsifiable
+and costly (facing channel), instantly falsified (inside start). The hidden
+channel is observationally identical to the closed ring although it changes
+$\beta_1$. \emph{TODO: full grid + Wilson CIs.}}
+\label{tab:mechanism}
+\end{table}
+
+% - Reading 1: below-random exploitation of an INVENTED mode from inside
+%   (pc_fill 1.769): hallucinated freezes tie all imagined returns and the
+%   planner drifts off the lode it sits on — the dual of paper 2's
+%   phantom-free-space lure.
+% - Reading 2: policy-relative reachability beats topology (hidden rows
+%   identical to closed at every eps) — the thesis in one table, pre-LLM.
+% - Reading 3 (two grades of impossibility): gamma = 0 interior is EXACTLY
+%   reach-null (theorem); hidden-channel r_int is positive but below
+%   measurement — grades that Section 6 will separate behaviorally.
+
+\section{LLM synthesis on the closed ring: three families}
+\label{sec:synthesis}
+
+% TODO: expand from EXPERIMENTS.md "RingField2D LLM synthesis arm" +
+% "Cross-family (Claude/Qwen)" + "Per-artifact behavioral audit". Protocol
+% identical to paper 2 (20 seeds/cell, N=40, eps=1e-9, <=5 refines; cells
+% A default/outside, B region/outside, C tda/outside, D tda/inside).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llrrl}
+\toprule
+cell & prompt / start & pass & mode-present & terminal classes (behavioral) \\
+\midrule
+A & default / out & 6/20 & 14 & fill-unbounded 13, blind 7 (large) \\
+B & region / out  & 8/20 & 14 & blind 16, arc 2, disc 1, point 1 \\
+C & tda / out     & 9/20 & 14 & blind 19, vdep 1 \\
+D & tda / inside  & 1/20 & 20 & arc 5, point 4, blind 4, disc 2, compl.\ 2, loop 2, vdep 1 \\
+\bottomrule
+\end{tabular}
+\caption{GPT-5.x large, closed ring ($\gamma = 0$). Every gate pass in
+A--C is a mode-absent blind artifact (exploited at
+$\mathrm{play\_cost} \approx 1.12$) or a measure-zero point fit; the one D
+pass is the gauge-free complement form. \emph{TODO: mini twin numbers;
+Qwen/Claude cross-family rows; blind-reference gate column.}}
+\label{tab:closedring}
+\end{table}
+
+% Content plan:
+% - Identifiability event family-independent (3 families; pc 1.1164
+%   bit-identical because the blind planner is family-independent by
+%   construction).
+% - No repair from outside: behavioral audit — gate-passing mode-present
+%   artifacts are textual point fits, behaviorally blind (wb = 1.0); from
+%   outside, ring and disc evidence are pathwise identical (Lemma 2
+%   corollary), so the summary can only report the reachable arc.
+% - From inside, repair is PARAMETER-bound, not structure-bound: half the
+%   mini cells pose closed/hollow structures (guidance-compliant) yet
+%   terminal gates average 0.56 vs blind reference 0.971 — posed regions
+%   with wrong parameters over-freeze demonstrably-free states. (This
+%   corrects our own first reading — template-prior collapse — and the
+%   audit is what corrected it.)
+% - How the ONE passer passed: complement form (freeze iff landing
+%   distance >= 3.5 around the reward-spec center), single parameter = the
+%   true round inner radius; outer boundary gauge-free (Prop 1). Claude's
+%   3/3 relay repairs: same form. Gate-pass measures (reachable-equivalent
+%   structure) x (exact-parameter guessability).
+% - Claude relay protocol note (context-free agent relay; integrity check:
+%   non-recovered cells plateau below 1.0).
+
+\section{The open-ring arm: danger is topology relative to reach}
+\label{sec:openring}
+
+% TODO: expand from EXPERIMENTS.md "Registered open-ring arm". Spec
+% pre-registered H1/H2/H3; driver/aggregator; 20-30 seeds/cell mini + large
+% robustness + Claude spots.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+$\gamma$ & 0.0 & 0.02 & 0.05 & 0.1 & 0.15 & 0.2 & 0.4 & 0.6 & 1.2 \\
+\midrule
+$\mathrm{pc}_{\mathrm{blind}}$ (facing) & 0.999 & 0.543 & 0.340 & 0.139 & 0.001 & 0.015 & 0.023 & 0.022 & 0.007 \\
+contact rate & 1.00 & 0.94 & 0.56 & 0.44 & 0.12 & 0.06 & 0.00 & 0.00 & 0.00 \\
+\bottomrule
+\end{tabular}
+\caption{H1, the danger curve (CPU, 16 paired MPC episodes/point): the blind
+model's exploitation collapses over a knee at $\gamma \approx 0.1$ ---
+channel arc-width $\gamma \, r_{\mathrm{in}} \approx 0.35$, comparable to
+the planner's step. The \emph{hidden} channel holds
+$\mathrm{pc} = 1.116$ at $\gamma = 0.6$ \emph{and} $1.2$: same $\beta_1$,
+opposite danger. LLM-arm confirmations at $\gamma \in \{0.1, 0.6\}$
+reproduce the curve in both model sizes and in the Claude relay
+(0.348 at the knee, all three families). \emph{TODO: figure.}}
+\label{tab:dangercurve}
+\end{table}
+
+% Content plan:
+% - H1 verdict + the mechanism: the phantom stops being phantom — as gamma
+%   opens, the blind plan (straight at the lode) becomes executable on the
+%   truth, so blind and truth agree along the optimal path: E(f)-agreement
+%   on the OPERATIVE path, the gate quotient at work on the play side.
+% - H3: inside gate-pass ~0 at every gamma (1/40, 0/20, 0/40, 0/20, 1/30,
+%   1/40); channel-edge angles pi +- gamma/2 are not round-guessable. The
+%   two wide-gamma passes are certified-WRONG (wall-blind 1.0, pc 0.0):
+%   even the strongest repairer's passes are not repairs.
+% - Identifiability axis alongside: mode-absent rate rises with gamma
+%   (6->16 of 20) as the ring shrinks — r and reachability move separately.
+
+\section{The evidence sensor has finite resolution}
+\label{sec:sensor}
+
+% TODO: expand from the audit section (detector curve) + open-ring H2 +
+% ShellField TDA inside/outside. Content plan:
+% - The pre-registered topological summary (honest, shape-agnostic wording;
+%   Rips with dedup 0.05 / cap 90 / 3x median-NN threshold) and its measured
+%   resolution curve: beta1-hat = 1 for every gamma <= 1.2, seed-dependent
+%   flip at 1.8, clean 0 at 2.4 — it cannot see a channel narrower than ~2
+%   arc-units at this density.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+$\gamma$ & 0.0 & 0.2 & 0.6 & 1.2 & 1.8 & 2.4 \\
+\midrule
+closed structures (disc/loop/complement) & 17 & 9 & 22 & 7 & 3 & 1 \\
+arc structures & 10 & 5 & 6 & 9 & 23 & 26 \\
+guidance $\hat\beta_1$ & 1 & 1 & 1 & 1 & mixed & 0 \\
+\bottomrule
+\end{tabular}
+\caption{H2: posed artifact topology tracks the \emph{guidance's}
+$\hat\beta_1$, not the true $\beta_1$ (which is $0$ for every
+$\gamma > 0$): closed structures dominate while the summary says ``closed
+loop'' and vanish where it honestly says ``arc.'' An honest sensor's
+resolution limit propagates into certified models. \emph{TODO: within-gap
+split at 1.8 (directionally consistent, underpowered at $n=30$); both
+sizes.}}
+\label{tab:sensor}
+\end{table}
+
+% - The shell TDA result: outside contact clouds recover beta_{n-1} at NO n
+%   (two failure modes: signal clarity — the cloud is a reachable arc — and
+%   NSW data starvation as r(n) collapses); inside clouds recover it at
+%   n = 2..5 (marginal at 6). Recovery is start-governed: the reachability
+%   theme, now for the sensor itself.
+% - Candidate formal statement (flagged as conjecture/program): repairable
+%   topology is bounded by the persistent-homology resolution of the
+%   contact evidence at the operative sampling density (NSW-computable).
+
+\section{Dimension as the rarity knob}
+\label{sec:ndim}
+
+% TODO: expand from EXPERIMENTS.md ShellField-n sections. Content plan:
+% - ShellField-n instrument (normalized geometry; thrust-vector action).
+% - r(n) collapse: 0.0133 / 0.0033 / 0.0017 / ~0 / ~0 for n = 2..6
+%   (concentration: a drift-free random walk loses the 2-plane) — by n >= 3
+%   the identifiability event is near-certain: n is a rarity knob.
+% - Truth-MPC navigates at every n <= 6 (planner not the bottleneck), and
+%   with axial candidate actions the blind model is exploited at pc ~ 1.0
+%   and contact 1.0 at EVERY n:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+$n$ & 2 & 3 & 4 & 5 & 6 \\
+\midrule
+$r(n)$ & 0.0133 & 0.0033 & 0.0017 & ${\sim}0$ & ${\sim}0$ \\
+$\mathrm{pc}_{\mathrm{blind}}$ & 1.023 & 1.013 & 0.994 & 0.991 & 0.996 \\
+blind contact & 1.0 & 1.0 & 1.0 & 1.0 & 1.0 \\
+\bottomrule
+\end{tabular}
+\caption{The two axes are independent: rarity collapses with $n$
+(synthesis axis: mis-synthesis near-certain) while exploitation stays at
+full strength (play axis: the competent planner always reaches the shell).
+\emph{TODO: the action-interface lesson (axial candidates) as a
+methods note --- an incompetent-planner confound we found and fixed.}}
+\label{tab:ndim}
+\end{table}
+
+\section{Related work}
+\label{sec:related}
+
+% TODO: port + extend paper 2's related work; add: persistent homology /
+% TDA (Edelsbrunner-Harer; stability Cohen-Steiner et al.), homology
+% inference sample bounds (Niyogi-Smale-Weinberger), reach (Federer),
+% model-based RL model-error literature (as in paper 2), safe RL /
+% reachability analysis (Hamilton-Jacobi), and the CWM line.
+
+\section{Limitations and honest assessment}
+\label{sec:limitations}
+
+% TODO, content plan (keep the papers' honest-residue style):
+% - One instrument family (ring/shell, round, freeze semantics); non-round
+%   and non-separating regions are the stated program, not results.
+% - Synthesis cells modest (20-30 seeds; three families but small-n relay
+%   spots); the within-gap H2 contrast underpowered (n=30).
+% - M1/M2 measured-only; (KEY) refuted — the honest math ledger.
+% - The sensor result is about OUR pre-registered summary (one detector at
+%   one density); the claim is the mechanism (resolution propagates), not
+%   the constant.
+% - Qwen D-cell blocked (credits); the D-cell family contrast rests on
+%   GPT (1/20) vs Claude (3/3).
+% - play_cost normalization at wide gamma (J_truth changes as the phantom
+%   becomes reachable — reported alongside, not hidden).
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+% TODO, content plan:
+% - The triad: certifiability, correctness, consequence — all three are
+%   statements about R, not about the mode. One knob separates them.
+% - For practitioners: a fence you cannot reach is a fence you cannot
+%   certify — and cannot be harmed by while it stays unreachable; the danger
+%   appears exactly when reach and omission intersect the optimal path.
+% - Repair needs evidence from the far side and a sensor that can see the
+%   topology at the operative density; both are measurable in advance.
+
+\section*{Reproducibility}
+
+% TODO: repo pointer, scripts list (mechanism grid, gamma probes, synthesis
+% harness + relay protocol, open-ring driver/aggregator, shellfield scripts,
+% behavioral audit), results JSONs, seeds/CRN conventions, resume discipline.
+
+\bibliography{references}
+
+\end{document}
