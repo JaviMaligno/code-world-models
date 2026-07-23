@@ -1,5 +1,43 @@
 # Experiments Log
 
+## PAPER 2 — Behavioral audit of the patch2d artifacts: the hand inspection VERIFIED (2026-07-23)
+
+`scripts/patch2d_artifact_audit.py` (oracle-selftested: 7 constructed classes
++ a two-patch case) → `results/patch2d_artifact_audit.json`. The same
+freeze-mask instrument built for paper 3's ring audit, adapted to
+PatchField2D: probe each artifact's `step()` on an 81×81 grid over
+[−2,14]×[−8,8] at two velocity slices, mark deviations from the pure
+integrator, classify the deviation set's SHAPE (halfplane-unbounded /
+disc-form / square-form / bounded-other / point / vdep / blind, with a
+textual-patch sub-split for measure-zero traps), measure per-patch coverage,
+and check integrator arithmetic on a west control strip (freeze-form
+deviations there are mode-rule overreach, not wrong arithmetic).
+
+**Every §7.1 hand-inspection claim is behaviorally CONFIRMED** (this matters
+because on paper 3's ring the same instrument *corrected* my hand reading —
+here it validates the paper's):
+
+| paper claim (hand inspection) | behavioral audit |
+|---|---|
+| 76 mode-present incomplete seeds | 76 ✓ |
+| 38/76 dimensional reduction (half-plane) | 39 ✓ |
+| 20 pure-blind + 9 superstitious | 13 pure-blind + 7 textual-patch (measure-zero traps, behaviorally blind) + 4 point (+3 square-form, 2 bounded-other) ✓ structure |
+| 9/76 disc-form attempts, none correct | 8 ✓ |
+| ~74/76 integrator exact | **74/76 exact** (16 west-strip flags resolve to 14 freeze-form mode overreaches + exactly 2 numeric) ✓ |
+| 0 partial repair (gate-level) | 0 artifacts cover a SEEN patch >90% behaviorally — they never even encode the seen patch ✓ |
+
+The two later results awaiting the tex fold are also behaviorally grounded:
+- **Square ablation (bidirectional template):** on SQUARE evidence the class
+  mix is the same story — halfplane dominates (20/40), and among bounded
+  attempts disc-form 5 vs square-form 1: models impose the round template on
+  square evidence, mirroring the half-plane imposed on disc evidence.
+  Integrator exact 40/40.
+- **Region+3×-budget confound cells:** the guidance ELIMINATED the half-plane
+  reduction (1/40 vs 21/40 in the k3_7 base) and moved artifacts to bounded
+  2D fits — point/micro-unions 15, bounded-other 6, square-form 5, disc-form
+  2, blind-ish 11 — none the true disc; integrator exact 40/40. Matches the
+  hull-fitting reading (RESEARCH-DIRECTION), now measured.
+
 ## PAPER 2 — PatchField2D (4D bi-modal instrument): the danger law composes; repair is geometry-dependent (2026-07-18)
 
 The third instrument closes the two structural gaps the reviewers flagged on the 1D
