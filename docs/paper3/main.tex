@@ -1054,8 +1054,15 @@ to $3/5$ seeds when the dose quadruples, because the persistence threshold
 ($3\times$ median nearest-neighbor spacing) shrinks with density while
 the spurious bar's absolute persistence stays fixed --- the sensor gets
 \emph{more confident} in the wrong topology as the data grows. Resolving a
-narrow channel requires a different filtration (e.g.\ one that respects
-trajectory connectivity), not a bigger sample.
+narrow channel requires a different filtration, not a bigger sample. A
+prototype confirms the direction and locates the real problem: censoring
+Rips edges that free trajectory segments properly cross restores
+specificity at every $\gamma > 0$ ($19/20$ versus $0/15$ for plain Rips at
+$\gamma \le 1.2$) at a sensitivity cost at $\gamma = 0$ ($2/5$ true
+loops lost), and the naive fix produces infinite spurious bars --- deleted
+edges leave never-fillable cycles --- so the principled estimator is
+\emph{relative} homology of the contact set with respect to certified-free
+space, which we leave as the identified open problem.
 
 \begin{table}[h]
 \centering

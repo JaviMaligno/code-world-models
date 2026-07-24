@@ -56,10 +56,13 @@ def median_nn_distance(points: list) -> float:
     return nns[m // 2] if m % 2 else 0.5 * (nns[m // 2 - 1] + nns[m // 2])
 
 
-def rips_persistence(points: list) -> dict:
+def rips_persistence(points: list, edge_filter=None) -> dict:
     """Full-clique Rips persistence. Returns {"h0": [...], "h1": [...]} as
     lists of (birth, death) with death=None for infinite bars. Zero-
-    persistence bars are dropped."""
+    persistence bars are dropped. `edge_filter(p, q) -> bool` (optional):
+    edges for which it returns False are CENSORED (excluded from the
+    filtration) — the trajectory-censored variant; default None is the
+    plain Rips, byte-identical."""
     n = len(points)
     if n == 0:
         return {"h0": [], "h1": []}
@@ -67,6 +70,9 @@ def rips_persistence(points: list) -> dict:
     edges = []                      # (length, i, j)
     for i in range(n):
         for j in range(i + 1, n):
+            if edge_filter is not None and not edge_filter(points[i],
+                                                           points[j]):
+                continue
             edges.append((_dist(points[i], points[j]), i, j))
     edges.sort()
     elen = [e[0] for e in edges]
@@ -103,9 +109,13 @@ def rips_persistence(points: list) -> dict:
     tris = []
     for i in range(n):
         for j in range(i + 1, n):
-            dij = elen[edge_index(i, j)]
+            if (i, j) not in eidx:      # censored edge: no such triangle
+                continue
+            dij = elen[eidx[(i, j)]]
             for k in range(j + 1, n):
-                f = max(dij, elen[edge_index(i, k)], elen[edge_index(j, k)])
+                if (i, k) not in eidx or (j, k) not in eidx:
+                    continue            # censored edge: no such triangle
+                f = max(dij, elen[eidx[(i, k)]], elen[eidx[(j, k)]])
                 tris.append((f, i, j, k))
     tris.sort()
 

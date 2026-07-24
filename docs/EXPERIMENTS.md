@@ -2581,7 +2581,34 @@ Two findings (exploratory, 5 seeds — do not over-read):
    disc/loop artifacts there are guidance-compliant, not prior-driven. See
    "Per-artifact behavioral audit" below.
 
-## Dose curve: evidence cannot buy repair — the parameter is GUESSED, not estimated (2026-07-24)
+## Trajectory-censored filtration (bucket-2b prototype): strong signal, and a real research problem found (2026-07-24)
+
+`tda.rips_persistence` gains an opt-in `edge_filter` (golden-safe);
+`scripts/ring2d_censored_filtration.py` (selftested: C-arc+traffic 1->0,
+true loop 1->1) censors a Rips edge when a FREE trajectory segment properly
+crosses it -> `results/ring2d_censored_filtration.json`.
+
+| gap | plain beta1 (5 seeds) | censored |
+|---|---|---|
+| 0.0 (true 1) | 1,1,1,1,1 | 1,0,1,1,0 |
+| 0.6 (true 0) | 1,1,1,1,1 | 0,0,0,1,0 |
+| 1.2 (true 0) | 1,1,1,1,1 | 0,0,0,0,0 |
+| 1.8 (true 0) | 1,0,0,0,0 | all 0 |
+| 2.4 (true 0) | all 0 | all 0 |
+
+Net 22/25 correct vs plain 8/25: the geometric resolution limit IS
+breakable with trajectory knowledge — specificity restored at every gamma.
+Cost: 2/5 false negatives at gap 0 (free 'pokes' ending just past a chord
+censor true-loop edges). The margin refinement (require perpendicular
+clearance both sides) was tried and REJECTED with a finding: deleting edges
+from a Rips complex creates cycles around censored regions that can never
+be filled -> INFINITE spurious H1 bars, a topological artifact of naive
+edge deletion. The principled estimator is RELATIVE homology (contact set
+relative to certified-free space) — a genuine research problem, not a
+patch. Decision-gate reading: signal strong, estimator design open ->
+paper-4-grade ingredient; v1 numbers stand as the prototype record.
+
+## Dose curve: evidence cannot buy repair## Dose curve: evidence cannot buy repair — the parameter is GUESSED, not estimated (2026-07-24)
 
 V2-PROGRAM bucket-1c. D-cell (closed ring, inside+tda, mini, 20 seeds) at
 N in {40, 80, 160, 320} rollouts (files `..._N{80,160,320}.json`; the

@@ -24,6 +24,14 @@ hidden≡closed observational identity, r(n) concentration order).
 
 ## Bucket 2 — paper-4 seeds (prototype-first; outcomes decide)
 
+STATUS 2026-07-24: 2a PASSED (pc 1.769 -> 0.029; lie-rate symmetry). 2b
+STRONG SIGNAL + open research problem (censored Rips 22/25 vs plain 8/25;
+naive edge deletion creates infinite-bar artifacts; the right object is
+relative homology). 1c DONE (dose cannot buy repair; parameters are guessed
+round numbers). The constructive thesis for a paper 4 now has two working
+legs + one identified research problem — the strongest configuration for a
+genuine fourth paper so far.
+
 | # | seed | prototype | decision gate |
 |---|---|---|---|
 | 2a | **Trust-inversion / optimism defense** (the dual of distrust: the invented-mode cell where every fence variant is inert at pc 1.769). Freedom fences: where the model predicted freeze and the truth MOVED, patch imagination locally with the pinned integrator (the contract's own integrator — legitimately known). | CPU, mitigation.py | pc 1.769 → small ⇒ the constructive program has its second leg |
