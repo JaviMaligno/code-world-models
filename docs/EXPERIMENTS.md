@@ -2581,7 +2581,29 @@ Two findings (exploratory, 5 seeds — do not over-read):
    disc/loop artifacts there are guidance-compliant, not prior-driven. See
    "Per-artifact behavioral audit" below.
 
-## Second wave: multi-chamber and the non-separating tube (2026-07-24)
+## Active boundary learning (bucket 2c): three routes to (COV) (2026-07-24)
+
+`scripts/ring2d_active_boundary.py` -> `results/ring2d_active_boundary.json`
+(rerun optimized after the FenceIndex fix: 269s vs 34+min unfinished).
+Boundary-tracing probe: 50 lessons in ONE episode (0.22-rad steps along the
+arc). Then plan_mitigated, POINTS mode (no nerve extension), persistent:
+
+| variant | lessons | pc | truth-equal from |
+|---|---|---|---|
+| nerve + persistent (prior run) | 2 | 0.058 | ep 2 |
+| active probe + points, persistent | 50 + 11 patch-up | 0.123 | ep 3 |
+| passive points, persistent | 9 (spread over 16 eps) | 0.152 | ~ep 5, with regressions |
+
+Reading: PERSISTENCE is the necessary ingredient in every working variant;
+the covering cost can be paid by fence GEOMETRY (tangential extension, 2
+lessons), by EXPLORATION (the probe, 50+11 — its 1.05-unit spacing left
+sub-eps gaps the planner found in eps 1-2: the covering law biting the
+prober too), or slowly by the planner's own contacts (9). Three routes to
+Prop 10's (COV), ranked by lesson-efficiency: geometry > exploration >
+passivity. Metadata fix: n_seed_fences aliasing bug corrected (passive row
+said 50, is 0).
+
+## Second wave: multi-chamber and the non-separating tube (2026-07-24)## Second wave: multi-chamber and the non-separating tube (2026-07-24)
 
 **1b — multi-chamber (nested rings).** RingField2D gains r_in2/r_out2
 ([7.5, 9.0]); three mutually reach-null chambers verified (0 escapes / 240

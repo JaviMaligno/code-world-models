@@ -81,6 +81,7 @@ def main():
     rows = []
     for tag, seed_fences in (("active-then-points", list(fences_active)),
                              ("passive-points", [])):
+        n_seeded = len(seed_fences)     # BEFORE the loop mutates the list
         fences = seed_fences
         t, b, m, r = [], [], [], []
         per_ep = []
@@ -99,7 +100,7 @@ def main():
         denom = j_t - j_r
         row = {
             "variant": tag, "eps": EPS_F, "n_episodes": EPISODES,
-            "n_seed_fences": len(seed_fences and fences_active or []),
+            "n_seed_fences": n_seeded,
             "final_fences": len(fences),
             "j_truth": j_t, "j_blind": j_b, "j_mitigated": j_m,
             "j_random": j_r,
