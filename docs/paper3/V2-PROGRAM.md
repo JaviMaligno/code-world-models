@@ -6,7 +6,10 @@ thesis, harder settings → v2 of the same preprint). Bucket 2 holds the only
 genuine paper-4 seeds; each is prototyped CHEAPLY first, and the outcome
 decides (positive & substantial → paper 4 candidate; negative or
 incremental → folds into paper 3 v2 as honest scope). After the experiments
-settle: a **measured→provable audit** (sweep every measured-only claim in
+settle: the audit ran 2026-07-24 (THEORY.md) and its residue is now the
+standing **RESULTS-TO-PROVE list (T1–T8, THEORY.md)** — attacked in
+Javier's order, on his timing; nothing on it is scoped out. Original note:
+a **measured→provable audit** (sweep every measured-only claim in
 papers 2–3 / THEORY.md / EXPERIMENTS.md for statements that are actually
 provable now — e.g. the persistent-fence planner-equivalence, the
 aligned-channel degeneracy, the Rips flip location via birth/death radii,

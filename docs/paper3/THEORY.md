@@ -485,3 +485,47 @@ measurement bounds above by 0 at n = 400: the observational identity is an
 inequality with an exactly-zero left witness, not an exact theorem — the
 two grades of impossibility again, now as a statement about the
 equivalence itself.
+
+## RESULTS TO PROVE — the v2 target list (2026-07-24, Javier's directive)
+
+Standing decision: everything below is a TARGET to be attacked, in Javier's
+order and on his timing (not this session). "Sketch" status is a starting
+point, never a resting place; difficulty notes are honest assessments, not
+scope exclusions. Superseding the audit table's dispositions above where
+they conflict.
+
+- **T1 — Rips flip location, full proof.** γ*(density) formula for the
+  spurious H1 bar on the C-arc cloud, via the Vietoris–Rips characterization
+  of the circle/arcs (Adamaszek–Adams 2017) adapted to (i) the arc with an
+  angular gap, (ii) dedup 0.05 + cap 90 subsampling, (iii) the 3×median-NN
+  threshold. Deliverable: a theorem "the pre-registered detector reports
+  β̂₁ = 1 iff chord(γ) < c·fill-scale", with the measured flip (~1.8)
+  inside the proven window.
+- **T2 — Aligned-channel degeneracy, full proposition.** Conditions
+  (corridor geometry + (RG)/(C)-style hypotheses) under which the facing
+  channel makes the blind argmax plan executable in truth, giving
+  play_cost = 0 exactly (or an explicit tail bound); the measured knee at
+  γ ≈ 0.1 as the hypothesis boundary.
+- **T3 — M1/M2 distributional monotonicity of r_int(γ).** The pathwise
+  route is CLOSED (seed-50543 certificate; freeze-rescue refuted the
+  pointwise (KEY)); any proof must establish stochastic domination of
+  post-divergence occupation measures — a freeze re-anchors one copy's
+  future, so local reversals exist and the argument must be global.
+  Hardest item on the list; also the most interesting.
+- **T4 — Prop 6's explicit density constant** (quantitative continuity
+  modulus for the γ-curves; the TODO in the proof sketch).
+- **T5 — r(n) concentration order with explicit constants** (drift-free
+  random walk loses the lode 2-plane; currently order-only).
+- **T6 — Hidden-channel reachability at γ = 0.6 within h = 80:** either
+  exhibit a controller (finer than the waypoint witness, which threads 1.2
+  but not 0.6) or prove no policy reaches the interior within the horizon —
+  a clean reachability dichotomy either way.
+- **T7 — The relative-homology evidence estimator** (bucket-2b's research
+  problem): formulate H(contact set | certified-free space) properly,
+  characterize when naive edge-censoring creates the measured infinite-bar
+  artifacts, and prove a stability/correctness theorem for the estimator
+  that avoids them.
+- **T8 — Linking-number query lower bound** (Prop 4's homological upgrade
+  for non-separating modes; TubeField-3): replace the metric crossing with
+  linking of the imagined path and the mode's core — the genuinely new
+  algebraic-topology math of the program.
