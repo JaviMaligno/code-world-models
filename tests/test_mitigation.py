@@ -165,3 +165,25 @@ def test_nerve_extension_seals_beyond_the_observed_cluster():
     assert not _crosses_fence(step_prev, step_next, [f1, f2], 0.5)
     assert not _crosses_fence_edges(step_prev, step_next, [(f1, f2)], 0.5)
     assert _crosses_fence_edges(step_prev, step_next, [edge_ext], 0.5)
+
+
+def test_fence_index_oracle_equivalence():
+    """The spatial index must agree with the linear scan on every query —
+    brute-force oracle over random fences and random step segments."""
+    import random
+    from cwm.continuous.mitigation import (FenceIndex, _crosses_fence,
+                                           _seg_point_dist)
+    rnd = random.Random(0)
+    eps = 0.5
+    fences = [(rnd.uniform(-10, 10), rnd.uniform(-10, 10)) for _ in range(60)]
+    idx = FenceIndex(eps)
+    for f in fences:
+        idx.add(f)
+    disagreements = 0
+    for _ in range(2000):
+        a = (rnd.uniform(-11, 11), rnd.uniform(-11, 11))
+        b = (a[0] + rnd.uniform(-1.2, 1.2), a[1] + rnd.uniform(-1.2, 1.2))
+        scan = any(_seg_point_dist(a, b, f) <= eps for f in fences)
+        fast = _crosses_fence(a, b, idx, eps)
+        disagreements += (scan != fast)
+    assert disagreements == 0

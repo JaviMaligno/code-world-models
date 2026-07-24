@@ -94,11 +94,58 @@ def _crosses_fence_edges(prev_pos, next_pos, fence_edges, eps) -> bool:
                for a, b in fence_edges)
 
 
+class FenceIndex:
+    """Uniform-grid spatial index over 2D fence points (cell size = eps),
+    so the per-imagined-step proximity query touches only the O(1) grid
+    cells the step's bounding box overlaps instead of scanning every fence
+    (the 2026-07-24 active-boundary run paid ~50x for the linear scan).
+    Oracle-tested equivalent to the scan (tests/test_mitigation.py)."""
+
+    def __init__(self, eps: float):
+        self.eps = eps
+        self._cells: dict = {}
+        self.points: list = []
+
+    def _key(self, p):
+        return (int(math.floor(p[0] / self.eps)),
+                int(math.floor(p[1] / self.eps)))
+
+    def add(self, p: tuple):
+        self.points.append(p)
+        self._cells.setdefault(self._key(p), []).append(p)
+
+    def near_point(self, p: tuple) -> bool:
+        e = self.eps
+        ki, kj = self._key(p)
+        for i in range(ki - 1, ki + 2):
+            for j in range(kj - 1, kj + 2):
+                for f in self._cells.get((i, j), ()):
+                    if math.dist(p, f) <= e:
+                        return True
+        return False
+
+    def near_segment(self, a: tuple, b: tuple) -> bool:
+        e = self.eps
+        i0 = int(math.floor((min(a[0], b[0]) - e) / e))
+        i1 = int(math.floor((max(a[0], b[0]) + e) / e))
+        j0 = int(math.floor((min(a[1], b[1]) - e) / e))
+        j1 = int(math.floor((max(a[1], b[1]) + e) / e))
+        for i in range(i0, i1 + 1):
+            for j in range(j0, j1 + 1):
+                for f in self._cells.get((i, j), ()):
+                    if _seg_point_dist(a, b, f) <= e:
+                        return True
+        return False
+
+
 def _crosses_fence(prev_pos: tuple, next_pos: tuple, fences, eps: float) -> bool:
     """Does the imagined step's position path come within eps of any fence?
     1D (len(pos_dims) == 1): the CURRENT interval-overlap boolean, verbatim —
     segment overlap with the fence's eps-band, leap-proof at any imagined
-    speed. n-D: segment-to-point distance <= eps."""
+    speed. n-D: segment-to-point distance <= eps, via the spatial index when
+    one is passed in place of a plain list."""
+    if isinstance(fences, FenceIndex):
+        return fences.near_segment(prev_pos, next_pos)
     if len(prev_pos) == 1:
         lo, hi = min(prev_pos[0], next_pos[0]), max(prev_pos[0], next_pos[0])
         return any(lo <= f[0] + eps and hi >= f[0] - eps for f in fences)
@@ -106,6 +153,8 @@ def _crosses_fence(prev_pos: tuple, next_pos: tuple, fences, eps: float) -> bool
 
 
 def _dist_to_nearest(pos: tuple, fences) -> float:
+    if isinstance(fences, FenceIndex):
+        fences = fences.points
     if not fences:
         return 0.0
     if len(pos) == 1:
@@ -180,8 +229,19 @@ def run_mitigated_episode(truth, model, seed: int = 0, horizon: int = 40,
     if fence_edges is None:
         fence_edges = []
     n_fences_at_start = len(fences)
+    # spatial index over the fence points (2D): the crossing check touches
+    # O(1) grid cells instead of every fence; `fences` stays the mutable
+    # list of record (persistent API unchanged). Lesson generalized from the
+    # freedom-point dedup: per-lesson growing structures get indexed/deduped
+    # at EVERY call site, before launch.
+    _idx = None
+    if len(pos_dims) == 2:
+        _idx = FenceIndex(eps)
+        for f in fences:
+            _idx.add(f)
     for t in range(truth.h_episode):
-        a = plan_mitigated(model, s, rng, fences, eps,
+        a = plan_mitigated(model, s, rng,
+                           _idx if _idx is not None else fences, eps,
                            horizon=horizon, n_samples=n_samples, block=block,
                            pos_dims=pos_dims, fence_edges=fence_edges)
         s2, r, c = truth.step(s, a)
@@ -210,6 +270,8 @@ def run_mitigated_episode(truth, model, seed: int = 0, horizon: int = 40,
                     else:
                         fence_edges.append((f, new_f))
             fences.append(new_f)  # position of the FALSE prediction
+            if _idx is not None:
+                _idx.add(new_f)
         if c and first_contact is None:
             first_contact = t
         contact = contact or c
