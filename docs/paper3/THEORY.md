@@ -547,3 +547,78 @@ they conflict.
   for non-separating modes; TubeField-3): replace the metric crossing with
   linking of the imagined path and the mode's core — the genuinely new
   algebraic-topology math of the program.
+
+## T1 — the proofs (2026-07-24, second pass: logic, not just validation)
+
+Setting. X = {x₁,…,x_m} ⊂ ℝ², all points star-shaped about the center O
+with radii rᵢ = ‖xᵢ − O‖ ∈ [r_min, r_max] and angles θᵢ (our landing
+clouds: r ∈ [3.5, ≈3.8]). Sort angles cyclically; let Δθ_max be the largest
+cyclic angular gap. For an edge (u, v) write δ(u,v) ∈ (−π, π] for the
+minimal angular increment. The winding number of a simplicial 1-cycle z
+(integer coefficients) is w(z) = (1/2π) Σ_{edges} δ — an integer, since the
+increments telescope mod 2π.
+
+**Lemma B (birth of the winding class — exact).** The smallest VR scale at
+which a cycle with w ≠ 0 exists is
+  s_w ∈ [ 2 r_min sin(Δθ_max/2), 2 r_max sin(Δθ_max/2) ],
+and for points exactly on a circle (r_min = r_max = ρ) it equals
+2ρ sin(Δθ_max/2).
+
+*Proof.* (Lower bound.) Let z have w(z) ≠ 0 and let G be the open sector of
+the maximal gap. The cumulative angle along z advances by 2πw, so some edge
+(u, v) has an increment interval covering G's midpoint; since no sample
+point lies in G, both endpoints lie outside G and |δ(u,v)| ≥ Δθ_max. As
+|δ| ≤ π, the chord satisfies ‖u − v‖ ≥ 2 r_min sin(|δ|/2) ≥
+2 r_min sin(Δθ_max/2) — the planar chord between points at radii ≥ r_min
+and angular separation α ≤ π is minimized on the circle of radius r_min.
+Hence z requires scale ≥ that chord. (Upper bound.) The consecutive-
+neighbors cycle (each point joined to its angular successor) has winding 1
+and all its angular increments ≤ Δθ_max, so all its chords ≤
+2 r_max sin(Δθ_max/2); it exists at that scale. ∎
+
+**Lemma D⁻ (death lower bound — self-contained, no literature needed).**
+At every scale s < √3 · r_min, the winding class is not a boundary; hence
+death ≥ √3 r_min.
+
+*Proof.* If s < √3 r_min then every edge has chord < √3 r_min, which forces
+|δ| < 2π/3 (a chord between points at radii ≥ r_min with angular
+separation ≥ 2π/3 has length ≥ 2 r_min sin(π/3) = √3 r_min). For any
+2-simplex all three of whose edges are present at scale s, the boundary's
+three increments each lie in (−2π/3, 2π/3) and sum to 2πk with
+|sum| < 2π, so k = 0: every triangle boundary has winding 0. Winding is
+therefore invariant under adding boundaries at scale s, and a cycle with
+w = 1 cannot be null-homologous. ∎
+
+**Corollary (the detector law, proved half).** The bridged bar has
+birth = 2ρ̃₁ sin(Δθ_max/2) and death ≥ √3 ρ̃₂ with ρ̃₁, ρ̃₂ ∈
+[r_min, r_max]; the measured death/ρ̄ spread [1.70, 1.82] around √3 = 1.732
+is exactly the radial thickness of the landing cloud (r ∈ [3.5, ~3.8]:
+√3·3.5/3.65 ≈ 1.66 to √3·3.8/3.65 ≈ 1.80). The law
+"β̂₁ = 1 iff √3ρ − 2ρ sin(Δθ_max/2) > τ" is therefore proved as a
+GUARANTEE in one direction: whenever √3 r_min − 2 r_max sin(Δθ_max/2) > τ,
+the bar exists and is persistent (Lemma B upper + Lemma D⁻), so the
+detector MUST report β̂₁ ≥ 1.
+
+**What remains open (the death upper bound).** That the class dies soon
+after √3 r_max — i.e. no persistent bar when
+2 r_min sin(Δθ_max/2) > √3 r_max + τ-margin — needs: (i) a near-equilateral
+sample triple (guaranteed by density outside the gap when Δθ_max < 2π/3),
+whose boundary has winding ±1 and kills the winding obstruction at scale
+≈ √3 r̄; and (ii) a "winding-0 cycles are boundaries" filling lemma at
+scales above the sample resolution. (ii) is where the cyclic-complex
+machinery (Adamaszek–Adams) genuinely enters; for the circle it is known.
+Status: T1 = proved guarantee (one direction, self-contained) + validated
+converse (78/80) + the named remaining lemma. Not closed; no longer resting
+on validation.
+
+## T5 — route refuted (2026-07-24), stays open
+
+The worst-case concentration route (Hoeffding/Azuma over the AR(1) weights,
+with Chernoff conditioning on ‖a‖ for the norm-cap's n-scaling) computes
+NUMERICALLY VACUOUS at the instrument's scales: bound ≈ 0.51 at n = 2–5
+versus measured r ≈ 0.013–0.002 (and the conditioning term only bites for
+n ≫ 20). Same failure shape as paper 2's envelope-tail attempt: bounded-
+difference constants ignore the drag's variance contraction. A sharp bound
+needs the variance-accurate route: Gaussian comparison for the AR(1)
+first-two-coordinate process plus a 2-plane ball-hitting estimate. Recorded
+as a refuted route (progress in the (KEY) sense); T5 remains open.
