@@ -1,0 +1,1094 @@
+{
+  "script": "continuous_eps_sweep.py",
+  "params": {
+    "eps_grid": [
+      1e-09,
+      1e-06,
+      0.0001,
+      0.001,
+      0.01,
+      0.03,
+      0.1,
+      0.3
+    ],
+    "rollouts": 2000,
+    "n_gate": 40,
+    "gates": 300,
+    "seed": 0
+  },
+  "rows": [
+    {
+      "instrument": "cart",
+      "arm": "wall@4 omitted",
+      "mode_arm": true,
+      "eps": 1e-09,
+      "rarity": 0.1385,
+      "rarity_ci": [
+        0.12405281145333309,
+        0.15433326457183782
+      ],
+      "predicted_pass": 0.002571646508142479,
+      "pass_rate": 0.0033333333333333335,
+      "pass_rate_ci": [
+        0.0005886425761407379,
+        0.018637164554943353
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@4 omitted",
+      "mode_arm": true,
+      "eps": 1e-06,
+      "rarity": 0.1385,
+      "rarity_ci": [
+        0.12405281145333309,
+        0.15433326457183782
+      ],
+      "predicted_pass": 0.002571646508142479,
+      "pass_rate": 0.0033333333333333335,
+      "pass_rate_ci": [
+        0.0005886425761407379,
+        0.018637164554943353
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@4 omitted",
+      "mode_arm": true,
+      "eps": 0.0001,
+      "rarity": 0.1385,
+      "rarity_ci": [
+        0.12405281145333309,
+        0.15433326457183782
+      ],
+      "predicted_pass": 0.002571646508142479,
+      "pass_rate": 0.0033333333333333335,
+      "pass_rate_ci": [
+        0.0005886425761407379,
+        0.018637164554943353
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@4 omitted",
+      "mode_arm": true,
+      "eps": 0.001,
+      "rarity": 0.1385,
+      "rarity_ci": [
+        0.12405281145333309,
+        0.15433326457183782
+      ],
+      "predicted_pass": 0.002571646508142479,
+      "pass_rate": 0.0033333333333333335,
+      "pass_rate_ci": [
+        0.0005886425761407379,
+        0.018637164554943353
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@4 omitted",
+      "mode_arm": true,
+      "eps": 0.01,
+      "rarity": 0.1385,
+      "rarity_ci": [
+        0.12405281145333309,
+        0.15433326457183782
+      ],
+      "predicted_pass": 0.002571646508142479,
+      "pass_rate": 0.0033333333333333335,
+      "pass_rate_ci": [
+        0.0005886425761407379,
+        0.018637164554943353
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@4 omitted",
+      "mode_arm": true,
+      "eps": 0.03,
+      "rarity": 0.1385,
+      "rarity_ci": [
+        0.12405281145333309,
+        0.15433326457183782
+      ],
+      "predicted_pass": 0.002571646508142479,
+      "pass_rate": 0.0033333333333333335,
+      "pass_rate_ci": [
+        0.0005886425761407379,
+        0.018637164554943353
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@4 omitted",
+      "mode_arm": true,
+      "eps": 0.1,
+      "rarity": 0.1385,
+      "rarity_ci": [
+        0.12405281145333309,
+        0.15433326457183782
+      ],
+      "predicted_pass": 0.002571646508142479,
+      "pass_rate": 0.0033333333333333335,
+      "pass_rate_ci": [
+        0.0005886425761407379,
+        0.018637164554943353
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@4 omitted",
+      "mode_arm": true,
+      "eps": 0.3,
+      "rarity": 0.1355,
+      "rarity_ci": [
+        0.12119682339349307,
+        0.1512007553372809
+      ],
+      "predicted_pass": 0.0029552886400935055,
+      "pass_rate": 0.006666666666666667,
+      "pass_rate_ci": [
+        0.0018301100329710784,
+        0.023978074231461442
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@8 omitted",
+      "mode_arm": true,
+      "eps": 1e-09,
+      "rarity": 0.0125,
+      "rarity_ci": [
+        0.008481021586816417,
+        0.018388168073683698
+      ],
+      "predicted_pass": 0.6046223152076992,
+      "pass_rate": 0.6666666666666666,
+      "pass_rate_ci": [
+        0.6115114164576771,
+        0.7176074402097443
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@8 omitted",
+      "mode_arm": true,
+      "eps": 1e-06,
+      "rarity": 0.0125,
+      "rarity_ci": [
+        0.008481021586816417,
+        0.018388168073683698
+      ],
+      "predicted_pass": 0.6046223152076992,
+      "pass_rate": 0.6666666666666666,
+      "pass_rate_ci": [
+        0.6115114164576771,
+        0.7176074402097443
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@8 omitted",
+      "mode_arm": true,
+      "eps": 0.0001,
+      "rarity": 0.0125,
+      "rarity_ci": [
+        0.008481021586816417,
+        0.018388168073683698
+      ],
+      "predicted_pass": 0.6046223152076992,
+      "pass_rate": 0.6666666666666666,
+      "pass_rate_ci": [
+        0.6115114164576771,
+        0.7176074402097443
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@8 omitted",
+      "mode_arm": true,
+      "eps": 0.001,
+      "rarity": 0.0125,
+      "rarity_ci": [
+        0.008481021586816417,
+        0.018388168073683698
+      ],
+      "predicted_pass": 0.6046223152076992,
+      "pass_rate": 0.6666666666666666,
+      "pass_rate_ci": [
+        0.6115114164576771,
+        0.7176074402097443
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@8 omitted",
+      "mode_arm": true,
+      "eps": 0.01,
+      "rarity": 0.0125,
+      "rarity_ci": [
+        0.008481021586816417,
+        0.018388168073683698
+      ],
+      "predicted_pass": 0.6046223152076992,
+      "pass_rate": 0.6666666666666666,
+      "pass_rate_ci": [
+        0.6115114164576771,
+        0.7176074402097443
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@8 omitted",
+      "mode_arm": true,
+      "eps": 0.03,
+      "rarity": 0.0125,
+      "rarity_ci": [
+        0.008481021586816417,
+        0.018388168073683698
+      ],
+      "predicted_pass": 0.6046223152076992,
+      "pass_rate": 0.6666666666666666,
+      "pass_rate_ci": [
+        0.6115114164576771,
+        0.7176074402097443
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@8 omitted",
+      "mode_arm": true,
+      "eps": 0.1,
+      "rarity": 0.0125,
+      "rarity_ci": [
+        0.008481021586816417,
+        0.018388168073683698
+      ],
+      "predicted_pass": 0.6046223152076992,
+      "pass_rate": 0.6666666666666666,
+      "pass_rate_ci": [
+        0.6115114164576771,
+        0.7176074402097443
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "wall@8 omitted",
+      "mode_arm": true,
+      "eps": 0.3,
+      "rarity": 0.0125,
+      "rarity_ci": [
+        0.008481021586816417,
+        0.018388168073683698
+      ],
+      "predicted_pass": 0.6046223152076992,
+      "pass_rate": 0.6666666666666666,
+      "pass_rate_ci": [
+        0.6115114164576771,
+        0.7176074402097443
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 1e-09,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 1e-06,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.0001,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.001,
+      "rarity": 0.62,
+      "rarity_ci": [
+        0.5985161031395005,
+        0.6410237886363763
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.01,
+      "rarity": 0.0,
+      "rarity_ci": [
+        0.0,
+        0.0019171176005129348
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.03,
+      "rarity": 0.0,
+      "rarity_ci": [
+        0.0,
+        0.0019171176005129348
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.1,
+      "rarity": 0.0,
+      "rarity_ci": [
+        0.0,
+        0.0019171176005129348
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.3,
+      "rarity": 0.0,
+      "rarity_ci": [
+        0.0,
+        0.0019171176005129348
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 1e-09,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 1e-06,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.0001,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.001,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.01,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.03,
+      "rarity": 0.7455,
+      "rarity_ci": [
+        0.7259517231249547,
+        0.7641069721331936
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.1,
+      "rarity": 0.004,
+      "rarity_ci": [
+        0.002028222209821939,
+        0.007873558449886893
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.3,
+      "rarity": 0.004,
+      "rarity_ci": [
+        0.002028222209821939,
+        0.007873558449886893
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp0.5",
+      "mode_arm": false,
+      "eps": 1e-09,
+      "rarity": 0.4595,
+      "rarity_ci": [
+        0.43775699074140767,
+        0.48139829578423393
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp0.5",
+      "mode_arm": false,
+      "eps": 1e-06,
+      "rarity": 0.3615,
+      "rarity_ci": [
+        0.3407280477377898,
+        0.3828029938375523
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp0.5",
+      "mode_arm": false,
+      "eps": 0.0001,
+      "rarity": 0.2805,
+      "rarity_ci": [
+        0.2612462228538873,
+        0.30059539177273786
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp0.5",
+      "mode_arm": false,
+      "eps": 0.001,
+      "rarity": 0.243,
+      "rarity_ci": [
+        0.22470710761016652,
+        0.2622782908364971
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp0.5",
+      "mode_arm": false,
+      "eps": 0.01,
+      "rarity": 0.1875,
+      "rarity_ci": [
+        0.17099881257523333,
+        0.20519938592508727
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp0.5",
+      "mode_arm": false,
+      "eps": 0.03,
+      "rarity": 0.1345,
+      "rarity_ci": [
+        0.12024536729687701,
+        0.15015604566909796
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp0.5",
+      "mode_arm": false,
+      "eps": 0.1,
+      "rarity": 0.001,
+      "rarity_ci": [
+        0.000274273176083379,
+        0.0036390101892285302
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp0.5",
+      "mode_arm": false,
+      "eps": 0.3,
+      "rarity": 0.0,
+      "rarity_ci": [
+        0.0,
+        0.0019171176005129348
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp1.0",
+      "mode_arm": false,
+      "eps": 1e-09,
+      "rarity": 0.4685,
+      "rarity_ci": [
+        0.4467113437551263,
+        0.49040943465370607
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp1.0",
+      "mode_arm": false,
+      "eps": 1e-06,
+      "rarity": 0.37,
+      "rarity_ci": [
+        0.3491082171303705,
+        0.3913902334457629
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp1.0",
+      "mode_arm": false,
+      "eps": 0.0001,
+      "rarity": 0.2915,
+      "rarity_ci": [
+        0.27199751412140355,
+        0.31180192391801026
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp1.0",
+      "mode_arm": false,
+      "eps": 0.001,
+      "rarity": 0.2545,
+      "rarity_ci": [
+        0.23589302786680652,
+        0.27404827687504535
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp1.0",
+      "mode_arm": false,
+      "eps": 0.01,
+      "rarity": 0.2085,
+      "rarity_ci": [
+        0.1912630564036264,
+        0.22685462315747262
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp1.0",
+      "mode_arm": false,
+      "eps": 0.03,
+      "rarity": 0.167,
+      "rarity_ci": [
+        0.15129521499740853,
+        0.1839815853245331
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp1.0",
+      "mode_arm": false,
+      "eps": 0.1,
+      "rarity": 0.053,
+      "rarity_ci": [
+        0.04401030668319261,
+        0.06370359645166596
+      ]
+    },
+    {
+      "instrument": "cart",
+      "arm": "bump amp1.0",
+      "mode_arm": false,
+      "eps": 0.3,
+      "rarity": 0.0,
+      "rarity_ci": [
+        0.0,
+        0.0019171176005129348
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.0 omitted",
+      "mode_arm": true,
+      "eps": 1e-09,
+      "rarity": 0.141,
+      "rarity_ci": [
+        0.12643462112011397,
+        0.1569418693170543
+      ],
+      "predicted_pass": 0.0022894256976624867,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.0 omitted",
+      "mode_arm": true,
+      "eps": 1e-06,
+      "rarity": 0.141,
+      "rarity_ci": [
+        0.12643462112011397,
+        0.1569418693170543
+      ],
+      "predicted_pass": 0.0022894256976624867,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.0 omitted",
+      "mode_arm": true,
+      "eps": 0.0001,
+      "rarity": 0.141,
+      "rarity_ci": [
+        0.12643462112011397,
+        0.1569418693170543
+      ],
+      "predicted_pass": 0.0022894256976624867,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.0 omitted",
+      "mode_arm": true,
+      "eps": 0.001,
+      "rarity": 0.141,
+      "rarity_ci": [
+        0.12643462112011397,
+        0.1569418693170543
+      ],
+      "predicted_pass": 0.0022894256976624867,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.0 omitted",
+      "mode_arm": true,
+      "eps": 0.01,
+      "rarity": 0.141,
+      "rarity_ci": [
+        0.12643462112011397,
+        0.1569418693170543
+      ],
+      "predicted_pass": 0.0022894256976624867,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.0 omitted",
+      "mode_arm": true,
+      "eps": 0.03,
+      "rarity": 0.141,
+      "rarity_ci": [
+        0.12643462112011397,
+        0.1569418693170543
+      ],
+      "predicted_pass": 0.0022894256976624867,
+      "pass_rate": 0.0,
+      "pass_rate_ci": [
+        0.0,
+        0.012643429997735661
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.0 omitted",
+      "mode_arm": true,
+      "eps": 0.1,
+      "rarity": 0.14,
+      "rarity_ci": [
+        0.12548170142943788,
+        0.15589862324293147
+      ],
+      "predicted_pass": 0.002398490760129482,
+      "pass_rate": 0.0033333333333333335,
+      "pass_rate_ci": [
+        0.0005886425761407379,
+        0.018637164554943353
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.0 omitted",
+      "mode_arm": true,
+      "eps": 0.3,
+      "rarity": 0.124,
+      "rarity_ci": [
+        0.11027214814271148,
+        0.13916952429287424
+      ],
+      "predicted_pass": 0.005013768145045709,
+      "pass_rate": 0.0033333333333333335,
+      "pass_rate_ci": [
+        0.0005886425761407379,
+        0.018637164554943353
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.4 omitted",
+      "mode_arm": true,
+      "eps": 1e-09,
+      "rarity": 0.0175,
+      "rarity_ci": [
+        0.0126096775369995,
+        0.02424034094749549
+      ],
+      "predicted_pass": 0.4935172780137024,
+      "pass_rate": 0.47333333333333333,
+      "pass_rate_ci": [
+        0.41752799159808596,
+        0.5298129913351266
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.4 omitted",
+      "mode_arm": true,
+      "eps": 1e-06,
+      "rarity": 0.0175,
+      "rarity_ci": [
+        0.0126096775369995,
+        0.02424034094749549
+      ],
+      "predicted_pass": 0.4935172780137024,
+      "pass_rate": 0.47333333333333333,
+      "pass_rate_ci": [
+        0.41752799159808596,
+        0.5298129913351266
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.4 omitted",
+      "mode_arm": true,
+      "eps": 0.0001,
+      "rarity": 0.0175,
+      "rarity_ci": [
+        0.0126096775369995,
+        0.02424034094749549
+      ],
+      "predicted_pass": 0.4935172780137024,
+      "pass_rate": 0.47333333333333333,
+      "pass_rate_ci": [
+        0.41752799159808596,
+        0.5298129913351266
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.4 omitted",
+      "mode_arm": true,
+      "eps": 0.001,
+      "rarity": 0.0175,
+      "rarity_ci": [
+        0.0126096775369995,
+        0.02424034094749549
+      ],
+      "predicted_pass": 0.4935172780137024,
+      "pass_rate": 0.47333333333333333,
+      "pass_rate_ci": [
+        0.41752799159808596,
+        0.5298129913351266
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.4 omitted",
+      "mode_arm": true,
+      "eps": 0.01,
+      "rarity": 0.0175,
+      "rarity_ci": [
+        0.0126096775369995,
+        0.02424034094749549
+      ],
+      "predicted_pass": 0.4935172780137024,
+      "pass_rate": 0.47333333333333333,
+      "pass_rate_ci": [
+        0.41752799159808596,
+        0.5298129913351266
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.4 omitted",
+      "mode_arm": true,
+      "eps": 0.03,
+      "rarity": 0.0175,
+      "rarity_ci": [
+        0.0126096775369995,
+        0.02424034094749549
+      ],
+      "predicted_pass": 0.4935172780137024,
+      "pass_rate": 0.47333333333333333,
+      "pass_rate_ci": [
+        0.41752799159808596,
+        0.5298129913351266
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.4 omitted",
+      "mode_arm": true,
+      "eps": 0.1,
+      "rarity": 0.017,
+      "rarity_ci": [
+        0.012190606557782523,
+        0.02366132904431298
+      ],
+      "predicted_pass": 0.5036637715882523,
+      "pass_rate": 0.4766666666666667,
+      "pass_rate_ci": [
+        0.4208006536261767,
+        0.5331227064403843
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "stop@1.4 omitted",
+      "mode_arm": true,
+      "eps": 0.3,
+      "rarity": 0.0155,
+      "rarity_ci": [
+        0.010940903471396526,
+        0.021916783483500506
+      ],
+      "predicted_pass": 0.5353389206500179,
+      "pass_rate": 0.49666666666666665,
+      "pass_rate_ci": [
+        0.440488541129282,
+        0.5529290817373694
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 1e-09,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 1e-06,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.0001,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.001,
+      "rarity": 0.5755,
+      "rarity_ci": [
+        0.5537133468718272,
+        0.5969971683704953
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.01,
+      "rarity": 0.0,
+      "rarity_ci": [
+        0.0,
+        0.0019171176005129348
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.03,
+      "rarity": 0.0,
+      "rarity_ci": [
+        0.0,
+        0.0019171176005129348
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.1,
+      "rarity": 0.0,
+      "rarity_ci": [
+        0.0,
+        0.0019171176005129348
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x1.03",
+      "mode_arm": false,
+      "eps": 0.3,
+      "rarity": 0.0,
+      "rarity_ci": [
+        0.0,
+        0.0019171176005129348
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 1e-09,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 1e-06,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.0001,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.001,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.01,
+      "rarity": 1.0,
+      "rarity_ci": [
+        0.9980828823994873,
+        1.0
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.03,
+      "rarity": 0.715,
+      "rarity_ci": [
+        0.6948183854389274,
+        0.734357253992852
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.1,
+      "rarity": 0.0045,
+      "rarity_ci": [
+        0.002369253608610716,
+        0.008530609933497604
+      ]
+    },
+    {
+      "instrument": "pend",
+      "arm": "bias x2.0",
+      "mode_arm": false,
+      "eps": 0.3,
+      "rarity": 0.0035,
+      "rarity_ci": [
+        0.0016964100455623193,
+        0.007207287731747025
+      ]
+    }
+  ],
+  "elapsed_s": 3835.1
+}

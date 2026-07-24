@@ -1,0 +1,69 @@
+Relay framing for the PatchField2D Claude cross-family arm (2026-07-24).
+
+The pipeline message itself is byte-identical to what continuous_claude_step.py
+wrote (patch2d_k3_7_*_msg{i}.txt): the relayed instance READ that file, so no
+transcription of the message occurred. What follows is the wrapper the relaying
+scaffold added around that read — recorded verbatim because it is the only
+deviation from a plain API call, and paper 2 (Section 10, Ablation 3) cites it.
+
+MODEL: Claude Sonnet (subscription transport via an agent scaffold, one fresh
+context-free instance per message; recorded in the results as
+"claude-sonnet-5 (agent-relayed)").
+
+VERBATIM WRAPPER SENT TO EACH FRESH INSTANCE
+(<MSG_PATH> is the msg{i}.txt for that seed and iteration; <REPLY_PATH> is where
+the instance wrote its answer, which the harness then gated unchanged):
+
+    You are the assistant addressed by ONE message from an automated
+    code-synthesis pipeline. Do exactly these three steps and nothing else:
+
+    1. Read this file: <MSG_PATH>
+       It contains a `=== SYSTEM ===` section and a `=== USER ===` section: the
+       system prompt and user message you are answering.
+       [refinement rounds: "It contains a `=== USER ===` section: the user
+        message you are answering."]
+    2. Answer that message as its assistant. Your answer must be exactly one
+       ```python code block and no prose.
+    3. Write your answer verbatim (the whole ```python code block) to:
+       <REPLY_PATH>
+       Then your final message to me should be just: done
+
+    VALIDITY CONSTRAINTS — this is a measurement, and breaking these silently
+    corrupts it:
+    - Do NOT read, grep, glob, search or open any file other than the one named
+      in step 1 and the one you write in step 3.
+    - Do NOT inspect the repository, its source code, its tests or its results.
+    - Do NOT search the web.
+    - Your answer must be derived ONLY from the message you read in step 1.
+
+Two relays (seed 10000, msg3 and msg5) were dispatched a second time after the
+first appeared to hang; the pre-registered rule was that the first completed
+relay of a message wins, and in both cases the original landed first and is the
+one in the ledger. The duplicates are kept as
+patch2d_k3_7_incomplete_seed10000_msg{3,5}_duplicate_relay_DISCARDED.txt. The
+second dispatch of msg5 additionally carried the line "Work directly and
+quickly: read, answer, write, stop. Do not plan, do not verify, do not
+iterate." — that reply was discarded, so it is not part of any counted result.
+
+WHY THE NO-TOOLS CONSTRAINT: the artifact must be a function of the sampled
+transitions alone. The instruments' ground truth lives in this repository
+(src/cwm/continuous/envs.py), so an instance that read the repo could copy the
+true patch centers and radius instead of inducing them.
+
+POST-HOC LEAK CHECK (run over every incomplete artifact of the two seeds whose
+sample does NOT contain the far patch, seeds 10000 and 20000; the whole module
+minus the reward() body, so module-level constants are included):
+
+  - the literal 7.0 (the unseen far patch's center) appears ZERO times;
+  - the only 3.0 in any artifact is GAIN = 3.0, which the contract states;
+  - no artifact declares a radius 1.0 or a center at (3.0, 0.0);
+  - no incomplete iteration is classified disc-landing in
+    results/continuous_claude_relay_patch2d_k3_7.json — the true form never
+    appears at all.
+
+What the artifacts DO contain is evidence-fitted: every half-plane threshold sits
+at x = 2.0 (the disc's west edge, the boundary the sample actually reveals), and
+the single radial attempt is OBSTACLE_X = 2.3275291505576885,
+OBSTACLE_Y = -0.13505551993070315, OBSTACLE_R = 0.824 — a hull fit of the
+observed freeze crescent, centered outside the true patch. Those are induced
+numbers, not copied ones.

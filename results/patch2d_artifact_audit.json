@@ -1,0 +1,3803 @@
+{
+ "files": {
+  "disc_large_k3_7": {
+   "path": "results/continuous_synthesis_patch2d_large_k3_7.json",
+   "cells": [
+    {
+     "seed": 10000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9296875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 20000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.940625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99625,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 30000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.0034375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 6561,
+     "n_dev_v1": 6561,
+     "textual_patch": false,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 1215,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 1.0
+    },
+    {
+     "seed": 40000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.995,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 50000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.448125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 5670,
+     "n_dev_v1": 5670,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 324,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.864
+    },
+    {
+     "seed": 60000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9021875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 70000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99375,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 80000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.56875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 5670,
+     "n_dev_v1": 5670,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 324,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.864
+    },
+    {
+     "seed": 90000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9696875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 100000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9190625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9971875,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 110000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.88625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9953125,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 120000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.496875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.991875,
+     "n_dev_v0": 500,
+     "n_dev_v1": 500,
+     "textual_patch": true,
+     "cover_p1": 0.987,
+     "cover_p2": 0.973,
+     "west_control_dev": 150,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 1.0,
+     "radial_ratio": 5.251,
+     "area_units": 20.0,
+     "centroid": [
+      2.9,
+      -0.1
+     ],
+     "class": "square-form"
+    },
+    {
+     "seed": 130000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 314,
+     "n_dev_v1": 315,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.785,
+     "radial_ratio": 1.058,
+     "area_units": 12.56,
+     "centroid": [
+      11.98,
+      -0.04
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 140000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.8221875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 150000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.8525,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9984375,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 160000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9084375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 4860,
+     "n_dev_v1": 4860,
+     "textual_patch": true,
+     "cover_p1": 0.987,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.741
+    },
+    {
+     "seed": 170000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9615625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9925,
+     "n_dev_v0": 65,
+     "n_dev_v1": 65,
+     "textual_patch": true,
+     "cover_p1": 0.582,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.802,
+     "radial_ratio": 1.184,
+     "area_units": 2.6,
+     "centroid": [
+      2.44,
+      -0.0
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 180000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.8540625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 190000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.8415625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9915625,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 200000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9925,
+     "gate_passed": false,
+     "blind_ref_gate": 0.994375,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    }
+   ],
+   "aggregates": {
+    "n": 20,
+    "classes_all": {
+     "halfplane": 14,
+     "blind": 1,
+     "blind-textual-patch": 2,
+     "square-form": 1,
+     "disc-form": 2
+    },
+    "n_mode_present": 20,
+    "classes_mode_present": {
+     "halfplane": 14,
+     "blind": 1,
+     "blind-textual-patch": 2,
+     "square-form": 1,
+     "disc-form": 2
+    },
+    "integrator_exact_present": 20
+   }
+  },
+  "disc_mini_k3_7": {
+   "path": "results/continuous_synthesis_patch2d_mini_k3_7.json",
+   "cells": [
+    {
+     "seed": 10000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.105,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 4837,
+     "n_dev_v1": 4837,
+     "textual_patch": true,
+     "cover_p1": 0.329,
+     "cover_p2": 1.0,
+     "west_control_dev": 893,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 2,
+     "class": "halfplane",
+     "area_frac": 0.737
+    },
+    {
+     "seed": 20000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99625,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 30000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.996875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 1,
+     "n_dev_v1": 2,
+     "textual_patch": true,
+     "cover_p1": 0.013,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 0,
+     "class": "point"
+    },
+    {
+     "seed": 40000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.864375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 50000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.16625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 1486,
+     "n_dev_v1": 1486,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 728,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.809,
+     "radial_ratio": 1.655,
+     "area_units": 59.44,
+     "centroid": [
+      1.05,
+      -0.01
+     ],
+     "class": "bounded-other"
+    },
+    {
+     "seed": 60000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.475625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 314,
+     "n_dev_v1": 315,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 246,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.785,
+     "radial_ratio": 1.058,
+     "area_units": 12.56,
+     "centroid": [
+      -0.02,
+      -0.04
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 70000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9934375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99375,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 80000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9978125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 90000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9946875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 100000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9971875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9971875,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 110000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9321875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9953125,
+     "n_dev_v0": 78,
+     "n_dev_v1": 79,
+     "textual_patch": true,
+     "cover_p1": 0.38,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.78,
+     "radial_ratio": 1.128,
+     "area_units": 3.12,
+     "centroid": [
+      1.97,
+      -0.08
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 120000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.8575,
+     "gate_passed": false,
+     "blind_ref_gate": 0.991875,
+     "n_dev_v0": 223,
+     "n_dev_v1": 223,
+     "textual_patch": true,
+     "cover_p1": 0.975,
+     "cover_p2": 0.64,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 2,
+     "bbox_fill": 1.0,
+     "radial_ratio": 2.169,
+     "area_units": 6.12,
+     "centroid": [
+      2.8,
+      0.0
+     ],
+     "class": "square-form"
+    },
+    {
+     "seed": 130000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 317,
+     "n_dev_v1": 317,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.048
+    },
+    {
+     "seed": 140000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9834375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 314,
+     "n_dev_v1": 315,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.785,
+     "radial_ratio": 1.058,
+     "area_units": 12.56,
+     "centroid": [
+      11.98,
+      -0.04
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 150000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.8790625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9984375,
+     "n_dev_v0": 1874,
+     "n_dev_v1": 1866,
+     "textual_patch": true,
+     "cover_p1": 0.759,
+     "cover_p2": 0.0,
+     "west_control_dev": 359,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.286
+    },
+    {
+     "seed": 160000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9978125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 170000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9575,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9925,
+     "n_dev_v0": 314,
+     "n_dev_v1": 315,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.785,
+     "radial_ratio": 1.058,
+     "area_units": 12.56,
+     "centroid": [
+      11.98,
+      -0.04
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 180000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.496875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 810,
+     "n_dev_v1": 810,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 810,
+     "west_numeric_dev": 810,
+     "integrator_exact": false,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.123
+    },
+    {
+     "seed": 190000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.03125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9915625,
+     "n_dev_v0": 6561,
+     "n_dev_v1": 6561,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 1215,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 1.0
+    },
+    {
+     "seed": 200000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9415625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.994375,
+     "n_dev_v0": 1516,
+     "n_dev_v1": 1508,
+     "textual_patch": true,
+     "cover_p1": 0.266,
+     "cover_p2": 0.0,
+     "west_control_dev": 288,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.231
+    }
+   ],
+   "aggregates": {
+    "n": 20,
+    "classes_all": {
+     "halfplane": 7,
+     "blind": 4,
+     "point": 1,
+     "bounded-other": 1,
+     "disc-form": 4,
+     "blind-textual-patch": 2,
+     "square-form": 1
+    },
+    "n_mode_present": 20,
+    "classes_mode_present": {
+     "halfplane": 7,
+     "blind": 4,
+     "point": 1,
+     "bounded-other": 1,
+     "disc-form": 4,
+     "blind-textual-patch": 2,
+     "square-form": 1
+    },
+    "integrator_exact_present": 19
+   }
+  },
+  "disc_large_k5_9": {
+   "path": "results/continuous_synthesis_patch2d_large_k5_9.json",
+   "cells": [
+    {
+     "seed": 10000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9496875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9990625,
+     "n_dev_v0": 4131,
+     "n_dev_v1": 4131,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.63
+    },
+    {
+     "seed": 20000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.993125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9990625,
+     "n_dev_v0": 4131,
+     "n_dev_v1": 4131,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.63
+    },
+    {
+     "seed": 30000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9478125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9990625,
+     "n_dev_v0": 4131,
+     "n_dev_v1": 4131,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.63
+    },
+    {
+     "seed": 40000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9559375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9975,
+     "n_dev_v0": 4131,
+     "n_dev_v1": 4131,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.63
+    },
+    {
+     "seed": 50000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.948125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.999375,
+     "n_dev_v0": 4131,
+     "n_dev_v1": 4131,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.63
+    },
+    {
+     "seed": 60000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.944375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99875,
+     "n_dev_v0": 4131,
+     "n_dev_v1": 4131,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.63
+    },
+    {
+     "seed": 70000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.966875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9946875,
+     "n_dev_v0": 4050,
+     "n_dev_v1": 4050,
+     "textual_patch": true,
+     "cover_p1": 0.987,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.617
+    },
+    {
+     "seed": 80000,
+     "modes_in_sample": {
+      "patch1": false,
+      "patch2": false
+     },
+     "any_mode": false,
+     "gate_accuracy": 1.0,
+     "gate_passed": true,
+     "blind_ref_gate": 1.0,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 90000,
+     "modes_in_sample": {
+      "patch1": false,
+      "patch2": false
+     },
+     "any_mode": false,
+     "gate_accuracy": 1.0,
+     "gate_passed": true,
+     "blind_ref_gate": 1.0,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 100000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.998125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.998125,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 110000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.959375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9971875,
+     "n_dev_v0": 3888,
+     "n_dev_v1": 3969,
+     "textual_patch": true,
+     "cover_p1": 0.797,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.593
+    },
+    {
+     "seed": 120000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.95,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9984375,
+     "n_dev_v0": 4131,
+     "n_dev_v1": 4131,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.63
+    },
+    {
+     "seed": 130000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9971875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9971875,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 140000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.93,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 4131,
+     "n_dev_v1": 4131,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.63
+    },
+    {
+     "seed": 150000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9265625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99875,
+     "n_dev_v0": 4131,
+     "n_dev_v1": 4131,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.63
+    },
+    {
+     "seed": 160000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9521875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9990625,
+     "n_dev_v0": 4131,
+     "n_dev_v1": 4131,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.63
+    },
+    {
+     "seed": 170000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9665625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995,
+     "n_dev_v0": 3969,
+     "n_dev_v1": 3969,
+     "textual_patch": true,
+     "cover_p1": 0.899,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.605
+    },
+    {
+     "seed": 180000,
+     "modes_in_sample": {
+      "patch1": false,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9890625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9996875,
+     "n_dev_v0": 2511,
+     "n_dev_v1": 2511,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.383
+    },
+    {
+     "seed": 190000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9996875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9996875,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 200000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9946875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99875,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    }
+   ],
+   "aggregates": {
+    "n": 20,
+    "classes_all": {
+     "halfplane": 14,
+     "blind": 5,
+     "blind-textual-patch": 1
+    },
+    "n_mode_present": 18,
+    "classes_mode_present": {
+     "halfplane": 14,
+     "blind": 3,
+     "blind-textual-patch": 1
+    },
+    "integrator_exact_present": 18
+   }
+  },
+  "disc_mini_k5_9": {
+   "path": "results/continuous_synthesis_patch2d_mini_k5_9.json",
+   "cells": [
+    {
+     "seed": 10000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9990625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9990625,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 20000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9971875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9990625,
+     "n_dev_v0": 1,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.013,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 0,
+     "class": "point"
+    },
+    {
+     "seed": 30000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9990625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9990625,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 40000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9975,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9975,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 50000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9921875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.999375,
+     "n_dev_v0": 314,
+     "n_dev_v1": 315,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.013,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.785,
+     "radial_ratio": 1.058,
+     "area_units": 12.56,
+     "centroid": [
+      11.98,
+      -0.04
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 60000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.040625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99875,
+     "n_dev_v0": 2673,
+     "n_dev_v1": 2592,
+     "textual_patch": true,
+     "cover_p1": 0.203,
+     "cover_p2": 0.0,
+     "west_control_dev": 1215,
+     "west_numeric_dev": 1215,
+     "integrator_exact": false,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.407
+    },
+    {
+     "seed": 70000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9946875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9946875,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 80000,
+     "modes_in_sample": {
+      "patch1": false,
+      "patch2": false
+     },
+     "any_mode": false,
+     "gate_accuracy": 1.0,
+     "gate_passed": true,
+     "blind_ref_gate": 1.0,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 90000,
+     "modes_in_sample": {
+      "patch1": false,
+      "patch2": false
+     },
+     "any_mode": false,
+     "gate_accuracy": 1.0,
+     "gate_passed": true,
+     "blind_ref_gate": 1.0,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 100000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.8603125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.998125,
+     "n_dev_v0": 6561,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 1215,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 1.0
+    },
+    {
+     "seed": 110000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.3696875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9971875,
+     "n_dev_v0": 1200,
+     "n_dev_v1": 1200,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 0.987,
+     "west_control_dev": 300,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 1.0,
+     "radial_ratio": 3.061,
+     "area_units": 48.0,
+     "centroid": [
+      3.9,
+      -0.1
+     ],
+     "class": "square-form"
+    },
+    {
+     "seed": 120000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.974375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9984375,
+     "n_dev_v0": 18,
+     "n_dev_v1": 21,
+     "textual_patch": true,
+     "cover_p1": 0.076,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.72,
+     "radial_ratio": 1.991,
+     "area_units": 0.72,
+     "centroid": [
+      3.98,
+      0.46
+     ],
+     "class": "bounded-other"
+    },
+    {
+     "seed": 130000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.95625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9971875,
+     "n_dev_v0": 6561,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 1215,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 1.0
+    },
+    {
+     "seed": 140000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9978125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 150000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99875,
+     "n_dev_v0": 1,
+     "n_dev_v1": 1,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 0,
+     "class": "point"
+    },
+    {
+     "seed": 160000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.98125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9990625,
+     "n_dev_v0": 10,
+     "n_dev_v1": 10,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    },
+    {
+     "seed": 170000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9809375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995,
+     "n_dev_v0": 79,
+     "n_dev_v1": 79,
+     "textual_patch": true,
+     "cover_p1": 0.392,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.79,
+     "radial_ratio": 1.163,
+     "area_units": 3.16,
+     "centroid": [
+      4.34,
+      0.74
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 180000,
+     "modes_in_sample": {
+      "patch1": false,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9996875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9996875,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 190000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.7434375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9996875,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 200000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.00125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99875,
+     "n_dev_v0": 2835,
+     "n_dev_v1": 2835,
+     "textual_patch": true,
+     "cover_p1": 0.43,
+     "cover_p2": 0.0,
+     "west_control_dev": 1215,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.432
+    }
+   ],
+   "aggregates": {
+    "n": 20,
+    "classes_all": {
+     "blind": 7,
+     "point": 3,
+     "disc-form": 2,
+     "halfplane": 4,
+     "square-form": 1,
+     "bounded-other": 1,
+     "blind-textual-patch": 2
+    },
+    "n_mode_present": 18,
+    "classes_mode_present": {
+     "blind": 5,
+     "point": 3,
+     "disc-form": 2,
+     "halfplane": 4,
+     "square-form": 1,
+     "bounded-other": 1,
+     "blind-textual-patch": 2
+    },
+    "integrator_exact_present": 17
+   }
+  },
+  "region_it15_large": {
+   "path": "results/continuous_synthesis_patch2d_large_k3_7_pv-region_it15.json",
+   "cells": [
+    {
+     "seed": 10000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9915625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 15,
+     "n_dev_v1": 15,
+     "textual_patch": true,
+     "cover_p1": 0.19,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.625,
+     "radial_ratio": 6.452,
+     "area_units": 0.6,
+     "centroid": [
+      2.32,
+      -0.12
+     ],
+     "class": "bounded-other"
+    },
+    {
+     "seed": 20000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9953125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99625,
+     "n_dev_v0": 1,
+     "n_dev_v1": 1,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 0,
+     "class": "point"
+    },
+    {
+     "seed": 30000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 168,
+     "n_dev_v1": 168,
+     "textual_patch": true,
+     "cover_p1": 0.911,
+     "cover_p2": 0.013,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 1.0,
+     "radial_ratio": 2.911,
+     "area_units": 6.72,
+     "centroid": [
+      4.0,
+      -0.1
+     ],
+     "class": "square-form"
+    },
+    {
+     "seed": 40000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.98875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995,
+     "n_dev_v0": 10,
+     "n_dev_v1": 10,
+     "textual_patch": true,
+     "cover_p1": 0.076,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    },
+    {
+     "seed": 50000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.518125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 3241,
+     "n_dev_v1": 3241,
+     "textual_patch": true,
+     "cover_p1": 0.443,
+     "cover_p2": 0.44,
+     "west_control_dev": 600,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.494
+    },
+    {
+     "seed": 60000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9934375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 70000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9921875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99375,
+     "n_dev_v0": 4,
+     "n_dev_v1": 4,
+     "textual_patch": true,
+     "cover_p1": 0.025,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 0,
+     "class": "point"
+    },
+    {
+     "seed": 80000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.998125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 90000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9965625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 100000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.944375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9971875,
+     "n_dev_v0": 79,
+     "n_dev_v1": 79,
+     "textual_patch": true,
+     "cover_p1": 0.405,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.653,
+     "radial_ratio": 1.267,
+     "area_units": 3.16,
+     "centroid": [
+      2.0,
+      -0.02
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 110000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9740625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9953125,
+     "n_dev_v0": 18,
+     "n_dev_v1": 18,
+     "textual_patch": true,
+     "cover_p1": 0.101,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 2,
+     "class": "point"
+    },
+    {
+     "seed": 120000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.98625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.991875,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 130000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9409375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 93,
+     "n_dev_v1": 93,
+     "textual_patch": true,
+     "cover_p1": 0.43,
+     "cover_p2": 0.053,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 2,
+     "bbox_fill": 0.636,
+     "radial_ratio": 1.831,
+     "area_units": 3.36,
+     "centroid": [
+      2.05,
+      -0.08
+     ],
+     "class": "bounded-other"
+    },
+    {
+     "seed": 140000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 5,
+     "n_dev_v1": 5,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    },
+    {
+     "seed": 150000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9984375,
+     "n_dev_v0": 15,
+     "n_dev_v1": 15,
+     "textual_patch": true,
+     "cover_p1": 0.127,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 1.0,
+     "radial_ratio": 2.236,
+     "area_units": 0.6,
+     "centroid": [
+      2.2,
+      -0.4
+     ],
+     "class": "square-form"
+    },
+    {
+     "seed": 160000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9825,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 21,
+     "n_dev_v1": 21,
+     "textual_patch": true,
+     "cover_p1": 0.114,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.84,
+     "radial_ratio": 1.118,
+     "area_units": 0.84,
+     "centroid": [
+      2.0,
+      -0.0
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 170000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9953125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9925,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 180000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9928125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 2,
+     "n_dev_v1": 2,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 0,
+     "class": "point"
+    },
+    {
+     "seed": 190000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9815625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9915625,
+     "n_dev_v0": 5,
+     "n_dev_v1": 5,
+     "textual_patch": true,
+     "cover_p1": 0.013,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    },
+    {
+     "seed": 200000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.994375,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    }
+   ],
+   "aggregates": {
+    "n": 20,
+    "classes_all": {
+     "bounded-other": 2,
+     "point": 7,
+     "square-form": 2,
+     "halfplane": 1,
+     "blind": 1,
+     "blind-textual-patch": 5,
+     "disc-form": 2
+    },
+    "n_mode_present": 20,
+    "classes_mode_present": {
+     "bounded-other": 2,
+     "point": 7,
+     "square-form": 2,
+     "halfplane": 1,
+     "blind": 1,
+     "blind-textual-patch": 5,
+     "disc-form": 2
+    },
+    "integrator_exact_present": 20
+   }
+  },
+  "region_it15_mini": {
+   "path": "results/continuous_synthesis_patch2d_mini_k3_7_pv-region_it15.json",
+   "cells": [
+    {
+     "seed": 10000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9934375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 20000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99625,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 30000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.961875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 45,
+     "n_dev_v1": 45,
+     "textual_patch": true,
+     "cover_p1": 0.241,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.833,
+     "radial_ratio": 1.742,
+     "area_units": 1.8,
+     "centroid": [
+      1.95,
+      -0.09
+     ],
+     "class": "bounded-other"
+    },
+    {
+     "seed": 40000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.984375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995,
+     "n_dev_v0": 5,
+     "n_dev_v1": 5,
+     "textual_patch": true,
+     "cover_p1": 0.013,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    },
+    {
+     "seed": 50000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9571875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 26,
+     "n_dev_v1": 26,
+     "textual_patch": true,
+     "cover_p1": 0.063,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 2,
+     "bbox_fill": 0.95,
+     "radial_ratio": 2.036,
+     "area_units": 0.76,
+     "centroid": [
+      2.02,
+      0.68
+     ],
+     "class": "square-form"
+    },
+    {
+     "seed": 60000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9609375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 33,
+     "n_dev_v1": 33,
+     "textual_patch": true,
+     "cover_p1": 0.165,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.673,
+     "radial_ratio": 1.414,
+     "area_units": 1.32,
+     "centroid": [
+      2.0,
+      -0.2
+     ],
+     "class": "bounded-other"
+    },
+    {
+     "seed": 70000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9775,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99375,
+     "n_dev_v0": 24,
+     "n_dev_v1": 25,
+     "textual_patch": true,
+     "cover_p1": 0.101,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.767,
+     "radial_ratio": 2.001,
+     "area_units": 0.92,
+     "centroid": [
+      1.96,
+      0.08
+     ],
+     "class": "bounded-other"
+    },
+    {
+     "seed": 80000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9978125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 90000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9809375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 11,
+     "n_dev_v1": 10,
+     "textual_patch": true,
+     "cover_p1": 0.038,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    },
+    {
+     "seed": 100000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9746875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9971875,
+     "n_dev_v0": 10,
+     "n_dev_v1": 10,
+     "textual_patch": true,
+     "cover_p1": 0.051,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    },
+    {
+     "seed": 110000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9953125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9953125,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 120000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.98125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.991875,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 130000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.98625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 9,
+     "n_dev_v1": 9,
+     "textual_patch": true,
+     "cover_p1": 0.013,
+     "cover_p2": 0.027,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 2,
+     "class": "point"
+    },
+    {
+     "seed": 140000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9821875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 30,
+     "n_dev_v1": 30,
+     "textual_patch": true,
+     "cover_p1": 0.253,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 1.0,
+     "radial_ratio": 1.553,
+     "area_units": 1.2,
+     "centroid": [
+      2.4,
+      -0.5
+     ],
+     "class": "square-form"
+    },
+    {
+     "seed": 150000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9984375,
+     "n_dev_v0": 6,
+     "n_dev_v1": 3,
+     "textual_patch": true,
+     "cover_p1": 0.038,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    },
+    {
+     "seed": 160000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 10,
+     "n_dev_v1": 10,
+     "textual_patch": true,
+     "cover_p1": 0.089,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    },
+    {
+     "seed": 170000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.98375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9925,
+     "n_dev_v0": 7,
+     "n_dev_v1": 7,
+     "textual_patch": true,
+     "cover_p1": 0.038,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    },
+    {
+     "seed": 180000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9684375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9965625,
+     "n_dev_v0": 24,
+     "n_dev_v1": 20,
+     "textual_patch": true,
+     "cover_p1": 0.076,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 1.0,
+     "radial_ratio": 1.844,
+     "area_units": 0.96,
+     "centroid": [
+      1.9,
+      0.5
+     ],
+     "class": "square-form"
+    },
+    {
+     "seed": 190000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9490625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9915625,
+     "n_dev_v0": 55,
+     "n_dev_v1": 55,
+     "textual_patch": true,
+     "cover_p1": 0.557,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.873,
+     "radial_ratio": 1.452,
+     "area_units": 2.2,
+     "centroid": [
+      2.55,
+      -0.0
+     ],
+     "class": "bounded-other"
+    },
+    {
+     "seed": 200000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9753125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.994375,
+     "n_dev_v0": 5,
+     "n_dev_v1": 5,
+     "textual_patch": true,
+     "cover_p1": 0.013,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    }
+   ],
+   "aggregates": {
+    "n": 20,
+    "classes_all": {
+     "blind": 3,
+     "blind-textual-patch": 2,
+     "bounded-other": 4,
+     "point": 8,
+     "square-form": 3
+    },
+    "n_mode_present": 20,
+    "classes_mode_present": {
+     "blind": 3,
+     "blind-textual-patch": 2,
+     "bounded-other": 4,
+     "point": 8,
+     "square-form": 3
+    },
+    "integrator_exact_present": 20
+   }
+  },
+  "square_large": {
+   "path": "results/continuous_synthesis_patch2dsq_large_k3_7.json",
+   "cells": [
+    {
+     "seed": 10000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9671875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.991875,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 20000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.95,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 30000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.8271875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9959375,
+     "n_dev_v0": 5022,
+     "n_dev_v1": 5022,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.765
+    },
+    {
+     "seed": 40000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99375,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 50000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.8403125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995625,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 60000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.923125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 70000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.905625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9921875,
+     "n_dev_v0": 79,
+     "n_dev_v1": 79,
+     "textual_patch": true,
+     "cover_p1": 0.372,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.653,
+     "radial_ratio": 1.267,
+     "area_units": 3.16,
+     "centroid": [
+      2.0,
+      -0.02
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 80000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.3515625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 600,
+     "n_dev_v1": 600,
+     "textual_patch": true,
+     "cover_p1": 0.909,
+     "cover_p2": 0.0,
+     "west_control_dev": 300,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 1.0,
+     "radial_ratio": 1.712,
+     "area_units": 24.0,
+     "centroid": [
+      0.9,
+      -0.1
+     ],
+     "class": "square-form"
+    },
+    {
+     "seed": 90000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9484375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99625,
+     "n_dev_v0": 79,
+     "n_dev_v1": 79,
+     "textual_patch": true,
+     "cover_p1": 0.372,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.653,
+     "radial_ratio": 1.267,
+     "area_units": 3.16,
+     "centroid": [
+      2.0,
+      -0.02
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 100000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.929375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.996875,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 110000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.993125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.993125,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 120000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9371875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 130000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9934375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9925,
+     "n_dev_v0": 327,
+     "n_dev_v1": 327,
+     "textual_patch": true,
+     "cover_p1": 0.182,
+     "cover_p2": 0.636,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.05
+    },
+    {
+     "seed": 140000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.845625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9903125,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 150000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.880625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9959375,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 160000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9140625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9953125,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 5022,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 170000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.969375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9909375,
+     "n_dev_v0": 22,
+     "n_dev_v1": 22,
+     "textual_patch": true,
+     "cover_p1": 0.091,
+     "cover_p2": 0.091,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 2,
+     "class": "point"
+    },
+    {
+     "seed": 180000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.871875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.993125,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 5022,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 190000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.90625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 200000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.976875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    }
+   ],
+   "aggregates": {
+    "n": 20,
+    "classes_all": {
+     "halfplane": 14,
+     "blind": 2,
+     "disc-form": 2,
+     "square-form": 1,
+     "point": 1
+    },
+    "n_mode_present": 20,
+    "classes_mode_present": {
+     "halfplane": 14,
+     "blind": 2,
+     "disc-form": 2,
+     "square-form": 1,
+     "point": 1
+    },
+    "integrator_exact_present": 20
+   }
+  },
+  "square_mini": {
+   "path": "results/continuous_synthesis_patch2dsq_mini_k3_7.json",
+   "cells": [
+    {
+     "seed": 10000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.991875,
+     "n_dev_v0": 1,
+     "n_dev_v1": 1,
+     "textual_patch": true,
+     "cover_p1": 0.008,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 0,
+     "class": "point"
+    },
+    {
+     "seed": 20000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9775,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 30000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9578125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9959375,
+     "n_dev_v0": 314,
+     "n_dev_v1": 315,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.785,
+     "radial_ratio": 1.058,
+     "area_units": 12.56,
+     "centroid": [
+      11.98,
+      -0.04
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 40000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9775,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99375,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind-textual-patch"
+    },
+    {
+     "seed": 50000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.8734375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995625,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 60000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9934375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9934375,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 70000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9878125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9921875,
+     "n_dev_v0": 5,
+     "n_dev_v1": 5,
+     "textual_patch": true,
+     "cover_p1": 0.033,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "point"
+    },
+    {
+     "seed": 80000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.0021875,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9978125,
+     "n_dev_v0": 6561,
+     "n_dev_v1": 6561,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 1215,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 1.0
+    },
+    {
+     "seed": 90000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99625,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 100000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.839375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.996875,
+     "n_dev_v0": 5103,
+     "n_dev_v1": 5184,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.778
+    },
+    {
+     "seed": 110000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.91125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.993125,
+     "n_dev_v0": 4941,
+     "n_dev_v1": 4941,
+     "textual_patch": true,
+     "cover_p1": 1.0,
+     "cover_p2": 1.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.753
+    },
+    {
+     "seed": 120000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 130000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.990625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9925,
+     "n_dev_v0": 314,
+     "n_dev_v1": 0,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.785,
+     "radial_ratio": 1.058,
+     "area_units": 12.56,
+     "centroid": [
+      11.98,
+      -0.04
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 140000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9803125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9903125,
+     "n_dev_v0": 314,
+     "n_dev_v1": 315,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "bbox_fill": 0.785,
+     "radial_ratio": 1.058,
+     "area_units": 12.56,
+     "centroid": [
+      11.98,
+      -0.04
+     ],
+     "class": "disc-form"
+    },
+    {
+     "seed": 150000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9959375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9959375,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 160000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.974375,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9953125,
+     "n_dev_v0": 317,
+     "n_dev_v1": 317,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.048
+    },
+    {
+     "seed": 170000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": true
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.988125,
+     "gate_passed": false,
+     "blind_ref_gate": 0.9909375,
+     "n_dev_v0": 10,
+     "n_dev_v1": 10,
+     "textual_patch": true,
+     "cover_p1": 0.033,
+     "cover_p2": 0.033,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 2,
+     "class": "point"
+    },
+    {
+     "seed": 180000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.9815625,
+     "gate_passed": false,
+     "blind_ref_gate": 0.993125,
+     "n_dev_v0": 317,
+     "n_dev_v1": 317,
+     "textual_patch": true,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "n_components": 1,
+     "class": "halfplane",
+     "area_frac": 0.048
+    },
+    {
+     "seed": 190000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.99,
+     "gate_passed": false,
+     "blind_ref_gate": 0.99,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    },
+    {
+     "seed": 200000,
+     "modes_in_sample": {
+      "patch1": true,
+      "patch2": false
+     },
+     "any_mode": true,
+     "gate_accuracy": 0.995,
+     "gate_passed": false,
+     "blind_ref_gate": 0.995,
+     "n_dev_v0": 0,
+     "n_dev_v1": 0,
+     "textual_patch": false,
+     "cover_p1": 0.0,
+     "cover_p2": 0.0,
+     "west_control_dev": 0,
+     "west_numeric_dev": 0,
+     "integrator_exact": true,
+     "class": "blind"
+    }
+   ],
+   "aggregates": {
+    "n": 20,
+    "classes_all": {
+     "point": 3,
+     "blind-textual-patch": 2,
+     "disc-form": 3,
+     "halfplane": 6,
+     "blind": 6
+    },
+    "n_mode_present": 20,
+    "classes_mode_present": {
+     "point": 3,
+     "blind-textual-patch": 2,
+     "disc-form": 3,
+     "halfplane": 6,
+     "blind": 6
+    },
+    "integrator_exact_present": 20
+   }
+  }
+ }
+}

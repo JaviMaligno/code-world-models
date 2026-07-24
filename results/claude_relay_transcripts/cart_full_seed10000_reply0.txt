@@ -1,0 +1,26 @@
+```python
+import math
+
+DT = 0.1
+GAIN = 3.0
+DRAG = 0.3
+A_MAX = 1.0
+WALL_X = 8.0
+
+
+def step(state: list, action: float) -> list:
+    x, v = state[0], state[1]
+    a = min(A_MAX, max(-A_MAX, action))
+    v2 = v + (GAIN * a - DRAG * v) * DT
+    x2 = x + v2 * DT
+    if x2 >= WALL_X:
+        return [WALL_X, 0.0]
+    return [x2, v2]
+
+
+def reward(state: list) -> float:
+    x = state[0]
+    left = 0.3 / (1.0 + math.exp(-((-6.0 - x) / 0.5)))
+    right = 1.0 / (1.0 + math.exp(-((x - 12.0) / 0.5)))
+    return left + right
+```

@@ -1,0 +1,70 @@
+{
+  "script": "continuous_mitigation_patch2d.py",
+  "params": {
+    "episodes": 20,
+    "seed": 0,
+    "knobs": [
+      2.0,
+      6.0,
+      3.0,
+      7.0,
+      4.0,
+      8.0
+    ],
+    "eps": 0.5
+  },
+  "rows": [
+    {
+      "instrument": "patch2d",
+      "k1": 2.0,
+      "k2": 6.0,
+      "eps": 0.5,
+      "j_truth": 17.98458178957501,
+      "j_blind": 0.0015158225467836457,
+      "j_mitigated": 13.395679772398188,
+      "j_random": 0.11347211999219906,
+      "play_cost_blind": 1.006264652812017,
+      "play_cost_mitigated": 0.2567776764857125,
+      "blind_contact_rate": 1.0,
+      "mitigated_contact_rate": 1.0,
+      "mean_violations": 1.05,
+      "mean_first_contact_step": 8.5,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "patch2d",
+      "k1": 3.0,
+      "k2": 7.0,
+      "eps": 0.5,
+      "j_truth": 18.471475577254353,
+      "j_blind": 0.0007733804586390643,
+      "j_mitigated": 8.533081091191175,
+      "j_random": 0.10822413483238573,
+      "play_cost_blind": 1.0058514013550737,
+      "play_cost_mitigated": 0.5412110440912409,
+      "blind_contact_rate": 1.0,
+      "mitigated_contact_rate": 1.0,
+      "mean_violations": 2.65,
+      "mean_first_contact_step": 12.35,
+      "n_episodes": 20
+    },
+    {
+      "instrument": "patch2d",
+      "k1": 4.0,
+      "k2": 8.0,
+      "eps": 0.5,
+      "j_truth": 19.079075775432784,
+      "j_blind": 0.0007280190919418809,
+      "j_mitigated": 2.732649606285701,
+      "j_random": 0.10821455280143615,
+      "play_cost_blind": 1.0056658752835779,
+      "play_cost_mitigated": 0.8616596778245661,
+      "blind_contact_rate": 1.0,
+      "mitigated_contact_rate": 1.0,
+      "mean_violations": 4.25,
+      "mean_first_contact_step": 15.25,
+      "n_episodes": 20
+    }
+  ],
+  "elapsed_s": 832.5
+}

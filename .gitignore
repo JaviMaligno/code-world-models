@@ -17,3 +17,8 @@ docs/paper/*.out
 docs/paper/*.bbl
 docs/paper/*.blg
 docs/paper/*.toc
+# (paper2's main.bbl is a committed artifact — do NOT ignore it)
+docs/paper2/*.aux
+docs/paper2/*.log
+docs/paper2/*.out
+docs/paper2/*.blg

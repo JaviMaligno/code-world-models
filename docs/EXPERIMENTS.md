@@ -1,5 +1,425 @@
 # Experiments Log
 
+## PAPER 2 — Pre-arXiv review closure: 2D cross-family arm, two missing entry points, re-run validation (2026-07-24)
+
+A pre-submission review of paper 2 raised eleven items (3 blocking, 4 substantive,
+4 minor). All were closed by measurement or by a precision fix, not by hedging.
+
+**1. Two scripts the paper cited did not exist.** §5 cited
+`scripts/continuous_cem_patch2d.py` and the §6 text cited
+`scripts/continuous_eps_sweep_patch2d.py`; the actual invocations were
+`continuous_cem.py --instrument patch2d` / `continuous_eps_sweep.py
+--instrument patch2d` (the appendix had it right, the body did not). Both now
+exist as first-class entry points that delegate to the shared implementation via
+`runpy` — no duplicated measurement code, so the 1D and 2D paths cannot drift —
+and stamp `entry_point` into their JSON for provenance. **Both were re-executed
+from a clean invocation of the new entry points and produced output
+byte-identical to the committed JSONs** (only `elapsed_s`/`entry_point` differ:
+837 s vs 1144 s, 449 s vs 898 s wall-clock). So the paper's CEM row
+(pc −0.022/+0.017/+0.020, crossing 0.0697<0.2076, 0.0270<0.1488,
+0.0091<0.0943, contact 0.05) and the per-mode eps-flatness (0.147 / 0.142 /
+0.005, constant across the whole eps grid) reproduce exactly.
+
+**2. The 2D repair collapse was GPT-5.x-only — now it has a second family.**
+The abstract/intro said "no model recovers the region rule", but PatchField2D had
+been run on GPT-5.x mini+large only (with shared samples). Two arms were
+attempted:
+
+- **Qwen: ABORTED after 3 cells — partial, recorded.**
+  `continuous_danger_synthesis.py mini 10 --instrument patch2d --k1 3 --k2 7
+  --compat-model Qwen/Qwen3-Coder-30B-A3B-Instruct` died on HTTP 402 (HF
+  Inference Providers monthly credits exhausted) after completing the arm order's
+  first three cells, which are all **full-arm**:
+  `results/continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json`
+  — 3/3 gate 1.000 at 0 refine iterations, both discs written exactly on the
+  landing position `(x2-3)²+(y2-0)² <= 1.0` / `(x2-7)²+(y2-0)² <= 1.0`, per-patch
+  blindness 0.0/0.0. So Qwen contributes a clean TRANSLATION control on the 2D
+  instrument and **zero** incomplete-arm (induction) data. Reported as exactly
+  that; the 2D induction evidence is GPT-5.x's 156 seeds + Claude's 3.
+- **Claude (agent-relayed): 3 mode-containing seeds + 1 full control at k=(3,7)**,
+  Sonnet, same N=40 sample, same eps=1e-9 pinned-integrator gate, same 5-iteration
+  memoryless refine loop. `continuous_claude_step.py` gained patch2d support
+  (per-mode blindness + `sample_contains_mode_per`, knob in the record key, and a
+  `--model-label` so the arm is attributable). Seeds 10000/20000 are
+  see-P1-miss-P2; seed 30000 sees BOTH patches.
+
+  **Full control: gate 1.000 at iteration 0**, both discs written on the landing
+  position, blindness 0.0, play_cost 0.0 — translation is not the problem, exactly
+  as with GPT-5.x. **Incomplete arm: no repair.** The trajectory is the finding:
+  every seed sits in a **period-2 cycle** between the pure-blind artifact and a
+  wrong template, returning to the iteration-0 gate value on every even iteration.
+  Per-iteration ledger (`scripts/claude_relay_ledger.py`, which re-derives gate
+  accuracy and rule class from the versioned transcripts →
+  `results/continuous_claude_relay_patch2d_k3_7.json`):
+
+  | seed | it0 | it1 | it2 | it3 | it4 | it5 |
+  |---|---|---|---|---|---|---|
+  | 10000 | blind .9934 | disc-**current** .9591 | blind .9934 | halfplane .9284 | blind .9934 | reward-thresh .7044 |
+  | 20000 | blind .9962 | halfplane .9406 | blind .9962 | halfplane .9406 | blind .9962 | halfplane .9406 |
+  | 30000 | blind .9966 | reward-zone .6750 | blind .9966 | halfplane .8406 | blind .9966 | y-band .5328 |
+
+  All three terminate REJECTED at iteration 5 (0/3 repair). The even iterations
+  return to the iteration-0 gate value exactly, on every seed — the memoryless
+  refine loop deletes the failed template and re-emits the blind artifact.
+
+  The templates are exactly the library the GPT-5.x campaigns exhibited: 1D
+  threshold (all three seeds), a radial disc conditioned on the **current**
+  instead of the landing position (seed 10000 — the wrong-causal-variable error
+  Ablation 1 found in 36/40 guided artifacts), and a reward-landmark freeze zone
+  (seed 30000). **No incomplete iteration in any seed wrote a disc on the landing
+  position** — the form this same model writes immediately when the contract
+  states it. The template prior is therefore not a GPT-5.x idiosyncrasy.
+
+  Transport note: two of seed 10000's relays (msg3, msg5) were dispatched twice
+  after the first appeared to hang. Pre-registered rule: the first completed relay
+  of a message wins. In both cases the original landed first and is the one used;
+  both duplicates are preserved as `..._msg{3,5}_duplicate_relay_DISCARDED.txt`
+  rather than deleted. Neither would have changed the finding — they wrote a
+  segment/capsule distance and a disc, both on the CURRENT position. Relayed
+  instances were instructed not to use tools or read files, so each artifact is a
+  function of the pipeline message alone; that framing is recorded with the
+  transcripts and disclosed in the paper.
+
+**3. Precision fixes (no new data needed).** Abstract cut to 1865 ASCII chars for
+arXiv's hard 1920-char metadata limit (`docs/paper2/abstract-arxiv.txt`);
+mini/large **share their gate samples by construction** (`rollout_seed =
+10_000*(i+1)`, model-independent) so every pooled "both sizes" count is n samples
+× 2 synthesis draws — now stated once in §9 and applied everywhere, with per-size
+Wilson bounds (0.72 cart, 0.70 pendulum) replacing the pooled ones (0.84, 0.824)
+as the bounds relied on, and the (1−r)^N check explicitly never pooled; the
+pendulum θ_stop=2.0 rarity is a censored zero (0/3000, Wilson upper 0.0013) so its
+d@40 is now reported as an upper bound with the CI-implied floor (0.895); exact
+Azure deployments footnoted (`gpt-5.4`, `gpt-5.4-mini`, API 2025-04-01-preview);
+the 38-vs-39 half-plane count between hand inspection and the behavioral audit
+reconciled to a syntax-vs-behavior reading of two named artifacts (mini k3_7
+seeds 130000, 150000 — radial predicates anchored at the reward lodes);
+Prop. 4's hypothesis widened to L ∈ [0,∞); Corollary 1's display made |play_cost|.
+
+## PAPER 2 — Behavioral audit of the patch2d artifacts: the hand inspection VERIFIED (2026-07-23)
+
+`scripts/patch2d_artifact_audit.py` (oracle-selftested: 7 constructed classes
++ a two-patch case) → `results/patch2d_artifact_audit.json`. The same
+freeze-mask instrument built for paper 3's ring audit, adapted to
+PatchField2D: probe each artifact's `step()` on an 81×81 grid over
+[−2,14]×[−8,8] at two velocity slices, mark deviations from the pure
+integrator, classify the deviation set's SHAPE (halfplane-unbounded /
+disc-form / square-form / bounded-other / point / vdep / blind, with a
+textual-patch sub-split for measure-zero traps), measure per-patch coverage,
+and check integrator arithmetic on a west control strip (freeze-form
+deviations there are mode-rule overreach, not wrong arithmetic).
+
+**Every §7.1 hand-inspection claim is behaviorally CONFIRMED** (this matters
+because on paper 3's ring the same instrument *corrected* my hand reading —
+here it validates the paper's):
+
+| paper claim (hand inspection) | behavioral audit |
+|---|---|
+| 76 mode-present incomplete seeds | 76 ✓ |
+| 38/76 dimensional reduction (half-plane) | 39 ✓ |
+| 20 pure-blind + 9 superstitious | 13 pure-blind + 7 textual-patch (measure-zero traps, behaviorally blind) + 4 point (+3 square-form, 2 bounded-other) ✓ structure |
+| 9/76 disc-form attempts, none correct | 8 ✓ |
+| ~74/76 integrator exact | **74/76 exact** (16 west-strip flags resolve to 14 freeze-form mode overreaches + exactly 2 numeric) ✓ |
+| 0 partial repair (gate-level) | **CORRECTED 2026-07-24**: the original check was vacuous (it read `per["p1"]` while the key is `"patch1"`, so its condition never fired). Real numbers: **34/76** freeze sets DO contain a seen patch (>90% coverage) — half-planes swallowing the disc, freezing ~75% of the probed box — and **0/76** contain one while freezing little else (area within 2.5× the patch's 1.2% share). No partial repair in the sense that counts ✓, but "no artifact covers the seen patch" was wrong and is fixed in the tex. |
+
+The two later results awaiting the tex fold are also behaviorally grounded:
+- **Square ablation (bidirectional template):** on SQUARE evidence the class
+  mix is the same story — halfplane dominates (20/40), and among bounded
+  attempts disc-form 5 vs square-form 1: models impose the round template on
+  square evidence, mirroring the half-plane imposed on disc evidence.
+  Integrator exact 40/40.
+- **Region+3×-budget confound cells:** the guidance ELIMINATED the half-plane
+  reduction (1/40 vs 21/40 in the k3_7 base) and moved artifacts to bounded
+  2D fits — point/micro-unions 15, bounded-other 6, square-form 5, disc-form
+  2, blind-ish 11 — none the true disc; integrator exact 40/40. Matches the
+  hull-fitting reading (RESEARCH-DIRECTION), now measured.
+
+## PAPER 2 — PatchField2D (4D bi-modal instrument): the danger law composes; repair is geometry-dependent (2026-07-18)
+
+The third instrument closes the two structural gaps the reviewers flagged on the 1D
+instruments — a 4D state and two independent modes — by adding a `PatchField2D`
+environment (`src/cwm/continuous/envs`): state `[x, y, vx, vy]`, scalar heading action
+`φ = π·clamp(a)/a_max`, two circular sticky patches `P_i = disc(c_i, R)` with a
+stay-at-previous-position clamp (`(x2,y2) ∈ P_i ⇒ next = [x, y, 0, 0]`), and two radial
+sigmoid lodes (small real one near the start, large phantom one behind the patches).
+Knobs `k1` (near patch) / `k2` (far patch) are the patch-center distances along/off the
+start→lode corridor; defaults frozen once (never per cell).
+
+### Mechanism — the danger law composes per mode (2026-07-18)
+
+`scripts/continuous_patch2d.py` → `results/continuous_patch2d.json`. 600 rarity rollouts,
+20 MPC episodes/arm per cell, 3×3 knob grid. `J_blind = 0.00` and `J_rand = 0.11` at every
+cell; `play_cost` knob-invariant at [1.005, 1.006]. Per-mode rarities separate cleanly
+(`r1 ∈ [0.085, 0.245]`, `r2 ∈ [0.0067, 0.0100]`). The danger law composes mode-wise:
+per-mode `d@40 = pc·(1−r_i)^40`, joint `d@40 = pc·((1−r1)(1−r2))^40`.
+
+| k1 | k2 | r1 | r2 | J_truth | J_blind | J_rand | pc | d40_p1 | d40_p2 | d40_joint |
+|---:|---:|-----:|------:|-------:|-------:|------:|-----:|------:|------:|--------:|
+| 2 | 6 | 0.2450 | 0.0100 | 17.98 | 0.00 | 0.11 | 1.006 | 0.0000 | 0.6732 | 0.0000 |
+| 2 | 7 | 0.2450 | 0.0083 | 18.02 | 0.00 | 0.11 | 1.006 | 0.0000 | 0.7200 | 0.0000 |
+| 2 | 8 | 0.2450 | 0.0067 | 18.08 | 0.00 | 0.11 | 1.006 | 0.0000 | 0.7700 | 0.0000 |
+| 3 | 6 | 0.1417 | 0.0083 | 18.57 | 0.00 | 0.11 | 1.006 | 0.0022 | 0.7197 | 0.0016 |
+| 3 | 7 | 0.1417 | 0.0083 | 18.47 | 0.00 | 0.11 | 1.006 | 0.0022 | 0.7197 | 0.0016 |
+| 3 | 8 | 0.1417 | 0.0067 | 17.72 | 0.00 | 0.11 | 1.006 | 0.0022 | 0.7699 | 0.0017 |
+| 4 | 6 | 0.0883 | 0.0083 | 20.85 | 0.00 | 0.11 | 1.005 | 0.0249 | 0.7192 | 0.0178 |
+| 4 | 7 | 0.0883 | 0.0100 | 19.52 | 0.00 | 0.11 | 1.006 | 0.0249 | 0.6727 | 0.0166 |
+| 4 | 8 | 0.0850 | 0.0083 | 19.08 | 0.00 | 0.11 | 1.006 | 0.0288 | 0.7196 | 0.0206 |
+
+**Honest notes.** The `r2` knob is only weakly resolved at 600 rollouts (its trend is
+under-resolved, not flat); the `k1=4` one-hit bump in `r2` is sampling noise, not a knob
+effect.
+
+### Synthesis — we predicted partial repair; we measured none (2026-07-18)
+
+`scripts/continuous_danger_synthesis.py --instrument patch2d` (Azure GPT-5.x mini + large,
+20 seeds/cell, N=40, ε=1e-9) on two bi-knob cells, k=(3,7) and k=(5,9). Per-seed JSONs:
+`results/continuous_synthesis_patch2d_{mini,large}_k{3_7,5_9}.json`.
+
+| file (model) | full | see-both | see1-miss2 | miss1-see2 | miss-both (certified) |
+|---|---|---|---|---|---|
+| mini_k3_7 (gpt-5.4-mini) | 20/20 | n=5 cert=0, gate [0.1663, 0.9969] | n=15 cert=0, gate [0.0312, 0.9978] | — | — |
+| large_k3_7 (gpt-5.4) | 20/20 | n=5 cert=0, gate [0.0034, 0.9912] | n=15 cert=0, gate [0.5687, 0.995] | — | — |
+| mini_k5_9 (gpt-5.4-mini) | 20/20 | — | n=17 cert=0, gate [0.0013, 0.9991] | n=1 cert=0, gate [0.9997] | n=2 cert=2, gate [1.0], play_cost 1.095 |
+| large_k5_9 (gpt-5.4) | 20/20 | — | n=17 cert=0, gate [0.9266, 0.9997] | n=1 cert=0, gate [0.9891] | n=2 cert=2, gate [1.0], play_cost 1.095 |
+
+**Headline (prediction-inverting).** The plan predicted PARTIAL REPAIR (a see-one-miss-other
+sample yielding an artifact that repairs the seen patch and is blind+certified on the
+unseen one). MEASURED: **0 partial-repair events in 66 see-one-miss-other cells**
+(66 = 64 see1-miss2 + 2 miss1-see2), and **0/76 in-sample incomplete artifacts recovered
+the disc rule at all** (76 = 80 incomplete seeds − 4 miss-both). Certification occurred
+**iff** the sample missed ALL modes: the only certified incomplete artifacts are the
+**4/80 miss-both seeds** (2 per size at k=(5,9)), blind on both patches, exploited at
+play_cost 1.095, contact 1.0. The all-or-nothing gate REJECTED every partial artifact
+rather than certifying it, so certification stayed sound in the strict sense (no wrong
+artifact certified on a covered transition); danger still lives exactly in the
+`(1−r1)^N (1−r2)^N` joint-miss event.
+
+**Mechanism (76-artifact code inspection).** Plant translation succeeds (≈74/76 exact 4D
+integrator + reward). What collapses is INDUCTION of the 2D circular boundary. The modal
+failure is DIMENSIONAL REDUCTION: the disc modeled as a CartWall half-plane (right location,
+wrong shape, e.g. `if x2 > 4.0`). Classification of the 76:
+
+| class | count | description |
+|---|---:|---|
+| dimensional reduction (half-plane) | 38/76 | disc → 1D half-plane clamp at the right location, wrong shape |
+| pure-blind | 20/76 | no patch logic at all |
+| superstitious | 9/76 | local patch fitted to observed contacts, mispredicts elsewhere |
+| disc-form but incorrect | 9/76 | attempts a circular form, none correct |
+
+The ε-exactness alternative is **falsified**: no correct-form disc failed on arithmetic;
+the discs that failed were the wrong shape.
+
+**Phrasing cautions (validated).** (i) High failing gates (e.g. 0.9997) = contact RARITY
+in a short rollout, NOT near-repair — more iterations would not populate a partial-repair
+branch that does not exist. (ii) mini/large partitions are seed-identical by construction
+(shared seeds) — not independent replication. (iii) the count is 0/66 see-one-miss-other
+(66, not 64).
+
+**The arc.** On 1D clamps the discrete paper's (b)-residual vanished (GPT-5.x repaired
+82/82); on the 2D circular mode it RETURNS (0/76). Repair-from-data is geometry-dependent,
+so the danger law's exhaustiveness claim is itself geometry-scoped.
+
+### eps sweep — per-mode reveal-rarity exactly flat (2026-07-18)
+
+`scripts/continuous_eps_sweep.py --instrument patch2d` →
+`results/continuous_eps_sweep_patch2d.json`. Mode-arm reveal-rarity is EXACTLY flat across
+the entire ε grid, per mode:
+
+| arm | rarity (constant across grid) |
+|---|---:|
+| patches omitted | 0.147 |
+| patch1 only omitted | 0.142 |
+| patch2 only omitted | 0.005 |
+
+The per-mode arms recover the per-mode rarities of the mechanism sweep — the tolerance axis
+is orthogonal to the mode hole on the bi-modal instrument, separately for each mode.
+
+### CEM row — blind CEM not exploited; the anticipated 2D competence gap did not materialize (2026-07-18)
+
+`scripts/continuous_cem.py --instrument patch2d` → `results/continuous_cem_patch2d.json`.
+horizon 40, 5 iters, 64 samples, elite 0.125, min-std 0.05 (one fixed setting).
+
+| knob | pc | t95 | contact | crossing CEM | crossing MPC |
+|---|---:|---|---:|---:|---:|
+| (2,6) | −0.0224 | [−0.1189, +0.0741] | 0.05 | 0.0697 | 0.2076 |
+| (3,7) | +0.0174 | [−0.0191, +0.0540] | 0.05 | 0.0270 | 0.1488 |
+| (4,8) | +0.0200 | [−0.0257, +0.0658] | 0.05 | 0.0091 | 0.0943 |
+
+pc t95 includes 0 on all 3 rows; crossing CEM < MPC on every row. CEM is competent in
+aggregate (the anticipated 2D competence gap did NOT materialize) but with per-seed variance
+(one truth-CEM ≈ 0.97 outlier episode). Blind contact 0.05 uniform — nonzero, unlike the
+cart's 0.00, and without positive play_cost.
+
+### Mitigation 2D — partial collapse that decays with patch distance (2026-07-18)
+
+`scripts/continuous_mitigation_patch2d.py` → `results/continuous_mitigation_patch2d.json`.
+Fences are the 2D positions of refuted predictions (inside the unreachable patch);
+segment-to-point crossing (leap-proof); the 1D path is preserved bitwise (tested
+char-identical). The collapse is PARTIAL and DECAYS with patch distance.
+
+| (k1,k2) | pc_blind | pc_mit | mean_viol | first_contact | c_mit |
+|---|---:|---:|---:|---:|---:|
+| (2,6) | 1.006 | 0.257 | 1.05 | 8.50 | 1.00 |
+| (3,7) | 1.006 | 0.541 | 2.65 | 12.35 | 1.00 |
+| (4,8) | 1.006 | 0.862 | 4.25 | 15.25 | 1.00 |
+
+The 1D single-violation sufficiency becomes a boundary-mapping transient (the planner rounds
+a fence disc and re-contacts the patch edge elsewhere, accreting fences along the arc); mean
+violations grow 1.05 → 4.25 vs the 1D instruments' 1.0. At (4,8) it nearly defeats the
+mitigation (pc_mit 0.862 vs pc_blind 1.006). Honest scope of a hard-boundary mitigation on a
+curved 2D boundary, not a failure. The escape test asserts the measured mechanism
+(pc_mit < 0.80·pc_blind, single-episode pessimistic bound).
+
+## PAPER 2 — Third model family (Claude, agent-relayed): a symmetry prior and a phantom-mode artifact (2026-07-15)
+
+**Protocol.** We ran paper 1's agent-relay protocol on the continuous synthesis
+pipeline as a third cross-family spot-check (after GPT-5.x API and the Qwen HF
+arm). `scripts/continuous_claude_step.py` emits the *verbatim* pipeline messages
+(the same `build_synthesis_messages` init and the `refine_continuous` check
+message, byte-for-byte with the API arms) and each message is relayed to a
+**fresh, context-free Claude Sonnet instance** (agent scaffold over a
+subscription transport — not an API). Everything else is the API pipeline: the
+ε = 1e-9 pinned-integrator gate, the mode-blindness classification, and the MPC
+play evaluation against the shared truth-planner baseline. Seeds
+10000/20000/30000 per instrument (the same 1-absent/2-present split as the Qwen
+spot-checks), plus one full-arm control per instrument. Source of truth:
+`results/continuous_claude_relay.json` (8 cells); audit-trail message/reply
+transcripts under `results/claude_relay_transcripts/`; protocol spec
+`docs/superpowers/specs/2026-07-15-claude-relay-crossfamily-design.md`.
+
+**Transport honesty notes.** (a) Agent scaffold + subscription transport, not an
+API; the relayed messages are byte-identical to the pipeline's. (b) Wrapper
+artifacts recorded: in the two multi-iteration cells a handful of refinement
+replies prefixed a one-line explanation before the code block (two distinct
+sentences, repeated across the oscillation) despite the output-only-code
+instruction — the code block still parsed cleanly. No relay was refused this
+time (the discrete probe saw two anti-injection refusals). (c) The refine loop
+is **memoryless in the API arms too**: `refine_continuous`
+(`src/cwm/continuous/contract.py`) sends a single user message per iteration
+with no history, so the oscillation below is protocol behavior, not a relay
+artifact.
+
+| instrument | arm | seed | mode in sample | gate acc | passed | refine iters | mode-blindness | play_cost | outcome |
+|---|---|---|---|---|---|---|---|---|---|
+| cart | full | 10000 | — | 1.000 | ✓ | 0 | 0.0 | 0.0 | clean control (translation exact) |
+| cart | incomplete | 10000 | no | 1.000 | ✓ | 0 | 1.0 | 0.999 | **mode-absent → blind & exploited** |
+| cart | incomplete | 20000 | yes | 1.000 | ✓ | 1 | 0.0 | 0.0 | repaired exact one-sided rule (1 iter) |
+| cart | incomplete | 30000 | yes | 1.000 | ✓ | 5 | 0.0 | 0.0 | repaired after period-2 oscillation (iter 5) |
+| pendulum | full | 10000 | — | 1.000 | ✓ | 0 | 0.0 | 0.0 | clean control (translation exact) |
+| pendulum | incomplete | 10000 | no | 1.000 | ✓ | 0 | 1.0 | 0.995 | **mode-absent → blind & exploited** |
+| pendulum | incomplete | 20000 | yes | 1.000 | ✓ | 1 | 0.0 | 0.0 | **certified with PHANTOM symmetric stop θ = −1.4** |
+| pendulum | incomplete | 30000 | yes | 0.9972 | ✗ | 5 | (n/a) | (n/a) | **stalled**, oscillating symmetric-stop ↔ no-stop |
+
+**Findings.**
+
+- *Controls (2/2 clean).* Both full arms translate the mode float-exactly: gate
+  1.000, blindness 0.0, play_cost 0.0. The pinned-integrator premise holds for
+  Claude too.
+- *Identifiability is family-independent (2/2 mode-absent blind & exploited).*
+  Both mode-absent seeds were certified fully blind (blindness 1.0) at gate
+  1.000 and exploited at play (cart play_cost 0.999, pendulum 0.995, contact
+  rate 1.0) — the (1−r)^N event fires regardless of family, exactly as
+  Proposition 2 requires.
+- *Repair mechanism: a symmetry prior.* Claude generalizes one-sided boundary
+  evidence into a **symmetric** pair of boundaries. Cart seed 20000: repaired
+  the exact one-sided `if x2 >= 8.0` rule in 1 iteration. Cart seed 30000:
+  repaired at iteration 5 after a period-2 oscillation (symmetric ±8 walls →
+  both removed → symmetric → removed → one-sided correct) — the sample reaches
+  x < −8, so the gate refutes the phantom left wall and the loop eventually
+  lands on the truth. This mechanism is neither GPT-5.x's (repairs every
+  revealed mode exactly, 62/62 + 20/20) nor Qwen's (repairs none; superstitious
+  local patches).
+- *A fourth artifact class — certified with an invented, unfalsifiable mode.*
+  Pendulum seed 20000 "repaired" in 1 iteration and passed the gate at 1.000,
+  **but the certified code carries a phantom symmetric stop at θ = −1.4**
+  (`if th2 < -th_max: th2 = -th_max; om2 = 0.0`) that this seed's rollouts never
+  visit. Gate 1.000 (unfalsifiable on this sample), blindness probe 0.0 (it
+  probes only the true +1.4 mode's region), play_cost 0.0. This is a genuinely
+  new artifact class beyond correct / blind / superstitious-patch: a
+  verified-and-exact-on-sample model that encodes a mode which does not exist.
+- *Natural experiment.* The **same** symmetric artifact was **refuted** at
+  pendulum seed 30000 (whose rollouts reach θ < −1.4, so the gate stalls it at
+  0.9972 and it oscillates) and **certified** at pendulum seed 20000 (whose
+  rollouts never go below −1.4). The only difference is sample coverage of the
+  invented side. This is Proposition 2's prior caveat measured directly: on
+  inputs the sample never covers, the artifact's content comes from the model's
+  prior and the gate cannot police it.
+- *Probe limitation (mirrors paper 1's artifact-level analysis).* The
+  `mode_blindness` probe fires only in the true mode's region (by construction
+  the probes must fire the mode in truth), so an invented mode *elsewhere* reads
+  as blindness 0.0 and is invisible to the classification. Code inspection, not
+  the probe, caught the phantom. Detecting invented modes needs code inspection
+  or probes seeded outside the sampled region.
+- *Scope.* n is small: 3 seeds + one control per instrument, one alternate
+  family. Repair-from-data is model-dependent **in mechanism**, not merely in
+  rate; identifiability (the mode-absent branch) is family-independent in all
+  three families tested, as the proposition requires.
+
+Papers updated: §7 (two-family → cross-family spot-checks: added the Claude
+paragraph, the phantom-mode "fourth artifact class" paragraph, and the Claude
+honesty notes; qualified the "never accepted a wrong mode-present artifact"
+claim to "never wrong on a sample-covered transition"), §10 limitations
+(three-family scope + the mode-blindness-probe limitation), the abstract, and
+the intro/conclusion regularity statements — in both `docs/paper2/main.tex` and
+`docs/paper2/preprint-draft.md`. Transcripts:
+`results/claude_relay_transcripts/`.
+
+## PAPER 2 — Second planner family (CEM): the other branch of the play-cost bound (2026-07-12)
+
+Proposition 3 says exploitation is planner-dependent: a wrong model can change
+behavior only when the planner queries the disagreement region. The paper's
+random-shooting MPC includes constant-action candidates that reach the distant
+phantom plateau in imagination, and is therefore lured into the omitted mode.
+The second family tested here is cross-entropy-method planning (CEM): per-step
+Gaussian action distributions, refined over 5 elite iterations with 64 samples,
+elite fraction 0.125, horizon 40, and a fixed minimum standard deviation 0.05.
+These hyperparameters are identical across both instruments and all knobs.
+
+`scripts/continuous_cem.py` runs paired truth-CEM, blind-CEM, and random-policy
+episodes (20 seeds/row), and measures a query-hit proxy for both planners: the
+fraction of sampled imagined trajectories that cross the omitted boundary.
+The MPC diagnostic uses its ordinary candidate generator; the CEM diagnostic
+accumulates all 5×64 sampled trajectories at every replanning step. Full run:
+11 rows, elapsed 1719.7 s; all values below are verbatim (rounded for display)
+from `results/continuous_cem.json`.
+
+| inst | knob | J_truth CEM | J_blind CEM | J_random | pc_blind CEM | blind contact | crossing CEM | crossing MPC |
+|------|-----:|------------:|------------:|---------:|-------------:|--------------:|-------------:|-------------:|
+| cart | 2.0 | 17.20 | 17.20 | 0.53 | 0.000 | 0.00 | 0.0010 | 0.3865 |
+| cart | 4.0 | 17.20 | 17.20 | 0.53 | 0.000 | 0.00 | 0.0001 | 0.2453 |
+| cart | 6.0 | 17.20 | 17.20 | 0.53 | 0.000 | 0.00 | 0.0000 | 0.1483 |
+| cart | 8.0 | 17.20 | 17.20 | 0.53 | 0.000 | 0.00 | 0.0000 | 0.0773 |
+| cart | 10.0 | 17.20 | 17.20 | 0.53 | 0.000 | 0.00 | 0.0000 | 0.0369 |
+| pend | 0.8 | 16.46 | 16.31 | 0.06 | 0.009 | 0.70 | 0.1092 | 0.6392 |
+| pend | 1.0 | 16.29 | 15.89 | 0.06 | 0.025 | 0.25 | 0.0703 | 0.5530 |
+| pend | 1.2 | 15.51 | 15.68 | 0.06 | -0.011 | 0.00 | 0.0345 | 0.4672 |
+| pend | 1.4 | 15.37 | 15.68 | 0.06 | -0.021 | 0.00 | 0.0162 | 0.3842 |
+| pend | 1.6 | 15.36 | 15.68 | 0.06 | -0.021 | 0.00 | 0.0085 | 0.3039 |
+| pend | 2.0 | 15.69 | 15.68 | 0.06 | 0.000 | 0.00 | 0.0029 | 0.2158 |
+
+**Findings.** The normalized blind-model play cost is near zero on all 11
+rows (range -0.0213 to 0.0248), rather than ≈0.94–1.03 as under MPC. On the
+cart, truth and blind returns are identical on every row, contact is zero, and
+CEM's imagined crossing fraction falls from 0.0010 to exactly 0 as the wall
+recedes; MPC's comparable start-state diagnostic is 0.3865→0.0369. On the
+pendulum, CEM crossing remains strictly below MPC at every stop (0.1092→0.0029
+vs 0.6392→0.2158), and play cost remains near zero despite honest boundary
+contacts at the two nearest stops: contact rate 0.70 at θ=0.8 and 0.25 at
+θ=1.0, then zero for θ≥1.2. Contact alone is therefore not exploitation: CEM
+can touch a nearby real boundary without being lured into the pinned,
+below-random fixed point created by MPC's phantom-reaching search.
+
+This is the measured other branch of Proposition 3. The certified-blind model
+is a landmine whose consequence depends on the planner's query reach: MPC
+detonates it; this CEM configuration largely does not. The result also turns
+§2.3's calibration lesson into a planner-family result: a search distribution
+that does not discover the phantom cannot optimize toward it. Two caveats are
+load-bearing. First, CEM truth return on the pendulum varies with stop position
+(15.36–16.46 versus MPC truth 20.08), consistent with local optima; the claim
+is about blind-vs-truth geometry within CEM, not CEM optimality. Second,
+limited reach is not knowledge or a safety mechanism: a planner that misses a
+phantom distant reward can also miss a real one. No hyperparameter sweep or
+per-knob tuning was performed.
+
 ## Budget-matched synthesized-CWM play cost, with CIs — codex #1 (2026-07-07/12)
 
 Closes the central pre-submit gap: the synthesized play evidence (Panel B) was
@@ -53,6 +473,618 @@ NOT channel (c)), and "precisely the sampling-miss event" → necessary-not-suff
 Added arena denominators and the 5-iteration refinement cap. No new experiment
 required; codex judged no blocking experiment outstanding.
 
+## PAPER 2 — ε-sensitivity sweep: the tolerance axis is orthogonal to the mode hole (2026-07-09)
+
+The gate's tolerance ε is a knob the deployer sets, and the paper's central
+claim needs it shown to be a *pervasive-error* dial, not a *mode-detection*
+dial: tightening ε cannot be used to catch the hard mode, and loosening it
+cannot be used to widen the hole. New module `scripts/continuous_eps_sweep.py`
+(read-only w.r.t. the environment/gate contract — `gate.py`, `envs.py`,
+`continuous_axes.py` untouched) sweeps `ε ∈ {1e-9, 1e-6, 1e-4, 1e-3, 1e-2,
+3e-2, 0.1, 0.3}` over ten arms on both instruments: cart mode arms (`wall@4
+omitted`, `wall@8 omitted`), cart pervasive arms (`bias ×1.03`, `bias ×2.0`,
+`bump amp0.5`, `bump amp1.0`), and pendulum mode/pervasive arms (`stop@1.0
+omitted`, `stop@1.4 omitted`, `bias ×1.03`, `bias ×2.0`). For every
+arm×ε cell, reveal-rarity is measured over 2000 rollouts; on the four mode
+arms, pass@40 is additionally measured over 300 independent N=40 gates and
+compared against the closed-form prediction `(1−r)^40`. Contract tested
+bitwise/behaviorally in `tests/test_eps_sweep.py`. Full run: grid above,
+rollouts=2000, n_gate=40, gates=300, elapsed=3835.1s. All numbers verbatim
+from `results/continuous_eps_sweep.json`.
+
+**Cart mode arms — rarity / (1−r)⁴⁰ / pass@40 across the ε grid.**
+
+| arm | metric | 1e-9 | 1e-6 | 1e-4 | 1e-3 | 1e-2 | 3e-2 | 0.1 | 0.3 |
+|-----|--------|-----:|-----:|-----:|-----:|-----:|-----:|----:|----:|
+| wall@4 omitted | rarity | 0.1385 | 0.1385 | 0.1385 | 0.1385 | 0.1385 | 0.1385 | 0.1385 | 0.1355 |
+| wall@4 omitted | (1−r)⁴⁰ | 0.0026 | 0.0026 | 0.0026 | 0.0026 | 0.0026 | 0.0026 | 0.0026 | 0.0030 |
+| wall@4 omitted | pass@40 | 0.003 | 0.003 | 0.003 | 0.003 | 0.003 | 0.003 | 0.003 | 0.007 |
+| wall@8 omitted | rarity | 0.0125 | 0.0125 | 0.0125 | 0.0125 | 0.0125 | 0.0125 | 0.0125 | 0.0125 |
+| wall@8 omitted | (1−r)⁴⁰ | 0.6046 | 0.6046 | 0.6046 | 0.6046 | 0.6046 | 0.6046 | 0.6046 | 0.6046 |
+| wall@8 omitted | pass@40 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 | 0.667 |
+
+**Pendulum mode arms — rarity / (1−r)⁴⁰ / pass@40 across the ε grid.**
+
+| arm | metric | 1e-9 | 1e-6 | 1e-4 | 1e-3 | 1e-2 | 3e-2 | 0.1 | 0.3 |
+|-----|--------|-----:|-----:|-----:|-----:|-----:|-----:|----:|----:|
+| stop@1.0 omitted | rarity | 0.1410 | 0.1410 | 0.1410 | 0.1410 | 0.1410 | 0.1410 | 0.1400 | 0.1240 |
+| stop@1.0 omitted | (1−r)⁴⁰ | 0.0023 | 0.0023 | 0.0023 | 0.0023 | 0.0023 | 0.0023 | 0.0024 | 0.0050 |
+| stop@1.0 omitted | pass@40 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.003 | 0.003 |
+| stop@1.4 omitted | rarity | 0.0175 | 0.0175 | 0.0175 | 0.0175 | 0.0175 | 0.0175 | 0.0170 | 0.0155 |
+| stop@1.4 omitted | (1−r)⁴⁰ | 0.4935 | 0.4935 | 0.4935 | 0.4935 | 0.4935 | 0.4935 | 0.5037 | 0.5353 |
+| stop@1.4 omitted | pass@40 | 0.473 | 0.473 | 0.473 | 0.473 | 0.473 | 0.473 | 0.477 | 0.497 |
+
+**Cart pervasive arms — rarity across the ε grid.**
+
+| arm | 1e-9 | 1e-6 | 1e-4 | 1e-3 | 1e-2 | 3e-2 | 0.1 | 0.3 |
+|-----|-----:|-----:|-----:|-----:|-----:|-----:|----:|----:|
+| bias ×1.03 | 1.0000 | 1.0000 | 1.0000 | 0.6200 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+| bias ×2.0 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.7455 | 0.0040 | 0.0040 |
+| bump amp0.5 | 0.4595 | 0.3615 | 0.2805 | 0.2430 | 0.1875 | 0.1345 | 0.0010 | 0.0000 |
+| bump amp1.0 | 0.4685 | 0.3700 | 0.2915 | 0.2545 | 0.2085 | 0.1670 | 0.0530 | 0.0000 |
+
+**Pendulum pervasive arms — rarity across the ε grid.**
+
+| arm | 1e-9 | 1e-6 | 1e-4 | 1e-3 | 1e-2 | 3e-2 | 0.1 | 0.3 |
+|-----|-----:|-----:|-----:|-----:|-----:|-----:|----:|----:|
+| bias ×1.03 | 1.0000 | 1.0000 | 1.0000 | 0.5755 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+| bias ×2.0 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.7150 | 0.0045 | 0.0035 |
+
+**Findings.** Mode-arm reveal-rarity is flat in ε, and the flatness is
+*stronger* than the design expectation of "flat below the mode's error
+scale": the cart mode arms are flat through ε=0.1 on both `wall@4` and
+`wall@8`, and `wall@8` is flat through the **entire grid**, ε=0.3 included
+(rarity 0.0125 identical at all eight points, so pass@40 is 0.667
+everywhere). The only tail movement is a slight *dip* at the top of the
+grid — never a widening: `wall@4` rarity drops 0.1385→0.1355 at ε=0.3 (pass
+ticks 0.003→0.007, still tiny); the pendulum's mode arms dip a little
+earlier and a little further, consistent with the design doc's prediction
+that low-speed contacts (error ≈ |v₂|) can fall under a loose ε — `stop@1.0`
+0.1410→0.1400 (ε=0.1)→0.1240 (ε=0.3), pass 0.000→0.003→0.003; `stop@1.4`
+0.0175→0.0170 (ε=0.1)→0.0155 (ε=0.3), pass 0.473→0.477→0.497. In every case
+the movement is a *decrease* in rarity at *higher* ε, i.e. the widened gate
+is, if anything, marginally *more* forgiving of the already-caught mode —
+never less. Below ε=1e-2 the flatness is exact (bit-identical rarity across
+1e-9…1e-2 on all four mode arms): the blind model is bit-exact off-mode, so
+a reveal is a mode contact, independent of ε below the mode's own error
+scale.
+
+The pervasive (bias) arms switch, sharply, at their own error scale, on
+**both** instruments. ×1.03 (a 3% pervasive drag error) is fully policed
+(rarity 1.0000) through ε=1e-4, has a measured partial value at the
+crossing (cart 0.6200, pendulum 0.5755 at ε=1e-3), and is fully invisible
+(rarity 0.0000) by ε=1e-2 — a ×1.03 switch across roughly one order of
+magnitude in ε. ×2.0 (a 2x pervasive drag error) switches an order of
+magnitude higher: rarity 1.0000 through ε=1e-2, a partial value at the
+crossing (cart 0.7455, pendulum 0.7150 at ε=3e-2), and near-zero (0.0040
+cart, 0.0045/0.0035 pendulum) by ε=0.1–0.3. The bump arms (cart-only, C∞
+localized perturbation, not a hard mode) decay smoothly with ε as expected,
+and the decay is ordered by amplitude at every grid point: the stronger bump
+(amp1.0) is consistently more detectable than the milder one (amp0.5) —
+0.4685 vs 0.4595 at ε=1e-9, and still 0.0530 vs 0.0010 at ε=0.1 (53×) —
+before both are driven to 0.0000 at ε=0.3.
+
+**Exactness check.** pass@40 ≈ (1−r)^40 holds at every ε for both mode arms
+on both instruments — this is the same gate-exactness proposition from the
+axis-separation table, now shown to be ε-invariant, not a coincidence of one
+setting. Honesty note: at `wall@8`, the closed-form prediction 0.6046 sits
+marginally *below* the empirical pass-rate 300-gate Wilson 95% CI lower
+bound (0.6115); with only 300 independent gates this is sampling noise, not
+disagreement, but the two numbers are quoted plainly here rather than as
+"exact" agreement.
+
+**Conclusion.** The design doc's ε-confound risk — that the deployment-
+realistic loose-ε arm needed a documented sensitivity sweep before the axis-
+separation claim could be trusted at ε values other than the one tested —
+is resolved. Tightening ε cannot catch the mode (rarity is flat, in the
+strongest cases through the whole grid); loosening ε does not widen the hole
+(the only tail movement observed is a slight narrowing, never a widening).
+The tolerance axis is orthogonal to the mode hole across the entire
+deployment-realistic range; ε moves the boundary of the pervasive-error
+axis and nothing else.
+
+## PAPER 2 — Mitigation: distrust-region replanning collapses the exploitation (2026-07-09)
+
+The exploitation measured throughout this paper is planner-mediated, not
+model-mediated, and a planner-side fix collapses it without touching the
+model or the gate. New module `src/cwm/continuous/mitigation.py`
+(`run_mitigated_episode`, `plan_mitigated`), strictly additive — `mpc.py`,
+`harness.py`, `envs.py` untouched. Mechanism: after each real step from state
+`s` with action `a`, compare the model's prediction `ŝ = model.step(s, a)`
+against the observed `s'`; if `max(|ŝ₀−s'₀|, |ŝ₁−s'₁|) > tol` with
+`tol = 1e-6`, record the **position of the model's refuted prediction**
+`ŝ[0]` (not the pre-state) as a one-sided distrust fence — false predictions
+always lie on/beyond the mode boundary, so the fence is one-sided by
+construction. While scoring a candidate rollout, the first imagined step
+whose position interval `[min(x_prev, x_next), max(x_prev, x_next)]`
+overlaps a fence's ε-band (ε = 0.25 cart, ε = 0.1 pendulum, fixed per
+instrument, not tuned per knob) truncates the rollout — reward so far kept,
+everything downstream dropped — so the fence cannot be leapt at any imagined
+speed (segment-crossing truncation, not point distance). Candidates are then
+ranked by `(truncated_total, |x_final − nearest fence|)`; because fences are
+one-sided, the tie-break structurally prefers the real side over the
+phantom side. With zero violations the second term is a constant 0.0 and the
+ranking is bit-identical to `mpc.plan` — the zero-cost control is exact by
+construction and tested bitwise (`tests/test_mitigation.py`,
+`test_plan_reduces_to_mpc_without_violations`,
+`test_bit_identical_episode_on_truth_model`).
+
+**Design iterations (recorded because they are themselves a finding — the
+argmax planner is an adversary against any incomplete fence).** v1, first-step
+flee over pre-state balls, got trapped at the local distance-maximum between
+overlapping balls. v2, final-state flee over pre-state balls, was biased
+*toward* the phantom, because violations can only be recorded on the truth
+side of the boundary, so the far side always looks "far from where the model
+lied." v3, full-state point fences at the false predictions, was dodged by
+the planner probing crossing *velocities* — measured: 5 fences at
+v ∈ {0.3, 1.46, 1.73, 2.25, 5.47}, episode ends before the fence wall closes.
+v4 (position-band + segment crossing + one-sided fences, shipped) is
+undodgeable: one violation suffices on every knob of both instruments. See
+`docs/superpowers/specs/2026-07-08-mitigation-experiment-design.md` for the
+full design record.
+
+**Measurement** (`scripts/continuous_mitigation.py`; three arms — truth-MPC,
+blind-MPC, blind-MPC+mitigation — on paired seeds, 20 episodes/knob;
+episodes=20, cart eps=0.25, pend eps=0.1, elapsed=1770.3s):
+
+| inst | knob | J_truth | J_blind | J_mit | J_rand | pc_blind | pc_mit | c_blind | c_mit | viol | first_contact |
+|------|-----:|--------:|--------:|------:|-------:|---------:|-------:|--------:|------:|-----:|--------------:|
+| cart | 2 | 17.77 | 0.00 | 12.77 | 0.53 | 1.031 | 0.290 | 1.00 | 1.00 | 1.0 | 11.6 |
+| cart | 4 | 17.77 | 0.00 | 10.09 | 0.53 | 1.031 | 0.446 | 1.00 | 1.00 | 1.0 | 16.9 |
+| cart | 6 | 17.77 | 0.00 | 7.80 | 0.53 | 1.031 | 0.578 | 1.00 | 1.00 | 1.0 | 21.3 |
+| cart | 8 | 17.77 | 0.02 | 5.72 | 0.53 | 1.030 | 0.699 | 1.00 | 1.00 | 1.0 | 25.1 |
+| cart | 10 | 17.77 | 0.94 | 3.88 | 0.53 | 0.977 | 0.806 | 1.00 | 1.00 | 1.0 | 28.7 |
+| pend | 0.8 | 20.08 | 0.01 | 17.82 | 0.06 | 1.002 | 0.113 | 1.00 | 1.00 | 1.0 | 7.0 |
+| pend | 1 | 20.08 | 0.03 | 17.49 | 0.06 | 1.002 | 0.129 | 1.00 | 1.00 | 1.0 | 8.1 |
+| pend | 1.2 | 20.08 | 0.05 | 17.21 | 0.06 | 1.000 | 0.143 | 1.00 | 1.00 | 1.0 | 9.0 |
+| pend | 1.4 | 20.08 | 0.12 | 16.88 | 0.06 | 0.997 | 0.160 | 1.00 | 1.00 | 1.0 | 10.0 |
+| pend | 1.6 | 20.08 | 0.26 | 16.54 | 0.06 | 0.990 | 0.177 | 1.00 | 1.00 | 1.0 | 11.0 |
+| pend | 2 | 20.08 | 1.23 | 15.84 | 0.06 | 0.942 | 0.212 | 1.00 | 1.00 | 1.0 | 13.0 |
+
+All numbers verbatim from `results/continuous_mitigation.json`.
+
+**Findings.** The exploitation collapses everywhere: `pc_blind` sits pinned
+at ≈0.94–1.03 on all 11 rows (below random, the existing fact) while
+`pc_mit` never rises above 0.81. Exactly one violation suffices to fence the
+mode on *every* row (`viol` = 1.0, all 11 knobs, both instruments) — the
+one-sided fence at the refuted prediction, truncated by segment crossing, is
+leap-proof, so a single contact is both necessary and sufficient. The
+residual `pc_mit` is not noise; it is the honest cost of the unavoidable
+first contact, and it scales monotonically with the lure distance (read off
+`first_contact`): cart 0.290 → 0.806 as first contact goes 11.6 → 28.7 of the
+80-step horizon (knob 2 → 10); pendulum 0.113 → 0.212 as first contact goes
+7.0 → 13.0 (knob 0.8 → 2.0). You cannot avoid what you have never seen —
+identifiability operationalized at the planner level. The cart knob=10 row is
+the least favorable in the sweep (`pc_mit` 0.806 vs. blind 0.977) because the
+transient consumes most of the horizon there, but the comparison that matters
+is the return, not the normalized cost: the blind planner stays pinned
+*forever* at that knob (J_blind 0.94 of J_truth 17.77) while the mitigated
+planner escapes and recovers most of the horizon (J_mit 3.88). Zero-cost
+control on a correct model is exact, not approximate: `run_mitigated_episode`
+is bit-identical to `harness.run_episode(..., "mpc", ...)` on truth/truth,
+tested bitwise in `tests/test_mitigation.py`. Framing: this does **not**
+contradict the danger law — the gate still certified a wrong model, and
+Proposition 2's identifiability argument is untouched. What collapses is the
+*planner-mediated exploitation* of that wrong model: the planner's own
+prediction-vs-observation signal, free at deployment (no extra sampling, no
+model change), turns a knob-invariant, below-random pin into a bounded
+first-contact transient.
+
+## PAPER 2 — Pendulum synthesis arm: repair-from-data on a nonlinear plant (2026-07-08)
+
+Closes the gap the 2026-07-07 pendulum-mechanism section left open ("the
+synthesis arms on the pendulum remain optional future work"). Same script and
+contract as the cart (`scripts/continuous_danger_synthesis.py --instrument
+pendulum --th-stop ...`; Azure GPT-5.x mini/large; ε=1e-9 pinned-integrator
+gate; N=40 training rollouts; 6 MPC play episodes/seed; max 5 refine iters),
+20 seeds/cell. Two knobs: **headline** θ_stop=1.4 (rarity 0.019 per the
+2026-07-07 pendulum-mechanism table below — mode usually but not always missed
+at N=40) and **caught** θ_stop=1.0 (rarity 0.128 — mode in nearly every
+sample). Baselines identical across all pendulum
+cells: J_truth=20.08, J_random=0.02. Per-seed JSON:
+`results/continuous_synthesis_pendulum_{mini,large}_thstop{1.4,1}.json` and
+`results/continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4.json`.
+
+**(1) Headline cell (θ_stop=1.4), both sizes.**
+
+| arm | mini (gpt-5.4-mini) | large (gpt-5.4) |
+|-----|---------------------|-----------------|
+| full | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 |
+| incomplete — mode ABSENT | 9/20 seeds; **9/9 blind & exploited**, play_cost 0.995 | 9/20 seeds; **9/9 blind & exploited**, play_cost 0.995 |
+| incomplete — mode PRESENT | 11/20 seeds; **11/11 repaired**, iters {0,1,1,1,1,1,1,1,1,3,5}, **0 stalled** | 11/20 seeds; **11/11 repaired**, iters {0,1,1,1,1,1,1,1,1,1,1}, **0 stalled** |
+
+**(2) Caught cell (θ_stop=1.0), both sizes.**
+
+| arm | mini (gpt-5.4-mini) | large (gpt-5.4) |
+|-----|---------------------|-----------------|
+| full | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 |
+| incomplete — mode ABSENT | 0/20 seeds (rarity 0.128 ⇒ (1−r)^40≈0.004 — essentially never missed) | 0/20 seeds |
+| incomplete — mode PRESENT | 20/20 seeds; **20/20 repaired**, iters {0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, **0 stalled** | 20/20 seeds; **20/20 repaired**, iters {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, **0 stalled** |
+
+**GPT-5.x combined (4 Azure cells, both sizes, both knobs, n=80 seeds):**
+full 80/80 clean; mode-ABSENT 18/18 blind & exploited (Wilson 95% lower bound
+0.824; per-size headline-cell 9/9, lower bound 0.701); mode-PRESENT 62/62
+**repaired**, 0 stalled (Wilson 95% lower bound 0.942).
+
+**(3) Cross-family spot-check (HF router,
+`Qwen/Qwen3-Coder-30B-A3B-Instruct`, 3 seeds, θ_stop=1.4).**
+
+- full: 3/3 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 — the pinned-integrator
+  premise holds cross-family on the pendulum too.
+- incomplete: 1/3 mode-ABSENT → blind & exploited, play_cost 0.995 (headline
+  identifiability event reproduced in a second model family); 2/3
+  mode-PRESENT → **both stalled, 0 repaired** (gate 0.9997 and 0.9997 — a
+  hair below the eps=1e-9 float-exact bar, the same superstitious-patch
+  signature as the cart's Qwen stalls).
+
+### Findings
+
+**Repair-from-data generalizes to a nonlinear plant.** Every qualitative
+result from the cart's synthesis section reproduces on the pendulum's
+gravity-driven (sin θ) dynamics with an angular clamp instead of a linear
+positional wall: the full arm is clean at every cell (80/80 GPT-5.x, 3/3
+Qwen); the mode-ABSENT identifiability event is knob- and size-invariant
+(blind & exploited whenever it fires, 18/18 GPT-5.x + 1/1 Qwen, play_cost
+pinned at 0.995 in every occurrence, matching the cart's fixed-point
+exploitation signature); and when the mode IS in the sample, GPT-5.x repairs
+it to the exact angular clamp every single time (62/62, 0 stalls) across both
+knobs and both sizes — including the θ_stop=1.0 "caught" cell where the mode
+is in essentially every sample (40/40 repaired there alone). The synthesis
+result is therefore not a cart artifact: a nonlinear plant plus an angular
+(not positional) hard stop behaves identically under the same harness.
+
+**Cross-family: identifiability reproduces, repair does not.** As on the
+cart, Qwen reproduces the mode-absent blind-and-exploited event (1/1 here)
+but fails to repair either of its mode-present seeds (0/2, stalled at gate
+0.9997) — consistent with the cart's cross-family finding that
+**identifiability is model-independent, repair is model-dependent**. The
+stalled gate values (0.9997) are closer to passing than the cart's Qwen
+stalls (0.491–0.999) but still short of the eps=1e-9 bar, and the gate
+correctly refuses both.
+
+**Notes.** n_seeds=20/cell for GPT-5.x (paper-1 standard), 3 seeds for the
+Qwen spot-check, matching the cart's design. Elapsed: mini θ=1.4 1081.2s,
+large θ=1.4 916.3s, mini θ=1.0 1903.7s, large θ=1.0 1990.6s, Qwen 165.1s.
+Reproducibility: seeds fix trajectory sampling and play; LLM synthesis is
+stochastic across calls, so exact per-seed iteration counts differ run-to-run
+while the three-way structure and identifiability conditional are stable.
+
+## PAPER 2 — Second instrument (pendulum-with-stop): the law on a nonlinear plant (2026-07-07)
+
+The design doc's last step-5 item (`scripts/continuous_pendulum.py`, 121 s
+CPU; `results/continuous_pendulum.json`; env `PendulumStop` in
+`cwm.continuous.envs`, same interface, blind_of removes the stop). The base
+plant is NONLINEAR (gravity term sin θ, θ=0 hanging down), so this checks the
+mechanism is not an artifact of the cart's linear off-mode dynamics. Rarity
+is natural here — gravity confines the random walk near the bottom; no lure
+engineering was needed beyond reusing the two-plateau reward on θ. First
+calibration worked unchanged (same MPC, same harness).
+
+| θ_stop | rarity [Wilson 95%] | J_truth | J_blind | J_rand | play_cost | blind hit | d@N=40 |
+|-------:|---------------------|--------:|--------:|-------:|----------:|----------:|-------:|
+| 0.8 | 0.297 [0.281, 0.314] | 20.08 | 0.01 | 0.06 | 1.002 | 1.00 | 0.000 |
+| 1.0 | 0.128 [0.116, 0.140] | 20.08 | 0.03 | 0.06 | 1.002 | 1.00 | 0.004 |
+| 1.2 | 0.053 [0.045, 0.061] | 20.08 | 0.05 | 0.06 | 1.000 | 1.00 | 0.115 |
+| 1.4 | 0.019 [0.015, 0.025] | 20.08 | 0.12 | 0.06 | 0.997 | 1.00 | 0.457 |
+| 1.6 | 0.007 [0.005, 0.011] | 20.08 | 0.26 | 0.06 | 0.990 | 1.00 | 0.737 |
+| 2.0 | 0.000 [0.000, 0.001] | 20.08 | 1.23 | 0.06 | 0.942 | 1.00 | 0.942 |
+
+Identical phenomenology to the cart: threshold law with the elbow inside the
+sweep, play_cost ≈ 1 knob-invariant, blind planner pinned at the stop in
+every episode at every knob (final θ = θ_stop exactly), truth planner never
+touches it. Two-instrument robustness established CPU-only; the synthesis
+arms on the pendulum remain optional future work (the contract machinery is
+env-generic except for the rules text).
+
+Also this date: paper-2 figures generated from the versioned results JSONs
+(`scripts/make_paper2_figures.py` → `docs/paper2/figures/`: danger_threshold,
+reach_mechanism, axis_separation, smooth_localization; Wong CVD-safe palette,
+same conventions as paper 1's figures).
+
+## PAPER 2 — Smooth-learner probe: the mode cannot be localized by a smooth hypothesis (2026-07-07)
+
+Design-doc step-5 probe (`scripts/continuous_smooth_probe.py`, 11 s CPU;
+`results/continuous_smooth_probe.json`). Trains the two most favorable smooth
+learners on the SAME N=40 samples the synthesis arms used (x_wall=8; seed
+10000 = wall-free, seed 20000 = wall-containing with 4/3200 contact rows):
+closed-form linear least squares (off the wall the dynamics are EXACTLY
+linear, so this is the smooth-learner best case) and a small tanh MLP (h=8).
+
+| model | trained on | off-mode err (mean / max) | wall probe err | gate 1e-9 | gate 1e-2 |
+|-------|-----------|---------------------------|---------------:|:---:|:---:|
+| linear-LSQ | wall-free | 3.6e-15 / 1.7e-14 | 4.18 | PASS | PASS |
+| linear-LSQ | wall-data | 1.9e-03 / 1.2e-02 | 4.17 | fail | fail |
+| MLP h=8 | wall-free | 3.5e-03 / 5.0e-02 | 4.20 | fail | fail |
+| MLP h=8 | wall-data | 6.0e-03 / 4.9e-02 | 4.19 | fail | fail |
+
+Readings (the two halves of thesis point 3, both measured):
+- **Identifiability is learner-independent, live.** The linear model trained
+  on the wall-free sample recovers the off-mode dynamics to 1e-15, PASSES
+  both gates (including eps=1e-9), and is exactly as wall-blind as the
+  synthesized blind code (probe err 4.18 — it predicts straight through the
+  wall). The (1−r)^N unsoundness is not an LLM property; ANY gate-passing
+  learner in the gate-miss event is blind (paper 1's Proposition, instantiated
+  on a second learner class).
+- **With the mode IN the data, smooth and code part ways.** 4 contact rows
+  out of 3200 tilt the linear fit by TWELVE orders of magnitude off-mode
+  (1.7e-14 → 1.2e-02 max) and it fails both gates while still getting the
+  mode wrong (probe 4.17): the smooth hypothesis cannot put the error ON the
+  mode — it leaks everywhere. The synthesized code on the same sample wrote
+  `if x2 >= 8.0: return [8.0, 0.0]` and passed at float precision. Repair is
+  a *representational* capability of code, not just a data question.
+- The MLP never gets its pervasive floor (~5e-3) under any gate and never
+  learns the mode (probe 4.2) — the generic smooth learner combines both
+  failure axes. Scope: probe, not a tuned baseline (as per the design doc).
+
+## PAPER 2 — LLM synthesis arms executed (credentialed run per the design-doc runbook) (2026-07-07)
+
+> **Superseded/tightened by the 20-seed + cross-family run below (2026-07-07,
+> later).** This section documents the first 5-seed spot-check; the headline
+> cell (x_wall=8) was subsequently run at 20 seeds/cell (paper-1 standard) on
+> both sizes and a Qwen cross-family spot-check was added — see "20-seed
+> tightening + Qwen cross-family". The three-way structure is unchanged; the
+> tightened run sharpens the identifiability conditional and removes the
+> mini stalls on the headline cell.
+
+Ran `scripts/continuous_danger_synthesis.py` as documented in the design doc's
+"Runbook — LLM arms" (Azure GPT-5.x, eps=1e-9 pinned-integrator gate, N=40
+rollouts, 6 MPC play-episodes/seed, max 5 refine iters), 5 seeds/cell. Baselines
+J_truth=17.76, J_random=0.00 (play_cost normalized: 1.0 = performs like random,
+i.e. pinned at the wall). Per-seed JSON (one file per cell — the filename now
+carries x_wall, fixed this run so cells no longer overwrite each other):
+`results/continuous_synthesis_{mini_xwall8,mini_xwall4,large_xwall8}.json`;
+combined stdout in `results/continuous_synthesis_llm.log`.
+
+**Cell 1 — mini, x_wall=8 (headline; gate misses the wall ~60% at N=40).**
+full: 5/5 gate 1.000 / 0 iters / blind 0.0 / play_cost 0.0. incomplete:
+
+| seed | wall_in_sample | gate | iters | blind | play_cost |
+|-----:|:--------------:|-----:|------:|------:|----------:|
+| 0 | **False** | 1.000 | 0 | **1.0** | **0.999** |
+| 1 | True  | 0.995 | 5 | (gate not passed) | n/a |
+| 2 | True  | 1.000 | 3 | 0.0 | 0.0 |
+| 3 | **False** | 1.000 | 0 | **1.0** | **0.999** |
+| 4 | True  | 1.000 | 3 | 0.0 | 0.0 |
+
+**Cell 2 — mini, x_wall=4 (caught; wall in every sample).** full 5/5 clean.
+incomplete: seeds 2,3,4 repaired to gate 1.000 (blind 0.0, play_cost 0.0) in
+5/2/0 iters; seeds 0,1 stalled just below within the 5-iter budget (gate 0.998,
+0.974) and were left unclassified (gate not passed -> no play).
+
+**Cell 3 — large, x_wall=8 (headline).** full 5/5 clean. incomplete: seeds 0,3
+wall-absent -> gate 1.000 + blind 1.0 + play_cost 0.999 + contact 1.0; seeds
+1,2,4 wall-present -> gate 1.000 + blind 0.0 + play_cost 0.0, repaired in **1
+iter each** (large repairs faster and more reliably than mini).
+
+### Findings
+
+**1. Full arm confirms the pinned-integrator premise live.** Both sizes
+synthesize correct `step`/`reward` and pass the eps=1e-9 gate to float precision
+in 0 iters, blind 0.0, play at truth parity — the offline (FakeProvider)
+prediction holds with a real LLM.
+
+**2. Paper-1 headline reproduces in continuous space when the wall is absent
+from the sample.** The identifiability event `wall_in_sample=False` occurred in
+2/5 seeds for both mini and large (consistent with r≈0.0125 at x_wall=8,
+(1−r)^40≈0.60); in EVERY such seed (4/4 across sizes) the synthesized model
+passed the gate fully wall-blind (1.0) and was exploited at play — pinned at the
+wall, contact 1.0, play_cost 0.999. A verified-but-wrong continuous CWM that
+loses, synthesized end-to-end. This cell is rock-solid across both this run and
+the 2026-07-07 first run.
+
+**3. The DIVERGENCE from paper 1 (design doc anticipated it).** When the wall
+WAS present in the sampled transitions, the model did **not** stay blind: it
+inferred the discontinuity from the failing transitions and encoded the clamp.
+Large repaired every wall-present seed to gate 1.000 (blind 0.0, play_cost 0.0)
+in 1 iter; mini repaired most (gate 1.000, blind 0.0) in 0–3 iters but on some
+seeds stalled just below 1.0 within the 5-iter budget (0.974–0.998 — most of the
+clamp encoded, not nailed to eps=1e-9 float precision in time). Either way this
+is the opposite of paper 1's symbolic setting, where a rule present in the
+sample sat at low gate accuracy and was never learned (the (b) residual). A
+**numerically-manifested** discontinuity is learnable-from-data in a way a
+**symbolic** game rule was not, so in the continuous setting the gap collapses
+toward a **pure identifiability/coverage (channel-(a)) phenomenon**: danger
+lives in the (1−r)^N event that the sample misses the discontinuity (there it is
+total, play_cost≈1), while the paper-1 (b) "translation-not-inference" residual
+largely vanishes. Per the runbook this "becomes its own section" for paper 2's
+write-up (not yet drafted).
+
+**3b. Artifact-level analysis of the repairs (code inspection, 2026-07-07).**
+Reading the synthesized `step()` of every wall-present incomplete seed
+(`results/continuous_synthesis_*_xwall*.json`, `code` field) sharpens finding 3
+into a soundness statement:
+- Every *repaired* seed wrote the TRUE global rule — `if x2 >= 8.0: return
+  [8.0, 0.0]` (modulo formatting; large 3/3, mini 5/8) — not a curve fit. One
+  mini seed (x_wall=4, seed 50000) wrote it in **0 iterations**, i.e. inferred
+  the clamp from the synthesis examples alone, before any refinement feedback.
+- Every *stalled* seed is a **superstitious local patch**, not a near-miss of
+  the rule: `if abs(x2 - 8.0) <= 0.15 and abs(v2) <= 1.1: x2 = 8.0` (mini@8
+  seed 20000) and `if x < 4.0 and x2 >= 4.0: x2 = 4.0` (mini@4 seed 10000) —
+  clamps fitted to the *observed manifestation* of the mode (low-speed,
+  near-wall contact transitions), which mispredict other approaches to the
+  wall. **The gate correctly rejects all of them** (0.974–0.998, never 1.000).
+- Net: with the mode present in the data, the synthesize+refine+gate loop is
+  *sound* — it either recovers the exact mode or refuses the artifact. The
+  ONLY unsoundness anywhere in the continuous pipeline is the (1−r)^N
+  identifiability event, where the wrong artifact is accepted at gate 1.000
+  and exploited at play. The danger law here is not just exact; it is
+  *exhaustive*.
+
+**Notes.** n_seeds=5/cell as documented — a spot-check, not a sweep; robust on
+the wall-absent cell (4/4), suggestive-with-variance on the repair rate.
+Reproducibility: seeds fix the trajectory sampling and play; LLM synthesis is
+stochastic across calls, so exact per-seed iters/gate differ run-to-run while
+the three-way structure (full-clean / absent-blind-exploited / present-repairs)
+is stable. Cost: <$1 Azure, ~9 min wall-clock (3 cells).
+
+## PAPER 2 — 20-seed tightening + Qwen cross-family (runbook remaining runs) (2026-07-07, later)
+
+The two "Remaining credentialed runs for the paper" from the design-doc
+runbook. Same script/params as above (eps=1e-9 pinned-integrator gate, N=40
+rollouts, 6 MPC play-episodes/seed, max 5 refine iters). Baselines identical
+(J_truth=17.76, J_random=0.00). Per-seed JSON with the synthesized `code`
+versioned: `results/continuous_synthesis_{mini,large}_xwall8.json` (now 20
+seeds, overwriting the 5-seed versions) and
+`results/continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8.json`.
+
+**(1) Headline cell (x_wall=8) tightened to 20 seeds/cell, both sizes (Azure
+GPT-5.x).**
+
+| arm | mini (gpt-5.4-mini) | large (gpt-5.4) |
+|-----|---------------------|-----------------|
+| full | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 | 20/20 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 |
+| incomplete — wall ABSENT | 10/20 seeds; **10/10 gate 1.000 + blind 1.0 + play_cost 0.999 + contact 1.0** | 10/20 seeds; **10/10 gate 1.000 + blind 1.0 + play_cost 0.999 + contact 1.0** |
+| incomplete — wall PRESENT | 10/20 seeds; **10/10 repaired** (gate 1.000, blind 0.0, play_cost 0.0), iters {0,1,1,1,1,3,3,3,4,5}, **0 stalled** | 10/20 seeds; **10/10 repaired** (gate 1.000, blind 0.0, play_cost 0.0), iters {0,0,1,1,1,1,1,1,1,1}, **0 stalled** |
+
+- **Identifiability conditional, sharpened.** At 20 seeds the wall-absent event
+  fired in exactly 10/20 seeds per size (r≈0.0125 at x_wall=8 gives
+  (1−r)^40≈0.60; 10/20 is within the sampling band). In EVERY wall-absent seed
+  — **20/20 across sizes** — the synthesized model passed the gate fully
+  wall-blind (1.0) and was exploited at play (pinned at the wall, contact 1.0,
+  play_cost 0.999). Wilson 95% on P(blind | wall missed): **10/10 → lo 0.72**
+  per size, **20/20 → lo 0.84** combined.
+- **Repair is now clean on the headline cell (0 stalls).** Every wall-present
+  seed repaired to the TRUE global clamp (`if x2 >= 8.0: return [8.0, 0.0]`, or
+  the equivalent `if x2 > 8.0: x2 = 8.0` — large seeds 70000/120000/150000),
+  not a curve fit. Large repaired in 0–1 iters (2 seeds in 0 iters, i.e. from
+  the synthesis examples alone); mini in 0–5 iters (1 seed in 0). The 5-seed
+  run's mini stalls do not recur here — with more seeds and only the x_wall=8
+  cell, GPT-5.x mini nailed all 10. (The superstitious-local-patch stalls of
+  the 5-seed run were on x_wall=4 and one x_wall=8 seed; the gate rejected all.)
+
+**(2) Cross-family spot-check (HF Inference Providers router,
+`Qwen/Qwen3-Coder-30B-A3B-Instruct`, 3 seeds, x_wall=8).**
+
+- full: 3/3 gate 1.000, 0 iters, blind 0.0, play_cost 0.0 — the pinned-integrator
+  premise holds cross-family too.
+- incomplete: 1/3 wall-absent → gate 1.000 + blind 1.0 + play_cost 0.999
+  (headline reproduced in a second model family); 2/3 wall-present → **both
+  stalled, 0 repaired** (gate 0.999 and 0.491). The gate-0.999 seed is a
+  superstitious partial patch (`if x2 >= 8.0 and v2 <= 0.0: ...` — clamps only
+  on the observed low-speed approach, mispredicts others); the gate correctly
+  rejected both.
+
+**Finding: repair-from-data is model-dependent; identifiability is not.** The
+wall-absent blind-and-exploited event reproduces in every model tried (GPT-5.x
+20/20, Qwen 1/1) — it is a property of the sample, not the synthesizer. But the
+wall-present *repair* is not uniform: GPT-5.x (both sizes) recovers the exact
+mode reliably (20/20 here), whereas Qwen stalls on both wall-present seeds
+(0/2), producing superstitious patches the gate refuses. So the continuous
+danger law's structure (soundness except on the (1−r)^N event) holds
+cross-family, but the *rate* at which the loop repairs a revealed mode — and
+hence how much of the (b)-residual it eliminates — depends on the model.
+Either outcome is a finding, as the runbook anticipated. Cost: <$1 Azure + HF
+credits; ~46 min mini + ~47 min large + ~6 min Qwen wall-clock.
+
+**Notes.** Reproducibility: seeds fix trajectory sampling and play; LLM
+synthesis is stochastic across calls, so exact per-seed iters differ run-to-run
+while the three-way structure and the identifiability conditional are stable.
+The large cell was run in a git worktree of this branch (a parallel session
+held the main checkout on `main`); results are byte-identical to a main-checkout
+run modulo LLM stochasticity.
+
+## PAPER 2 — Axis separation: localized mode vs pervasive error vs smooth bump (2026-07-06)
+
+The design doc's step-4 controls, all CPU (`scripts/continuous_axes.py`,
+eps=0.01 deployment-realistic tolerance gate, 2000 reveal-rarity rollouts,
+300 independent N=40 gates, 20 MPC episodes/arm; 169 s;
+`results/continuous_axes.json`). Reveal-rarity is the measure-theoretic
+rarity: P(a random rollout contains a transition where truth and model
+differ > eps).
+
+| arm | rarity | (1−r)^40 | pass@40 (empirical) | play_cost | danger@40 |
+|-----|-------:|---------:|--------------------:|----------:|----------:|
+| wall@4 omitted | 0.1385 | 0.0026 | 0.003 | 1.031 | 0.0027 |
+| wall@8 omitted | 0.0125 | 0.6046 | 0.667 | 1.030 | 0.6227 |
+| drag bias ×1.03 (sub-eps) | 0.0000 | 1.0000 | 0.997 | 0.000 | 0.0000 |
+| drag bias ×2.0 (supra-eps) | 1.0000 | 0.0000 | 0.000 | 0.000 | 0.0000 |
+| bump@4 amp0.5 (smooth) | 0.1875 | 0.0002 | 0.000 | 0.000 | 0.0000 |
+| bump@4 amp1.0 (smooth) | 0.2085 | 0.0001 | 0.000 | −0.745 | −0.0001 |
+
+Readings:
+- **Gate exactness confirmed empirically**: pass@40 matches (1−r)^40 in both
+  wall rows (0.003 vs 0.0026; 0.667 vs 0.605 — correction 2026-07-10: the
+  prediction is marginally BELOW the 300-gate Wilson lower bound 0.612, not
+  inside the CI; sampling noise at that gate count, see the ε-sweep entry).
+- **The four-quadrant separation the paper needs**: the tolerance gate
+  *polices pervasive error* (supra-eps bias rejected on every rollout) and
+  *tolerates harmless* sub-eps bias (pass 0.997, play_cost 0.000) — yet is
+  **blind exactly (1−r)^N of the time to the localized hard mode, whose
+  play_cost is ~1**. Danger lives only in the rare∧hard-mode cell.
+- **Smoothness kills consequence, not detectability**: the C∞ drag bump at
+  the same location has *comparable rarity* to the wall (0.19 vs 0.14) but
+  play_cost exactly 0.000 at amp 0.5 — rarity without consequence (the
+  Connect-Four analogue). At amp 1.0 play_cost goes *negative* (−0.745): the
+  truth planner is over-pessimistic about the slowdown near its horizon edge
+  and often settles for the small left plateau, while the bump-blind planner
+  pushes through and wins — a smooth localized omission can even *help*.
+  Smooth perturbations produce planner-side timing effects of ambiguous
+  sign; only the hard mode produces the one-way exploitation geometry.
+- Footnote: the sub-eps arm's 0.997 (not 1.000) pass rate is the velocity
+  tail — in ~1/12,000 rollouts |v| gets large enough to push the drag-bias
+  error marginally over eps. The arm is sub-eps everywhere but the extreme
+  tail.
+
+Offline validation of the LLM arms (no Azure): `tests/test_continuous_contract.py`
+drives the full synthesis pipeline (`cwm.continuous.contract`) with
+FakeProvider — the hand-written full-spec artifact passes the pinned-
+integrator gate at eps=1e-9 **to float precision** (the pinned-integrator
+premise holds through the sandbox JSON round-trip), the wall-omitting
+artifact passes iff the sample missed the wall and probes fully wall-blind,
+and MPC on the synthesized blind artifact is exploited (pinned at the wall).
+Runbook for the credentialed run: design doc §"Runbook — LLM arms".
+
+## PAPER 2 — Continuous/hybrid instrument: mechanism go/no-go PASSED (2026-07-06)
+
+First run of the continuous/hybrid rare-mode instrument (cart-with-wall; spec
+`docs/specs/2026-07-06-continuous-hybrid-cwm-design.md`, order-of-work step
+1-2). The wall-blind model is the hand-written on-manifold proxy (same code
+path minus the wall branch — **bit-exact off-mode by construction**, tested);
+planner is random-shooting MPC with piecewise-constant + constant candidates.
+
+`PYTHONPATH=src python scripts/continuous_reach.py` (3000 rarity rollouts,
+20 MPC episodes/arm per knob, 146 s CPU; `results/continuous_reach.json`):
+
+| x_wall | rarity [Wilson 95%] | J_truth | J_blind | J_rand | play_cost | blind hit | truth hit | d@N=20 | d@40 | d@80 |
+|-------:|---------------------|--------:|--------:|-------:|----------:|----------:|----------:|-------:|-----:|-----:|
+| 2 | 0.331 [0.315, 0.348] | 17.77 | 0.00 | 0.53 | 1.031 | 1.00 | 0.00 | 0.000 | 0.000 | 0.000 |
+| 3 | 0.219 [0.205, 0.234] | 17.77 | 0.00 | 0.53 | 1.031 | 1.00 | 0.00 | 0.007 | 0.000 | 0.000 |
+| 4 | 0.143 [0.131, 0.156] | 17.77 | 0.00 | 0.53 | 1.031 | 1.00 | 0.00 | 0.047 | 0.002 | 0.000 |
+| 5 | 0.084 [0.075, 0.095] | 17.77 | 0.00 | 0.53 | 1.031 | 1.00 | 0.00 | 0.177 | 0.030 | 0.001 |
+| 6 | 0.050 [0.043, 0.059] | 17.77 | 0.00 | 0.53 | 1.031 | 1.00 | 0.00 | 0.367 | 0.131 | 0.017 |
+| 8 | 0.013 [0.009, 0.017] | 17.77 | 0.02 | 0.53 | 1.030 | 1.00 | 0.00 | 0.798 | 0.619 | 0.372 |
+| 10 | 0.002 [0.001, 0.004] | 17.77 | 0.94 | 0.53 | 0.977 | 1.00 | 0.00 | 0.938 | 0.901 | 0.832 |
+
+**The paper-1 mechanism reproduces in continuous state space, sharper:**
+- **Threshold law again:** danger ≈ 0 while the wall is inside the random
+  envelope, rises through the elbow, plateaus at full play_cost; N shifts the
+  threshold (d@20 vs d@80 columns). The whole elbow sits inside the sweep.
+- **play_cost knob-invariant** (1.031 flat; 0.977 at x_wall=10 where the
+  sigmoid tail of the far lode leaks J_blind=0.94) — and **> 1**: the
+  blind-model planner scores *below random* (J 0.00 vs 0.53), because MPC is
+  not merely uninformed but actively exploited — it drives into the phantom
+  region and stays pinned pressing against the wall for the entire episode,
+  replanning the same doomed plan every step (`blind hit` = 1.00 at every
+  knob; final x = x_wall exactly). The continuous analogue of "loses ~2:1",
+  in stronger form.
+- **The reach mechanism, cleaner than paper 1:** exploited-planner wall reach
+  flat at 1.00 across the knob; random reach (= rarity) falls 0.33 → 0.002;
+  truth-planner trajectory reach 0.00 (the wall is off *its* path — the mode
+  lives on the blind planner's deployment path and the truth planner's *query*
+  distribution, per the μ_query bound).
+- Gate-miss exactness re-verified in-tests: empirical P(N rollouts miss) =
+  (1−r)^N within binomial error (`tests/test_continuous.py`).
+
+Calibration findings recorded for the paper (spikes, same date): (i) i.i.d.
+per-step candidate sampling makes MPC imagination diffusive — it never reaches
+distant reward, and truth/blind rank candidates *identically* (the wall never
+enters imagination); piecewise-constant blocks + constant {−1,0,+1} candidates
+fix it. (ii) Point (Gaussian) reward lodes demand braking finesse random
+shooting lacks; sigmoid plateaus remove the confound. (iii) The plant's drag
+time-constant must sit well inside the planning horizon or no arm can act.
+
+GO for order-of-work steps 3+ (synthesis contract, exactness + pervasive-error
+control, smooth-bump contrast — `envs.py` already carries the C∞ bump arm).
 
 ## Editorial de-archaeology + proper-DAgger rerun + effective-dose measurement (2026-07-05/06)
 
@@ -1264,3 +2296,112 @@ Implication for Claim B: it needs a vehicle whose **dynamics synthesize cleanly*
 independent of the dynamics**. Candidate: a familiar-dynamics game (synthesizes at
 gate 1.0) overlaid with an arbitrary, non-recallable masking rule — see
 RESEARCH-DIRECTION.
+
+## Confound closure on the 0/76: richer prompting + 3× budget do NOT restore disc repair (2026-07-19)
+
+Best-shot cells from the runbook
+(`docs/superpowers/plans/2026-07-19-disc-confounds-square-ablation.md`, Task 1):
+patch2d k=(3,7), incomplete arm, `--prompt-variant region --max-iters 15`,
+20 seeds × {large, mini} — the most favorable treatment (120 examples, 40
+failure lines, describe-the-region-first guidance + the explicit "the region
+need not be a 1D threshold" de-bias) at 3× the original refine budget.
+JSONs: `results/continuous_synthesis_patch2d_{large,mini}_k3_7_pv-region_it15.json`
+(identical samples to the original run — same seed formula — so directly
+comparable; patch1 in all 40 samples as r1=0.14 forces, patch2 in 5/20 and
+6/20).
+
+**Result: 0/40 repair.** No gate passes (max accuracy 0.9981 large / 0.9978
+mini; every seed exhausted the 15-iteration cap; one large seed broke the
+plant entirely at 0.518). Gate soundness held throughout — nothing wrong was
+certified.
+
+**But the artifact class MOVED — the guidance worked as prompt engineering
+and still didn't buy repair.** Code inspection of all 40 (keyword
+classification + hand spot-checks): the half-plane dimensional reduction of
+the original run is GONE (0/40); the artifacts now explicitly reason "no 1D
+threshold separates these; the trigger must be a bounded planar region" and
+fit **rotated ellipses (~15/40), axis-aligned rectangles (~10/40), unions of
+r=0.003 micro-discs (~5/40)**, and other bounded fits — none the true disc
+(0/40 write a disc at (3,0) R=1 on the landing). The new failure class is
+**evidence-hull fitting**, with two compounding errors:
+1. They fit the hull of the OBSERVED freeze positions — which are the
+   PRE-freeze states, a crescent hugging the disc's reachable (west)
+   boundary from OUTSIDE — instead of inducing the generative boundary
+   (fitted centers ≈ x 2.3, outside the patch whose west edge is at x = 2).
+2. They condition on the wrong variable: only 4/40 test the landing
+   (x2, y2) — the causal variable of the freeze rule; the rest gate on the
+   current position (x, y).
+The sample itself (3200 transitions) then refuses every wrong shape — the
+~0.98–0.99 accuracies are shape errors, not arithmetic (consistent with the
+original run's falsified ε-exactness alternative).
+
+**Consequences.** (a) Paper 2 §10's "whether richer prompting, larger
+iteration budgets ... restore repair is open" is now a measured negative at
+the strongest joint treatment; per the runbook decision tree the ablation
+pair (region-only / budget-only) is NOT needed — nothing repaired, so there
+is no factor to attribute. (b) The mechanism sharpens: the failure is not
+"cannot write 2D predicates" (they now write ellipses), it is induction of
+the generative boundary from one-sided evidence — the contact evidence IS
+only the reachable crescent, and paper 3's evidence-equivalence corollary
+(THEORY.md on `claude/paper-tres-topology-4w813y`: outside evidence cannot
+even pose the disc-vs-annulus question) says a hull-fit is the rational
+response to it. (c) The paper-3 rung-1 datum (0/76, now +0/40 under
+confound treatment) stands unconditioned.
+
+## Square-patch ablation: the curvature explanation is FALSIFIED (2026-07-19/20)
+
+Runbook Task 2 (`docs/superpowers/plans/2026-07-19-disc-confounds-square-
+ablation.md`): patch2dsq k=(3,7), default prompt, it5, both arms, 20 seeds ×
+{large, mini}. JSONs: `results/continuous_synthesis_patch2dsq_{large,mini}_
+k3_7.json` (large incomplete arm first checkpointed at 14/20, then COMPLETED
+by a resumed run — the resume layer's first production use).
+
+**Control clean, premise holds on max/abs:** full arm 20/20 gate 1.000 at
+0 refine iterations in BOTH sizes, per-mode blindness 0.0/0.0, play_cost
+0.0 across the board — translating the square clause is as easy as the
+disc's and the wall's.
+
+**Incomplete arm: 0/40 repair** (every sample mode-containing — square
+r1 = 0.185 forces p1 into all 40 samples; p2 in 5/20 + 6/20). No gate
+passes (best 0.9962), all seeds at the 5-iteration cap; gate soundness
+intact. So flat edges do NOT restore repair: 0/76 disc + 0/40 disc-with-
+guidance + 0/40 square = 0/156 pooled across the three campaigns. **The
+collapse axis is 2D-region induction itself (the conjunction), not
+boundary curvature.** The resumed large seeds add the sharpest
+evidence-hull instance of the campaign (seed 170000): thin strips
+[1.9,2.0]x[-1,1] and [5.9,6.0]x[-1,1] — BOTH patches' west faces found,
+correct y-extent, yet only the observed contact shell is modeled, on the
+pre-position instead of the landing: the hull of the evidence, never the
+generative box.
+
+**The artifact classes sharpen the mechanism into a template prior:**
+- *Half-plane reduction ON FLAT EVIDENCE*: dominant large class is
+  `if x2 >= 2.0` — the square's west edge as a 1D threshold (7/14 large,
+  3/20 mini). Dimensional reduction is shape-agnostic.
+- *The INVERSE error — curving flat evidence*: several artifacts write
+  DISCS on the square instrument (`hypot(x-2, y) <= 1.0` at the west-edge
+  midpoint; r=0.25 discs at (2,0)/(6,0); micro-disc unions). On the disc
+  instrument the models wrote half-planes; on the square they write discs.
+- *Reward-anchored superstition* (mostly mini): freeze zones invented AT
+  THE LODES (hypot to (-6,0) or (12,0) <= 2.0) — the prior anchors on
+  salient reward landmarks, not on the failure geometry; one degenerate
+  `if reward(...) > 0.0` artifact (gate 0.0022).
+- One rectangle attempt with the wrong extent ([-2,4]x[-2,2], gate 0.35);
+  ZERO artifacts write the true box [2,4]x[-1,1] or its max/abs form.
+
+Net mechanism across the three campaigns: the synthesizer selects from a
+small library of low-descriptive-complexity region templates (1D threshold,
+radial ball, reward-landmark zone) and keeps whichever locally fits,
+under-weighting the evidence's actual geometry in BOTH directions
+(flattening curves, curving flats). "Dimensional reduction" (paper 2 §7.1)
+was one face of this; the square run exposes the other. This is exactly the
+regime the Phase-A curvature sweep (Shape families + AST/MDL program
+features + evidence-dose) is built to characterize quantitatively — these
+two cells are its anchor points, not its replacement.
+
+Paper hooks (deferred to the Phase-A fold-in, one coherent edit): §7.1's
+mechanism paragraph ("reduces the disc to a half-plane") generalizes to the
+template-prior statement; §10's open items on prompting/budget and "other
+geometries" are now BOTH measured negatives (confound entry above + this);
+the abstract's "geometry-dependent" stays correct but "curvature" should
+never be the stated axis.

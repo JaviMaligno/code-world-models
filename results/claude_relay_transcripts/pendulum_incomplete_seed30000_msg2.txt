@@ -1,0 +1,75 @@
+=== USER ===
+Implement a deterministic 1D control world model as Python module-level
+functions (pure, no I/O, no globals, only the `math` standard-library module).
+
+State is a list [th, om] of two floats (angle, angular velocity). Action is a
+float.
+
+Functions to implement EXACTLY these signatures:
+  def step(state: list, action: float) -> list   # next [th, om]
+  def reward(state: list) -> float               # reward of a state
+
+The integrator is FIXED and part of the contract. step() must compute, in
+exactly this order, with plain Python floats:
+  1. a = min(a_max, max(-a_max, action))                  # clamp the action
+  2. om2 = om + (gain * a - grav * math.sin(th) - drag * om) * dt
+  3. th2 = th + om2 * dt
+then apply any additional dynamics rules given below, and return [th2, om2].
+
+Physical constants:
+  dt = 0.1
+  gain = 3.0
+  grav = 2.0
+  drag = 0.3
+  a_max = 1.0
+
+Reward (a function of the state [th, om] alone):
+  left  = 0.3 / (1.0 + math.exp(-((-2.0 - th) / 0.25)))
+  right = 1.0 / (1.0 + math.exp(-((th - 3.0) / 0.25)))
+  reward = left + right
+
+The current implementation is below. It fails some transitions. Fix it so every transition matches to within 1e-09 in x, v and reward. Output only one ```python code block.
+
+CURRENT CODE:
+```python
+import math
+
+dt = 0.1
+gain = 3.0
+grav = 2.0
+drag = 0.3
+a_max = 1.0
+th_max = 1.4
+
+
+def step(state: list, action: float) -> list:
+    th, om = state[0], state[1]
+    a = min(a_max, max(-a_max, action))
+    om2 = om + (gain * a - grav * math.sin(th) - drag * om) * dt
+    th2 = th + om2 * dt
+    if th2 > th_max:
+        th2 = th_max
+        om2 = 0.0
+    elif th2 < -th_max:
+        th2 = -th_max
+        om2 = 0.0
+    return [th2, om2]
+
+
+def reward(state: list) -> float:
+    th, om = state[0], state[1]
+    left = 0.3 / (1.0 + math.exp(-((-2.0 - th) / 0.25)))
+    right = 1.0 / (1.0 + math.exp(-((th - 3.0) / 0.25)))
+    return left + right
+```
+
+FAILURES (expected vs got):
+step([-1.3387531503816714, -1.2729097401897547], 0.47030786924364953): expected [-1.4286521878085252, -0.8989903742685386] r=0.027702050264361365, got [-1.4, 0.0] r=0.024951831668636116 (err 0.899)
+step([-1.4286521878085252, -0.8989903742685386], 0.9110717713956533): expected [-1.468723810562013, -0.40071622753487945] r=0.03200420030027256, got [-1.4, 0.0] r=0.024951831668636116 (err 0.401)
+step([-1.468723810562013, -0.40071622753487945], -0.0902668233244377): expected [-1.4904053868902711, -0.2168157632825798] r=0.034569601262084096, got [-1.4, 0.0] r=0.024951831668636116 (err 0.217)
+step([-1.4904053868902711, -0.2168157632825798], 0.11120386451604469): expected [-1.4881649922274405, 0.02240394662830647] r=0.03429644568487492, got [-1.4, 0.0] r=0.024951831668636116 (err 0.0882)
+step([-1.4881649922274405, 0.02240394662830647], -0.7609652106220817): expected [-1.4888890062559141, -0.007240140284737379] r=0.03438451342317646, got [-1.4, 0.0] r=0.024951831668636116 (err 0.0889)
+step([-1.4888890062559141, -0.007240140284737379], -0.9353132459450533): expected [-1.4977177478350836, -0.08828741579169468] r=0.03547434388829101, got [-1.4, 0.0] r=0.024951831668636116 (err 0.0977)
+step([-1.4977177478350836, -0.08828741579169468], -0.15987686516357402): expected [-1.491131314145783, 0.06586433689300637] r=0.03465851352325593, got [-1.4, 0.0] r=0.024951831668636116 (err 0.0911)
+step([-1.491131314145783, 0.06586433689300637], -0.8618883887895594): expected [-1.4906625567151492, 0.004687574306335721] r=0.03460107695276843, got [-1.4, 0.0] r=0.024951831668636116 (err 0.0907)
+step([-1.4906625567151492, 0.004687574306335721], 0.8556168808756948): expected [-1.4446035354373825, 0.4605902127776671] r=0.029348643969360984, got [-1.4, 0.0] r=0.024951831668636116 (err 0.461)
