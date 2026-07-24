@@ -783,5 +783,6 @@
       ]
     }
   ],
-  "elapsed_s": 1144.0
+  "elapsed_s": 837.0,
+  "entry_point": "continuous_cem_patch2d.py"
 }

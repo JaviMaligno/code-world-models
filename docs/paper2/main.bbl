@@ -9,7 +9,8 @@
 Javier Aguilar~Mart\'in.
 \newblock When a verified world model still loses: Play-adequacy vs
   prediction-accuracy in {LLM}-synthesized code world models, 2026.
-\newblock Companion paper (paper 1). Preprint; repository:
+\newblock Companion paper (paper 1). arXiv:2607.14169,
+  \url{https://arxiv.org/abs/2607.14169}; repository:
   \url{https://github.com/JaviMaligno/code-world-models}.
 
 \bibitem[Alshiekh et~al.(2018)Alshiekh, Bloem, Ehlers, K{\"o}nighofer, Niekum,

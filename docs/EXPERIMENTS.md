@@ -1,5 +1,100 @@
 # Experiments Log
 
+## PAPER 2 — Pre-arXiv review closure: 2D cross-family arm, two missing entry points, re-run validation (2026-07-24)
+
+A pre-submission review of paper 2 raised eleven items (3 blocking, 4 substantive,
+4 minor). All were closed by measurement or by a precision fix, not by hedging.
+
+**1. Two scripts the paper cited did not exist.** §5 cited
+`scripts/continuous_cem_patch2d.py` and the §6 text cited
+`scripts/continuous_eps_sweep_patch2d.py`; the actual invocations were
+`continuous_cem.py --instrument patch2d` / `continuous_eps_sweep.py
+--instrument patch2d` (the appendix had it right, the body did not). Both now
+exist as first-class entry points that delegate to the shared implementation via
+`runpy` — no duplicated measurement code, so the 1D and 2D paths cannot drift —
+and stamp `entry_point` into their JSON for provenance. **Both were re-executed
+from a clean invocation of the new entry points and produced output
+byte-identical to the committed JSONs** (only `elapsed_s`/`entry_point` differ:
+837 s vs 1144 s, 449 s vs 898 s wall-clock). So the paper's CEM row
+(pc −0.022/+0.017/+0.020, crossing 0.0697<0.2076, 0.0270<0.1488,
+0.0091<0.0943, contact 0.05) and the per-mode eps-flatness (0.147 / 0.142 /
+0.005, constant across the whole eps grid) reproduce exactly.
+
+**2. The 2D repair collapse was GPT-5.x-only — now it has a second family.**
+The abstract/intro said "no model recovers the region rule", but PatchField2D had
+been run on GPT-5.x mini+large only (with shared samples). Two arms were
+attempted:
+
+- **Qwen: ABORTED after 3 cells — partial, recorded.**
+  `continuous_danger_synthesis.py mini 10 --instrument patch2d --k1 3 --k2 7
+  --compat-model Qwen/Qwen3-Coder-30B-A3B-Instruct` died on HTTP 402 (HF
+  Inference Providers monthly credits exhausted) after completing the arm order's
+  first three cells, which are all **full-arm**:
+  `results/continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json`
+  — 3/3 gate 1.000 at 0 refine iterations, both discs written exactly on the
+  landing position `(x2-3)²+(y2-0)² <= 1.0` / `(x2-7)²+(y2-0)² <= 1.0`, per-patch
+  blindness 0.0/0.0. So Qwen contributes a clean TRANSLATION control on the 2D
+  instrument and **zero** incomplete-arm (induction) data. Reported as exactly
+  that; the 2D induction evidence is GPT-5.x's 156 seeds + Claude's 3.
+- **Claude (agent-relayed): 3 mode-containing seeds + 1 full control at k=(3,7)**,
+  Sonnet, same N=40 sample, same eps=1e-9 pinned-integrator gate, same 5-iteration
+  memoryless refine loop. `continuous_claude_step.py` gained patch2d support
+  (per-mode blindness + `sample_contains_mode_per`, knob in the record key, and a
+  `--model-label` so the arm is attributable). Seeds 10000/20000 are
+  see-P1-miss-P2; seed 30000 sees BOTH patches.
+
+  **Full control: gate 1.000 at iteration 0**, both discs written on the landing
+  position, blindness 0.0, play_cost 0.0 — translation is not the problem, exactly
+  as with GPT-5.x. **Incomplete arm: no repair.** The trajectory is the finding:
+  every seed sits in a **period-2 cycle** between the pure-blind artifact and a
+  wrong template, returning to the iteration-0 gate value on every even iteration.
+  Per-iteration ledger (`scripts/claude_relay_ledger.py`, which re-derives gate
+  accuracy and rule class from the versioned transcripts →
+  `results/continuous_claude_relay_patch2d_k3_7.json`):
+
+  | seed | it0 | it1 | it2 | it3 | it4 | it5 |
+  |---|---|---|---|---|---|---|
+  | 10000 | blind .9934 | disc-**current** .9591 | blind .9934 | halfplane .9284 | blind .9934 | reward-thresh .7044 |
+  | 20000 | blind .9962 | halfplane .9406 | blind .9962 | halfplane .9406 | blind .9962 | halfplane .9406 |
+  | 30000 | blind .9966 | reward-zone .6750 | blind .9966 | halfplane .8406 | blind .9966 | y-band .5328 |
+
+  All three terminate REJECTED at iteration 5 (0/3 repair). The even iterations
+  return to the iteration-0 gate value exactly, on every seed — the memoryless
+  refine loop deletes the failed template and re-emits the blind artifact.
+
+  The templates are exactly the library the GPT-5.x campaigns exhibited: 1D
+  threshold (all three seeds), a radial disc conditioned on the **current**
+  instead of the landing position (seed 10000 — the wrong-causal-variable error
+  Ablation 1 found in 36/40 guided artifacts), and a reward-landmark freeze zone
+  (seed 30000). **No incomplete iteration in any seed wrote a disc on the landing
+  position** — the form this same model writes immediately when the contract
+  states it. The template prior is therefore not a GPT-5.x idiosyncrasy.
+
+  Transport note: two of seed 10000's relays (msg3, msg5) were dispatched twice
+  after the first appeared to hang. Pre-registered rule: the first completed relay
+  of a message wins. In both cases the original landed first and is the one used;
+  both duplicates are preserved as `..._msg{3,5}_duplicate_relay_DISCARDED.txt`
+  rather than deleted. Neither would have changed the finding — they wrote a
+  segment/capsule distance and a disc, both on the CURRENT position. Relayed
+  instances were instructed not to use tools or read files, so each artifact is a
+  function of the pipeline message alone; that framing is recorded with the
+  transcripts and disclosed in the paper.
+
+**3. Precision fixes (no new data needed).** Abstract cut to 1865 ASCII chars for
+arXiv's hard 1920-char metadata limit (`docs/paper2/abstract-arxiv.txt`);
+mini/large **share their gate samples by construction** (`rollout_seed =
+10_000*(i+1)`, model-independent) so every pooled "both sizes" count is n samples
+× 2 synthesis draws — now stated once in §9 and applied everywhere, with per-size
+Wilson bounds (0.72 cart, 0.70 pendulum) replacing the pooled ones (0.84, 0.824)
+as the bounds relied on, and the (1−r)^N check explicitly never pooled; the
+pendulum θ_stop=2.0 rarity is a censored zero (0/3000, Wilson upper 0.0013) so its
+d@40 is now reported as an upper bound with the CI-implied floor (0.895); exact
+Azure deployments footnoted (`gpt-5.4`, `gpt-5.4-mini`, API 2025-04-01-preview);
+the 38-vs-39 half-plane count between hand inspection and the behavioral audit
+reconciled to a syntax-vs-behavior reading of two named artifacts (mini k3_7
+seeds 130000, 150000 — radial predicates anchored at the reward lodes);
+Prop. 4's hypothesis widened to L ∈ [0,∞); Corollary 1's display made |play_cost|.
+
 ## PAPER 2 — Behavioral audit of the patch2d artifacts: the hand inspection VERIFIED (2026-07-23)
 
 `scripts/patch2d_artifact_audit.py` (oracle-selftested: 7 constructed classes

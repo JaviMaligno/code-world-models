@@ -1,0 +1,277 @@
+{
+  "script": "claude_relay_ledger.py",
+  "tag": "patch2d_k3_7",
+  "instrument": "patch2d",
+  "k1": 3.0,
+  "k2": 7.0,
+  "n_rollouts": 40,
+  "eps": 1e-09,
+  "rows": [
+    {
+      "arm": "full",
+      "seed": 10000,
+      "iteration": 0,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "rule_class": "disc-landing",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_full_seed10000_reply0.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 10000,
+      "iteration": 0,
+      "gate_accuracy": 0.9934375,
+      "gate_passed": false,
+      "rule_class": "blind",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed10000_reply0.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 10000,
+      "iteration": 1,
+      "gate_accuracy": 0.9590625,
+      "gate_passed": false,
+      "rule_class": "disc-current",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed10000_reply1.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 10000,
+      "iteration": 2,
+      "gate_accuracy": 0.9934375,
+      "gate_passed": false,
+      "rule_class": "blind",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed10000_reply2.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 10000,
+      "iteration": 3,
+      "gate_accuracy": 0.9284375,
+      "gate_passed": false,
+      "rule_class": "halfplane",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed10000_reply3.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 10000,
+      "iteration": 4,
+      "gate_accuracy": 0.9934375,
+      "gate_passed": false,
+      "rule_class": "blind",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed10000_reply4.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 10000,
+      "iteration": 5,
+      "gate_accuracy": 0.704375,
+      "gate_passed": false,
+      "rule_class": "reward-zone",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed10000_reply5.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 20000,
+      "iteration": 0,
+      "gate_accuracy": 0.99625,
+      "gate_passed": false,
+      "rule_class": "blind",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed20000_reply0.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 20000,
+      "iteration": 1,
+      "gate_accuracy": 0.940625,
+      "gate_passed": false,
+      "rule_class": "halfplane",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed20000_reply1.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 20000,
+      "iteration": 2,
+      "gate_accuracy": 0.99625,
+      "gate_passed": false,
+      "rule_class": "blind",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed20000_reply2.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 20000,
+      "iteration": 3,
+      "gate_accuracy": 0.940625,
+      "gate_passed": false,
+      "rule_class": "halfplane",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed20000_reply3.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 20000,
+      "iteration": 4,
+      "gate_accuracy": 0.99625,
+      "gate_passed": false,
+      "rule_class": "blind",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed20000_reply4.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 20000,
+      "iteration": 5,
+      "gate_accuracy": 0.940625,
+      "gate_passed": false,
+      "rule_class": "halfplane",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed20000_reply5.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 30000,
+      "iteration": 0,
+      "gate_accuracy": 0.9965625,
+      "gate_passed": false,
+      "rule_class": "blind",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed30000_reply0.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 30000,
+      "iteration": 1,
+      "gate_accuracy": 0.675,
+      "gate_passed": false,
+      "rule_class": "reward-zone",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed30000_reply1.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 30000,
+      "iteration": 2,
+      "gate_accuracy": 0.9965625,
+      "gate_passed": false,
+      "rule_class": "blind",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed30000_reply2.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 30000,
+      "iteration": 3,
+      "gate_accuracy": 0.840625,
+      "gate_passed": false,
+      "rule_class": "halfplane",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed30000_reply3.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 30000,
+      "iteration": 4,
+      "gate_accuracy": 0.9965625,
+      "gate_passed": false,
+      "rule_class": "blind",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed30000_reply4.txt"
+    },
+    {
+      "arm": "incomplete",
+      "seed": 30000,
+      "iteration": 5,
+      "gate_accuracy": 0.5328125,
+      "gate_passed": false,
+      "rule_class": "strip",
+      "sample_contains_mode": true,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      },
+      "reply_file": "results/claude_relay_transcripts/patch2d_k3_7_incomplete_seed30000_reply5.txt"
+    }
+  ]
+}
