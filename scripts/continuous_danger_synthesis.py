@@ -354,6 +354,8 @@ if __name__ == "__main__":
         SUFFIX += f"_pv-{args.prompt_variant}"
     if args.max_iters != 5:
         SUFFIX += f"_it{args.max_iters}"
+    if args.n_rollouts != 40:
+        SUFFIX += f"_N{args.n_rollouts}"
 
     # Truth-planner + random baselines, shared across all seeds/arms (paired).
     print(f"baselines: {args.play_episodes} truth-MPC + random episodes...", flush=True)

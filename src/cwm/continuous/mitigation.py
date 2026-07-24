@@ -218,3 +218,78 @@ def run_mitigated_episode(truth, model, seed: int = 0, horizon: int = 40,
     return MitigatedEpisode(ret=total, contact=contact, final_state=s,
                             violations=len(fences) - n_fences_at_start,
                             first_contact_step=first_contact)
+
+
+# ---------------- trust inversion: the OPTIMISM defense (2026-07-24) -------
+# The dual failure: an INVENTED mode (e.g. the filled disc from inside)
+# flattens imagined value — every candidate freezes immediately — so
+# distrust-fences fire constantly and change nothing (measured: pc 1.769
+# under every fence variant). The dual defense records FREEDOM points:
+# positions where the model predicted a freeze and the truth MOVED. During
+# imagination, a model step that freezes within eps of a freedom point is
+# replaced by the PINNED INTEGRATOR's step (the contract's own mode-free
+# integrator — legitimately known to the pipeline). Where the model was
+# refuted as too pessimistic, imagination is locally un-frozen.
+
+
+def _is_freeze_form(s, s2, pos_dims) -> bool:
+    """Model step is freeze-form: position preserved, velocity zeroed."""
+    if any(abs(s2[i] - s[i]) > 1e-9 for i in pos_dims):
+        return False
+    vel_dims = [i for i in range(len(s)) if i not in pos_dims]
+    return all(abs(s2[i]) < 1e-9 for i in vel_dims)
+
+
+class _PatchedModel:
+    """Imagination wrapper: un-freeze model steps near freedom points."""
+
+    def __init__(self, model, freedom, eps, integrate, pos_dims):
+        self._m, self._free, self._eps = model, freedom, eps
+        self._integrate, self._pos = integrate, pos_dims
+        self.a_max = model.a_max
+        self.h_episode = model.h_episode
+
+    def step(self, s, a):
+        s2, r, c = self._m.step(s, a)
+        if self._free and _is_freeze_form(s, s2, self._pos):
+            pos = tuple(s[i] for i in self._pos)
+            if any(math.dist(pos, f) <= self._eps for f in self._free):
+                s2p = tuple(self._integrate(s, a))
+                return s2p, self._m.reward(s2p), False
+        return s2, r, c
+
+
+def run_patched_episode(truth, model, integrate, seed: int = 0,
+                        horizon: int = 40, n_samples: int = 200,
+                        block: int = 10, tol: float = 1e-6,
+                        eps: float = 0.5, pos_dims: tuple = (0, 1),
+                        freedom: list | None = None) -> MitigatedEpisode:
+    """Play one episode planning on the freedom-patched model. `integrate`
+    is the pinned mode-free integrator (state, action) -> next state. Pass a
+    mutable `freedom` list to persist across episodes. With a correct model
+    no freedom point is ever recorded and planning is bit-identical to
+    mpc.plan on it."""
+    if freedom is None:
+        freedom = []
+    rng = random.Random(seed)
+    s = truth.initial_state(rng)
+    total, contact, first_contact = 0.0, False, None
+    n0 = len(freedom)
+    patched = _PatchedModel(model, freedom, eps, integrate, pos_dims)
+    for t in range(truth.h_episode):
+        a = mpc.plan(patched, s, rng, horizon=horizon,
+                     n_samples=n_samples, block=block)
+        s2, r, c = truth.step(s, a)
+        pred, _, _ = model.step(s, a)
+        if (max(abs(pred[i] - s2[i]) for i in range(len(s2))) > tol
+                and _is_freeze_form(s, pred, pos_dims)):
+            # the model froze; the world moved: a freedom certificate
+            freedom.append(tuple(s[i] for i in pos_dims))
+        if c and first_contact is None:
+            first_contact = t
+        contact = contact or c
+        total += r
+        s = s2
+    return MitigatedEpisode(ret=total, contact=contact, final_state=s,
+                            violations=len(freedom) - n0,
+                            first_contact_step=first_contact)
