@@ -2581,7 +2581,29 @@ Two findings (exploratory, 5 seeds — do not over-read):
    disc/loop artifacts there are guidance-compliant, not prior-driven. See
    "Per-artifact behavioral audit" below.
 
-## Square ring (bucket-1a): phenomenology norm-invariant; the template prior reaches the separator (2026-07-24)
+## Second wave: multi-chamber and the non-separating tube (2026-07-24)
+
+**1b — multi-chamber (nested rings).** RingField2D gains r_in2/r_out2
+([7.5, 9.0]); three mutually reach-null chambers verified (0 escapes / 240
+rollouts). Azure D-cell from the MIDDLE chamber (mini 20, tda):
+`continuous_synthesis_ring2d_mini_gap0-m2-mid_pv-tda.json`. 0/20 pass;
+classes arc 13 / blind 6 / point 1 — ZERO closed and ZERO nested (two-band)
+artifacts: the loop does not even POSE layer two. Sensor: the true
+two-circle cloud (beta1=2) draws a detector LOTTERY {0:9, 1:10, 2:1} —
+Rips bridges between concentric circles merge/kill loops seed-dependently
+(third failure mode of the pre-registered detector).
+
+**2d — TubeField3D (non-separating; T8's instrument).** Solid torus between
+start and phantom; complement CONNECTED (deterministic around-path test):
+no reach-null region, no exact gauge. Mechanism
+(`tubefield_mechanism.json`): aligned (hole on-axis) r=0.0033 pc_blind
+0.019 contact 0.00; offset (tube on-axis) r=0.0033 pc_blind 0.898 contact
+0.94. Same rarity, same trivial topology — the danger dichotomy is purely
+PATH-relative; separation contributes only the exact-gauge side. The ring
+conflated the two; the tube separates them. T8 (linking-number query
+bound) is the math this instrument opens.
+
+## Square ring (bucket-1a)## Square ring (bucket-1a): phenomenology norm-invariant; the template prior reaches the separator (2026-07-24)
 
 RingField2D gains norm='cheby' (square annulus, zero curvature, corners;
 Chebyshev is 1-Lipschitz wrt Euclidean steps so Lemma 2 survives verbatim —

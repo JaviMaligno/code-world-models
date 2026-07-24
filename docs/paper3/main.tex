@@ -1115,7 +1115,18 @@ $\gamma \le 1.2$) at a sensitivity cost at $\gamma = 0$ ($2/5$ true
 loops lost), and the naive fix produces infinite spurious bars --- deleted
 edges leave never-fillable cycles --- so the principled estimator is
 \emph{relative} homology of the contact set with respect to certified-free
-space, which we leave as the identified open problem.
+space, which we leave as the identified open problem. Nested boundaries
+break the detector a third way: with two concentric rings (the
+multi-chamber instrument) the middle-chamber evidence cloud is two
+concentric circles ($\beta_1 = 2$), and the pre-registered detector
+returns a seed-dependent \emph{lottery} --- $\hat\beta_1 = 0$ on $9/20$
+samples, $1$ on $10/20$, the true $2$ on $1/20$ --- as Rips bridges between
+the circles merge or kill loops at this density. The synthesis side is
+correspondingly worse than the single ring: $0/20$ gate passes and
+\emph{zero} artifacts pose a nested (two-band) structure --- $13/20$ pose
+single arcs hugging one boundary. Certification peels one boundary layer
+per start placement (Proposition~\ref{prop:quotient}); the repair loop, at
+this depth, does not even \emph{pose} layer two.
 
 \begin{table}[h]
 \centering
@@ -1251,6 +1262,44 @@ $\mathrm{pc}_{\mathrm{blind}}$ with the axial-candidate planner (see the
 methods note in the text).}
 \label{tab:ndim}
 \end{table}
+
+\subsection{The non-separating control: obstruction is path-relative,
+gauge is separation-relative}
+\label{sec:tube}
+
+One control remained to disentangle the thesis's two halves. A solid torus
+in $\mathbb{R}^3$ placed between start and lode
+(\texttt{TubeField3D}; thrust-vector action) does \emph{not} separate
+space: an explicit around-path reaches the far side contact-free, so
+nothing is reach-null, there is \emph{no exact gauge region}, and the
+crossing lemma has no separating surface to act on --- certification-wise
+this mode is back in the companion papers' merely-rare world. Yet the
+danger dichotomy reproduces in full, governed by one knob that moves the
+torus's hole on or off the start--lode axis:
+
+\begin{center}
+\small
+\begin{tabular}{lrrr}
+\toprule
+config & $r$ & $\mathrm{pc}_{\mathrm{blind}}$ & contact \\
+\midrule
+hole on-axis (plan threads it) & 0.0033 & 0.019 & 0.00 \\
+tube on-axis (plan clips it) & 0.0033 & 0.898 & 0.94 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Same rarity, same (trivial) topology, same instrument: only the position of
+the mode relative to the optimal path changes, and the exploitation swings
+from $0.02$ to $0.90$. The decomposition this completes: \textbf{danger is
+path-relative} (an on-path mode is exploited whether or not it separates
+anything), while \textbf{exact unfalsifiability is separation-relative}
+(only an enclosing boundary manufactures a reach-null gauge region). The
+ring, where the enclosing boundary and the blocked path coincide, conflates
+the two; the tube separates them. The homological program this opens ---
+lower-bounding query mass by the linking of imagined paths with the tube's
+core, where the metric crossing argument has nothing to grip --- is the
+stated next mathematics of the series.
 
 \section{Related work}
 \label{sec:related}
