@@ -2581,7 +2581,30 @@ Two findings (exploratory, 5 seeds — do not over-read):
    disc/loop artifacts there are guidance-compliant, not prior-driven. See
    "Per-artifact behavioral audit" below.
 
-## Trajectory-censored filtration (bucket-2b prototype): strong signal, and a real research problem found (2026-07-24)
+## Square ring (bucket-1a): phenomenology norm-invariant; the template prior reaches the separator (2026-07-24)
+
+RingField2D gains norm='cheby' (square annulus, zero curvature, corners;
+Chebyshev is 1-Lipschitz wrt Euclidean steps so Lemma 2 survives verbatim —
+tests: reach-null 0/200, Prop 3 planner-equivalence BITWISE, 12/12).
+CPU calibration: r=0.050, pc_blind 0.999, pc_filled 0.000. Azure cells
+(mini 20 seeds): A outside/default -> 3/20 mode-absent, ALL certified blind
+and exploited at pc 1.117 (= round ring's 1.116); 17 mode-present, 0
+repairs (terminals: blind 11, point 5, arc 3, fill-unb 1). D inside/tda ->
+0/20 pass, structures posed in 15/20 (disc 8, loop 4, arc 3).
+
+**The headline: models write ROUND rings on SQUARE evidence.** Of the 12
+posed closed structures, 11 have corner ratio ~1.0 (round; square = 1.414)
+and 12/12 are written with hypot — ZERO use the max/abs form the truth
+has. Paper 2's bidirectional template prior (flatten curves, curve flats),
+measured now on the ENCLOSING SEPARATOR itself: the topology axis and the
+template-prior axis compose. Everything else is norm-invariant — danger,
+identifiability, parameter-bound repair.
+
+Files: continuous_synthesis_ring2d_mini_sqgap0{,-in_pv-tda}.json,
+continuous_ring2d_cheby_calibration.json; corner-ratio analysis inline
+(EXPERIMENTS log).
+
+## Trajectory-censored filtration (bucket-2b prototype)## Trajectory-censored filtration (bucket-2b prototype): strong signal, and a real research problem found (2026-07-24)
 
 `tda.rips_persistence` gains an opt-in `edge_filter` (golden-safe);
 `scripts/ring2d_censored_filtration.py` (selftested: C-arc+traffic 1->0,

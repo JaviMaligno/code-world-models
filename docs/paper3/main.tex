@@ -793,7 +793,24 @@ that is, the median artifact poses $r = 4.0$, a \emph{round number},
 whether it has seen $40$ rollouts or $320$. The parameter is not estimated
 from the evidence; it is guessed from the template library, so evidence
 dose cannot buy repair --- the synthesis-side twin of
-Section~\ref{sec:sensor}'s dose-independence. We flag a correction of our own along the way: our first reading
+Section~\ref{sec:sensor}'s dose-independence.
+
+\paragraph{The separator ablation: a square ring.} Replacing the Euclidean
+norm by the Chebyshev norm turns the annulus into a square ring (zero
+curvature, corners) while the crossing lemma survives verbatim (Chebyshev
+distance is 1-Lipschitz with respect to Euclidean steps; reach-null and the
+bitwise Proposition~\ref{prop:harmless} equivalence re-verify on the
+square). Every quantitative finding is norm-invariant: mode-absent samples
+yield certified blind artifacts exploited at $1.117$; inside repair is
+$0/20$ with structures posed in $15/20$. The shape of what is posed is not:
+of the $12$ posed closed structures on \emph{square} evidence, $11$ are
+round (freeze-boundary corner ratio ${\approx}1.0$ against the square's
+$\sqrt 2$) and $12/12$ are written with \texttt{hypot} --- zero use the
+truth's \texttt{max}/\texttt{abs} form. The companion paper's
+bidirectional template prior, measured there on small patches, reaches the
+enclosing separator itself: the topology axis and the template-prior axis
+compose, and the certified artifact's \emph{shape} comes from the prior
+even when its \emph{topology} comes from the guidance. We flag a correction of our own along the way: our first reading
 attributed the D failures to template-prior collapse, and the behavioral
 audit --- the same instrument that \emph{verified} the companion paper's
 inspection --- is what corrected it here.
