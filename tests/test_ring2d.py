@@ -242,3 +242,37 @@ def test_multichamber_blind_of_removes_both_rings():
     assert b.r_in is None and b.r_in2 is None and b.r_out2 is None
     # blind never freezes anywhere
     assert not b._in_mode(12.0, 4.0) and not b._in_mode(12.0 + 8.0, 0.0)
+
+
+def test_t6_hidden06_steering_witness():
+    """T6 (THEORY.md) settled positively: the optimized waypoint controller
+    enters the interior through the HIDDEN gamma=0.6 channel within the
+    instrument's own horizon. Machine-checked witness (params from
+    results/t6_hidden06_witness.json, search 2026-07-24)."""
+    env = RingField2D(gap=0.6, gap_center=0.0, x0_center=(0.0, 0.0))
+    cx, cy = env.center
+    P = [9.006, 6.974, 7.47, 16.22, 3.626, 7.482, 17.146, 0.203, 3.954, 5.87]
+    wps = [((P[0], P[1]), P[2]), ((P[3], P[4]), P[5]),
+           ((P[6], P[7]), P[8]), ((cx, cy), P[9])]
+
+    def steer(s, wp, v):
+        d = math.hypot(wp[0] - s[0], wp[1] - s[1]) or 1e-9
+        phi = math.atan2(v * (wp[1] - s[1]) / d - s[3],
+                         v * (wp[0] - s[0]) / d - s[2])
+        return max(-1.0, min(1.0, phi / math.pi))
+
+    entries = 0
+    for sd in range(1000, 1005):
+        rng = random.Random(sd)
+        s = env.initial_state(rng)
+        wp_i = 0
+        for _ in range(env.h_episode):
+            wp, v = wps[wp_i]
+            if math.hypot(s[0] - wp[0], s[1] - wp[1]) < 2.0:
+                wp_i = min(wp_i + 1, len(wps) - 1)
+                wp, v = wps[wp_i]
+            s, _, _ = env.step(s, steer(s, wp, v))
+            if math.hypot(s[0] - cx, s[1] - cy) < env.r_in:
+                entries += 1
+                break
+    assert entries == 5

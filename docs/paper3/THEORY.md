@@ -516,10 +516,16 @@ they conflict.
   modulus for the γ-curves; the TODO in the proof sketch).
 - **T5 — r(n) concentration order with explicit constants** (drift-free
   random walk loses the lode 2-plane; currently order-only).
-- **T6 — Hidden-channel reachability at γ = 0.6 within h = 80:** either
-  exhibit a controller (finer than the waypoint witness, which threads 1.2
-  but not 0.6) or prove no policy reaches the interior within the horizon —
-  a clean reachability dichotomy either way.
+- **T6 — Hidden-channel reachability at γ = 0.6 within h = 80:**
+  **RESOLVED (2026-07-24, positive).** A 10-parameter waypoint-controller
+  search (400 random + 300 refinement candidates,
+  `scripts/t6_hidden06_witness_search.py`) found a controller entering the
+  interior **100/100** over the standard start distribution — found at
+  candidate 4, so the witness is abundant in the family, not a needle. The
+  hand template's failure was control precision, not reachability.
+  Machine-checked permanently: `test_t6_hidden06_steering_witness`.
+  Consequence for R2: at hidden γ = 0.6 BOTH grades are now witnessed —
+  gate-policy rate 0 at n = 400 vs steered rate 1.0.
 - **T7 — The relative-homology evidence estimator** (bucket-2b's research
   problem): formulate H(contact set | certified-free space) properly,
   characterize when naive edge-censoring creates the measured infinite-bar

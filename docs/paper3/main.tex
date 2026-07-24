@@ -569,10 +569,13 @@ horizon}, where the gate policy's measured rate is $0/100$ --- and the same
 controller at $\gamma = 0$ enters $0/100$, as the theorem requires.
 Certifiability is relative to the query policy $\rho$:
 $E(f)$ is defined by $\rho$'s reach, and a policy that knows the channel
-shrinks the gauge region. (At hidden $\gamma = 0.6$ the hand controller
-fails to thread the narrower corridor within the horizon --- the witness
-there would need finer control, which is itself the point: reachability is
-jointly a property of geometry, policy, and budget.) \textbf{(d)} Under two checkable
+shrinks the gauge region. (At hidden $\gamma = 0.6$ the narrower corridor defeats the
+\emph{hand} controller --- but a $10$-parameter search over the same
+waypoint family finds a controller entering $100/100$ within the same
+horizon, machine-checked. Reachability is jointly a property of geometry,
+policy, and budget, and the policy axis is cheap to search: what the gate
+policy cannot reach in $400$ rollouts, ten tuned parameters reach every
+time.) \textbf{(d)} Under two checkable
 hypotheses --- (RG), a reward gap making some channel-entering candidate
 dominate every non-entering one, and (C), candidate coverage --- the blind
 planner's imagined argmax path must cross the annulus, so the planner
