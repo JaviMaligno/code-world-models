@@ -22,3 +22,7 @@ docs/paper2/*.aux
 docs/paper2/*.log
 docs/paper2/*.out
 docs/paper2/*.blg
+docs/paper3/main.aux
+docs/paper3/main.log
+docs/paper3/main.out
+docs/paper3/main.blg
