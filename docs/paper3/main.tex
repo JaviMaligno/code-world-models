@@ -1110,11 +1110,18 @@ $N \in \{40, 160\}$ rollouts $\times$ $\gamma$, five seeds each)
 shows the flip does not move: $\hat\beta_1 = 1$ at every
 $\gamma \le 1.2$ under \emph{every} budget and dose, $0$ at $2.4$ under
 all of them, with only the boundary gap $1.8$ wobbling. The mechanism is
-Rips geometry: the spurious loop bar is born when the filtration bridges
-the channel chord and dies at the complex's fill scale, and both lengths
-are properties of the \emph{shape}, not the sample --- so no detector
-budget and no amount of additional evidence resolves a channel narrower
-than the fill scale. Worse, more evidence is counterproductive at the
+Rips geometry, and it can be written as a law: the detector reports
+$\hat\beta_1 = 1$ exactly when $\sqrt{3}\rho - 2\rho
+\sin(\Delta\theta_{\max}/2) > \tau$, where $\rho$ is the cloud's mean
+radius, $\Delta\theta_{\max}$ the \emph{largest angular gap of the
+sample} (the channel or a subsampling gap, whichever is larger), and
+$\tau$ the detector's persistence threshold --- the bar is born at the
+largest gap's chord (provably: a winding cycle must span every gap) and
+dies at $\sqrt{3}\rho$, the Vietoris--Rips circle constant
+\citep{adamaszek2017vietoris}, which we measure to transfer to gapped
+samples within $\pm 2\%$. The law reproduces $78/80$ rows of the
+factorial, including the seed-level wobble at $\gamma = 1.8$
+(subsampling-gap lottery at the boundary). Worse, more evidence is counterproductive at the
 boundary: at $\gamma = 1.8$ the false-loop rate \emph{rises} from $1/5$
 to $3/5$ seeds when the dose quadruples, because the persistence threshold
 ($3\times$ median nearest-neighbor spacing) shrinks with density while

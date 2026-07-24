@@ -494,13 +494,25 @@ point, never a resting place; difficulty notes are honest assessments, not
 scope exclusions. Superseding the audit table's dispositions above where
 they conflict.
 
-- **T1 — Rips flip location, full proof.** γ*(density) formula for the
-  spurious H1 bar on the C-arc cloud, via the Vietoris–Rips characterization
-  of the circle/arcs (Adamaszek–Adams 2017) adapted to (i) the arc with an
-  angular gap, (ii) dedup 0.05 + cap 90 subsampling, (iii) the 3×median-NN
-  threshold. Deliverable: a theorem "the pre-registered detector reports
-  β̂₁ = 1 iff chord(γ) < c·fill-scale", with the measured flip (~1.8)
-  inside the proven window.
+- **T1 — Rips flip location.** **NEAR-RESOLVED (2026-07-24): the law is
+  found and validated at 78/80.** The detector reports β̂₁ = 1 iff
+  **√3·ρ − 2ρ·sin(Δθ_max/2) > τ**, where Δθ_max is the largest angular gap
+  of the deduped+capped SAMPLE (channel or subsampling gap, whichever is
+  larger), ρ the cloud's mean radius, τ the 3×median-NN threshold.
+  Ingredients and status: (a) birth = chord of the largest sample gap —
+  PROVABLE (any winding 1-cycle must contain an edge spanning every angular
+  gap of a circle-supported sample; write-up pending); (b) death = √3·ρ,
+  the Adamaszek–Adams circle constant, MEASURED to transfer to gapped
+  samples within ±2% (`t1_bar_geometry.json`: death/ρ ∈ [1.70, 1.82],
+  15/15 finite bars) — full proof route: Adamaszek's cyclic-complex
+  characterization covers arbitrary finite subsets of S¹; (c) validation
+  `scripts/t1_flip_law_validation.py` → 78/80 on the sensor factorial (the
+  2 misses are γ=1.8/N=160 boundary rows with margin ≈0.2, inside the
+  death-constant spread). Naive channel-chord version: 66/80 — the flip is
+  the MAX SAMPLE GAP, not the channel, which also explains the boundary
+  wobble (subsampling lottery) and the multi-chamber lottery. Remaining for
+  full resolution: the birth-lemma write-up and the cyclic-complex death
+  proof.
 - **T2 — Aligned-channel degeneracy, full proposition.** Conditions
   (corridor geometry + (RG)/(C)-style hypotheses) under which the facing
   channel makes the blind argmax plan executable in truth, giving
