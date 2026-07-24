@@ -154,7 +154,8 @@ def build_summary(paths, curve_path=CURVE_PATH):
 
 
 def main():
-    paths = [p for g in DEFAULT_GLOBS for p in glob.glob(g)]
+    paths = [p for g in DEFAULT_GLOBS for p in glob.glob(g)
+             if "_N" not in os.path.basename(p)]   # dose cells analyzed apart
     summary = build_summary(paths)
     tmp = OUT_PATH + ".tmp"
     with open(tmp, "w") as f:

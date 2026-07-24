@@ -2581,7 +2581,22 @@ Two findings (exploratory, 5 seeds — do not over-read):
    disc/loop artifacts there are guidance-compliant, not prior-driven. See
    "Per-artifact behavioral audit" below.
 
-## The dual defense: freedom patching collapses the invented-mode exploitation (2026-07-24)
+## Dose curve: evidence cannot buy repair — the parameter is GUESSED, not estimated (2026-07-24)
+
+V2-PROGRAM bucket-1c. D-cell (closed ring, inside+tda, mini, 20 seeds) at
+N in {40, 80, 160, 320} rollouts (files `..._N{80,160,320}.json`; the
+pipeline couples evidence and gate — pre-registered reading: the deployed
+pipeline's dose curve). Result: **0/20 gate-pass at every dose**; mean
+terminal gates flat (0.56/0.63/0.45/0.61); class mixture unchanged. The
+sharp reading: median posed inner-radius error |r_lo - 3.5| = **0.5 at
+every dose** — i.e. the median artifact poses r = 4.0, a ROUND NUMBER,
+whether it saw 40 or 320 rollouts. The parameter is not estimated from
+evidence but guessed from the template library (round radii), so dose
+cannot buy repair: the synthesis-side twin of the sensor factorial's
+dose-independence. Aggregator patched to exclude `_N` dose files from the
+registered open-sweep summary (analyzed apart).
+
+## The dual defense: freedom patching collapses the invented-mode exploitation (2026-07-24)## The dual defense: freedom patching collapses the invented-mode exploitation (2026-07-24)
 
 V2-PROGRAM bucket-2a prototype, decision gate PASSED.
 `mitigation.run_patched_episode` + `_PatchedModel`: record a FREEDOM point

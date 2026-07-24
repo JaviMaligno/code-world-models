@@ -785,7 +785,15 @@ gates average $0.56$, far \emph{below} the $0.971$ blind reference: a
 posed region with wrong parameters over-freezes states the evidence shows
 free. The bottleneck is not posing the topology (the guidance says loop and
 the models comply) but pinning its parameters to $10^{-9}$ from landing
-evidence. We flag a correction of our own along the way: our first reading
+evidence. A dose curve makes this precise: re-running the D cell with
+$8\times$ the evidence ($N \in \{40, 80, 160, 320\}$ rollouts, $20$
+seeds each) yields $0/20$ gate passes at \emph{every} dose, with the
+posed structures' median inner-radius error pinned at $0.5$ throughout ---
+that is, the median artifact poses $r = 4.0$, a \emph{round number},
+whether it has seen $40$ rollouts or $320$. The parameter is not estimated
+from the evidence; it is guessed from the template library, so evidence
+dose cannot buy repair --- the synthesis-side twin of
+Section~\ref{sec:sensor}'s dose-independence. We flag a correction of our own along the way: our first reading
 attributed the D failures to template-prior collapse, and the behavioral
 audit --- the same instrument that \emph{verified} the companion paper's
 inspection --- is what corrected it here.
