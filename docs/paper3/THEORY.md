@@ -622,3 +622,33 @@ difference constants ignore the drag's variance contraction. A sharp bound
 needs the variance-accurate route: Gaussian comparison for the AR(1)
 first-two-coordinate process plus a 2-plane ball-hitting estimate. Recorded
 as a refuted route (progress in the (KEY) sense); T5 remains open.
+
+## T2 — lemma proved, exact route closed by a hypothesis-emptiness certificate (2026-07-24)
+
+**Lemma (clean-step coincidence).** At a fixed real state with the
+deterministic candidate enumeration: truth imagination and blind
+imagination score every A-free candidate identically (the models agree off
+A), so if NO candidate's imagined path touches A, the two argmaxes coincide
+exactly; by induction, an episode all of whose steps are candidate-clean is
+IDENTICAL under the two planners and contributes 0 to play_cost. (Proof:
+strict-> argmax over the same enumeration of equal scores; the weaker
+per-step form — blind argmax A-free AND touch-penalties not promoting
+another candidate — suffices and is what the checker tests.) ∎
+
+**Certificate (the hypothesis is empirically empty).**
+`scripts/t2_aligned_degeneracy.py` replays paired episodes at facing
+γ ∈ {0.3, 0.6, 1.2} marking each step clean/dirty: **0/48 episodes are
+clean end-to-end** — every episode has at least one step where the blind
+argmax clips A in imagination or a touching candidate separates the two
+argmaxes. So the aligned-channel degeneracy is NOT explained by exact
+coincidence (route closed, in the seed-50543 sense), and the exact-0
+conditional theorem, though valid, has empty scope at episode granularity.
+
+**What the data says the true mechanism is (the remaining target).** The
+dirty return gaps are SMALL: truth − blind ≈ 0.7 on average (occasionally
+negative — random-shooting noise) against a denominator ≈ 40, giving the
+measured pc ≈ 0.02. The correct theorem to seek is a PER-CONTACT REGRET
+BOUND: each imagination-touch near an open channel costs O(freeze-transient)
+because the next replan threads the channel — bounding pc by
+(touch rate) × (per-touch cost) / (J_truth − J_random). T2 stays OPEN with
+this named target; artifacts: `results/t2_aligned_degeneracy.json`.
