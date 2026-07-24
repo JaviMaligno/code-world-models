@@ -1115,13 +1115,17 @@ $\hat\beta_1 = 1$ exactly when $\sqrt{3}\rho - 2\rho
 \sin(\Delta\theta_{\max}/2) > \tau$, where $\rho$ is the cloud's mean
 radius, $\Delta\theta_{\max}$ the \emph{largest angular gap of the
 sample} (the channel or a subsampling gap, whichever is larger), and
-$\tau$ the detector's persistence threshold --- the bar is born at the
-largest gap's chord (provably: a winding cycle must span every gap) and
-dies at $\sqrt{3}\rho$, the Vietoris--Rips circle constant
-\citep{adamaszek2017vietoris}, which we measure to transfer to gapped
-samples within $\pm 2\%$. The law reproduces $78/80$ rows of the
-factorial, including the seed-level wobble at $\gamma = 1.8$
-(subsampling-gap lottery at the boundary). Worse, more evidence is counterproductive at the
+$\tau$ the detector's persistence threshold --- the bar is born exactly at the
+largest gap's chord (proved: a winding cycle must contain an edge spanning
+every angular gap) and cannot die before $\sqrt{3}\, r_{\min}$ (proved
+self-containedly: below that scale every triangle's boundary has winding
+zero, so winding obstructs filling) --- so one direction of the law is a
+\emph{guarantee}; the death's upper side matches the Vietoris--Rips circle
+constant \citep{adamaszek2017vietoris} within the cloud's radial thickness
+(measured death$/\bar\rho \in [1.70, 1.82]$ around
+$\sqrt 3 = 1.732$), with its full proof reduced to a filling lemma. The
+law reproduces $78/80$ rows of the factorial, including the seed-level
+wobble at $\gamma = 1.8$ (subsampling-gap lottery at the boundary). Worse, more evidence is counterproductive at the
 boundary: at $\gamma = 1.8$ the false-loop rate \emph{rises} from $1/5$
 to $3/5$ seeds when the dose quadruples, because the persistence threshold
 ($3\times$ median nearest-neighbor spacing) shrinks with density while
