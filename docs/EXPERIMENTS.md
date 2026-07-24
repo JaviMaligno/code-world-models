@@ -2581,7 +2581,31 @@ Two findings (exploratory, 5 seeds — do not over-read):
    disc/loop artifacts there are guidance-compliant, not prior-driven. See
    "Per-artifact behavioral audit" below.
 
-## The constructive turn: nerve fence + persistence beats the covering law (2026-07-23)
+## The dual defense: freedom patching collapses the invented-mode exploitation (2026-07-24)
+
+V2-PROGRAM bucket-2a prototype, decision gate PASSED.
+`mitigation.run_patched_episode` + `_PatchedModel`: record a FREEDOM point
+where the model predicted a freeze and the truth moved; during imagination,
+a model step that freezes within eps of a freedom point is replaced by the
+contract's pinned integrator (mode-free, legitimately known).
+`scripts/continuous_ring2d_optimism.py` -> `results/continuous_ring2d_optimism.json`.
+
+| defense on gap0-inside-filled | pc | freedom pts/ep | per-ep returns |
+|---|---|---|---|
+| none / any distrust variant | 1.769 | (fences 18.6, inert) | ~13.5 |
+| freedom patch, episodic | **0.029** | 80 | 76.6-77.5 (truth 78.1-78.4) from EP 1 |
+| freedom patch, persistent | **0.021** | 80 | same, slightly better late |
+
+The LIE-RATE symmetry is the finding: an invented mode lies at EVERY step
+(80 certificates/ep -> refutes itself constantly -> within-episode patching
+suffices, no persistence needed), an omitted mode lies RARELY (2 lessons/ep
+-> its fence must persist to pay the covering cost). Opposite defenses,
+each priced by its failure's lie rate. Both constructive legs now measured:
+omitted -> persistent nerve fence (0.999->0.058); invented -> freedom patch
+(1.769->0.029). Implementation note: freedom points now dedup at eps/2 (the
+prototype's linear scan paid ~6x for skipping this; semantics preserved).
+
+## The constructive turn: nerve fence + persistence beats the covering law (2026-07-23)## The constructive turn: nerve fence + persistence beats the covering law (2026-07-23)
 
 `mitigation.py` gains `fence_mode="nerve"` (violations within link_r linked
 into segments, tangentially EXTENDED ext=3 beyond both endpoints — two

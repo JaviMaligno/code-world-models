@@ -62,8 +62,11 @@ while a fence matched to the boundary's dimension and \emph{persisted}
 across episodes collapses the exploitation to a two-lesson transient
 ($\mathrm{play\_cost}$ $0.999 \to 0.058$, truth-equal returns from the
 second episode on). Against an \emph{invented} mode every fence fires
-constantly and recovers nothing: the two wrongnesses need opposite
-defenses. In $n$ dimensions the enclosing shell makes the identifiability
+constantly and recovers nothing --- and the dual certificate (freedom
+points that locally un-freeze imagination where the model was refuted as
+too pessimistic) collapses that failure symmetrically
+($1.769 \to 0.029$): the two wrongnesses need opposite defenses, each
+priced by its failure's lie rate. In $n$ dimensions the enclosing shell makes the identifiability
 event near-certain ($r(n) \to 0$) while the danger stays fully exploitable
 --- rarity and reachability are independent knobs of the danger law.
 \end{abstract}
@@ -169,10 +172,14 @@ $\mathcal{R}$.
   $\mathrm{play\_cost}$ $0.999 \to 0.058$, with returns equal to the
   truth planner's from episode 2 on --- the fence engineers the blind model
   back into the truth's gate-equivalence class on the operative side.
-  Against the \emph{invented} mode every variant fires constantly and
-  changes nothing: distrust can stop belief in false free space but cannot
-  recover value hidden behind false obstructions --- the two wrongnesses
-  need opposite defenses.
+  Against the \emph{invented} mode every distrust variant fires constantly
+  and changes nothing --- and the \emph{dual} defense (freedom patching:
+  un-freeze imagination, via the pinned integrator, where the model was
+  refuted as too pessimistic) collapses that failure at once
+  ($1.769 \to 0.029$, near-truth returns from episode 1). The two
+  wrongnesses need opposite defenses, and each defense's cost is set by its
+  failure's lie rate: false obstructions refute themselves at every step;
+  false freedoms only at the rare boundary.
 \item \textbf{The evidence sensor has finite resolution --- and it
   propagates} (Section~\ref{sec:sensor}). The pre-registered
   persistent-homology summary reports $\hat\beta_1 = 1$ for every channel
@@ -920,6 +927,7 @@ closed ring, \emph{inside, filled} & 0.5 & 1.769 & \textbf{1.769} & 1.00 & 18.6 
 \midrule
 nerve fence, episodic & 0.5 & 0.999 & 0.957 & 1.00 & 2.0 \\
 \textbf{nerve fence, persistent} & 0.5 & 0.999 & \textbf{0.058} & 0.06 & 0.1 \\
+\textbf{freedom patch} (inside, filled) & 0.5 & 1.769 & \textbf{0.029} & --- & 80 \\
 \bottomrule
 \end{tabular}
 \caption{Distrust-region replanning on the ring ($16$ paired MPC episodes
@@ -983,11 +991,23 @@ every few steps) and change nothing ($\mathrm{pc}$ identical to three
 decimals). Distrust-based mitigation is one-sided in exactly the sense the
 danger is two-sided: it can stop the planner from \emph{believing} false
 free space, but recovering value that the model hides behind false
-obstructions needs optimism --- exploration bonuses, not fences. The
-omitted-mode lure and the invented-mode repulsion
-(Remark~\ref{rem:triad}'s two wrongnesses) thus need \emph{opposite}
-planner-side defenses, and a defense calibrated for one is inert against
-the other.
+obstructions needs the \emph{dual} certificate. We built it:
+\textbf{freedom patching} records, at each real step where the model
+predicted a freeze and the truth moved, a freedom point; during
+imagination, a model step that freezes within $\varepsilon_f$ of a freedom
+point is replaced by the contract's own pinned integrator (mode-free,
+legitimately known to the pipeline). On the same cell this collapses the
+below-random exploitation at once: $\mathrm{pc}$ $1.769 \to 0.029$
+episodic ($0.021$ persistent), with near-truth returns from
+\emph{episode 1}. The asymmetry of the two defenses' costs is itself the
+finding: an invented mode \emph{lies at every step} ($80$ freedom
+certificates per episode --- it refutes itself constantly, so within-episode
+patching suffices), while an omitted mode lies \emph{rarely} ($2$ lessons
+per episode --- so its fence must persist to ever pay the covering cost).
+The omitted-mode lure and the invented-mode repulsion
+(Remark~\ref{rem:triad}'s two wrongnesses) need \emph{opposite}
+planner-side defenses; a defense calibrated for one is inert against the
+other; and each defense's price is set by its failure's \emph{lie rate}.
 
 \section{The evidence sensor has finite resolution}
 \label{sec:sensor}

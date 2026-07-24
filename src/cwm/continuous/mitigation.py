@@ -283,8 +283,15 @@ def run_patched_episode(truth, model, integrate, seed: int = 0,
         pred, _, _ = model.step(s, a)
         if (max(abs(pred[i] - s2[i]) for i in range(len(s2))) > tol
                 and _is_freeze_form(s, pred, pos_dims)):
-            # the model froze; the world moved: a freedom certificate
-            freedom.append(tuple(s[i] for i in pos_dims))
+            # the model froze; the world moved: a freedom certificate.
+            # Dedup at eps/2: coverage at radius eps is preserved and the
+            # certificate set saturates instead of growing per lesson (the
+            # linear scan in _PatchedModel is then O(visited area), not
+            # O(steps) — the 2026-07-24 prototype run paid ~6x for skipping
+            # this).
+            pos = tuple(s[i] for i in pos_dims)
+            if all(math.dist(pos, f) > eps / 2 for f in freedom):
+                freedom.append(pos)
         if c and first_contact is None:
             first_contact = t
         contact = contact or c
