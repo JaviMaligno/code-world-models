@@ -1019,7 +1019,17 @@ truth planner: $\mathrm{play\_cost} = 0$ exactly.
 \end{proposition}
 
 Episode 1 is the learning transient the proposition does not (and should
-not) cover: (COV) is established \emph{by} its two lessons. The fence is
+not) cover: (COV) is established \emph{by} its two lessons. And (COV) is
+policy-payable by three routes, measured head-to-head (all persistent):
+fence \emph{geometry} (the tangential extension: $2$ lessons,
+$\mathrm{pc}$ $0.058$), \emph{exploration} (a boundary-tracing probe
+collects $50$ lessons in one episode --- plus $11$ patch-ups, since its
+$1.05$-unit spacing left sub-$\varepsilon_f$ gaps: the covering law bites
+the prober too --- $\mathrm{pc}$ $0.123$), and \emph{passivity} (the
+planner's own contacts, $9$ lessons spread over $16$ episodes,
+$\mathrm{pc}$ $0.152$ with occasional regressions). Persistence is the
+ingredient common to everything that works; geometry beats exploration
+beats waiting. The fence is
 itself an estimated boundary, i.e.\ the same object as
 Section~\ref{sec:sensor}'s evidence summaries, and inherits the same
 resolution limits.
