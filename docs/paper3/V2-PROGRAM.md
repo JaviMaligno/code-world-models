@@ -18,7 +18,7 @@ hidden≡closed observational identity, r(n) concentration order).
 |---|---|---|---|
 | 1c | **Synthesis-side dose curve**: D-cell (closed ring, inside+tda), evidence N ∈ {40, 80, 160, 320}, 20 seeds mini. Note the pipeline couples evidence and gate (the gate IS the sample) — pre-registered reading: the deployed pipeline's dose curve. H: gate-pass stays ≈0 (parameter identifiability is not dose-limited; the sensor factorial already showed β̂₁ isn't). | Azure mini ~2h | **launching** |
 | 1a | **Square ring** (Chebyshev annulus, zero curvature, corners): mechanism grid + synthesis cells A/D. Pairs with paper 2's square ablation: do models write ROUND rings on square-ring evidence (template prior on the separator)? Honest note: Chebyshev distance is 1-Lipschitz, so Lemma 2 SURVIVES — this is still the metric side; it ablates curvature-of-the-separator, not the metric proof. | env + CPU + Azure | queued |
-| 1d | **Smooth learners on the ring** (paper 2's probe, ring evidence, inside and outside starts). | CPU minutes | queued |
+| 1d | **Smooth learners on the ring** — DEPRIORITIZED (2026-07-24): paper 2's smoothness-forbids-localized-error proposition is geometry-independent and already covers the ring in principle; the probe code is 1D-hardcoded and porting it buys a foregone confirmation. Revisit only if a reviewer asks. | — | deprioritized |
 | 1b | **Multi-chamber** (nested annuli; gauge structure is nested; D-cell from the middle chamber). Needs design. | design + all arms | second wave |
 | — | thin-neck ring (thickness < Δ locally: where Lemma 2's hypothesis fails, leap-through becomes possible and measurable) | env + CPU | second wave |
 

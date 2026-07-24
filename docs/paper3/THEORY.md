@@ -410,3 +410,78 @@ The arm supplies empirical counterparts to the theory here:
   A.1) — is what the certified model's topology inherits. Candidate formal
   statement: repairable topology is bounded by the persistent-homology
   resolution of the contact evidence at the sampling density.
+
+## The measured→provable audit (2026-07-24, with the v2 program)
+
+Sweep of every measured-only claim in papers 2–3 / EXPERIMENTS.md for
+statements that are provable with the existing toolkit. Verdicts:
+
+| measured claim | provable? | action |
+|---|---|---|
+| persistent nerve fence ⇒ truth-equal play (pc 0.999→0.058) | **YES** — Prop 10 below (coverage + margin hypotheses, both checkable) | PROVED |
+| freedom patch ⇒ truth-equal play on invented modes (1.769→0.029) | **YES** — Prop 11 below (certificate-coverage hypothesis) | PROVED |
+| lie-rate symmetry (80 vs 2 lessons/ep) | trivially — Remark R1 | stated |
+| hidden ≡ closed observational identity | YES (Lemma 3 coupling) — Remark R2 | stated |
+| Rips flip location (chord vs fill scale) | YES in idealized form via the known VR-complex-of-S¹/arc characterization (Adamaszek–Adams 2017) — gives a γ* formula; our measured flip sits between the naive chord bound and the exact characterization | sketched; formalize at v2 write-up |
+| aligned-channel degeneracy (facing pc→0) | bound-grade (corridor-fits-channel ⇒ blind argmax executable ⇒ pc ≤ tail terms) | sketch only |
+| r(n) collapse order | concentration-of-measure order bound; constant not worth it | note |
+| M1/M2 | still occupation-measure grade | unchanged (out of proportion) |
+| dose-independence of parameter guessing | NOT provable (a claim about LLM behavior) | stays measured |
+
+**Proposition 10 (fence sufficiency — the constructive result is
+theorem-backed).** Let the planner be deterministic argmax over candidates
+𝒞 with imagined steps of length ≤ Δ, truth f the closed ring, model f̂ the
+blind model, F the fence set (union of segments), and suppose:
+
+  (COV) every segment of length ≤ Δ that crosses the reachable outer
+  boundary arc of A passes within ε of F;
+  (RG-west) the best non-crossing candidate's imagined return under the
+  pure integrator exceeds every crossing candidate's PRE-crossing return
+  plus its flee tie-break advantage (at the defaults: west-lode return ≈ 2
+  vs phantom-tail prefix ≤ 0.1 — holds with margin, checkable over the
+  visited envelope).
+
+Then for every real state outside the band: (i) every crossing candidate is
+truncated at or before its crossing step (by (COV)); (ii) every
+non-crossing candidate receives the SAME imagined return under f̂+fences,
+under f̂ alone, and under the truth f (all three agree along non-crossing
+paths: f̂ = integrator = f off the band, and truth-imagination freezes only
+on crossings); (iii) by (RG-west) the argmax is a non-crossing candidate
+and is the same candidate under f-imagination and under f̂+fence
+imagination. Hence the mitigated planner and the truth planner choose the
+same action at every real step: real trajectories are identical,
+play_cost = 0 exactly. ∎
+*Measured instance:* episodes 2–16 of the persistent-nerve run satisfy
+(COV) after episode 1's two lessons (the extended edges span the crossing
+corridor) and return-match the truth planner episode-for-episode; pc 0.058
+> 0 comes entirely from episode 1 — the learning transient the theorem
+does not (and should not) cover.
+
+**Proposition 11 (patch sufficiency — the dual).** Let f̂ be an
+invented-mode model (f̂ = f except it freezes on a region B where f moves
+freely), K the freedom-certificate set, and suppose (CERT): every point of
+B visited by any candidate's imagined path from the current real state lies
+within ε of K, and f̂'s freeze prediction at any state within ε of K is
+freeze-form. Then the patched model's imagination equals truth imagination
+for every candidate (off B they agree; on B∩(ε-neighborhood of K) the patch
+substitutes the pinned integrator = f), so the argmax coincides with the
+truth planner's and play_cost = 0 exactly. ∎
+*Measured instance:* from inside, every step yields a certificate (the model
+lies each step — R1), so (CERT) is satisfied within one episode's prefix;
+measured near-truth returns from episode 1, pc 0.029 = the prefix cost.
+
+**Remark R1 (lie rates).** The certificate rate is the occupation of the
+disagreement region under the operative policy: for the filled model from
+inside it is ≈1 per step (the disagreement region contains the start's
+whole neighborhood); for the blind model from outside it is r per rollout
+(the disagreement region is the band, reached rarely). The measured 80 vs 2
+lessons/episode is this occupation gap, not an algorithmic property.
+
+**Remark R2 (hidden ≡ closed, quantified).** By the Lemma-3 coupling with
+D = the hidden channel's slivers, any trajectory event's probability
+differs between hidden-γ and closed ring by at most P(some landing in D) =
+r_int-type mass, which Prop 8's tube argument bounds below by ρ^h > 0 and
+measurement bounds above by 0 at n = 400: the observational identity is an
+inequality with an exactly-zero left witness, not an exact theorem — the
+two grades of impossibility again, now as a statement about the
+equivalence itself.
