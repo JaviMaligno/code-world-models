@@ -564,6 +564,87 @@ class ShellFieldN:
         return s2, self.reward(s2), False
 
 
+@dataclass
+class TubeField3D:
+    """The NON-SEPARATING mode (V2-PROGRAM 2d, T8's instrument): a solid
+    torus in R^3 whose core circle stands in the y-z plane at x = core_x,
+    between the start and the phantom lode. Unlike every ring/shell above,
+    the tube's complement is CONNECTED: nothing is reach-null, there is no
+    exact gauge region, and the crossing lemma has no separating surface to
+    work with — obstruction becomes a property of the PATH (does the
+    optimal plan thread the hole or clip the tube?), not of separation.
+    The `core_yz` offset knob moves the hole off the start->phantom axis:
+    offset 0 = the straight plan threads the hole (aligned-channel
+    analogue); offset ~1.5 = the straight plan clips the tube (danger).
+
+    Same integrator family and freeze-on-entry semantics as ShellFieldN
+    (thrust-vector action via action_dim = 3)."""
+    dt: float = 0.1
+    gain: float = 3.0
+    drag: float = 0.3
+    a_max: float = 1.0
+    core_x: float = 8.0
+    core_yz: tuple = (0.0, 0.0)
+    core_radius: float = 2.0
+    tube_radius: float | None = 1.0     # None = the blind model
+    lode_real_xy: tuple = (-6.0, 0.0)
+    center_xy: tuple = (12.0, 0.0)
+    amp_real: float = 0.3
+    amp_phantom: float = 1.0
+    r0: float = 2.0
+    width: float = 0.5
+    h_episode: int = 80
+    x0_range: float = 0.5
+
+    @property
+    def action_dim(self) -> int:
+        return 3
+
+    def center(self) -> tuple:
+        return (self.center_xy[0], self.center_xy[1], 0.0)
+
+    def lode_real(self) -> tuple:
+        return (self.lode_real_xy[0], self.lode_real_xy[1], 0.0)
+
+    def initial_state(self, rng) -> State:
+        return (rng.uniform(-self.x0_range, self.x0_range),
+                rng.uniform(-self.x0_range, self.x0_range),
+                0.0, 0.0, 0.0, 0.0)
+
+    def dist_core(self, pos: tuple) -> float:
+        """Distance from a point to the torus core circle."""
+        dyz = math.hypot(pos[1] - self.core_yz[0], pos[2] - self.core_yz[1])
+        return math.hypot(pos[0] - self.core_x, dyz - self.core_radius)
+
+    def _in_mode(self, pos: tuple) -> bool:
+        if self.tube_radius is None:
+            return False
+        return self.dist_core(pos) <= self.tube_radius
+
+    def _lode(self, pos: tuple, point: tuple, amp: float) -> float:
+        d = math.sqrt(sum((a - b) ** 2 for a, b in zip(pos, point)))
+        return amp / (1.0 + math.exp((d - self.r0) / self.width))
+
+    def reward(self, state: State) -> float:
+        pos = state[:3]
+        return (self._lode(pos, self.lode_real(), self.amp_real)
+                + self._lode(pos, self.center(), self.amp_phantom))
+
+    def _integrate(self, state: State, action: tuple) -> State:
+        return integrate_nd(state, action, self.dt, self.gain, self.drag,
+                            self.a_max)
+
+    def contact_mode(self, state: State, action: tuple) -> bool:
+        return self._in_mode(self._integrate(state, action)[:3])
+
+    def step(self, state: State, action: tuple):
+        s2 = self._integrate(state, action)
+        if self._in_mode(s2[:3]):
+            frozen = state[:3] + (0.0, 0.0, 0.0)
+            return frozen, self.reward(frozen), True
+        return s2, self.reward(s2), False
+
+
 def filled_of(env: "RingField2D") -> "RingField2D":
     """The wrong-topology model: the annulus completed to a disc."""
     return replace(env, filled=True)
@@ -587,6 +668,8 @@ def blind_of(env):
         return replace(env, p1=None, p2=None)
     if isinstance(env, RingField2D):
         return replace(env, r_in=None, r_in2=None, r_out2=None)
+    if isinstance(env, TubeField3D):
+        return replace(env, tube_radius=None)
     if isinstance(env, ShapeField2D):
         return replace(env, shape=None)
     if isinstance(env, ShellFieldN):
