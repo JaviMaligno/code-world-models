@@ -194,3 +194,51 @@ def test_cheby_wrong_topology_is_planner_equivalent_at_gap_zero():
 def test_cheby_norm_carries_through_blind_and_filled():
     env = RingField2D(norm="cheby")
     assert blind_of(env).norm == "cheby" and filled_of(env).norm == "cheby"
+
+
+# ---------------- multi-chamber (nested rings, V2-PROGRAM 1b) ----------------
+
+def test_multichamber_three_reach_null_chambers():
+    """Two nested uncrossable bands split the plane into three mutually
+    reach-null chambers: a trajectory stays in its start chamber, from every
+    start placement."""
+    def chamber(env, x, y):
+        d = math.hypot(x - env.center[0], y - env.center[1])
+        if d < env.r_in:
+            return "hole"
+        if env.r_out < d < env.r_in2:
+            return "middle"
+        if d > env.r_out2:
+            return "outside"
+        return "band"
+
+    mid_r = (5.0 + 7.5) / 2
+    for start, x0 in (("outside", (0.0, 0.0)),
+                      ("middle", (12.0 - mid_r, 0.0)),
+                      ("hole", (12.0, 0.0))):
+        env = RingField2D(r_in2=7.5, r_out2=9.0, x0_center=x0)
+        crossings, contacts = 0, 0
+        for i in range(80):
+            rng = random.Random(60_000 + i)
+            s = env.initial_state(rng)
+            assert chamber(env, s[0], s[1]) == start
+            hit = False
+            for _ in range(env.h_episode):
+                a = rng.uniform(-env.a_max, env.a_max)
+                s, _, c = env.step(s, a)
+                hit = hit or c
+                if chamber(env, s[0], s[1]) != start:
+                    crossings += 1
+                    break
+            contacts += hit
+        assert crossings == 0, f"chamber escape from {start}"
+        if start in ("outside", "middle"):
+            assert contacts >= 1        # some boundary IS reachable
+
+
+def test_multichamber_blind_of_removes_both_rings():
+    env = RingField2D(r_in2=7.5, r_out2=9.0)
+    b = blind_of(env)
+    assert b.r_in is None and b.r_in2 is None and b.r_out2 is None
+    # blind never freezes anywhere
+    assert not b._in_mode(12.0, 4.0) and not b._in_mode(12.0 + 8.0, 0.0)

@@ -312,6 +312,15 @@ class RingField2D:
                                     # survives verbatim — this ablates the
                                     # separator's curvature, not the metric
                                     # proof.
+    r_in2: float | None = None      # optional SECOND (outer) ring
+    r_out2: float | None = None     # [r_in2, r_out2]: the multi-chamber
+                                    # instrument (V2-PROGRAM 1b). Nested
+                                    # gauge: each band is uncrossable
+                                    # (thickness > step), so the plane
+                                    # splits into three mutually reach-null
+                                    # chambers — hole, middle, outside —
+                                    # and certification peels exactly one
+                                    # boundary layer per start placement.
 
     def _d(self, x: float, y: float) -> float:
         dx, dy = x - self.center[0], y - self.center[1]
@@ -340,19 +349,25 @@ class RingField2D:
             return False
         return self._d(x, y) < self.r_in
 
+    def _in_gap_sector(self, x: float, y: float) -> bool:
+        if self.gap <= 0.0:
+            return False
+        ang = math.atan2(y - self.center[1], x - self.center[0])
+        delta = (ang - self.gap_center + math.pi) % (2 * math.pi) - math.pi
+        return abs(delta) <= self.gap / 2.0
+
     def _in_mode(self, x: float, y: float) -> bool:
         if self.r_in is None:
             return False
         d = self._d(x, y)
+        if (self.r_in2 is not None and self.r_out2 is not None
+                and self.r_in2 <= d <= self.r_out2
+                and not self._in_gap_sector(x, y)):
+            return True
         lo = 0.0 if self.filled else self.r_in
         if not (lo <= d <= self.r_out):
             return False
-        if self.gap > 0.0:
-            ang = math.atan2(y - self.center[1], x - self.center[0])
-            delta = (ang - self.gap_center + math.pi) % (2 * math.pi) - math.pi
-            if abs(delta) <= self.gap / 2.0:
-                return False
-        return True
+        return not self._in_gap_sector(x, y)
 
     def _integrate(self, state: State, action: float):
         return integrate_2d(state, action, self.dt, self.gain, self.drag,
@@ -571,7 +586,7 @@ def blind_of(env):
     if isinstance(env, PatchField2D):
         return replace(env, p1=None, p2=None)
     if isinstance(env, RingField2D):
-        return replace(env, r_in=None)
+        return replace(env, r_in=None, r_in2=None, r_out2=None)
     if isinstance(env, ShapeField2D):
         return replace(env, shape=None)
     if isinstance(env, ShellFieldN):

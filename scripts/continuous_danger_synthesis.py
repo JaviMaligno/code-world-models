@@ -271,7 +271,11 @@ if __name__ == "__main__":
     ap.add_argument("--channel", choices=["facing", "hidden"], default="facing",
                     help="ring2d: channel orientation — facing the start "
                     "(gap_center=pi) or hidden on the far side (gap_center=0)")
-    ap.add_argument("--start", choices=["outside", "inside"], default="outside",
+    ap.add_argument("--multi", action="store_true",
+                    help="ring2d: add a second nested ring [7.5, 9.0] "
+                    "(multi-chamber instrument; three reach-null chambers)")
+    ap.add_argument("--start", choices=["outside", "inside", "middle"],
+                    default="outside",
                     help="ring2d: initial-state placement (mu0 knob); inside "
                     "puts x0 at the ring center — the loop-evidence regime")
     ap.add_argument("--ring-norm", choices=["euclid", "cheby"],
@@ -324,20 +328,28 @@ if __name__ == "__main__":
         ap.error("--patch-shape is a patch2d knob")
     if args.instrument != "ring2d" and (
             args.gap != 0.0 or args.channel != "facing"
-            or args.start != "outside" or args.ring_norm != "euclid"):
-        ap.error("--gap/--channel/--start/--ring-norm are ring2d knobs")
+            or args.start != "outside" or args.ring_norm != "euclid"
+            or args.multi):
+        ap.error("--gap/--channel/--start/--ring-norm/--multi are ring2d knobs")
 
     if args.instrument == "ring2d":
+        if args.start == "middle" and not args.multi:
+            ap.error("--start middle requires --multi")
+        _c = RingField2D().center
+        _x0 = {"outside": (0.0, 0.0), "inside": _c,
+               "middle": (_c[0] - 6.25, _c[1])}[args.start]
         ENV = RingField2D(
             gap=args.gap,
             gap_center=math.pi if args.channel == "facing" else 0.0,
-            x0_center=(0.0, 0.0) if args.start == "outside"
-            else RingField2D().center,
-            norm=args.ring_norm)
+            x0_center=_x0,
+            norm=args.ring_norm,
+            r_in2=7.5 if args.multi else None,
+            r_out2=9.0 if args.multi else None)
         KNOB = (("sq" if args.ring_norm == "cheby" else "")
                 + f"gap{args.gap:g}"
+                + ("-m2" if args.multi else "")
                 + ("" if args.channel == "facing" else "-hid")
-                + ("" if args.start == "outside" else "-in"))
+                + {"outside": "", "inside": "-in", "middle": "-mid"}[args.start])
         INSTR_TAG = "ring2d_"
     elif args.instrument == "pendulum":
         ENV = PendulumStop(th_stop=args.th_stop)
