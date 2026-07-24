@@ -1,10 +1,13 @@
 # arXiv submission guide — "When a Verified World Model Still Loses"
 
-Status: **v2 candidate updated 2026-07-19** with the policy-guided and bounded
-adversarial Beacon belief gates (3 prior review rounds + polish; + accessibility
-pass with 4 vector figure assets). LaTeX compiles clean (43 pp, 0 errors, 0 undefined
-cites/refs, 0 bibtex warnings). This file documents everything done and
-everything YOU still need to do to upload the revision to arXiv.
+Status: **v2 uploaded to arXiv:2607.14169 on 2026-07-24** (replacement submitted by
+the author; arXiv announces the new version on its next mailing cycle). The v2
+content is the 2026-07-19 bundle: the policy-guided and bounded adversarial Beacon
+belief gates (3 prior review rounds + polish; + accessibility pass with 4 vector
+figure assets). LaTeX compiles clean (43 pp, 0 errors, 0 undefined cites/refs,
+0 bibtex warnings). Nothing is pending for v2. This file is kept as the runbook for
+any *future* revision (v3+): §2 regenerates the bundle, §3 lists the manual arXiv
+steps, §4–§6 record what was verified.
 
 ## 1. What is ready (done)
 
@@ -45,10 +48,11 @@ tar --exclude='._*' -czf arxiv-submission.tar.gz -C arxiv-submission \
 rm -f main.aux main.log main.out main.blg main.toc main.bbl
 ```
 
-## 3. Steps YOU must do on arXiv (cannot be automated)
+## 3. Steps on arXiv that cannot be automated (v2: DONE 2026-07-24)
 
-The paper already exists as **arXiv:2607.14169**, so this is a replacement rather
-than a new submission; no new endorsement, category, or license choice is needed.
+The paper already exists as **arXiv:2607.14169**, so any revision is a replacement
+rather than a new submission; no new endorsement, category, or license choice is
+needed. The sequence below is what was followed for v2 and what to repeat for v3+.
 
 1. Open arXiv:2607.14169 in the author account and choose **Replace**.
 2. Upload the bundle from §2.
@@ -96,7 +100,13 @@ These are disclosed; no fix needed — they are the honest scope.
 
 ## 7. Publication state
 
-- arXiv identifier: **2607.14169**.
+- arXiv identifier: **2607.14169**, currently at **v2** (replacement uploaded
+  2026-07-24).
 - Code repository: **public**.
-- v2 source bundle: **ready and standalone-compiling**.
-- Remaining external action: upload the replacement through the arXiv author UI.
+- v2 source bundle: **uploaded**; `arxiv-submission/` and `arxiv-submission.tar.gz`
+  match `main.tex` byte-for-byte, so they are the reproducible record of what v2 is.
+- Remaining external action for v2: **none**. Optional follow-ups: check the
+  arXiv-rendered v2 PDF once announced, and update the blog if it quotes the v1
+  abstract or conclusions.
+- Next planned venue step (not arXiv): TMLR submission of this paper — needs an
+  anonymized build (drop AGILabs, javieraguilar.ai, and the repository URLs).
