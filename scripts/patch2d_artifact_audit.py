@@ -335,17 +335,35 @@ def main():
     print(f"square-form/bounded-other: {cls.get('square-form', 0)}/"
           f"{cls.get('bounded-other', 0)}")
     print(f"integrator exact: {integ}/{len(disc)}   (paper: ~74/76)")
-    # behavioral partial-repair check: any see-one artifact covering the
-    # SEEN patch's region substantially?
-    partial = 0
+    # Behavioral partial-repair check. Two DIFFERENT questions, kept apart
+    # because conflating them is wrong (bug fixed 2026-07-24: this loop looked
+    # up per["p1"] while sample_modes is keyed "patch1", so its condition was
+    # never true and it reported 0 vacuously):
+    #   (a) does the artifact's freeze set CONTAIN the seen patch? An unbounded
+    #       half-plane at the patch's west edge does, trivially.
+    #   (b) does it ENCODE the patch — contain it AND freeze little else? That
+    #       is what a partial repair would mean. The true patch occupies
+    #       pi*R^2/256 ~ 1.2% of the probed box, so an encoding artifact's
+    #       deviation set must be a few percent at most, not the ~75% a
+    #       half-plane covers.
+    KEY = {"patch1": "p1", "patch2": "p2"}
+    AREA_MAX = 0.03            # ~2.5x one patch's share of the probed box
+    contains = encodes = seen_total = 0
     for r in disc:
         per = r.get("modes_in_sample") or {}
-        for pname in ("p1", "p2"):
-            if per.get(pname) and (r.get(f"cover_{pname}") or 0) > 0.9:
-                partial += 1
-                break
-    print(f"artifacts covering a seen patch >90% behaviorally: {partial} "
-          f"(paper: 0 partial-repair certificates; gate-level)")
+        seen = [KEY[n] for n, v in per.items() if v and n in KEY]
+        if not seen:
+            continue
+        seen_total += 1
+        cov = max((r.get(f"cover_{p}") or 0) for p in seen)
+        if cov > 0.9:
+            contains += 1
+            if (r.get("area_frac") or 1.0) <= AREA_MAX:
+                encodes += 1
+    print(f"artifacts whose freeze set CONTAINS a seen patch (>90%): "
+          f"{contains}/{seen_total} — mostly half-planes swallowing the disc")
+    print(f"artifacts that ENCODE a seen patch (contain it AND area_frac "
+          f"<= {AREA_MAX}): {encodes}/{seen_total}   (paper: 0 partial repairs)")
 
 
 # ---------------- oracle self-test (constructed classes) -----------------

@@ -16,7 +16,7 @@ Status: **ready to submit** (new submission, not a replacement).
   `axis_separation`, `smooth_localization`), regenerated from the result JSONs by
   `scripts/make_paper2_figures.py`.
 - `abstract-arxiv.txt` — **the abstract for the submission form**: plain ASCII,
-  1865 characters, under arXiv's hard 1920-character limit. Paste this, not the
+  1890 characters, under arXiv's hard 1920-character limit. Paste this, not the
   LaTeX abstract (which carries `\citep`, math mode and em dashes the metadata
   field will not take).
 
@@ -69,8 +69,17 @@ for consistency with paper 1's bundle and so the source is self-contained.
   byte-identical to the committed JSONs (`continuous_cem_patch2d.json`,
   `continuous_eps_sweep_patch2d.json`), so the paper's §5 CEM row and the
   per-mode eps-flatness numbers reproduce.
-- **Numbers spot-checked against the JSONs**: the d@N columns, the CEM paired
-  t-intervals, the Wilson bounds, and the artifact-audit class counts.
+- **Numbers mechanically audited, not spot-checked**:
+  `scripts/audit_paper2_numbers.py` parses every `tabular` in `main.tex`, looks up
+  the row in the JSON the experiment wrote, and compares each cell at the paper's
+  own printed precision (derived columns such as the d@N danger products are
+  recomputed, not trusted). It also re-checks the counted prose claims (82/82,
+  20/20, 62/62, 4/80 at play_cost 1.095, 0/156, the mitigation single-violation
+  rows, the CEM paired t-intervals, 0/76 encoded patches). 357 values, all
+  agreeing. Wired into CI as the `paper_numbers` job, so a stale transcription
+  fails there instead of in a preprint. Two last-digit errors it caught before
+  submission: d@80 at x_wall=8 (0.372 -> 0.371) and d@40 at theta_stop=1.6
+  (0.737 -> 0.738).
 
 ## 5. Honest residual scope (disclosed in the paper, §11)
 

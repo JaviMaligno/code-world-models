@@ -119,7 +119,7 @@ here it validates the paper's):
 | 20 pure-blind + 9 superstitious | 13 pure-blind + 7 textual-patch (measure-zero traps, behaviorally blind) + 4 point (+3 square-form, 2 bounded-other) ✓ structure |
 | 9/76 disc-form attempts, none correct | 8 ✓ |
 | ~74/76 integrator exact | **74/76 exact** (16 west-strip flags resolve to 14 freeze-form mode overreaches + exactly 2 numeric) ✓ |
-| 0 partial repair (gate-level) | 0 artifacts cover a SEEN patch >90% behaviorally — they never even encode the seen patch ✓ |
+| 0 partial repair (gate-level) | **CORRECTED 2026-07-24**: the original check was vacuous (it read `per["p1"]` while the key is `"patch1"`, so its condition never fired). Real numbers: **34/76** freeze sets DO contain a seen patch (>90% coverage) — half-planes swallowing the disc, freezing ~75% of the probed box — and **0/76** contain one while freezing little else (area within 2.5× the patch's 1.2% share). No partial repair in the sense that counts ✓, but "no artifact covers the seen patch" was wrong and is fixed in the tex. |
 
 The two later results awaiting the tex fold are also behaviorally grounded:
 - **Square ablation (bidirectional template):** on SQUARE evidence the class
