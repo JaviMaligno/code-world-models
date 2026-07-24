@@ -158,10 +158,12 @@ def env_for(params):
     gap = params.get("gap", 0.0) or 0.0
     channel = params.get("channel", "facing") or "facing"
     start = params.get("start", "outside") or "outside"
+    norm = params.get("ring_norm", "euclid") or "euclid"
     return RingField2D(gap=gap,
                        gap_center=math.pi if channel == "facing" else 0.0,
                        x0_center=(0.0, 0.0) if start == "outside"
-                       else RingField2D().center)
+                       else RingField2D().center,
+                       norm=norm)
 
 
 def contact_landings(env, transitions):

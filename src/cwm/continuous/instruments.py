@@ -365,15 +365,20 @@ def _ring2d_rules_text(env: RingField2D, include_mode: bool,
     if include_mode:
         if env.r_in is None:
             raise ValueError("env has no ring; cannot write the mode clause")
+        square = getattr(env, "norm", "euclid") == "cheby"
+        shape_name = ("square ring (square annulus)" if square
+                      else "ring (annulus)")
+        d_line = (f"    d = max(abs(x2 - {c[0]}), abs(y2 - {c[1]}))." if square
+                  else f"    d = math.hypot(x2 - {c[0]}, y2 - {c[1]}).")
         lines += [
             "",
             "Additional dynamics rule:",
-            f"  There is a sticky ring (annulus) centered at (x, y) = "
+            f"  There is a sticky {shape_name} centered at (x, y) = "
             f"({c[0]}, {c[1]})",
             f"  with inner radius r_in = {env.r_in} and outer radius "
             f"r_out = {env.r_out}.",
             "  After computing x2 and y2 as above, let",
-            f"    d = math.hypot(x2 - {c[0]}, y2 - {c[1]}).",
+            d_line,
             f"  If {env.r_in} <= d <= {env.r_out}, the mover sticks: the next "
             f"state is",
             "  exactly [x, y, 0.0, 0.0] (the PREVIOUS position, with zero "

@@ -304,6 +304,20 @@ class RingField2D:
     x0_center: tuple = (0.0, 0.0)   # start placement; set to `center` for
                                     # inside-the-hole episodes (mu0 knob:
                                     # moves the reachable set, Prop 1)
+    norm: str = "euclid"            # "euclid" (round ring) | "cheby" (square
+                                    # ring: the zero-curvature separator
+                                    # ablation, V2-PROGRAM 1a). Chebyshev
+                                    # distance is 1-Lipschitz w.r.t.
+                                    # Euclidean steps, so the crossing lemma
+                                    # survives verbatim — this ablates the
+                                    # separator's curvature, not the metric
+                                    # proof.
+
+    def _d(self, x: float, y: float) -> float:
+        dx, dy = x - self.center[0], y - self.center[1]
+        if self.norm == "cheby":
+            return max(abs(dx), abs(dy))
+        return math.hypot(dx, dy)
 
     def initial_state(self, rng) -> State:
         return (self.x0_center[0] + rng.uniform(-self.x0_range, self.x0_range),
@@ -324,12 +338,12 @@ class RingField2D:
         measurement is about the true geometry, not a model's)."""
         if self.r_in is None:
             return False
-        return math.hypot(x - self.center[0], y - self.center[1]) < self.r_in
+        return self._d(x, y) < self.r_in
 
     def _in_mode(self, x: float, y: float) -> bool:
         if self.r_in is None:
             return False
-        d = math.hypot(x - self.center[0], y - self.center[1])
+        d = self._d(x, y)
         lo = 0.0 if self.filled else self.r_in
         if not (lo <= d <= self.r_out):
             return False

@@ -144,3 +144,53 @@ def test_positivity_witness_tube():
                 entered = True
                 break
         assert entered and t < 45     # enters with slack in the horizon
+
+
+# ---------------- square ring (Chebyshev norm, V2-PROGRAM 1a) ----------------
+
+def test_cheby_ring_membership_is_square():
+    env = RingField2D(norm="cheby")
+    cx, cy = env.center
+    # corner of the square band: Euclidean distance ~ r*sqrt(2), Chebyshev r
+    assert env._in_mode(cx + 4.0, cy + 4.0)          # cheby d = 4 in [3.5, 5]
+    assert not RingField2D()._in_mode(cx + 4.0, cy + 4.0)   # euclid d = 5.66
+    assert env.in_interior(cx + 3.0, cy + 3.0)       # cheby d = 3 < 3.5
+    assert not RingField2D().in_interior(cx + 3.0, cy + 3.0)
+
+
+def test_cheby_interior_is_reach_null_at_gap_zero():
+    """The crossing lemma survives the square separator (Chebyshev distance
+    is 1-Lipschitz w.r.t. Euclidean steps): zero interior entries, ring
+    reachable."""
+    env = RingField2D(norm="cheby")
+    entered, contacts = 0, 0
+    for i in range(200):
+        rng = random.Random(50_000 + i)
+        s = env.initial_state(rng)
+        hit = False
+        for _ in range(env.h_episode):
+            a = rng.uniform(-env.a_max, env.a_max)
+            s, _, c = env.step(s, a)
+            hit = hit or c
+            if env.in_interior(s[0], s[1]):
+                entered += 1
+                break
+        contacts += hit
+    assert entered == 0
+    assert contacts >= 1
+
+
+def test_cheby_wrong_topology_is_planner_equivalent_at_gap_zero():
+    """Prop 3 transfers to the square ring, bitwise."""
+    env = RingField2D(norm="cheby")
+    for seed in (0, 1, 2):
+        a = harness.run_episode(env, env, "mpc", seed=seed, n_samples=40)
+        b = harness.run_episode(env, filled_of(env), "mpc", seed=seed,
+                                n_samples=40)
+        assert a.ret == b.ret and a.final_state == b.final_state
+        assert a.contact == b.contact
+
+
+def test_cheby_norm_carries_through_blind_and_filled():
+    env = RingField2D(norm="cheby")
+    assert blind_of(env).norm == "cheby" and filled_of(env).norm == "cheby"

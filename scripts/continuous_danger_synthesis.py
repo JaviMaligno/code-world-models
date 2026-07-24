@@ -125,7 +125,7 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
         stored_p = results.get("params", {}) or {}
         current_p = meta.get("params", {}) or {}
         _RESULT_KEYS = ("instrument", "x_wall", "th_stop", "k1", "k2",
-                        "patch_shape", "gap", "channel", "start",
+                        "patch_shape", "gap", "channel", "start", "ring_norm",
                         "prompt_variant", "n_rollouts", "eps",
                         "max_iters", "play_episodes", "compat_model")
         mismatch = {k: (stored_p[k], current_p[k]) for k in _RESULT_KEYS
@@ -274,6 +274,11 @@ if __name__ == "__main__":
     ap.add_argument("--start", choices=["outside", "inside"], default="outside",
                     help="ring2d: initial-state placement (mu0 knob); inside "
                     "puts x0 at the ring center — the loop-evidence regime")
+    ap.add_argument("--ring-norm", choices=["euclid", "cheby"],
+                    default="euclid",
+                    help="ring2d: separator norm — euclid (round ring) or "
+                    "cheby (square ring, the zero-curvature separator "
+                    "ablation)")
     ap.add_argument("--prompt-variant",
                     choices=["default", "guided", "region", "tda"],
                     default="default",
@@ -319,16 +324,18 @@ if __name__ == "__main__":
         ap.error("--patch-shape is a patch2d knob")
     if args.instrument != "ring2d" and (
             args.gap != 0.0 or args.channel != "facing"
-            or args.start != "outside"):
-        ap.error("--gap/--channel/--start are ring2d knobs")
+            or args.start != "outside" or args.ring_norm != "euclid"):
+        ap.error("--gap/--channel/--start/--ring-norm are ring2d knobs")
 
     if args.instrument == "ring2d":
         ENV = RingField2D(
             gap=args.gap,
             gap_center=math.pi if args.channel == "facing" else 0.0,
             x0_center=(0.0, 0.0) if args.start == "outside"
-            else RingField2D().center)
-        KNOB = (f"gap{args.gap:g}"
+            else RingField2D().center,
+            norm=args.ring_norm)
+        KNOB = (("sq" if args.ring_norm == "cheby" else "")
+                + f"gap{args.gap:g}"
                 + ("" if args.channel == "facing" else "-hid")
                 + ("" if args.start == "outside" else "-in"))
         INSTR_TAG = "ring2d_"
