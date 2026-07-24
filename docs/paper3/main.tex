@@ -983,7 +983,26 @@ rate $1/16$. The mechanism is Proposition~\ref{prop:quotient} run in
 reverse: the extended fence reconstructs enough of the boundary that the
 blind model \emph{plus its fence memory} becomes planner-equivalent to the
 truth on the operative side --- certification could not distinguish members
-of $E(f)$, and the defense engineers the planner back into it. The fence is
+of $E(f)$, and the defense engineers the planner back into it. This is
+theorem-backed under checkable hypotheses:
+
+\begin{proposition}[fence sufficiency]
+\label{prop:fence}
+Suppose \textup{(COV)} every segment of length $\le \Delta$ crossing the
+reachable outer boundary arc of $A$ passes within $\varepsilon_f$ of the
+fence set, and \textup{(RG-west)} the best non-crossing candidate's
+imagined return exceeds every crossing candidate's pre-crossing return plus
+its tie-break advantage (at the defaults: ${\approx}2$ versus
+${\le}0.1$, checkable over the visited envelope). Then every crossing
+candidate truncates at or before its crossing; every non-crossing candidate
+scores identically under truth imagination and fenced-blind imagination
+(the models agree off the band, and truth imagination freezes only on
+crossings); and the argmax coincides. The mitigated planner \emph{is} the
+truth planner: $\mathrm{play\_cost} = 0$ exactly.
+\end{proposition}
+
+Episode 1 is the learning transient the proposition does not (and should
+not) cover: (COV) is established \emph{by} its two lessons. The fence is
 itself an estimated boundary, i.e.\ the same object as
 Section~\ref{sec:sensor}'s evidence summaries, and inherits the same
 resolution limits.
@@ -1012,7 +1031,24 @@ finding: an invented mode \emph{lies at every step} ($80$ freedom
 certificates per episode --- it refutes itself constantly, so within-episode
 patching suffices), while an omitted mode lies \emph{rarely} ($2$ lessons
 per episode --- so its fence must persist to ever pay the covering cost).
-The omitted-mode lure and the invented-mode repulsion
+The dual result is theorem-backed the same way:
+
+\begin{proposition}[patch sufficiency]
+\label{prop:patch}
+Let $\hat f$ freeze on a region $B$ where $f$ moves freely, and suppose
+\textup{(CERT)}: every point of $B$ visited by any candidate's imagined
+path from the current real state lies within $\varepsilon_f$ of the
+freedom-certificate set. Then patched imagination equals truth imagination
+for every candidate (off $B$ the models agree; on the certified part of $B$
+the patch substitutes the pinned integrator, which \emph{is} $f$ there),
+so the argmax coincides with the truth planner's and
+$\mathrm{play\_cost} = 0$ exactly.
+\end{proposition}
+
+From inside, every step yields a certificate (the model lies each step ---
+the lie rate is the occupation of the disagreement region under the
+operative policy), so (CERT) holds within one episode's prefix; the
+measured $0.029$ is that prefix. The omitted-mode lure and the invented-mode repulsion
 (Remark~\ref{rem:triad}'s two wrongnesses) need \emph{opposite}
 planner-side defenses; a defense calibrated for one is inert against the
 other; and each defense's price is set by its failure's \emph{lie rate}.
