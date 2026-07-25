@@ -590,13 +590,17 @@ they conflict.
   0.4167^{n−2} — the measured law, now a theorem, non-vacuous from n ≈ 7
   against n ≈ 400 for the exchangeability bound. Verified at n = 3…8
   (isotropic decay 0.431 vs predicted 0.4167; cap bound checked to
-  n = 30). REMAINING is only the INTERFACE TRANSFER to the cube-uniform
-  action (measured decay 0.411, same law): its symmetry group is finite,
-  and the cone event is a small-ball event for the perpendicular mass
-  (0.21× typical at n = 8), so the Bernstein-on-Z₁ attack is the wrong
-  tail and computes below the truth (refuted route, recorded). Since the
-  action interface is a design choice, adopting the isotropic one makes
-  the rarity law a theorem outright.
+  n = 30). **INTERFACE TRANSFER largely closed too (Lemma H + Prop
+  T5-T):** conditioning on the action's absolute values makes the
+  displacement coordinates INDEPENDENT (the norm cap is sign-invariant,
+  so the signs are i.i.d. Rademacher — checked bitwise), and a single
+  matched-exponent Chernoff bound then returns
+  √(e·n/(1+γ²))·(1−κ²)^{(n−1)/2} — the cap rate exactly, losing only √n.
+  So the cube route is SHARP, not merely exponential, modulo one
+  Berry–Esseen ingredient requiring the conditional weight profile to be
+  non-degenerate. Refuted en route: Bernstein-on-Z₁ (computes 2.5e-5 <
+  measured 2.4e-3 at n = 8 — the cone event is a small-ball event for
+  the perpendicular mass, 0.21× typical at n = 8).
 - **T6 — Hidden-channel reachability at γ = 0.6 within h = 80:**
   **RESOLVED (2026-07-24, positive).** A 10-parameter waypoint-controller
   search (400 random + 300 refinement candidates,
@@ -974,22 +978,71 @@ the cap bound holds against the exact cap integral at n = 3…30, the
 isotropic simulation obeys T5-I at every n = 3…8, and its per-dimension
 decay is 0.431 against the predicted sin θ = 0.4167.
 
-**What is genuinely left.** Only a TRANSFER question, and a narrow one:
-the paper's instrument uses the cube-uniform interface, whose measured
-per-dimension decay is 0.411 — against the isotropic interface's 0.431
-and the theoretical 0.4167, all three agreeing within noise — but for which the proof route is blocked as diagnosed above
-(the cone event is a small-ball event for the perpendicular mass, and
-the cube's symmetry group is finite). Two honest resolutions, in
-decreasing order of appeal: (i) adopt the isotropic interface for the
-n-dim arm, where the rarity law is a theorem — the action interface is
-ours to choose, and this is the second time in the paper that choosing
-it well changes what can be proved; (ii) prove the comparison, which
-needs the small-ball estimate for the cube case.
+## The interface transfer (2026-07-25): the cube case, reduced to one
+## Berry–Esseen estimate, with the scheme proved SHARP
+
+The cube-uniform thrust has a finite symmetry group, so no symmetry
+argument can reach the exponential rate (Lemma E is sharp for
+exchangeable laws). But the cube has a structure the isotropic proof
+throws away, and it is exactly the one needed: independence.
+
+**Lemma H (conditional coordinate independence).** The norm cap
+M_s = max(1, ‖a_s‖) is a function of the ABSOLUTE values |a_{s,i}|
+alone, and the coordinates of a_s are independent and symmetric. Hence,
+conditionally on all absolute values B = (|a_{s,i}|), the signs
+ε_{s,i} = sgn(a_{s,i}) are i.i.d. Rademacher and
+  T_{s,i} = ε_{s,i}·b_{s,i},  b_{s,i} := gain·|a_{s,i}|/M_s
+with b B-measurable. Therefore the displacement coordinates
+  Z_i = dt²·Σ_s w_{t,s} ε_{s,i} b_{s,i}
+are, given B, **INDEPENDENT across i**, each a Rademacher sum with
+deterministic weights c_{s,i} = dt² w_{t,s} b_{s,i}. ∎
+*Machine-checked EXACTLY, not statistically*
+(`scripts/t5_interface_transfer.py`): flipping one sign in column j
+changes coordinate j and no other, bitwise, in 1500 checks — and the cap
+is sign-invariant, which is the step the lemma turns on.
+
+**Proposition T5-T (transfer scheme; sharp in the exponent).** Write
+γ² = (1−κ²)/κ². The cone event implies R² ≤ γ²Z₁² with
+R² = Σ_{i≥2}Z_i², so by Lemma H's independence, for any λ > 0 with
+2λγ²σ₁² < 1,
+  P(cone | B) ≤ E[e^{λγ²Z₁²} | B] · Π_{i≥2} E[e^{−λZ_i²} | B].
+If the conditional coordinate laws obey the Gaussian-regime estimates
+E[e^{tZ₁²}] ≤ (1−2tσ²)^{−1/2} and E[e^{−λZ_i²}] ≤ (1+2λσ²)^{−1/2}, then
+optimizing λ — the optimum is u* = 2λ*σ² = ((n−1) − γ²)/(nγ²) — gives
+  P(cone) ≤ √(e·n/(1+γ²)) · (1 − κ²)^{(n−1)/2}.
+This is **the spherical-cap rate exactly, losing only a √n factor**: the
+scheme is not merely exponential but sharp in the exponent, and it
+recovers T5-I's constant without any symmetry.
+*Verified*: the closed-form optimum against numerical minimisation, and
+the constant against its asymptotic prediction, at n = 3…40 (ratios
+2.36/3.18/4.10/5.08/6.62/9.42 versus predicted 2.60/3.35/4.24/5.19/
+6.70/9.48).
+
+**The two ingredients, and which one is open.**
+(i) *Upper side (Z₁).* Rademacher sums are sub-Gaussian with proxy σ₁²
+(Hoeffding), giving E[e^{tZ₁²}] ≤ (1−2tσ₁²)^{−1/2} up to an absolute
+constant. STANDARD, no gap.
+(ii) *Lower side (each Z_i).* Requires that a Rademacher sum be no more
+concentrated near 0 than its Gaussian counterpart:
+E[e^{−λZ_i²}] ≤ (1+2λσ_i²)^{−1/2} + error. Berry–Esseen supplies the
+error as 2C·ρ₃/σ_i³, ρ₃ = Σ_s|c_{s,i}|³, which is of order h^{−1/2}
+≈ 0.11 at h = 80 FOR COMPARABLE WEIGHTS. So the sole remaining gap is
+control of the conditional weight profile — that no few steps dominate
+σ_i. That is a statement about deterministic AR(1) weights w_{t,s} times
+i.i.d. |a_{s,i}|, not about the geometry at all.
+
+Status of the transfer: **reduced from "open" to one Berry–Esseen
+estimate on a weight profile, with the scheme proved sharp.** An irony
+worth keeping: the isotropic interface is provable because its symmetry
+is exact, the cube interface because its coordinates are independent —
+the two routes are disjoint, and it is the cube's that yields the sharp
+constant.
 
 Status: **T5 RESOLVED for the isotropic interface** (exact exponential
-rate, proved, machine-checked) **and order-resolved with the measured
-constant for the cube interface**; what remains is the interface
-transfer, not the law.
+rate, proved, machine-checked); **for the cube interface, order-resolved
+unconditionally and sharp-rate-resolved modulo ingredient (ii)**. The
+measured decays agree across all three: cube 0.411, isotropic 0.431,
+theory 0.4167.
 
 ## T2 — lemma proved, exact route closed by a hypothesis-emptiness certificate (2026-07-24)
 

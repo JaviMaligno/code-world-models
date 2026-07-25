@@ -1399,17 +1399,31 @@ this gives
 \]
 non-vacuous from $n \approx 7$ against $n \approx 400$ for the
 exchangeability bound, and verified at $n = 3\ldots8$ (simulated decay
-$0.431$ against the predicted $0.4167$). What remains open is only the
-\emph{interface transfer}: the cube-uniform thrust used here has a
-finite symmetry group and its cone event turns out to be a small-ball
-event for the perpendicular displacement mass (measured at $0.21\times$
-its typical value at $n=8$), so tail bounds on the aligned component
-attack the wrong tail. Its measured decay is $0.411$, matching the
-proved isotropic law; and since the action interface is ours to choose,
-adopting the isotropic one makes the rarity law a theorem outright ---
-the second place in this paper where choosing the interface well changes
-what can be proved. Details and machine checks are in the repository's
-theory notes (Lemmas~C/E/F/G, Theorems~T5-C and T5-I).
+$0.431$ against the predicted $0.4167$).
+
+The instrument's own thrust is cube-uniform and norm-capped, whose
+symmetry group is finite, so that argument does not apply to it --- but
+a different structure does, and it gives the \emph{sharp} rate. The norm
+cap depends only on the absolute values of the action, and the action's
+coordinates are independent and symmetric; hence conditionally on all
+absolute values the signs are i.i.d. Rademacher and the displacement
+coordinates are \emph{independent}, each a Rademacher sum with
+deterministic weights. (Exactly so: flipping one sign changes its own
+coordinate and no other, bitwise.) Independence replaces symmetry: since
+the cone event forces $\sum_{i \ge 2} Z_i^2 \le \gamma^2 Z_1^2$ with
+$\gamma^2 = (1-\kappa^2)/\kappa^2$, a single Chernoff bound with matched
+exponent gives $P \le E[e^{\lambda\gamma^2 Z_1^2}]\prod_{i\ge2}
+E[e^{-\lambda Z_i^2}]$, and optimizing $\lambda$ in the Gaussian regime
+returns $\sqrt{en/(1+\gamma^2)}\,(1-\kappa^2)^{(n-1)/2}$: the cap rate
+exactly, losing only $\sqrt n$. Two ingredients close it --- Hoeffding
+sub-Gaussianity for $Z_1$ (standard), and the statement that a
+Rademacher sum is no more concentrated near zero than its Gaussian
+counterpart, for which Berry--Esseen supplies an $O(h^{-1/2})$ error
+provided no few steps dominate the weight profile. That weight-profile
+control is the one thing still missing, and it is a statement about
+AR(1) coefficients rather than about geometry. Details and machine
+checks are in the repository's theory notes (Lemmas~C/E/F/G/H,
+Theorems~T5-C, T5-I and Proposition~T5-T).
 
 \paragraph{A methods note: the danger needs a competent planner, and
 ``competent'' is an interface property.} Our first $n$-sweep measured

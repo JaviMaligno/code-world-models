@@ -181,3 +181,53 @@ def test_t5_theorem_i_bound_holds_on_the_isotropic_interface():
                 hits += 1
                 break
     assert hits / n_roll <= min(1.0, (h / 2) * (1 - k2) ** ((n - 2) / 2))
+
+
+def test_t5_lemma_h_conditional_coordinate_independence():
+    # Lemma H, checked EXACTLY: given the absolute values, coordinate i of
+    # the displacement depends only on the i-th column of signs, so the
+    # coordinates are conditionally independent. Bitwise, not statistical.
+    from cwm.continuous.envs import thrust_vector_nd
+    n, h, gain, a_max, dt, drag = 6, 30, 3.0, 1.0, 0.1, 0.3
+    rng = random.Random(11)
+    absa = [[abs(rng.uniform(-1, 1)) for _ in range(n)] for _ in range(h)]
+
+    def disp(signs):
+        vel, pos = [0.0] * n, [0.0] * n
+        for s in range(h):
+            a = tuple(sg * v for sg, v in zip(signs[s], absa[s]))
+            t = thrust_vector_nd(a, gain, a_max)
+            vel = [v + (x - drag * v) * dt for v, x in zip(vel, t)]
+            pos = [p + v * dt for p, v in zip(pos, vel)]
+        return pos
+
+    base = [[rng.choice((1, -1)) for _ in range(n)] for _ in range(h)]
+    z0 = disp(base)
+    for _ in range(60):
+        s, j = rng.randrange(h), rng.randrange(n)
+        flip = [row[:] for row in base]
+        flip[s][j] *= -1
+        z1 = disp(flip)
+        for i in range(n):
+            if i != j:
+                assert z1[i] == z0[i], (i, j, s)
+        assert z1[j] != z0[j]      # non-vacuous: its own coordinate moves
+
+
+def test_t5_transfer_scheme_is_sharp():
+    # Proposition T5-T: the Chernoff scheme's optimum reproduces the
+    # spherical-cap rate up to sqrt(n) — never an exponential loss.
+    k2 = (12.0 ** 2 - 5.0 ** 2) / 12.0 ** 2
+    g2 = (1 - k2) / k2
+    for n in (8, 12, 20, 40):
+        ustar = ((n - 1) - g2) / (n * g2)
+        scheme = (1 - g2 * ustar) ** -0.5 * (1 + ustar) ** (-(n - 1) / 2)
+        cap = (1 - k2) ** ((n - 1) / 2)
+        predicted = math.sqrt(math.e * n / (1 + g2))
+        assert abs(scheme / cap / predicted - 1) < 0.05, (n, scheme / cap)
+        # and the optimum really is a minimum of the scheme
+        for du in (0.8, 1.2):
+            u = ustar * du
+            if u < 1 / g2:
+                assert (1 - g2 * u) ** -0.5 * (1 + u) ** (-(n - 1) / 2) \
+                    >= scheme - 1e-15
