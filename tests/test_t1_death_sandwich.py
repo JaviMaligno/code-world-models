@@ -53,8 +53,14 @@ def test_t1_sandwich_on_synthetic_clouds():
             b_lo = 2 * r_min * math.sin(dmax / 2)
             b_hi = 2 * r_max * math.sin(dmax / 2)
             d_lo, d_hi = SQ3 * r_min, 2 * r_max * math.sin(th / 2)
+            bars = rips_persistence(pts)["h1"]
+            # Lemma P: exactly one bar spans the window [B+, sqrt3*r_min)
+            if b_hi < d_lo:
+                r0 = sum(1 for b, d in bars
+                         if b <= b_hi + 1e-9 and (d is None or d >= d_lo - 1e-9))
+                assert r0 == 1, (gap, seed, r0)
             wind = None
-            for b, d in rips_persistence(pts)["h1"]:
+            for b, d in bars:
                 if d is not None and 0.95 * b_lo <= b <= 1.05 * b_hi:
                     if wind is None or (d - b) > (wind[1] - wind[0]):
                         wind = (b, d)

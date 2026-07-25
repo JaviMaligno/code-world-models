@@ -71,17 +71,26 @@ for r in rows:
     th, ok = theta_star(dmax, d2)
     d_hi = 2 * r_max * math.sin(th / 2) if ok else 2 * r_max
     bars = rips_persistence(pts)["h1"]
+    # Lemma P's window-uniqueness rank: #bars containing [B+, sqrt3*r_min)
+    r0 = sum(1 for b, d in bars
+             if b <= b_hi + 1e-9 and (d is None or d >= d_lo - 1e-9))
     # winding bar: birth inside Lemma B's interval (5% tolerance), longest
     wind = None
     for b, d in bars:
         if d is not None and 0.95 * b_lo <= b <= 1.05 * b_hi:
             if wind is None or (d - b) > (wind[1] - wind[0]):
                 wind = (b, d)
+    window_nonempty = b_hi < d_lo
     rec = {"gap": r["gap"], "cap": r["cap"], "n_rollouts": r["n_rollouts"],
            "seed": r["seed"], "r_min": round(r_min, 3),
            "r_max": round(r_max, 3), "dtheta_max": round(dmax, 3),
            "dtheta_2": round(d2, 3), "B": [round(b_lo, 3), round(b_hi, 3)],
-           "D": [round(d_lo, 3), round(d_hi, 3)], "regime_ok": ok}
+           "D": [round(d_lo, 3), round(d_hi, 3)], "regime_ok": ok,
+           "window_nonempty": window_nonempty, "r0": r0}
+    if window_nonempty:
+        # Lemma P(a): r0 >= 1; P(b)'s hypothesis: r0 == 1
+        assert r0 >= 1, rec
+        assert r0 == 1, rec
     if wind:
         bars_checked += 1
         good = d_lo - 1e-9 <= wind[1] <= d_hi + 1e-9
@@ -104,6 +113,8 @@ for r in rows:
     out.append(rec)
 assert g1_viol == 0, g1_viol
 assert g0_wind_viol == 0, g0_wind_viol
+n_window = sum(1 for r in out if r["window_nonempty"])
+print(f"Lemma P: r0 == 1 in {n_window}/{n_window} nonempty-window rows")
 print(f"sandwich: {sandwich_ok}/{bars_checked} winding bars inside [D-, D+]")
 print(f"two-sided law: guaranteed-1 rows {g1_rows} (0 violations), "
       f"guaranteed-0 rows {g0_rows} (0 winding violations), "

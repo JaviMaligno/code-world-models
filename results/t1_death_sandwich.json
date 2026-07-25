@@ -22,6 +22,8 @@
     8.819
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     2.849,
     6.247
@@ -46,6 +48,8 @@
     8.97
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     4.753,
     6.388
@@ -70,6 +74,8 @@
     8.823
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.116,
     6.206
@@ -94,6 +100,8 @@
     7.382
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.695,
     6.569
@@ -118,6 +126,8 @@
     7.131
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     3.567,
     6.18
@@ -142,6 +152,8 @@
     8.791
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     2.441,
     6.144
@@ -166,6 +178,8 @@
     9.039
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     3.237,
     6.242
@@ -190,6 +204,8 @@
     8.566
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     3.868,
     6.122
@@ -214,6 +230,8 @@
     7.339
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     3.936,
     6.104
@@ -238,6 +256,8 @@
     7.34
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     2.311,
     6.111
@@ -262,6 +282,8 @@
     8.791
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     2.441,
     6.144
@@ -286,6 +308,8 @@
     9.039
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     3.237,
     6.242
@@ -310,6 +334,8 @@
     8.566
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     3.868,
     6.122
@@ -334,6 +360,8 @@
     7.339
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     3.936,
     6.104
@@ -358,6 +386,8 @@
     7.34
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     2.311,
     6.111
@@ -382,6 +412,8 @@
     7.295
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     2.261,
     6.126
@@ -406,6 +438,8 @@
     8.561
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     2.468,
     6.086
@@ -430,6 +464,8 @@
     8.566
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     2.31,
     6.113
@@ -454,6 +490,8 @@
     8.048
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     2.676,
     6.102
@@ -478,6 +516,8 @@
     9.03
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     2.598,
     6.102
@@ -502,6 +542,8 @@
     7.18
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.03,
     6.157
@@ -526,6 +568,8 @@
     9.204
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     4.753,
     6.391
@@ -550,6 +594,8 @@
     8.46
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     5.271,
     6.299
@@ -574,6 +620,8 @@
     7.456
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.42,
     6.178
@@ -598,6 +646,8 @@
     7.163
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.354,
     6.141
@@ -622,6 +672,8 @@
     7.166
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.03,
     6.144
@@ -646,6 +698,8 @@
     9.722
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.305,
     6.327
@@ -670,6 +724,8 @@
     8.434
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     5.032,
     6.122
@@ -694,6 +750,8 @@
     7.455
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.337,
     6.104
@@ -718,6 +776,8 @@
     6.883
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.354,
     6.141
@@ -742,6 +802,8 @@
     7.166
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.03,
     6.144
@@ -766,6 +828,8 @@
     9.722
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.305,
     6.327
@@ -790,6 +854,8 @@
     8.434
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     5.032,
     6.122
@@ -814,6 +880,8 @@
     7.455
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.337,
     6.104
@@ -838,6 +906,8 @@
     6.883
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.354,
     6.141
@@ -862,6 +932,8 @@
     7.201
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.826,
     6.143
@@ -886,6 +958,8 @@
     9.042
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.109,
     6.125
@@ -910,6 +984,8 @@
     9.239
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.354,
     6.113
@@ -934,6 +1010,8 @@
     8.157
    ],
    "regime_ok": true,
+   "window_nonempty": true,
+   "r0": 1,
    "winding_bar": [
     4.336,
     6.097
@@ -958,6 +1036,8 @@
     8.995
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     5.053,
     6.113
@@ -981,7 +1061,9 @@
     6.065,
     7.3
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 1.8,
@@ -1001,6 +1083,8 @@
     7.059
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     6.273,
     6.327
@@ -1025,6 +1109,8 @@
     6.749
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0,
    "guaranteed": "0"
   },
   {
@@ -1045,6 +1131,8 @@
     9.266
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     5.975,
     6.178
@@ -1069,6 +1157,8 @@
     6.51
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0,
    "guaranteed": "0"
   },
   {
@@ -1089,6 +1179,8 @@
     7.471
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     6.043,
     6.445
@@ -1113,6 +1205,8 @@
     7.059
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     6.273,
     6.327
@@ -1137,6 +1231,8 @@
     6.764
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     6.068,
     6.175
@@ -1161,6 +1257,8 @@
     9.235
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     5.975,
     6.104
@@ -1185,6 +1283,8 @@
     8.128
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     6.077,
     6.247
@@ -1209,6 +1309,8 @@
     7.471
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     6.043,
     6.445
@@ -1233,6 +1335,8 @@
     7.059
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     6.273,
     6.327
@@ -1257,6 +1361,8 @@
     6.764
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     6.068,
     6.175
@@ -1281,6 +1387,8 @@
     9.235
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     5.975,
     6.104
@@ -1305,6 +1413,8 @@
     8.128
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     6.077,
     6.247
@@ -1329,6 +1439,8 @@
     7.272
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     5.875,
     6.169
@@ -1353,6 +1465,8 @@
     9.094
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     5.626,
     6.13
@@ -1377,6 +1491,8 @@
     8.892
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     5.725,
     6.151
@@ -1401,6 +1517,8 @@
     8.716
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     5.972,
     6.2
@@ -1425,6 +1543,8 @@
     7.867
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 1,
    "winding_bar": [
     5.975,
     6.15
@@ -1448,7 +1568,9 @@
     6.065,
     7.79
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1467,7 +1589,9 @@
     6.063,
     7.157
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1487,6 +1611,8 @@
     7.035
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0,
    "guaranteed": "0"
   },
   {
@@ -1506,7 +1632,9 @@
     6.063,
     7.458
    ],
-   "regime_ok": false
+   "regime_ok": false,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1525,7 +1653,9 @@
     6.063,
     7.216
    ],
-   "regime_ok": false
+   "regime_ok": false,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1544,7 +1674,9 @@
     6.065,
     8.105
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1563,7 +1695,9 @@
     6.063,
     7.157
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1582,7 +1716,9 @@
     6.063,
     7.035
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1601,7 +1737,9 @@
     6.063,
     7.458
    ],
-   "regime_ok": false
+   "regime_ok": false,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1621,6 +1759,8 @@
     7.058
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0,
    "guaranteed": "0"
   },
   {
@@ -1640,7 +1780,9 @@
     6.065,
     8.105
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1659,7 +1801,9 @@
     6.063,
     7.157
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1678,7 +1822,9 @@
     6.063,
     7.035
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1697,7 +1843,9 @@
     6.063,
     7.458
    ],
-   "regime_ok": false
+   "regime_ok": false,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1717,6 +1865,8 @@
     7.058
    ],
    "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0,
    "guaranteed": "0"
   },
   {
@@ -1736,7 +1886,9 @@
     6.062,
     6.994
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1755,7 +1907,9 @@
     6.063,
     8.641
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1774,7 +1928,9 @@
     6.062,
     8.012
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1793,7 +1949,9 @@
     6.063,
     9.153
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   },
   {
    "gap": 2.4,
@@ -1812,7 +1970,9 @@
     6.063,
     6.951
    ],
-   "regime_ok": true
+   "regime_ok": true,
+   "window_nonempty": false,
+   "r0": 0
   }
  ]
 }

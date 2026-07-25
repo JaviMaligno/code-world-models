@@ -514,9 +514,12 @@ they conflict.
   Validation: 78/80 pointwise law (`t1_flip_law_validation.py`, the 2
   misses inside the proved undecided band), sandwich 57/57 winding bars
   + 34 guaranteed-1 and 5 guaranteed-0 rows with 0 violations
-  (`scripts/t1_death_sandwich.py`). Sole remaining exclusion: a spurious
-  non-winding persistent class (never observed in the factorial),
-  recorded in the corollary.
+  (`scripts/t1_death_sandwich.py`). The class-to-BAR transfer is Lemma P
+  (2026-07-25 second pass, prompted by Javier's pairing question): under
+  the checkable rank condition r₀ = 1 (exactly one bar spans
+  [B⁺, √3·r_min)) the sandwich holds for the bar itself; r₀ = 1 measured
+  in 36/36 nonempty-window rows, and r₀ ≥ 2 is the SAME configuration as
+  the spurious-class exclusion — one hypothesis, per-sample decidable.
 - **T2 — Aligned-channel degeneracy, full proposition.** Conditions
   (corridor geometry + (RG)/(C)-style hypotheses) under which the facing
   channel makes the blind argmax plan executable in truth, giving
@@ -681,9 +684,38 @@ already implied; in regime (ii), θ* ≥ (2π − Δθ_max)/2 ≥ π/2, so
 Δθ₂ ≤ π/4 suffices — (H) is stated as the lemma's standing hypothesis
 and checked numerically per sample.
 Under (H), all prisms are present; summing their boundaries telescopes φ
-along z₀ and yields z₀ − ∂(triangle-fan image) = boundary, and the image
-cycle collapses to ∂(x₁x₂x₃) (degenerate repeats cancel). Hence
-[z₀] = [∂(x₁x₂x₃)] = 0 at s*, and the bar born with z₀ is dead by s*. ∎
+along z₀ (φ is monotone along the angularly-sorted cycle, so the image
+cycle is exactly ∂(x₁x₂x₃), degenerate repeats cancelling). Hence
+[z₀] = [∂(x₁x₂x₃)] = 0 in H₁(K_{s*}). ∎
+NOTE: this kills the CLASS. That the measured BAR dies is a persistence-
+pairing statement and needs Lemma P below — the class could in principle
+be carried past s* by a winding-0 admixture on a second long bar.
+
+**Lemma P (from class death to bar death — the pairing step).** Suppose
+B⁺ < √3 r_min (the persistent regime; otherwise the law predicts no bar)
+and let r₀ = rank(ι: H₁(K_{B⁺}) → H₁(K_{√3 r_min − ε})) = the number of
+bars containing the window [B⁺, √3 r_min) — computable from the barcode
+as #{bars: birth ≤ B⁺, death ≥ √3 r_min}. Then:
+  (a) r₀ ≥ 1 always: ι[z₀] ≠ 0 across the window because w(ι z₀) = 1
+      and w is defined below √3 r_min (Lemma D⁻'s triangle computation);
+  (b) if r₀ = 1, the UNIQUE window-spanning bar has birth ∈ [B⁻, B⁺]
+      and death ∈ [√3 r_min, s*] — the sandwich holds for THE BAR.
+*Proof of (b).* Fix an interval decomposition V ≅ ⊕ I[bᵢ, dᵢ) of the H₁
+persistence module (field coefficients; transition maps act as identity-
+or-zero per summand, so a class born by scale x has constant bar
+coefficients along s ≥ x). Expand ι[z₀] at s = √3 r_min − ε: only bars
+containing [B⁺, s] can carry nonzero coefficients; by r₀ = 1 there is
+one, e₁: ι[z₀] = a₁e₁, and applying w gives 1 = a₁·w(e₁), so a₁ ≠ 0 and
+w(e₁) ≠ 0. At s*: 0 = ι[z₀] = a₁·ι(e₁) (Lemma D⁺), hence ι(e₁) = 0: the
+bar is dead by s*. Its death ≥ √3 r_min since it spans the window; its
+birth b₁ ≤ B⁺ by the window, and ≥ B⁻ because its birth class pushes
+forward to e₁ with w ≠ 0, so it is a winding cycle and Lemma B applies.∎
+  When r₀ ≥ 2 a second long bar coexists with the winding one across the
+window; that is exactly the "spurious persistent class" configuration
+already recorded as the detector-level exclusion — the hypothesis of
+Lemma P and the detector caveat are the SAME per-sample checkable
+condition (measured: r₀ = 1 in every factorial row with a nonempty
+window, `t1_death_sandwich.json`).
 
 **Corollary (the detector law, now TWO-SIDED).** With B⁻ = 2 r_min
 sin(Δθ_max/2), B⁺ = 2 r_max sin(Δθ_max/2) (Lemma B), D⁻ = √3 r_min
@@ -697,10 +729,13 @@ The undecided band D⁻ − B⁺ ≤ persistence-proxy ≤ D⁺ − B⁻ has wid
 (D⁺ − D⁻) + (B⁺ − B⁻) — radial thickness plus the θ*-slack — and the
 measured flip rows (γ = 1.8, N = 160, margin ≈ 0.2) sit inside it, as
 they must. Validation: `scripts/t1_death_sandwich.py` — per sensor-
-factorial row, D⁻ ≤ death ≤ D⁺ for every finite winding bar.
+factorial row, the window-uniqueness rank r₀ (Lemma P) and
+D⁻ ≤ death ≤ D⁺ for the window-spanning bar.
 Status: **T1 CLOSED as a two-sided sandwich law with explicit constants**
-(birth exact by Lemma B; death sandwiched by D⁻/D⁺; the flip location
-follows), modulo only the spurious-class exclusion, recorded above.
+(birth exact by Lemma B; death of the class sandwiched by D⁻/D⁺; the
+BAR inherits the sandwich under Lemma P's r₀ = 1, which is per-sample
+checkable and is the same condition as the spurious-class exclusion —
+the caveat structure collapses to one measured-true hypothesis).
 
 ## T5 — route refuted (2026-07-24), stays open
 
@@ -760,8 +795,12 @@ linear bijection [−a_max, a_max] → [−π, π] carrying uniform to uniform,
 the landing law is exactly the uniform (normalized arc-length) measure on
 the circle ∂B(c(s), R_L). At the defaults R_L = 0.03.
 *Proof.* Read off `integrate_2d`: x′ = x + v′x·dt = x + (1 − drag·dt)·vx·dt
-+ gain·dt²·cos φ, same for y. ∎ (machine-checked:
-`test_t4_landing_circle_exact`.)
++ gain·dt²·cos φ, same for y; the pushforward of the uniform angle law
+under φ ↦ c(s) + R_L(cos φ, sin φ) is by definition the uniform
+arc-length measure. ∎ (The accompanying machine check,
+`test_t4_landing_circle_exact`, is a CODE-CONFORMANCE check — that the
+repository's integrator is the map this theorem is about — not part of
+the mathematics.)
 
 **Lemma A (circle–strip anticoncentration, explicit).** Let U be uniform
 on the circle of radius R centered at c, S the closed strip of width w
