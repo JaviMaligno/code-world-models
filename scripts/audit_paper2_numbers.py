@@ -463,6 +463,37 @@ claim("exactly one patch-selective artifact, a half-plane at 31x",
       len(_sel) == 1 and _sel[0][0] == 180000 and _sel[0][1] == "halfplane"
       and round(_sel[0][2] / PATCH_SHARE) == 31, str(_sel))
 
+# --- Proposition (knob-invariance): the affine identity, to the digit -------
+# play_cost(k) = J_truth/(J_truth-J_rand) - J_blind(k)/(J_truth-J_rand) whenever
+# the two baselines are knob-free. The paper quotes both the predicted play_cost
+# error and the predicted spread, so check the identity itself on both variants.
+for label, name, tol_pred, tol_spread in (
+        ("cart sharp", "continuous_reach_sharp", 1e-9, 1e-8),
+        ("cart default", "continuous_reach", 1e-5, 1e-5)):
+    rows = load(name)["rows"]
+    jt = {r["j_truth"] for r in rows}
+    claim(f"{label}: J_truth is knob-independent (bit-identical)", len(jt) == 1,
+          f"{len(jt)} distinct values")
+    JT = next(iter(jt))
+    JR = max(r["j_random"] for r in rows)
+    c0 = JT / (JT - JR)
+    worst = max(abs((c0 - r["j_blind"] / (JT - JR)) - r["play_cost"])
+                for r in rows)
+    claim(f"{label}: affine identity predicts play_cost", worst < tol_pred,
+          f"worst {worst:.2e}")
+    pred = ((max(r["j_blind"] for r in rows) - min(r["j_blind"] for r in rows))
+            / (JT - JR))
+    meas = (max(r["play_cost"] for r in rows)
+            - min(r["play_cost"] for r in rows))
+    claim(f"{label}: predicted spread matches measured",
+          abs(pred - meas) < tol_spread, f"pred {pred:.6e} vs meas {meas:.6e}")
+    # the paper quotes both figures: 3.9e-9 (sharp) and 1.2e-4 (default)
+    jr_spread = (max(r["j_random"] for r in rows)
+                 - min(r["j_random"] for r in rows))
+    want = 3.9e-9 if "sharp" in name else 1.2e-4
+    claim(f"{label}: J_rand knob-variation as quoted ({want:.1e})",
+          abs(jr_spread - want) < 0.05 * want, f"{jr_spread:.3e}")
+
 # --- sharp-plateau variant: the claims the variant exists to make -----------
 sharp_cart = load("continuous_reach_sharp")["rows"]
 sharp_pend = load("continuous_pendulum_sharp")["rows"]

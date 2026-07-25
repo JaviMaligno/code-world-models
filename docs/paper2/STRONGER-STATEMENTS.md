@@ -232,3 +232,29 @@ proposition's direction).
   data* rather than missing strength.
 - Not recoverable, by design: "no learner can infer it **from the sample**". A
   prior can supply the mode; that caveat is the theorem's content.
+
+---
+
+## Addendum 2026-07-25 (later): two more statements upgraded from measured to proved
+
+**Knob-invariance of play\_cost is now an identity, not a regularity.** Javier
+asked whether the invariance is a theorem or a measurement. It was a measurement;
+it is now Proposition 8: whenever $J_\mathrm{truth}$ and $J_\mathrm{rand}$ are
+knob-free, play\_cost$(k) = J_\mathrm{truth}/(J_\mathrm{truth}-J_\mathrm{rand}) -
+J_\mathrm{blind}(k)/(J_\mathrm{truth}-J_\mathrm{rand})$ — affine in the exploited
+planner's own return, so the whole knob-dependence *is* its residual reward over
+the truth-minus-random margin. The hypotheses are measured sharply ($J_\mathrm{truth}$
+knob-identical to twelve digits; $J_\mathrm{rand}$ varying by 3.9e-9 sharp / 1.2e-4
+default), and the identity predicts every measured play\_cost to 2.4e-10 (sharp),
+with the predicted spread 1.3615e-4 matching the measured 1.3615e-4. What the
+sharp-plateau variant buys is therefore not the invariance but the vanishing of
+$J_\mathrm{blind}$ that makes the identity's residual term negligible. Audited.
+
+**The bracket is sharp, and that is the independence-free result.** The joint
+gate-miss bracket's ends are exactly the Fréchet–Hoeffding bounds for
+$P(R_1 \cup R_2)$ given the marginals, pushed through $x \mapsto x^N$: the interval
+is the *exact* range of joint miss probabilities consistent with $r_1, r_2$, so no
+bound in the marginals alone can be tighter. That — not a bespoke instrument — is
+the correct theoretical statement without independence, and it was already in the
+paper; the earlier "superseded" note referred only to the discarded instrument
+plan and undersold it.
