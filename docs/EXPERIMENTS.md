@@ -1,5 +1,94 @@
 # Experiments Log
 
+## PAPER 2 — Reference & proof review: an independence error in the joint danger factor (2026-07-25)
+
+Review of (a) external citations, (b) code references, (c) the proofs. Findings,
+all closed by measurement or by making the statement match what is proved.
+
+**0. The correction became a theorem.** Rather than leave the joint factor as a
+measured number, the paper now proves a two-sided bracket that needs no
+independence assumption — (1-min(1,r1+r2))^N ≤ (1-r_∪)^N ≤ (1-max(r1,r2))^N, with
+the product inside it — plus an exact sign rule: the product over-estimates the
+joint miss probability iff P(both) < r1·r2. `audit_paper2_numbers.py` checks the
+bracket, the sign rule and inclusion-exclusion consistency at all nine knobs (443
+values total). So the pre-review claim ("the law composes per mode") was an
+assumption; what replaced it is stronger, not weaker. Everything the reviews *did*
+weaken is listed with a recovery route in `docs/paper2/STRONGER-STATEMENTS.md`.
+
+**1. The joint gate-miss factor was composed, not measured — and the product is
+wrong by up to 17%.** §3.3 claimed "the danger law composes per mode: the joint
+factor is (1-r1)^N (1-r2)^N". That product is the joint factor only if the two
+per-mode contact events are independent WITHIN a rollout, which PatchField2D does
+not satisfy. `continuous_patch2d.py` now measures the union event directly
+(`r_either`, plus `r_both` to expose the dependence) and reports
+d@40_joint = play_cost * (1 - r_either)^40; the product is kept alongside as
+`d40_joint_indep_approx` so the error stays visible. Re-run (557 s): every
+previously committed column reproduces EXACTLY (r1, r2, J_truth, J_blind,
+J_random, play_cost, contact, d40_p1, d40_p2), and the joint column moves:
+
+| k1/k2 | r_either | r1+r2 | P(both) | r1·r2 | d@40 exact | d@40 product | bias |
+|---|---|---|---|---|---|---|---|
+| 3/6 | 0.1500 | 0.1500 | 0.0000 | 0.00118 | 0.0015 | 0.0016 | +5.7% |
+| 4/6 | 0.0917 | 0.0967 | 0.0050 | 0.00074 | 0.0215 | 0.0178 | −17.2% |
+| 4/7 | 0.0950 | 0.0983 | 0.0033 | 0.00088 | 0.0185 | 0.0166 | −10.3% |
+| 2/7 | 0.2533 | 0.2533 | 0.0000 | 0.00204 | 0.0000 | 0.0000 | +11.5% |
+
+P(both) ∈ [0, 0.005] against r1·r2 ∈ [0.0007, 0.0025] — *below* independence at
+some knobs (a frozen rollout has spent its travel) and *above* it at others
+(reaching the far patch means passing the near one), which is why the product
+errs in both directions. Prop. 1 itself is untouched: it holds for any measurable
+critical event, and the union event is one.
+
+**2. Three code quotes in the paper were not verbatim; one was fabricated.**
+- The superstitious clamp was printed as `if abs(x2 - 8.0) <= 0.15 and abs(v2)
+  <= 1.1: x2 = 8.0`. **No artifact contains `abs(v2) <= 1.1`.** The real one (the
+  x_wall=4 cell the surrounding text cites, mini seed 20000, gate 0.9738) is
+  `if abs(x2 - 4.0) <= 0.15 and abs(v2) <= 2.5: x2 = 4.0; v2 = 0.0`.
+- The pendulum repair was rendered schematically (`th2 >= theta_stop`); artifacts
+  write the literal knob: `if th2 >= 1.4: return [1.4, 0.0]`.
+- Claude's phantom stop is the `elif` branch of a symmetric pair, not an `if`.
+`audit_paper2_numbers.py` now checks every quoted snippet against the artifact
+corpus (whitespace and `;` normalised) plus every cited repo path, so a quote
+nobody produced fails CI.
+
+**2b. A second vacuous check, and a metric that was silently missing.**
+`patch2d_artifact_audit.py` emitted `area_frac` only on the half-plane branch, so
+bounded/square/disc-form rows carried `None` and any downstream comparison had to
+guess a default. Fixed (emitted for every artifact), and the partial-repair claim
+restated threshold-free on the branch where it is definable: of the 66
+see-one-miss-the-other seeds, 28 freeze sets contain the seen patch, by freezing
+15×–81× its area (median 61×), and exactly ONE is patch-selective — seed 180000,
+a half-plane at 31× the patch area, i.e. selective by where its threshold falls,
+not by encoding a region. Gate rejected it like all the others.
+
+**3. "(tested char-identical)" was not tested and not char-identical.** The n-D
+generalisation rewrote 33 lines of `mitigation.py`; the 1D claim is behavioural.
+Now pinned by `tests/test_mitigation_1d_regression.py` (exact ret / violations /
+first-contact for cart and pendulum, plus the single-violation property), and the
+paper says behavioural + names the test.
+
+**4. Proof precision (no result changed).** Prop. 2 now instantiates Prop. 1 at
+R = {rollouts visiting M} instead of relying on it implicitly; Prop. 3's coupling
+notes that "no query ever lands in E" is a single coupling-measurable event, not
+two model-dependent ones; Prop. 4's radius is stated for L > 0 with L = 0 as the
+degenerate case (the formula divides by 2L); the corollary defines J_max/J_min as
+the *realizable* return range, without which "saturated" is not well-founded —
+and records that on the cart the bound is *attained* (17.77/17.24 = 1.031 both
+sides) because the exploited planner sits at the realizable floor. Abstract:
+"cannot realize the localized geometry" → "*exactly* localized"; "no learner can
+infer it" → "from the sample".
+
+**5. Bibliography verified against source.** 21/21 entries complete; Lehrach et
+al. confirmed as ICLR 2026 with the 16-author list and OpenReview id matching;
+Fazeli IJRR 36(13–14):1437–1454 and Corso JAIR 72:377–428 match exactly. Removed
+one unverifiable detail ("Poster") from the Lehrach note.
+
+**6. Also fixed: a second censored zero.** `tab:axes`'s sub-eps arm reveals a
+disagreement in 0/2000 rollouts, so its predicted pass rate 1.0000 sat outside
+the measured pass CI [0.9814, 0.9994]. Now reported as the raw count with the
+prediction as an upper bound: at the Wilson upper rarity (0.0019) the prediction
+is 0.926, and the measured 0.997 lies inside [0.926, 1.000].
+
 ## PAPER 2 — Pre-arXiv review closure: 2D cross-family arm, two missing entry points, re-run validation (2026-07-24)
 
 A pre-submission review of paper 2 raised eleven items (3 blocking, 4 substantive,

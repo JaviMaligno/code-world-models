@@ -243,10 +243,14 @@ def audit_code(code, env):
     out["n_components"] = len([c for c in comps if len(c) >= 4])
     if len(main) * CELL_AREA < 0.5:
         out["class"] = "point"
+        out["area_frac"] = round(n0 / (GRID_N * GRID_N), 4)
         return out
+    # area_frac is emitted for EVERY classified artifact (it used to be set only
+    # on the halfplane branch, so bounded/square/disc-form rows carried None and
+    # downstream comparisons had to guess a default — fixed 2026-07-25).
+    out["area_frac"] = round(n0 / (GRID_N * GRID_N), 4)
     if _touches_far_edge(main):
         out["class"] = "halfplane"
-        out["area_frac"] = round(n0 / (GRID_N * GRID_N), 3)
         return out
     sm = _shape_metrics(main)
     out.update(sm)
@@ -347,8 +351,10 @@ def main():
     #       deviation set must be a few percent at most, not the ~75% a
     #       half-plane covers.
     KEY = {"patch1": "p1", "patch2": "p2"}
-    AREA_MAX = 0.03            # ~2.5x one patch's share of the probed box
-    contains = encodes = seen_total = 0
+    PATCH_SHARE = (math.pi * PatchField2D().R ** 2
+                   / ((X_HI - X_LO) * (Y_HI - Y_LO)))
+    contains, seen_total, areas = 0, 0, []
+    tightest = None
     for r in disc:
         per = r.get("modes_in_sample") or {}
         seen = [KEY[n] for n, v in per.items() if v and n in KEY]
@@ -358,12 +364,53 @@ def main():
         cov = max((r.get(f"cover_{p}") or 0) for p in seen)
         if cov > 0.9:
             contains += 1
-            if (r.get("area_frac") or 1.0) <= AREA_MAX:
-                encodes += 1
+            af = r.get("area_frac")
+            assert af is not None, "area_frac must be emitted for every artifact"
+            areas.append(af)
+            unseen = [KEY[n] for n, v in per.items() if not v and n in KEY]
+            if tightest is None or af < tightest[0]:
+                tightest = (af, r["seed"], r["class"], cov,
+                            max((r.get(f"cover_{p}") or 0) for p in unseen)
+                            if unseen else None)
+    # Descriptive, threshold-free: how close does any artifact come to freezing
+    # the seen patch AND LITTLE ELSE? (The true patch is PATCH_SHARE of the box.)
+    areas.sort()
     print(f"artifacts whose freeze set CONTAINS a seen patch (>90%): "
           f"{contains}/{seen_total} — mostly half-planes swallowing the disc")
-    print(f"artifacts that ENCODE a seen patch (contain it AND area_frac "
-          f"<= {AREA_MAX}): {encodes}/{seen_total}   (paper: 0 partial repairs)")
+    print(f"  their frozen area: {areas[0]:.4f} to {areas[-1]:.4f} of the probed "
+          f"box (median {areas[len(areas)//2]:.4f}) against the patch's own "
+          f"{PATCH_SHARE:.4f} — i.e. {areas[len(areas)//2]/PATCH_SHARE:.0f}x the "
+          f"patch at the median, {areas[0]/PATCH_SHARE:.1f}x at the tightest")
+    print(f"  tightest: seed {tightest[1]} ({tightest[2]}), seen-patch coverage "
+          f"{tightest[3]:.3f}, area {tightest[0]:.4f}, unseen-patch coverage "
+          f"{tightest[4]}")
+
+    # The partial-repair claim lives on the see-ONE-miss-the-other branch, so
+    # report that population separately: containment there, how tight it gets,
+    # and whether any artifact is patch-SELECTIVE (covers seen, spares unseen).
+    see_one = []
+    for r in disc:
+        per = r.get("modes_in_sample") or {}
+        seen = [KEY[n] for n, v in per.items() if v and n in KEY]
+        unseen = [KEY[n] for n, v in per.items() if not v and n in KEY]
+        if len(seen) == 1 and len(unseen) == 1:
+            see_one.append((r.get(f"cover_{seen[0]}") or 0,
+                            r.get(f"cover_{unseen[0]}") or 0,
+                            r.get("area_frac"), r["seed"], r["class"]))
+    cont1 = [r for r in see_one if r[0] > 0.9]
+    a1 = sorted(r[2] for r in cont1)
+    sel = [r for r in cont1 if r[1] < 0.1]
+    print(f"see-one-miss-the-other: {len(see_one)} artifacts; "
+          f"{len(cont1)} contain the seen patch (>90%)")
+    print(f"  frozen area {a1[0]:.4f}–{a1[-1]:.4f} of the box (median "
+          f"{a1[len(a1)//2]:.4f}) = {a1[0]/PATCH_SHARE:.0f}x–"
+          f"{a1[-1]/PATCH_SHARE:.0f}x the patch (median "
+          f"{a1[len(a1)//2]/PATCH_SHARE:.0f}x)")
+    for r in sel:
+        print(f"  patch-SELECTIVE (seen>{0.9}, unseen<0.1): seed {r[3]} "
+              f"({r[4]}), area {r[2]:.4f} = {r[2]/PATCH_SHARE:.0f}x the patch")
+    if not sel:
+        print("  patch-selective artifacts: none")
 
 
 # ---------------- oracle self-test (constructed classes) -----------------

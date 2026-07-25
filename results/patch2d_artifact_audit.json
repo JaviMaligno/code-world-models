@@ -22,8 +22,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 20000,
@@ -44,8 +44,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 30000,
@@ -66,8 +66,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 1.0
+     "area_frac": 1.0,
+     "class": "halfplane"
     },
     {
      "seed": 40000,
@@ -108,8 +108,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.864
+     "area_frac": 0.8642,
+     "class": "halfplane"
     },
     {
      "seed": 60000,
@@ -130,8 +130,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 70000,
@@ -172,8 +172,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.864
+     "area_frac": 0.8642,
+     "class": "halfplane"
     },
     {
      "seed": 90000,
@@ -194,8 +194,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 100000,
@@ -216,8 +216,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 110000,
@@ -238,8 +238,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 120000,
@@ -260,6 +260,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0762,
      "bbox_fill": 1.0,
      "radial_ratio": 5.251,
      "area_units": 20.0,
@@ -288,6 +289,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0479,
      "bbox_fill": 0.785,
      "radial_ratio": 1.058,
      "area_units": 12.56,
@@ -316,8 +318,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 150000,
@@ -338,8 +340,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 160000,
@@ -360,8 +362,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.741
+     "area_frac": 0.7407,
+     "class": "halfplane"
     },
     {
      "seed": 170000,
@@ -382,6 +384,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0099,
      "bbox_fill": 0.802,
      "radial_ratio": 1.184,
      "area_units": 2.6,
@@ -410,8 +413,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 190000,
@@ -432,8 +435,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 200000,
@@ -498,8 +501,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 2,
-     "class": "halfplane",
-     "area_frac": 0.737
+     "area_frac": 0.7372,
+     "class": "halfplane"
     },
     {
      "seed": 20000,
@@ -540,7 +543,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 0,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0002
     },
     {
      "seed": 40000,
@@ -561,8 +565,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 50000,
@@ -583,6 +587,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.2265,
      "bbox_fill": 0.809,
      "radial_ratio": 1.655,
      "area_units": 59.44,
@@ -611,6 +616,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0479,
      "bbox_fill": 0.785,
      "radial_ratio": 1.058,
      "area_units": 12.56,
@@ -719,6 +725,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0119,
      "bbox_fill": 0.78,
      "radial_ratio": 1.128,
      "area_units": 3.12,
@@ -747,6 +754,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 2,
+     "area_frac": 0.034,
      "bbox_fill": 1.0,
      "radial_ratio": 2.169,
      "area_units": 6.12,
@@ -775,8 +783,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.048
+     "area_frac": 0.0483,
+     "class": "halfplane"
     },
     {
      "seed": 140000,
@@ -797,6 +805,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0479,
      "bbox_fill": 0.785,
      "radial_ratio": 1.058,
      "area_units": 12.56,
@@ -825,8 +834,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.286
+     "area_frac": 0.2856,
+     "class": "halfplane"
     },
     {
      "seed": 160000,
@@ -867,6 +876,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0479,
      "bbox_fill": 0.785,
      "radial_ratio": 1.058,
      "area_units": 12.56,
@@ -895,8 +905,8 @@
      "west_numeric_dev": 810,
      "integrator_exact": false,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.123
+     "area_frac": 0.1235,
+     "class": "halfplane"
     },
     {
      "seed": 190000,
@@ -917,8 +927,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 1.0
+     "area_frac": 1.0,
+     "class": "halfplane"
     },
     {
      "seed": 200000,
@@ -939,8 +949,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.231
+     "area_frac": 0.2311,
+     "class": "halfplane"
     }
    ],
    "aggregates": {
@@ -989,8 +999,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.63
+     "area_frac": 0.6296,
+     "class": "halfplane"
     },
     {
      "seed": 20000,
@@ -1011,8 +1021,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.63
+     "area_frac": 0.6296,
+     "class": "halfplane"
     },
     {
      "seed": 30000,
@@ -1033,8 +1043,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.63
+     "area_frac": 0.6296,
+     "class": "halfplane"
     },
     {
      "seed": 40000,
@@ -1055,8 +1065,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.63
+     "area_frac": 0.6296,
+     "class": "halfplane"
     },
     {
      "seed": 50000,
@@ -1077,8 +1087,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.63
+     "area_frac": 0.6296,
+     "class": "halfplane"
     },
     {
      "seed": 60000,
@@ -1099,8 +1109,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.63
+     "area_frac": 0.6296,
+     "class": "halfplane"
     },
     {
      "seed": 70000,
@@ -1121,8 +1131,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.617
+     "area_frac": 0.6173,
+     "class": "halfplane"
     },
     {
      "seed": 80000,
@@ -1203,8 +1213,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.593
+     "area_frac": 0.5926,
+     "class": "halfplane"
     },
     {
      "seed": 120000,
@@ -1225,8 +1235,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.63
+     "area_frac": 0.6296,
+     "class": "halfplane"
     },
     {
      "seed": 130000,
@@ -1267,8 +1277,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.63
+     "area_frac": 0.6296,
+     "class": "halfplane"
     },
     {
      "seed": 150000,
@@ -1289,8 +1299,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.63
+     "area_frac": 0.6296,
+     "class": "halfplane"
     },
     {
      "seed": 160000,
@@ -1311,8 +1321,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.63
+     "area_frac": 0.6296,
+     "class": "halfplane"
     },
     {
      "seed": 170000,
@@ -1333,8 +1343,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.605
+     "area_frac": 0.6049,
+     "class": "halfplane"
     },
     {
      "seed": 180000,
@@ -1355,8 +1365,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.383
+     "area_frac": 0.3827,
+     "class": "halfplane"
     },
     {
      "seed": 190000,
@@ -1457,7 +1467,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 0,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0002
     },
     {
      "seed": 30000,
@@ -1518,6 +1529,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0479,
      "bbox_fill": 0.785,
      "radial_ratio": 1.058,
      "area_units": 12.56,
@@ -1546,8 +1558,8 @@
      "west_numeric_dev": 1215,
      "integrator_exact": false,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.407
+     "area_frac": 0.4074,
+     "class": "halfplane"
     },
     {
      "seed": 70000,
@@ -1628,8 +1640,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 1.0
+     "area_frac": 1.0,
+     "class": "halfplane"
     },
     {
      "seed": 110000,
@@ -1650,6 +1662,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.1829,
      "bbox_fill": 1.0,
      "radial_ratio": 3.061,
      "area_units": 48.0,
@@ -1678,6 +1691,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0027,
      "bbox_fill": 0.72,
      "radial_ratio": 1.991,
      "area_units": 0.72,
@@ -1706,8 +1720,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 1.0
+     "area_frac": 1.0,
+     "class": "halfplane"
     },
     {
      "seed": 140000,
@@ -1748,7 +1762,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 0,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0002
     },
     {
      "seed": 160000,
@@ -1769,7 +1784,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0015
     },
     {
      "seed": 170000,
@@ -1790,6 +1806,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.012,
      "bbox_fill": 0.79,
      "radial_ratio": 1.163,
      "area_units": 3.16,
@@ -1858,8 +1875,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.432
+     "area_frac": 0.4321,
+     "class": "halfplane"
     }
    ],
    "aggregates": {
@@ -1908,6 +1925,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0023,
      "bbox_fill": 0.625,
      "radial_ratio": 6.452,
      "area_units": 0.6,
@@ -1936,7 +1954,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 0,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0002
     },
     {
      "seed": 30000,
@@ -1957,6 +1976,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0256,
      "bbox_fill": 1.0,
      "radial_ratio": 2.911,
      "area_units": 6.72,
@@ -1985,7 +2005,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0015
     },
     {
      "seed": 50000,
@@ -2006,8 +2027,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.494
+     "area_frac": 0.494,
+     "class": "halfplane"
     },
     {
      "seed": 60000,
@@ -2048,7 +2069,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 0,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0006
     },
     {
      "seed": 80000,
@@ -2109,6 +2131,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.012,
      "bbox_fill": 0.653,
      "radial_ratio": 1.267,
      "area_units": 3.16,
@@ -2137,7 +2160,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 2,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0027
     },
     {
      "seed": 120000,
@@ -2178,6 +2202,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 2,
+     "area_frac": 0.0142,
      "bbox_fill": 0.636,
      "radial_ratio": 1.831,
      "area_units": 3.36,
@@ -2206,7 +2231,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0008
     },
     {
      "seed": 150000,
@@ -2227,6 +2253,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0023,
      "bbox_fill": 1.0,
      "radial_ratio": 2.236,
      "area_units": 0.6,
@@ -2255,6 +2282,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0032,
      "bbox_fill": 0.84,
      "radial_ratio": 1.118,
      "area_units": 0.84,
@@ -2303,7 +2331,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 0,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0003
     },
     {
      "seed": 190000,
@@ -2324,7 +2353,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0008
     },
     {
      "seed": 200000,
@@ -2433,6 +2463,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0069,
      "bbox_fill": 0.833,
      "radial_ratio": 1.742,
      "area_units": 1.8,
@@ -2461,7 +2492,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0008
     },
     {
      "seed": 50000,
@@ -2482,6 +2514,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 2,
+     "area_frac": 0.004,
      "bbox_fill": 0.95,
      "radial_ratio": 2.036,
      "area_units": 0.76,
@@ -2510,6 +2543,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.005,
      "bbox_fill": 0.673,
      "radial_ratio": 1.414,
      "area_units": 1.32,
@@ -2538,6 +2572,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0037,
      "bbox_fill": 0.767,
      "radial_ratio": 2.001,
      "area_units": 0.92,
@@ -2586,7 +2621,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0017
     },
     {
      "seed": 100000,
@@ -2607,7 +2643,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0015
     },
     {
      "seed": 110000,
@@ -2668,7 +2705,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 2,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0014
     },
     {
      "seed": 140000,
@@ -2689,6 +2727,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0046,
      "bbox_fill": 1.0,
      "radial_ratio": 1.553,
      "area_units": 1.2,
@@ -2717,7 +2756,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0009
     },
     {
      "seed": 160000,
@@ -2738,7 +2778,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0015
     },
     {
      "seed": 170000,
@@ -2759,7 +2800,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0011
     },
     {
      "seed": 180000,
@@ -2780,6 +2822,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0037,
      "bbox_fill": 1.0,
      "radial_ratio": 1.844,
      "area_units": 0.96,
@@ -2808,6 +2851,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0084,
      "bbox_fill": 0.873,
      "radial_ratio": 1.452,
      "area_units": 2.2,
@@ -2836,7 +2880,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0008
     }
    ],
    "aggregates": {
@@ -2881,8 +2926,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 20000,
@@ -2903,8 +2948,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 30000,
@@ -2925,8 +2970,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.765
+     "area_frac": 0.7654,
+     "class": "halfplane"
     },
     {
      "seed": 40000,
@@ -2967,8 +3012,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 60000,
@@ -2989,8 +3034,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 70000,
@@ -3011,6 +3056,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.012,
      "bbox_fill": 0.653,
      "radial_ratio": 1.267,
      "area_units": 3.16,
@@ -3039,6 +3085,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0914,
      "bbox_fill": 1.0,
      "radial_ratio": 1.712,
      "area_units": 24.0,
@@ -3067,6 +3114,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.012,
      "bbox_fill": 0.653,
      "radial_ratio": 1.267,
      "area_units": 3.16,
@@ -3095,8 +3143,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 110000,
@@ -3137,8 +3185,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 130000,
@@ -3159,8 +3207,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.05
+     "area_frac": 0.0498,
+     "class": "halfplane"
     },
     {
      "seed": 140000,
@@ -3181,8 +3229,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 150000,
@@ -3203,8 +3251,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 160000,
@@ -3225,8 +3273,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 170000,
@@ -3247,7 +3295,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 2,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0034
     },
     {
      "seed": 180000,
@@ -3268,8 +3317,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 190000,
@@ -3290,8 +3339,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 200000,
@@ -3312,8 +3361,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     }
    ],
    "aggregates": {
@@ -3358,7 +3407,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 0,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0002
     },
     {
      "seed": 20000,
@@ -3399,6 +3449,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0479,
      "bbox_fill": 0.785,
      "radial_ratio": 1.058,
      "area_units": 12.56,
@@ -3447,8 +3498,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 60000,
@@ -3489,7 +3540,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0008
     },
     {
      "seed": 80000,
@@ -3510,8 +3562,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 1.0
+     "area_frac": 1.0,
+     "class": "halfplane"
     },
     {
      "seed": 90000,
@@ -3552,8 +3604,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.778
+     "area_frac": 0.7778,
+     "class": "halfplane"
     },
     {
      "seed": 110000,
@@ -3574,8 +3626,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.753
+     "area_frac": 0.7531,
+     "class": "halfplane"
     },
     {
      "seed": 120000,
@@ -3616,6 +3668,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0479,
      "bbox_fill": 0.785,
      "radial_ratio": 1.058,
      "area_units": 12.56,
@@ -3644,6 +3697,7 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
+     "area_frac": 0.0479,
      "bbox_fill": 0.785,
      "radial_ratio": 1.058,
      "area_units": 12.56,
@@ -3692,8 +3746,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.048
+     "area_frac": 0.0483,
+     "class": "halfplane"
     },
     {
      "seed": 170000,
@@ -3714,7 +3768,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 2,
-     "class": "point"
+     "class": "point",
+     "area_frac": 0.0015
     },
     {
      "seed": 180000,
@@ -3735,8 +3790,8 @@
      "west_numeric_dev": 0,
      "integrator_exact": true,
      "n_components": 1,
-     "class": "halfplane",
-     "area_frac": 0.048
+     "area_frac": 0.0483,
+     "class": "halfplane"
     },
     {
      "seed": 190000,

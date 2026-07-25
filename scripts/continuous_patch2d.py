@@ -4,8 +4,16 @@
 Bi-knob mechanism sweep: for each (k1, k2) patch-center cell, measure
 per-mode rarity (Wilson CIs), the paired truth/blind/random MPC arena
 (play_cost), and the per-mode + joint danger(N=40) law
-d@40 = play_cost * (1-r_i)^40 (per mode) and
-d@40_joint = play_cost * ((1-r1)*(1-r2))^40.
+d@40 = play_cost * (1-r_i)^40 (per mode) and, for the joint event,
+d@40_joint = play_cost * (1 - r_either)^40.
+
+r_either is MEASURED (the fraction of rollouts contacting P1 or P2), not
+composed as (1-r1)(1-r2): that product is the joint factor only if the two
+per-mode contact events are independent WITHIN a rollout, which this instrument
+does not satisfy -- a rollout that reaches the far patch has usually passed the
+near one, and a freeze can end a rollout's travel. Both are reported so the
+size of the independence error is visible (measured 2026-07-25: the product
+misses the exact joint factor by -17% to +12% relative, in both directions).
 
 Run: PYTHONPATH=src python scripts/continuous_patch2d.py   (~1-2h CPU)
 """
@@ -31,10 +39,15 @@ ap.add_argument("--patch-shape", choices=["disc", "square"], default="disc",
 args = ap.parse_args()
 
 
-def per_mode_rarity(truth, n_rollouts: int, seed: int) -> tuple[int, int]:
+def per_mode_rarity(truth, n_rollouts: int, seed: int) -> tuple[int, int, int, int]:
     """Random-action rollouts, tracking per-mode contacts BEFORE stepping
-    (mirrors tests/test_patch2d.py::test_rarity_split's loop)."""
-    h1 = h2 = 0
+    (mirrors tests/test_patch2d.py::test_rarity_split's loop).
+
+    Returns (h1, h2, h_either, h_both): the per-mode counts plus the two joint
+    counts. h_either is what the danger law needs for the joint event (the gate
+    misses the pair iff no rollout contacts EITHER patch); h_both quantifies how
+    far the events are from independent."""
+    h1 = h2 = h_either = h_both = 0
     for i in range(n_rollouts):
         rng = random.Random(seed + i)
         s = truth.initial_state(rng)
@@ -46,7 +59,9 @@ def per_mode_rarity(truth, n_rollouts: int, seed: int) -> tuple[int, int]:
             s = truth.step(s, a)[0]
         h1 += c1
         h2 += c2
-    return h1, h2
+        h_either += (c1 or c2)
+        h_both += (c1 and c2)
+    return h1, h2, h_either, h_both
 
 
 t0 = time.time()
@@ -59,24 +74,34 @@ for k1 in args.k1:
                              patch_shape=args.patch_shape)
         blind = blind_of(truth)
 
-        h1, h2 = per_mode_rarity(truth, args.rollouts, seed=args.seed + 50_000)
+        h1, h2, h_either, h_both = per_mode_rarity(truth, args.rollouts,
+                                                   seed=args.seed + 50_000)
         r1, r1_lo, r1_hi = wilson_ci(h1, args.rollouts)
         r2, r2_lo, r2_hi = wilson_ci(h2, args.rollouts)
+        r_either, re_lo, re_hi = wilson_ci(h_either, args.rollouts)
+        r_both = h_both / args.rollouts
 
         pc = harness.play_cost(truth, blind, args.episodes, seed=args.seed)
 
         d40_p1 = pc["play_cost"] * (1 - r1) ** 40
         d40_p2 = pc["play_cost"] * (1 - r2) ** 40
-        d40_joint = pc["play_cost"] * ((1 - r1) * (1 - r2)) ** 40
+        # the danger law applied to the joint critical event (Prop 1 with
+        # R = {rollouts contacting either patch}); the product form is kept
+        # alongside it only to expose the independence error
+        d40_joint = pc["play_cost"] * (1 - r_either) ** 40
+        d40_joint_indep = pc["play_cost"] * ((1 - r1) * (1 - r2)) ** 40
 
         row = {
             "k1": k1, "k2": k2,
             "r1": r1, "r1_ci": [r1_lo, r1_hi],
             "r2": r2, "r2_ci": [r2_lo, r2_hi],
+            "r_either": r_either, "r_either_ci": [re_lo, re_hi],
+            "r_both": r_both,
             "j_truth": pc["j_truth"], "j_blind": pc["j_blind"],
             "j_random": pc["j_random"], "play_cost": pc["play_cost"],
             "blind_contact_rate": pc["blind_contact_rate"],
             "d40_p1": d40_p1, "d40_p2": d40_p2, "d40_joint": d40_joint,
+            "d40_joint_indep_approx": d40_joint_indep,
             "n_episodes": pc["n_episodes"],
         }
         rows.append(row)

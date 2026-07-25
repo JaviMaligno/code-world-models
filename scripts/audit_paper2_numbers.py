@@ -146,11 +146,13 @@ for cells in tabular_rows("tab:patch2d"):
     j = p2d[key]
     for col, i, actual in (
             ("r1", 2, j["r1"]), ("r2", 3, j["r2"]),
-            ("J_truth", 4, j["j_truth"]), ("play_cost", 5, j["play_cost"]),
-            ("d@40 P1", 6, d(j["play_cost"], j["r1"], 40)),
-            ("d@40 P2", 7, d(j["play_cost"], j["r2"], 40)),
-            ("d@40 joint", 8,
-             j["play_cost"] * ((1 - j["r1"]) * (1 - j["r2"])) ** 40)):
+            ("r_union", 4, j["r_either"]),
+            ("J_truth", 5, j["j_truth"]), ("play_cost", 6, j["play_cost"]),
+            ("d@40 P1", 7, d(j["play_cost"], j["r1"], 40)),
+            ("d@40 P2", 8, d(j["play_cost"], j["r2"], 40)),
+            # the joint factor is the law at the union event, NOT the product of
+            # the per-mode factors (that would assume within-rollout independence)
+            ("d@40 joint", 9, d(j["play_cost"], j["r_either"], 40))):
         agree("tab:patch2d", key, col, numbers(cells[i])[0], actual)
 
 # --- tab:cem (with the cross-source play_cost check) ------------------------
@@ -171,14 +173,22 @@ for cells in tabular_rows("tab:cem"):
 
 # --- tab:axes ---------------------------------------------------------------
 axes = load("continuous_axes")["rows"]
+N_AXES_ROLLOUTS = 2000
 for cells in tabular_rows("tab:axes"):
-    r = numbers(cells[1])[0][0]
+    # a censored extreme is printed as a raw count (e.g. 0/2000), not a rate
+    if "/" in cells[1]:
+        k, n = (v for v, _ in numbers(cells[1]))
+        r = k / n
+        assert n == N_AXES_ROLLOUTS
+    else:
+        r = numbers(cells[1])[0][0]
     cand = [a for a in axes if abs(a["rarity"] - r) < 5e-4]
     if len(cand) != 1:
         FAILS.append(f"tab:axes: {cells[0]!r} matched {len(cand)} arms by rarity")
         continue
     j = cand[0]
-    for col, i, actual in (("reveal-rarity", 1, j["rarity"]),
+    for col, i, actual in (("reveal-rarity", 1,
+                            j["rarity"] * (N_AXES_ROLLOUTS if "/" in cells[1] else 1)),
                            ("(1-r)^40", 2, j["predicted_pass"]),
                            ("pass@40", 3, j["pass_rate"]),
                            ("play_cost", 4, j["play_cost"]),
@@ -425,7 +435,120 @@ for k in ("disc_large_k3_7", "disc_mini_k3_7", "disc_large_k5_9", "disc_mini_k5_
             if (c.get("area_frac") or 1.0) <= 0.03:
                 encodes += 1
 claim("34/76 contain a seen patch", contains == 34, str(contains))
-claim("0/76 encode a seen patch", encodes == 0, str(encodes))
+# the paper's partial-repair numbers live on the see-one-miss-the-other branch
+_see_one, _cont1, _sel = [], [], []
+for k in ("disc_large_k3_7", "disc_mini_k3_7", "disc_large_k5_9", "disc_mini_k5_9"):
+    for c in audit[k]["cells"]:
+        per = c.get("modes_in_sample") or {}
+        seen = [KEYMAP[n] for n, v in per.items() if v and n in KEYMAP]
+        unseen = [KEYMAP[n] for n, v in per.items() if not v and n in KEYMAP]
+        if len(seen) == 1 and len(unseen) == 1:
+            cs = c.get(f"cover_{seen[0]}") or 0
+            cu = c.get(f"cover_{unseen[0]}") or 0
+            af = c.get("area_frac")
+            _see_one.append(c)
+            if cs > 0.9:
+                _cont1.append(af)
+                if cu < 0.1:
+                    _sel.append((c["seed"], c["class"], af))
+PATCH_SHARE = 3.141592653589793 / (16 * 16)
+claim("66 see-one seeds", len(_see_one) == 66, str(len(_see_one)))
+claim("28 of them contain the seen patch", len(_cont1) == 28, str(len(_cont1)))
+claim("their area spans 15x-81x the patch (median 61x)",
+      (round(min(_cont1) / PATCH_SHARE) == 15
+       and round(max(_cont1) / PATCH_SHARE) == 81
+       and round(sorted(_cont1)[len(_cont1) // 2] / PATCH_SHARE) == 61),
+      f"{min(_cont1)/PATCH_SHARE:.1f}x-{max(_cont1)/PATCH_SHARE:.1f}x")
+claim("exactly one patch-selective artifact, a half-plane at 31x",
+      len(_sel) == 1 and _sel[0][0] == 180000 and _sel[0][1] == "halfplane"
+      and round(_sel[0][2] / PATCH_SHARE) == 31, str(_sel))
+
+# --- Proposition (joint gate miss): bracket + sign rule vs the measurement --
+# The paper proves a two-sided bracket for the joint gate-miss factor and a sign
+# rule for the product's error. Both are checkable on every knob, so check them:
+# a proof that contradicted the data would be a bug in one of the two.
+N_GATE = 40
+for j in load("continuous_patch2d")["rows"]:
+    r1, r2, ru, rb = j["r1"], j["r2"], j["r_either"], j["r_both"]
+    lo = max(0.0, 1 - min(1.0, r1 + r2)) ** N_GATE
+    hi = (1 - max(r1, r2)) ** N_GATE
+    truth = (1 - ru) ** N_GATE
+    prod = ((1 - r1) * (1 - r2)) ** N_GATE
+    knob = (j["k1"], j["k2"])
+    claim(f"bracket contains the measured joint factor {knob}",
+          lo - 1e-15 <= truth <= hi + 1e-15, f"[{lo:.6f},{hi:.6f}] vs {truth:.6f}")
+    claim(f"bracket contains the product form {knob}",
+          lo - 1e-15 <= prod <= hi + 1e-15, f"[{lo:.6f},{hi:.6f}] vs {prod:.6f}")
+    # sign rule: product over-estimates the miss iff P(both) < r1*r2
+    if abs(prod - truth) > 1e-12:
+        claim(f"sign rule predicts the product's error direction {knob}",
+              (rb < r1 * r2) == (prod > truth),
+              f"P(both)={rb:.4f} r1r2={r1*r2:.5f} prod-truth={prod-truth:.2e}")
+    # inclusion-exclusion consistency of the measured quantities themselves
+    claim(f"measured r_union = r1 + r2 - P(both) {knob}",
+          abs(ru - (r1 + r2 - rb)) < 1e-9, f"{ru:.6f} vs {r1+r2-rb:.6f}")
+
+# --- cited code artifacts: paths exist, quoted code is verbatim ------------
+TEX = TEX  # noqa: PLW0127 — readability: the paper source, parsed again below
+_tex = TEX.read_text()
+
+# (a) every repo path the paper names in \texttt{} must exist
+for m in re.finditer(r"\\texttt\{((?:[^{}]|\\[_{}])*)\}", _tex):
+    s = (m.group(1).replace("\\_", "_").replace("\\allowbreak", "")
+         .replace(" ", ""))
+    if s.startswith(("scripts/", "src/", "tests/", "docs/", "results/")) \
+            and not s.endswith("*.py") and "*" not in s:
+        claim(f"cited path exists: {s}", (_REPO / s).exists())
+
+# (b) code the paper quotes from artifacts must appear in a committed artifact.
+# Whitespace-normalised containment; the corpus is every synthesized artifact and
+# every relayed reply under results/. This is the check that catches a quote
+# nobody produced (it caught a fabricated "abs(v2) <= 1.1" clamp on 2026-07-25).
+_corpus = []
+for f in (_REPO / "results").glob("continuous_synthesis_*.json"):
+    try:
+        blob = json.loads(f.read_text())
+    except Exception:
+        continue
+    _corpus += [c.get("code", "") for c in blob.get("cells", [])]
+_relay = _REPO / "results" / "continuous_claude_relay.json"
+if _relay.exists():
+    _corpus += [c.get("code", "") for c in json.loads(_relay.read_text())]
+for f in (_REPO / "results" / "claude_relay_transcripts").glob("*_reply*.txt"):
+    _corpus.append(f.read_text())
+# ";" is Python's statement separator: a paper that inlines a multi-line body as
+# "if c: a = 1; b = 2" quotes the same code, so it is normalised away too.
+def _flat(s):
+    return re.sub(r"[\s;]+", "", s)
+
+
+_norm = [_flat(c) for c in _corpus]
+
+QUOTED_CODE = [
+    ("cart repair (return form)", "if x2 >= 8.0: return [8.0, 0.0]"),
+    ("cart repair (assign form)", "if x2 > 8.0: x2 = 8.0"),
+    ("superstitious clamp (x_wall=4 cell)",
+     "if abs(x2 - 4.0) <= 0.15 and abs(v2) <= 2.5: x2 = 4.0; v2 = 0.0"),
+    ("Qwen superstitious patch", "if x2 >= 8.0 and v2 <= 0.0:"),
+    ("pendulum repair at the headline knob", "if th2 >= 1.4: return [1.4, 0.0]"),
+    ("Claude phantom stop (elif branch)",
+     "elif th2 < -th_max: th2 = -th_max; om2 = 0.0"),
+    ("patch2d dimensional reduction", "if x2 > 4.0:"),
+    ("square-ablation dimensional reduction", "if x2 >= 2.0"),
+    ("reward-lode disc (mini k3_7 seed 130000)", "if d1 <= 2.0 or d2 <= 2.0:"),
+]
+for label, snippet in QUOTED_CODE:
+    q = _flat(snippet)
+    claim(f"quoted verbatim in some artifact: {label}",
+          any(q in c for c in _norm))
+    CHECKS[0] += 0  # claim() already counted it
+
+# (c) the fitted constants the paper attributes to Claude's one radial attempt
+_claude_disc = [c for c in _norm if "OBSTACLE_R" in c]
+claim("Claude's fitted disc constants (2.3275291505576885 / -0.13505551993070315 / 0.824)",
+      any(all(v in c for v in ("2.3275291505576885", "-0.13505551993070315",
+                               "0.824")) for c in _claude_disc),
+      f"{len(_claude_disc)} artifact(s) with OBSTACLE_R")
 
 # --- report ----------------------------------------------------------------
 print(f"checked {CHECKS[0]} values from docs/paper2/main.tex against results/")
