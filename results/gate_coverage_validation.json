@@ -1,0 +1,48 @@
+{
+  "script": "gate_coverage_validation.py",
+  "params": {
+    "rhos": [
+      0.7,
+      0.6,
+      0.5,
+      0.4
+    ],
+    "n_gate": 40,
+    "trials": 200,
+    "region": 1.0
+  },
+  "rows": [
+    {
+      "rho": 0.7,
+      "covered": 200,
+      "trials": 200,
+      "rate": 1.0,
+      "n_needed_certificate": 10,
+      "certificate_expects": "cover"
+    },
+    {
+      "rho": 0.6,
+      "covered": 199,
+      "trials": 200,
+      "rate": 0.995,
+      "n_needed_certificate": 35,
+      "certificate_expects": "cover"
+    },
+    {
+      "rho": 0.5,
+      "covered": 128,
+      "trials": 200,
+      "rate": 0.64,
+      "n_needed_certificate": 169,
+      "certificate_expects": "fail"
+    },
+    {
+      "rho": 0.4,
+      "covered": 10,
+      "trials": 200,
+      "rate": 0.05,
+      "n_needed_certificate": 1179,
+      "certificate_expects": "fail"
+    }
+  ]
+}

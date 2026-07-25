@@ -1,5 +1,54 @@
 # Experiments Log
 
+## PAPER 2 — Density derived at every step; certificate extended; threshold validated (2026-07-25, final)
+
+Javier asked two things: whether the small N is a problem calling for a bigger
+experiment, and to derive what was missing.
+
+**On N = 40: it is the OBJECT OF STUDY, not our sample size.** The paper is about
+what a deployed CWM gate misses, and that gate is 40 rollouts (paper 1's setting).
+"This gate certifies sup <= 1.53 for Lipschitz models" is a fact about a weak gate
+— the thesis, not a limitation of our evidence. Where N *was* our measurement
+budget it has already been raised (rarity 3000 -> 30000, axes 2000 -> 20000, 300
+independent gates for pass@N). Running a bigger GATE would measure a different
+object; what it would add is only confirmation of the arithmetic in the N-vs-rho
+table, so instead we validated the threshold (below).
+
+**Derived: the visitation density at every step t >= 2.** The plant is linear and
+time-invariant, so (x_t, v_t) is an affine image of (x_0, a_0..a_{t-1}); splitting
+off the LAST TWO actions gives (x_t,v_t) = W_t + M (a_{t-2}, a_{t-1}) with M
+time-invariant and |det M| = 0.009 (verified against finite differences). Hence at
+every t the step-t law is a convolution with the uniform law on a parallelogram of
+area 0.036, so it is absolutely continuous with
+
+    p_t(u) >= 27.78 * P( M^{-1}(u - W_t) in [-a_max, a_max]^2 ),
+
+an exact constant times a reachability probability. `gate_density_step_t.py`.
+
+Two things we measured before believing them:
+- **The certified region must be a LEVEL SET, not a box.** A box's corners pair
+  extreme x with extreme v, which the gate never reaches, so inf over a box is 0
+  and the bound is vacuous. First attempt returned exactly that; the script now
+  reports level sets.
+- **Later steps trade density for extent.** Step 20's {p >= 0.05} has volume 6.9 in
+  (x,v,a) against the one-step set's 1.2, and N = 40 certifies rho = 1.44, i.e.
+  sup <= **3.67** — a region **5.7x larger, still excluding the hard mode's 4.2**.
+  Step 40's {p >= 0.01} (volume 19) gives rho = 2.39 and 6.07, which no longer
+  excludes it: that is the frontier of what 40 rollouts buy.
+
+**The threshold is TIGHT, measured.** 200 independent gates per resolution
+(`gate_coverage_validation.py`): the deployed gate actually covers in 200/200 at
+rho = 0.70, **199/200 at rho = 0.60** (the resolution the certificate licenses),
+then 128/200 at 0.50 and 10/200 at 0.40 — exactly where the certificate demands
+N >= 169 and N >= 1179. So the bound is tight to one grid step, not loose by orders
+of magnitude, which is what makes the N-vs-rho trade-off worth quoting.
+
+Limitations narrowed again: the density gap is closed for all steps of this plant;
+what stays open is covering the UNION over steps (or the planner's own visitation,
+which is not the gate's) and the nonlinear analogue of the Jacobian argument.
+
+State: 38 pp, 0 errors / 0 undefined / 0 overfull; **531 audited values**.
+
 ## PAPER 2 — The "mixing argument" settled: a negative result, and a better proof (2026-07-25, last)
 
 Javier: "eso que dices del argumento de mezcla entiendo que significa que hay algo

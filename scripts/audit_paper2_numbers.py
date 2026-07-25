@@ -607,6 +607,26 @@ claim("both bounds are below the hard mode's own disagreement (4.2)",
 claim("the certificate's c and L match the corollary's", 
       abs(cov["c"] - 5 / 6) < 1e-12 and abs(cov["L_plant"] - 1.27) < 5e-3)
 
+# --- density at step t, and the tightness validation -------------------------
+dst = load("gate_density_step_t")
+claim("|det M| = 0.009 and the parallelogram density is 27.78",
+      abs(abs(dst["det_M"]) - 0.009) < 1e-9
+      and abs(dst["parallelogram_density"] - 27.7778) < 1e-3)
+_step20 = [r for r in dst["rows"] if r["step"] == 20][0]
+_i05 = _step20["alphas"].index(0.05)
+claim("step-20 level set {p>=0.05} has volume 6.9 in (x,v,a)",
+      abs(_step20["volumes_sa"][_i05] - 6.875) < 0.05,
+      f"{_step20['volumes_sa'][_i05]:.3f}")
+val = {round(r["rho"], 2): r for r in load("gate_coverage_validation")["rows"]}
+claim("validation: 199/200 gates cover at rho = 0.60",
+      val[0.6]["covered"] == 199, str(val[0.6]["covered"]))
+claim("validation: coverage collapses to 128/200 at 0.50 and 10/200 at 0.40",
+      val[0.5]["covered"] == 128 and val[0.4]["covered"] == 10,
+      f"{val[0.5]['covered']}, {val[0.4]['covered']}")
+claim("validation agrees with the certificate's expectation at every rho",
+      all((r["rate"] >= 0.95) == (r["certificate_expects"] == "cover")
+          for r in load("gate_coverage_validation")["rows"]))
+
 # --- the dependence-exact coverage certificate --------------------------------
 dep = load("gate_coverage_dependent")["rows"]
 _by = {round(r["rho"], 2): r for r in dep}
