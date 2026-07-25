@@ -1415,15 +1415,25 @@ $\gamma^2 = (1-\kappa^2)/\kappa^2$, a single Chernoff bound with matched
 exponent gives $P \le E[e^{\lambda\gamma^2 Z_1^2}]\prod_{i\ge2}
 E[e^{-\lambda Z_i^2}]$, and optimizing $\lambda$ in the Gaussian regime
 returns $\sqrt{en/(1+\gamma^2)}\,(1-\kappa^2)^{(n-1)/2}$: the cap rate
-exactly, losing only $\sqrt n$. Two ingredients close it --- Hoeffding
-sub-Gaussianity for $Z_1$ (standard), and the statement that a
-Rademacher sum is no more concentrated near zero than its Gaussian
-counterpart, for which Berry--Esseen supplies an $O(h^{-1/2})$ error
-provided no few steps dominate the weight profile. That weight-profile
-control is the one thing still missing, and it is a statement about
-AR(1) coefficients rather than about geometry. Details and machine
-checks are in the repository's theory notes (Lemmas~C/E/F/G/H,
-Theorems~T5-C, T5-I and Proposition~T5-T).
+exactly, losing only $\sqrt n$. Two ingredients close it. The first is Hoeffding
+sub-Gaussianity for $Z_1$. The second is that a Rademacher sum is no
+more concentrated near zero than its Gaussian counterpart --- which in
+its clean form is \emph{false} (equal weights leave an atom at the
+origin), and whose correct form we prove by writing
+$E[e^{-\lambda Z^2}] = E_g\prod_s \cos(\sqrt{2\lambda}\,g\,c_s)$ and
+splitting on $|g|$: since $|\cos x| \le e^{-x^2/2}$ for
+$|x| \le 1.778$,
+\[
+  E[e^{-\lambda Z^2}] \;\le\; (1+2\lambda\sigma^2)^{-1/2}
+  + 2\bar\Phi\!\left(1.778\,\rho/\sqrt{2\lambda\sigma^2}\right),
+  \qquad \rho = \sigma/\max_s|c_s|,
+\]
+with no hypothesis on the weights for validity. The instrument's own
+conditional profile has $\rho$ of median $4.0$ and minimum $2.34$ over
+${\approx}8000$ samples, so the error costs ${\approx}3\times10^{-3}$:
+the per-dimension rate is $0.418$ against the sharp $0.4167$. Details
+and machine checks are in the repository's theory notes (Lemmas~C/E/F/G/
+H/I, Theorems~T5-C and T5-I, Proposition~T5-T).
 
 \paragraph{A methods note: the danger needs a competent planner, and
 ``competent'' is an interface property.} Our first $n$-sweep measured

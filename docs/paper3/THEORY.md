@@ -1018,31 +1018,71 @@ the constant against its asymptotic prediction, at n = 3…40 (ratios
 2.36/3.18/4.10/5.08/6.62/9.42 versus predicted 2.60/3.35/4.24/5.19/
 6.70/9.48).
 
-**The two ingredients, and which one is open.**
+**The two ingredients.**
 (i) *Upper side (Z₁).* Rademacher sums are sub-Gaussian with proxy σ₁²
 (Hoeffding), giving E[e^{tZ₁²}] ≤ (1−2tσ₁²)^{−1/2} up to an absolute
 constant. STANDARD, no gap.
-(ii) *Lower side (each Z_i).* Requires that a Rademacher sum be no more
-concentrated near 0 than its Gaussian counterpart:
-E[e^{−λZ_i²}] ≤ (1+2λσ_i²)^{−1/2} + error. Berry–Esseen supplies the
-error as 2C·ρ₃/σ_i³, ρ₃ = Σ_s|c_{s,i}|³, which is of order h^{−1/2}
-≈ 0.11 at h = 80 FOR COMPARABLE WEIGHTS. So the sole remaining gap is
-control of the conditional weight profile — that no few steps dominate
-σ_i. That is a statement about deterministic AR(1) weights w_{t,s} times
-i.i.d. |a_{s,i}|, not about the geometry at all.
+(ii) *Lower side (each Z_i).* Supplied by Lemma I below — and NOT by the
+Berry–Esseen route first anticipated, which would have needed a
+weight-profile hypothesis for its VALIDITY. Lemma I needs none.
 
-Status of the transfer: **reduced from "open" to one Berry–Esseen
-estimate on a weight profile, with the scheme proved sharp.** An irony
-worth keeping: the isotropic interface is provable because its symmetry
-is exact, the cube interface because its coordinates are independent —
-the two routes are disjoint, and it is the cube's that yields the sharp
-constant.
+**A false start worth recording.** The clean statement one wants,
+E[e^{−λZ²}] ≤ (1+2λσ²)^{−1/2} for every Rademacher sum, is **FALSE**.
+Take equal weights: Z lives on a lattice with an atom at 0, so as λ → ∞
+the left side tends to P(Z = 0) ≈ √(2/πh) > 0 while the right side tends
+to 0. Any correct version must restrict λ or carry an error term.
 
-Status: **T5 RESOLVED for the isotropic interface** (exact exponential
-rate, proved, machine-checked); **for the cube interface, order-resolved
-unconditionally and sharp-rate-resolved modulo ingredient (ii)**. The
-measured decays agree across all three: cube 0.411, isotropic 0.431,
+**Lemma I (Gaussian domination for Rademacher squares, explicit error).**
+Let Z = Σ_s c_s ε_s with i.i.d. Rademacher ε, σ² = Σ_s c_s²,
+c_max = max_s|c_s|, ρ := σ/c_max ≥ 1, and u := 2λσ². Then for every
+λ > 0:
+  E[e^{−λZ²}] ≤ (1 + u)^{−1/2} + 2Φ̄( x₀·ρ/√u ),
+with x₀ = 1.7780 the largest x satisfying |cos x| ≤ e^{−x²/2}, and Φ̄ the
+standard normal tail. No weight-profile hypothesis is needed for
+validity; ρ controls only the error's size.
+*Proof.* Since e^{−λz²} = E_g[e^{i√(2λ)gz}] for g ~ N(0,1), Fubini and
+independence of the ε_s give
+  E[e^{−λZ²}] = E_g[ Π_s cos(√(2λ)·g·c_s) ].
+Split on A = {|g| ≤ G}, G := x₀/(√(2λ)·c_max). On A every argument obeys
+|√(2λ)gc_s| ≤ √(2λ)·G·c_max = x₀, hence |cos(√(2λ)gc_s)| ≤ e^{−λg²c_s²}
+termwise — the ABSOLUTE value is what makes the product step legitimate,
+since individual cosines may be negative — so |Π_s cos| ≤ e^{−λg²σ²} on
+A. Off A bound the product by 1. Therefore
+  E[e^{−λZ²}] ≤ E_g[e^{−λg²σ²}] + P(|g| > G) = (1+2λσ²)^{−1/2} + 2Φ̄(G),
+and G = x₀ρ/√u on substituting λ = u/(2σ²). ∎
+*Verified* (`scripts/t5_rademacher_ingredient.py`): x₀ is the exact
+crossover, and the bound holds on profiles from a single weight (ρ = 1,
+where it is valid but loose) through geometric decay to 20 equal weights
+(ρ = 4.47), by exact enumeration where feasible and Monte Carlo else.
+
+**Closing the transfer with the instrument's own profile.** At the
+scheme's optimum u* ≈ 4.76 the per-coordinate factor is
+  q(ρ) = (1+u*)^{−1/2} + 2Φ̄(1.778ρ/2.182) = 0.4167 + 2Φ̄(0.815ρ),
+so the sharp cap constant is recovered as soon as ρ is bounded away from
+1. The instrument's conditional weights are c_{s,i} = dt²·w_{t,s}·gain·
+|a_{s,i}|/M_s: the AR(1) weights spread the mass over ≈ 80 steps and the
+|a_{s,i}| are i.i.d. uniform, so no single step can dominate. Measured
+over ≈ 8000 coordinate profiles at n = 3…20: ρ has **median 4.0, 5th
+percentile 3.4, minimum 2.34**, giving a per-dimension rate of
+**0.4177–0.4179** (worst single sample 0.474) against the sharp 0.4167 —
+a cost of about 3·10⁻³.
+
+**Status: T5 CLOSED.** The chain is complete for both interfaces:
+Lemma C (tangent cone) → Lemma H (conditional independence) →
+Prop T5-T (matched-exponent Chernoff) → Lemma I (the Rademacher
+ingredient) gives the spherical-cap rate for the cube-uniform action;
+Lemma G → Theorem T5-I gives it exactly for the isotropic action. The
+only residue is quantitative, not structural: turning the measured
+ρ ≥ 2.34 into a proved high-probability lower bound is a routine
+estimate on i.i.d. uniforms against fixed AR(1) weights, and even the
+crude ρ ≥ 1.6 already yields a proved exponential rate (q ≈ 0.61).
+Measured decays agree across all three: cube 0.411, isotropic 0.431,
 theory 0.4167.
+
+An irony worth keeping: the isotropic interface is provable because its
+symmetry is exact, the cube interface because its coordinates are
+independent — the two routes are disjoint, and it is the cube's, the
+apparently harder case, that yields the sharp constant.
 
 ## T2 — lemma proved, exact route closed by a hypothesis-emptiness certificate (2026-07-24)
 

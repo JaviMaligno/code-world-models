@@ -231,3 +231,73 @@ def test_t5_transfer_scheme_is_sharp():
             if u < 1 / g2:
                 assert (1 - g2 * u) ** -0.5 * (1 + u) ** (-(n - 1) / 2) \
                     >= scheme - 1e-15
+
+
+def _phibar(x):
+    return 0.5 * math.erfc(x / math.sqrt(2))
+
+
+def test_t5_lemma_i_pointwise_inequality():
+    # x0 = 1.7780 is exactly the crossover of |cos x| and exp(-x^2/2)
+    x0 = 1.7780
+    for i in range(1, 17781):
+        x = i * 1e-4
+        assert abs(math.cos(x)) <= math.exp(-x * x / 2) + 1e-12, x
+    assert abs(math.cos(x0 + 2e-4)) > math.exp(-(x0 + 2e-4) ** 2 / 2)
+
+
+def test_t5_lemma_i_bound_holds_on_extreme_profiles():
+    # Lemma I is valid with NO weight-profile hypothesis: check from a
+    # single weight (rho = 1) to many equal weights.
+    import itertools
+    x0, u = 1.7780, 4.76
+    for cs in ([1.0], [1.0, 1.0], [1.0] + [0.05] * 9,
+               [0.7 ** k for k in range(10)], [1.0] * 12):
+        s2 = sum(c * c for c in cs)
+        lam = u / (2 * s2)
+        exact = sum(math.exp(-lam * sum(s * c for s, c in zip(sg, cs)) ** 2)
+                    for sg in itertools.product((1, -1), repeat=len(cs)))
+        exact /= 2 ** len(cs)
+        rho = math.sqrt(s2) / max(abs(c) for c in cs)
+        bound = (1 + u) ** -0.5 + 2 * _phibar(x0 * rho / math.sqrt(u))
+        assert exact <= bound, (cs, exact, bound)
+
+
+def test_t5_gaussian_domination_without_error_is_false():
+    # The clean statement E[e^{-lam Z^2}] <= (1+2 lam sigma^2)^{-1/2} is
+    # FALSE for lattice weights: the atom at 0 survives lam -> infinity.
+    # Guarded so the error term is never dropped as "cosmetic".
+    import itertools
+    h = 8
+    cs = [1.0] * h
+    s2 = float(h)
+    lam = 500.0 / s2                    # large lambda
+    exact = sum(math.exp(-lam * sum(s for s in sg) ** 2)
+                for sg in itertools.product((1, -1), repeat=h)) / 2 ** h
+    gaussian = (1 + 2 * lam * s2) ** -0.5
+    assert exact > gaussian, (exact, gaussian)
+
+
+def test_t5_instrument_weight_profile_is_non_degenerate():
+    # The transfer's remaining quantitative input: the instrument's
+    # conditional weight profile has rho = sigma/c_max well above 1, so
+    # Lemma I's error term is negligible at the scheme's optimum.
+    from cwm.continuous.envs import thrust_vector_nd
+    dt, drag, gain, a_max, h, n = 0.1, 0.3, 3.0, 1.0, 80, 6
+    beta = 1 - drag * dt
+    w = [(1 - beta ** (h - s)) / (1 - beta) for s in range(h)]
+    rng = random.Random(7)
+    worst = 99.0
+    for _ in range(40):
+        cols = [[0.0] * h for _ in range(n)]
+        for s in range(h):
+            t = thrust_vector_nd(tuple(rng.uniform(-1, 1) for _ in range(n)),
+                                 gain, a_max)
+            for i in range(n):
+                cols[i][s] = dt * dt * w[s] * abs(t[i])
+        for col in cols:
+            cm = max(col)
+            worst = min(worst, math.sqrt(sum(x * x for x in col)) / cm)
+    assert worst > 2.0, worst
+    q = (1 + 4.76) ** -0.5 + 2 * _phibar(1.7780 * worst / math.sqrt(4.76))
+    assert q < 0.50, (worst, q)        # vs the sharp 0.4167
