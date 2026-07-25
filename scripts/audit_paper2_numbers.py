@@ -516,10 +516,13 @@ for eta, want in ((0.1, 0.33), (0.5, 1.78), (4.2, 15.2)):
 # claims reveal/firing is exactly 1.000 below eps*: check all three.
 eps_thr = load("eps_invariance_threshold")
 GRID_EPS = eps_thr["grid"]
-QUOTED = {"cart wall@8": (0.3855, None),
-          "cart wall@4": (0.0561, 0.1),
-          "pendulum stop@1.0": (0.0513, 0.1),
-          "pendulum stop@1.4": (0.1164, 0.3)}
+# The table now quotes eps* computed on the SWEEP'S OWN stream (--seed 10000),
+# because a threshold from one sample compared against dips in another is not a
+# prediction; in-sample it is an identity. Values from the paper's Table epsstar.
+QUOTED = {"cart wall@8": (0.3959, None),
+          "cart wall@4": (0.1137, 0.3),
+          "pendulum stop@1.0": (0.0791, 0.1),
+          "pendulum stop@1.4": (0.0805, 0.1)}
 for row in eps_thr["rows"]:
     want_star, want_break = QUOTED[row["arm"]]
     claim(f"eps* as quoted for {row['arm']}",
@@ -594,18 +597,56 @@ for label, name, tol_pred, tol_spread in (
 # --- Proposition (coverage certificate): the two instantiated bounds ---------
 cov = load("gate_coverage_certificate")
 _reg = {r["regime"].split(" (")[0]: r for r in cov["regimes"]}
-claim("rigorous regime: rho = 0.615 and bound 1.57",
-      abs(_reg["one step per rollout"]["rho"] - 0.615) < 0.006
-      and abs(_reg["one step per rollout"]["uniform_bound"] - 1.57) < 0.02,
+claim("rigorous regime: rho = 1.165 and bound 2.97 (with the COMPUTED ball-mass "
+      "factor, 0.950 * 2^-DIM for this sheared U)",
+      abs(_reg["one step per rollout"]["rho"] - 1.165) < 0.006
+      and abs(_reg["one step per rollout"]["uniform_bound"] - 2.969) < 0.02,
       str(_reg["one step per rollout"]))
-claim("all-steps regime: rho = 0.165 and bound 0.43",
-      abs(_reg["all steps"]["rho"] - 0.165) < 0.006
-      and abs(_reg["all steps"]["uniform_bound"] - 0.43) < 0.02,
+claim("all-steps regime: rho = 0.310 and bound 0.797",
+      abs(_reg["all steps"]["rho"] - 0.310) < 0.006
+      and abs(_reg["all steps"]["uniform_bound"] - 0.797) < 0.02,
       str(_reg["all steps"]))
 claim("both bounds are below the hard mode's own disagreement (4.2)",
       all(r["uniform_bound"] < cov["wall_probe_error"] for r in cov["regimes"]))
+claim("the wall's error is excluded only for pairs with L <= 1.80",
+      abs(cov["max_L_excluding_wall_error"] - 1.798) < 0.005,
+      f"{cov['max_L_excluding_wall_error']:.3f}")
+claim("the corner hypothesis holds: U's narrowest extent 0.6 >= rho/2 = 0.583",
+      0.6 >= _reg["one step per rollout"]["rho"] / 2)
 claim("the certificate's c and L match the corollary's", 
       abs(cov["c"] - 5 / 6) < 1e-12 and abs(cov["L_plant"] - 1.27) < 5e-3)
+
+# --- the 1D repair count, ALL cells (peer review 2026-07-25 caught 106/106
+# excluding the x_wall=4 cell, where 2 of 5 mode-present seeds are not repaired)
+_1d_files = ["continuous_synthesis_mini_xwall8", "continuous_synthesis_large_xwall8",
+             "continuous_synthesis_large_xwall8_off20",
+             "continuous_synthesis_mini_xwall4",
+             "continuous_synthesis_pendulum_mini_thstop1.4",
+             "continuous_synthesis_pendulum_large_thstop1.4",
+             "continuous_synthesis_pendulum_large_thstop1.4_off20",
+             "continuous_synthesis_pendulum_mini_thstop1",
+             "continuous_synthesis_pendulum_large_thstop1"]
+_present = _repaired = 0
+for _f in _1d_files:
+    for c in synth_cells(_f):
+        if c["arm"] == "incomplete" and c["sample_contains_wall"]:
+            _present += 1
+            if c["gate_passed"] and (c["wall_blindness"] or 0) == 0.0:
+                _repaired += 1
+claim("GPT-5.x 1D repair is 109/111 over ALL cells, not 106/106",
+      (_repaired, _present) == (109, 111), f"{_repaired}/{_present}")
+_x4 = [c for c in synth_cells("continuous_synthesis_mini_xwall4")
+       if c["arm"] == "incomplete" and c["sample_contains_wall"]]
+claim("the x_wall=4 cell is 3/5 (the two exceptions)",
+      len(_x4) == 5 and sum(1 for c in _x4 if c["gate_passed"]
+                            and (c["wall_blindness"] or 0) == 0.0) == 3)
+
+# --- CEM: only the zero-crossing rows instantiate the low-query-reach branch --
+_cem = load("continuous_cem")["rows"]
+_zero = [r for r in _cem if r["crossing_frac_cem_blind"] == 0.0]
+claim("exactly two CEM rows have crossing fraction exactly zero",
+      len(_zero) == 2 and all(r["instrument"] == "cart" for r in _zero),
+      str([(r["instrument"], r["knob"]) for r in _zero]))
 
 # --- the universal two-action Jacobian and the query-mass measurement --------
 _qm = load("certified_region_query_mass")["rows"]
@@ -627,40 +668,178 @@ claim("universal two-action Jacobian equals gain^2 dt^3 = 0.009",
 
 # --- density at step t, and the tightness validation -------------------------
 dst = load("gate_density_step_t")
-claim("|det M| = 0.009 and the parallelogram density is 27.78",
+claim("|det M| = 0.009 and the parallelogram (2-D) density is 27.78",
       abs(abs(dst["det_M"]) - 0.009) < 1e-9
-      and abs(dst["parallelogram_density"] - 27.7778) < 1e-3)
-_step20 = [r for r in dst["rows"] if r["step"] == 20][0]
-_i05 = _step20["alphas"].index(0.05)
-claim("step-20 level set {p>=0.05} has volume 6.9 in (x,v,a)",
-      abs(_step20["volumes_sa"][_i05] - 6.875) < 0.05,
-      f"{_step20['volumes_sa'][_i05]:.3f}")
-val = {round(r["rho"], 2): r for r in load("gate_coverage_validation")["rows"]}
-claim("validation: 199/200 gates cover at rho = 0.60",
-      val[0.6]["covered"] == 199, str(val[0.6]["covered"]))
+      and abs(dst["parallelogram_density_2d"] - 27.7778) < 1e-3)
+claim("the 3-D density divides by 2*a_max (the action factor the first version "
+      "dropped)",
+      all(ls["alpha"] <= dst["parallelogram_density_2d"] / 2.0
+          for r in dst["rows"] for ls in r["level_sets"]))
+_certs = [(r["step"], ls["alpha"], ls["certificate"])
+          for r in dst["rows"] for ls in r["level_sets"] if ls["certificate"]]
+claim("with a shape-free ball-mass bound, N = 40 certifies NOTHING on any step-t "
+      "level set (the retracted 3.67 came from an unjustified 2^-DIM factor)",
+      _certs == [] and dst["best"] is None, str(len(_certs)))
+_vols = {(r["step"], ls["alpha"]): ls["vol_sa"]
+         for r in dst["rows"] for ls in r["level_sets"]}
+claim("step-20 {p>=0.05} has volume 3.09 in (x,v,a)",
+      abs(_vols[(20, 0.05)] - 3.087) < 0.02, f"{_vols[(20, 0.05)]:.3f}")
+claim("step-40 {p>=0.02} has volume 6.13 and step-80 {p>=0.01} has 6.21",
+      abs(_vols[(40, 0.02)] - 6.125) < 0.02
+      and abs(_vols[(80, 0.01)] - 6.206) < 0.02,
+      f"{_vols[(40, 0.02)]:.3f}, {_vols[(80, 0.01)]:.3f}")
+val = {round(r["rho"], 3): r for r in load("gate_coverage_validation")["rows"]}
+claim("validation: 200/200 gates cover at the licensed net radius 1.0",
+      val[1.0]["covered"] == 200, str(val[1.0]["covered"]))
+claim("validation: 198/200 at radius 0.667, which the certificate declines "
+      "(N >= 42 > 40) -- conservative by ~5% in N",
+      val[0.667]["covered"] == 198 and val[0.667]["n_needed_certificate"] == 42,
+      f"{val[0.667]['covered']}, N={val[0.667]['n_needed_certificate']}")
 claim("validation: coverage collapses to 128/200 at 0.50 and 10/200 at 0.40",
       val[0.5]["covered"] == 128 and val[0.4]["covered"] == 10,
       f"{val[0.5]['covered']}, {val[0.4]['covered']}")
-claim("validation agrees with the certificate's expectation at every rho",
-      all((r["rate"] >= 0.95) == (r["certificate_expects"] == "cover")
-          for r in load("gate_coverage_validation")["rows"]))
+claim("the validation grid is honest: every cell at most rho wide",
+      all(r["cell_width"] <= r["rho"] + 1e-12
+          for r in load("gate_coverage_dependent")["rows"]))
+
+# --- the invariance certificate's SCOPE, not just its verdict -----------------
+_inv = load("truth_plan_invariance_certificate")
+claim("the invariance certificate covers the harness's 20 episodes per knob",
+      _inv["params"]["episodes"] == 20, str(_inv["params"]["episodes"]))
+claim("uniqueness (C3) is a diagnostic and does in fact fail -- ties occur, and "
+      "the certificate rests on C1, C2 and the knob-independent tie-break",
+      any(not r.get("C3_argmax_unique", True) for r in _inv["rows"]))
+claim("every sweep knob is certified", all(r["certificate"] for r in _inv["rows"]
+                                           if r["in_sweep"]))
+
+# --- the fence census: what the proposition bounds vs what the table counts ----
+_fc = load("fence_separation_census")
+_pc = {tuple(r["knob"]): r for r in _fc["patch2d_episode_census"]}
+claim("census reproduces the mitigation table's means 1.05/2.65/4.25",
+      all(abs(_pc[k]["mean_violations"] - v) < 5e-3 for k, v in
+          (((2.0, 6.0), 1.05), ((3.0, 7.0), 2.65), ((4.0, 8.0), 4.25))))
+claim("per-episode medians are 1/1/2, not the means",
+      [_pc[k]["median_violations"] for k in ((2.0, 6.0), (3.0, 7.0), (4.0, 8.0))]
+      == [1, 1, 2])
+claim("maxima are 2/28/28 violations",
+      [_pc[k]["max_violations"] for k in ((2.0, 6.0), (3.0, 7.0), (4.0, 8.0))]
+      == [2, 28, 28])
+claim("but DISTINCT fences never exceed 2/5/6 -- a quarter of the 24-fence "
+      "two-patch packing budget, so the bounded quantity is comfortably under it",
+      [_pc[k]["max_distinct_fences"]
+       for k in ((2.0, 6.0), (3.0, 7.0), (4.0, 8.0))] == [2, 5, 6]
+      and max(_pc[k]["max_distinct_fences"] for k in _pc) < 24)
+claim("pinned (blind-level) episodes are 0/20, 2/20, 7/20",
+      [_pc[k]["pinned_episodes"] for k in ((2.0, 6.0), (3.0, 7.0), (4.0, 8.0))]
+      == [0, 2, 7])
+claim("directly measured median probed arc is 0%/0%/87%",
+      abs(_pc[(2.0, 6.0)]["median_probed_arc_fraction"]) < 1e-9
+      and abs(_pc[(3.0, 7.0)]["median_probed_arc_fraction"]) < 1e-9
+      and abs(_pc[(4.0, 8.0)]["median_probed_arc_fraction"] - 0.873) < 0.005,
+      f"{100*_pc[(4.0,8.0)]['median_probed_arc_fraction']:.1f}%")
+claim("1D fence overshoot exceeds the band on the cart (4 of 5 episodes), so the "
+      "covering hypothesis fails where the conclusion holds",
+      [r for r in _fc["fence_placement_1d"] if "cart" in r["arm"]][0]
+      ["band_misses_boundary"] == 4)
+claim("1D outcomes are bit-identical over a 20x eps range on the pendulum",
+      [r for r in _fc["eps_invariance_1d"] if "pendulum" in r["arm"]][0]
+      ["identical_across_eps"])
+claim("and they move on the cart only at eps = 0.01 (identical from 0.25 to 0.05)",
+      not [r for r in _fc["eps_invariance_1d"] if "cart" in r["arm"]][0]
+      ["identical_across_eps"])
+
+# --- the fence bound is a PACKING number, and the counterexample is exhibited ---
+_circ = load("circle_covering_number")
+claim("circle covering number at eps=0.5 is 7 (centres on the circle)",
+      _circ["metric_centres_on_circle"]["n"] == 7)
+claim("circle PACKING number is 12, and every one of the 12 adds coverage",
+      _circ["packing_on_circle"]["n"] == 12
+      and _circ["packing_on_circle"]["all_add_coverage"],
+      str(_circ["packing_on_circle"]["n"]))
+claim("the 12 packing points are pairwise farther than eps apart",
+      _circ["packing_on_circle"]["min_pairwise_chord"] > 0.5,
+      f"{_circ['packing_on_circle']['min_pairwise_chord']:.4f}")
+claim("so packing exceeds covering: the covering bound was the wrong direction",
+      _circ["packing_on_circle"]["n"] > _circ["metric_centres_on_circle"]["n"])
+
+# --- the dependence sign, resolved at 50k -------------------------------------
+_dep50 = {(r["k1"], r["k2"]): r for r in load("patch2d_dependence_50k")["rows"]}
+claim("50k: (2,6) shows negative dependence with the interval excluding r1*r2",
+      _dep50[(2.0, 6.0)]["verdict"] == "negative dependence",
+      _dep50[(2.0, 6.0)]["verdict"])
+claim("50k: (4,6) shows POSITIVE dependence -- the sign changes across the grid",
+      _dep50[(4.0, 6.0)]["verdict"] == "positive dependence",
+      _dep50[(4.0, 6.0)]["verdict"])
+claim("50k: (3,7) negative and (4,7) undecided",
+      _dep50[(3.0, 7.0)]["verdict"] == "negative dependence"
+      and _dep50[(4.0, 7.0)]["verdict"] == "undecided at this sample size")
+claim("50k P(both) at (2,6) is 8.6e-4 against r1*r2 = 19.0e-4",
+      abs(_dep50[(2.0, 6.0)]["P_both"] - 8.6e-4) < 0.05e-4
+      and abs(_dep50[(2.0, 6.0)]["r1_times_r2"] - 19.0e-4) < 0.1e-4,
+      f"{_dep50[(2.0,6.0)]['P_both']:.5f}")
+claim("50k P(both) at (4,6) is 12.8e-4 against r1*r2 = 6.2e-4",
+      abs(_dep50[(4.0, 6.0)]["P_both"] - 12.8e-4) < 0.05e-4
+      and abs(_dep50[(4.0, 6.0)]["r1_times_r2"] - 6.2e-4) < 0.1e-4,
+      f"{_dep50[(4.0,6.0)]['P_both']:.5f}")
+claim("the in-sample inclusion-exclusion residual is exactly 0 (so bracket "
+      "containment at 600 rollouts is an identity, not a confirmation)",
+      all(abs(r["hits_union"] - (r["hits1"] + r["hits2"] - r["hits_both"])) == 0
+          for r in load("patch2d_dependence_50k")["rows"]))
+
+# --- the sampling unit is the rollout-seed block ------------------------------
+_cen = {f["family"]: f for f in load("sample_stream_census")["families"]}
+claim("1D cart: 22 distinct rollout-seed blocks behind the repair claim",
+      [c for c in load("sample_stream_census")["claims"]
+       if c["claim"] == "1D cart repair"][0]["distinct_blocks"] == 22)
+claim("1D pendulum: 34 blocks", [c for c in load("sample_stream_census")["claims"]
+      if c["claim"] == "1D pendulum repair"][0]["distinct_blocks"] == 34)
+claim("PatchField2D disc: 195 mode-present cells over only 20 blocks",
+      [c for c in load("sample_stream_census")["claims"]
+       if c["claim"] == "PatchField2D repair (disc)"][0]["distinct_blocks"] == 20)
+claim("block-level Wilson: all-repair lower bounds 0.851 (cart), 0.898 (pendulum)",
+      abs([c for c in load("sample_stream_census")["claims"]
+           if c["claim"] == "1D cart repair"][0]
+          ["wilson_lower_if_all_repair_blocks"] - 0.851) < 0.002
+      and abs([c for c in load("sample_stream_census")["claims"]
+               if c["claim"] == "1D pendulum repair"][0]
+              ["wilson_lower_if_all_repair_blocks"] - 0.898) < 0.002)
+claim("block-level Wilson upper for the 2D negative result is 0.161, not 'never'",
+      abs([c for c in load("sample_stream_census")["claims"]
+           if c["claim"] == "PatchField2D repair (disc)"][0]
+          ["wilson_upper_if_none_repair_blocks"] - 0.161) < 0.002)
+
+# --- eps* is a sample minimum: the spread is quoted, so check it --------------
+_es = {r["arm"]: r for r in load("eps_invariance_threshold")["rows"]}
+claim("eps* on wall@4 moves by a factor 1.8 across equal-sized streams",
+      abs(max(o["eps_star"] for o in _es["cart wall@4"]["eps_star_other_streams"]
+              + [{"eps_star": _es["cart wall@4"]["eps_star"]}])
+          / _es["cart wall@4"]["eps_star"] - 1.76) < 0.05)
+claim("at 20k rollouts wall@8's eps* falls to 0.272, BELOW the grid top of 0.3",
+      abs(_es["cart wall@8"]["eps_star_big_sample"]["eps_star"] - 0.2718) < 5e-4
+      and _es["cart wall@8"]["eps_star_big_sample"]["eps_star"] < 0.3,
+      f"{_es['cart wall@8']['eps_star_big_sample']['eps_star']:.4f}")
+claim("the smallest single-contact disagreement on wall@4 is 0.0018",
+      abs(_es["cart wall@4"]["min_single_contact_disagreement"] - 0.001794) < 5e-6,
+      f"{_es['cart wall@4']['min_single_contact_disagreement']:.5f}")
+claim("wall@8's eps* rests on only 25 firing rollouts",
+      _es["cart wall@8"]["n_firing"] == 25, str(_es["cart wall@8"]["n_firing"]))
 
 # --- the dependence-exact coverage certificate --------------------------------
 dep = load("gate_coverage_dependent")["rows"]
-_by = {round(r["rho"], 2): r for r in dep}
-claim("dependence-exact: deployed gate certifies rho = 0.60 needing N >= 35",
-      _by[0.6]["n_needed_rigorous"] == 35 and _by[0.6]["certified_at_deployed_N"],
-      str(_by[0.6]["n_needed_rigorous"]))
-claim("its bound is 1.53", abs(_by[0.6]["uniform_bound"] - 1.534) < 0.005,
-      f"{_by[0.6]['uniform_bound']:.3f}")
-claim("rho = 0.5 needs N >= 169", _by[0.5]["n_needed_rigorous"] == 169,
+_by = {round(r["rho"], 3): r for r in dep}
+claim("dependence-exact: deployed gate certifies net radius 1.0 (N >= 7)",
+      _by[1.0]["n_needed_rigorous"] == 7 and _by[1.0]["certified_at_deployed_N"],
+      str(_by[1.0]["n_needed_rigorous"]))
+claim("its bound is 2.55", abs(_by[1.0]["uniform_bound"] - 2.550) < 0.005,
+      f"{_by[1.0]['uniform_bound']:.3f}")
+claim("radius 0.667 needs N >= 42, two more than the gate has",
+      _by[0.667]["n_needed_rigorous"] == 42
+      and not _by[0.667]["certified_at_deployed_N"],
+      str(_by[0.667]["n_needed_rigorous"]))
+claim("radius 0.5 needs N >= 194 for a bound of 1.28",
+      _by[0.5]["n_needed_rigorous"] == 194
+      and abs(_by[0.5]["uniform_bound"] - 1.280) < 0.005,
       str(_by[0.5]["n_needed_rigorous"]))
-claim("rho = 0.4 needs N >= 1179 (a gate ~30x larger)",
-      _by[0.4]["n_needed_rigorous"] == 1179,
-      str(_by[0.4]["n_needed_rigorous"]))
-claim("handling the dependence buys ~2% over the one-step reading",
-      abs(1.572 - _by[0.6]["uniform_bound"]) / 1.572 < 0.03)
-
 # --- geometry of the one fitted disc (the claim that got a correction) -------
 # Claude's single radial attempt: the paper describes where the fitted disc sits
 # relative to the true patch. Recompute that geometry rather than trust prose.

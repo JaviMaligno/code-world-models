@@ -1,5 +1,11 @@
 """Falsification test for the coverage certificate's resolution threshold.
 
+Grid note: this uses the SAME honest grid as gate_coverage_dependent.py (ceil, every
+cell of width <= rho). The first version of both shared an `int(2R/rho)` + clamp
+grid whose top cell was wider than rho, so the test validated a coarser net than the
+certificate claimed -- and, sharing the bug, could not detect it. A falsification
+test must not import the defect it is meant to falsify.
+
 The certificate says the deployed gate (N = 40) rho-covers the region at
 rho = 0.60 with probability >= 1 - delta, and that finer resolutions need a much
 larger gate (N >= 169 at rho = 0.50, N >= 1179 at rho = 0.40). Those are bounds, so
@@ -13,6 +19,7 @@ Run: PYTHONPATH=src python scripts/gate_coverage_validation.py   (~5 min CPU)
 """
 import argparse
 import json
+import math
 import pathlib
 import random
 import sys
@@ -35,8 +42,9 @@ T, A, R = env.h_episode, env.a_max, args.region
 
 def gate_covers(rho, n_gate, trial):
     """Do this gate's rollouts put a sample in every cell of side rho of U?"""
-    nx = int(2 * R / rho)
-    na = int(2 * A / rho)
+    nx = math.ceil(2 * R / rho)
+    na = math.ceil(2 * A / rho)
+    wx, wa = 2 * R / nx, 2 * A / na       # every cell <= rho wide (see below)
     need = {(i, j, k) for i in range(nx) for j in range(nx) for k in range(na)}
     for i in range(n_gate):
         rng = random.Random(1_000_000 * trial + i)
@@ -45,14 +53,19 @@ def gate_covers(rho, n_gate, trial):
             a = rng.uniform(-A, A)
             x, v = s
             if abs(x) < R and abs(v) < R:
-                need.discard((min(nx - 1, int((x + R) / rho)),
-                              min(nx - 1, int((v + R) / rho)),
-                              min(na - 1, int((a + A) / rho))))
+                need.discard((min(nx - 1, int((x + R) / wx)),
+                              min(nx - 1, int((v + R) / wx)),
+                              min(na - 1, int((a + A) / wa))))
             s = env.step(s, a)[0]
     return len(need) == 0
 
 
-PREDICTED_N = {0.7: 10, 0.6: 35, 0.5: 169, 0.4: 1179}
+PREDICTED_N = {}   # filled from results/gate_coverage_dependent.json below
+try:
+    _dep = json.loads((_REPO / 'results' / 'gate_coverage_dependent.json').read_text())
+    PREDICTED_N = {round(r['rho'], 2): r['n_needed_rigorous'] for r in _dep['rows']}
+except Exception:
+    pass
 rows = []
 print(f"region |x|,|v| <= {R};  N = {args.n_gate};  {args.trials} trials/rho")
 print(f"{'rho':>5} {'covered':>9} {'rate':>7} {'N needed (cert)':>17} "

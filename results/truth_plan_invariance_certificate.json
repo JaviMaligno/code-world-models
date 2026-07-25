@@ -16,7 +16,7 @@
       12.5,
       13.0
     ],
-    "episodes": 2,
+    "episodes": 20,
     "horizon": 40,
     "n_samples": 200,
     "block": 10
@@ -28,7 +28,10 @@
       "in_sweep": true,
       "C1_argmax_never_reaches_min_wall": true,
       "C2_clamping_candidates_always_lose": true,
+      "C3_argmax_unique": false,
+      "min_top_two_gap": 0.0,
       "certificate": true,
+      "note_C3": "diagnostic only: ties are broken by the knob-independent enumeration order",
       "argmax_max_x_over_run": 0.3444218515250481,
       "min_margin_argmax_minus_best_clamping": 5.483096773150912
     },
@@ -37,7 +40,10 @@
       "in_sweep": true,
       "C1_argmax_never_reaches_min_wall": true,
       "C2_clamping_candidates_always_lose": true,
+      "C3_argmax_unique": false,
+      "min_top_two_gap": 0.0,
       "certificate": true,
+      "note_C3": "diagnostic only: ties are broken by the knob-independent enumeration order",
       "argmax_max_x_over_run": 0.3444218515250481,
       "min_margin_argmax_minus_best_clamping": 5.484469314741891
     },
@@ -46,7 +52,10 @@
       "in_sweep": true,
       "C1_argmax_never_reaches_min_wall": true,
       "C2_clamping_candidates_always_lose": true,
+      "C3_argmax_unique": false,
+      "min_top_two_gap": 0.0,
       "certificate": true,
+      "note_C3": "diagnostic only: ties are broken by the knob-independent enumeration order",
       "argmax_max_x_over_run": 0.3444218515250481,
       "min_margin_argmax_minus_best_clamping": 5.484572834432556
     },
@@ -55,7 +64,10 @@
       "in_sweep": true,
       "C1_argmax_never_reaches_min_wall": true,
       "C2_clamping_candidates_always_lose": true,
+      "C3_argmax_unique": false,
+      "min_top_two_gap": 0.0,
       "certificate": true,
+      "note_C3": "diagnostic only: ties are broken by the knob-independent enumeration order",
       "argmax_max_x_over_run": 0.3444218515250481,
       "min_margin_argmax_minus_best_clamping": 5.484614796620341
     },
@@ -64,7 +76,10 @@
       "in_sweep": true,
       "C1_argmax_never_reaches_min_wall": true,
       "C2_clamping_candidates_always_lose": true,
+      "C3_argmax_unique": false,
+      "min_top_two_gap": 0.0,
       "certificate": true,
+      "note_C3": "diagnostic only: ties are broken by the knob-independent enumeration order",
       "argmax_max_x_over_run": 0.3444218515250481,
       "min_margin_argmax_minus_best_clamping": 5.48452442013267
     },
@@ -73,7 +88,10 @@
       "in_sweep": true,
       "C1_argmax_never_reaches_min_wall": true,
       "C2_clamping_candidates_always_lose": true,
+      "C3_argmax_unique": false,
+      "min_top_two_gap": 0.0,
       "certificate": true,
+      "note_C3": "diagnostic only: ties are broken by the knob-independent enumeration order",
       "argmax_max_x_over_run": 0.3444218515250481,
       "min_margin_argmax_minus_best_clamping": 5.479061131387847
     },
@@ -82,7 +100,10 @@
       "in_sweep": true,
       "C1_argmax_never_reaches_min_wall": true,
       "C2_clamping_candidates_always_lose": true,
+      "C3_argmax_unique": false,
+      "min_top_two_gap": 0.0,
       "certificate": true,
+      "note_C3": "diagnostic only: ties are broken by the knob-independent enumeration order",
       "argmax_max_x_over_run": 0.3444218515250481,
       "min_margin_argmax_minus_best_clamping": 5.251188014066986
     },
@@ -91,7 +112,10 @@
       "in_sweep": false,
       "C1_argmax_never_reaches_min_wall": true,
       "C2_clamping_candidates_always_lose": true,
+      "C3_argmax_unique": false,
+      "min_top_two_gap": 0.0,
       "certificate": true,
+      "note_C3": "diagnostic only: ties are broken by the knob-independent enumeration order",
       "argmax_max_x_over_run": 0.3444218515250481,
       "min_margin_argmax_minus_best_clamping": 4.12299700340503
     },
@@ -100,7 +124,10 @@
       "in_sweep": false,
       "C1_argmax_never_reaches_min_wall": true,
       "C2_clamping_candidates_always_lose": true,
+      "C3_argmax_unique": false,
+      "min_top_two_gap": 0.0,
       "certificate": true,
+      "note_C3": "diagnostic only: ties are broken by the knob-independent enumeration order",
       "argmax_max_x_over_run": 0.3444218515250481,
       "min_margin_argmax_minus_best_clamping": 0.5101080769440989
     },
@@ -109,7 +136,10 @@
       "in_sweep": false,
       "C1_argmax_never_reaches_min_wall": false,
       "C2_clamping_candidates_always_lose": false,
+      "C3_argmax_unique": false,
+      "min_top_two_gap": 0.0,
       "certificate": false,
+      "note_C3": "diagnostic only: ties are broken by the knob-independent enumeration order",
       "argmax_max_x_over_run": 12.5,
       "min_margin_argmax_minus_best_clamping": 0.0
     },
@@ -118,7 +148,10 @@
       "in_sweep": false,
       "C1_argmax_never_reaches_min_wall": false,
       "C2_clamping_candidates_always_lose": false,
+      "C3_argmax_unique": false,
+      "min_top_two_gap": 0.0,
       "certificate": false,
+      "note_C3": "diagnostic only: ties are broken by the knob-independent enumeration order",
       "argmax_max_x_over_run": 13.0,
       "min_margin_argmax_minus_best_clamping": 0.0
     }

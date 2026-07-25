@@ -13,9 +13,11 @@
       3.0,
       2.0
     ],
-    "grid": 9,
-    "mc": 6000,
+    "lam": 0.25,
+    "mc": 40000,
     "delta": 0.05,
+    "n_gate": 40,
+    "eps_gate": 0.01,
     "seed": 99
   },
   "M": [
@@ -30,130 +32,273 @@
   ],
   "det_M": -0.009000000000000003,
   "parallelogram_area": 0.03600000000000001,
-  "parallelogram_density": 27.777777777777768,
-  "box": [
+  "parallelogram_density_2d": 27.777777777777768,
+  "cell_area": 0.0022500000000000007,
+  "L_plant": 1.27,
+  "dim": 3,
+  "region_box": [
     3.0,
     2.0
   ],
   "rows": [
     {
       "step": 2,
-      "alphas": [
-        0.5,
-        0.2,
-        0.1,
-        0.05,
-        0.02,
-        0.01
-      ],
-      "volumes_sa": [
-        1.125,
-        2.0,
-        2.0,
-        2.375,
-        2.75,
-        3.5
+      "n_cells_seen": 404,
+      "max_density_3d": 0.5848371733719712,
+      "level_sets": [
+        {
+          "alpha": 0.5,
+          "n_cells": 45,
+          "vol_sa": 0.20250000000000007,
+          "certificate": null
+        },
+        {
+          "alpha": 0.2,
+          "n_cells": 253,
+          "vol_sa": 1.1385000000000003,
+          "certificate": null
+        },
+        {
+          "alpha": 0.1,
+          "n_cells": 320,
+          "vol_sa": 1.4400000000000004,
+          "certificate": null
+        },
+        {
+          "alpha": 0.05,
+          "n_cells": 365,
+          "vol_sa": 1.6425000000000005,
+          "certificate": null
+        },
+        {
+          "alpha": 0.02,
+          "n_cells": 386,
+          "vol_sa": 1.7370000000000005,
+          "certificate": null
+        },
+        {
+          "alpha": 0.01,
+          "n_cells": 394,
+          "vol_sa": 1.7730000000000006,
+          "certificate": null
+        }
       ]
     },
     {
       "step": 5,
-      "alphas": [
-        0.5,
-        0.2,
-        0.1,
-        0.05,
-        0.02,
-        0.01
-      ],
-      "volumes_sa": [
-        1.375,
-        2.25,
-        3.25,
-        3.5,
-        4.875,
-        5.0
+      "n_cells_seen": 1147,
+      "max_density_3d": 0.32175509277837483,
+      "level_sets": [
+        {
+          "alpha": 0.5,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.2,
+          "n_cells": 241,
+          "vol_sa": 1.0845000000000002,
+          "certificate": null
+        },
+        {
+          "alpha": 0.1,
+          "n_cells": 416,
+          "vol_sa": 1.8720000000000006,
+          "certificate": null
+        },
+        {
+          "alpha": 0.05,
+          "n_cells": 558,
+          "vol_sa": 2.5110000000000006,
+          "certificate": null
+        },
+        {
+          "alpha": 0.02,
+          "n_cells": 688,
+          "vol_sa": 3.096000000000001,
+          "certificate": null
+        },
+        {
+          "alpha": 0.01,
+          "n_cells": 774,
+          "vol_sa": 3.483000000000001,
+          "certificate": null
+        }
       ]
     },
     {
       "step": 10,
-      "alphas": [
-        0.5,
-        0.2,
-        0.1,
-        0.05,
-        0.02,
-        0.01
-      ],
-      "volumes_sa": [
-        0.75,
-        2.875,
-        4.0,
-        5.0,
-        6.25,
-        7.0
+      "n_cells_seen": 2281,
+      "max_density_3d": 0.21694442823750978,
+      "level_sets": [
+        {
+          "alpha": 0.5,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.2,
+          "n_cells": 54,
+          "vol_sa": 0.24300000000000008,
+          "certificate": null
+        },
+        {
+          "alpha": 0.1,
+          "n_cells": 426,
+          "vol_sa": 1.9170000000000007,
+          "certificate": null
+        },
+        {
+          "alpha": 0.05,
+          "n_cells": 677,
+          "vol_sa": 3.046500000000001,
+          "certificate": null
+        },
+        {
+          "alpha": 0.02,
+          "n_cells": 965,
+          "vol_sa": 4.342500000000001,
+          "certificate": null
+        },
+        {
+          "alpha": 0.01,
+          "n_cells": 1155,
+          "vol_sa": 5.197500000000002,
+          "certificate": null
+        }
       ]
     },
     {
       "step": 20,
-      "alphas": [
-        0.5,
-        0.2,
-        0.1,
-        0.05,
-        0.02,
-        0.01
-      ],
-      "volumes_sa": [
-        0.0,
-        2.0,
-        4.5,
-        6.875,
-        9.875,
-        11.5
+      "n_cells_seen": 4821,
+      "max_density_3d": 0.1251407929524361,
+      "level_sets": [
+        {
+          "alpha": 0.5,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.2,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.1,
+          "n_cells": 131,
+          "vol_sa": 0.5895000000000001,
+          "certificate": null
+        },
+        {
+          "alpha": 0.05,
+          "n_cells": 686,
+          "vol_sa": 3.087000000000001,
+          "certificate": null
+        },
+        {
+          "alpha": 0.02,
+          "n_cells": 1369,
+          "vol_sa": 6.160500000000002,
+          "certificate": null
+        },
+        {
+          "alpha": 0.01,
+          "n_cells": 1817,
+          "vol_sa": 8.176500000000003,
+          "certificate": null
+        }
       ]
     },
     {
       "step": 40,
-      "alphas": [
-        0.5,
-        0.2,
-        0.1,
-        0.05,
-        0.02,
-        0.01
-      ],
-      "volumes_sa": [
-        0.0,
-        0.0,
-        1.25,
-        6.75,
-        14.625,
-        19.0
+      "n_cells_seen": 7361,
+      "max_density_3d": 0.04913275516066134,
+      "level_sets": [
+        {
+          "alpha": 0.5,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.2,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.1,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.05,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.02,
+          "n_cells": 1361,
+          "vol_sa": 6.124500000000002,
+          "certificate": null
+        },
+        {
+          "alpha": 0.01,
+          "n_cells": 2628,
+          "vol_sa": 11.826000000000004,
+          "certificate": null
+        }
       ]
     },
     {
       "step": 80,
-      "alphas": [
-        0.5,
-        0.2,
-        0.1,
-        0.05,
-        0.02,
-        0.01
-      ],
-      "volumes_sa": [
-        0.0,
-        0.0,
-        0.0,
-        0.125,
-        10.625,
-        18.25
+      "n_cells_seen": 8596,
+      "max_density_3d": 0.01974284068596878,
+      "level_sets": [
+        {
+          "alpha": 0.5,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.2,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.1,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.05,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.02,
+          "n_cells": 0,
+          "vol_sa": 0.0,
+          "certificate": null
+        },
+        {
+          "alpha": 0.01,
+          "n_cells": 1379,
+          "vol_sa": 6.205500000000002,
+          "certificate": null
+        }
       ]
     }
   ],
-  "best": {
-    "step": 40,
-    "c": 0.01,
-    "volume_sa": 19.0
-  }
+  "best": null
 }

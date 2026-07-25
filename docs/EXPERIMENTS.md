@@ -52,7 +52,7 @@ experiment, and to derive what was missing.
 
 **On N = 40: it is the OBJECT OF STUDY, not our sample size.** The paper is about
 what a deployed CWM gate misses, and that gate is 40 rollouts (paper 1's setting).
-"This gate certifies sup <= 1.53 for Lipschitz models" is a fact about a weak gate
+"This gate certifies sup <= 2.97 for 1.80-Lipschitz models" is a fact about a weak gate
 — the thesis, not a limitation of our evidence. Where N *was* our measurement
 budget it has already been raised (rarity 3000 -> 30000, axes 2000 -> 20000, 300
 independent gates for pass@N). Running a bigger GATE would measure a different
@@ -107,34 +107,54 @@ figure. But under the gate policy the action a_t is i.i.d. and INDEPENDENT of s_
 so conditioning on a rollout's whole state trajectory, the action indicators at the
 visiting times are independent Bernoulli(q_a) and
 
-    P(cell unhit by a rollout | state trajectory) = (1 - q_a)^O,  O = #{t : s_t in C_s}
+    P(cell unhit by the gate) = p_C^N,  p_C = P(one rollout misses cell C)
 
-exactly — no independence between steps used. And rollouts ARE i.i.d., so the
-expectation factorises: P(cell unhit by the gate) = phi^N with
-phi = E[(1-q_a)^O], a per-rollout expectation of a [0,1] variable, hence
-Monte-Carlo boundable by Hoeffding. `scripts/gate_coverage_dependent.py`.
+**SUPERSEDED 2026-07-25.** The original version of this entry claimed the
+conditional factorisation `P(unhit | state trajectory) = (1-q_a)^O` was EXACT, by
+conditioning on the whole state trajectory and calling the visiting-time action
+indicators independent Bernoulli(q_a). That is false: this plant is invertible in
+the action (`a_t = ((v_{t+1}-v_t)/dt + drag*v_t)/gain`), so conditioning on the
+trajectory DETERMINES every action and the conditional indicator law is degenerate.
+The gate policy gives `a_t ⊥ s_t`, not `a_t ⊥ (s_0..s_T)`. Measured damage at
+rho = 0.6: the model gave 0.802 against a true 0.812 at the binding cell —
+anti-conservative — and up to 11.6% off elsewhere.
 
-**What it buys: 2%, not a factor of four.** At rho = 0.60 the worst cell has
-phi <= 0.819 and N >= 35 suffices, so the deployed N = 40 certifies
-sup|f - f_hat| <= **1.534** against 1.572 for the one-step reading. The optimistic
-0.43 was not merely un-rigorous, it was unreachable at this gate size.
+**The repair needed no factorisation at all.** Only the i.i.d.-ness of the N gate
+ROLLOUTS is used, which is a property of the design rather than of the dynamics:
+p_C is measured directly by counting rollouts that miss C, Hoeffding bounds it
+above, and `p_C^N` is exact. `scripts/gate_coverage_dependent.py`.
 
-**Why, and the trade-off that replaces it.** The binding constraint is not how
-steps correlate but how many ROLLOUTS reach the worst cell. Measured N-vs-rho
-(rigorous / point-estimate):
+**A second bug in the same script: the grid was not a grid.** `nx = int(2R/rho)`
+with `min(nx-1, ...)` index clamping makes the TOP cell wider than rho — 0.8 at
+rho = 0.6, 1.2 at rho = 0.8 — so "every cell hit" certified a coarser net than
+claimed, and the action sliver [0.8, 1.0] belonged to no cell while being charged
+q_a = rho/2A. Worse, `gate_coverage_validation.py` used the identical grid, so the
+falsification test validated the bug instead of catching it. Both now use `ceil`
+with every cell of width <= rho, and the reported bound uses the achieved width.
 
-| rho | cells K | N needed (rigorous) | N (estimate) | certifies |
+**What it buys, honestly: the gate is WEAKER than we said.** On the box
+|x|,|v| <= 1 the deployed N = 40 certifies net radius 1.0, i.e.
+sup|f - f_hat| <= **2.55**, and it misses the next resolution by two rollouts
+(radius 0.667 needs N >= 42, bound 1.70). Measured N-vs-radius:
+
+| net radius | cells K | N needed (rigorous) | N (estimate) | certifies |
 |---|---|---|---|---|
-| 0.80 | 8 | 9 | 8 | 2.042 |
-| 0.70 | 8 | 10 | 10 | 1.788 |
-| 0.60 | 27 | **35** | 31 | **1.534** |
-| 0.50 | 64 | 169 | 112 | 1.280 |
-| 0.40 | 125 | 1179 | 273 | 1.026 |
-| 0.30 | 216 | (MC unresolved) | 458 | 0.772 |
+| 2.000 | 1 | 1 | 1 | 5.090 |
+| 1.000 | 8 | **7** | 7 | **2.550** |
+| 0.667 | 27 | 42 | 37 | 1.703 |
+| 0.500 | 64 | 194 | 122 | 1.280 |
+| 0.400 | 125 | 2189 | 306 | 1.026 |
 
-So certifying 1.03 instead of 1.53 costs a gate thirty times larger — which is
-itself the quantitative statement of how weak a 40-rollout sampling gate is, and a
-better thing to have in the paper than the optimistic figure it replaces.
+No percentage is quoted against the one-step-per-rollout figure (2.93), because the
+two certificates cover different regions: 2.93 on the step-1 reachable slab
+(vol 1.2), 2.55 on a box 6.7x larger. The qualitative conclusion is unchanged and
+sharper: the mixing question was a red herring, and the all-steps-independent
+resolution is unreachable at this gate size by two orders of magnitude in N.
+
+**Tightness, on the honest grid.** 200 independent gates per resolution: 200/200
+cover at radius 1.0 (licensed), 198/200 at 0.667 (which the certificate declines,
+needing 42) — so the bound is conservative by about 5% in N — then 128/200 at 0.5
+and 10/200 at 0.4, where it asks for 194 and 2189.
 
 Limitations updated: the within-rollout gap is CLOSED (negatively — no mixing
 needed, and little to gain), and the one that stays open is named precisely: the
@@ -154,10 +174,17 @@ fallando". Both were warranted.
 eps=0.5 needs 13 balls. It needs **7** (centres on the circle) or **6** (free
 centres): I used the angular HALF-width 2*asin(eps/2R) = 0.5054 rad as the full
 width, when the covered arc is 4*asin(eps/2R) = 1.0107 rad. Consequences: the
-measured fence counts correspond to reachable arcs of **17% / 43% / 68%** of the
-circle (not 8/21/34), so the farthest knob spends about two thirds of the covering
-budget — the bound is nearly saturated, which is a stronger consistency statement
-than the wrong one was.
+measured fence counts were then said to correspond to reachable arcs of 17/43/68%
+of the circle.
+
+**That consequence was itself wrong, twice over (2026-07-25).** The percentages are
+the violation count divided by the budget — saturation ASSUMED and restated as a
+percentage, then used to explain the count, which is circular; the probed arc is
+now measured directly. And the budget was a covering number where the bound needs a
+PACKING number (12, not 7, at R=1, eps=0.5 — with an exhibited 12-point sequence
+every member of which adds coverage). So the "nearly saturated bound" reading is
+retired entirely: it was built on a number that was too small and a percentage that
+could not fail.
 
 Javier's 3 is a DIFFERENT quantity, and correct in its own setting: the minimal
 GOOD cover of S^1 by contractible open arcs with contractible pairwise
@@ -193,19 +220,39 @@ The coverage certificate needs an UPPER bound on N_cov(U, rho/2); I had used
 vol(U)/vol(B), which is a packing LOWER bound and understates it by 2^dim. Fixed
 to the rigorous vol(U + B_{rho/4})/vol(B_{rho/4}) with the grown slab computed
 exactly. Effect: the rigorous rho moves 0.535 -> 0.615 and the certified bound
-1.37 -> 1.57.
+1.37 -> 1.57. (A LATER correction of the same class — the boundary factor 2^-(d+m)
+on the ball mass — moves them again, to 1.165 and 2.97; see below.)
 
-**And the gate-side covering number is now CLOSED (Prop 9).** For L-Lipschitz
-f, f_hat with f_hat passing at tolerance eps, if the visited set is a rho-net of U
-then sup_U |f - f_hat| <= eps + 2*L*rho; and M >= ln(N_cov(U,rho/2)/delta) /
-(c*vol(B_{rho/2})) samples give the net with probability 1-delta. Instantiated on
-the deployed cart gate (c = 5/6, L = 1.27, eps = 0.01, delta = 0.05): one step per
-rollout (rigorous, since within-rollout steps are dependent) gives rho = 0.615 and
-certifies sup <= **1.57**; all 40x80 steps (optimistic, assumes approximate
-independence) give rho = 0.165 and **0.43**. The hard mode's own disagreement is
-4.2, above both — so no Lipschitz model with the wall's error can pass this gate,
-and the wall passes it only by not being Lipschitz. The continuous coverage
-analogue closes exactly the smooth case and is silent exactly where the danger
+**And the gate-side covering number is now CLOSED (Prop 9), with two further
+corrections of the same 2^dim class (2026-07-25).** For L-Lipschitz f, f_hat with
+f_hat passing at tolerance eps, if the visited set is a rho-net of U then
+sup_U |f - f_hat| <= eps + 2*L*rho. The sample-size half needed two fixes:
+
+  * the cardinality that enters is the PACKING number (it dominates the covering
+    number, and a union bound needs the upper one);
+  * the ball mass must be intersected with U, since c is hypothesised only ON U. A
+    packing point on dU keeps one orthant of its sup-ball: a factor 2^-(d+m). The
+    cart's U has v-extent 0.6, below rho, so corners are attained and the factor is
+    real.
+
+A THIRD correction, found on re-reading our own fix: the corner factor 2^-(d+m) is
+NOT shear-invariant, and this U is a sheared box, so asserting it left the
+certificate 5% optimistic. `ball_mass_fraction()` now computes the true infimum of
+vol(B(u,rho/2) ∩ U)/vol(B) over U (attained at a corner, cross-checked against an
+interior scan): **0.950 * 2^-(d+m)**. And for the step-t regions, which are UNIONS of
+cells, there is no orthant argument at all, so those use a shape-free cell-containment
+bound instead.
+
+Instantiated on the deployed cart gate (c = 5/6, L = 1.27, eps = 0.01,
+delta = 0.05): one step per rollout gives rho = **1.165** and certifies
+sup <= **2.97** (was 0.615 / 1.57 before the boundary treatment); the optimistic
+all-steps reading gives 0.310 / 0.797 and is doubly invalid, since it also uses the
+step-1 density at steps t >= 2. The hard mode's disagreement of 4.2 exceeds 2.97,
+but eps + 2*L*rho GROWS with L, so what is excluded is a pair with
+L = max(Lip f, Lip f_hat) <= **1.80** carrying that error — a real but narrow class
+against the plant's own 1.27. The wall passes by not being Lipschitz at all. The
+continuous coverage analogue closes exactly the smooth case and is silent exactly
+where the danger
 lives, which is the same boundary the Lipschitz obstruction draws. Limitations
 updated from "no continuous analogue" to that, with the two residual gaps named
 (density verified in closed form only at step 1 of one instrument; a mixing
@@ -294,38 +341,73 @@ plan flips exactly once the wall stops blocking the far plateau (x_right = 12) �
 so the invariance regime is "the wall lies between start and reward", and the
 paper's sweep [2, 10] sits well inside it.
 
-**3. The eps-flatness → an identity with a computable threshold that PREDICTS the
-sweep (Prop 3).** For a rollout w let D(w) be the max sup-norm disagreement over
-its mode contacts. Reveal-rarity(eps) = P(D > eps) exactly, so it equals the
-mode-firing rarity for every eps < eps* = min{D(w) : D(w) > 0}. eps* is computable
-from the gate policy alone (`scripts/eps_invariance_threshold.py`), and it predicts
-the first grid point where each arm departs from flatness — in all four arms:
+**3. The eps-flatness → an identity with a computable threshold (Prop 3).**
+CORRECTED 2026-07-25; the earlier version of this entry claimed a cross-sample
+PREDICTION and it was falsified on 2 of 4 arms. For a rollout w let D(w) be the max
+sup-norm disagreement over its mode contacts. Reveal-rarity(eps) = P(D > eps)
+exactly, so it equals the mode-firing rarity for every eps < eps* = min{D(w) : D(w)
+> 0}. The catch: eps* is a property of a SAMPLE. `eps_invariance_threshold.py` used
+`Random(0+i)` while `continuous_eps_sweep.py` draws `Random(10000+i)`, so the two
+were different random quantities and agreeing was luck. It now defaults to the
+sweep's own stream, where the relation is an IDENTITY:
 
-| arm | eps* | predicted break | sweep measured |
-|---|---|---|---|
-| cart wall@8 | 0.3855 | none in grid | bit-identically flat through 0.3 |
-| cart wall@4 | 0.0561 | 0.1 | flat to 3e-2, dips from 0.1 |
-| pend stop@1.0 | 0.0513 | 0.1 | 0.1410 to 3e-2, 0.1400 at 0.1, 0.1240 at 0.3 |
-| pend stop@1.4 | 0.1164 | 0.3 | flat to 0.1, dips at 0.3 |
+| arm | eps* (sweep's stream) | firing | first grid eps >= eps* | same-sample sweep |
+|---|---|---|---|---|
+| cart wall@8 | 0.3959 | 25 | none in grid | flat through 0.3 |
+| cart wall@4 | 0.1137 | 277 | 0.3 | 0.1385 to 0.1, 0.1355 at 0.3 |
+| pend stop@1.0 | 0.0791 | 282 | 0.1 | 0.1410 to 3e-2, 0.1400 at 0.1 |
+| pend stop@1.4 | 0.0805 | 35 | 0.1 | 0.0175 to 3e-2, 0.0170 at 0.1 |
+
+Second correction: a minimum is unstable, upward-biased and decreasing in n, so it
+must not be read to the last digit nor compared against a grid edge. Across equal-
+sized independent streams eps* moves 1.8x on wall@4 (0.114 / 0.146 / 0.201) and
+1.4x on wall@8 (0.396 / 0.438 / 0.538, each over only ~21-25 firing rollouts). At
+10x the sample it falls further: 0.065 on wall@4 and **0.272 on wall@8** — below
+the grid's top point of 0.3, so "wall@8 is flat throughout the grid" is a statement
+about the 2000-rollout sample, not about the arm. The script now reports the firing
+count, the second order statistic, other streams and the 10x sample, so the
+resolution is visible instead of a false decimal.
 
 Note eps* is a per-rollout MINIMUM of a per-contact MAXIMUM: a pinned rollout
 contacts many times and only needs one coarse contact to be revealed, which is why
-eps* sits two orders above the smallest single-contact disagreement (0.0017).
+eps* sits two orders above the smallest single-contact disagreement — now COMPUTED
+rather than asserted: 0.001794 over the 919 contacts on wall@4 (the field used to
+be `null` in the JSON while the paper quoted 0.0017 from nowhere).
 
-**4. "Exactly one violation on all 11 rows" → a covering number equal to one
-(Prop 7).** Each violation fences a boundary point; once the fences eps-cover the
-reachable boundary, every phantom-reaching imagined trajectory is truncated, so the
-number of coverage-adding violations is at most N_cov(A, eps). In 1D the mode is
-separated by a POINT: N_cov = 1, hence at most one violation — and the measured
-mean is exactly 1.00 on all eleven rows, i.e. the bound is tight. In 2D a fence
-eps-covers an arc 2R*asin(eps/2R) = 0.5054 rad, so the circle needs 13; measured
-means 1.05/2.65/4.25 correspond to reachable arcs of 8%/21%/34% of the circle. This
-is the covering-number analogue the Limitations list as open, delivered on the
-MITIGATION side: the danger law is dimension-free, but repairing the model at
-deployment costs a covering number of the mode boundary.
+**4. "Exactly one violation on all 11 rows" → a PACKING number (Prop 7), and in 1D
+an eps-dependence that is measured rather than assumed.** SUPERSEDED TWICE; this is
+the current version (2026-07-25). Two corrections, both from peer review:
+
+  * The bound is a **packing** number of the fence locus, not a covering number.
+    A covering number counts an OPTIMAL cover and the planner is an adversary
+    against the fence, so it can place every point of a maximal packing first.
+    Verified counterexample on the unit circle at eps = 0.5: 12 equispaced fences,
+    pairwise chord distance 0.5176 > eps, every one adding new coverage on a 200k
+    grid sweep — against a covering number of 7. `circle_covering_number.py`
+    computes both. N_pack(A,eps) <= N_cov(A,eps/2) keeps Cor 2's ORDER intact.
+  * The 1D "exactly 1.00" is **not** the covering hypothesis being satisfied. The
+    fence is recorded at the model's refuted PREDICTION, which overshoots the wall
+    by 0.17–0.58 against eps = 0.25, so the band does not contain x_wall in 4 of 5
+    cart episodes — yet the count is still 1. What the count is sensitive to is the
+    strip between the boundary and the fence: `fence_separation_census.py` sweeps
+    eps and finds the outcome IDENTICAL from 0.25 down to 0.05 and then moving at
+    0.01 (2 violations on 2 of 4 seeds), i.e. the 1.00 holds while the band is wide
+    relative to the overshoot and fails when it is not. That is a stated, checkable
+    hypothesis instead of a theorem that did not apply.
+
+Also corrected: the arc percentages (8%/21%/34%, later 17%/43%/68%) were the
+violation count divided by the budget, i.e. saturation assumed and restated as a
+percentage, then used to explain the count. The probed arc is now measured directly
+per patch per episode. And PatchField2D is bi-modal, so a one-circle budget was half
+the right one.
+
+This is the covering/packing-number analogue delivered on the MITIGATION side; the
+gate side has its own (Prop 9), so the Limitations' "open" note is retired on both.
 
 **5. Prop 6's density hypothesis, closed for one instrument (Cor 1).** For the
-cart's gate at step 1 the (x,v,a) density factorises exactly:
+cart's gate at step 1 the (x,v,a) density is CONSTANT on a sheared set (not a
+product of marginals: x_1 = x_0 + dt*v_1 makes the two dependent, but the shear has
+unit Jacobian so the value is the product of the normalizations):
 c = 1/(2*gain*dt*a_max) * 1 * 1/(2*a_max) = **5/6**, Monte-Carlo confirmed to 1.3%
 (`scripts/gate_density_constant.py`). So the detectability bound is quantitative
 here: hiding an eta-sized error from the deployed gate (eps=0.01, N=40) with
@@ -2914,3 +2996,58 @@ template-prior statement; §10's open items on prompting/budget and "other
 geometries" are now BOTH measured negatives (confound entry above + this);
 the abstract's "geometry-dependent" stays correct but "curvature" should
 never be the stated axis.
+
+
+---
+
+## Round-2 peer review: three new scripts, and what each one settles
+
+Added 2026-07-25 after five adversarial reviews. Each exists because a claim in the
+paper rested on a number nobody had measured.
+
+**`scripts/patch2d_dependence_50k.py`** (~40 min, resumable per knob). Settles the
+dependence sign. At the 600 rollouts of `tab:patch2d`, P(both) was 0–3 counts per
+knob and six of nine cells were censored zeros, so "the dependence changes sign
+across the grid" was over-read from noise. Note also what could NOT be fixed by
+better statistics on the same sample: r1, r2, r_union and P(both) all come from the
+same rollouts, so inclusion–exclusion holds identically in the plug-in estimates and
+"the bracket contains the measured value at all nine knobs" is an algebraic identity
+with zero empirical content. At 50,000 rollouts the sign IS resolvable and does
+change: negative at (2,6) and (3,7), **positive at (4,6)**, all three with Wilson
+intervals excluding r1*r2, undecided at (4,7). So no fixed correction factor can
+replace the bracket.
+
+**`scripts/fence_separation_census.py`** (~12 min). Settles three things about
+Prop 7. (i) The 1D fences are not where the proposition put them: the fence is the
+model's refuted PREDICTION, overshooting the wall by 0.17–0.58 against eps = 0.25,
+so the band misses x_wall in 4 of 5 cart episodes while the count is still exactly 1.
+(ii) What explains the 1 is SEPARATION — a point beyond the boundary disconnects the
+agent from the lure — and separation has a signature the covering story lacks:
+eps-invariance. Measured bit-identical over a 20x range on the pendulum (0.1 →
+0.005) and from 0.25 to 0.05 on the cart, breaking only at 0.01, where the unfenced
+strip grows wide enough for a real contact no imagined segment crosses. (iii) In 2D
+the per-episode picture is not the mean: medians 1/1/2 against means 1.05/2.65/4.25,
+maxima 2/28/28, but at most **2/5/6 DISTINCT** fence positions — so the bounded
+quantity (new-coverage fences) is a quarter of the 24-fence two-patch packing budget,
+and the raw counts are duplicates. And 0/20, 2/20, **7/20** episodes end pinned at
+blind-level return: the far-knob degradation is lock-in, not a longer transient. The
+probed arc is now measured directly (median 0%/0%/87%) instead of being inferred from
+count-over-budget, which was circular.
+
+**`scripts/sample_stream_census.py`** (instant, in CI). Recounts every campaign at
+rollout-seed-block level, because `collect_transitions` draws `Random(seed + i)` with
+`seed = 10_000*(index + 1 + offset)` and nothing else — not the instrument, knob,
+patch shape or prompt variant. So the PatchField2D campaign's 203 cells rest on 20
+blocks, the guided ablation reuses the disc cells' samples byte for byte, and the
+honest bounds are cluster-level: all-repair lower bounds 0.851 (cart, 22 blocks) and
+0.898 (pendulum, 34 blocks), and the 2D negative result's upper bound is **0.161**
+per sample rather than "never".
+
+Two rewritten scripts worth noting: `gate_density_step_t.py` now delivers a genuine
+POINTWISE density infimum via a Minkowski erosion with P-shaped cells (oracle-tested:
+zero inclusion violations in 4800 trials, and the bound sits below a separately
+measured density by exactly the predicted (1-lambda)^2), and it runs the certificate
+itself so no rho or bound is hand-computed. `truth_plan_invariance_certificate.py`
+now runs the harness's 20 episodes per knob (was 2) and reports argmax uniqueness as
+a DIAGNOSTIC — it fails, ties occur because the reward saturates to 1.0 in floating
+point, and the certificate rests instead on the knob-independent enumeration order.

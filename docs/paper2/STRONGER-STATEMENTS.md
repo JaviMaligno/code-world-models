@@ -263,3 +263,105 @@ bound in the marginals alone can be tighter. That — not a bespoke instrument �
 the correct theoretical statement without independence, and it was already in the
 paper; the earlier "superseded" note referred only to the discarded instrument
 plan and undersold it.
+
+
+---
+
+# Round 2: five adversarial peer reviews, 2026-07-25 (later the same day)
+
+Five reviewers were run over the revised paper (core probability, claim-vs-theorem,
+geometry/measure, covering-number mitigation, statistics/inference). They found
+errors the first round had not, including three that flipped bolded conclusions.
+What follows is the ledger: what was wrong, what it is now, and which of them is a
+weakening that could be earned back.
+
+## Fixed by making the paper WEAKER and TRUER (no path back — the earlier claim was
+simply false)
+
+1. **The wall corollary was vacuous.** "No smooth pair less than twelve times as
+   sensitive as the plant can hide the wall from this gate ($L \geq 15.2$ for
+   $\eta = 4.2$)" instantiated a density $c = 5/6$ that is supported on the
+   one-step reachable set $|x_1| < 0.53$ — at the wall ($x \in [2,10]$) the
+   step-1 density is exactly zero and the proposition says nothing. The ball does
+   not bridge the gap either. Deleted; what remains at the wall is the measurement
+   (reveal-rarity 0.14) and Prop lipschitz's density-free obstruction.
+
+2. **The step-t certificate did not exclude the hard mode.** Two independent
+   errors: the density was computed in 2-D $(x,v)$ and consumed as 3-D $(x,v,a)$
+   (a factor $2a_{max}$ the step-1 corollary got right), and a per-cell AVERAGE was
+   used where the hypothesis wants an INFIMUM. Corrected via a Minkowski erosion
+   with $P$-shaped cells (a genuine pointwise infimum, oracle-tested), the step-20
+   bound is 8.84, not 3.67. The bolded "still excluding the hard mode's 4.2" is
+   retracted. The honest replacement is a better statement: at fixed $N$, extent is
+   paid for with resolution, and NO step-$t$ region beats the step-1 corollary — so
+   the step-1 restriction was never what limited the certificate.
+
+3. **The $\varphi$ factorization was not exact.** "Conditioning on the entire state
+   trajectory leaves the action indicators independent Bernoulli" is false when the
+   plant is invertible in the action, which this one is. Replaced by a direct
+   measurement of the per-rollout miss probability, which needs no factorization at
+   all and is genuinely exact.
+
+4. **The grid was not a grid.** `int(2R/rho)` with index clamping made the top cell
+   0.8 wide at $\rho = 0.6$, so "all cells hit" certified a coarser net than
+   claimed — and the falsification test shared the bug, so it validated it. Both
+   fixed to `ceil`; the deployed gate certifies net radius 1.0 (bound 2.55) and
+   misses 0.667 by two rollouts.
+
+5. **The fence bound was in the wrong direction.** Coverage-adding fences are
+   bounded by a PACKING number, not a covering number: 12 on the unit circle at
+   $\varepsilon = 0.5$, against a covering number of 7, with the 12-point sequence
+   exhibited. Cor 2's ORDER survives ($N_{pack} \leq N_{cov}(\cdot,\varepsilon/2)$).
+
+6. **The 1D "exactly 1.00" was not the covering bound.** The fence lands at the
+   refuted prediction, which overshoots the wall by up to 0.58 against
+   $\varepsilon = 0.25$, so the covering hypothesis fails in 4 of 5 cart episodes
+   while the conclusion holds. It is a SEPARATION fact, and it has a signature we
+   measured: bit-identical outcomes over a $20\times$ $\varepsilon$ range on the
+   pendulum, breaking only at $\varepsilon = 0.01$ on the cart.
+
+7. **$J_{max}$ was incoherent.** Read as a supremum over policies of the expected
+   return it is 17.697, BELOW the measured $J_{truth} = 17.772$ — the normalization
+   would exceed 1 by construction. The coupling needs pointwise extremes: with
+   $J_{max} = 18.009$ the bound is 1.0447 against a measured 1.0310, so the
+   corollary is at 98.7% of its bound and NOT attained.
+
+8. **"Confirmed at all nine knobs" was an identity.** $r_1$, $r_2$, $r_\cup$ and
+   $P(both)$ come from the same rollouts, so inclusion-exclusion holds exactly
+   in-sample and the bracket cannot fail. Zero empirical content.
+
+9. **"Distinct gate samples" over-counted by up to $10\times$.** The rollout stream
+   depends on the seed index alone, not on the instrument, knob, patch shape or
+   prompt variant — so the PatchField2D campaign's 203 cells rest on 20 blocks, and
+   the guided ablation reuses the disc cells' samples byte for byte.
+
+## Earned back the same day (weakened, then recovered by measurement)
+
+10. **"The dependence changes sign across the grid."** At 600 rollouts $P(both)$ was
+    0–3 counts and the claim was noise. Re-measured at 50,000 rollouts per knob:
+    negative at $(2,6)$ and $(3,7)$, POSITIVE at $(4,6)$, all three with Wilson
+    intervals excluding $r_1r_2$. The claim is now earned, and it is the reason a
+    fixed correction factor cannot replace the bracket.
+
+11. **$\varepsilon^\star$ "predicts where each sweep arm dips."** It was computed on
+    a different rollout stream than the sweep, and failed on 2 of 4 arms. Computed
+    on the sweep's own stream it is an IDENTITY on all four — weaker in kind (an
+    identity, not a prediction) but true, and now stated as such.
+
+## Still open — a real weakening with a known path back
+
+12. **The 2D fencing budget and the "boundary-mapping transient".** The arc
+    percentages were the violation count divided by the budget (saturation assumed
+    and restated), the budget ignored the second patch, and per-episode maxima
+    reach 28 with 24 duplicate fences at one point. The census script now measures
+    the probed arc directly and reports median/max/lock-in. **To earn a real
+    claim here:** instrument which patch each violation belongs to, report the
+    per-patch packing budget, and separate the lock-in failures from the transient
+    — a mitigation that pins the agent 7 episodes in 20 is not a slower transient,
+    it is a different failure mode.
+
+13. **The interiority hypothesis holds on only 34% of $U$.** Prop detectrate's
+    $q = c(2\rho)^{d+m}$ needs the ball unclipped; on the cart's $U$ that is
+    $33.9\%$ of the volume, and elsewhere $q$ is smaller by up to $2^{d+m}$. Stated
+    rather than fixed. **To earn it back:** a boundary-aware version of the ball
+    volume, or a certified region taken as an interior sub-level set.

@@ -46,3 +46,11 @@ jobs:
       # precision. A stale transcription fails here rather than in a preprint.
       - name: Audit paper 2 tables against the result JSONs
         run: python scripts/audit_paper2_numbers.py
+      # The two constants that peer review found wrong were hand-computed in prose,
+      # so they are now derived by scripts and the audit reads them from the output.
+      # These two are cheap enough to re-derive on every push rather than trusting
+      # a checked-in JSON.
+      - name: Re-derive the circle covering AND packing numbers
+        run: PYTHONPATH=src python scripts/circle_covering_number.py
+      - name: Recount the distinct rollout-seed blocks behind every pooled claim
+        run: PYTHONPATH=src python scripts/sample_stream_census.py

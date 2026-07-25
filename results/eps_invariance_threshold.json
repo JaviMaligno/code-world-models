@@ -2,7 +2,12 @@
   "script": "eps_invariance_threshold.py",
   "params": {
     "rollouts": 2000,
-    "seed": 0
+    "seed": 10000,
+    "blocks": [
+      500000,
+      900000
+    ],
+    "big": 20000
   },
   "grid": [
     1e-09,
@@ -17,9 +22,10 @@
   "rows": [
     {
       "arm": "cart wall@4",
-      "n_firing": 285,
-      "eps_star": 0.056134912994624434,
-      "first_grid_eps_above_eps_star": 0.1,
+      "n_firing": 277,
+      "eps_star": 0.1137119443493087,
+      "second_order_statistic": 0.1843993756557278,
+      "first_grid_eps_above_eps_star": 0.3,
       "grid": [
         1e-09,
         1e-06,
@@ -37,15 +43,34 @@
         1.0,
         1.0,
         1.0,
-        0.9964912280701754,
-        0.968421052631579
+        1.0,
+        0.9783393501805054
       ],
-      "min_single_contact_disagreement": null
+      "eps_star_other_streams": [
+        {
+          "seed": 500000,
+          "n_firing": 278,
+          "eps_star": 0.14639103088628086
+        },
+        {
+          "seed": 900000,
+          "n_firing": 252,
+          "eps_star": 0.20050591834874662
+        }
+      ],
+      "eps_star_big_sample": {
+        "rollouts": 20000,
+        "n_firing": 2702,
+        "eps_star": 0.06447675971797132
+      },
+      "n_contacts": 919,
+      "min_single_contact_disagreement": 0.0017935101645310425
     },
     {
       "arm": "cart wall@8",
-      "n_firing": 24,
-      "eps_star": 0.3854971745912619,
+      "n_firing": 25,
+      "eps_star": 0.39590474910151385,
+      "second_order_statistic": 0.6307237684796183,
       "first_grid_eps_above_eps_star": null,
       "grid": [
         1e-09,
@@ -67,12 +92,31 @@
         1.0,
         1.0
       ],
-      "min_single_contact_disagreement": null
+      "eps_star_other_streams": [
+        {
+          "seed": 500000,
+          "n_firing": 21,
+          "eps_star": 0.4382572567167269
+        },
+        {
+          "seed": 900000,
+          "n_firing": 21,
+          "eps_star": 0.5381360156111636
+        }
+      ],
+      "eps_star_big_sample": {
+        "rollouts": 20000,
+        "n_firing": 205,
+        "eps_star": 0.2718457564031734
+      },
+      "n_contacts": 75,
+      "min_single_contact_disagreement": 0.01516189460892954
     },
     {
       "arm": "pendulum stop@1.0",
-      "n_firing": 250,
-      "eps_star": 0.05128355789327432,
+      "n_firing": 282,
+      "eps_star": 0.07907393200511889,
+      "second_order_statistic": 0.09908275540160472,
       "first_grid_eps_above_eps_star": 0.1,
       "grid": [
         1e-09,
@@ -91,16 +135,35 @@
         1.0,
         1.0,
         1.0,
-        0.988,
-        0.92
+        0.9929078014184397,
+        0.8794326241134752
       ],
-      "min_single_contact_disagreement": null
+      "eps_star_other_streams": [
+        {
+          "seed": 500000,
+          "n_firing": 267,
+          "eps_star": 0.08514975872444305
+        },
+        {
+          "seed": 900000,
+          "n_firing": 212,
+          "eps_star": 0.03249670150650941
+        }
+      ],
+      "eps_star_big_sample": {
+        "rollouts": 20000,
+        "n_firing": 2502,
+        "eps_star": 0.0332194229908947
+      },
+      "n_contacts": 373,
+      "min_single_contact_disagreement": 0.0022434245057317615
     },
     {
       "arm": "pendulum stop@1.4",
-      "n_firing": 50,
-      "eps_star": 0.11642644493974322,
-      "first_grid_eps_above_eps_star": 0.3,
+      "n_firing": 35,
+      "eps_star": 0.08052125652673209,
+      "second_order_statistic": 0.1434078878007634,
+      "first_grid_eps_above_eps_star": 0.1,
       "grid": [
         1e-09,
         1e-06,
@@ -118,10 +181,28 @@
         1.0,
         1.0,
         1.0,
-        1.0,
-        0.86
+        0.9714285714285714,
+        0.8857142857142857
       ],
-      "min_single_contact_disagreement": null
+      "eps_star_other_streams": [
+        {
+          "seed": 500000,
+          "n_firing": 35,
+          "eps_star": 0.05367000538736213
+        },
+        {
+          "seed": 900000,
+          "n_firing": 37,
+          "eps_star": 0.06095979442914619
+        }
+      ],
+      "eps_star_big_sample": {
+        "rollouts": 20000,
+        "n_firing": 357,
+        "eps_star": 0.07618126011403933
+      },
+      "n_contacts": 41,
+      "min_single_contact_disagreement": 0.0028363893021853717
     }
   ]
 }

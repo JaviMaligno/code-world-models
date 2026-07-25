@@ -1,0 +1,95 @@
+{
+  "script": "patch2d_dependence_50k.py",
+  "params": {
+    "knobs": [
+      2.0,
+      6.0,
+      4.0,
+      6.0,
+      4.0,
+      7.0,
+      3.0,
+      7.0
+    ],
+    "rollouts": 50000,
+    "seed_base": 50000
+  },
+  "rows": [
+    {
+      "k1": 2.0,
+      "k2": 6.0,
+      "n": 50000,
+      "hits1": 11727,
+      "hits2": 404,
+      "hits_both": 43,
+      "hits_union": 12088,
+      "r1": 0.23454,
+      "r2": 0.00808,
+      "P_both": 0.00086,
+      "P_both_ci": [
+        0.0006385699318141032,
+        0.001158124024595838
+      ],
+      "r1_times_r2": 0.0018950832000000002,
+      "verdict": "negative dependence",
+      "interval_excludes_independence": true
+    },
+    {
+      "k1": 4.0,
+      "k2": 6.0,
+      "n": 50000,
+      "hits1": 4101,
+      "hits2": 380,
+      "hits_both": 64,
+      "hits_union": 4417,
+      "r1": 0.08202,
+      "r2": 0.0076,
+      "P_both": 0.00128,
+      "P_both_ci": [
+        0.0010025940281071888,
+        0.001634035394381023
+      ],
+      "r1_times_r2": 0.000623352,
+      "verdict": "positive dependence",
+      "interval_excludes_independence": true
+    },
+    {
+      "k1": 4.0,
+      "k2": 7.0,
+      "n": 50000,
+      "hits1": 4074,
+      "hits2": 304,
+      "hits_both": 20,
+      "hits_union": 4358,
+      "r1": 0.08148,
+      "r2": 0.00608,
+      "P_both": 0.0004,
+      "P_both_ci": [
+        0.00025896284018545545,
+        0.0006178017962339993
+      ],
+      "r1_times_r2": 0.0004953984,
+      "verdict": "undecided at this sample size",
+      "interval_excludes_independence": false
+    },
+    {
+      "k1": 3.0,
+      "k2": 7.0,
+      "n": 50000,
+      "hits1": 6610,
+      "hits2": 304,
+      "hits_both": 22,
+      "hits_union": 6892,
+      "r1": 0.1322,
+      "r2": 0.00608,
+      "P_both": 0.00044,
+      "P_both_ci": [
+        0.0002905985865828194,
+        0.0006661599037488515
+      ],
+      "r1_times_r2": 0.0008037760000000001,
+      "verdict": "negative dependence",
+      "interval_excludes_independence": true
+    }
+  ]
+}

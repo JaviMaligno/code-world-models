@@ -74,14 +74,70 @@ def n_cover_bound(r):
     return vol_U_grown(r / 2) / ((r) ** DIM)
 
 
+def ball_mass_fraction(rho):
+    """inf_{u in U} vol(B(u, rho/2) INTERSECT U) / vol(B_{rho/2}), computed rather
+    than asserted.
+
+    The tempting shortcut is 2^-DIM: for an AXIS-ALIGNED box whose extents all
+    exceed rho/2, a corner keeps exactly one orthant of its sup-ball. But this U is
+    a SHEARED box, {|v| < V, |x - dt v| < 1/2, |a| < a_max}, and the ratio is not
+    shear-invariant --- the sup-ball is axis-aligned while the region is not, so the
+    slanted constraint clips the corner cap a little further. Measured here it is
+    0.950 * 2^-DIM at the certified rho, i.e. asserting 2^-DIM would have left the
+    certificate 5% optimistic. That is small, and it is exactly the size of error
+    that hand-asserted geometry produces, so it is computed.
+
+    The infimum is attained at a corner (the scan below re-checks that), and the cap
+    volume factorises as (action interval) x (area of the clipped (x, v) slab)."""
+    r = rho / 2
+    V = env.gain * env.dt * env.a_max
+
+    def cap(ux, uv, ua, n=400):
+        la = min(env.a_max, ua + r) - max(-env.a_max, ua - r)
+        if la <= 0:
+            return 0.0
+        lo, hi = max(-V, uv - r), min(V, uv + r)
+        if hi <= lo:
+            return 0.0
+        tot, dv = 0.0, (hi - lo) / n
+        for i in range(n):
+            v = lo + (i + 0.5) * dv
+            xlo = max(env.dt * v - 0.5, ux - r)
+            xhi = min(env.dt * v + 0.5, ux + r)
+            if xhi > xlo:
+                tot += (xhi - xlo) * dv
+        return tot * la
+
+    vol_ball = rho ** DIM
+    corners = [(env.dt * sv * V + sx * 0.5, sv * V, sa * env.a_max)
+               for sv in (-1, 1) for sx in (-1, 1) for sa in (-1, 1)]
+    best = min(cap(*c) for c in corners) / vol_ball
+    # self-check: no interior point beats the worst corner (coarse scan)
+    for i in range(9):
+        for j in range(9):
+            uv = -V + 2 * V * j / 8
+            ux = env.dt * uv - 0.5 + i / 8
+            for k in range(9):
+                ua = -env.a_max + 2 * env.a_max * k / 8
+                best = min(best, cap(ux, uv, ua, n=120) / vol_ball)
+    return best
+
+
 def samples_needed(rho):
     """A rho-net needs every point of a rho/2-net to be hit. K is bounded above
     by n_cover_bound(rho/2) -- an UPPER bound matters here, since a bigger K
     demands more samples (using vol(U)/vol(B) instead, a packing LOWER bound,
-    understates it by a factor 2^DIM; corrected 2026-07-25)."""
+    understates it by a factor 2^DIM; corrected 2026-07-25).
+
+    BOUNDARY. The density c is hypothesised only ON U, so a net point p sitting on
+    dU gets P(B(p, rho/2)) >= c * vol(B(p, rho/2) INTERSECT U), not c * vol(B).
+    The factor is computed by ball_mass_fraction(), not asserted: for this SHEARED
+    U it is 0.950 * 2^-DIM rather than the 2^-DIM an axis-aligned box would give
+    (caught in peer review, 2026-07-25 -- the same 2^DIM class as the packing slip
+    above -- and the residual 5% caught on re-reading our own correction)."""
     vol_ball = rho ** DIM                     # vol(B_{rho/2}), side rho
     K = max(1.0, n_cover_bound(rho / 2))
-    p = C * vol_ball
+    p = C * vol_ball * ball_mass_fraction(rho)   # computed, not asserted
     return math.log(K / args.delta) / p
 
 
@@ -118,16 +174,25 @@ print()
 for r in rows:
     print(f"{r['regime']:>44}: M={r['m_samples']:5} -> rho={r['rho']:.3f}, "
           f"certifies sup|f-fhat| <= {r['uniform_bound']:.3f}")
+rig = rows[0]
+L_MAX_EXCLUDED = (WALL_PROBE_ERROR - args.eps_gate) / (2 * rig["rho"])
 print(f"\nThe hard mode's own disagreement is {WALL_PROBE_ERROR} (the wall-region "
       f"probe error), which exceeds")
-print("both bounds -- so the certificate EXCLUDES any Lipschitz model with the")
-print("wall's error magnitude. The wall escapes it only by not being Lipschitz:")
-print("that is the exact boundary of what a continuous coverage guarantee can buy.")
+print(f"the rigorous bound {rig['uniform_bound']:.3f} -- but only for pairs smooth "
+      f"enough. Since eps + 2*L*rho")
+print(f"GROWS with L, the certificate excludes an error of {WALL_PROBE_ERROR} exactly "
+      f"for pairs with")
+print(f"L = max(Lip f, Lip f_hat) <= {L_MAX_EXCLUDED:.3f} (the plant itself is "
+      f"{L:.2f}-Lipschitz, so this is")
+print("a real but narrow class: a smoother-than-the-plant model cannot carry the")
+print("wall's error past this gate, a 2x-rougher one can). The wall itself escapes by")
+print("not being Lipschitz at all: that is the boundary of what coverage can buy.")
 
 out = _REPO / "results" / "gate_coverage_certificate.json"
 out.write_text(json.dumps(
     {"script": "gate_coverage_certificate.py", "params": vars(args),
      "vol_U": VOL_U, "c": C, "L_plant": L, "dim": DIM,
      "grid": grid, "regimes": rows,
-     "wall_probe_error": WALL_PROBE_ERROR}, indent=2))
+     "wall_probe_error": WALL_PROBE_ERROR,
+     "max_L_excluding_wall_error": L_MAX_EXCLUDED}, indent=2))
 print(f"\nwrote {out}")

@@ -13,37 +13,37 @@
   "grid": [
     {
       "rho": 0.1,
-      "m_needed": 14788.232085842224,
+      "m_needed": 124532.48072288193,
       "uniform_bound": 0.264
     },
     {
       "rho": 0.2,
-      "m_needed": 1558.966495297652,
+      "m_needed": 13128.138907769713,
       "uniform_bound": 0.518
     },
     {
       "rho": 0.3,
-      "m_needed": 414.11551488520405,
+      "m_needed": 3487.2885464017186,
       "uniform_bound": 0.772
     },
     {
       "rho": 0.4,
-      "m_needed": 161.0289502247159,
+      "m_needed": 1356.03326505024,
       "uniform_bound": 1.026
     },
     {
       "rho": 0.5,
-      "m_needed": 77.24133909352902,
+      "m_needed": 650.4533818402444,
       "uniform_bound": 1.28
     },
     {
       "rho": 0.6,
-      "m_needed": 42.3354346446819,
+      "m_needed": 356.5089233236371,
       "uniform_bound": 1.534
     },
     {
       "rho": 0.8,
-      "m_needed": 16.37042887527718,
+      "m_needed": 137.85624316022893,
       "uniform_bound": 2.042
     }
   ],
@@ -51,15 +51,16 @@
     {
       "regime": "one step per rollout (rigorous)",
       "m_samples": 40,
-      "rho": 0.6150000000000004,
-      "uniform_bound": 1.5721000000000012
+      "rho": 1.1649999999999971,
+      "uniform_bound": 2.9690999999999925
     },
     {
       "regime": "all steps (assumes approximate independence)",
       "m_samples": 3200,
-      "rho": 0.16500000000000006,
-      "uniform_bound": 0.42910000000000015
+      "rho": 0.31000000000000016,
+      "uniform_bound": 0.7974000000000004
     }
   ],
-  "wall_probe_error": 4.2
+  "wall_probe_error": 4.2,
+  "max_L_excluding_wall_error": 1.7982832618025797
 }

@@ -21,5 +21,24 @@
   "closed_form_half_width": 0.5053605102841573,
   "closed_form_n": 7,
   "classic_eps_equals_R_n": 3,
+  "packing_on_circle": {
+    "n": 12,
+    "min_pairwise_chord": 0.5176380902050409,
+    "all_add_coverage": true,
+    "coverage_added_per_fence": [
+      32173,
+      16666,
+      16667,
+      16667,
+      16666,
+      16667,
+      16667,
+      16666,
+      16667,
+      16667,
+      16666,
+      1161
+    ]
+  },
   "minimal_good_cover_S1": 3
 }
