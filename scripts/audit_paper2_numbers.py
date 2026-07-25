@@ -17,6 +17,7 @@ Exit code 0 iff every checked cell agrees. Run:
   PYTHONPATH=src python scripts/audit_paper2_numbers.py
 """
 import json
+import math
 import pathlib
 import re
 import sys
@@ -462,6 +463,67 @@ claim("their area spans 15x-81x the patch (median 61x)",
 claim("exactly one patch-selective artifact, a half-plane at 31x",
       len(_sel) == 1 and _sel[0][0] == 180000 and _sel[0][1] == "halfplane"
       and round(_sel[0][2] / PATCH_SHARE) == 31, str(_sel))
+
+# --- Prop 8's hypothesis: the truth planner's knob-invariance regime --------
+regime = load("truth_planner_knob_regime")["rows"]
+inside = [r for r in regime if r["x_wall"] <= 12.0]
+outside = [r for r in regime if r["x_wall"] > 12.0]
+claim("truth J is bit-identical for x_wall <= 12 (the invariance regime)",
+      len({r["j_truth"] for r in inside}) == 1
+      and all(r["truth_contact_rate"] == 0.0 for r in inside),
+      str(sorted({r["j_truth"] for r in inside})))
+claim("truth J as quoted inside the regime",
+      abs(next(iter({r["j_truth"] for r in inside})) - 17.659688408965) < 5e-12)
+claim("the plan flips past x_right = 12 (contact 1.00, J jumps)",
+      all(r["truth_contact_rate"] == 1.0 for r in outside)
+      and min(r["j_truth"] for r in outside) > 30,
+      str([(r["x_wall"], round(r["j_truth"], 2)) for r in outside]))
+
+# --- Corollary: the gate density constant, analytic vs Monte Carlo -----------
+dens = load("gate_density_constant")
+claim("analytic gate density is 5/6", abs(dens["c_analytic"] - 5 / 6) < 1e-12)
+claim("Monte Carlo confirms it within 2%",
+      abs(dens["c_monte_carlo"] - dens["c_analytic"]) / dens["c_analytic"] < 0.02,
+      f"{dens['c_monte_carlo']:.6f}")
+claim("plant Lipschitz constant is the 1.27 the paper quotes",
+      abs(dens["L_plant_sup_metric"] - 1.27) < 5e-3)
+_hide = {round(r["eta"], 2): r["L_min_delta0.5"] for r in dens["hiding_table"]}
+for eta, want in ((0.1, 0.33), (0.5, 1.78), (4.2, 15.2)):
+    claim(f"hiding L bound as quoted for eta={eta}",
+          abs(_hide[eta] - want) < 0.05, f"{_hide[eta]:.3f}")
+
+# --- Proposition (eps-invariance): the threshold and its predictions --------
+# eps* = min over mode-firing rollouts of the max per-contact disagreement. The
+# paper's table quotes eps* per arm and the first grid eps at or above it, and
+# claims reveal/firing is exactly 1.000 below eps*: check all three.
+eps_thr = load("eps_invariance_threshold")
+GRID_EPS = eps_thr["grid"]
+QUOTED = {"cart wall@8": (0.3855, None),
+          "cart wall@4": (0.0561, 0.1),
+          "pendulum stop@1.0": (0.0513, 0.1),
+          "pendulum stop@1.4": (0.1164, 0.3)}
+for row in eps_thr["rows"]:
+    want_star, want_break = QUOTED[row["arm"]]
+    claim(f"eps* as quoted for {row['arm']}",
+          abs(row["eps_star"] - want_star) < 5e-5, f"{row['eps_star']:.4f}")
+    claim(f"first grid eps at/above eps* for {row['arm']}",
+          row["first_grid_eps_above_eps_star"] == want_break,
+          str(row["first_grid_eps_above_eps_star"]))
+    below = [r for e, r in zip(GRID_EPS, row["reveal_over_firing"])
+             if e < row["eps_star"]]
+    claim(f"reveal/firing is exactly 1 below eps* for {row['arm']}",
+          all(r == 1.0 for r in below), str(below))
+
+# --- Proposition (fence covering number) ------------------------------------
+mit_rows = load("continuous_mitigation")["rows"]
+claim("1D: covering number 1 => exactly one violation on all 11 rows",
+      all(r["mean_violations"] == 1.0 for r in mit_rows) and len(mit_rows) == 11)
+_R, _EPS2D = 1.0, 0.5
+_cov = math.ceil(2 * math.pi / (2 * math.asin(_EPS2D / (2 * _R))))
+claim("2D covering bound is the 13 the paper quotes", _cov == 13, str(_cov))
+for r in load("continuous_mitigation_patch2d")["rows"]:
+    claim(f"2D violations under the covering bound {(r['k1'], r['k2'])}",
+          r["mean_violations"] <= _cov, f"{r['mean_violations']} vs {_cov}")
 
 # --- Proposition (knob-invariance): the affine identity, to the digit -------
 # play_cost(k) = J_truth/(J_truth-J_rand) - J_blind(k)/(J_truth-J_rand) whenever

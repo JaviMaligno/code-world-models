@@ -130,6 +130,38 @@ The bracket is not merely valid but \textbf{sharp}: its ends are the Fr\'echet--
 
 Section~\ref{sec:patch2d} measures both ingredients on the bi-modal instrument, and the proposition is confirmed where it is checkable: the bracket contains the measured joint factor at all nine knobs, and the sign rule predicts the direction of the product's error at all nine --- an error that runs $-17\%$ to $+12\%$ because the dependence changes sign across the grid. The practical reading is that a multi-mode danger law needs the union event measured (or the bracket, which needs only the marginals), never the marginals multiplied.
 
+\begin{proposition}[$\varepsilon$-invariance of a hard mode's reveal-rarity, with its exact threshold]
+\label{prop:epsinv}
+Fix a hard mode, a gate policy, and the mode-blind model. For a rollout $\omega$ put
+\[
+  D(\omega) \;=\; \max\{\,\|f(s,a) - \hat f(s,a)\|_\infty \;:\; (s,a) \text{ a mode contact of } \omega\,\},
+\]
+with $D(\omega) = 0$ if $\omega$ never contacts the mode. Then the reveal-rarity at tolerance $\varepsilon$ --- the probability that a gate rollout contains a transition on which truth and model differ by more than $\varepsilon$ --- is exactly $P_\rho(D > \varepsilon)$, a non-increasing step function of $\varepsilon$ whose steps sit at the realized values of $D$. Consequently, with $\varepsilon^\ast = \min\{D(\omega) : D(\omega) > 0\}$,
+\[
+  \text{reveal-rarity}(\varepsilon) \;=\; \underbrace{P_\rho(D > 0)}_{\text{mode-firing rarity } r} \quad\text{for every } \varepsilon < \varepsilon^\ast,
+\]
+and $\mathrm{pass@}N = (1-r)^N$ is \emph{exactly} $\varepsilon$-invariant on that range, degrading only above $\varepsilon^\ast$. So writing one symbol $r$ for the two rarities is licensed precisely for $\varepsilon < \varepsilon^\ast$, and the flatness the sweep measures is an identity there rather than a coincidence.
+\end{proposition}
+
+Note what $\varepsilon^\ast$ is: a per-rollout \emph{minimum} of a per-contact \emph{maximum}. A pinned rollout contacts the mode many times, and it only has to contact it coarsely \emph{once} to be revealed, which is why $\varepsilon^\ast$ sits two orders of magnitude above the smallest single-contact disagreement ($0.0017$ on \texttt{wall@4}). The threshold is computable (\texttt{scripts/eps\_invariance\_threshold.py}), and it \textbf{predicts where each sweep arm dips}, arm by arm:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lrrl}
+\toprule
+mode arm & $\varepsilon^\ast$ & first grid $\varepsilon \geq \varepsilon^\ast$ & measured in the sweep \\
+\midrule
+cart \texttt{wall@8} & 0.3855 & none in grid & bit-identically flat through $\varepsilon = 0.3$ \\
+cart \texttt{wall@4} & 0.0561 & 0.1 & flat to $3{\times}10^{-2}$, slight dip from 0.1 \\
+pendulum \texttt{stop@1.0} & 0.0513 & 0.1 & $0.1410$ to $3{\times}10^{-2}$, $0.1400$ at 0.1, $0.1240$ at 0.3 \\
+pendulum \texttt{stop@1.4} & 0.1164 & 0.3 & flat to 0.1, dips at 0.3 \\
+\bottomrule
+\end{tabular}
+\caption{The $\varepsilon$-invariance threshold predicts the sweep. $\varepsilon^\ast$ is computed from the gate policy alone (2000 rollouts/arm, no gate involved); the last column is what Section~\ref{sec:axes}'s sweep measured independently. Every arm's first departure from flatness lands at the predicted grid point --- including \texttt{wall@8}, whose $\varepsilon^\ast$ exceeds the grid and which is therefore flat throughout.}
+\label{tab:epsstar}
+\end{table}
+
 \begin{proposition}[identifiability; transfers verbatim]
 \label{prop:ident}
 Let $M \subseteq S \times A$ be the mode region (for the cart the clamp fires depending on $(s,a)$ through $x' \geq x_{\mathrm{wall}}$) and instantiate Proposition~\ref{prop:gatemiss} at the critical event $R = \{\text{rollouts that visit } M\}$, so that ``miss'' means exactly that no sampled transition lies in $M$. Condition on that miss event and let $\hat f_1, \hat f_2$ be any two models that agree on $(S \times A) \setminus M$. On the miss event the sample visits no transition in $M$, so $\hat f_1$ and $\hat f_2$ produce identical outputs on every sampled input; hence every sample-measurable score (the gate, a likelihood, a refinement objective) is constant across the two, and no such score can distinguish them --- preference for the correct one must come from the prior or the specification. This holds for \emph{any} learner --- LLM, linear regression, MLP --- a point Section~\ref{sec:smooth} instantiates empirically.
@@ -166,7 +198,7 @@ an affine function of the exploited planner's own return with knob-independent c
 so the entire knob-dependence is the exploited planner's \emph{residual} reward divided by the truth-minus-random margin; a planner pinned with none gives play\_cost exactly $J_{\mathrm{truth}}/(J_{\mathrm{truth}} - J_{\mathrm{rand}})$.
 \end{proposition}
 
-The two hypotheses are measured, and measured sharply: on the cart the truth planner's return is knob-independent \emph{to twelve digits} ($J_{\mathrm{truth}} = 17.757356407381$ at all seven knobs of the sharp variant, $17.772246981024$ at all seven of the default), and $J_{\mathrm{rand}}$ varies across knobs by $3.9\times10^{-9}$ on the sharp variant and $1.2\times10^{-4}$ on the default --- the random policy does occasionally enter the mode region, so its knob-independence is approximate rather than structural, and measurably less approximate once the plateau tail is removed. With those in hand the proposition is not decoration: it predicts every measured play\_cost to $2.4\times10^{-10}$ on the sharp variant (and to $7.3\times10^{-6}$ on the default, the slack being $J_{\mathrm{rand}}$'s residual knob-dependence), and the spread it predicts, $1.3615\times10^{-4}$, matches the measured $1.3615\times10^{-4}$. So the ``knob-invariant $\mathrm{play\_cost} \approx 1$'' of Section~\ref{sec:mechanism} is an \emph{identity} once the planner is pinned, and what the sharp-plateau variant buys is not invariance itself but the vanishing of $J_{\mathrm{blind}}$ that makes the identity's residual term negligible. What remains empirical is the pinning ($\mathrm{contact} = 1.00$ and $J_{\mathrm{blind}} \approx 0$) and the truth planner's indifference to the knob --- the latter not automatic, since the clamp does change the imagined value of right-going candidates; the bit-identity of $J_{\mathrm{truth}}$ across the sweep is the evidence that it never changes the argmax.
+The two hypotheses are measured, and measured sharply: on the cart the truth planner's return is knob-independent \emph{to twelve digits} ($J_{\mathrm{truth}} = 17.757356407381$ at all seven knobs of the sharp variant, $17.772246981024$ at all seven of the default), and $J_{\mathrm{rand}}$ varies across knobs by $3.9\times10^{-9}$ on the sharp variant and $1.2\times10^{-4}$ on the default --- the random policy does occasionally enter the mode region, so its knob-independence is approximate rather than structural, and measurably less approximate once the plateau tail is removed. With those in hand the proposition is not decoration: it predicts every measured play\_cost to $2.4\times10^{-10}$ on the sharp variant, and that residue is itself accounted for rather than left over: $\partial\,\mathrm{play\_cost}/\partial J_{\mathrm{rand}} = (J_{\mathrm{truth}} - J_{\mathrm{blind}})/(J_{\mathrm{truth}} - J_{\mathrm{rand}})^2 \approx 0.060$, which against $J_{\mathrm{rand}}$'s measured $3.9\times10^{-9}$ knob-variation predicts $2.3\times10^{-10}$ --- the observed residue to one digit. On the default the same propagation of a $1.2\times10^{-4}$ variation gives $7\times10^{-6}$, matching the $7.3\times10^{-6}$ observed there, and the spread it predicts, $1.3615\times10^{-4}$, matches the measured $1.3615\times10^{-4}$. So the ``knob-invariant $\mathrm{play\_cost} \approx 1$'' of Section~\ref{sec:mechanism} is an \emph{identity} once the planner is pinned, and what the sharp-plateau variant buys is not invariance itself but the vanishing of $J_{\mathrm{blind}}$ that makes the identity's residual term negligible. What remains empirical is the pinning ($\mathrm{contact} = 1.00$ and $J_{\mathrm{blind}} \approx 0$) and the truth planner's indifference to the knob. The latter is not automatic --- the clamp does change the imagined value of right-going candidates --- but it is not fragile either, and it has a \emph{located boundary}. Extending the sweep past its range (\texttt{results/truth\_planner\_knob\_regime.json}) shows $J_{\mathrm{truth}}$ bit-identical at $17.659688408965$ for every $x_\mathrm{wall} \in \{8, 10, 10.5, 11, 11.5, 12\}$ with truth contact $0.00$, and then flipping at $x_\mathrm{wall} = 12.5$ to $35.84$ with contact $1.00$: the truth planner switches to the right plateau exactly once the wall stops blocking it, i.e.\ once $x_\mathrm{wall} > x_\mathrm{right} = 12$. So the invariance regime is the structurally meaningful one --- the wall lies between the start and the far reward --- and the paper's sweep $[2, 10]$ sits well inside it. Beyond the boundary the mode is no longer a trap and there is no danger to measure.
 
 \paragraph{What does not transfer.} The companion paper's coverage certificates enumerate finite information-set spaces. Continuous state spaces admit no such enumeration; covering-number analogues under Lipschitz assumptions are left open (Section~\ref{sec:limitations}).
 
@@ -202,6 +234,20 @@ $B \subseteq E_\varepsilon$ by Proposition~\ref{prop:lipschitz}, and the step-$k
 \end{proof}
 
 Three readings. (i) It is the \emph{measure} counterpart of Proposition~\ref{prop:lipschitz}: smoothness does not merely forbid exact localization, it forces a detection rate. (ii) The Lipschitz constant needed to hide a fixed error grows only like $N^{1/(d+m)}$, so hiding gets \emph{easier} with dimension --- the same dimensional loosening paper~3 studies as a rarity knob. (iii) The hypothesis is where the work is: verifying a visitation-density lower bound is instrument-specific, and our gate's step-$1$ law is supported on a lower-dimensional set (the initial-state distribution has $v = 0$), so we do not claim $c$ for the instruments here. What we \emph{do} have is the direct measurement in its place: the smooth bump arm of Section~\ref{sec:axes} has reveal-rarity $0.19$ against the hard wall's $0.14$ at comparable amplitude --- the smooth error is, if anything, \emph{more} detectable, exactly as this proposition's direction requires, and its harmlessness comes from $\mathrm{play\_cost} \approx 0$ rather than from hiding.
+
+\begin{corollary}[the constant, computed for this instrument]
+\label{cor:cartdensity}
+For the cart's gate at step $k=1$ the density hypothesis is not an assumption: the gate policy gives $v_1 = \mathrm{gain}\cdot dt\cdot a_0$ with $a_0 \sim U(-a_{\max}, a_{\max})$, $x_1 = x_0 + dt\,v_1$ with $x_0 \sim U(-\tfrac12,\tfrac12)$, and $a_1 \sim U(-a_{\max},a_{\max})$ independent, so on $\{|v_1| < \mathrm{gain}\,dt\,a_{\max}\} \cap \{|x_1 - dt\,v_1| < \tfrac12\} \cap \{|a_1| < a_{\max}\}$ the joint $(x_1,v_1,a_1)$ density factorizes exactly:
+\[
+  c \;=\; \frac{1}{2\,\mathrm{gain}\,dt\,a_{\max}} \cdot 1 \cdot \frac{1}{2 a_{\max}} \;=\; \frac{5}{6}
+  \qquad\text{at } \mathrm{gain} = 3,\ dt = 0.1,\ a_{\max} = 1
+\]
+($d + m = 3$ here). Monte Carlo on an interior box agrees to $1.3\%$ (\texttt{scripts/\allowbreak gate\_\allowbreak density\_\allowbreak constant.py}). Proposition~\ref{prop:detectrate} is therefore quantitative on this instrument: hiding an $\eta$-sized disagreement from the deployed gate ($\varepsilon = 0.01$, $N = 40$) with probability above $\tfrac12$ requires
+\[
+  L \;\geq\; (\eta - \varepsilon)\left(\frac{5/6}{\ln 2 / 40}\right)^{1/3},
+\]
+i.e.\ $L \geq 0.33$ for $\eta = 0.1$, $L \geq 1.78$ for $\eta = 0.5$, and $L \geq 15.2$ for $\eta = 4.2$ --- against the plant's own sup-metric Lipschitz constant of $1.27$. The last row is the instrument's own numbers: $4.2$ is the wall-region probe error of Section~\ref{sec:smooth} (a model that predicts straight through the wall), so \textbf{no smooth pair less than twelve times as sensitive as the plant can hide the wall from this gate}. That is the quantitative form of Proposition~\ref{prop:lipschitz}'s obstruction, and it is why the smooth arms of Section~\ref{sec:axes} are \emph{detected} (bump reveal-rarity $0.18$) rather than hidden --- their harmlessness comes from play\_cost, not from invisibility.
+\end{corollary}
 
 \begin{remark}[metric, not measure]
 The ball in Proposition~\ref{prop:lipschitz} is metric, and its \emph{probability} under the gate's visitation measure can still be small --- smoothness bounds how spatially concentrated an error can be, not how often the gate visits it. The proposition removes the \emph{exact} localization premise for smooth pairs; the $(1-r)^N$ mechanism itself is representation-independent and applies to any critical region of small visitation measure.
@@ -438,6 +484,20 @@ knob & pc\_blind & pc\_mit & first-contact step \\
 \end{table}
 
 The collapse is large at every knob (Table~\ref{tab:mitigation}): \texttt{pc\_blind} stays pinned at $\approx 0.94$--$1.03$ everywhere (established in Section~\ref{sec:mechanism}, Tables~\ref{tab:danger} and~\ref{tab:pendulum}), while \texttt{pc\_mit} never exceeds $0.81$. Exactly one violation suffices to fence the mode on \emph{every} one of the 11 rows --- the mitigated planner must touch the mode once, which is identifiability operationalized: you cannot avoid what you have never seen. The residual \texttt{pc\_mit} is the honest cost of that unavoidable first contact, and it grows with the lure distance, read off the first-contact step: cart $0.290 \to 0.806$ as first contact goes $11.6 \to 28.7$ of 80 steps (knob $2 \to 10$); pendulum $0.113 \to 0.212$ as first contact goes $7.0 \to 13.0$ (knob $0.8 \to 2.0$). The cart knob $=10$ row is the least favorable in the sweep (\texttt{pc\_mit} $0.806$, close to blind's $0.977$) because the transient consumes most of the horizon --- but the blind planner stays pinned \emph{forever} there ($J$ $0.94$ of $J_\mathrm{truth}$ $17.77$) while the mitigated planner escapes and recovers most of the horizon ($J$ $3.88$): the normalized cost looks modest, the actual return does not.
+
+\paragraph{Why exactly one violation, and what sets the count in general.} The single-violation sufficiency is not a lucky measurement either --- it is a covering number equal to one.
+
+\begin{proposition}[the mitigation's violation count is bounded by a covering number]
+\label{prop:fencecover}
+Run distrust-region replanning with band $\varepsilon$. Let $A$ be the set of mode-boundary points at which a violation can occur (the points where the mitigated planner's real step can enter the mode region). Each violation places a fence at a point of $A$, and once the accumulated fences $\varepsilon$-cover $A$, every imagined trajectory entering the mode region crosses $A$ within $\varepsilon$ of a fence and is therefore truncated --- so no candidate scores the phantom and no further violation occurs. Hence the number of \emph{coverage-adding} violations is at most $N_{\mathrm{cov}}(A, \varepsilon)$, the $\varepsilon$-covering number of $A$.
+\end{proposition}
+
+The two instrument families instantiate the two extremes of that bound.
+\begin{itemize}
+\item \textbf{1D: $N_{\mathrm{cov}} = 1$, and the bound is tight.} A position or angular clamp has $A = \{x_\mathrm{wall}\}$ (resp.\ $\{\theta_\mathrm{stop}\}$) --- a single point --- so at most one violation is possible, and Table~\ref{tab:mitigation} measures a mean of exactly $1.00$ on all eleven rows. The exactness of that $1.00$ is the proposition, not a regularity: in one dimension the mode is separated from the reachable region by a \emph{point}, and one fence covers a point.
+\item \textbf{2D: the count is the boundary's covering number, and it grows with the reachable arc.} A disc patch of radius $R$ has $A \subseteq \partial\,\mathrm{disc}$, an arc of a circle; a fence at a boundary point $\varepsilon$-covers an arc of $2R\arcsin(\varepsilon/2R)$, so the whole circle needs $\lceil 2\pi / (2\arcsin(\varepsilon/2R)) \rceil = 13$ fences at $R = 1$, $\varepsilon = 0.5$. The measured means $1.05 / 2.65 / 4.25$ (Table~\ref{tab:patch2d-mitigation}) sit under that bound and correspond to reachable arcs of $8\% / 21\% / 34\%$ of the circle --- the ``boundary-mapping transient'' of Section~\ref{sec:patch2d-mitigation} quantified: as the patch recedes, the planner rounds more of it before the fences close the phantom off.
+\end{itemize}
+This is also the one place where the covering-number analogue that Section~\ref{sec:limitations} lists as open does appear --- not on the gate side, where it remains open, but on the mitigation side, where the cost of fencing a mode is exactly a covering number of its reachable boundary. The dimensional reading is the paper's own: the danger law's $(1-r)^N$ is dimension-free, but \emph{repairing} the model at deployment time costs $N_{\mathrm{cov}}(\partial M, \varepsilon)$, which grows with the boundary's dimension.
 
 \subsection{The 2D mitigation: a partial collapse that decays with mode distance}
 \label{sec:patch2d-mitigation}

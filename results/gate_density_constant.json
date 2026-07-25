@@ -1,0 +1,47 @@
+{
+  "script": "gate_density_constant.py",
+  "params": {
+    "mc_samples": 4000000,
+    "seed": 0
+  },
+  "instrument": "CartWall",
+  "step": 1,
+  "dims": 3,
+  "c_analytic": 0.8333333333333333,
+  "c_monte_carlo": 0.8224999999999999,
+  "mc_box_half_widths": [
+    0.05,
+    0.02,
+    0.1
+  ],
+  "L_plant_sup_metric": 1.27,
+  "eps": 0.01,
+  "n_gate": 40,
+  "hiding_table": [
+    {
+      "eta": 0.05,
+      "L_min_delta0.5": 0.14546028006237255,
+      "L_min_delta0.1": 0.09748721795100235
+    },
+    {
+      "eta": 0.1,
+      "L_min_delta0.5": 0.3272856301403383,
+      "L_min_delta0.1": 0.2193462403897553
+    },
+    {
+      "eta": 0.5,
+      "L_min_delta0.5": 1.781888430764064,
+      "L_min_delta0.1": 1.1942184198997787
+    },
+    {
+      "eta": 1.0,
+      "L_min_delta0.5": 3.6001419315437206,
+      "L_min_delta0.1": 2.412808644287308
+    },
+    {
+      "eta": 4.2,
+      "L_min_delta0.5": 15.236964336533527,
+      "L_min_delta0.1": 10.211786080367496
+    }
+  ]
+}

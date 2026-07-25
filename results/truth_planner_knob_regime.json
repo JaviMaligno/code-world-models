@@ -1,0 +1,50 @@
+{
+  "script": "critknob",
+  "rows": [
+    {
+      "x_wall": 8.0,
+      "j_truth": 17.6596884089646,
+      "truth_contact_rate": 0.0
+    },
+    {
+      "x_wall": 10.0,
+      "j_truth": 17.6596884089646,
+      "truth_contact_rate": 0.0
+    },
+    {
+      "x_wall": 10.5,
+      "j_truth": 17.6596884089646,
+      "truth_contact_rate": 0.0
+    },
+    {
+      "x_wall": 11.0,
+      "j_truth": 17.6596884089646,
+      "truth_contact_rate": 0.0
+    },
+    {
+      "x_wall": 11.5,
+      "j_truth": 17.6596884089646,
+      "truth_contact_rate": 0.0
+    },
+    {
+      "x_wall": 12.0,
+      "j_truth": 17.6596884089646,
+      "truth_contact_rate": 0.0
+    },
+    {
+      "x_wall": 12.5,
+      "j_truth": 35.84072512986314,
+      "truth_contact_rate": 1.0
+    },
+    {
+      "x_wall": 13.0,
+      "j_truth": 42.91690334040159,
+      "truth_contact_rate": 1.0
+    },
+    {
+      "x_wall": 14.0,
+      "j_truth": 47.599347677645206,
+      "truth_contact_rate": 1.0
+    }
+  ]
+}

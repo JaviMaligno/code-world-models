@@ -1,5 +1,81 @@
 # Experiments Log
 
+## PAPER 2 — The exact measurements were theorems in disguise: four proved (2026-07-25)
+
+Javier: "mencionas varias cosas medidas que salen completamente exactas, me pregunto
+si eso es hint de algo más que se puede demostrar". It was, four times over. Each
+item below started as a suspiciously exact measurement and ends as a proposition
+whose hypotheses are either derived or measured to a stated precision.
+
+**1. play_cost's knob-invariance → an identity (Prop 8).** With the two baselines
+knob-free, play_cost(k) = J_truth/(J_truth-J_rand) - J_blind(k)/(J_truth-J_rand):
+affine in the exploited planner's own return. So the whole knob-dependence IS its
+residual reward over the truth-minus-random margin. Verification: J_truth is
+knob-identical to twelve digits; the identity predicts every measured play_cost to
+2.4e-10 (sharp) / 7.3e-6 (default), and BOTH residues are themselves accounted for
+by first-order propagation of J_rand's knob-variation (dplay_cost/dJ_rand = 0.0598
+times 3.9e-9 = 2.33e-10; times 1.226e-4 = 7.33e-6 — three digits).
+
+**2. The hypothesis behind it has a located boundary.** Why is the truth planner
+indifferent to the knob at all, given the clamp changes imagined values for
+right-going candidates? Extended the sweep past its range
+(`results/truth_planner_knob_regime.json`): J_truth is bit-identical at
+17.659688408965 for x_wall in {8, 10, 10.5, 11, 11.5, 12} with truth contact 0.00,
+then flips at 12.5 to 35.84 with contact 1.00. The boundary is structural — the
+plan flips exactly once the wall stops blocking the far plateau (x_right = 12) —
+so the invariance regime is "the wall lies between start and reward", and the
+paper's sweep [2, 10] sits well inside it.
+
+**3. The eps-flatness → an identity with a computable threshold that PREDICTS the
+sweep (Prop 3).** For a rollout w let D(w) be the max sup-norm disagreement over
+its mode contacts. Reveal-rarity(eps) = P(D > eps) exactly, so it equals the
+mode-firing rarity for every eps < eps* = min{D(w) : D(w) > 0}. eps* is computable
+from the gate policy alone (`scripts/eps_invariance_threshold.py`), and it predicts
+the first grid point where each arm departs from flatness — in all four arms:
+
+| arm | eps* | predicted break | sweep measured |
+|---|---|---|---|
+| cart wall@8 | 0.3855 | none in grid | bit-identically flat through 0.3 |
+| cart wall@4 | 0.0561 | 0.1 | flat to 3e-2, dips from 0.1 |
+| pend stop@1.0 | 0.0513 | 0.1 | 0.1410 to 3e-2, 0.1400 at 0.1, 0.1240 at 0.3 |
+| pend stop@1.4 | 0.1164 | 0.3 | flat to 0.1, dips at 0.3 |
+
+Note eps* is a per-rollout MINIMUM of a per-contact MAXIMUM: a pinned rollout
+contacts many times and only needs one coarse contact to be revealed, which is why
+eps* sits two orders above the smallest single-contact disagreement (0.0017).
+
+**4. "Exactly one violation on all 11 rows" → a covering number equal to one
+(Prop 7).** Each violation fences a boundary point; once the fences eps-cover the
+reachable boundary, every phantom-reaching imagined trajectory is truncated, so the
+number of coverage-adding violations is at most N_cov(A, eps). In 1D the mode is
+separated by a POINT: N_cov = 1, hence at most one violation — and the measured
+mean is exactly 1.00 on all eleven rows, i.e. the bound is tight. In 2D a fence
+eps-covers an arc 2R*asin(eps/2R) = 0.5054 rad, so the circle needs 13; measured
+means 1.05/2.65/4.25 correspond to reachable arcs of 8%/21%/34% of the circle. This
+is the covering-number analogue the Limitations list as open, delivered on the
+MITIGATION side: the danger law is dimension-free, but repairing the model at
+deployment costs a covering number of the mode boundary.
+
+**5. Prop 6's density hypothesis, closed for one instrument (Cor 1).** For the
+cart's gate at step 1 the (x,v,a) density factorises exactly:
+c = 1/(2*gain*dt*a_max) * 1 * 1/(2*a_max) = **5/6**, Monte-Carlo confirmed to 1.3%
+(`scripts/gate_density_constant.py`). So the detectability bound is quantitative
+here: hiding an eta-sized error from the deployed gate (eps=0.01, N=40) with
+probability > 1/2 needs L >= 0.33 (eta=0.1), 1.78 (eta=0.5), **15.2 (eta=4.2)**
+against the plant's own sup-metric Lipschitz constant of 1.27. The last row is the
+instrument's own number — 4.2 is the wall-region probe error of §9 — so no smooth
+pair less than **twelve times as sensitive as the plant** can hide the wall from
+this gate. That is why the smooth arms are detected (bump reveal-rarity 0.18)
+rather than hidden: their harmlessness is play_cost, not invisibility.
+
+**6. The joint bracket is Frechet-Hoeffding sharp.** Its ends are the
+Frechet-Hoeffding bounds for P(R1 u R2) given the marginals, pushed through
+x -> x^N, so the interval is the EXACT range consistent with r1, r2: no bound in
+the marginals alone can be tighter, and it narrows only by measuring something
+beyond them (which is what r_union is).
+
+State: 34 pp, 0 errors / 0 undefined / 0 overfull; **490 audited values**.
+
 ## PAPER 2 — Reinforcing the weakened statements: 4 of 5 earned, 1 superseded (2026-07-25)
 
 Javier: "vamos a ir reforzando esos incluido el 5". Worked the
