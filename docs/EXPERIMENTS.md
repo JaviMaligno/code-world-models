@@ -1,5 +1,50 @@
 # Experiments Log
 
+## PAPER 2 — The last gap closed: a universal Jacobian, and the certificate's own irrelevance measured (2026-07-25, closing)
+
+Two gaps were left: the nonlinear analogue of the density argument, and the fact
+that the certified region is the GATE's, not the PLANNER's. Both closed, and
+closing them sharpened the conclusion rather than the guarantee.
+
+**1. The nonlinear case is not a separate case — the constant is UNIVERSAL.** For
+any plant of the semi-implicit form
+
+    om_{t+1} = om_t + (gain*a_t + F(th_t, om_t))*dt,   th_{t+1} = th_t + om_{t+1}*dt
+
+with F in C^1 ARBITRARY, the two-action Jacobian satisfies
+
+    |det d(th_t, om_t)/d(a_{t-2}, a_{t-1})| = gain^2 * dt^3   identically,
+
+independent of F, of the state and of t: substituting the partials, every
+F-dependent term cancels (algebra in the tex; verified numerically against four
+forces including a non-separable one, at three (gain, dt) pairs, to ten digits).
+So c = 1/(4 a_max^2 gain^2 dt^3) = 27.78 is the SAME constant for the cart and the
+pendulum, and the certificate's hypothesis holds for the whole instrument family.
+The one exception is the expected one: wherever the mode clamp fires the two-action
+map is constant, det = 0 exactly, and no density argument reaches the mode —
+intrinsic, not technical. (First attempt at this measured min|det| = 0 everywhere;
+that was my grid including |a| = a_max, where the action clamp kills the
+derivative. Corrected to interior actions, and then the free part is exactly 0.009
+with min = max.)
+
+**2. The certified region carries 1.9% of the planner's queries.** The certificate
+bounds the model where the GATE covers; play cost is driven by where the PLANNER
+queries. Measured directly (`certified_region_query_mass.py`, every imagined MPC
+step is a query, 1.3M queries per episode pair): of the exploited planner's
+queries, **1.9%** fall inside the region certified at rho = 0.60 and **7.8%**
+inside the larger step-20 region (truth planner: 2.3% and 7.3%).
+
+So the certificate is sound and nearly irrelevant to play — not because the bound
+is loose (it is tight to one grid step, measured) but because the gate covers a
+couple of percent of the query mass. That is the paper's thesis restated as a
+measurement instead of an argument, and it is why obtaining the continuous coverage
+analogue does not rescue sampling verification: the gate certifies where it looks,
+and the planner looks somewhere else. Limitations now say exactly that, and point
+at the companion paper's prescription (sample the deployment distribution) as the
+change that would matter.
+
+State: 38 pp, 0 errors / 0 undefined / 0 overfull; **536 audited values**.
+
 ## PAPER 2 — Density derived at every step; certificate extended; threshold validated (2026-07-25, final)
 
 Javier asked two things: whether the small N is a problem calling for a bigger

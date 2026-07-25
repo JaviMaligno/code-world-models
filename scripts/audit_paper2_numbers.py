@@ -607,6 +607,24 @@ claim("both bounds are below the hard mode's own disagreement (4.2)",
 claim("the certificate's c and L match the corollary's", 
       abs(cov["c"] - 5 / 6) < 1e-12 and abs(cov["L_plant"] - 1.27) < 5e-3)
 
+# --- the universal two-action Jacobian and the query-mass measurement --------
+_qm = load("certified_region_query_mass")["rows"]
+_blind = [r for r in _qm if "blind" in r["planner"]][0]
+_truth = [r for r in _qm if r["planner"] == "truth"][0]
+claim("certified region carries 1.9% of the blind planner's queries",
+      abs(_blind["inside_fraction"]["1.0,1.0"] - 0.019) < 0.002,
+      f"{_blind['inside_fraction']['1.0,1.0']:.4f}")
+claim("larger region carries 7.8% of them",
+      abs(_blind["inside_fraction"]["3.0,2.0"] - 0.078) < 0.002,
+      f"{_blind['inside_fraction']['3.0,2.0']:.4f}")
+claim("truth planner: 2.3% and 7.3%",
+      abs(_truth["inside_fraction"]["1.0,1.0"] - 0.023) < 0.002
+      and abs(_truth["inside_fraction"]["3.0,2.0"] - 0.073) < 0.002,
+      str(_truth["inside_fraction"]))
+# the universal Jacobian: gain^2 dt^3 for the paper's constants
+claim("universal two-action Jacobian equals gain^2 dt^3 = 0.009",
+      abs(3.0 ** 2 * 0.1 ** 3 - 0.009) < 1e-12)
+
 # --- density at step t, and the tightness validation -------------------------
 dst = load("gate_density_step_t")
 claim("|det M| = 0.009 and the parallelogram density is 27.78",
