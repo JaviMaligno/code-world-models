@@ -607,6 +607,22 @@ claim("both bounds are below the hard mode's own disagreement (4.2)",
 claim("the certificate's c and L match the corollary's", 
       abs(cov["c"] - 5 / 6) < 1e-12 and abs(cov["L_plant"] - 1.27) < 5e-3)
 
+# --- the dependence-exact coverage certificate --------------------------------
+dep = load("gate_coverage_dependent")["rows"]
+_by = {round(r["rho"], 2): r for r in dep}
+claim("dependence-exact: deployed gate certifies rho = 0.60 needing N >= 35",
+      _by[0.6]["n_needed_rigorous"] == 35 and _by[0.6]["certified_at_deployed_N"],
+      str(_by[0.6]["n_needed_rigorous"]))
+claim("its bound is 1.53", abs(_by[0.6]["uniform_bound"] - 1.534) < 0.005,
+      f"{_by[0.6]['uniform_bound']:.3f}")
+claim("rho = 0.5 needs N >= 169", _by[0.5]["n_needed_rigorous"] == 169,
+      str(_by[0.5]["n_needed_rigorous"]))
+claim("rho = 0.4 needs N >= 1179 (a gate ~30x larger)",
+      _by[0.4]["n_needed_rigorous"] == 1179,
+      str(_by[0.4]["n_needed_rigorous"]))
+claim("handling the dependence buys ~2% over the one-step reading",
+      abs(1.572 - _by[0.6]["uniform_bound"]) / 1.572 < 0.03)
+
 # --- geometry of the one fitted disc (the claim that got a correction) -------
 # Claude's single radial attempt: the paper describes where the fitted disc sits
 # relative to the true patch. Recompute that geometry rather than trust prose.

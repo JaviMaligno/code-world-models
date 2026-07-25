@@ -1,5 +1,55 @@
 # Experiments Log
 
+## PAPER 2 — The "mixing argument" settled: a negative result, and a better proof (2026-07-25, last)
+
+Javier: "eso que dices del argumento de mezcla entiendo que significa que hay algo
+más que hacer por ahí, si es así hazlo." There was, and the answer is negative in
+an informative way.
+
+**No mixing argument is needed — there is better structure.** The certificate's
+rigorous instantiation used one step per rollout (N = 40) because steps within a
+rollout are dependent, and I had flagged mixing as the route to the all-steps
+figure. But under the gate policy the action a_t is i.i.d. and INDEPENDENT of s_t,
+so conditioning on a rollout's whole state trajectory, the action indicators at the
+visiting times are independent Bernoulli(q_a) and
+
+    P(cell unhit by a rollout | state trajectory) = (1 - q_a)^O,  O = #{t : s_t in C_s}
+
+exactly — no independence between steps used. And rollouts ARE i.i.d., so the
+expectation factorises: P(cell unhit by the gate) = phi^N with
+phi = E[(1-q_a)^O], a per-rollout expectation of a [0,1] variable, hence
+Monte-Carlo boundable by Hoeffding. `scripts/gate_coverage_dependent.py`.
+
+**What it buys: 2%, not a factor of four.** At rho = 0.60 the worst cell has
+phi <= 0.819 and N >= 35 suffices, so the deployed N = 40 certifies
+sup|f - f_hat| <= **1.534** against 1.572 for the one-step reading. The optimistic
+0.43 was not merely un-rigorous, it was unreachable at this gate size.
+
+**Why, and the trade-off that replaces it.** The binding constraint is not how
+steps correlate but how many ROLLOUTS reach the worst cell. Measured N-vs-rho
+(rigorous / point-estimate):
+
+| rho | cells K | N needed (rigorous) | N (estimate) | certifies |
+|---|---|---|---|---|
+| 0.80 | 8 | 9 | 8 | 2.042 |
+| 0.70 | 8 | 10 | 10 | 1.788 |
+| 0.60 | 27 | **35** | 31 | **1.534** |
+| 0.50 | 64 | 169 | 112 | 1.280 |
+| 0.40 | 125 | 1179 | 273 | 1.026 |
+| 0.30 | 216 | (MC unresolved) | 458 | 0.772 |
+
+So certifying 1.03 instead of 1.53 costs a gate thirty times larger — which is
+itself the quantitative statement of how weak a 40-rollout sampling gate is, and a
+better thing to have in the paper than the optimistic figure it replaces.
+
+Limitations updated: the within-rollout gap is CLOSED (negatively — no mixing
+needed, and little to gain), and the one that stays open is named precisely: the
+visitation density is derived in closed form only at step 1 of one instrument, so
+certifying a larger U (the whole region the planner visits) needs the density
+there, which we have not derived.
+
+State: 37 pp, 0 errors / 0 undefined / 0 overfull; **524 audited values**.
+
 ## PAPER 2 — A geometry error, its class, and the gate-side covering number closed (2026-07-25, later still)
 
 Javier: "el número de recubrimiento de un círculo no es 3?" — and then, after the

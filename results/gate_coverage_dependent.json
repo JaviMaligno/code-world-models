@@ -1,0 +1,88 @@
+{
+  "script": "gate_coverage_dependent.py",
+  "params": {
+    "region": 1.0,
+    "rhos": [
+      0.8,
+      0.7,
+      0.6,
+      0.5,
+      0.4,
+      0.3
+    ],
+    "mc_rollouts": 8000,
+    "n_gate": 40,
+    "delta": 0.05,
+    "eps_gate": 0.01,
+    "seed": 4242
+  },
+  "L_plant": 1.27,
+  "rows": [
+    {
+      "rho": 0.8,
+      "n_cells": 8,
+      "q_a": 0.4,
+      "worst_phi": 0.473060063028287,
+      "worst_phi_ub": 0.4927034240312791,
+      "n_needed_rigorous": 9,
+      "n_needed_estimated": 8,
+      "uniform_bound": 2.042,
+      "certified_at_deployed_N": true
+    },
+    {
+      "rho": 0.7,
+      "n_cells": 8,
+      "q_a": 0.35,
+      "worst_phi": 0.5352495453873812,
+      "worst_phi_ub": 0.5548929063903734,
+      "n_needed_rigorous": 10,
+      "n_needed_estimated": 10,
+      "uniform_bound": 1.7879999999999998,
+      "certified_at_deployed_N": true
+    },
+    {
+      "rho": 0.6,
+      "n_cells": 27,
+      "q_a": 0.3,
+      "worst_phi": 0.7972261917229895,
+      "worst_phi_ub": 0.8187177328325551,
+      "n_needed_rigorous": 35,
+      "n_needed_estimated": 31,
+      "uniform_bound": 1.534,
+      "certified_at_deployed_N": true
+    },
+    {
+      "rho": 0.5,
+      "n_cells": 64,
+      "q_a": 0.25,
+      "worst_phi": 0.9318390415981412,
+      "worst_phi_ub": 0.9545508607205466,
+      "n_needed_rigorous": 169,
+      "n_needed_estimated": 112,
+      "uniform_bound": 1.28,
+      "certified_at_deployed_N": false
+    },
+    {
+      "rho": 0.4,
+      "n_cells": 125,
+      "q_a": 0.2,
+      "worst_phi": 0.9691824457728054,
+      "worst_phi_ub": 0.9927974017058635,
+      "n_needed_rigorous": 1179,
+      "n_needed_estimated": 273,
+      "uniform_bound": 1.026,
+      "certified_at_deployed_N": false
+    },
+    {
+      "rho": 0.3,
+      "n_cells": 216,
+      "q_a": 0.15,
+      "worst_phi": 0.9803825429836955,
+      "worst_phi_ub": 1.0,
+      "n_needed_rigorous": null,
+      "n_needed_estimated": 458,
+      "uniform_bound": 0.772,
+      "certified_at_deployed_N": false
+    }
+  ]
+}

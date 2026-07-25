@@ -227,10 +227,12 @@ proposition's direction).
   only the phantom plateau (per-plateau widths, `--width-right 0.08`) gives 6/6
   below random with the random baseline intact and play_cost invariant to 7.1e-5.
 - ~~Verifying the visitation-density constant $c$~~ **CLOSED 2026-07-25**: exact
-  for the cart's gate at step 1 ($c = 5/6$, Monte-Carlo confirmed), with the
-  general form being a volume ratio $q \geq \mathrm{vol}(B)/\mathrm{vol}(U)$. The
-  gate-side covering-number analogue is still open; the mitigation-side one is now
-  proved (Prop 7 + Cor 2).
+  for the cart's gate at step 1 ($c = 5/6$, Monte-Carlo confirmed), general form a
+  volume ratio. Both covering-number analogues are now proved: mitigation-side
+  (Prop 7 + Cor 2) and gate-side (Prop 9). The within-rollout dependence is also
+  settled — no mixing argument needed, and worth only 2% — leaving one named gap:
+  the density is derived only at step 1 of one instrument, so certifying the whole
+  region the planner visits needs the density there.
 - The Qwen 2D induction arm (credits; see the separate note) — the only *missing
   data* rather than missing strength.
 - Not recoverable, by design: "no learner can infer it **from the sample**". A
