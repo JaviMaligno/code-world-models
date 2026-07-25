@@ -1314,23 +1314,48 @@ beyond the reachable set there is nothing to identify. Plain β̂₁ scores
 5/5 here by answering a DIFFERENT question — the SHAPE of the cloud, not
 the SEPARATION it induces — and the two questions come apart precisely
 in the gauge region.
-  (b) *two-sided evidence: a live calibration gap.* Pooling inside and
-outside starts makes enclosure identifiable in principle and the
-estimator does fire (1/5), but the informative bar is short: its length
-is set by the band thickness minus the free-sample clearance (≈0.5),
-while the pre-registered threshold τ = 3 × median contact spacing is
-≈0.6–0.9. The bar is sub-threshold, not absent. A τ calibrated to the
-FREE-evidence geometry rather than the contact spacing is the named
-remaining step — the estimator's persistence rule was inherited from
-`betti1_estimate` for comparability, and comparability is exactly what
-makes it wrong here.
+  (b) *two-sided evidence: NOT a calibration gap — a structural limit of
+freeze evidence.* This was my first diagnosis and the measurement
+refuted it. See Proposition R4.
 
-Status: **T7's formulation is RESOLVED** (relative pair + Props R1/R2,
-with the point-cloud instantiation refuted and paths identified as the
-correct input), **discrimination is established at γ > 0** (20/20), and
-what remains is the threshold calibration at γ = 0 plus the stability
-theorem (interleaving of pairs), which the pair formulation now makes a
-standard rather than an open-ended question.
+**Proposition R4 (freeze evidence cannot resolve enclosure, and more of
+it makes things worse).** Under freeze-on-entry the contact cloud
+concentrates on two thin shells at the band's faces and never samples
+its interior. Mechanism — it is Lemma S again: a freeze resets the
+velocity to zero, and from rest the next proposed landing moves only
+R_L = gain·dt² = 0.03, so after the first contact the trajectory creeps
+along the face instead of penetrating. Consequently, writing w =
+r_out − r_in for the band thickness and δ for the shell thickness:
+  • free-direct connection scale = w exactly (inside free reaches r_in,
+    outside free reaches r_out);
+  • contact-mediated connection scale ≥ w − 2δ;
+so the relative bar has length ≤ 2δ, set by the shells and NOT by the
+sample size, while τ = 3 × median contact spacing GROWS with the sample
+(more contacts spread the deduped-and-capped cloud over more of each
+face). The estimator therefore degrades with more evidence.
+*Measured* (γ = 0, two-faced evidence via a start distribution reaching
+both faces, 40/120/320 rollouts per arm): shells saturate at
+r ∈ [3.50, 3.71] and [4.83, 5.00] (δ ≈ 0.21, 0.17, unchanged from 120 to
+320); bar length 0.160 / 0.197 / 0.253 against τ = 0.183 / 0.324 /
+0.439. The bar is sub-threshold at every sample size and the gap widens.
+*Consequence.* No threshold calibration recovers γ = 0: the obstruction
+is in the EVIDENCE, not the rule. What would fix it is evidence that
+enters the band at speed on both faces — which freeze semantics
+structurally prevents after the first contact. This is a third, sharper
+form of the paper's recurring point that the sensor's limits are
+mechanical rather than statistical.
+
+Note the pleasing closure: the same one-step landing law (Lemma S) that
+made T4's continuity modulus explicit is what caps T7's estimator here.
+
+Status: **T7 CLOSED as far as the evidence allows.** Formulation resolved
+(relative pair + Props R1/R2; point-cloud input refuted, paths correct),
+discrimination established at γ > 0 (20/20 vs 9/20), and the γ = 0 miss
+resolved into two proved obstructions rather than an open task: gauge
+(Prop 1) for one-sided evidence, and Proposition R4's shell geometry for
+two-sided. The only genuinely open item left is the interleaving
+stability theorem for pairs, which the pair formulation makes a standard
+exercise rather than a research question.
 
 ## T8 — the linking dichotomy, RESOLVED (2026-07-25): the unconditional
 ## bound is REFUTED with witnesses, the conditional bound is proved

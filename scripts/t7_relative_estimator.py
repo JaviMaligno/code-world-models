@@ -128,5 +128,50 @@ def main():
     print(f"wrote {OUT}  ({time.time() - t0:.0f}s)")
 
 
+def shell_geometry_arm():
+    """Proposition R4: freeze evidence hugs the two band faces, so the
+    relative bar's length saturates while tau grows with the sample.
+    Run: PYTHONPATH=src python scripts/t7_relative_estimator.py --r4
+    """
+    from cwm.continuous.tda import free_merge_persistence, median_nn_distance
+    C = RingField2D().center
+    rows = []
+    for n_roll in (40, 120, 320):
+        inside = RingField2D(gap=0.0, gap_center=math.pi, x0_center=C)
+        # a start distribution reaching the OUTER face, so the evidence is
+        # two-faced (random rollouts from far away almost never contact)
+        near = RingField2D(gap=0.0, gap_center=math.pi,
+                           x0_center=(C[0] - 6.5, 0.0))
+        li, pi_ = evidence(inside, 10000, n_roll=n_roll)
+        lo, po = evidence(near, 10007, n_roll=n_roll)
+        pts = subsample(dedupe(li + lo, 0.05), CAP, 0)
+        res = free_merge_persistence(pts, pi_ + po)
+        tau = 3 * median_nn_distance(pts)
+        ri = [math.hypot(p[0] - C[0], p[1] - C[1]) for p in li]
+        ro = [math.hypot(p[0] - C[0], p[1] - C[1]) for p in lo]
+        longest = max((b[1] - b[0] for b in res["bars"]), default=0.0)
+        rows.append({"n_roll": n_roll, "n_contacts": len(li) + len(lo),
+                     "inner_shell": [min(ri), max(ri)],
+                     "outer_shell": [min(ro), max(ro)],
+                     "longest_bar": longest, "tau": tau,
+                     "fires": longest > tau})
+        print(f"n_roll={n_roll:3d}: inner [{min(ri):.2f},{max(ri):.2f}] "
+              f"outer [{min(ro):.2f},{max(ro):.2f}] longest bar "
+              f"{longest:.3f} vs tau {tau:.3f} -> "
+              f"{'fires' if longest > tau else 'sub-threshold'}", flush=True)
+    assert not any(r["fires"] for r in rows), "R4 predicts sub-threshold"
+    assert rows[-1]["tau"] / rows[0]["tau"] > rows[-1]["longest_bar"] / \
+        rows[0]["longest_bar"], "R4 predicts tau grows faster than the bar"
+    print("\nProposition R4 confirmed: the bar saturates (shell-limited) "
+          "while tau grows — more evidence makes gamma=0 harder, so no "
+          "threshold calibration recovers it.")
+    p = pathlib.Path("results/t7_shell_geometry.json")
+    p.write_text(json.dumps(rows, indent=1))
+    print(f"wrote {p}")
+
+
 if __name__ == "__main__":
-    main()
+    if "--r4" in sys.argv:
+        shell_geometry_arm()
+    else:
+        main()

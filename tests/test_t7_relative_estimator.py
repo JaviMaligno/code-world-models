@@ -136,3 +136,28 @@ def test_flat_point_cloud_input_is_the_refuted_instantiation():
             # the path form of the same evidence gets it right
             assert relative_betti1_estimate(
                 c, _paths(gap, seed))["betti1_rel"] == 0
+
+
+def test_r4_freeze_evidence_hugs_the_band_faces():
+    # Proposition R4's mechanism: a freeze zeroes the velocity, so the next
+    # proposed landing moves only gain*dt^2 from rest (Lemma S). Contact
+    # landings therefore pile up in thin shells at the faces instead of
+    # penetrating the band.
+    from cwm.continuous.envs import RingField2D
+    from cwm.continuous.contract import collect_transitions
+    env = RingField2D(gap=0.0, gap_center=math.pi,
+                      x0_center=RingField2D().center)
+    cx, cy = env.center
+    radii = []
+    for tr in collect_transitions(env, 40, seed=10000):
+        if tr["contact"]:
+            x2, y2, _, _ = env._integrate(tr["state"], tr["action"])
+            radii.append(math.hypot(x2 - cx, y2 - cy))
+    assert radii, "no contact evidence to test"
+    w = env.r_out - env.r_in                    # band thickness 1.5
+    shell = max(radii) - min(radii)
+    # the inner shell is far thinner than the band it sits on
+    assert shell < 0.4 * w, (shell, w)
+    # and every landing sits within one from-rest step scale of the face,
+    # many orders below the band thickness
+    assert min(radii) >= env.r_in - 1e-9

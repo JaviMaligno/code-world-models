@@ -1238,11 +1238,23 @@ reach-null, nothing outside is sampled, and separation is
 \emph{unidentifiable by any estimator} --- Proposition~\ref{prop:quotient}
 asserting itself, with plain $\hat\beta_1$ scoring well there only
 because it answers a different question (the cloud's shape, not the
-separation it induces); with two-sided evidence the informative bar
-exists but falls below a persistence threshold calibrated to contact
-spacing rather than to the free evidence. That calibration, and the
-interleaving-stability theorem the pair formulation now makes routine,
-are what remain. Nested boundaries
+separation it induces). With two-sided evidence the obstruction is
+different and, we think, more interesting: freeze semantics resets the
+velocity on contact, so after the first freeze the next proposed landing
+moves only $\mathrm{gain}\cdot dt^2 = 0.03$ from rest and the trajectory
+\emph{creeps along the face} instead of penetrating. Contact evidence
+therefore occupies two thin shells at the band's faces and never its
+interior, which caps the informative bar at the shell thickness while
+the persistence threshold grows with sample size as the shells fill in.
+Measured at $40/120/320$ rollouts per arm: shells saturate at
+$[3.50, 3.71]$ and $[4.83, 5.00]$, bar length $0.160/0.197/0.253$
+against $\tau = 0.183/0.324/0.439$ --- sub-threshold at every size, with
+the gap \emph{widening}. So no recalibration recovers $\gamma = 0$: the
+limit is in the evidence, not the rule, and more data makes it worse.
+The same one-step landing law that makes the continuity modulus explicit
+(Proposition~\ref{prop:continuity}) is what caps the sensor here. Only
+the interleaving-stability theorem, which the pair formulation makes
+routine, remains. Nested boundaries
 break the detector a third way: with two concentric rings (the
 multi-chamber instrument) the middle-chamber evidence cloud is two
 concentric circles ($\beta_1 = 2$), and the pre-registered detector
