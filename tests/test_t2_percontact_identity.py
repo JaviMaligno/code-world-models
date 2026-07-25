@@ -92,3 +92,19 @@ def test_t2_clean_steps_contribute_zero():
             assert s_b == s_tau and r_b == r_tau     # A_t = 0 identically
         s, _, _ = truth.step(s, b_t)
     assert clean_seen > 0
+
+
+def test_t2_truth_continuations_never_freeze():
+    # The refuted tail hypothesis, kept as a guard: after a dirty step both
+    # continuations follow pi_T, and the truth planner knows the mode, so
+    # neither ever freezes. Any future claim that the tail is a freeze
+    # transient has to get past this.
+    truth = RingField2D(gap=0.6, gap_center=math.pi, x0_center=(0.0, 0.0))
+    ep_seed = 700
+    s = truth.initial_state(random.Random(ep_seed))
+    freezes = 0
+    for t in range(H):
+        a = _argmax(truth, s, _cands(truth.a_max, ep_seed, t))
+        s, _, contact = truth.step(s, a)
+        freezes += contact
+    assert freezes == 0

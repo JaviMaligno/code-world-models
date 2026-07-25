@@ -27,6 +27,7 @@ import argparse
 import json
 import math
 import os
+import pathlib
 import random
 import sys
 import time
@@ -45,6 +46,8 @@ ap.add_argument("--dims", type=int, nargs="+",
                 default=[2, 3, 4, 5, 6, 7, 8])
 ap.add_argument("--rollouts", type=int, default=10_000)
 ap.add_argument("--seed", type=int, default=0)
+ap.add_argument("--smallball", action="store_true",
+                help="run the refuted-route localization instead of the sweep")
 args = ap.parse_args()
 
 OUT = "results/t5_cone_bound.json"
@@ -145,5 +148,65 @@ def main():
     print(f"wrote {OUT}  ({time.time() - t0:.0f}s)")
 
 
+
+
+def small_ball_arm():
+    """The refuted-route localization (THEORY.md, T5 'A refuted route'):
+    conditional on the cone event, is the PERPENDICULAR mass R small or
+    is the aligned component Z1 large? Answer decides which tail a sharp
+    bound must control.
+    Run: PYTHONPATH=src python scripts/t5_cone_bound.py --smallball
+    """
+    import statistics as st
+    out = []
+    for n in (5, 8):
+        env = ShellFieldN(n=n)
+        c = env.center()
+        z1s, rs, all_r = [], [], []
+        for i in range(args.rollouts):
+            rng = random.Random(args.seed + 90_000 + i)
+            s = env.initial_state(rng)
+            x0 = s[:n]
+            d = [c[k] - x0[k] for k in range(n)]
+            L = math.sqrt(sum(v * v for v in d))
+            kappa = math.sqrt(max(0.0, L * L - env.r_out ** 2)) / L
+            e = [v / L for v in d]
+            for _ in range(env.h_episode):
+                a = tuple(rng.uniform(-env.a_max, env.a_max)
+                          for _ in range(n))
+                s, _, _ = env.step(s, a)
+                z = [s[k] - x0[k] for k in range(n)]
+                nz = math.sqrt(sum(v * v for v in z))
+                if nz == 0.0:
+                    continue
+                z1 = sum(z[k] * e[k] for k in range(n))
+                r = math.sqrt(max(0.0, nz * nz - z1 * z1))
+                all_r.append(r)
+                if z1 >= kappa * nz:
+                    z1s.append(z1)
+                    rs.append(r)
+        mean_r = st.mean(all_r)
+        row = {"n": n, "cone_events": len(z1s), "mean_R_overall": mean_r,
+               "mean_R_given_cone": st.mean(rs) if rs else None,
+               "R_ratio": (st.mean(rs) / mean_r) if rs else None,
+               "mean_Z1_given_cone": st.mean(z1s) if z1s else None}
+        out.append(row)
+        print(f"n={n}: cone events {len(z1s)}; R|cone = "
+              f"{row['R_ratio']:.2f}x typical; Z1|cone = "
+              f"{row['mean_Z1_given_cone']:.2f} vs R scale {mean_r:.2f}",
+              flush=True)
+    assert all(r["R_ratio"] < 0.6 for r in out), \
+        "the cone event should be carried by SMALL perpendicular mass"
+    print("\nThe cone event is a SMALL-BALL event for the perpendicular "
+          "mass, not a large deviation of the aligned component: a sharp "
+          "bound must control R's lower tail.")
+    p = pathlib.Path("results/t5_small_ball.json")
+    p.write_text(json.dumps(out, indent=1))
+    print(f"wrote {p}")
+
+
 if __name__ == "__main__":
-    main()
+    if args.smallball:
+        small_ball_arm()
+    else:
+        main()

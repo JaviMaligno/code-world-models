@@ -56,3 +56,40 @@ def test_t3p_no_wall_means_every_entry_is_direct():
     direct, funnel = _split(env, 1500)
     assert funnel == set()
     assert len(direct) > 0
+
+
+def test_t3p_prime_funnel_is_contained_in_fire():
+    # Corollary T3-P': a funnel entry lands in A(gamma) before entering,
+    # so funnel subset fire and f <= r — the a-priori defect bound.
+    for gap in (0.2, 0.6, 1.2):
+        env = RingField2D(gap=gap)
+        n, funnel, fire = 1200, 0, 0
+        for i in range(n):
+            rng = random.Random(50_000 + i)
+            s = env.initial_state(rng)
+            froze = entered_after_freeze = fired = False
+            for _ in range(env.h_episode):
+                a = rng.uniform(-env.a_max, env.a_max)
+                s, _, contact = env.step(s, a)
+                fired = fired or contact
+                if env.in_interior(s[0], s[1]):
+                    entered_after_freeze = froze
+                    break
+                froze = froze or contact
+            funnel += entered_after_freeze
+            fire += fired
+        assert funnel <= fire, (gap, funnel, fire)
+    assert fire > 0, "the containment check must not be vacuous"
+
+
+def test_t3p_prime_no_mode_means_no_defect():
+    # At gamma = 2pi there is no mode, so nothing fires, so f = 0 exactly
+    # — the endpoint where the a-priori bound proves what measurement
+    # cannot.
+    env = RingField2D(gap=2 * math.pi)
+    for i in range(400):
+        rng = random.Random(70_000 + i)
+        s = env.initial_state(rng)
+        for _ in range(env.h_episode):
+            s, _, contact = env.step(s, rng.uniform(-env.a_max, env.a_max))
+            assert not contact

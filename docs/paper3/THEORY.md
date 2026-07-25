@@ -532,10 +532,15 @@ they conflict.
   40% of A_t are NEGATIVE at every γ (blind's action often better under
   the truth continuation — play_cost is a small difference of large
   cancelling terms); and the tail is heavy (max A_t = 11.65 vs mean
-  0.13 at γ = 0.3). REMAINING (a-priori half): an analytic TAIL bound on
-  A_t near an open channel (freeze-transient estimate) — the heavy tail
-  is now the named obstacle, and a mean-based bound is refuted as
-  insufficient.
+  0.13 at γ = 0.3). The freeze-transient explanation of that tail is
+  **REFUTED** (0/556 freezes in both continuations: after the dirty step
+  both follow π_T, which knows the mode). The tail instead scales with
+  remaining horizon (corr +0.325) and concentrates at narrow gaps
+  (18/6/3 of the top decile at γ = 0.3/0.6/1.2), pointing at
+  ROUTE COMMITMENT. REMAINING (a-priori half): a CUT-LOCUS bound —
+  P(dirty step within 2Δ of the route-switching locus) × (value jump)
+  + Lipschitz term — which makes T2's open half the planner-side face of
+  the paper's own topology rather than a separate analytic chore.
 - **T3 — M1/M2 distributional monotonicity of r_int(γ).** **PARTIALLY
   RESOLVED (2026-07-25): M1 and M2 are now THEOREMS with an explicit,
   measured defect.** Theorem T3-P: r_int(γ₂) ≥ r_int(γ₁) − f(γ₁) for
@@ -578,8 +583,12 @@ they conflict.
   else. Surprise worth keeping: the cube-uniform thrust is strongly
   diagonal-biased yet matches the isotropic constant to 1.5 %, which
   licenses an isotropic comparison as the route to the sharp theorem.
-  REMAINING: the matching upper bound (r_out/L)^{n(1+o(1))}, i.e. a
-  diffuseness input for Z₁/‖Z‖ that exchangeability cannot give.
+  REMAINING: the matching upper bound (r_out/L)^{n(1+o(1))}, now reduced
+  to ONE named lemma — a SMALL-BALL bound on the perpendicular mass
+  Σ_{i≥2}Z_i². Measurement shows the cone event is carried by that mass
+  being atypically small (0.21× typical at n = 8) rather than by the
+  aligned component being large, so a Bernstein attack on Z₁ is the
+  wrong tail and computes below the truth (refuted route, recorded).
 - **T6 — Hidden-channel reachability at γ = 0.6 within h = 80:**
   **RESOLVED (2026-07-24, positive).** A 10-parameter waypoint-controller
   search (400 random + 300 refinement candidates,
@@ -891,10 +900,32 @@ strongly biased toward the diagonals, yet the measured rate matches the
 exponential rate — evidence that an isotropic comparison is the right
 route to the sharp theorem, not merely the convenient one.
 
+**A refuted route, and the lemma it names (2026-07-25).** The obvious
+attack on the exponential upper bound is to write the cone event as
+Z₁ ≥ c·R with c = κ/√(1−κ²) = 2.18 and R² = Σ_{i≥2} Z_i², replace R by
+its typical value σ√n, and apply Bernstein to Z₁ (bounded by the per-step
+displacement, |ΔZ₁| ≤ dt²·W·gain = 1). That computes to ≈ 2.5·10⁻⁵ at
+n = 8 — BELOW the measured cone rate 2.4·10⁻³, so the route is invalid,
+and the invalidity localizes the error: treating R as concentrated
+discards the event's actual mechanism.
+*Measured localization* (4000 rollouts, all times): conditional on the
+cone event, the perpendicular mass R is **0.41× its typical value at
+n = 5 and 0.21× at n = 8**, while the aligned component Z₁ is only 1.18×
+typical at n = 5 and, at n = 8, actually *below* typical (1.29 against a
+scale of 2.71). So the cone event is **a small-ball event for R, not a
+large-deviation event for Z₁**, and the effect strengthens with n.
+*Consequence.* The missing ingredient is now a specific, well-posed
+lemma rather than "diffuseness": an anti-concentration (small-ball)
+estimate P(Σ_{i≥2} Z_i² ≤ t·E[·]) ≤ ρ(t)ⁿ for sums of independent
+exchangeable, sign-symmetric vectors. Exchangeability is silent about
+R's LOWER tail, which is exactly why Lemma E cannot be improved by any
+amount of symmetry — the gap is not looseness, it is the wrong tail.
+
 Status: **T5's order is RESOLVED as a proved O(1/n) bound plus a measured
 exponential law with an identified constant**; the open item is the
-matching upper bound (r_out/L)^{n(1+o(1))}, for which the isotropic
-comparison is now empirically licensed.
+matching upper bound (r_out/L)^{n(1+o(1))}, now reduced to the named
+small-ball lemma above, with the isotropic comparison empirically
+licensed as the route to it.
 
 ## T2 — lemma proved, exact route closed by a hypothesis-emptiness certificate (2026-07-24)
 
@@ -988,9 +1019,46 @@ not the level.)*
 
 *Status after this pass:* the decomposition half of T2 is CLOSED as an
 identity (machine-checked: per-episode Σ A_t = J_T − J_B to float
-precision, 18/18). REMAINING (the a-priori half): an analytic tail bound
-on A_t near an open channel — the freeze-transient estimate — stays
-open, now with its target sharpened by (iii).
+precision, 18/18). The a-priori half — a tail bound on A_t — stays open;
+the next section refutes the obvious guess about it.
+
+### T2 tail mechanism: the freeze-transient guess is REFUTED (2026-07-25)
+
+The natural conjecture, and the one written into the earlier target, was
+that a large A_t is a FREEZE TRANSIENT: the blind action pushes the
+trajectory into the mode, costing a freeze the truth action avoids.
+`scripts/t2_tail_mechanism.py` records, for all 278 dirty steps, the
+freeze counts of BOTH continuations. Result:
+  **every continuation freezes exactly 0 times — 0/556.**
+The reason is structural and should have been obvious: after the dirty
+step both branches follow π_T, and the truth planner knows the mode, so
+it never touches it. The advantage term compares two mode-free futures.
+Freeze transients cannot be the tail; the guess is dead.
+
+What the tail actually correlates with (same run, top decile
+|A| ≥ 1.818, n = 27):
+  • **remaining horizon** — tail steps have mean t = 14.3 versus 25.9 in
+    the bulk, and corr(remaining horizon, |A|) = +0.325: the damage of a
+    wrong first action is proportional to how long it has to compound;
+  • **channel narrowness** — 18 / 6 / 3 of the tail at γ = 0.3 / 0.6 /
+    1.2, i.e. the tail concentrates where the two routes around the mode
+    differ most.
+*Reading* (consistent with both facts, not itself measured): A_t is a
+ROUTE-COMMITMENT cost. One bad first action commits the truth-following
+continuation to the long way around the annulus instead of through the
+channel, and the two mode-free futures then differ for the whole
+remaining horizon. On that reading V_T is Lipschitz along the reachable
+set except across the locus where the optimal route switches sense — the
+CUT LOCUS of the obstacle-avoiding metric — and the heavy tail is
+precisely V_T's jump across it.
+
+**Revised target for the open half.** Not a moment bound on A_t, but
+  pc ≤ P(a dirty step lands within 2Δ of the cut locus) × (the value
+  jump across it) + L_V · 2Δ · (dirty rate),
+i.e. a cut-locus estimate plus a Lipschitz constant off it. This is the
+same geometric object the rest of the paper is about — where the two
+homotopy classes of route meet — so T2's remaining half is not an
+isolated analytic chore but the planner-side face of the topology.
 
 ## T4 — the explicit continuity modulus, RESOLVED (2026-07-25)
 
@@ -1172,10 +1240,29 @@ when either disappears. By T3-P(c), M1 holds EXACTLY (defect provably
 zero if f = 0) throughout the saturated region γ ≥ 3.2, where the
 measurement is 0/50 000.
 
-Full closure of T3 = an a-priori bound on f(γ) (the freeze-then-thread
-event), which is where the occupation estimate genuinely enters — now
-the ONLY place, and with the shape of the target known: a bound that
-vanishes at both γ → 0 and γ → 2π.
+**Corollary T3-P′ (the defect has an A-PRIORI bound too).** A funnel
+entry lands in A(γ) at least once before entering, so
+funnel(γ) ⊆ fire(γ) and
+  f(γ) ≤ r(γ),  hence  r_int(γ₂) ≥ r_int(γ₁) − r(γ₁) for γ₁ < γ₂.
+This replaces the measured slack by a quantity the theory already
+controls: r is nonincreasing (Prop 5) and r(2π) = 0, so **the M1/M2
+defect bound improves monotonically in γ and vanishes at the wall-free
+end**. At γ = 2π there is no mode at all, so r(2π) = 0 BY CONSTRUCTION,
+hence f(2π) = 0 and M2's defect at the endpoint is exactly zero — proved,
+not measured. (At γ = 4.6 the probe also reports r = 0, but that is a
+0/4000 measurement, not a proof; the distinction matters and we keep it.)
+Checked on the grid: f ≤ r holds at every γ, though loosely — r/f runs
+from 24× (γ = 1.2) to 356× (γ = 0.1), because most fires never go on to
+enter. So the two bounds are complementary rather than competing: at
+small and middle γ the measured f of the table above is far tighter and
+is the operative bound; at the wall-free end, where f measures 0/50 000
+and a measurement can prove nothing, T3-P′ supplies the proof.
+
+Full closure of T3 = an a-priori bound on f(γ) that is TIGHTER than
+r(γ) at small γ — i.e. control of the conditional "enter after having
+frozen", which is where the occupation estimate genuinely enters. That
+is now the only remaining piece, and the target's shape is known: it
+must vanish at both γ → 0 and γ → 2π.
 
 ## T7 (first half) — infinite censoring artifacts characterized and made
 ## DECIDABLE (2026-07-25); the estimator's stability theorem stays open
@@ -1348,14 +1435,44 @@ mechanical rather than statistical.
 Note the pleasing closure: the same one-step landing law (Lemma S) that
 made T4's continuity modulus explicit is what caps T7's estimator here.
 
+**Proposition R5 (stability of the relative estimator).** Let (X, Y) and
+(X′, Y′) be two evidence sets with d_H(X, X′) ≤ ε and d_H(Y, Y′) ≤ ε
+(Hausdorff), and suppose the free evidence is given as point sets (no
+path edges) or, for path input, that the paths correspond in pairs with
+d_H ≤ ε vertex-wise along matched paths. Then the relative persistence
+modules of (VR(X ∪ Y; ·), VR(Y; ·)) and (VR(X′ ∪ Y′; ·), VR(Y′; ·)) are
+2ε-interleaved, so their diagrams satisfy
+  d_bottleneck ≤ 2ε.
+*Proof.* Choose π: X ∪ Y → X′ ∪ Y′ sending each point to a nearest point
+of the other set, taking Y into Y′ and X into X′ (possible separately on
+each part by the two Hausdorff hypotheses). For p, q at distance ≤ s,
+‖π(p) − π(q)‖ ≤ s + 2ε, so π induces simplicial maps VR(X ∪ Y; s) →
+VR(X′ ∪ Y′; s + 2ε) that carry VR(Y; s) into VR(Y′; s + 2ε): a map of
+PAIRS. With path input, matched path edges (present at scale 0 on both
+sides) are preserved because π matches paths, so π stays simplicial on
+the augmented complexes. Symmetrically for π′. The composites π′π and
+ππ′ are contiguous to the inclusions (any point and its double image lie
+within 2ε, so images of a simplex together with the simplex span a
+simplex at the shifted scale), hence induce the interleaving identities
+on relative homology, which is functorial for maps of pairs. Algebraic
+stability for interleaved modules (Chazal et al.) gives the bottleneck
+bound. ∎
+*What the hypothesis costs.* The path clause is a genuine restriction,
+not a formality: two evidence sets can be Hausdorff-close as point sets
+while their PATH structures differ (one traversal present, one absent),
+and the estimator is designed to be sensitive to exactly that. Stability
+is therefore stability under perturbation of the trajectories, not under
+arbitrary perturbation of the sampled positions — which is the right
+notion here, since the trajectories are the certificates.
+
 Status: **T7 CLOSED as far as the evidence allows.** Formulation resolved
 (relative pair + Props R1/R2; point-cloud input refuted, paths correct),
 discrimination established at γ > 0 (20/20 vs 9/20), and the γ = 0 miss
 resolved into two proved obstructions rather than an open task: gauge
 (Prop 1) for one-sided evidence, and Proposition R4's shell geometry for
-two-sided. The only genuinely open item left is the interleaving
-stability theorem for pairs, which the pair formulation makes a standard
-exercise rather than a research question.
+two-sided. Stability is Proposition R5 (2ε-interleaving of pairs, with
+the honest caveat that the perturbation must respect the path
+structure). **T7 is CLOSED.**
 
 ## T8 — the linking dichotomy, RESOLVED (2026-07-25): the unconditional
 ## bound is REFUTED with witnesses, the conditional bound is proved
