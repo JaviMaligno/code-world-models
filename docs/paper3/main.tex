@@ -1172,10 +1172,20 @@ prototype confirms the direction and locates the real problem: censoring
 Rips edges that free trajectory segments properly cross restores
 specificity at every $\gamma > 0$ ($19/20$ versus $0/15$ for plain Rips at
 $\gamma \le 1.2$) at a sensitivity cost at $\gamma = 0$ ($2/5$ true
-loops lost), and the naive fix produces infinite spurious bars --- deleted
-edges leave never-fillable cycles --- so the principled estimator is
-\emph{relative} homology of the contact set with respect to certified-free
-space, which we leave as the identified open problem. Nested boundaries
+loops lost). But edge deletion has a topological pathology with a clean
+characterization: a censored filtration stabilizes at the flag complex
+of the censor-complement graph, so \emph{never-fillable cycles}
+(infinite $H_1$ bars, impossible for plain Rips) are exactly that
+complex's $H_1$ --- per-sample decidable by one finite computation.
+Running that certificate on all cells finds the pathology is real and
+\emph{semantically ambivalent}: the same mechanism carries the true
+$\gamma = 0$ loops (their fills cross the certified-free hole, so the
+correct loop gets infinite confidence) and the prototype's single false
+positive at $\gamma = 0.6$, which turns out to be a structural
+never-fillable cycle, not a near-threshold bar. Edge deletion is the
+wrong primitive; the principled estimator is \emph{relative} homology of
+the contact set with respect to certified-free space, which we leave as
+the identified open problem. Nested boundaries
 break the detector a third way: with two concentric rings (the
 multi-chamber instrument) the middle-chamber evidence cloud is two
 concentric circles ($\beta_1 = 2$), and the pre-registered detector

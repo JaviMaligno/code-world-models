@@ -555,11 +555,21 @@ they conflict.
   Machine-checked permanently: `test_t6_hidden06_steering_witness`.
   Consequence for R2: at hidden γ = 0.6 BOTH grades are now witnessed —
   gate-policy rate 0 at n = 400 vs steered rate 1.0.
-- **T7 — The relative-homology evidence estimator** (bucket-2b's research
-  problem): formulate H(contact set | certified-free space) properly,
-  characterize when naive edge-censoring creates the measured infinite-bar
-  artifacts, and prove a stability/correctness theorem for the estimator
-  that avoids them.
+- **T7 — The relative-homology evidence estimator.** **FIRST HALF
+  RESOLVED (2026-07-25):** infinite-bar artifacts characterized (Prop C1:
+  they are H₁ of the censor-complement flag complex — per-sample
+  DECIDABLE), minimal model proved (Prop C2 quadrilateral), censor
+  non-monotonicity established and measured (Prop C3: nested censors →
+  0/4/0 infinite-bar cells). Certificate run INVERTED the historical
+  note: the never-fillable cycles belong to v1 itself (4/25 cells — the
+  3 true gap-0 loops + the single 19/20 specificity failure, now
+  diagnosed as structural), not to the margin refinement (rejected for
+  bridge restoration, 5/5 finite false loops at γ = 0.6). REMAINING
+  (the open second half): formulate H(contact | certified-free) as
+  relative persistence and prove its stability/correctness theorem —
+  the ambivalence finding (same mechanism carries truth at γ = 0 and
+  the false positive at γ = 0.6) is the sharpest argument that edge
+  deletion is the wrong primitive.
 - **T8 — Linking-number query lower bound:** **RESOLVED (2026-07-25), in
   two halves.** The UNCONDITIONAL bound is REFUTED with explicit
   landing-free witnesses in BOTH linking classes (even at the dangerous
@@ -851,6 +861,77 @@ structural: the landing law is EXACTLY circular-uniform (Lemma S), the
 modulus is finite and explicit for EVERY trajectory event at once, and the
 only obstruction to a linear modulus is tangency occupation — located, not
 hidden.
+
+## T7 (first half) — infinite censoring artifacts characterized and made
+## DECIDABLE (2026-07-25); the estimator's stability theorem stays open
+
+Setting. Finite cloud X ⊂ ℝ², censor set F of forbidden (unordered) point
+pairs — here: edges properly crossed by a certified-free trajectory
+segment (`ring2d_censored_filtration.py`, `_crosses` with margin δ ≥ 0).
+The censored VR filtration VR_F(X; s) = the flag complex on edges
+{‖p−q‖ ≤ s} \ F. It is a filtration in s, and for s ≥ diam(X) it is
+CONSTANT, equal to Cl(G_F) := the flag complex of the censor-complement
+graph G_F = (X, all pairs ∉ F).
+
+**Proposition C1 (characterization + decidability of infinite bars).**
+The infinite H_k bars of VR_F are in bijection with a basis of
+H_k(Cl(G_F)). In particular: (a) with F = ∅ the limit is the full
+simplex, so the PLAIN Rips filtration has no infinite H₁ bars — the
+INFINITUDE of any censored bar is caused by the censor (though the class
+it carries may be genuine: see the gap-0 cells below); (b) whether a
+given (X, F) has infinite bars is DECIDABLE by one finite computation
+(H₁ of Cl(G_F)); "this censored sensor reading has no never-fillable
+cycles" is a per-sample machine-checkable CERTIFICATE, not a hope.
+*Proof.* The filtration stabilizes at Cl(G_F), so classes alive at all
+scales are exactly the classes of the limit complex; F = ∅ gives the
+(2·diam)-cone. ∎
+
+**Proposition C2 (the minimal model: a never-fillable cycle).**
+Let x₁…x₄ be an allowed 4-cycle (consecutive pairs ∉ F) whose two
+diagonals ∈ F, with [x₁x₂x₃x₄] ≠ 0 in H₁(Cl(G_F)) (for the isolated
+quadrilateral, Cl(G_F) IS the 4-cycle graph and H₁ = ℤ). Then VR_F has
+an infinite H₁ bar born ≤ the longest side.
+(Machine-checked: `test_t7_quadrilateral_minimal_model`.)
+
+**Proposition C3 (censor monotonicity gives a bifiltration, NOT
+monotone artifacts).** Nested censors F ⊆ F′ give nested limit
+complexes Cl(G_{F′}) ⊆ Cl(G_F) — (scale, censor) is a bifiltration —
+but H₁ of the limit is NOT monotone in the censor: removing edges can
+both create cycles (by removing fills) and destroy them (by removing
+the cycle's own edges). So there is no "safe censor-strength" theorem;
+each censor needs its own C1 certificate. *Measured directly:* the
+three nested censors clearance-0.3 ⊂ v1 ⊂ proximity-0.3 produce
+0 / 4 / 0 infinite-bar cells on the same 25 clouds.
+
+**Certificate run — the finding INVERTS the historical note.**
+`scripts/t7_infinite_bar_certificate.py` on the committed
+censored-filtration cells (γ ∈ {0, 0.6, 1.2, 1.8, 2.4} × seeds
+10000–50000, inside evidence):
+  - **v1 itself has infinite H₁ bars in 4/25 cells** — the historical
+    comment attributing infinite bars to the margin refinement is
+    corrected: the margin (clearance-0.3) and proximity-0.3 variants
+    have 0/25.
+  - The 4 cells are exactly interpretable: the 3 gap-0 cells with an
+    infinite bar are precisely the committed run's gap-0 β̂₁ = 1
+    readings (the TRUE loop, whose fills cross the certified-free hole
+    and are censored — infinite persistence is the estimator saying
+    "this loop encloses certified-free space", the correct answer with
+    infinite confidence); the 4th is gap 0.6 seed 40000 — the SINGLE
+    specificity failure of the 19/20 result, now DIAGNOSED: it is not a
+    near-threshold finite bar but a structural C2-type never-fillable
+    cycle (the censor missed the closing chord and censored its fills).
+  - The margin-0.3 rejection reason is also corrected by measurement:
+    it repairs the gap-0 false negatives (5/5) but RESTORES THE BRIDGE
+    at γ = 0.6 (5/5 false loops, all finite) — it was rightly rejected,
+    for specificity, not for infinite bars.
+The two-sided conclusion for the estimator problem: infinite bars under
+edge-censoring are (a) per-sample decidable (C1), (b) semantically
+AMBIVALENT — the same mechanism encodes the true enclosure at γ = 0 and
+the lone false positive at γ = 0.6 — which is the sharpest argument yet
+that edge deletion is the wrong primitive and the principled object is
+RELATIVE homology of contact w.r.t. certified-free space. That
+estimator's formulation and stability theorem remain the OPEN second
+half of T7.
 
 ## T8 — the linking dichotomy, RESOLVED (2026-07-25): the unconditional
 ## bound is REFUTED with witnesses, the conditional bound is proved

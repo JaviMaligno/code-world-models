@@ -48,12 +48,16 @@ OUT = "results/ring2d_censored_filtration.json"
 
 MARGIN = 0.0   # transversality margin over the edge's supporting line.
 # 0.0 = v1 semantics (any proper crossing censors). The 0.3-margin refinement
-# was tried against the gap-0 false negatives (pokes) and REJECTED: censoring
-# fewer edges leaves cycles around censored regions that can NEVER be filled
-# (their filling triangles need censored edges), producing INFINITE spurious
-# H1 bars — a topological artifact of naive edge deletion. The principled
-# object is RELATIVE homology (contact set relative to certified-free space);
-# that estimator is a research problem, recorded as the bucket-2b outcome.
+# was tried against the gap-0 false negatives (pokes) and REJECTED — measured
+# reason (t7_infinite_bar_certificate, 2026-07-25): it repairs gap-0 (5/5)
+# but censors too few edges and RESTORES THE BRIDGE at gamma=0.6 (5/5 false
+# loops, finite bars). The never-fillable-cycle phenomenon (INFINITE H1 bars,
+# a topological artifact of naive edge deletion) belongs to v1 ITSELF: 4/25
+# cells — the 3 gap-0 true loops (fills cross the certified-free hole) and
+# the single gap-0.6 specificity failure, which is structural, not
+# near-threshold. Infinite bars are per-sample decidable (THEORY.md Prop C1);
+# the principled object is RELATIVE homology (contact set relative to
+# certified-free space) — that estimator is the open half of T7.
 
 
 def _crosses(p1, p2, q1, q2):
