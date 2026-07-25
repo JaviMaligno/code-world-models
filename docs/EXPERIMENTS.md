@@ -1,5 +1,74 @@
 # Experiments Log
 
+## PAPER 2 — A geometry error, its class, and the gate-side covering number closed (2026-07-25, later still)
+
+Javier: "el número de recubrimiento de un círculo no es 3?" — and then, after the
+answer, "revisa si se da algún otro caso de algo así o geometría que estés
+fallando". Both were warranted.
+
+**The error.** I wrote that covering a circle of radius R=1 with balls of radius
+eps=0.5 needs 13 balls. It needs **7** (centres on the circle) or **6** (free
+centres): I used the angular HALF-width 2*asin(eps/2R) = 0.5054 rad as the full
+width, when the covered arc is 4*asin(eps/2R) = 1.0107 rad. Consequences: the
+measured fence counts correspond to reachable arcs of **17% / 43% / 68%** of the
+circle (not 8/21/34), so the farthest knob spends about two thirds of the covering
+budget — the bound is nearly saturated, which is a stronger consistency statement
+than the wrong one was.
+
+Javier's 3 is a DIFFERENT quantity, and correct in its own setting: the minimal
+GOOD cover of S^1 by contractible open arcs with contractible pairwise
+intersections (no radius constraint) — the nerve-theoretic count paper 3's
+persistent fence is built on. The fence bound needs the metric count at the FIXED
+radius the algorithm imposes. Both are now stated side by side so the distinction
+is on the record, and both are verified in `scripts/circle_covering_number.py`,
+which brute-forces the cover on a 200k-point discretisation AND checks that one
+fewer ball fails. The audit now READS the number from that script's output instead
+of trusting a hand computation.
+
+**The class of error, and the sweep.** The failure mode was specific: a constant
+computed by hand in prose, with no data source, hence invisible to a numeric audit
+that compares the paper against `results/`. So I swept all 31 sentences in the tex
+that combine geometry vocabulary with numbers. One more was wrong:
+
+- **"fitted centers ... outside a patch whose west edge is at x = 2"** — FALSE.
+  Claude's fitted disc has centre (2.328, -0.135), which is 0.686 from the true
+  centre (3,0), i.e. INSIDE the true patch. What is true, and now what the paper
+  says: the fitted disc spans x in [1.50, 3.15] against the true [2, 4] — dragged
+  west onto the evidence, covering the patch's west half, missing x in [3.15, 4]
+  entirely, and freezing free space over x in [1.50, 2], with radius 0.824 vs 1.
+
+Everything else in the sweep checks out, including one pleasing cross-check: a
+half-plane at x>2 covers exactly (14-2)/16 = 75% of the probed box, matching the
+behavioural audit's measured median area_frac of 0.7531 independently. The
+Lipschitz constant 1.27 is the max row sum of the affine step map (the correct
+induced sup-norm), vol(U) = 1.2 is Monte-Carlo confirmed, and the disagreement
+ball's volume (2rho)^(d+m) uses the sup-metric cube correctly.
+
+**A third error of the same class, found while closing the gate-side certificate.**
+The coverage certificate needs an UPPER bound on N_cov(U, rho/2); I had used
+vol(U)/vol(B), which is a packing LOWER bound and understates it by 2^dim. Fixed
+to the rigorous vol(U + B_{rho/4})/vol(B_{rho/4}) with the grown slab computed
+exactly. Effect: the rigorous rho moves 0.535 -> 0.615 and the certified bound
+1.37 -> 1.57.
+
+**And the gate-side covering number is now CLOSED (Prop 9).** For L-Lipschitz
+f, f_hat with f_hat passing at tolerance eps, if the visited set is a rho-net of U
+then sup_U |f - f_hat| <= eps + 2*L*rho; and M >= ln(N_cov(U,rho/2)/delta) /
+(c*vol(B_{rho/2})) samples give the net with probability 1-delta. Instantiated on
+the deployed cart gate (c = 5/6, L = 1.27, eps = 0.01, delta = 0.05): one step per
+rollout (rigorous, since within-rollout steps are dependent) gives rho = 0.615 and
+certifies sup <= **1.57**; all 40x80 steps (optimistic, assumes approximate
+independence) give rho = 0.165 and **0.43**. The hard mode's own disagreement is
+4.2, above both — so no Lipschitz model with the wall's error can pass this gate,
+and the wall passes it only by not being Lipschitz. The continuous coverage
+analogue closes exactly the smooth case and is silent exactly where the danger
+lives, which is the same boundary the Lipschitz obstruction draws. Limitations
+updated from "no continuous analogue" to that, with the two residual gaps named
+(density verified in closed form only at step 1 of one instrument; a mixing
+argument would earn the optimistic figure honestly).
+
+State: 36 pp, 0 errors / 0 undefined / 0 overfull; **518 audited values**.
+
 ## PAPER 2 — Scope audit of the new theory + the pendulum residue closed (2026-07-25, later)
 
 Javier's questions were about SCOPE: is the identity theory including its

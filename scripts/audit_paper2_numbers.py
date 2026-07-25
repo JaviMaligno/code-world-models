@@ -536,9 +536,26 @@ for row in eps_thr["rows"]:
 mit_rows = load("continuous_mitigation")["rows"]
 claim("1D: covering number 1 => exactly one violation on all 11 rows",
       all(r["mean_violations"] == 1.0 for r in mit_rows) and len(mit_rows) == 11)
-_R, _EPS2D = 1.0, 0.5
-_cov = math.ceil(2 * math.pi / (2 * math.asin(_EPS2D / (2 * _R))))
-claim("2D covering bound is the 13 the paper quotes", _cov == 13, str(_cov))
+# the covering number is READ from the brute-force script, not recomputed here:
+# a hand-computed constant is exactly what went wrong once (13 for 7).
+_circ = load("circle_covering_number")
+_cov = _circ["metric_centres_on_circle"]["n"]
+claim("brute force verifies the on-circle covering number is 7", _cov == 7,
+      str(_cov))
+claim("its cover is verified and one fewer fails",
+      _circ["metric_centres_on_circle"]["verified_cover"]
+      and _circ["metric_centres_on_circle"]["n_minus_1_fails"])
+claim("free-centre optimum is 6", _circ["metric_centres_free"]["n"] == 6,
+      str(_circ["metric_centres_free"]["n"]))
+claim("closed form agrees with brute force",
+      _circ["closed_form_n"] == _cov)
+claim("the classic eps=R case is 3 (a different quantity from the bound)",
+      _circ["classic_eps_equals_R_n"] == 3)
+# and the arc fractions the paper quotes
+_half = _circ["metric_centres_on_circle"]["half_width"]
+for v, want in ((1.05, 17), (2.65, 43), (4.25, 68)):
+    frac = round(100 * v * 2 * _half / (2 * math.pi))
+    claim(f"arc fraction for {v} fences is {want}%", frac == want, f"{frac}%")
 for r in load("continuous_mitigation_patch2d")["rows"]:
     claim(f"2D violations under the covering bound {(r['k1'], r['k2'])}",
           r["mean_violations"] <= _cov, f"{r['mean_violations']} vs {_cov}")
@@ -573,6 +590,39 @@ for label, name, tol_pred, tol_spread in (
     want = 3.9e-9 if "sharp" in name else 1.2e-4
     claim(f"{label}: J_rand knob-variation as quoted ({want:.1e})",
           abs(jr_spread - want) < 0.05 * want, f"{jr_spread:.3e}")
+
+# --- Proposition (coverage certificate): the two instantiated bounds ---------
+cov = load("gate_coverage_certificate")
+_reg = {r["regime"].split(" (")[0]: r for r in cov["regimes"]}
+claim("rigorous regime: rho = 0.615 and bound 1.57",
+      abs(_reg["one step per rollout"]["rho"] - 0.615) < 0.006
+      and abs(_reg["one step per rollout"]["uniform_bound"] - 1.57) < 0.02,
+      str(_reg["one step per rollout"]))
+claim("all-steps regime: rho = 0.165 and bound 0.43",
+      abs(_reg["all steps"]["rho"] - 0.165) < 0.006
+      and abs(_reg["all steps"]["uniform_bound"] - 0.43) < 0.02,
+      str(_reg["all steps"]))
+claim("both bounds are below the hard mode's own disagreement (4.2)",
+      all(r["uniform_bound"] < cov["wall_probe_error"] for r in cov["regimes"]))
+claim("the certificate's c and L match the corollary's", 
+      abs(cov["c"] - 5 / 6) < 1e-12 and abs(cov["L_plant"] - 1.27) < 5e-3)
+
+# --- geometry of the one fitted disc (the claim that got a correction) -------
+# Claude's single radial attempt: the paper describes where the fitted disc sits
+# relative to the true patch. Recompute that geometry rather than trust prose.
+_C = (2.3275291505576885, -0.13505551993070315)
+_RFIT = 0.824
+_TRUE_C, _TRUE_R = (3.0, 0.0), 1.0
+_d = math.hypot(_C[0] - _TRUE_C[0], _C[1] - _TRUE_C[1])
+claim("fitted disc's centre is INSIDE the true patch, 0.69 from its centre",
+      _d < _TRUE_R and abs(_d - 0.69) < 0.01, f"{_d:.4f}")
+claim("fitted disc spans x in [1.50, 3.15]",
+      abs((_C[0] - _RFIT) - 1.50) < 0.01 and abs((_C[0] + _RFIT) - 3.15) < 0.01,
+      f"[{_C[0]-_RFIT:.3f}, {_C[0]+_RFIT:.3f}]")
+claim("true patch spans x in [2, 4]",
+      (_TRUE_C[0] - _TRUE_R, _TRUE_C[0] + _TRUE_R) == (2.0, 4.0))
+claim("a half-plane x>2 covers 75% of the probed box (matches the audit median)",
+      abs((14 - 2) / 16 - 0.75) < 1e-9)
 
 # --- sharp-plateau variant: the claims the variant exists to make -----------
 sharp_cart = load("continuous_reach_sharp")["rows"]

@@ -1,0 +1,25 @@
+{
+  "script": "circle_covering_number.py",
+  "params": {
+    "radius": 1.0,
+    "eps": 0.5,
+    "grid": 200000
+  },
+  "metric_centres_on_circle": {
+    "n": 7,
+    "half_width": 0.5053605102841583,
+    "verified_cover": true,
+    "n_minus_1_fails": true
+  },
+  "metric_centres_free": {
+    "n": 6,
+    "half_width": 0.5235987755983,
+    "verified_cover": true,
+    "n_minus_1_fails": true
+  },
+  "optimal_centre_distance": 0.8660254037844386,
+  "closed_form_half_width": 0.5053605102841573,
+  "closed_form_n": 7,
+  "classic_eps_equals_R_n": 3,
+  "minimal_good_cover_S1": 3
+}
