@@ -520,11 +520,22 @@ they conflict.
   [B⁺, √3·r_min)) the sandwich holds for the bar itself; r₀ = 1 measured
   in 36/36 nonempty-window rows, and r₀ ≥ 2 is the SAME configuration as
   the spurious-class exclusion — one hypothesis, per-sample decidable.
-- **T2 — Aligned-channel degeneracy, full proposition.** Conditions
-  (corridor geometry + (RG)/(C)-style hypotheses) under which the facing
-  channel makes the blind argmax plan executable in truth, giving
-  play_cost = 0 exactly (or an explicit tail bound); the measured knee at
-  γ ≈ 0.1 as the hypothesis boundary.
+- **T2 — Aligned-channel degeneracy.** **DECOMPOSITION HALF CLOSED
+  (2026-07-25):** the clean-step lemma's exact route was closed by the
+  hypothesis-emptiness certificate (0/48 clean episodes), and the
+  replacement is now an EXACT IDENTITY, not a bound — hybrid
+  telescoping gives J_T − J_B = Σ_{dirty steps} A_t with clean steps
+  contributing exactly 0 (Lemma T2-I; residual ≤ 4.6·10⁻¹⁴ in 18/18
+  episodes, `scripts/t2_percontact_identity.py`). Measured structure:
+  the γ-trend lives in the dirty-step RATE (21.2 → 10.5 per episode as
+  γ goes 0.3 → 1.2) while the per-contact cost Ā is flat (≈0.12–0.17);
+  40% of A_t are NEGATIVE at every γ (blind's action often better under
+  the truth continuation — play_cost is a small difference of large
+  cancelling terms); and the tail is heavy (max A_t = 11.65 vs mean
+  0.13 at γ = 0.3). REMAINING (a-priori half): an analytic TAIL bound on
+  A_t near an open channel (freeze-transient estimate) — the heavy tail
+  is now the named obstacle, and a mean-based bound is refuted as
+  insufficient.
 - **T3 — M1/M2 distributional monotonicity of r_int(γ).** The pathwise
   route is CLOSED (seed-50543 certificate; freeze-rescue refuted the
   pointwise (KEY)); any proof must establish stochastic domination of
@@ -778,6 +789,72 @@ BOUND: each imagination-touch near an open channel costs O(freeze-transient)
 because the next replan threads the channel — bounding pc by
 (touch rate) × (per-touch cost) / (J_truth − J_random). T2 stays OPEN with
 this named target; artifacts: `results/t2_aligned_degeneracy.json`.
+
+## T2 (second pass, 2026-07-25) — the per-contact decomposition is an
+## EXACT IDENTITY, not a bound
+
+Setting. Deterministic dynamics f; make the planners MARKOV by seeding
+each step's candidate draw with (episode_seed, t) — a per-step-seeded
+variant of the harness planner (same candidate family; the identity
+needs the policy to be a function of (state, t) alone, which the
+sequential-RNG harness is not). Both planners share the per-(episode, t)
+candidate set; a step is CLEAN iff the blind argmax action equals the
+truth argmax action on that shared set (the clean-step lemma's
+condition), DIRTY otherwise.
+
+**Lemma T2-I (hybrid telescoping — exact).** Let π_B, π_T be the blind-
+and truth-planner policies, s₀..s_{H−1} the π_B trajectory, and for a
+state s and step index t let V_T^t(s) = the return of following π_T from
+s for the remaining steps. Then
+  J(π_T) − J(π_B) = Σ_{t dirty} A_t,   with
+  A_t = [r(s_t, τ_t) + V_T^{t+1}(f(s_t, τ_t))]
+      − [r(s_t, b_t) + V_T^{t+1}(f(s_t, b_t))],
+τ_t = π_T(s_t, t), b_t = π_B(s_t, t). Clean steps contribute EXACTLY 0.
+*Proof.* Hybrid argument: h_t = return of playing π_B for steps < t then
+π_T from step t (h_0 = J(π_T)-episode from s₀... precisely h_0 = pure
+π_T, h_H = pure π_B, both from the same s₀). h_t and h_{t+1} share the
+π_B prefix through s_t; they differ only in the step-t action (τ_t vs
+b_t) and the π_T continuation from the resulting state:
+h_t − h_{t+1} = A_t. At a clean step τ_t = b_t so A_t = 0. Sum the
+telescope. ∎
+Corollary (the named per-contact bound, now trivial):
+  pc = Σ_{dirty} A_t / (J_T − J_rand) ≤ D̄ · Â / (J_T − J_rand),
+D̄ = dirty-step count, Â = max_t A_t. The CONTENT is no longer the
+inequality but the measured size of Â — the identity localizes all of
+play_cost onto the dirty steps' advantage terms, and A_t can be NEGATIVE
+(a blind action that happens to score better under the truth
+continuation), which is why dirty return gaps were occasionally negative.
+
+**Measured decomposition** (`scripts/t2_percontact_identity.py`, Markov
+planner horizon 40 / 48 samples, 6 episodes × γ ∈ {0.3, 0.6, 1.2}):
+
+| γ | dirty steps / 80 | Ā | max A_t | frac(A_t < 0) |
+|---|---|---|---|---|
+| 0.3 | 20–23 (mean 21.2) | +0.129 | 11.65 | 0.40 |
+| 0.6 | 13–19 (mean 14.7) | +0.169 | 2.70 | 0.40 |
+| 1.2 | 8–12 (mean 10.5) | +0.118 | 2.26 | 0.40 |
+
+Identity residual ≤ 4.6·10⁻¹⁴ in 18/18 episodes. Three readings:
+(i) **the contact RATE, not the per-contact cost, carries the γ-trend** —
+Ā is flat (≈0.12–0.17) while dirty steps fall by half from γ = 0.3 to
+1.2, so the danger curve's γ-dependence lives in the first factor of
+D̄·Â, exactly where the reachability story predicts it;
+(ii) **40% of dirty steps have A_t < 0** at every γ — blind's action is
+often BETTER under the truth continuation, so play_cost is a small
+difference of large cancelling terms, which is why bounding it by
+|A_t| alone must be loose;
+(iii) the γ = 0.3 outlier max A_t = 11.65 against a mean of 0.13 is a
+heavy tail: any useful a-priori bound must control the tail, not the
+mean. *(Planner note: the Markov variant with 48 samples is not the
+registered arm's 200-sample sequential planner, so absolute pc here is
+not comparable to the paper's 0.02–0.03 — the structure is the claim,
+not the level.)*
+
+*Status after this pass:* the decomposition half of T2 is CLOSED as an
+identity (machine-checked: per-episode Σ A_t = J_T − J_B to float
+precision, 18/18). REMAINING (the a-priori half): an analytic tail bound
+on A_t near an open channel — the freeze-transient estimate — stays
+open, now with its target sharpened by (iii).
 
 ## T4 — the explicit continuity modulus, RESOLVED (2026-07-25)
 
