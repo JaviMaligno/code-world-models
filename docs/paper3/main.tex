@@ -1317,13 +1317,40 @@ band on a spherical shell $S^{n-1}$ around the phantom lode (both lodes in
 the first two coordinates, so $n$ is the only knob); the action becomes a
 thrust vector $\vec a \in [-1, 1]^n$, norm-capped. Two facts scale in
 opposite directions. The gate-side rarity $r(n)$ collapses geometrically
---- a drift-free random walk loses the 2-plane the lodes live in
-(concentration) --- so by $n \ge 3$ the identifiability event is
-near-certain: \textbf{$n$ is a rarity knob}, and the mode is almost never
-in the sample. The play side does not collapse: truth-MPC still reaches the
+--- so by $n \ge 3$ the identifiability event is near-certain:
+\textbf{$n$ is a rarity knob}, and the mode is almost never in the
+sample. The play side does not collapse: truth-MPC still reaches the
 real lode at every $n \le 6$ (the planner is not the bottleneck), and the
 blind model is exploited at full strength at every $n$
 (Table~\ref{tab:ndim}).
+
+\paragraph{What sets the collapse rate: solid angle.} The mechanism is
+not variance concentration but direction. Reaching the shell from $x_0$
+forces the displacement into the \emph{tangent cone} to $B(c,
+r_{\mathrm{out}})$: if $\lVert x_t - c\rVert \le r_{\mathrm{out}}$ then
+$\langle x_t - x_0, e\rangle \ge \kappa \lVert x_t - x_0 \rVert$ with
+$e$ the unit vector to the centre, $L = \lVert c - x_0\rVert$ and
+$\kappa = \sqrt{L^2 - r_{\mathrm{out}}^2}/L$ (expand
+$\lVert Z - Le\rVert^2 \le r_{\mathrm{out}}^2$ and apply AM--GM). The
+thrust's coordinates are exchangeable and sign-symmetric, and so is any
+independent weighted sum of them; since at most $2/\kappa^2$ coordinates
+of any vector can each carry a $\kappa^2/2$ share of its squared norm,
+exchangeability alone gives $P(\langle Z, e\rangle \ge \kappa\lVert
+Z\rVert) \le 4/(n\kappa^2)$ and hence $r(n) \le 4h/(n\kappa^2)$ --- an
+explicit bound with no concentration inequality in it. The truth is
+faster: measuring the cone event over $10{,}000$ rollouts per dimension
+gives a clean exponential (log-linear $R^2 = 0.999$ versus log-log
+$0.952$) at per-dimension factor $0.411$, against the isotropic
+spherical-cap prediction $\sin\theta = r_{\mathrm{out}}/L = 5/12 =
+0.4167$ --- agreement to $1.5\%$. So the collapse rate is the mode's
+\emph{angular size from the start}, $r(n) \asymp (r_{\mathrm{out}}/L)^n$,
+and nothing else: not its volume, not its thickness, not the horizon.
+Notably the cube-uniform thrust direction is strongly biased toward the
+diagonals (density $\propto (\max_i |\theta_i|)^{-n}$ on the sphere) yet
+matches the isotropic constant anyway; proving the matching exponential
+upper bound needs exactly the diffuseness input that exchangeability
+cannot supply, which we leave open. Details and machine checks are in
+the repository's theory notes (Lemmas~C/E/F, Theorem~T5-C).
 
 \paragraph{A methods note: the danger needs a competent planner, and
 ``competent'' is an interface property.} Our first $n$-sweep measured

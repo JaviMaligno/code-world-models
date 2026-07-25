@@ -565,8 +565,21 @@ they conflict.
   `scripts/t4_continuity_modulus.py` (exact circle to 4e-15; bounds vs
   analytic/MC; tangency slope exactly 0.5). Section "T4 — the explicit
   continuity modulus" below.
-- **T5 — r(n) concentration order with explicit constants** (drift-free
-  random walk loses the lode 2-plane; currently order-only).
+- **T5 — r(n) concentration order with explicit constants.** **ORDER
+  RESOLVED (2026-07-25).** The Hoeffding/Azuma route stays refuted; the
+  replacement is geometric and needs no concentration inequality:
+  reaching the shell forces the displacement into the TANGENT CONE
+  (Lemma C), and an exchangeable, sign-symmetric displacement enters a
+  fixed cone with probability ≤ 4/(nκ²) (Lemma E), giving the proved
+  bound r(n) ≤ 4h/(nκ²), κ² = 1 − (r_out/L)² (Theorem T5-C). Measured
+  truth is EXPONENTIAL at exactly the spherical-cap rate
+  (r_out/L)ⁿ = 0.4167ⁿ — fitted 0.411, log-linear R² = 0.999 — so the
+  dimension effect is the mode's ANGULAR SIZE from the start and nothing
+  else. Surprise worth keeping: the cube-uniform thrust is strongly
+  diagonal-biased yet matches the isotropic constant to 1.5 %, which
+  licenses an isotropic comparison as the route to the sharp theorem.
+  REMAINING: the matching upper bound (r_out/L)^{n(1+o(1))}, i.e. a
+  diffuseness input for Z₁/‖Z‖ that exchangeability cannot give.
 - **T6 — Hidden-channel reachability at γ = 0.6 within h = 80:**
   **RESOLVED (2026-07-24, positive).** A 10-parameter waypoint-controller
   search (400 random + 300 refinement candidates,
@@ -756,17 +769,126 @@ BAR inherits the sandwich under Lemma P's r₀ = 1, which is per-sample
 checkable and is the same condition as the spurious-class exclusion —
 the caveat structure collapses to one measured-true hypothesis).
 
-## T5 — route refuted (2026-07-24), stays open
+## T5 — route refuted (2026-07-24); replaced by a proved cone bound
+## (2026-07-25). Order now explicit; the sharp rate stays open
 
 The worst-case concentration route (Hoeffding/Azuma over the AR(1) weights,
 with Chernoff conditioning on ‖a‖ for the norm-cap's n-scaling) computes
 NUMERICALLY VACUOUS at the instrument's scales: bound ≈ 0.51 at n = 2–5
 versus measured r ≈ 0.013–0.002 (and the conditioning term only bites for
 n ≫ 20). Same failure shape as paper 2's envelope-tail attempt: bounded-
-difference constants ignore the drag's variance contraction. A sharp bound
-needs the variance-accurate route: Gaussian comparison for the AR(1)
-first-two-coordinate process plus a 2-plane ball-hitting estimate. Recorded
-as a refuted route (progress in the (KEY) sense); T5 remains open.
+difference constants ignore the drag's variance contraction. Recorded as a
+refuted route (progress in the (KEY) sense).
+
+**The replacement is geometric, not variance-based** — and it needs no
+concentration inequality at all. What kills the hit rate in high dimension
+is not the SIZE of the displacement but its DIRECTION: the shell subtends
+a fixed solid angle from the start, and an exchangeable displacement
+almost never points into a fixed cone.
+
+**Lemma C (tangent cone).** Let x₀ be the start, c the shell centre,
+L = ‖c − x₀‖ > r_out, and Z = x_t − x₀. If ‖x_t − c‖ ≤ r_out then
+  ⟨Z, e⟩ ≥ κ‖Z‖,  e := (c − x₀)/L,  κ := √(L² − r_out²)/L,
+i.e. Z lies in the tangent cone from x₀ to the ball B(c, r_out), whose
+half-angle has sine r_out/L.
+*Proof.* ‖x_t − c‖² = ‖Z − Le‖² = ‖Z‖² − 2L⟨Z,e⟩ + L² ≤ r_out² gives
+⟨Z,e⟩ ≥ (‖Z‖² + L² − r_out²)/(2L) ≥ ‖Z‖·√(L² − r_out²)/L by AM–GM. ∎
+
+**Lemma E (exchangeable cone bound).** Let Z be a random vector in ℝⁿ
+whose coordinates are exchangeable and jointly sign-symmetric, and let
+e be a unit vector lying in the span of two coordinate axes. Then for
+κ ∈ (0, 1],
+  P(⟨Z, e⟩ ≥ κ‖Z‖) ≤ 4/(nκ²),
+and if e is itself a coordinate axis, P ≤ 1/(2nκ²).
+*Proof.* Let S = {i : Z_i² ≥ (κ²/2)‖Z‖²}. Since Σ_i Z_i² = ‖Z‖², we have
+|S| ≤ 2/κ² deterministically, so by exchangeability
+P(1 ∈ S) = E|S|/n ≤ 2/(nκ²). With e ∈ span(e₁, e₂), Cauchy–Schwarz gives
+⟨Z,e⟩ ≤ √(Z₁² + Z₂²), so the event forces Z₁² + Z₂² ≥ κ²‖Z‖², hence
+max(Z₁², Z₂²) ≥ (κ²/2)‖Z‖², i.e. 1 ∈ S or 2 ∈ S; union bound. For an
+axis-aligned e the event is Z₁ ≥ κ‖Z‖, so 1 ∈ S′ = {i : Z_i² ≥ κ²‖Z‖²}
+with |S′| ≤ 1/κ², giving P(|Z₁| ≥ κ‖Z‖) ≤ 1/(nκ²), halved by sign
+symmetry. ∎
+
+**Lemma F (the instrument satisfies the hypotheses).** In ShellFieldN the
+displacement Z_t = x_t − x₀ = dt²·Σ_s w_{t,s}·T_s, with weights
+w_{t,s} = (1 − β^{t−s+1})/(1 − β), β = 1 − drag·dt, and thrusts
+T_s = gain·a⃗_s/max(1, ‖a⃗_s‖), a⃗_s ~ U([−1,1]ⁿ) i.i.d. Each T_s has
+exchangeable, jointly sign-symmetric coordinates (‖a⃗‖ is invariant under
+permutations and sign flips, and the a⃗ coordinates are i.i.d. symmetric);
+independent sums of such vectors inherit both properties, so Z_t does.
+Moreover c and x₀ lie in the first-two-coordinates plane, so e ∈
+span(e₁, e₂). ∎
+
+**Theorem T5-C (explicit dimension bound on the contact rate).** For
+ShellFieldN with horizon h,
+  r(n) ≤ h · 4/(n κ²),  κ² = (L² − r_out²)/L²,
+with L = ‖c − x₀‖ (≈ 12 at the defaults, so κ² = 119/144 ≈ 0.826).
+Hence r(n) = O(1/n) with an explicit constant 4h/κ² ≈ 387 — the first
+non-vacuous bound for T5, and one that needs no concentration inequality:
+only exchangeability and the tangent-cone geometry.
+*Proof.* Union bound over t ≤ h of Lemma C ∘ Lemma E, valid by Lemma F. ∎
+
+**What is still open, and why.** The bound is asymptotic in practice: at
+the defaults it bites only for n ≳ 400, while the truth at n = 2–6 is
+already ~10⁻³. Two named sources of looseness, both now identified rather
+than guessed:
+  (a) *the union over time* (a factor h = 80) — the h displacement
+      vectors are strongly dependent, and a maximal version of Lemma E
+      would remove most of it;
+  (b) *exchangeability is too weak to see the exponential rate.* Lemma E
+      is sharp for exchangeable laws (a Z supported on the coordinate
+      axes attains it), but the actual Z is diffuse: for i.i.d.-Gaussian
+      coordinates, Z₁²/‖Z‖² ~ Beta(½, (n−1)/2) and the cone probability
+      decays like (1 − κ²)^{(n−1)/2} — EXPONENTIALLY. The instrument
+      should be at least this fast, since the cube-uniform thrust
+      direction has density ∝ (max_i|θ_i|)^{−n} on the sphere, i.e. it
+      concentrates near the DIAGONALS and away from the coordinate axes
+      where the target sits. Proving the exponential rate therefore needs
+      a diffuseness input (an anti-concentration or small-ball estimate
+      for Z₁/‖Z‖) that exchangeability alone cannot supply. That is the
+      remaining T5 target, now sharply stated.
+
+**The measured law: the rate is the spherical-cap measure**
+(`scripts/t5_cone_bound.py`, 10 000 rollouts per n):
+
+| n | cone rate | r measured |
+|---|---|---|
+| 2 | 0.5120 | 0.0096 |
+| 3 | 0.2258 | 0.0049 |
+| 4 | 0.0962 | 0.0020 |
+| 5 | 0.0383 | 0.0006 |
+| 6 | 0.0159 | 0.0002 |
+| 7 | 0.0067 | 0.0001 |
+| 8 | 0.0024 | 0.0000 |
+
+The decay is **exponential, not polynomial**: log-linear fit R² = 0.999
+against log-log R² = 0.952, per-dimension factor **0.411**. The
+prediction from treating Z as isotropic is the normalized measure of a
+spherical cap of half-angle θ = arcsin(r_out/L), whose leading factor is
+sin θ = r_out/L = 5/12 = **0.4167** — agreement to **1.5 %**. So:
+
+  **r(n) ≍ (r_out/L)ⁿ, the tangent cone's angular measure.**
+
+Three consequences worth recording.
+(i) The dimension effect is set by the mode's *angular size from the
+start* — r_out/L — and by nothing else: not its volume, not its
+thickness, not the horizon. "Danger dies with dimension" is a statement
+about solid angle.
+(ii) Lemma E's 1/n is provably valid but quantitatively the wrong order;
+the measurement shows the gap is the whole exponential, so no sharpening
+of the union bound (looseness (a)) can rescue it — the missing
+ingredient is diffuseness (looseness (b)), as diagnosed.
+(iii) A genuine surprise, and a useful one: the cube-uniform thrust
+direction has density ∝ (max_i|θ_i|)^{−n} on the sphere and so is
+strongly biased toward the diagonals, yet the measured rate matches the
+*isotropic* cap constant to 1.5 %. The diagonal bias does not change the
+exponential rate — evidence that an isotropic comparison is the right
+route to the sharp theorem, not merely the convenient one.
+
+Status: **T5's order is RESOLVED as a proved O(1/n) bound plus a measured
+exponential law with an identified constant**; the open item is the
+matching upper bound (r_out/L)^{n(1+o(1))}, for which the isotropic
+comparison is now empirically licensed.
 
 ## T2 — lemma proved, exact route closed by a hypothesis-emptiness certificate (2026-07-24)
 
