@@ -102,3 +102,82 @@ def test_t5_theorem_bound_dominates_measured_contact_rate():
                     break
         k2 = (12.0 ** 2 - env.r_out ** 2) / 12.0 ** 2
         assert fired / 300 <= min(1.0, env.h_episode * 4.0 / (n * k2))
+
+
+def _cap_exact(n, kappa, steps=20000):
+    """P(U_1 >= kappa), U uniform on S^{n-1}, by quadrature."""
+    def integ(a, b):
+        h = (b - a) / steps
+        s = 0.0
+        for i in range(steps + 1):
+            u = a + i * h
+            v = 1.0 - u * u
+            t = 0.0 if v <= 0.0 else math.exp(((n - 3) / 2) * math.log(v))
+            s += (0.5 if i in (0, steps) else 1.0) * t
+        return s * h
+    return integ(kappa, 1.0) / integ(-1.0, 1.0)
+
+
+def test_t5_lemma_g_cap_bound():
+    # Lemma G: P(U_1 >= kappa) <= (1/2)(1-kappa^2)^((n-2)/2), n >= 3.
+    kappa = _kappa(12.0, ShellFieldN(n=3).r_out)
+    k2 = kappa * kappa
+    for n in (3, 4, 6, 10, 20):
+        assert _cap_exact(n, kappa) <= 0.5 * (1 - k2) ** ((n - 2) / 2) + 1e-15
+
+
+def test_t5_isotropic_displacement_is_spherically_symmetric():
+    # Theorem T5-I's engine: a sum of independent spherically symmetric
+    # thrusts is spherically symmetric, so the displacement direction is
+    # uniform — checked as coordinate-marginal symmetry of Z/||Z||.
+    n, h = 5, 40
+    rng = random.Random(23)
+    m1 = [0.0] * n
+    trials = 3000
+    for _ in range(trials):
+        vel = [0.0] * n
+        pos = [0.0] * n
+        for _ in range(h):
+            g = [rng.gauss(0, 1) for _ in range(n)]
+            ng = math.sqrt(sum(v * v for v in g)) or 1.0
+            thrust = [3.0 * x / ng for x in g]
+            vel = [v + (t - 0.3 * v) * 0.1 for v, t in zip(vel, thrust)]
+            pos = [p + v * 0.1 for p, v in zip(pos, vel)]
+        nz = math.sqrt(sum(v * v for v in pos)) or 1.0
+        for k in range(n):
+            m1[k] += (pos[k] / nz) ** 2 / trials
+    # every coordinate of a uniform direction has E[U_k^2] = 1/n
+    for k in range(n):
+        assert abs(m1[k] - 1.0 / n) < 0.02, (k, m1[k])
+
+
+def test_t5_theorem_i_bound_holds_on_the_isotropic_interface():
+    # r(n) <= (h/2) (r_out/L)^(n-2) for the isotropic action interface
+    env = ShellFieldN(n=6)
+    L, h = 12.0, env.h_episode
+    k2 = (L * L - env.r_out ** 2) / (L * L)
+    kappa = math.sqrt(k2)
+    hits, n_roll, n = 0, 400, 6
+    for i in range(n_roll):
+        rng = random.Random(90_000 + i)
+        s = env.initial_state(rng)
+        x0 = list(s[:n])
+        c = env.center()
+        d = [c[k] - x0[k] for k in range(n)]
+        LL = math.sqrt(sum(v * v for v in d))
+        e = [v / LL for v in d]
+        pos, vel = list(x0), [0.0] * n
+        for _ in range(h):
+            a = [rng.uniform(-1, 1) for _ in range(n)]
+            mag = env.gain * min(1.0, math.sqrt(sum(v * v for v in a)))
+            g = [rng.gauss(0, 1) for _ in range(n)]
+            ng = math.sqrt(sum(v * v for v in g)) or 1.0
+            th = [mag * x / ng for x in g]
+            vel = [v + (t - env.drag * v) * env.dt for v, t in zip(vel, th)]
+            pos = [p + v * env.dt for p, v in zip(pos, vel)]
+            z = [pos[k] - x0[k] for k in range(n)]
+            nz = math.sqrt(sum(v * v for v in z))
+            if nz > 0 and sum(z[k] * e[k] for k in range(n)) >= kappa * nz:
+                hits += 1
+                break
+    assert hits / n_roll <= min(1.0, (h / 2) * (1 - k2) ** ((n - 2) / 2))

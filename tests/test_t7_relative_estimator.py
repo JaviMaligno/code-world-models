@@ -161,3 +161,42 @@ def test_r4_freeze_evidence_hugs_the_band_faces():
     # and every landing sits within one from-rest step scale of the face,
     # many orders below the band thickness
     assert min(radii) >= env.r_in - 1e-9
+
+
+def test_r5_path_structure_is_necessary():
+    # Proposition R5's path clause is NOT a formality: with an identical
+    # point set (Hausdorff distance 0) but two different path groupings,
+    # the relative diagrams differ, so bottleneck > 0 = 2*eps. A
+    # point-set-only stability statement would be false.
+    contact = _ring(0.9, 0)
+    inside = [(2.4 * math.cos(1.2 * t), 2.4 * math.sin(1.2 * t))
+              for t in range(6)]
+    outside = [(6.5 * math.cos(1.2 * t), 6.5 * math.sin(1.2 * t))
+               for t in range(6)]
+    sp = 1.8                       # coarse: only path edges certify passage
+    bridge = [((2.4 + sp * t) * math.cos(math.pi),
+               (2.4 + sp * t) * math.sin(math.pi))
+              for t in range(int(4.2 / sp) + 1)]
+    traversal = [inside, outside, bridge]
+    severed = [inside, outside] + [[q] for q in bridge]
+    flat_a = sorted(p for path in traversal for p in path)
+    flat_b = sorted(p for path in severed for p in path)
+    assert flat_a == flat_b, "the counterexample needs identical point sets"
+
+    a = sorted(free_merge_persistence(contact, traversal)["bars"])
+    b = sorted(free_merge_persistence(contact, severed)["bars"])
+
+    def bottleneck_lower_bound(d1, d2):
+        rem, worst = list(d1), 0.0
+        for x, y in d2:
+            hit = [c for c in rem
+                   if abs(c[0] - x) < 1e-9 and abs(c[1] - y) < 1e-9]
+            if hit:
+                rem.remove(hit[0])
+            else:
+                worst = max(worst, (y - x) / 2)
+        for x, y in rem:
+            worst = max(worst, (y - x) / 2)
+        return worst
+
+    assert bottleneck_lower_bound(a, b) > 0.1, (a, b)

@@ -1384,12 +1384,32 @@ spherical-cap prediction $\sin\theta = r_{\mathrm{out}}/L = 5/12 =
 0.4167$ --- agreement to $1.5\%$. So the collapse rate is the mode's
 \emph{angular size from the start}, $r(n) \asymp (r_{\mathrm{out}}/L)^n$,
 and nothing else: not its volume, not its thickness, not the horizon.
-Notably the cube-uniform thrust direction is strongly biased toward the
-diagonals (density $\propto (\max_i |\theta_i|)^{-n}$ on the sphere) yet
-matches the isotropic constant anyway; proving the matching exponential
-upper bound needs exactly the diffuseness input that exchangeability
-cannot supply, which we leave open. Details and machine checks are in
-the repository's theory notes (Lemmas~C/E/F, Theorem~T5-C).
+The exponential law is moreover a \emph{theorem} once the action
+interface is chosen well. If the thrust direction is uniform on
+$S^{n-1}$, the displacement is a sum of independent spherically
+symmetric vectors, hence spherically symmetric, so its direction is
+exactly uniform and the cone probability is exactly a spherical cap;
+with the elementary bound
+$P(\langle U, e\rangle \ge \kappa) \le \tfrac12 (1-\kappa^2)^{(n-2)/2}$
+this gives
+\[
+  r(n) \;\le\; \tfrac{h}{2}\,(r_{\mathrm{out}}/L)^{\,n-2}
+  \;=\; 40 \cdot 0.4167^{\,n-2}
+  \quad\text{at the defaults,}
+\]
+non-vacuous from $n \approx 7$ against $n \approx 400$ for the
+exchangeability bound, and verified at $n = 3\ldots8$ (simulated decay
+$0.431$ against the predicted $0.4167$). What remains open is only the
+\emph{interface transfer}: the cube-uniform thrust used here has a
+finite symmetry group and its cone event turns out to be a small-ball
+event for the perpendicular displacement mass (measured at $0.21\times$
+its typical value at $n=8$), so tail bounds on the aligned component
+attack the wrong tail. Its measured decay is $0.411$, matching the
+proved isotropic law; and since the action interface is ours to choose,
+adopting the isotropic one makes the rarity law a theorem outright ---
+the second place in this paper where choosing the interface well changes
+what can be proved. Details and machine checks are in the repository's
+theory notes (Lemmas~C/E/F/G, Theorems~T5-C and T5-I).
 
 \paragraph{A methods note: the danger needs a competent planner, and
 ``competent'' is an interface property.} Our first $n$-sweep measured

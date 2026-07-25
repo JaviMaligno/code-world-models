@@ -583,12 +583,20 @@ they conflict.
   else. Surprise worth keeping: the cube-uniform thrust is strongly
   diagonal-biased yet matches the isotropic constant to 1.5 %, which
   licenses an isotropic comparison as the route to the sharp theorem.
-  REMAINING: the matching upper bound (r_out/L)^{n(1+o(1))}, now reduced
-  to ONE named lemma — a SMALL-BALL bound on the perpendicular mass
-  Σ_{i≥2}Z_i². Measurement shows the cone event is carried by that mass
-  being atypically small (0.21× typical at n = 8) rather than by the
-  aligned component being large, so a Bernstein attack on Z₁ is the
-  wrong tail and computes below the truth (refuted route, recorded).
+  **EXPONENTIAL RATE PROVED for the ISOTROPIC action interface
+  (2026-07-25):** if the thrust direction is uniform on S^{n−1} then Z is
+  spherically symmetric, its direction is EXACTLY uniform, and Lemma G
+  (self-contained cap bound) gives r(n) ≤ (h/2)(r_out/L)^{n−2} = 40 ·
+  0.4167^{n−2} — the measured law, now a theorem, non-vacuous from n ≈ 7
+  against n ≈ 400 for the exchangeability bound. Verified at n = 3…8
+  (isotropic decay 0.431 vs predicted 0.4167; cap bound checked to
+  n = 30). REMAINING is only the INTERFACE TRANSFER to the cube-uniform
+  action (measured decay 0.411, same law): its symmetry group is finite,
+  and the cone event is a small-ball event for the perpendicular mass
+  (0.21× typical at n = 8), so the Bernstein-on-Z₁ attack is the wrong
+  tail and computes below the truth (refuted route, recorded). Since the
+  action interface is a design choice, adopting the isotropic one makes
+  the rarity law a theorem outright.
 - **T6 — Hidden-channel reachability at γ = 0.6 within h = 80:**
   **RESOLVED (2026-07-24, positive).** A 10-parameter waypoint-controller
   search (400 random + 300 refinement candidates,
@@ -921,11 +929,67 @@ exchangeable, sign-symmetric vectors. Exchangeability is silent about
 R's LOWER tail, which is exactly why Lemma E cannot be improved by any
 amount of symmetry — the gap is not looseness, it is the wrong tail.
 
-Status: **T5's order is RESOLVED as a proved O(1/n) bound plus a measured
-exponential law with an identified constant**; the open item is the
-matching upper bound (r_out/L)^{n(1+o(1))}, now reduced to the named
-small-ball lemma above, with the isotropic comparison empirically
-licensed as the route to it.
+**The exponential bound, PROVED — for the isotropic action interface
+(2026-07-25).** The small-ball lemma is hard because the cube-uniform
+thrust is only finitely symmetric. But nothing in the instrument forces
+that choice: the action interface is a DESIGN decision (the same point
+the n-dim methods note already makes about planner competence). Under
+the isotropic interface the obstruction disappears entirely.
+
+**Lemma G (spherical cap bound, self-contained).** For U uniform on
+S^{n−1}, n ≥ 3, and κ ∈ [0, 1):
+  P(⟨U, e⟩ ≥ κ) ≤ ½ (1 − κ²)^{(n−2)/2}.
+*Proof.* The marginal density of U₁ is c_n(1 − u²)^{(n−3)/2} on [−1, 1],
+and P(U₁ ≥ 0) = ½, so it suffices to show
+∫_κ^1 (1−u²)^{(n−3)/2}du ≤ (1−κ²)^{(n−2)/2} ∫_0^1 (1−y²)^{(n−3)/2}dy.
+Substitute u = κ + √(1−κ²)·y, so du = √(1−κ²) dy and y ranges over
+[0, √((1−κ)/(1+κ))] ⊆ [0, 1]. Then
+  1 − u² = (1−κ²)[1 − 2κy/√(1−κ²) − y²] ≤ (1−κ²)(1 − y²),
+and since (n−3)/2 ≥ 0 the map t ↦ t^{(n−3)/2} is nondecreasing, giving
+(1−u²)^{(n−3)/2} ≤ (1−κ²)^{(n−3)/2}(1−y²)^{(n−3)/2}. Multiply by
+du = √(1−κ²)dy and enlarge the range to [0,1]. ∎
+(Machine-checked against the exact cap integral for n = 3…30.)
+
+**Theorem T5-I (exponential rate under the isotropic interface).**
+Suppose the per-step thrust T_s is spherically symmetric — direction
+uniform on S^{n−1}, norm arbitrary and independent across steps (the
+instrument's own norm law is allowed). Then for every t the displacement
+Z_t = dt²·Σ_s w_{t,s} T_s is a sum of independent spherically symmetric
+vectors, hence spherically symmetric, so Z_t/‖Z_t‖ is EXACTLY uniform on
+S^{n−1}. With Lemma C and Lemma G,
+  P(reach the shell at step t) ≤ ½(1 − κ²)^{(n−2)/2} = ½ (r_out/L)^{n−2},
+and therefore
+  **r(n) ≤ (h/2) · (r_out/L)^{n−2}**  — at the defaults, 40 · 0.4167^{n−2}.
+*Proof.* Spherical symmetry is preserved by independent sums (a rotation
+acts on each summand separately) and by the deterministic weights;
+Lemma C makes the tangent cone necessary; Lemma G bounds its measure;
+union over t ≤ h. ∎
+
+This is the exponential law itself, no longer a measured regularity: the
+rate is exactly the tangent cone's angular measure, and no concentration
+or small-ball input is needed because the symmetry is exact rather than
+approximate. It is non-vacuous from n ≈ 7 (against n ≈ 400 for the
+exchangeability bound). *Verified* (`scripts/t5_isotropic_bound.py`):
+the cap bound holds against the exact cap integral at n = 3…30, the
+isotropic simulation obeys T5-I at every n = 3…8, and its per-dimension
+decay is 0.431 against the predicted sin θ = 0.4167.
+
+**What is genuinely left.** Only a TRANSFER question, and a narrow one:
+the paper's instrument uses the cube-uniform interface, whose measured
+per-dimension decay is 0.411 — against the isotropic interface's 0.431
+and the theoretical 0.4167, all three agreeing within noise — but for which the proof route is blocked as diagnosed above
+(the cone event is a small-ball event for the perpendicular mass, and
+the cube's symmetry group is finite). Two honest resolutions, in
+decreasing order of appeal: (i) adopt the isotropic interface for the
+n-dim arm, where the rarity law is a theorem — the action interface is
+ours to choose, and this is the second time in the paper that choosing
+it well changes what can be proved; (ii) prove the comparison, which
+needs the small-ball estimate for the cube case.
+
+Status: **T5 RESOLVED for the isotropic interface** (exact exponential
+rate, proved, machine-checked) **and order-resolved with the measured
+constant for the cube interface**; what remains is the interface
+transfer, not the law.
 
 ## T2 — lemma proved, exact route closed by a hypothesis-emptiness certificate (2026-07-24)
 
@@ -1457,13 +1521,29 @@ simplex at the shifted scale), hence induce the interleaving identities
 on relative homology, which is functorial for maps of pairs. Algebraic
 stability for interleaved modules (Chazal et al.) gives the bottleneck
 bound. ∎
-*What the hypothesis costs.* The path clause is a genuine restriction,
-not a formality: two evidence sets can be Hausdorff-close as point sets
-while their PATH structures differ (one traversal present, one absent),
-and the estimator is designed to be sensitive to exactly that. Stability
-is therefore stability under perturbation of the trajectories, not under
-arbitrary perturbation of the sampled positions — which is the right
-notion here, since the trajectories are the certificates.
+**Why the path clause is necessary (a counterexample at ε = 0).** The
+clause is not a technical convenience; without it R5 is FALSE. Take one
+fixed point set Y and two different groupings of it into paths: in P the
+coarse samples along a channel traversal form ONE path, in P′ the same
+points are singletons. The point sets are IDENTICAL, so d_H = 0 and any
+point-set-only hypothesis is satisfied with ε = 0, which would force
+d_bottleneck = 0. Measured (`test_r5_path_structure_is_necessary`,
+coarse bridge of spacing 1.8): P yields one bar, P′ yields two, and the
+unmatched bar puts **d_bottleneck ≥ 0.317 while 2ε = 0**. So the
+hypothesis cannot be weakened to Hausdorff closeness of the points.
+
+*Why this is the right situation rather than a defect.* The estimator's
+entire job is to decide whether a certified free TRAVERSAL exists — that
+is how it separates γ = 0 from γ > 0. Traversal-existence is a property
+of the trajectories, not of the point cloud: the same positions,
+regrouped, describe either "one path crossed the channel" or "some
+points happened to lie near the channel". Any estimator that answers the
+question therefore MUST be discontinuous in the point-set metric; a
+point-set-stable estimator provably could not do the job (it would have
+to give the same answer to both groupings above). R5 accordingly states
+stability in the metric the input actually lives in — perturbation of
+the trajectories, which are the certificates — and the counterexample is
+what shows that choice is forced, not chosen for convenience.
 
 Status: **T7 CLOSED as far as the evidence allows.** Formulation resolved
 (relative pair + Props R1/R2; point-cloud input refuted, paths correct),
