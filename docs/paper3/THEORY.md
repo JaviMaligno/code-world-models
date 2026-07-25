@@ -210,11 +210,14 @@ boundary rays; the events decrease to {some landing exactly on a boundary
 ray}. For fixed state, the landing position is a non-constant real-analytic
 curve of the action a, so the a-preimage of the (measure-zero) rays is
 finite per step; integrating over the i.i.d. action law and summing over h
-steps, the limit event is null. Monotone convergence gives continuity. The
-quantitative version (P(landing in a width-ε sector) ≤ h·C·ε off tangencies,
-Hölder-1/2 at tangencies of the landing curve to the rays) is the explicit-
-constant TODO. Corollary: r_int(γ) → r_int(0) = 0 as γ → 0 — the
-continuity-at-0 claim, now by a named argument. ∎(mod the TODO)
+steps, the limit event is null. Monotone convergence gives continuity.
+**RESOLVED quantitatively (T4, 2026-07-25):** the one-step landing law is
+EXACTLY uniform on a circle of radius gain·dt² (Lemma S below), giving the
+explicit uniform modulus |q(γ) − q(γ′)| ≤ h·√(r_out·|γ−γ′|/(gain·dt²))
+(Theorem T4: Hölder-1/2, ≈ 1033·√ε at the defaults; linear in ε off
+tangencies with explicit C(m), Theorem T4′, and per-step √ε is attained at
+tangency, so Hölder-1/2 is sharp per-state). Corollary: r_int(γ) ≤ 1033·√γ
+→ r_int(0) = 0 as γ → 0 — the continuity-at-0 claim, now quantitative. ∎
 
 **Proposition 7 (direct entries are pathwise monotone).** Call an interior
 entry *direct* (at gap γ) if the trajectory never lands in A(γ) before its
@@ -380,7 +383,7 @@ for this paper and leave M1/M2 as measured regularities with the identity
 | Prop 4 (query lower bound) | proved under (RG)+(C); (RG) checkable per instrument, check to pre-register |
 | Lemma 3 (divergence localization) | proved |
 | Prop 5 (r nonincreasing in γ) | proved (pathwise); 0 violations in 44k CRN checks |
-| Prop 6 (continuity of r, r_int in γ) | proved mod explicit density constant |
+| Prop 6 (continuity of r, r_int in γ) | PROVED with explicit modulus (Theorem T4, 2026-07-25): Hölder-1/2 constant h·√(r_out/(gain·dt²)) ≈ 1033; linear off tangencies; per-step sharpness at tangency |
 | Prop 7 (direct entries monotone) | proved (pathwise); measured 0 violations |
 | Prop 8 (positivity r_int(γ) > 0, facing) | proved (witness tube); machine-checked incl. perturbations |
 | Prop 9 (KEY ⇒ M1, simultaneous induction) | proved — but (KEY) is FALSE (91/91 CI-separated violations; freeze-rescue) |
@@ -524,8 +527,21 @@ they conflict.
   post-divergence occupation measures — a freeze re-anchors one copy's
   future, so local reversals exist and the argument must be global.
   Hardest item on the list; also the most interesting.
-- **T4 — Prop 6's explicit density constant** (quantitative continuity
-  modulus for the γ-curves; the TODO in the proof sketch).
+- **T4 — Prop 6's explicit density constant:** **RESOLVED (2026-07-25).**
+  The one-step landing law is EXACTLY circular-uniform (Lemma S), so the
+  γ-curves are uniformly Hölder-1/2 with the fully explicit constant
+  h·√(r_out/(gain·dt²)) ≈ 1033 (Theorem T4), linear in ε off tangencies
+  with explicit C(m) (Theorem T4′), and the per-step √ε rate is ATTAINED
+  at tangency (Lemma A(iv)) — so the only route from √ε to ε is an
+  occupation bound on the tangency band, the "density constant" the
+  sketch anticipated, now isolated — and the MEASUREMENT shows the
+  coupling route's quantity P(hit D) genuinely scales sublinearly,
+  ε^0.30 over ε ∈ [0.0125, 0.2] (funnel states occupy the tangency band
+  and saturate per episode), so the Hölder exponent is not pessimism of
+  the method. Validated:
+  `scripts/t4_continuity_modulus.py` (exact circle to 4e-15; bounds vs
+  analytic/MC; tangency slope exactly 0.5). Section "T4 — the explicit
+  continuity modulus" below.
 - **T5 — r(n) concentration order with explicit constants** (drift-free
   random walk loses the lode 2-plane; currently order-only).
 - **T6 — Hidden-channel reachability at γ = 0.6 within h = 80:**
@@ -652,3 +668,121 @@ BOUND: each imagination-touch near an open channel costs O(freeze-transient)
 because the next replan threads the channel — bounding pc by
 (touch rate) × (per-touch cost) / (J_truth − J_random). T2 stays OPEN with
 this named target; artifacts: `results/t2_aligned_degeneracy.json`.
+
+## T4 — the explicit continuity modulus, RESOLVED (2026-07-25)
+
+The structural fact that unlocks everything: the one-step landing law is
+not merely absolutely continuous — it is EXACTLY the uniform measure on a
+circle whose radius is a constant of the plant.
+
+**Lemma S (one-step landing law).** Fix any state s = (x, y, vx, vy)
+(including post-freeze states) and draw a ~ U(−a_max, a_max). The proposed
+landing of one `integrate_2d` step is
+  L = c(s) + R_L · (cos φ, sin φ),   φ = π a / a_max,
+with drift center c(s) = (x + (1 − drag·dt)·vx·dt,
+y + (1 − drag·dt)·vy·dt) and radius R_L = gain·dt². Since a ↦ φ is a
+linear bijection [−a_max, a_max] → [−π, π] carrying uniform to uniform,
+the landing law is exactly the uniform (normalized arc-length) measure on
+the circle ∂B(c(s), R_L). At the defaults R_L = 0.03.
+*Proof.* Read off `integrate_2d`: x′ = x + v′x·dt = x + (1 − drag·dt)·vx·dt
++ gain·dt²·cos φ, same for y. ∎ (machine-checked:
+`test_t4_landing_circle_exact`.)
+
+**Lemma A (circle–strip anticoncentration, explicit).** Let U be uniform
+on the circle of radius R centered at c, S the closed strip of width w
+around a line ℒ, and s = dist(c, ℒ). Set ℓ = w/R. Then:
+  (i) [unconditional] P(U ∈ S) ≤ √(ℓ/2) = √(w/(2R));
+  (ii) [transversal ⇒ linear] if s ≤ (1 − m)R for some m ∈ (0, 1] and
+       w ≤ mR, then P(U ∈ S) ≤ 2w/(π R √(3m));
+  (iii) [miss] if s ≥ R + w/2 then P(U ∈ S) = 0;
+  (iv) [tangency sharpness] if s = R and ℓ ≤ 2 then P(U ∈ S) ≥ √ℓ/π —
+       so (i) is attained up to the factor π/√2 ≈ 2.22, and no per-step
+       bound of order better than √w holds without a hypothesis on s.
+*Proof.* Choose coordinates with ℒ = {second coord = 0}, c = (0, s),
+s ≥ 0; rotating coordinates shifts the uniform ψ, so U ∈ S iff
+sin ψ ∈ I := [(−w/2 − s)/R, (w/2 − s)/R], an interval of length ℓ. Over a
+period, Leb{ψ : sin ψ ∈ [a, b]} = 2·(arcsin(b ∧ 1) − arcsin(a ∨ (−1))).
+  (i) The arcsin increment over intervals of length ℓ is maximized when I
+abuts an endpoint: arcsin(1) − arcsin(1 − ℓ) = arccos(1 − ℓ)
+= 2 arcsin √(ℓ/2) ≤ π √(ℓ/2) (using arcsin u ≤ (π/2)u); divide by 2π.
+  (ii) The endpoints of I satisfy |·| ≤ s/R + ℓ/2 ≤ 1 − m/2, so
+arcsin′ = (1 − t²)^{−1/2} ≤ (m − m²/4)^{−1/2} ≤ 2/√(3m) on I (m ≤ 1);
+Leb ≤ 4ℓ/√(3m); divide by 2π.
+  (iii) I ∩ [−1, 1] = ∅.
+  (iv) I = [−1 − ℓ/2, −1 + ℓ/2]; Leb = 2 arccos(1 − ℓ/2)
+= 4 arcsin √(ℓ/4) ≥ 4√(ℓ/4) = 2√ℓ (arcsin u ≥ u); divide by 2π. ∎
+
+**Lemma W (sliver-in-strip).** For γ′ = γ + ε ≤ 2π the divergence set
+D(γ, γ′) = A(γ) \ A(γ′) is the union of two slivers, each of angular
+width ε/2 flanking the channel; each sliver is contained in the strip of
+width w_ε = r_out·ε/2 around the line through the ring center along the
+sliver's angular bisector.
+*Proof.* A sliver point p has |p − c₀| ≤ r_out and angular offset ≤ ε/4
+from the bisector, so its distance to the bisector line is
+|p − c₀|·sin(offset) ≤ r_out·ε/4 = w_ε/2. ∎
+*(Chebyshev ring: identical with w_ε = √2·r_out·ε/2, since d_∞ ≤ r_out ⇒
+d₂ ≤ √2·r_out; the gap sector stays angular in both norms.)*
+
+**Theorem T4 (explicit modulus for the γ-curves).** For all
+0 ≤ γ ≤ γ′ ≤ 2π with ε = γ′ − γ, and for q = r, q = r_int — indeed for
+the probability q of ANY trajectory-determined event —
+  |q(γ) − q(γ′)| ≤ P(some landing in D(γ, γ′) within h steps)
+                 ≤ h · √( r_out · ε / (gain · dt²) ).
+At the defaults (h = 80, r_out = 5, gain = 3, dt = 0.1) the modulus is
+80·√(500ε/3) ≈ 1033·√ε: r and r_int are uniformly Hölder-1/2 on [0, 2π]
+with a fully explicit constant. Corollary, quantitative continuity at 0:
+r_int(γ) = |r_int(γ) − r_int(0)| ≤ 1033·√γ (with r_int(0) = 0 exact).
+Prop 6's TODO is closed.
+*Proof.* Lemma 3 gives the first inequality. For the second, the coupled
+trajectory's state before step t is ℱ_{t−1}-measurable and a_t is an
+independent uniform, so by Lemma S the conditional landing law is
+circular-uniform with radius R_L = gain·dt²; by Lemmas W and A(i) each
+sliver contributes ≤ √(w_ε/(2R_L)), so P(L_t ∈ D | ℱ_{t−1}) ≤
+2·√(r_out·ε/(4·gain·dt²)) = √(r_out·ε/(gain·dt²)); union over t ≤ h. ∎
+
+**Theorem T4′ (linear off tangencies — the promised density
+decomposition).** Fix m ∈ (0, 1] and let ε satisfy w_ε ≤ m·R_L (i.e.
+ε ≤ 2m·gain·dt²/r_out). For step t and sliver line ℒ^± write
+s_t^± = dist(c(state_{t−1}), ℒ^±), and call (t, ±) *tangent* if
+s_t^± ∈ ((1 − m)·R_L, R_L + w_ε/2]. Then
+  P(hit D within h) ≤ h·C(m)·ε + √(w_ε/(2R_L)) · E[#tangent pairs],
+with C(m) = 2·r_out / (π·gain·dt²·√(3m)) — at the defaults
+C(m) ≈ 106.1/√(3m). *Proof.* Per step and sliver apply Lemma A(ii) when
+s_t^± ≤ (1 − m)R_L (contribution 2w_ε/(πR_L√(3m)) = C(m)·ε/2), A(iii)
+when s_t^± > R_L + w_ε/2 (zero), and A(i) on the tangent pairs. ∎
+  The √ε residue is NOT an artifact of the method: by Lemma A(iv), a state
+whose drift center sits at distance exactly R_L from a sliver line with
+the tangency arc inside the sliver proper (available at any radius in
+[r_in, r_out]: the tangency arc has length ~√(w_ε·R_L) ≪ ring thickness)
+has SINGLE-STEP hitting probability ≥ √(w′/R_L)/π with w′ ≥ r_in·ε/2 the
+sliver's true width there — the per-step √ε rate is attained, so improving
+the modulus to O(ε) requires an occupation bound on the tangency band (a
+density constant for the drift-center law along the trajectory), not a
+better per-state estimate. That is exactly the "density constant"
+anticipated by the Prop-6 sketch, now isolated as the sole remaining gap
+between √ε and ε.
+  *Measured scaling — the tangency term is REAL, not a technicality*
+(`results/t4_continuity_modulus.json`): P(hit D) over ε ∈ [0.0125, 0.2]
+at γ = 0.6 fits log-log slope **0.30** (ε ×16 ⇒ P ×2.3) — strictly
+sublinear. So a LINEAR bound on the divergence probability — the
+intermediate quantity every coupling proof controls — is refuted at the
+measured scale, not merely unprovable per-state; whether |Δr_int| itself
+is Lipschitz stays open (its increments, 0.0005–0.001, are below CRN
+resolution at n = 4000). Mechanism: the funnel states (the same mouth-hovering freeze-re-anchor
+population behind seed 50543) sit with drift centers within ~R_L of the
+channel-edge ray — inside T4′'s tangency band — and propose MANY
+correlated landings per episode, so mouth episodes saturate (hit for
+every ε in range) and the marginal growth comes from the thin
+non-saturated fringe: slope ≤ 1/2. The coupling inequality
+|Δr_int| ≤ P(hit D) was verified sample-exact per ε, with measured slack
+≈ 10× (0.0005–0.001 vs 0.005–0.011).
+
+**Honesty note (what the constant is and is not).** 1033·√ε is
+astronomically loose at the measured scale (adjacent-γ r_int increments
+are ~10⁻³ at ε = 0.2): the union bound counts all h steps while Lemma
+A(iii) zeroes all but the near-band ones, and worst-case-state
+anticoncentration is far from typical. The theorem's content is
+structural: the landing law is EXACTLY circular-uniform (Lemma S), the
+modulus is finite and explicit for EVERY trajectory event at once, and the
+only obstruction to a linear modulus is tangency occupation — located, not
+hidden.

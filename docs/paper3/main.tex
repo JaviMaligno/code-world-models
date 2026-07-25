@@ -451,20 +451,44 @@ if some $D$-landing occurs at $s \le t$, a landing in $D$ \emph{is} a
 landing in $A(\gamma_1)$. ($0$ violations in $44{,}000$ CRN checks.)
 \end{proof}
 
-\begin{proposition}[continuity of the $\gamma$-curves]
+\begin{proposition}[continuity of the $\gamma$-curves, with explicit modulus]
 \label{prop:continuity}
-$r$ and $r_{\mathrm{int}}$ are continuous on $[0, 2\pi]$.
+For every event determined by the trajectory --- in particular for
+$q = r$ and $q = r_{\mathrm{int}}$ --- and all
+$0 \le \gamma \le \gamma' \le 2\pi$ with $\varepsilon = \gamma' - \gamma$,
+\[
+  |q(\gamma) - q(\gamma')|
+  \;\le\; h \cdot \sqrt{ r_{\mathrm{out}}\,\varepsilon /
+    (\mathrm{gain}\cdot dt^2) }
+  \;\approx\; 1033\,\sqrt{\varepsilon}
+  \quad \text{at the defaults},
+\]
+so both curves are uniformly H\"older-$\tfrac12$ on $[0, 2\pi]$; in
+particular $r_{\mathrm{int}}(\gamma) \le 1033\sqrt{\gamma} \to
+r_{\mathrm{int}}(0) = 0$.
 \end{proposition}
-\begin{proof}[Proof sketch]
-By Lemma~\ref{lem:divergence} the increments are bounded by
-$P(\text{some landing in } D(\gamma, \gamma'))$; as $\gamma' \to
-\gamma$ the slivers shrink to two boundary rays, and for a fixed state the
-landing position is a non-constant real-analytic curve of the action, so
-the action-preimage of the measure-zero rays is finite per step; integrate
-and sum over $h$ steps. The explicit modulus (a density constant off
-tangencies) is stated in the repository's theory notes and not needed
-below. In particular $r_{\mathrm{int}}(\gamma) \to
-r_{\mathrm{int}}(0) = 0$ as $\gamma \to 0$.
+\begin{proof}
+The one-step proposed landing from any state is \emph{exactly} uniform on
+a circle of radius $R_L = \mathrm{gain}\cdot dt^2$ centered at a
+state-determined drift point: the integrator gives
+$x' = x + (1 - \mathrm{drag}\,dt)\,v_x\,dt +
+\mathrm{gain}\cdot dt^2\cos\phi$ (same for $y$) with
+$\phi = \pi a / a_{\max}$ uniform on $[-\pi, \pi]$ when $a$ is uniform. Each of $D$'s two slivers
+lies in a strip of width $r_{\mathrm{out}}\varepsilon/2$ around its
+bisector line, and a circular-uniform law gives a width-$w$ strip mass at
+most $\sqrt{w/(2R_L)}$ (the arcsine of a length-$w/R_L$ interval; the
+worst case is tangency, where the bound is attained up to the factor
+$\pi/\sqrt2$). Condition on the state, apply this per step and sliver,
+and sum over $h$ steps via Lemma~\ref{lem:divergence}. The exponent
+$\tfrac12$ is not pessimism: a drift center at distance exactly $R_L$
+from a sliver line has single-step hitting probability
+$\ge \sqrt{w/R_L}/\pi$, and the measured divergence probability scales as
+$\varepsilon^{0.30}$ over $\varepsilon \in [0.0125, 0.2]$ --- the
+channel-mouth (funnel) states occupy this tangency band and saturate per
+episode --- so a linear bound on the coupling's divergence term is
+refuted at the measured scale. Full statements, the linear
+off-tangency refinement, and machine checks are in the repository's
+theory notes (Lemmas~S/A/W, Theorems~T4/T4$'$).
 \end{proof}
 
 \begin{proposition}[direct interior entries are pathwise monotone]
