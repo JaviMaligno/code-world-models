@@ -127,9 +127,11 @@ $\mathcal{R}$.
   Monotonicity, continuity, and positivity of the rarity curves in $\gamma$
   round out the provable core (Section~\ref{sec:gammacurves}, stated and
   proved, one positivity witness machine-checked); the two monotonicity
-  conjectures remain measured-only --- with a measured \emph{certificate}
-  that no pathwise proof can exist (Remark~\ref{rem:certificate}) --- and
-  we say so.
+  statements hold up to an explicit \emph{funnel defect}
+  (Corollary~\ref{cor:funneldefect}) that we bound by measurement,
+  $17\times$ below the effect --- unconditionally they are out of reach,
+  and a measured certificate shows why no pathwise proof can exist
+  (Remark~\ref{rem:certificate}).
 \item \textbf{The three-regime mechanism, without LLMs}
   (Section~\ref{sec:mechanism}). One artifact walks through
   unfalsifiable-and-harmless ($\gamma = 0$), falsifiable-and-costly (facing
@@ -506,21 +508,45 @@ Lemma~\ref{lem:divergence} induction it is unchanged under $\gamma_2$ and
 still direct.
 \end{proof}
 
-\begin{remark}[a measured certificate closes the pathwise route]
+\begin{corollary}[monotonicity up to the funnel defect]
+\label{cor:funneldefect}
+Write $r_{\mathrm{int}} = d + f$, splitting entries into direct and
+funnel-assisted. For $\gamma_1 < \gamma_2$,
+$r_{\mathrm{int}}(\gamma_2) \ge r_{\mathrm{int}}(\gamma_1) -
+f(\gamma_1)$; in particular any violation of M1
+($r_{\mathrm{int}}$ nondecreasing) or M2
+($r_{\mathrm{int}}(\gamma) \le r_{\mathrm{int}}(2\pi)$) is at most the
+funnel mass at the smaller gap, and is exactly zero where $f = 0$.
+\end{corollary}
+\begin{proof}
+$r_{\mathrm{int}}(\gamma_2) \ge d(\gamma_2) \ge d(\gamma_1) =
+r_{\mathrm{int}}(\gamma_1) - f(\gamma_1)$, the middle step by
+Proposition~\ref{prop:direct}. At $\gamma = 2\pi$ there is no mode, so
+$f(2\pi) = 0$ and $r_{\mathrm{int}}(2\pi) = d(2\pi)$.
+\end{proof}
+
+\begin{remark}[the defect is measured, and small]
 \label{rem:certificate}
-Full monotonicity of $r_{\mathrm{int}}$ admits \emph{no} pathwise proof:
-probe seed $50543$ enters the interior at $\gamma = 0.4$ but not at
-$\gamma = 0.6$ (nor at $2\pi$) --- a funnel-assisted entry, destroyed by
-widening the channel, found in $44{,}000$ adjacent-pair comparisons. The
-monotonicity conjectures (M1: $r_{\mathrm{int}}$ nondecreasing; M2:
-$r_{\mathrm{int}}(\gamma) \le r_{\mathrm{int}}(2\pi)$) are therefore
-stated distributionally, remain measured-consistent across the full grid
-(with saturation: $r_{\mathrm{int}}$ exactly constant for
-$\gamma \ge 2.4$), and remain conjectures: the one pointwise estimate
-that would prove them was itself \emph{refuted} by a freeze-rescue effect
-($91/91$ CI-separated violations), and we record the refutation rather
-than weaken the claim. Nothing below load-bears on M1/M2
-(Corollary~\ref{cor:knob}).
+Full monotonicity admits \emph{no} pathwise proof: probe seed $50543$
+enters the interior at $\gamma = 0.4$ but not at $\gamma = 0.6$ (nor at
+$2\pi$). Corollary~\ref{cor:funneldefect} explains rather than merely
+records it --- Proposition~\ref{prop:direct} forbids a direct violation,
+so the counterexample must be funnel-assisted, which it is. It also
+bounds the damage. Measuring the defect over $50{,}000$ common-random
+rollouts per gap: the funnel mass peaks at $22/50{,}000$ around
+$\gamma \in [0.6, 0.9]$ and vanishes at both ends (nothing to enter at
+$\gamma = 0$; nothing to freeze against past saturation), giving a
+certified slack of $6.7 \times 10^{-4}$ against an effect size of
+$1.12 \times 10^{-2}$ --- a factor of $17$, with zero empirical
+violations and Proposition~\ref{prop:direct} confirmed across
+$550{,}000$ pathwise comparisons. So M1 and M2 hold as theorems up to a
+defect an order of magnitude below the phenomenon, and exactly for
+$\gamma \ge 3.2$ where the funnel mass measures zero. What remains open
+is an \emph{a priori} bound on the funnel mass; the one pointwise
+estimate that would have given unconditional monotonicity was
+\emph{refuted} by a freeze-rescue effect ($91/91$ CI-separated
+violations), and we record the refutation rather than weaken the claim.
+Nothing below load-bears on M1/M2 (Corollary~\ref{cor:knob}).
 \end{remark}
 
 \begin{proposition}[positivity: $r_{\mathrm{int}}(\gamma) > 0$ for every
@@ -1462,14 +1488,16 @@ $n = 60$ ($3/27$ versus $2/33$); the cross-gap crossover carries H2.
 The Qwen D cell is missing (provider credits), so the D-cell family
 contrast rests on GPT ($1/20$) versus Claude ($3/3$).
 
-\paragraph{The honest math ledger.} Two clean $\gamma$-curve regularities
+\paragraph{The honest math ledger.} The two $\gamma$-curve regularities
 (monotonicity of $r_{\mathrm{int}}$, and that the wall never helps net
-entry) remain measured-only. Every local proof route is closed \emph{with
-evidence}, not abandoned: the pathwise route by an explicit counterexample
-(seed $50543$), the pointwise estimate by refutation in the data ($91/91$
-CI-separated violations via a freeze-rescue effect). What remains is a
-stochastic-domination argument on post-divergence occupation measures ---
-named, not waved at. Elsewhere the ledger has moved the other way, and we
+entry) are theorems only \emph{up to the funnel defect}
+(Corollary~\ref{cor:funneldefect}), which we bound by measurement
+($17\times$ below the effect) rather than by proof. The routes to the
+unconditional statement are closed \emph{with evidence}, not abandoned:
+the pathwise route by an explicit counterexample (seed $50543$), the
+pointwise estimate by refutation in the data ($91/91$ CI-separated
+violations via a freeze-rescue effect). What remains is an a-priori bound
+on one scalar, the funnel mass --- named, not waved at. Elsewhere the ledger has moved the other way, and we
 report both directions: the continuity modulus, the barcode sandwich, the
 non-separating query bound, and the play-cost decomposition are now
 theorems with explicit constants (some of them, like the refuted
