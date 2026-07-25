@@ -176,7 +176,11 @@ real path realizes the crossing every episode, matching μ_query = 1.
 *Topological upgrade slot (n-dim program §8.3-2).* For non-separating modes
 (TubeField-3) the same proposition's conclusion must be re-derived with the
 linking number of the imagined path and the mode's core replacing the
-metric crossing — that is the genuinely homological version of this bound.
+metric crossing. **RESOLVED (T8, 2026-07-25): the upgrade is a DICHOTOMY,
+not a bound** — the unconditional query bound is refuted by landing-free
+witnesses in every linking class, and what survives is "link ⇒ query ∨
+thread-the-clearance-disc" plus the corridor corollary. See the T8 section
+below.
 
 ## The γ-curves: r(γ) and r_int(γ) (second pass, 2026-07-19)
 
@@ -559,10 +563,21 @@ they conflict.
   characterize when naive edge-censoring creates the measured infinite-bar
   artifacts, and prove a stability/correctness theorem for the estimator
   that avoids them.
-- **T8 — Linking-number query lower bound** (Prop 4's homological upgrade
-  for non-separating modes; TubeField-3): replace the metric crossing with
-  linking of the imagined path and the mode's core — the genuinely new
-  algebraic-topology math of the program.
+- **T8 — Linking-number query lower bound:** **RESOLVED (2026-07-25), in
+  two halves.** The UNCONDITIONAL bound is REFUTED with explicit
+  landing-free witnesses in BOTH linking classes (even at the dangerous
+  offset — a threading plan of trivial extra length exists), so
+  "obstruction is path-relative" is now a theorem, not a measurement.
+  What survives and is PROVED: the linking dichotomy — a plan that links
+  the core either queries the tube or threads the clearance sub-disc D_m
+  (Lemmas X/Y); real trajectories never enter the tube and can only link
+  through D_m (the hole is the only gate under the true dynamics); and
+  the corridor corollary recovers μ_query = 1 exactly when the candidate
+  corridor's straight segment clears the core by < ρ_t − Δ/2 (the
+  registered offset 1.5 sits AT this boundary: min g = 0.5 exactly).
+  thread = linking machine-checked against the Gauss integral
+  (`scripts/t8_linking_dichotomy.py`; 1.0006 / 1.0006 / −0.0002).
+  Section "T8 — the linking dichotomy" below.
 
 ## T1 — the proofs (2026-07-24, second pass: logic, not just validation)
 
@@ -786,3 +801,103 @@ structural: the landing law is EXACTLY circular-uniform (Lemma S), the
 modulus is finite and explicit for EVERY trajectory event at once, and the
 only obstruction to a linear modulus is tangency occupation — located, not
 hidden.
+
+## T8 — the linking dichotomy, RESOLVED (2026-07-25): the unconditional
+## bound is REFUTED with witnesses, the conditional bound is proved
+
+Setting (TubeField3D). Core circle K = {x = c_x, dyz = R_c} with
+dyz(p) = ‖(p_y, p_z) − core_yz‖, defaults c_x = 8, R_c = core_radius = 2,
+core_yz = (o, 0). Tube T = {g ≤ ρ_t}, g(p) = dist(p, K) =
+hypot(p_x − c_x, dyz(p) − R_c), ρ_t = tube_radius = 1; g is 1-Lipschitz
+(distance to a set). Spanning disc D = {x = c_x, dyz ≤ R_c}, oriented by
++x; K = ∂D. Plant: ‖v_{t+1}‖ ≤ (1 − drag·dt)‖v_t‖ + gain·dt with
+‖v₀‖ = 0, so every step (real or imagined) has length ≤ Δ := (gain/drag)·dt
+= 1.0 — the same step bound as the ring (Lemma 2's hypothesis). Write
+m := ρ_t − Δ/2 = 1/2 (the clearance margin).
+
+**Lemma X (discrete clearance — the metric primitive, any dimension, any
+core set).** If a polygonal path with steps ≤ Δ has an interpolation point
+q with g(q) ≤ ρ_t − Δ/2, then some LANDING lies in the closed tube
+{g ≤ ρ_t}.
+*Proof.* q lies on a segment of length ≤ Δ, so its nearer endpoint p has
+‖p − q‖ ≤ Δ/2; g is 1-Lipschitz, so g(p) ≤ g(q) + Δ/2 ≤ ρ_t. ∎
+
+**Lemma Y (hole gate).** If no landing of the path lies in T, then every
+intersection of its interpolation with the spanning disc D lies in the
+open clearance sub-disc D_m := {x = c_x, dyz < R_c − m}.
+*Proof.* An intersection q ∈ D has x = c_x and dyz(q) ≤ R_c, so
+g(q) = R_c − dyz(q). If dyz(q) ≥ R_c − m then g(q) ≤ m = ρ_t − Δ/2 and
+Lemma X puts a landing in T — contradiction. ∎
+
+**Definition (threading number = path-level linking).** For a polygonal
+path π with endpoints off the plane {x = c_x} that meets D transversally
+in finitely many segment-interior points (generic; perturb by < min-gap
+otherwise), thread(π) := the signed count of crossings of D (sign = sign
+of the x-increment). Closing π by any arc in the far region
+{dyz ≥ R_c + ρ_t + 1} ∪ {far x} that avoids D and T yields a loop L with
+lk(L, K) = thread(π): D is a Seifert surface for K and the far arc
+crosses the plane only outside D. thread is therefore the linking number
+of the plan with the mode's core, needing no closure choice.
+(Machine-checked against the Gauss linking integral:
+`scripts/t8_linking_dichotomy.py`.)
+
+**Theorem T8 (linking dichotomy).**
+(a) *Gate:* any plan (imagined path, steps ≤ Δ) with thread ≠ 0 either
+has an imagined landing in T — under blind imagination, a QUERY on the
+disagreement region E = T × actions — or crosses the clearance disc D_m.
+Hence the conditional query bound: μ_query ≥ 1 for every plan with
+thread(π) ≠ 0 that avoids D_m. (Proof: thread ≠ 0 forces a D-crossing;
+Lemma Y.)
+(b) *The unconditional bound is FALSE — witnesses in both classes:* both
+linking classes contain landing-free (hence query-free) plans from the
+start region to B(c, r₀), at the aligned AND at the offset geometry:
+  - thread = 1, aligned (o = 0): the x-axis path (t, 0, 0) has dyz ≡ 0,
+    g(t) = hypot(t − 8, 2) ≥ 2 > ρ_t, and crosses D at (8, 0, 0) ∈ D_m;
+  - thread = 1, offset (o = 1.5): route (0,0,0) → (0, 1.5, 0) →
+    (12, 1.5, 0) → (12, 0, 0); on the east leg dyz ≡ 0 relative to the
+    core center, g = hypot(t − 8, 2) ≥ 2; crossing at (8, 1.5, 0) = the
+    hole's center, g = 2;
+  - thread = 0 (around): (0,0,0) → (0, 6, 0) → (12, 6, 0) → (12, 0, 0);
+    at the plane crossing (8, 6, 0), dyz − R_c ≥ 2.5 (offset) so
+    g ≥ 2.5, and the crossing is outside D.
+  Subdivide each route into steps ≤ Δ: all landings keep g > ρ_t. So NO
+  positive lower bound on query mass follows from topology alone —
+  "obstruction is path-relative" is now a THEOREM about the instrument,
+  not only the measured 0.019-vs-0.898 dichotomy; even at the dangerous
+  offset a query-free threading plan of trivial extra length exists, so
+  the measured 0.898 is a property of the planner's SEARCH (random
+  shooting concentrates near the straight corridor), not of the geometry
+  of feasible plans.
+(c) *Real dynamics:* real trajectories never land in T (freeze semantics:
+a proposed landing in T freezes at the previous position — the same
+argument that makes the ring band reach-null in position), and real steps
+obey the same Δ; hence by Lemma Y every real trajectory that links the
+core threads D_m: under the true dynamics, THE HOLE IS THE ONLY GATE to
+the winding class. *Measured non-vacuously* (east-biased action arm, 300
+episodes × 80 steps per config): 0 real positions in the tube, 368 plane
+crossings all through the clearance disc, and the real linking rate drops
+0.507 → 0.283 when the offset moves the hole off the flow — the knob's
+mechanism seen directly in the trajectories' homology classes.
+(d) *Corridor corollary — where Prop 4 survives:* assume (RG3) + (C3) and
+that every candidate's imagined path lies within Hausdorff distance ε of
+the straight segment start → phantom. The straight segment (t, 0, 0) has
+constant dyz = o, so min_t g = |o − R_c| (attained at t = c_x). If
+|o − R_c| < ρ_t − Δ/2 − ε, every candidate — in particular the argmax —
+has an interpolation point with g < ρ_t − Δ/2, so by Lemma X it queries:
+μ_query = 1. The mechanism run's offset o = 1.5 gives min g = 0.5 =
+ρ_t − Δ/2 EXACTLY — the registered configuration sits at the degenerate
+boundary of the corollary (planner paths dip below the straight line's
+clearance, which is why contact = 0.94 is measured); any o with
+|o − R_c| < 0.5, e.g. o = 1.75, satisfies the strict hypothesis for
+ε < 0.5 − |o − R_c|.
+
+**What replaces "linking lower-bounds query mass".** The correct
+statement has the same shape as the paper's two-grades remark: the metric
+crossing (Lemma 2) forced queries because the mode SEPARATED the lure —
+for the tube, the winding class is gated by the hole (Lemma Y), and
+queries are forced exactly on plans that link WITHOUT threading (T8(a)),
+a conditional statement whose unconditional strengthening is refuted by
+explicit witnesses (T8(b)). Topology relocates the obstruction from
+"reaching the lure" to "which homotopy class the plan uses"; it cannot
+force the planner into the dangerous class — that choice is the
+planner's, which is the tube row's measured content.

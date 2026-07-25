@@ -366,10 +366,11 @@ Lemma~\ref{lem:crossing} uses only that distance-to-center is 1-Lipschitz;
 it works verbatim for round shells $S^{n-1}$ in $\mathbb{R}^n$ and needs no
 homology. Genuine algebraic topology is \emph{earned} exactly where this
 proof dies: non-round separators (Jordan--Brouwer to even define
-``inside'') and non-separating modes (winding and linking obstructions).
-The round ring deliberately sits on the metric side of that boundary; the
-topology enters through what the gauge region and its boundary class
-organize, not through the crossing proof.
+``inside'') and non-separating modes (winding and linking obstructions ---
+for the solid torus this is carried out in Section~\ref{sec:tube}: the
+linking dichotomy). The round ring deliberately sits on the metric side of
+that boundary; the topology enters through what the gauge region and its
+boundary class organize, not through the crossing proof.
 \end{remark}
 
 \begin{proposition}[wrong topology: unfalsifiable and harmless at $\gamma = 0$]
@@ -1344,10 +1345,39 @@ path-relative} (an on-path mode is exploited whether or not it separates
 anything), while \textbf{exact unfalsifiability is separation-relative}
 (only an enclosing boundary manufactures a reach-null gauge region). The
 ring, where the enclosing boundary and the blocked path coincide, conflates
-the two; the tube separates them. The homological program this opens ---
-lower-bounding query mass by the linking of imagined paths with the tube's
-core, where the metric crossing argument has nothing to grip --- is the
-stated next mathematics of the series.
+the two; the tube separates them.
+
+The homological version of the query bound
+(Proposition~\ref{prop:query}), where the metric crossing has nothing to
+grip, turns out to be a \emph{dichotomy}, and its unconditional form is
+false. Let $K$ be the core circle, $g = \mathrm{dist}(\cdot, K)$
+(1-Lipschitz), $D$ the spanning disc, $\rho_t$ the tube radius and
+$\Delta = 1.0$ the step bound (same as the ring's). If an interpolation
+point of a discrete path dips into the shrunken tube
+$\{g \le \rho_t - \Delta/2\}$, its nearer landing lies in the tube
+(clearance lemma); consequently a path with no landing in the tube can
+cross $D$ only through the clearance sub-disc $D_m$ of radius
+$R_c - (\rho_t - \Delta/2)$, and its linking number with $K$ (equal to
+its signed $D$-crossing count; machine-checked against the Gauss
+integral) is realized entirely by hole-threadings. \textbf{Dichotomy:} a
+plan that links the core either queries the tube or threads $D_m$.
+\textbf{Refutation:} both linking classes contain landing-free ---
+query-free --- plans from start to lure, \emph{even at the dangerous
+offset} (thread the displaced hole with clearance $2\rho_t$, or go
+around), so no positive query mass follows from topology alone:
+obstruction is path-relative as a \emph{theorem}, and the measured
+$0.898$ is the search's concentration near the straight corridor, not a
+geometric necessity. \textbf{What survives:} if every candidate's
+imagined path stays within $\varepsilon$ of the straight segment, whose
+clearance to the core is $|o - R_c|$ exactly (offset knob $o$), then
+$|o - R_c| < \rho_t - \Delta/2 - \varepsilon$ forces
+$\mu_{\mathrm{query}} = 1$ --- the registered offset $1.5$ sits exactly
+at this boundary ($0.5 = \rho_t - \Delta/2$). Real trajectories, which
+never enter the tube (freeze), can link the core only through $D_m$: the
+hole is the only gate to the winding class under the true dynamics, and
+the offset knob's mechanism is visible in the real linking rate,
+$0.507 \to 0.283$ under an east-biased action arm. Proofs and machine
+checks are in the repository's theory notes (Lemmas~X/Y, Theorem~T8).
 
 \section{Related work}
 \label{sec:related}
@@ -1388,13 +1418,15 @@ loop}: the sensor's resolution propagates into the certified artifact.
 \section{Limitations and honest assessment}
 \label{sec:limitations}
 
-\paragraph{One instrument family, round and separating.} Every result
-lives on round shells with freeze semantics, where the crossing lemma is
-metric and needs no homology (Section~\ref{sec:theory}'s honesty remark).
-Non-round separators (where Jordan--Brouwer is needed to define
-``inside''), non-separating modes (winding and linking obstructions), and
-moving boundaries are the stated program, not results; the paper's claims
-are about what the round instruments already suffice to separate.
+\paragraph{One instrument family, mostly round and separating.} The core
+results live on round shells with freeze semantics, where the crossing
+lemma is metric and needs no homology (Section~\ref{sec:theory}'s honesty
+remark); the square ring ablates roundness and the solid torus now
+carries the non-separating case's linking dichotomy
+(Section~\ref{sec:tube}). Non-round separators in general position (where
+Jordan--Brouwer is needed to define ``inside'') and moving boundaries
+remain the stated program, not results; the paper's claims are about what
+these instruments already suffice to separate.
 
 \paragraph{Synthesis cells are modest; one contrast is underpowered.}
 $20$--$30$ seeds per cell across two GPT-5.x sizes; the cross-family
