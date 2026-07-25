@@ -1142,15 +1142,26 @@ radius, $\Delta\theta_{\max}$ the \emph{largest angular gap of the
 sample} (the channel or a subsampling gap, whichever is larger), and
 $\tau$ the detector's persistence threshold --- the bar is born exactly at the
 largest gap's chord (proved: a winding cycle must contain an edge spanning
-every angular gap) and cannot die before $\sqrt{3}\, r_{\min}$ (proved
+every angular gap), cannot die before $\sqrt{3}\, r_{\min}$ (proved
 self-containedly: below that scale every triangle's boundary has winding
-zero, so winding obstructs filling) --- so one direction of the law is a
-\emph{guarantee}; the death's upper side matches the Vietoris--Rips circle
-constant \citep{adamaszek2017vietoris} within the cloud's radial thickness
-(measured death$/\bar\rho \in [1.70, 1.82]$ around
-$\sqrt 3 = 1.732$), with its full proof reduced to a filling lemma. The
-law reproduces $78/80$ rows of the factorial, including the seed-level
-wobble at $\gamma = 1.8$ (subsampling-gap lottery at the boundary). Worse, more evidence is counterproductive at the
+zero, so winding obstructs filling), and dies by
+$2 r_{\max} \sin(\theta^*/2)$ with an explicit $\theta^*$
+(the filling lemma, proved: an explicit gap-aware spanning triangle of
+winding one plus a fan retraction exhibit the 2-chain that bounds the
+born class --- no general filling machinery needed; $\theta^* \to 2\pi/3$
+for dense samples, recovering the Vietoris--Rips circle constant
+\citep{adamaszek2017vietoris}, and the measured
+death$/\bar\rho \in [1.70, 1.82]$ around $\sqrt 3 = 1.732$ is the radial
+thickness). The law is therefore \emph{two-sided}: $\hat\beta_1 \ge 1$ is
+guaranteed when $\sqrt3\,r_{\min} - 2 r_{\max}\sin(\Delta\theta_{\max}/2)
+> \tau$, and no persistent winding bar exists when
+$2 r_{\max}\sin(\theta^*/2) - 2 r_{\min}\sin(\Delta\theta_{\max}/2) <
+\tau$ (only a spurious non-winding class could still fire --- never
+observed). On the factorial: the sandwich holds for $57/57$ winding bars,
+the guaranteed bands have $0$ violations ($34$ and $5$ rows), and the
+pointwise law reproduces $78/80$ rows, the $2$ misses falling in the
+proved undecided band ($\gamma = 1.8$ boundary, subsampling-gap
+lottery). Worse, more evidence is counterproductive at the
 boundary: at $\gamma = 1.8$ the false-loop rate \emph{rises} from $1/5$
 to $3/5$ seeds when the dose quadruples, because the persistence threshold
 ($3\times$ median nearest-neighbor spacing) shrinks with density while

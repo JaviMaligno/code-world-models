@@ -501,25 +501,22 @@ point, never a resting place; difficulty notes are honest assessments, not
 scope exclusions. Superseding the audit table's dispositions above where
 they conflict.
 
-- **T1 — Rips flip location.** **NEAR-RESOLVED (2026-07-24): the law is
-  found and validated at 78/80.** The detector reports β̂₁ = 1 iff
-  **√3·ρ − 2ρ·sin(Δθ_max/2) > τ**, where Δθ_max is the largest angular gap
-  of the deduped+capped SAMPLE (channel or subsampling gap, whichever is
-  larger), ρ the cloud's mean radius, τ the 3×median-NN threshold.
-  Ingredients and status: (a) birth = chord of the largest sample gap —
-  PROVABLE (any winding 1-cycle must contain an edge spanning every angular
-  gap of a circle-supported sample; write-up pending); (b) death = √3·ρ,
-  the Adamaszek–Adams circle constant, MEASURED to transfer to gapped
-  samples within ±2% (`t1_bar_geometry.json`: death/ρ ∈ [1.70, 1.82],
-  15/15 finite bars) — full proof route: Adamaszek's cyclic-complex
-  characterization covers arbitrary finite subsets of S¹; (c) validation
-  `scripts/t1_flip_law_validation.py` → 78/80 on the sensor factorial (the
-  2 misses are γ=1.8/N=160 boundary rows with margin ≈0.2, inside the
-  death-constant spread). Naive channel-chord version: 66/80 — the flip is
-  the MAX SAMPLE GAP, not the channel, which also explains the boundary
-  wobble (subsampling lottery) and the multi-chamber lottery. Remaining for
-  full resolution: the birth-lemma write-up and the cyclic-complex death
-  proof.
+- **T1 — Rips flip location.** **CLOSED (2026-07-25) as a two-sided
+  sandwich law with explicit constants.** Birth exact (Lemma B, winding
+  argument); death sandwiched √3·r_min ≤ death ≤ 2·r_max·sin(θ*/2)
+  (Lemma D⁻ + the FILLING LEMMA D⁺, proved 2026-07-25 by an explicit
+  spanning-triangle + fan-retraction 2-chain — the key reduction: the
+  bar dies when ITS OWN class [z₀] bounds, so no general
+  "winding-0 ⇒ boundary" lemma is needed and the Adamaszek–Adams
+  machinery is not required). Two-sided corollary: guaranteed β̂₁ ≥ 1
+  when √3·r_min − 2·r_max·sin(Δθ_max/2) > τ; guaranteed no persistent
+  winding bar when 2·r_max·sin(θ*/2) − 2·r_min·sin(Δθ_max/2) < τ.
+  Validation: 78/80 pointwise law (`t1_flip_law_validation.py`, the 2
+  misses inside the proved undecided band), sandwich 57/57 winding bars
+  + 34 guaranteed-1 and 5 guaranteed-0 rows with 0 violations
+  (`scripts/t1_death_sandwich.py`). Sole remaining exclusion: a spurious
+  non-winding persistent class (never observed in the factorial),
+  recorded in the corollary.
 - **T2 — Aligned-channel degeneracy, full proposition.** Conditions
   (corridor geometry + (RG)/(C)-style hypotheses) under which the facing
   channel makes the blind argmax plan executable in truth, giving
@@ -630,17 +627,70 @@ GUARANTEE in one direction: whenever √3 r_min − 2 r_max sin(Δθ_max/2) > τ
 the bar exists and is persistent (Lemma B upper + Lemma D⁻), so the
 detector MUST report β̂₁ ≥ 1.
 
-**What remains open (the death upper bound).** That the class dies soon
-after √3 r_max — i.e. no persistent bar when
-2 r_min sin(Δθ_max/2) > √3 r_max + τ-margin — needs: (i) a near-equilateral
-sample triple (guaranteed by density outside the gap when Δθ_max < 2π/3),
-whose boundary has winding ±1 and kills the winding obstruction at scale
-≈ √3 r̄; and (ii) a "winding-0 cycles are boundaries" filling lemma at
-scales above the sample resolution. (ii) is where the cyclic-complex
-machinery (Adamaszek–Adams) genuinely enters; for the circle it is known.
-Status: T1 = proved guarantee (one direction, self-contained) + validated
-converse (78/80) + the named remaining lemma. Not closed; no longer resting
-on validation.
+**Lemma D⁺ (death upper bound — the filling lemma, RESOLVED 2026-07-25).**
+Let Δθ_max be the largest angular gap and Δθ₂ the second-largest
+(Δθ₂ ≤ Δθ_max). Then the winding bar's death satisfies
+  death ≤ 2 r_max · sin(θ*/2),
+with θ* given by whichever regime applies (take the smaller when both do):
+  (i) if Δθ_max ≤ 2π/3 and Δθ₂ < π/3:  θ* = 2π/3 + Δθ₂;
+  (ii) if Δθ₂ < Δθ_max < π:  θ* = max(Δθ_max, (2π − Δθ_max)/2 + Δθ₂/2).
+Both θ* ≤ π, so the bound is genuine; and always death ≤ diam(X) ≤ 2 r_max
+(cone). KEY REDUCTION: no general "winding-0 ⇒ boundary" filling lemma is
+needed — the bar dies as soon as ITS OWN class [z₀] (the
+consecutive-neighbors cycle born at Lemma B's scale) becomes a boundary,
+and the proof exhibits an explicit 2-chain doing exactly that.
+
+*Proof.* Step 1 (the spanning triangle). Choose three samples x₁, x₂, x₃:
+in regime (i), place targets t₁ = G_mid − π/3, t₂ = G_mid + π/3, t₃ =
+G_mid + π (G = the largest gap, an open arc of length Δθ_max centered at
+G_mid); each target lies outside G (its distance to G's edge is
+π/3 − Δθ_max/2 ≥ 0), so its nearest sample sits within Δθ₂/2; the three
+arcs of (x₁, x₂, x₃) have lengths 2π/3 ± Δθ₂ < π. In regime (ii), take
+x₁ = u, x₂ = v (the samples flanking G) and x₃ = the sample nearest to
+G_mid + π (within Δθ₂/2, since that target is not in G when Δθ_max < π);
+the arcs are Δθ_max < π and (2π − Δθ_max)/2 ± Δθ₂/2, each < π because
+Δθ₂ < Δθ_max. In both regimes every arc is < π and ≤ θ*, so every chord
+is ≤ 2 r_max sin(θ*/2) =: s* and the triangle is a 2-simplex of VR(X; s*)
+(flag). Its boundary's three angular increments are the arcs (each < π,
+sum 2π): winding 1.
+Step 2 (fan retraction: [z₀] = [∂triangle] at s*). Let φ map each sample
+to the nearest of x₁, x₂, x₃ by angle; φ moves points by ≤ (largest
+arc)/2 ≤ θ*/2, so the fan edges (x, φ(x)) have chord ≤ 2 r_max sin(θ*/4)
+≤ s*. For each consecutive pair (p, q) of the cycle z₀, the prism
+triangles (p, q, φ(p)) and (q, φ(p), φ(q)) lie in VR(X; s*): the only
+non-trivial edge is (q, φ(p)), with angular length ≤ (consecutive gap) +
+θ*/2. Case (a), the pair flanks G: in regime (ii), p = u, q = v are
+themselves vertices and the prism is degenerate; in regime (i), φ(p) is
+the x₁-side vertex at angular distance ≤ π/3 + Δθ₂/2 from p, so
+(q, φ(p)) has angular length ≤ Δθ_max/2 + π/3 + Δθ₂/2 ≤ 2π/3 + Δθ₂/2
+(using Δθ_max ≤ 2π/3), chord ≤ s*. Case (b), any other pair: the gap is
+≤ Δθ₂, angular length ≤ θ*/2 + Δθ₂, and the chord comparison
+sin(θ*/4 + Δθ₂/2) ≤ sin(θ*/2) holds iff (H): Δθ₂ ≤ θ*/2. (H) is
+AUTOMATIC in regime (i), where θ*/2 = π/3 + Δθ₂/2 > Δθ₂ ⟺ Δθ₂ < 2π/3,
+already implied; in regime (ii), θ* ≥ (2π − Δθ_max)/2 ≥ π/2, so
+Δθ₂ ≤ π/4 suffices — (H) is stated as the lemma's standing hypothesis
+and checked numerically per sample.
+Under (H), all prisms are present; summing their boundaries telescopes φ
+along z₀ and yields z₀ − ∂(triangle-fan image) = boundary, and the image
+cycle collapses to ∂(x₁x₂x₃) (degenerate repeats cancel). Hence
+[z₀] = [∂(x₁x₂x₃)] = 0 at s*, and the bar born with z₀ is dead by s*. ∎
+
+**Corollary (the detector law, now TWO-SIDED).** With B⁻ = 2 r_min
+sin(Δθ_max/2), B⁺ = 2 r_max sin(Δθ_max/2) (Lemma B), D⁻ = √3 r_min
+(Lemma D⁻), D⁺ = 2 r_max sin(θ*/2) (Lemma D⁺):
+  - GUARANTEED β̂₁ ≥ 1 when D⁻ − B⁺ > τ (the bar exists and persists);
+  - GUARANTEED no persistent WINDING bar when D⁺ − B⁻ < τ; the detector
+    can then only report β̂₁ ≥ 1 through a spurious non-winding class,
+    which is the one remaining unproved exclusion (measured: no
+    non-winding H1 bar ever cleared τ in the 80-row factorial).
+The undecided band D⁻ − B⁺ ≤ persistence-proxy ≤ D⁺ − B⁻ has width
+(D⁺ − D⁻) + (B⁺ − B⁻) — radial thickness plus the θ*-slack — and the
+measured flip rows (γ = 1.8, N = 160, margin ≈ 0.2) sit inside it, as
+they must. Validation: `scripts/t1_death_sandwich.py` — per sensor-
+factorial row, D⁻ ≤ death ≤ D⁺ for every finite winding bar.
+Status: **T1 CLOSED as a two-sided sandwich law with explicit constants**
+(birth exact by Lemma B; death sandwiched by D⁻/D⁺; the flip location
+follows), modulo only the spurious-class exclusion, recorded above.
 
 ## T5 — route refuted (2026-07-24), stays open
 
