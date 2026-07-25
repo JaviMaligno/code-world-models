@@ -142,6 +142,117 @@ def rips_persistence(points: list, edge_filter=None) -> dict:
     return {"h0": h0, "h1": h1}
 
 
+def free_merge_persistence(contact: list, free_paths: list) -> dict:
+    """The RELATIVE evidence estimator (docs/paper3/THEORY.md, "T7 (second
+    half)"): persistence of rank ker(H0(VR(free)) -> H0(VR(contact+free))),
+    i.e. how many certified-free components the contact evidence glues
+    together, as a function of scale.
+
+    By the long exact sequence of the pair (K, L) = (VR(X u Y), VR(Y)),
+    this rank equals rank H1(K, L) whenever H1(K) = 0 and lower-bounds it
+    otherwise (Proposition R2). Unlike edge censoring it has NO infinite
+    bars by construction (Proposition R1): at scale >= diam both complexes
+    are full simplices, so the rank returns to 0.
+
+    `free_paths` is a list of PATHS (each a list of consecutive positions
+    along one certified-free trajectory segment chain), not a flat cloud:
+    consecutive samples on a path are joined at scale 0 in both complexes,
+    because a free trajectory certifies that its own samples are connected
+    through free space. Passing a flat cloud instead makes the estimator
+    measure the contact/free DENSITY MISMATCH rather than the topology --
+    the refuted point-cloud instantiation (THEORY.md, T7 second half).
+
+    Returns {"bars": [(birth, death), ...], "max_rank": int}; a bar covers
+    a maximal scale interval on which the rank is >= 1. Both union-finds
+    are maintained incrementally, so the cost is one sort of the pairwise
+    distances.
+    """
+    free = [p for path in free_paths for p in path]
+    pts = list(contact) + free
+    nc, nf = len(contact), len(free)
+    n = nc + nf
+    if nf == 0 or n == 0:
+        return {"bars": [], "max_rank": 0}
+
+    events = []
+    for i in range(n):
+        for j in range(i + 1, n):
+            events.append((_dist(pts[i], pts[j]), i, j))
+    events.sort()
+
+    par_l = list(range(n))          # union-find on FREE points only
+    par_k = list(range(n))          # union-find on ALL points
+    has_free = [i >= nc for i in range(n)]
+
+    def find(par, x):
+        while par[x] != x:
+            par[x] = par[par[x]]
+            x = par[x]
+        return x
+
+    comp_l = nf                     # components of VR(free)
+    comp_k_free = nf                # K-components containing a free point
+
+    # scale-0 path edges: a free trajectory certifies its own connectivity
+    off = nc
+    for path in free_paths:
+        for t in range(len(path) - 1):
+            u, v = off + t, off + t + 1
+            a, b = find(par_l, u), find(par_l, v)
+            if a != b:
+                par_l[a] = b
+                comp_l -= 1
+            a, b = find(par_k, u), find(par_k, v)
+            if a != b:
+                comp_k_free -= 1    # both carry free points by construction
+                par_k[a] = b
+                has_free[b] = True
+        off += len(path)
+
+    bars, open_at, prev_rank, max_rank = [], None, 0, 0
+    for d, i, j in events:
+        if i >= nc and j >= nc:     # free-free edge: merges in BOTH
+            a, b = find(par_l, i), find(par_l, j)
+            if a != b:
+                par_l[a] = b
+                comp_l -= 1
+        a, b = find(par_k, i), find(par_k, j)
+        if a != b:
+            if has_free[a] and has_free[b]:
+                comp_k_free -= 1
+            par_k[a] = b
+            has_free[b] = has_free[a] or has_free[b]
+        rank = comp_l - comp_k_free
+        max_rank = max(max_rank, rank)
+        if rank != prev_rank:
+            if prev_rank == 0 and rank > 0:
+                open_at = d
+            elif rank == 0 and open_at is not None:
+                if d > open_at:
+                    bars.append((open_at, d))
+                open_at = None
+            prev_rank = rank
+    # Proposition R1: at the top scale everything is one component, so the
+    # rank is back to 0 and no bar can be left open.
+    assert prev_rank == 0 and open_at is None, "infinite relative bar"
+    return {"bars": bars, "max_rank": max_rank}
+
+
+def relative_betti1_estimate(contact: list, free_paths: list,
+                             factor: float = 3.0) -> dict:
+    """Detector on `free_merge_persistence`, using the SAME persistence
+    rule as `betti1_estimate` (bars longer than factor x median
+    nearest-neighbour spacing of the contact cloud) so the two are
+    directly comparable."""
+    res = free_merge_persistence(contact, free_paths)
+    tau = factor * median_nn_distance(contact)
+    persistent = [b for b in res["bars"] if (b[1] - b[0]) > tau]
+    return {"betti1_rel": len(persistent), "tau": tau,
+            "bars": res["bars"], "bars_over_tau": persistent,
+            "max_rank": res["max_rank"], "n_contact": len(contact),
+            "n_free": sum(len(p) for p in free_paths)}
+
+
 def betti1_estimate(points: list, factor: float = 3.0) -> dict:
     """Pre-registered detector: count H1 bars with persistence above
     factor x median-NN spacing (infinite bars always count). Returns the

@@ -599,12 +599,18 @@ they conflict.
   note: the never-fillable cycles belong to v1 itself (4/25 cells — the
   3 true gap-0 loops + the single 19/20 specificity failure, now
   diagnosed as structural), not to the margin refinement (rejected for
-  bridge restoration, 5/5 finite false loops at γ = 0.6). REMAINING
-  (the open second half): formulate H(contact | certified-free) as
-  relative persistence and prove its stability/correctness theorem —
-  the ambivalence finding (same mechanism carries truth at γ = 0 and
-  the false positive at γ = 0.6) is the sharpest argument that edge
-  deletion is the wrong primitive.
+  bridge restoration, 5/5 finite false loops at γ = 0.6). The
+  ambivalence finding (same mechanism carries truth at γ = 0 and the
+  false positive at γ = 0.6) is the sharpest argument that edge deletion
+  is the wrong primitive. **SECOND HALF LARGELY RESOLVED (2026-07-25):**
+  the relative pair estimator is formulated, Props R1 (no infinite bars,
+  structural) and R2 (LES reduction to a union-find) proved, the
+  point-cloud instantiation REFUTED by measurement (density mismatch)
+  and replaced by path input, discrimination 20/20 at γ > 0 against
+  plain Rips's 9/20, and the γ = 0 one-sided miss identified as
+  Proposition 1's gauge rather than an estimator defect. REMAINING: the
+  γ = 0 threshold calibration under two-sided evidence, and the
+  interleaving stability theorem for pairs.
 - **T8 — Linking-number query lower bound:** **RESOLVED (2026-07-25), in
   two halves.** The UNCONDITIONAL bound is REFUTED with explicit
   landing-free witnesses in BOTH linking classes (even at the dangerous
@@ -1241,6 +1247,90 @@ that edge deletion is the wrong primitive and the principled object is
 RELATIVE homology of contact w.r.t. certified-free space. That
 estimator's formulation and stability theorem remain the OPEN second
 half of T7.
+
+## T7 (second half) — the relative estimator: formulated, two structural
+## propositions proved, discrimination measured (2026-07-25)
+
+The censoring pathology (infinite bars) came from deleting edges, which
+leaves a limit complex that is not a cone. The principled replacement
+uses the pair (K, L) = (VR(X ∪ Y; s), VR(Y; s)) with X the contact cloud
+and Y the certified-free evidence, and reads the relative group
+H₁(K, L). Two structural facts make it the right object.
+
+**Proposition R1 (no infinite bars, by construction).** For s ≥ diam both
+K_s and L_s are full simplices, so H₁(K_s, L_s) = 0: every relative bar
+is finite. Edge censoring admits infinite bars precisely because its
+limit complex is Cl(G_F) ≠ full (Prop C1); the relative construction
+removes the pathology rather than certifying its absence per sample.
+(Machine-checked in every cell run below and asserted in the estimator.)
+
+**Proposition R2 (the estimator is a union-find).** The long exact
+sequence of the pair gives
+  H₁(K) → H₁(K, L) → H₀(L) → H₀(K),
+so rank H₁(K, L) = rank(im H₁(K)) + rank ker(H₀(L) → H₀(K)); when
+H₁(K) = 0 it equals rank ker(H₀(L) → H₀(K)) exactly, and lower-bounds it
+otherwise. That kernel rank is
+  #components of VR(Y; s) − #components of VR(X ∪ Y; s) that contain a
+  point of Y,
+i.e. **the number of certified-free components that the contact evidence
+glues together** — computable by two incremental union-finds, no matrix
+reduction. Implementation: `tda.free_merge_persistence`.
+
+**The free evidence is PATHS, not a cloud (a refuted instantiation).**
+Feeding Y as a flat point cloud makes the estimator report separation
+almost everywhere, including wide-open channels (measured: rel β̂₁ ≥ 1 at
+γ = 1.8, worse than plain Rips). Diagnosis: the contact cloud is dense on
+a curve while the free cloud is a sparse 2-D scatter, so contact points
+glue free components purely by DENSITY MISMATCH. The fix is not a
+parameter but the right object: a free trajectory certifies passage
+between its own consecutive samples, so Y enters as polylines whose
+consecutive samples are joined at scale 0. (A useful corollary: path
+subsampling is lossless for the connectivity certificate, unlike
+point-cloud subsampling.) With paths, synthetic discrimination is
+perfect: **12/12** — β̂₁^rel = 1 on the closed ring and 0 at
+γ ∈ {0.6, 1.2, 1.8}, where plain Rips reports the spurious loop.
+
+**Measured on the instrument** (`scripts/t7_relative_estimator.py`,
+5 gaps × 5 seeds × 2 evidence arms):
+
+| γ | plain β̂₁ (correct/5) | rel β̂₁ (correct/5) |
+|---|---|---|
+| 0.0 | 5/5 | 0/5 (one-sided), 1/5 (two-sided) |
+| 0.6 | 0/5 | 5/5 |
+| 1.2 | 0/5 | 5/5 |
+| 1.8 | 4/5 | 5/5 |
+| 2.4 | 5/5 | 5/5 |
+
+At every γ > 0 — the whole regime where the pre-registered detector
+fails — the relative estimator is **20/20** against plain Rips's 9/20,
+with no infinite bars and no censoring. At γ = 0 it does not fire, for
+two different reasons that must not be conflated:
+  (a) *one-sided evidence: not a defect but the gauge theorem.* With
+inside starts the interior is reach-null, so no free evidence exists
+outside the ring. The estimator answers "how many certified-free
+components does the contact set separate?", and with one side sampled
+the answer is vacuously zero. Proposition 1's quotient says exactly this:
+beyond the reachable set there is nothing to identify. Plain β̂₁ scores
+5/5 here by answering a DIFFERENT question — the SHAPE of the cloud, not
+the SEPARATION it induces — and the two questions come apart precisely
+in the gauge region.
+  (b) *two-sided evidence: a live calibration gap.* Pooling inside and
+outside starts makes enclosure identifiable in principle and the
+estimator does fire (1/5), but the informative bar is short: its length
+is set by the band thickness minus the free-sample clearance (≈0.5),
+while the pre-registered threshold τ = 3 × median contact spacing is
+≈0.6–0.9. The bar is sub-threshold, not absent. A τ calibrated to the
+FREE-evidence geometry rather than the contact spacing is the named
+remaining step — the estimator's persistence rule was inherited from
+`betti1_estimate` for comparability, and comparability is exactly what
+makes it wrong here.
+
+Status: **T7's formulation is RESOLVED** (relative pair + Props R1/R2,
+with the point-cloud instantiation refuted and paths identified as the
+correct input), **discrimination is established at γ > 0** (20/20), and
+what remains is the threshold calibration at γ = 0 plus the stability
+theorem (interleaving of pairs), which the pair formulation now makes a
+standard rather than an open-ended question.
 
 ## T8 — the linking dichotomy, RESOLVED (2026-07-25): the unconditional
 ## bound is REFUTED with witnesses, the conditional bound is proved

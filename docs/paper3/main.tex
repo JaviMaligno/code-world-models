@@ -1212,10 +1212,37 @@ Running that certificate on all cells finds the pathology is real and
 $\gamma = 0$ loops (their fills cross the certified-free hole, so the
 correct loop gets infinite confidence) and the prototype's single false
 positive at $\gamma = 0.6$, which turns out to be a structural
-never-fillable cycle, not a near-threshold bar. Edge deletion is the
-wrong primitive; the principled estimator is \emph{relative} homology of
-the contact set with respect to certified-free space, which we leave as
-the identified open problem. Nested boundaries
+never-fillable cycle, not a near-threshold bar.
+
+Edge deletion is therefore the wrong primitive, and the principled
+replacement is \emph{relative} homology of the pair
+$(\mathrm{VR}(X \cup Y), \mathrm{VR}(Y))$, contact evidence $X$ against
+certified-free evidence $Y$. Two things make it the right object. It
+cannot produce infinite bars at all --- both complexes are full
+simplices past the diameter, so every relative class dies --- and by the
+long exact sequence its rank is $\operatorname{rank}\ker(H_0(\mathrm{VR}(Y))
+\to H_0(\mathrm{VR}(X \cup Y)))$ whenever the union has trivial $H_1$:
+\emph{the number of certified-free components that the contact evidence
+glues together}, computable by two union-finds rather than a matrix
+reduction. One instantiation detail is load-bearing and we record it
+because we got it wrong first: $Y$ must enter as trajectory
+\emph{polylines}, not as a point cloud. A free trajectory certifies
+passage between its own consecutive samples; discard that and the
+estimator reports separation almost everywhere, because a curve-dense
+contact cloud glues a scatter-sparse free cloud by density mismatch
+alone. With paths, the estimator is correct on $20/20$ open-ring cells
+where the pre-registered detector scores $9/20$, with no censoring and
+no infinite bars. At $\gamma = 0$ it does not fire, for two reasons we
+keep separate: with one-sided (inside) evidence the interior is
+reach-null, nothing outside is sampled, and separation is
+\emph{unidentifiable by any estimator} --- Proposition~\ref{prop:quotient}
+asserting itself, with plain $\hat\beta_1$ scoring well there only
+because it answers a different question (the cloud's shape, not the
+separation it induces); with two-sided evidence the informative bar
+exists but falls below a persistence threshold calibrated to contact
+spacing rather than to the free evidence. That calibration, and the
+interleaving-stability theorem the pair formulation now makes routine,
+are what remain. Nested boundaries
 break the detector a third way: with two concentric rings (the
 multi-chamber instrument) the middle-chamber evidence cloud is two
 concentric circles ($\beta_1 = 2$), and the pre-registered detector
