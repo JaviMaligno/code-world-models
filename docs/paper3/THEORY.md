@@ -1067,15 +1067,50 @@ percentile 3.4, minimum 2.34**, giving a per-dimension rate of
 **0.4177–0.4179** (worst single sample 0.474) against the sharp 0.4167 —
 a cost of about 3·10⁻³.
 
-**Status: T5 CLOSED.** The chain is complete for both interfaces:
+**Lemma I′ (subset refinement).** For ANY subset S of the steps,
+  E[e^{−λZ²}] ≤ (1 + 2λσ_S²)^{−1/2} + 2Φ̄( x₀/(√(2λ)·max_{s∈S}|c_s|) ),
+σ_S² = Σ_{s∈S}c_s². *Proof.* Z = Z_S + Z_{S^c} with independent parts,
+so E[e^{−λZ²}] ≤ sup_t E[e^{−λ(Z_S+t)²}]; the representation gives
+E[e^{−λ(Z_S+t)²}] = E_g[e^{i√(2λ)gt}·Π_{s∈S}cos(√(2λ)gc_s)], and the
+shift's phase has modulus 1, so taking absolute values reduces to
+Lemma I's proof on S. ∎ Useful because a single anomalously large weight
+can simply be dropped from S. (Verified on 200 random profiles, half of
+them deliberately given a dominant weight: dropping the largest weight
+always yields a valid bound.)
+
+**On PROVING ρ rather than measuring it — an honest accounting.** The
+chain is: ρ_i² ≥ (M_min/M_max)²·Σ_s v_s²a_{s,i}², where v_s = w_{t,s}/w_max
+is the deterministic AR(1) profile and M_s = max(1,‖a_s‖). For the
+instrument's profile Σv_s² = 44.2 and Σv_s⁴ = 32.8, so Hoeffding on the
+bounded independent terms v_s²a_{s,i}² gives Σ_s v_s²a_{s,i}² ≥ 4.09
+with probability 0.999, i.e. ρ_i ≥ 2.02·(M_min/M_max). The remaining
+factor is where the accounting goes badly: M_s ∈ [1, √n] deterministically,
+and the concentration ‖a_s‖² ≈ n/3 that would give M_max/M_min ≤ √3
+needs a union bound over h = 80 steps, which is vacuous until n ≳ 80.
+So the PROVED constants are:
+  • n ≳ 80 (concentration bites): ρ ≥ 1.17, rate q ≤ 0.758;
+  • M_s effectively constant (n → ∞): ρ ≥ 2.02, q ≤ 0.516;
+  • MEASURED at n = 3…20: ρ median 4.0, min 2.34, q ≈ 0.418.
+Attempts to remove the M-factor by pigeonholing the steps into dyadic
+M-bands, or by restricting to the AR(1) plateau, make the surviving
+subset small enough that the loss exceeds the gain (both were tried; the
+subset version of the argument lands below the trivial ρ ≥ 1). So this
+one constant remains measured rather than proved at the instrument's
+actual dimensions, and we say so instead of quoting the asymptotic
+regime as if it covered n = 8.
+
+**Status: T5 CLOSED up to one measured constant.** The chain is complete
+for both interfaces:
 Lemma C (tangent cone) → Lemma H (conditional independence) →
 Prop T5-T (matched-exponent Chernoff) → Lemma I (the Rademacher
 ingredient) gives the spherical-cap rate for the cube-uniform action;
 Lemma G → Theorem T5-I gives it exactly for the isotropic action. The
-only residue is quantitative, not structural: turning the measured
-ρ ≥ 2.34 into a proved high-probability lower bound is a routine
-estimate on i.i.d. uniforms against fixed AR(1) weights, and even the
-crude ρ ≥ 1.6 already yields a proved exponential rate (q ≈ 0.61).
+only residue is the single constant ρ: the exponential DECAY is proved
+unconditionally at large n (q ≤ 0.758 once the norm concentration
+bites, ≤ 0.516 asymptotically), while the SHARP constant at the
+instrument's own dimensions rests on the measured ρ ≈ 4. The gap is one
+scalar, and the accounting above says exactly how much each worst-case
+factor costs.
 Measured decays agree across all three: cube 0.411, isotropic 0.431,
 theory 0.4167.
 

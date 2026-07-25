@@ -301,3 +301,28 @@ def test_t5_instrument_weight_profile_is_non_degenerate():
     assert worst > 2.0, worst
     q = (1 + 4.76) ** -0.5 + 2 * _phibar(1.7780 * worst / math.sqrt(4.76))
     assert q < 0.50, (worst, q)        # vs the sharp 0.4167
+
+
+def test_t5_lemma_i_prime_subset_refinement():
+    # Lemma I': the bound may be evaluated on any SUBSET of the steps,
+    # because the omitted part is an independent shift whose phase has
+    # modulus 1. Checked on profiles with a deliberately dominant weight,
+    # which is exactly what the refinement is for.
+    import itertools
+    x0, u = 1.7780, 4.76
+    for trial in range(24):
+        rng2 = random.Random(500 + trial)
+        h = rng2.randint(4, 12)
+        cs = [abs(rng2.gauss(0, 1)) + 0.02 for _ in range(h)]
+        if trial % 2 == 0:
+            cs[0] *= 8                      # dominant weight
+        s2 = sum(c * c for c in cs)
+        lam = u / (2 * s2)
+        exact = sum(math.exp(-lam * sum(s * c for s, c in zip(sg, cs)) ** 2)
+                    for sg in itertools.product((1, -1), repeat=h)) / 2 ** h
+        keep = sorted(range(h), key=lambda j: -cs[j])[1:]     # drop largest
+        s2s = sum(cs[j] ** 2 for j in keep)
+        cms = max(cs[j] for j in keep)
+        bound = ((1 + 2 * lam * s2s) ** -0.5
+                 + 2 * _phibar(x0 / (math.sqrt(2 * lam) * cms)))
+        assert exact <= bound + 1e-12, (trial, exact, bound)
