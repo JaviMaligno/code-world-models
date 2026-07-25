@@ -32,28 +32,39 @@ sys.path.insert(0, str(_REPO / "src"))
 
 CART_WIDTH = 0.2        # default 0.5
 PEND_WIDTH = 0.1        # default 0.25
-RUNS = (("continuous_reach.py", CART_WIDTH, "continuous_reach"),
-        ("continuous_pendulum.py", PEND_WIDTH, "continuous_pendulum"))
+# Narrowing BOTH plateaus starves the random policy too (measured: pendulum J_rand
+# collapses 0.059 -> 3.6e-4), which makes "below random" vacuous at the widest
+# knob. The asymmetric variant narrows only the PHANTOM plateau -- the one whose
+# tail a pinned planner collects -- and leaves the real one at its default width,
+# so the random baseline survives.
+PEND_PHANTOM_WIDTH = 0.08
+RUNS = (("continuous_reach.py", ["--width", str(CART_WIDTH)], "continuous_reach", "_sharp"),
+        ("continuous_pendulum.py", ["--width", str(PEND_WIDTH)], "continuous_pendulum", "_sharp"),
+        ("continuous_pendulum.py", ["--width-right", str(PEND_PHANTOM_WIDTH)],
+         "continuous_pendulum", "_sharpphantom"))
 
 
-def _delegate(script, width):
-    sys.argv = [str(_HERE / script), "--width", str(width),
-                "--out-suffix", "_sharp"]
+def _delegate(script, flags, suffix):
+    sys.argv = [str(_HERE / script), *flags, "--out-suffix", suffix]
     runpy.run_path(str(_HERE / script), run_name="__main__")
 
 
-for script, width, stem in RUNS:
-    print(f"\n=== {script} at width={width} ===", flush=True)
-    _delegate(script, width)
+for script, flags, stem, suffix in RUNS:
+    print(f"\n=== {script} {' '.join(flags)} ===", flush=True)
+    _delegate(script, flags, suffix)
 
 # --- the comparison the variant exists to make -----------------------------
 print("\n=== below-random check: default vs sharp ===")
 print(f"{'instrument':>10} {'knob':>6} {'J_blind':>9} {'J_rand':>8} "
       f"{'below?':>7} {'pc':>6} {'contact':>8}")
 verdict = {}
-for _, _, stem in RUNS:
-    for tag, path in (("default", f"results/{stem}.json"),
-                      ("sharp", f"results/{stem}_sharp.json")):
+SHOW = [("continuous_reach", "default", ""), ("continuous_reach", "sharp", "_sharp"),
+        ("continuous_pendulum", "default", ""),
+        ("continuous_pendulum", "sharp", "_sharp"),
+        ("continuous_pendulum", "sharp-phantom-only", "_sharpphantom")]
+for stem, tag, sfx in SHOW:
+    for _ in (0,):
+        path = f"results/{stem}{sfx}.json"
         rows = json.loads((_REPO / path).read_text())["rows"]
         knob_key = "x_wall" if stem.endswith("reach") else "th_stop"
         below = 0

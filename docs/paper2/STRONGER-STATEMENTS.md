@@ -223,11 +223,14 @@ proposition's direction).
 
 ## What remains open after 2026-07-25
 
-- The pendulum's widest sharp-variant knob (below-random fails there because the
-  random baseline collapsed; play_cost = 1.0000 carries the claim instead).
-- Verifying the visitation-density constant $c$ of Proposition 6 for a specific
-  instrument (our gate's step-1 law is supported on a lower-dimensional set), and
-  with it the covering-number analogue §11 still lists as open.
+- ~~The pendulum's widest sharp-variant knob~~ **CLOSED 2026-07-25**: narrowing
+  only the phantom plateau (per-plateau widths, `--width-right 0.08`) gives 6/6
+  below random with the random baseline intact and play_cost invariant to 7.1e-5.
+- ~~Verifying the visitation-density constant $c$~~ **CLOSED 2026-07-25**: exact
+  for the cart's gate at step 1 ($c = 5/6$, Monte-Carlo confirmed), with the
+  general form being a volume ratio $q \geq \mathrm{vol}(B)/\mathrm{vol}(U)$. The
+  gate-side covering-number analogue is still open; the mitigation-side one is now
+  proved (Prop 7 + Cor 2).
 - The Qwen 2D induction arm (credits; see the separate note) — the only *missing
   data* rather than missing strength.
 - Not recoverable, by design: "no learner can infer it **from the sample**". A

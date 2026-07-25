@@ -25,6 +25,9 @@ ap.add_argument("--width", type=float, default=None,
                 help="reward-plateau sigmoid width; None = the instrument's own "
                      "default (0.25), which reproduces the committed sweep "
                      "byte-for-byte")
+ap.add_argument("--width-right", type=float, default=None,
+                help="width of the FAR (phantom) plateau only; leaves the near "
+                     "plateau at --width so the random baseline survives")
 ap.add_argument("--out-suffix", default="",
                 help="written to results/continuous_pendulum{suffix}.json")
 args = ap.parse_args()
@@ -35,8 +38,12 @@ print(f"{'stop':>5} {'rarity':>8} {'(CI)':>17} {'J_truth':>8} {'J_blind':>8} "
       f"{'J_rand':>7} {'cost':>6} {'blind_hit':>9} {'truth_hit':>9} "
       f"{'d@40':>7}", flush=True)
 for st in args.stops:
-    truth = (PendulumStop(th_stop=st) if args.width is None
-             else PendulumStop(th_stop=st, width=args.width))
+    kw = {}
+    if args.width is not None:
+        kw["width"] = args.width
+    if args.width_right is not None:
+        kw["width_right"] = args.width_right
+    truth = PendulumStop(th_stop=st, **kw)
     r, lo, hi = harness.rarity(truth, args.rollouts, seed=args.seed + 50_000)
     pc = harness.play_cost(truth, blind_of(truth), args.episodes,
                            seed=args.seed)

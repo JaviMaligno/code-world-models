@@ -465,6 +465,24 @@ claim("exactly one patch-selective artifact, a half-plane at 31x",
       and round(_sel[0][2] / PATCH_SHARE) == 31, str(_sel))
 
 # --- Prop 8's hypothesis: the truth planner's knob-invariance regime --------
+cert = load("truth_plan_invariance_certificate")["rows"]
+in_sweep = [r for r in cert if r["in_sweep"]]
+claim("the invariance certificate holds at every sweep knob",
+      all(r["certificate"] for r in in_sweep) and len(in_sweep) == 7,
+      str([(r["x_wall"], r["certificate"]) for r in in_sweep]))
+claim("argmax candidate never exceeds x = 0.344 in the sweep",
+      max(r["argmax_max_x_over_run"] for r in in_sweep) < 0.345,
+      f"{max(r['argmax_max_x_over_run'] for r in in_sweep):.3f}")
+claim("clamping candidates lose by >= 5.25 in the sweep",
+      min(r["min_margin_argmax_minus_best_clamping"] for r in in_sweep) >= 5.25,
+      f"{min(r['min_margin_argmax_minus_best_clamping'] for r in in_sweep):.3f}")
+_m = {r["x_wall"]: r["min_margin_argmax_minus_best_clamping"] for r in cert}
+claim("the margin contracts to 4.12 at 11 and 0.51 at 12",
+      abs(_m[11.0] - 4.12) < 0.02 and abs(_m[12.0] - 0.51) < 0.02,
+      f"{_m[11.0]:.2f}, {_m[12.0]:.2f}")
+claim("the certificate fails at 12.5 (argmax itself reaches the wall)",
+      not [r for r in cert if r["x_wall"] == 12.5][0]["certificate"])
+
 regime = load("truth_planner_knob_regime")["rows"]
 inside = [r for r in regime if r["x_wall"] <= 12.0]
 outside = [r for r in regime if r["x_wall"] > 12.0]
@@ -579,6 +597,29 @@ for label, sharp, base, want_sharp, want_base in (
           f"sharp {spread_s:.2e} vs default {spread_b:.2e}")
     claim(f"{label}: contact stays 1.00 at every sharp knob",
           all(r["blind_contact_rate"] == 1.0 for r in sharp))
+# the asymmetric variant: only the phantom plateau narrowed, so J_rand survives
+ph = load("continuous_pendulum_sharpphantom")
+ph_rows = ph["rows"]
+claim("asymmetric variant: below random at 6/6 pendulum knobs",
+      sum(r["j_blind"] < r["j_random"] for r in ph_rows) == 6)
+claim("asymmetric variant: J_rand survives in [0.057, 0.059]",
+      all(0.057 <= r["j_random"] <= 0.059 for r in ph_rows),
+      str(sorted({round(r["j_random"], 4) for r in ph_rows})))
+claim("asymmetric variant: J_blind in [4.3e-4, 7.2e-4]",
+      4.3e-4 <= min(r["j_blind"] for r in ph_rows)
+      and max(r["j_blind"] for r in ph_rows) <= 7.2e-4,
+      f"[{min(r['j_blind'] for r in ph_rows):.2e}, "
+      f"{max(r['j_blind'] for r in ph_rows):.2e}]")
+_sp = (max(r["play_cost"] for r in ph_rows)
+       - min(r["play_cost"] for r in ph_rows))
+claim("asymmetric variant: play_cost spread ~7.1e-5", abs(_sp - 7.1e-5) < 1e-5,
+      f"{_sp:.2e}")
+claim("asymmetric variant: J_truth unchanged at 20.08 and contact 1.00",
+      all(abs(r["j_truth"] - 20.08) < 5e-3 and r["blind_contact_rate"] == 1.0
+          for r in ph_rows))
+claim("asymmetric variant narrows only the phantom plateau",
+      ph["params"]["width_right"] == 0.08 and ph["params"]["width"] is None)
+
 claim("sharp widths are the ones the paper names (cart 0.2, pendulum 0.1)",
       load("continuous_reach_sharp")["params"]["width"] == 0.2
       and load("continuous_pendulum_sharp")["params"]["width"] == 0.1)

@@ -137,6 +137,14 @@ class PendulumStop:
     th_right: float = 3.0
     a_right: float = 1.0
     width: float = 0.25
+    # Per-plateau widths: None means "use `width`", which is what every committed
+    # run does (bit-identical). Split widths exist because the sharp-plateau
+    # variant needs to narrow the PHANTOM plateau (removing the tail a pinned
+    # planner collects) while leaving the REAL one wide enough that the uniform
+    # random policy still earns a baseline -- otherwise J_rand collapses and
+    # "below random" stops being an informative comparison (2026-07-25).
+    width_left: float | None = None
+    width_right: float | None = None
     h_episode: int = 80
     th0_range: float = 0.3
 
@@ -145,8 +153,10 @@ class PendulumStop:
 
     def reward(self, state: State) -> float:
         th = state[0]
-        left = self.a_left / _sigmoid_denom(-((self.th_left - th) / self.width))
-        right = self.a_right / _sigmoid_denom(-((th - self.th_right) / self.width))
+        wl = self.width if self.width_left is None else self.width_left
+        wr = self.width if self.width_right is None else self.width_right
+        left = self.a_left / _sigmoid_denom(-((self.th_left - th) / wl))
+        right = self.a_right / _sigmoid_denom(-((th - self.th_right) / wr))
         return left + right
 
     def step(self, state: State, action: float) -> tuple[State, float, bool]:

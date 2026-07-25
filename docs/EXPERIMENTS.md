@@ -1,5 +1,60 @@
 # Experiments Log
 
+## PAPER 2 — Scope audit of the new theory + the pendulum residue closed (2026-07-25, later)
+
+Javier's questions were about SCOPE: is the identity theory including its
+boundary, is the covering result general in n, does the constant have a general
+analytic form. Honest answers were "hypothesis measured", "yes, but only the
+evaluation is instance-specific", "computed for one instrument". All three pushed:
+
+**1. Prop 8's hypothesis is now a machine-checked CERTIFICATE, and the boundary
+is derived.** `scripts/truth_plan_invariance_certificate.py`: a candidate's
+imagined return under truth depends on the knob only if its trajectory reaches the
+clamp, so it suffices to check per knob and per replanning step that (C1) the
+argmax candidate stays strictly below the smallest wall in the sweep and (C2)
+every clamping candidate scores strictly below it. Then the argmax is the
+maximiser over a knob-free subset and the plan is identical — a proof over the
+planner's own candidate set, not an observation about outputs. Result: certified at
+ALL SEVEN sweep knobs, argmax never exceeding x = 0.344, clamping candidates
+losing by >= 5.25. Past the sweep the margin contracts monotonically (4.12 at
+x_wall = 11, **0.51** at 12) and the certificate FAILS at 12.5, where the argmax
+candidate itself reaches the wall — so the boundary is derived at x_right = 12,
+not merely observed via bit-identity.
+
+**2. The covering result was already general in n; the general corollary is now
+stated.** Prop 7's proof uses only that fences eps-cover the reachable boundary —
+no dimension enters. What is instance-specific is the covering NUMBER. Added
+Cor 2: if the reachable boundary is a p-dimensional Lipschitz piece of diameter D,
+N_cov = O((D/eps)^p), so the deployment repair cost is exponential in the
+BOUNDARY's dimension (p = 0 gives the exact 1 measured in 1D; p = 1 gives the
+measured 1.05 -> 4.25 as the arc lengthens; p = 2 would cost O((D/eps)^2)). That
+is the precise sense in which the danger is dimension-free and the repair is not.
+
+**3. The density constant has a general closed form: a VOLUME RATIO.** Added
+Remark: if the step-k law of (s,a) is uniform on a set U (as at k=1 whenever the
+one-step map is affine in the randomized coordinates), then c = 1/vol(U) exactly
+and the reveal probability is q >= vol(B)/vol(U) — literally the fraction of the
+gate's one-step reachable volume that the guaranteed disagreement ball occupies;
+for non-uniform laws c = inf p_0 / sup|det DF| by pushforward. The cart's 5/6 is
+that formula evaluated: vol(U) = (2*gain*dt*a_max) * 1 * (2*a_max) = 1.2.
+
+**4. The pendulum's below-random residue: CLOSED (the non-Qwen data item).**
+Diagnosis said the symmetric sharp variant starves the random baseline too, so
+narrow only the PHANTOM plateau. Added per-plateau widths to PendulumStop
+(`width_left`/`width_right`, defaulting to `width` so every committed run stays
+bit-identical — verified) and a `--width-right` flag. With width_right = 0.08:
+**below random at 6/6 knobs**, J_blind in [4.3e-4, 7.1e-4] against a surviving
+J_rand in [0.0572, 0.0584], J_truth unchanged at 20.08, contact 1.00 everywhere,
+and play_cost in [1.0028, 1.0029] — spread **7.1e-5**, tighter than the symmetric
+variant and 850x tighter than the default. So the strong form now holds on both
+instruments: exploited, pinned, below random at EVERY knob, play_cost invariant to
+1e-4.
+
+The audit caught one of my numbers again: I wrote J_rand = 0.0577 for the
+asymmetric variant when it is a range [0.0572, 0.0584]. Fixed in both places.
+
+State: 35 pp, 0 errors / 0 undefined / 0 overfull; **501 audited values**.
+
 ## PAPER 2 — The exact measurements were theorems in disguise: four proved (2026-07-25)
 
 Javier: "mencionas varias cosas medidas que salen completamente exactas, me pregunto
