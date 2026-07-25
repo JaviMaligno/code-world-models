@@ -23,6 +23,20 @@ import math
 from dataclasses import dataclass, replace
 
 
+def _sigmoid_denom(z: float) -> float:
+    """1 + exp(z), overflow-safe. For |z| <= 700 this is exactly `1.0 +
+    math.exp(z)` (bit-identical, so every committed sweep reproduces); beyond
+    that math.exp raises OverflowError while the quantity it feeds --- a reward
+    plateau of the form amp/(1+exp(z)) --- has already saturated, so we return
+    the float that makes the plateau 0.0. Needed because a narrow plateau width
+    scales z up: a free-spinning pendulum reaches |th| where (th - th_right)/0.1
+    exceeds 709 and the plain expression crashes (found 2026-07-25 running the
+    sharp-plateau variant)."""
+    if z > 700.0:
+        return float("inf")
+    return 1.0 + math.exp(z)
+
+
 State = tuple  # (x, v)
 
 
@@ -83,8 +97,8 @@ class CartWall:
 
     def reward(self, state: State) -> float:
         x = state[0]
-        left = self.a_left / (1.0 + math.exp(-((self.x_left - x) / self.width)))
-        right = self.a_right / (1.0 + math.exp(-((x - self.x_right) / self.width)))
+        left = self.a_left / _sigmoid_denom(-((self.x_left - x) / self.width))
+        right = self.a_right / _sigmoid_denom(-((x - self.x_right) / self.width))
         return left + right
 
     def step(self, state: State, action: float) -> tuple[State, float, bool]:
@@ -131,8 +145,8 @@ class PendulumStop:
 
     def reward(self, state: State) -> float:
         th = state[0]
-        left = self.a_left / (1.0 + math.exp(-((self.th_left - th) / self.width)))
-        right = self.a_right / (1.0 + math.exp(-((th - self.th_right) / self.width)))
+        left = self.a_left / _sigmoid_denom(-((self.th_left - th) / self.width))
+        right = self.a_right / _sigmoid_denom(-((th - self.th_right) / self.width))
         return left + right
 
     def step(self, state: State, action: float) -> tuple[State, float, bool]:
@@ -192,7 +206,7 @@ class PatchField2D:
 
     def _lode(self, x: float, y: float, lode: tuple, amp: float) -> float:
         d = math.hypot(x - lode[0], y - lode[1])
-        return amp / (1.0 + math.exp((d - self.r0) / self.width))
+        return amp / _sigmoid_denom((d - self.r0) / self.width)
 
     def reward(self, state: State) -> float:
         x, y = state[0], state[1]
@@ -251,7 +265,7 @@ class ShapeField2D:
 
     def _lode(self, x: float, y: float, lode: tuple, amp: float) -> float:
         d = math.hypot(x - lode[0], y - lode[1])
-        return amp / (1.0 + math.exp((d - self.r0) / self.width))
+        return amp / _sigmoid_denom((d - self.r0) / self.width)
 
     def reward(self, state: State) -> float:
         x, y = state[0], state[1]

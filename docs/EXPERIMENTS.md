@@ -1,5 +1,81 @@
 # Experiments Log
 
+## PAPER 2 — Reinforcing the weakened statements: 4 of 5 earned, 1 superseded (2026-07-25)
+
+Javier: "vamos a ir reforzando esos incluido el 5". Worked the
+`docs/paper2/STRONGER-STATEMENTS.md` list.
+
+**Item 4 — censored zeros: RESOLVED.** Pendulum rarity 3000 → 30,000 rollouts
+(591 s): θ_stop=2.0 goes from `0/3000` to **0.0007 [0.0004, 0.0010]**, so every
+row is a point estimate and every d@40 a number instead of a bound. Axes 2000 →
+20,000 (716 s): the sub-eps arm goes from `0/2000` to 0.0001, predicted pass
+0.9940, **inside** the measured [0.9814, 0.9994]. Two unrequested bonuses:
+wall@8's prediction moves 0.6046 → **0.6622** against a measured 0.667, killing
+the standing "prediction below the Wilson lower bound" caveat (it was the rarity
+estimate's noise); and with the cart raised to 30,000 too, the two independent
+estimates of the same event agree to the third decimal (0.1352 vs 0.1351, versus
+0.1430 vs 0.1385 before). Figures regenerated.
+
+**Item 2 — disjoint seed blocks: 0.84 RESTORED, legitimately.** `--seed-offset`
+added to `continuous_danger_synthesis.py` (+2 tests: blocks disjoint, resume does
+not re-spend within an offset block). Large arm re-run at offset 20 on the cart
+headline cell (605 s) and the pendulum headline knob (646 s). Cart: mini@S0 +
+large@S20 = **20/20 on 20 INDEPENDENT samples, Wilson 0.8389**; the gate-miss rate
+is now poolable as well (20/40 independent samples lacked the mode vs a predicted
+0.63). Pendulum: 15/15 disjoint, Wilson **0.796** (was 0.701 per size). Repair
+total 82/82 → **106/106** over 65 distinct samples. Each headline cell now carries
+two orthogonal replications: same samples/different model (large@S0) and different
+samples/same model (large@S20).
+
+**Item 5 — sharp-plateau variant: the strong claim EARNED on the cart.** Done
+non-destructively (`scripts/continuous_sharp_plateau.py`, sibling JSONs, default
+instruments and every paid synthesis artifact untouched) because re-calibrating the
+default reward would have invalidated the synthesis contracts. Cart width 0.5→0.2:
+blind below random at **7/7** knobs (was 6/7) by 2–13 orders of magnitude.
+Pendulum 0.25→0.1: **5/6** (was 3/6). What strengthened more than the target:
+play_cost becomes knob-invariant to ~1.5e-4 on both instruments, a **400×
+tightening** — the invariance the defaults show approximately is exact without the
+tail. The pre-registered risk (a sharper plateau starving random-shooting MPC of
+gradient) did not materialise: J_truth 17.77→17.76 and 20.08→20.05, contact 1.00
+everywhere. Honest residue: the pendulum's widest stop still has J_blind 3.1e-3
+over J_rand 3.6e-4 — there the *random* baseline collapsed to 1e-4, so below-random
+stops being the informative comparison and play_cost = 1.0000 is.
+**Bug found and fixed on the way:** the reward's `1 + math.exp(z)` raises
+OverflowError when a narrow plateau meets a free-spinning pendulum (|z| > 709).
+Replaced by `_sigmoid_denom`, bit-identical for |z| ≤ 700 (verified) and correct in
+the limit beyond; the 1D mitigation golden pins passed unchanged, which is exactly
+what they are for.
+
+**Item 6 — the measure version of the Lipschitz bound: PROVED.** New proposition:
+with a gate whose step-k visitation density is ≥ c on the guaranteed ball, one
+rollout reveals the disagreement with probability ≥ c((η-ε)/L)^(d+m), so the miss
+probability is ≤ (1-q)^N — and hiding an η-sized error from N rollouts forces
+L ≥ (η-ε)(cN/ln(1/δ))^(1/(d+m)), i.e. the Lipschitz constant needed to hide grows
+like N^(1/(d+m)): hiding gets *easier* with dimension. The density hypothesis is
+stated, not verified per instrument (our step-1 gate law is supported on a
+lower-dimensional set); the measured stand-in is the smooth bump arm's
+reveal-rarity, 0.18 against the hard wall's 0.14.
+
+**Item 3 — SUPERSEDED by a better result.** The plan (an instrument with provably
+independent modes, so the product form could be derived) was wrong on its own
+terms: moving modes apart makes the events *disjoint*, the opposite of independent.
+Replaced by a remark stating what is true — both bracket ends are attained (the
+lower one in our data, at six of nine knobs where no rollout out of 600 contacts
+both patches), and exact factorization is a property of the **gate**: a stratified
+gate spending independent budgets N1, N2 on the two mode regions has joint miss
+probability exactly (1-r1')^N1 (1-r2')^N2. A design consequence for multi-mode
+pipelines, at zero compute cost.
+
+**Reproducibility fact worth recording.** Re-running the cart/pendulum sweeps from
+HEAD did NOT reproduce the committed JSONs bit-for-bit: max **2 ULPs** (3.6e-15),
+from refactors of the shared env/harness code since those sweeps were run. No
+printed digit changed at any precision the paper uses (verified), and the JSONs
+were regenerated so HEAD is self-consistent again. The patch2d family, by
+contrast, reproduces byte-identically.
+
+State: 32 pp, 0 errors / 0 undefined / 0 overfull; **453 audited values**; 342
+tests pass.
+
 ## PAPER 2 — Reference & proof review: an independence error in the joint danger factor (2026-07-25)
 
 Review of (a) external citations, (b) code references, (c) the proofs. Findings,

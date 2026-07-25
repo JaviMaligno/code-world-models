@@ -463,6 +463,33 @@ claim("exactly one patch-selective artifact, a half-plane at 31x",
       len(_sel) == 1 and _sel[0][0] == 180000 and _sel[0][1] == "halfplane"
       and round(_sel[0][2] / PATCH_SHARE) == 31, str(_sel))
 
+# --- sharp-plateau variant: the claims the variant exists to make -----------
+sharp_cart = load("continuous_reach_sharp")["rows"]
+sharp_pend = load("continuous_pendulum_sharp")["rows"]
+base_cart = load("continuous_reach")["rows"]
+base_pend = load("continuous_pendulum")["rows"]
+for label, sharp, base, want_sharp, want_base in (
+        ("cart", sharp_cart, base_cart, 7, 6),
+        ("pendulum", sharp_pend, base_pend, 5, 3)):
+    below_s = sum(r["j_blind"] < r["j_random"] for r in sharp)
+    below_b = sum(r["j_blind"] < r["j_random"] for r in base)
+    claim(f"{label}: blind below random at {want_sharp}/{len(sharp)} knobs (sharp)",
+          below_s == want_sharp, f"{below_s}/{len(sharp)}")
+    claim(f"{label}: below random at {want_base}/{len(base)} knobs (default)",
+          below_b == want_base, f"{below_b}/{len(base)}")
+    spread_s = (max(r["play_cost"] for r in sharp)
+                - min(r["play_cost"] for r in sharp))
+    spread_b = (max(r["play_cost"] for r in base)
+                - min(r["play_cost"] for r in base))
+    claim(f"{label}: sharp play_cost spread ~1e-4 and >100x tighter than default",
+          spread_s < 2e-4 and spread_b / spread_s > 100,
+          f"sharp {spread_s:.2e} vs default {spread_b:.2e}")
+    claim(f"{label}: contact stays 1.00 at every sharp knob",
+          all(r["blind_contact_rate"] == 1.0 for r in sharp))
+claim("sharp widths are the ones the paper names (cart 0.2, pendulum 0.1)",
+      load("continuous_reach_sharp")["params"]["width"] == 0.2
+      and load("continuous_pendulum_sharp")["params"]["width"] == 0.1)
+
 # --- Proposition (joint gate miss): bracket + sign rule vs the measurement --
 # The paper proves a two-sided bracket for the joint gate-miss factor and a sign
 # rule for the product's error. Both are checkable on every knob, so check them:

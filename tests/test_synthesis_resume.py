@@ -174,3 +174,43 @@ def test_resume_model_mismatch_is_rejected(tmp_path):
     out.write_text(json.dumps(partial))
     with pytest.raises(ValueError, match="different configuration"):
         _run(FakeProvider([RESPONSE]), out)
+
+
+# --- disjoint seed blocks (--seed-offset) -----------------------------------
+# The gate sample comes from the seed index alone, so two model sizes run at
+# offset 0 share their samples and a pooled count is n samples x 2 draws. The
+# offset shifts the block so the two are disjoint and the pooled count is 2n
+# independent samples. Two things must hold: the seeds actually shift, and
+# resume still works within an offset block (no re-spending).
+def _run_off(provider, out_path, offset, n_seeds=N_SEEDS):
+    return synth_mod.run_synthesis(
+        provider, "fake", ENV, ["full"], n_seeds, out_path,
+        seed_offset=offset, n_rollouts=3, eps=1e-9, max_iters=5,
+        play_episodes=1, j_truth=1.0, j_random=0.0, meta=META)
+
+
+def test_seed_offset_shifts_the_sample_block_and_keeps_blocks_disjoint(tmp_path):
+    base = _run_off(FakeProvider([RESPONSE] * N_SEEDS), tmp_path / "a.json", 0)
+    off = _run_off(FakeProvider([RESPONSE] * N_SEEDS), tmp_path / "b.json", N_SEEDS)
+    seeds_base = sorted(c["seed"] for c in base["cells"])
+    seeds_off = sorted(c["seed"] for c in off["cells"])
+    assert seeds_base == [10_000 * (i + 1) for i in range(N_SEEDS)]
+    assert seeds_off == [10_000 * (i + 1 + N_SEEDS) for i in range(N_SEEDS)]
+    assert not set(seeds_base) & set(seeds_off), "blocks must be disjoint"
+
+
+def test_resume_within_an_offset_block_does_not_respend(tmp_path):
+    out = tmp_path / "off.json"
+    # one response only: the first seed completes, then the provider is exhausted
+    with pytest.raises(IndexError):
+        _run_off(FakeProvider([RESPONSE]), out, N_SEEDS)
+    partial = json.loads(out.read_text())
+    assert len(partial["cells"]) == 1
+    # resuming with exactly the responses for the REMAINING seeds must suffice;
+    # if the offset were mis-inverted the finished seed would be redone and the
+    # provider would run out (IndexError) instead of completing.
+    done = _run_off(FakeProvider([RESPONSE] * (N_SEEDS - 1)), out, N_SEEDS)
+    assert len(done["cells"]) == N_SEEDS
+    assert sorted(c["seed"] for c in done["cells"]) == \
+        [10_000 * (i + 1 + N_SEEDS) for i in range(N_SEEDS)]
+

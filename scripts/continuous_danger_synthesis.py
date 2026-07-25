@@ -77,14 +77,15 @@ def _atomic_write_json(path: pathlib.Path, obj) -> None:
     os.replace(tmp, path)
 
 
-def _seed_index(cell: dict) -> int:
-    """Invert the seed-index -> rollout-seed transform used by the sweep
-    loop below (rollout_seed = 10_000 * (seed_index + 1)), so a resumed run
-    can tell which (arm, seed_index) pairs an existing checkpoint covers."""
-    return cell["seed"] // 10_000 - 1
+def _seed_index(cell: dict, seed_offset: int = 0) -> int:
+    """Invert the seed-index -> rollout-seed transform used by the sweep loop
+    below (rollout_seed = 10_000 * (seed_index + 1 + seed_offset)), so a resumed
+    run can tell which (arm, seed_index) pairs an existing checkpoint covers."""
+    return cell["seed"] // 10_000 - 1 - seed_offset
 
 
 def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
+                  seed_offset: int = 0,
                    n_rollouts, eps, max_iters, max_examples=30, guidance="",
                    max_failures=20, play_episodes=6, j_truth, j_random,
                    meta, print_fn=print) -> dict:
@@ -151,7 +152,7 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
         results["j_random"] = j_random
         results["cells"] = []
 
-    done = {(c["arm"], _seed_index(c)) for c in results["cells"]}
+    done = {(c["arm"], _seed_index(c, seed_offset)) for c in results["cells"]}
 
     for arm in arms:
         for seed in range(n_seeds):
@@ -159,7 +160,8 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
                 continue
             cell = synthesize_and_evaluate(
                 provider, model_name, env, include_mode=(arm == "full"),
-                n_rollouts=n_rollouts, seed=10_000 * (seed + 1),
+                n_rollouts=n_rollouts,
+                seed=10_000 * (seed + 1 + seed_offset),
                 eps=eps, max_iters=max_iters, max_examples=max_examples,
                 guidance=guidance, max_failures=max_failures)
             if cell["gate_passed"]:
@@ -246,6 +248,15 @@ if __name__ == "__main__":
                     "explicit de-biasing note that a localized rule's trigger "
                     "region need not be a 1D threshold (never names the shape). "
                     "'default' is byte-identical to all committed runs")
+    ap.add_argument("--seed-offset", type=int, default=0,
+                    help="shift the gate-sample seed block: rollout_seed = "
+                    "10_000*(i+1+offset). The samples are drawn from the seed "
+                    "index alone, so mini and large at offset 0 share them and a "
+                    "pooled count is n samples x 2 synthesis draws. Running the "
+                    "second size at --seed-offset 20 makes the two blocks "
+                    "DISJOINT, so the pooled count is 2n independent samples and "
+                    "a pooled Wilson bound is legitimate. Written to a distinct "
+                    "JSON (_off{N}), never overwriting an offset-0 run.")
     ap.add_argument("--n-rollouts", type=int, default=40, help="the danger-law N")
     ap.add_argument("--eps", type=float, default=1e-9,
                     help="pinned-integrator gate tolerance; loosen to 1e-6 if a "
@@ -295,6 +306,8 @@ if __name__ == "__main__":
     VARIANT = PROMPT_VARIANTS[args.prompt_variant]
 
     SUFFIX = ""
+    if args.seed_offset:
+        SUFFIX += f"_off{args.seed_offset}"
     if args.prompt_variant != "default":
         SUFFIX += f"_pv-{args.prompt_variant}"
     if args.max_iters != 5:
@@ -316,6 +329,7 @@ if __name__ == "__main__":
             "size": args.size, "tag": TAG, "params": vars(args)}
     results = run_synthesis(
         provider, MODEL, ENV, ARMS, args.n_seeds, out,
+        seed_offset=args.seed_offset,
         n_rollouts=args.n_rollouts, eps=args.eps, max_iters=args.max_iters,
         max_examples=VARIANT["max_examples"], guidance=VARIANT["guidance"],
         max_failures=VARIANT["max_failures"], play_episodes=args.play_episodes,

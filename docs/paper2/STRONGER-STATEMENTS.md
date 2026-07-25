@@ -1,10 +1,9 @@
 # Statements the reviews weakened, and how to earn them back
 
-Written 2026-07-25 at Javier's request: every claim that the correctness reviews
-made *weaker* than it was, why the strong version was not defensible, and the
-concrete route to a strong version that would be. Ordered by how much strength is
-recoverable per unit of work. Nothing here blocks the arXiv submission — the paper
-as it stands claims only what the data supports.
+Written 2026-07-25 at Javier's request. **STATUS 2026-07-25 (same day): items 1, 2,
+4 and 5 are DONE and item 3 was superseded by a better result — see the per-item
+"EARNED" notes below. This file is kept as the record of what was weak, what it
+cost to fix, and what remains.**
 
 ---
 
@@ -27,14 +26,31 @@ under-estimates under positive). Verified against all nine knobs in CI.
 note the corrected numbers are *larger* (more danger) at 3 of 9 knobs: e.g.
 $k=(4,6)$ goes 0.0178 → 0.0215.
 
-**Still open (cheap, CPU-only):** an instrument where the two modes are provably
-independent within a rollout (patches on orthogonal axes, far enough apart that no
-rollout can reach both) would let the product form be *derived* rather than
-assumed, giving a clean factorization result to sit beside the bracket.
+**Superseded 2026-07-25, by a better result than the one planned.** The plan was
+an instrument with provably independent modes so the product form could be
+*derived*. That plan was wrong on its own terms: moving modes apart makes the
+events *disjoint*, which is the opposite of independent, and pushes the joint
+factor to the bracket's lower end. What replaced it is a remark that says what is
+actually true — both bracket ends are attained (the lower one in our data, at six
+of nine knobs where no rollout out of 600 contacts both patches), and exact
+factorization is a property of the **gate**, not the instrument: a *stratified*
+gate spending independent budgets $N_1, N_2$ on the two mode regions has joint
+miss probability exactly $(1-r_1')^{N_1}(1-r_2')^{N_2}$. That is a design
+consequence for multi-mode pipelines, and it cost no compute.
 
 ---
 
 ## 2. Weakened, recoverable with Azure money — the pooled Wilson bounds
+
+**EARNED 2026-07-25.** `--seed-offset` added (tested: blocks disjoint, resume
+does not re-spend) and the large arm re-run on block $S_{20}$ for both headline
+cells, 10 min each. Cart: 20/20 on **20 independent samples**, Wilson **0.8389** —
+the 0.84 restored and legitimate; the $(1-r)^N$ check is now poolable too (20/40
+independent samples lacked the mode against a predicted 0.63). Pendulum: 15/15
+disjoint, Wilson **0.796** (was 0.701 per size). Bonus: repair goes 82/82 → 106/106
+over 65 distinct samples, and the cells now carry two orthogonal replications
+(same samples/different model, and different samples/same model).
+
 
 **Was:** mode-absent ⇒ blind-and-exploited with Wilson lower bound **0.84**
 (pooled 20/20 across the two GPT-5.x sizes); pendulum 0.824 (18/18).
@@ -60,6 +76,23 @@ run is already per-seed checkpointed, so nothing is re-spent).
 ---
 
 ## 3. Weakened rhetorically, recoverable by re-calibration — "below random at every knob"
+
+**EARNED (partly) 2026-07-25** via a non-destructive variant rather than a
+re-calibration: `scripts/continuous_sharp_plateau.py` (cart width 0.5→0.2,
+pendulum 0.25→0.1) into sibling JSONs, leaving the default instruments and every
+paid-for synthesis artifact untouched. Cart: below random at **7/7** knobs (was
+6/7), by 2–13 orders of magnitude. Pendulum: **5/6** (was 3/6). What strengthened
+more than expected: `play_cost` becomes knob-invariant to ~$1.5\times10^{-4}$ on
+both instruments, a **400× tightening**, i.e. the invariance the default shows
+approximately is exact without the tail — and the pre-registered risk did not
+materialise ($J_\mathrm{truth}$ moves 17.77→17.76 and 20.08→20.05). Honest
+residue: the pendulum's widest stop still has $J_\mathrm{blind} = 3.1e{-3}$ over
+$J_\mathrm{rand} = 3.6e{-4}$ — there the random baseline has itself collapsed, so
+below-random stops being the informative comparison and play_cost = 1.0000 is.
+Side effect: fixed a real crash (`OverflowError` in the reward when a narrow
+plateau meets a free-spinning pendulum), bit-identically for every reachable
+default value.
+
 
 **Was:** "the mode-blind planner is exploited **below random** at every knob."
 
@@ -89,6 +122,17 @@ every knob" is true as stated.
 ---
 
 ## 4. Weakened, cheap to recover — the two censored zeros
+
+**EARNED 2026-07-25.** Pendulum rarity sample 3000 → **30,000**: the censored
+zero resolves to 0.0007 [0.0004, 0.0010], so every row is a point estimate and
+every d@40 a number. Axes 2000 → **20,000**: the sub-eps arm resolves to 0.0001
+with predicted pass 0.9940 **inside** the measured [0.9814, 0.9994]. Two bonuses
+nobody asked for: wall@8's prediction moves 0.6046 → 0.6622 against a measured
+0.667, so the standing "the prediction sits below the Wilson lower bound" caveat
+is *gone* (it was the rarity estimate's noise, as suspected); and with the cart
+also raised to 30,000, the two independent estimates of the same event agree to
+the third decimal (0.1352 vs 0.1351, against 0.1430 vs 0.1385 before).
+
 
 **Was:** pendulum $\theta_\mathrm{stop}=2.0$ rarity `0.0000` with
 $d@40 = 0.942$; axes sub-$\varepsilon$ arm rarity `0.0000` with predicted pass
@@ -134,6 +178,19 @@ population instead of an emptiness claim.
 
 ## 6. Precision, not weakening — but with a real theorem behind it
 
+**EARNED 2026-07-25 (the measure version exists now).** Added as a
+proposition: with an $L$-Lipschitz pair differing by $\eta$ and a gate whose
+step-$k$ visitation density is $\geq c$ on the guaranteed ball, one rollout reveals
+the disagreement with probability $\geq c((\eta-\varepsilon)/L)^{d+m}$, so the miss
+probability is $\leq (1-q)^N$ — and hiding an $\eta$-sized error from $N$ rollouts
+forces $L \geq (\eta-\varepsilon)(cN/\ln(1/\delta))^{1/(d+m)}$, i.e. the required
+Lipschitz constant grows like $N^{1/(d+m)}$ (hiding gets easier with dimension).
+The density hypothesis is not verified per instrument and is stated as such; the
+measured stand-in is the smooth bump arm's reveal-rarity (0.18 against the hard
+wall's 0.14 — the smooth error is if anything *more* detectable, matching the
+proposition's direction).
+
+
 - "smooth pairs cannot realize the localized geometry" → "**exactly** localized".
   Proposition 5 bounds the disagreement ball's radius by $(\eta-\varepsilon)/2L$;
   what is impossible is *exact* localization, not a merely tiny region.
@@ -161,3 +218,17 @@ population instead of an emptiness claim.
    intellectual payoff, no compute; also closes a stated limitation.
 5. **§3 (reward re-calibration)** — only under reviewer pressure; four tables move
    for one sharper sentence.
+
+---
+
+## What remains open after 2026-07-25
+
+- The pendulum's widest sharp-variant knob (below-random fails there because the
+  random baseline collapsed; play_cost = 1.0000 carries the claim instead).
+- Verifying the visitation-density constant $c$ of Proposition 6 for a specific
+  instrument (our gate's step-1 law is supported on a lower-dimensional set), and
+  with it the covering-number analogue §11 still lists as open.
+- The Qwen 2D induction arm (credits; see the separate note) — the only *missing
+  data* rather than missing strength.
+- Not recoverable, by design: "no learner can infer it **from the sample**". A
+  prior can supply the mode; that caveat is the theorem's content.
