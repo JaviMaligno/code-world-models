@@ -1630,9 +1630,17 @@ value function jumps across the cut locus --- which was attractive
 because it would have tied the planner-side analysis to this paper's own
 topology. Measured, the correlation runs backwards: tail events split
 the two routes \emph{less} often than the bulk ($0.190$ versus
-$0.299$), and same-side pairs carry the larger advantages. Both readings
-are withdrawn; the tail's mechanism is currently unidentified, and we
-prefer to say so than to advertise the third guess.
+$0.299$), and same-side pairs carry the larger advantages. Both readings are withdrawn. The third
+survived contact with measurement, and it is the dull one: the tail is a
+\emph{delay} cost. Regressing the advantage on the difference in time
+the two continuations spend inside the phantom basin gives slope
+$0.94$ against the reward amplitude $1.0$ --- a known constant, not a
+fitted one --- with intercept $\approx 0$ and $R^2 = 0.93$, and every
+tail event has a nonzero dwell difference against $41\%$ of the bulk.
+One wrong action costs basin time, and with a narrow channel it can cost
+a whole extra pass. What remains to bound is therefore the truth
+planner's recovery time after a bounded perturbation --- a control
+question, not a topological one.
 
 \paragraph{The honest math ledger.} The two $\gamma$-curve regularities
 (monotonicity of $r_{\mathrm{int}}$, and that the wall never helps net

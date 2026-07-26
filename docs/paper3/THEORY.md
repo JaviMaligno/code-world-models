@@ -539,11 +539,13 @@ they conflict.
   (18/6/3 of the top decile at γ = 0.3/0.6/1.2), pointing at
   route commitment — WHICH WAS THEN REFUTED (2026-07-26): tail events
   split the two routes LESS often than the bulk (0.190 vs 0.299) and
-  same-side pairs carry the larger |A|. So the cut-locus target is
-  withdrawn. REMAINING (a-priori half): no validated mechanism. The
-  surviving facts (horizon correlation, narrow-gap concentration,
-  same-route) suggest a DELAY cost, recorded as an untested hypothesis
-  with its test named, not as a target.
+  same-side pairs carry the larger |A|; cut-locus target withdrawn.
+  **MECHANISM FOUND (2026-07-26): DELAY COST**, measured not asserted —
+  A_t regressed on the basin-dwell difference gives slope 0.9404 against
+  the known amp_phantom = 1.0, intercept ≈ 0, R² = 0.9275, and 100% of
+  tail events have a nonzero dwell difference (bulk 41%). REMAINING: a
+  bound on Δdwell — the RECOVERY TIME of π_T after a ≤ 2Δ perturbation.
+  A control question, not an occupation or geometric one.
 - **T3 — M1/M2 distributional monotonicity of r_int(γ).** **PARTIALLY
   RESOLVED (2026-07-25): M1 and M2 are now THEOREMS with an explicit,
   measured defect.** Theorem T3-P: r_int(γ₂) ≥ r_int(γ₁) − f(γ₁) for
@@ -1379,20 +1381,37 @@ commitment is refuted, and with it the cut-locus target — which was
 attractive precisely because it would have tied T2 to the paper's
 topology, a reason to distrust it rather than to believe it.
 
-**What survives, and the next hypothesis (untested — labelled as such).**
-Two facts stand: |A_t| grows with the remaining horizon (corr +0.325)
-and concentrates at narrow gaps; and the two continuations take the same
-route. Both are consistent with a DELAY cost — a wrong first action
-loses time, the return is dominated by time spent in the phantom basin,
-and lost time compounds over the remaining horizon while a narrow
-channel makes it harder to recover. On that reading the target would be
-  pc ≤ (dirty rate) × (delay per wrong action) × (reward rate),
-a Lipschitz-in-time statement rather than a geometric one. But this is
-exactly the same KIND of claim as the refuted one — an interpretation
-fitted to the surviving correlations — so it is recorded as a HYPOTHESIS
-with its test named (compare the two continuations' first-arrival times
-at the phantom basin, and correlate the difference with |A_t|), not as
-the target. T2's open half currently has no validated mechanism.
+**The third reading — DELAY COST — is CONFIRMED (2026-07-26).** The
+surviving facts (|A_t| grows with the remaining horizon, concentrates at
+narrow gaps, same route) suggested that a wrong first action simply
+loses TIME, and that the return is dominated by time spent in the
+phantom basin. Unlike the two refuted readings this one makes a sharp
+quantitative prediction, so it was measured rather than asserted. With
+  dwell := #steps of a continuation with dist(pos, centre) < r₀,
+the prediction is A_t ≈ amp_phantom·(dwell_τ − dwell_blind) — slope
+equal to a KNOWN constant, not a fitted one.
+`scripts/t2_delay_cost.py`, 215 dirty steps at γ ∈ {0.3, 0.6}:
+  **slope 0.9404** against amp_phantom = **1.0** (6% off),
+  **intercept 0.0141** (≈ 0), **R² = 0.9275**,
+  nonzero dwell difference in **100%** of tail events vs **41%** of the
+  bulk.
+So the dwell difference explains 93% of the variance in the per-contact
+advantage, at the reward amplitude. This is the mechanism.
+
+**T2's remaining half, now a well-posed control question.** With the
+mechanism fixed, the identity pc = Σ_dirty A_t/(J_T − J_rand) becomes
+  pc ≈ amp_phantom · (dirty rate) · E[Δdwell] / (J_T − J_rand),
+and what must be bounded is Δdwell: **how many steps of basin time does
+one wrong action cost the truth planner?** Both continuations follow π_T
+from states at most 2Δ apart, so this is a RECOVERY-TIME question — the
+delay π_T incurs after a bounded perturbation — not an occupation
+estimate and not a geometric one. The measured tail (max A_t = 11.65,
+i.e. ~11 steps of basin time lost from a single step's displacement)
+says the recovery time is not O(1): the perturbation can make the
+trajectory miss the channel on that pass and have to come round again,
+which is consistent with the same-route finding and with the narrow-gap
+concentration. Bounding the recovery time of π_T after a 2Δ perturbation
+is the named target.
 
 ## T4 — the explicit continuity modulus, RESOLVED (2026-07-25)
 
@@ -1615,9 +1634,34 @@ measured range, and c = 1/2 would already halve the defect.
 
 Full closure of T3 = a bound f(γ) ≤ c·r_int(γ) with c < 1 uniform (see
 the sharpened statement above). Any such c is new; c = 1/4 would cover
-the whole measured range. This is where the occupation estimate
-genuinely enters — the conditional "enter after having frozen" — and it
-is now the only remaining piece.
+the whole measured range.
+
+**An intuition about that constant, REFUTED (2026-07-26).** The natural
+hope was that a freeze HANDICAPS entry — Lemma S says the freeze zeroes
+the velocity, so the next landing creeps 0.03 and the trajectory has to
+rebuild speed before it can thread the channel; on that reading
+P(enter | froze) would be well below P(enter) and c small for kinematic
+reasons. Measured (40 000 rollouts per gap) it is the opposite:
+  γ = 0.2: P(enter) = 0.00140, P(enter | froze first) = 0.00805 — **5.8×**
+  γ = 0.6: 0.00580 vs 0.02130 — **3.7×**
+  γ = 1.2: 0.00960 vs 0.04624 — **4.8×**
+Freezing does not hinder entry, it SELECTS for it: a trajectory that has
+touched the band is one that reached the ring's neighbourhood, which is
+a prerequisite for threading the channel. The selection effect dominates
+the kinematic handicap by nearly an order of magnitude.
+
+**What that leaves, exactly.** By Bayes the target factorises with no
+slack at all:
+  c(γ) = f/r_int = P(froze | entered) = r(γ) · κ(γ),
+  κ(γ) := P(enter | froze first)/P(enter)  — the freeze BOOST.
+So c < 1 ⟺ κ < 1/r, and with r ≤ 0.031 on the grid it would suffice to
+prove κ ≤ 32 (measured κ ≈ 4–6). The whole difficulty is now visible in
+one scalar: κ is a bounded-boost statement about conditioning on a
+freeze, and the trivial bound κ ≤ 1/r_int merely reproduces f ≤ r. This
+is the sharpest form of T3's remaining piece — and note it is a
+statement about the entering population, not an occupation estimate,
+which is a different (and possibly easier) kind of question than the one
+recorded before.
 
 ## T7 (first half) — infinite censoring artifacts characterized and made
 ## DECIDABLE (2026-07-25). Second half and stability: see below; T7 is

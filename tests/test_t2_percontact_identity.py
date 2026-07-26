@@ -130,3 +130,26 @@ def test_t2_route_side_is_computable_and_discriminating():
                 best_d, best_y = d, s[1] - cy
         sides.add(1 if best_y >= 0 else -1)
     assert sides == {1, -1}, sides
+
+
+def test_t2_delay_mechanism_dwell_is_well_defined_and_varies():
+    # Guard for the CONFIRMED delay reading: the basin-dwell statistic
+    # must be well defined and must actually discriminate between
+    # continuations, else the R^2 = 0.93 regression would be degenerate.
+    # the basin sits 12 units from the start, so the guard's short horizon
+    # never reaches it — use the instrument's own horizon, few episodes
+    truth = RingField2D(gap=0.3, gap_center=math.pi, x0_center=(0.0, 0.0))
+    cx, cy = truth.center
+    dwells = set()
+    for ep in range(3):
+        ep_seed = 800 + 13 * ep
+        s = truth.initial_state(random.Random(ep_seed))
+        dwell = 0
+        for t in range(truth.h_episode):
+            a = _argmax(truth, s, _cands(truth.a_max, ep_seed, t))
+            s, _, _ = truth.step(s, a)
+            if math.hypot(s[0] - cx, s[1] - cy) < truth.r0:
+                dwell += 1
+        dwells.add(dwell)
+    assert max(dwells) > 0, "the basin must actually be reached"
+    assert len(dwells) > 1, dwells          # and the statistic must vary
