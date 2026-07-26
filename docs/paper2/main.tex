@@ -241,10 +241,11 @@ Pointwise extremes are what Proposition~\ref{prop:playcost} needs --- its coupli
 \label{prop:normalizers}
 Fix the cart instrument with $x_\mathrm{wall} < x_\mathrm{right}$, and let $x_{\min}(t)$ be the position at step $t$ of the trajectory that starts at $x_0 = -x_0^{\mathrm{range}}$ and takes $a_s = -a_{\max}$ throughout. Then for \emph{every} policy and every admissible $x_0$,
 \[
+\begin{gathered}
   J \;\leq\; \sum_{t=1}^{T}\left[\frac{a_\mathrm{left}}{1 + e^{(x_{\min}(t) - x_\mathrm{left})/w}} \;+\; \frac{a_\mathrm{right}}{1 + e^{(x_\mathrm{right} - x_\mathrm{wall})/w}}\right]
-  \;=:\; \bar J,
-  \qquad
+  \;=:\; \bar J, \\[2pt]
   J \;\geq\; T \min_{x \in [x_{\min}(T),\, x_\mathrm{wall}]} r(x) \;=:\; \underline J,
+\end{gathered}
 \]
 and both sides are explicit numbers.
 \end{proposition}
