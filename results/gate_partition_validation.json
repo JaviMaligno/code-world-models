@@ -1,0 +1,43 @@
+{
+  "script": "gate_partition_validation.py",
+  "params": {
+    "trials": 400,
+    "n_gate": 40
+  },
+  "rows": [
+    {
+      "regime": "(a) one step per rollout",
+      "n_y": 2,
+      "n_v": 1,
+      "n_a": 4,
+      "K": 8,
+      "covered": 385,
+      "trials": 400,
+      "cover_rate": 0.9625,
+      "measured_failure": 0.03749999999999998,
+      "measured_failure_ci": [
+        0.022854824841380277,
+        0.06094436771332434
+      ],
+      "certificate_failure_bound": 0.038318818328224556,
+      "bound_holds": true
+    },
+    {
+      "regime": "(b) all steps",
+      "n_y": 3,
+      "n_v": 2,
+      "n_a": 6,
+      "K": 36,
+      "covered": 400,
+      "trials": 400,
+      "cover_rate": 1.0,
+      "measured_failure": 0.0,
+      "measured_failure_ci": [
+        0.0,
+        0.009512640599680667
+      ],
+      "certificate_failure_bound": 0.009556683283846498,
+      "bound_holds": true
+    }
+  ]
+}

@@ -712,6 +712,66 @@ claim("uniqueness (C3) is a diagnostic and does in fact fail -- ties occur, and 
 claim("every sweep knob is certified", all(r["certificate"] for r in _inv["rows"]
                                            if r["in_sweep"]))
 
+# --- the partition certificate: the recovery, and it must stay exact ----------
+_part = load("gate_partition_certificate")
+claim("partition route: the largest admissible K at N = 40 is 8",
+      _part["max_admissible_K_exact"] == 8,
+      str(_part["max_admissible_K_exact"]))
+claim("K = 8 has failure probability 0.0383 and K = 9 would exceed delta",
+      abs(8 * (7 / 8) ** 40 - 0.0383) < 5e-4 and 9 * (8 / 9) ** 40 > 0.05)
+_ba = _part["exact_best"]
+claim("the optimal split is (n_y, n_v, n_a) = (2, 1, 4)",
+      (_ba["n_y"], _ba["n_v"], _ba["n_a"]) == (2, 1, 4),
+      str((_ba["n_y"], _ba["n_v"], _ba["n_a"])))
+claim("it gives rho = 0.600 and certifies 1.534",
+      abs(_ba["rho"] - 0.600) < 1e-9
+      and abs(_ba["uniform_bound"] - 1.534) < 5e-4,
+      f"{_ba['rho']:.3f} -> {_ba['uniform_bound']:.4f}")
+claim("rho is pinned by Delta_v = 2V = 0.6, the whole reachable velocity range",
+      abs(_ba["cell_extents"][1] - 0.6) < 1e-9 and _ba["n_v"] == 1)
+claim("the net radius accounts for the shear: Delta_y + dt*Delta_v <= rho",
+      _ba["cell_extents"][0] + 0.1 * _ba["cell_extents"][1] <= _ba["rho"] + 1e-12)
+claim("the partition route beats the packing route by a factor ~2",
+      _ba["uniform_bound"] < 0.55 * 2.969,
+      f"{_ba['uniform_bound']:.3f} vs 2.969")
+
+# --- the partition certificate's all-steps arm, and its falsification test -----
+_bb = _part["measured_best"]
+claim("all-steps partition: K = 36 at (3, 2, 6), rho = 0.363, bound 0.933",
+      _bb["K"] == 36 and (_bb["n_y"], _bb["n_v"], _bb["n_a"]) == (3, 2, 6)
+      and abs(_bb["rho"] - 0.3633) < 5e-4
+      and abs(_bb["uniform_bound"] - 0.9329) < 5e-4,
+      f"K={_bb['K']} rho={_bb['rho']:.4f} bound={_bb['uniform_bound']:.4f}")
+claim("its worst per-rollout miss probability is 0.800, bounded above by 0.814",
+      abs(_bb["worst_p_C"] - 0.8001) < 5e-4
+      and abs(_bb["worst_p_C_ub"] - 0.8140) < 5e-4,
+      f"{_bb['worst_p_C']:.4f} / {_bb['worst_p_C_ub']:.4f}")
+claim("the union failure 36 * 0.814^40 = 0.0096 is within delta/2",
+      abs(_bb["union_failure"] - 0.0096) < 5e-4 and _bb["union_failure"] <= 0.025,
+      f"{_bb['union_failure']:.4f}")
+claim("all steps buys a factor 1.6 over independent single samples",
+      abs(_ba["uniform_bound"] / _bb["uniform_bound"] - 1.64) < 0.03,
+      f"{_ba['uniform_bound']/_bb['uniform_bound']:.2f}")
+claim("and it is only 1.2x worse than the retired all-steps-independent promise",
+      abs(_bb["uniform_bound"] / 0.7847 - 1.19) < 0.03)
+_pv = {r["regime"]: r for r in load("gate_partition_validation")["rows"]}
+_va = _pv["(a) one step per rollout"]
+claim("validation (a): 385/400 gates cover the K = 8 partition",
+      _va["covered"] == 385 and _va["trials"] == 400, str(_va["covered"]))
+claim("measured failure 0.0375 against the bound 0.0383 -- tight to 2%",
+      abs(_va["measured_failure"] - 0.0375) < 5e-4
+      and _va["measured_failure"] <= _va["certificate_failure_bound"],
+      f"{_va['measured_failure']:.4f} vs {_va['certificate_failure_bound']:.4f}")
+_vb = _pv["(b) all steps"]
+claim("validation (b): 400/400 cover the K = 36 partition, failure CI upper 0.0095 "
+      "against a bound of 0.0096",
+      _vb["covered"] == 400
+      and abs(_vb["measured_failure_ci"][1] - 0.0095) < 5e-4,
+      f"{_vb['covered']}/{_vb['trials']}")
+claim("the validation reads the partition from the certificate rather than "
+      "re-implementing it (same K)",
+      _va["K"] == _ba["K"] and _vb["K"] == _bb["K"])
+
 # --- the fence census: what the proposition bounds vs what the table counts ----
 _fc = load("fence_separation_census")
 _pc = {tuple(r["knob"]): r for r in _fc["patch2d_episode_census"]}

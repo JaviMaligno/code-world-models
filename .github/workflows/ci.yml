@@ -54,3 +54,9 @@ jobs:
         run: PYTHONPATH=src python scripts/circle_covering_number.py
       - name: Recount the distinct rollout-seed blocks behind every pooled claim
         run: PYTHONPATH=src python scripts/sample_stream_census.py
+      # The partition certificate's headline is EXACT (per-cell probability 1/K), so
+      # part (a) needs no Monte Carlo and is re-derived on every push and VERIFIED
+      # against the versioned JSON. --part-a-only never writes: an earlier version of
+      # this step ran the script in a degraded mode and clobbered part (b)'s result.
+      - name: Re-derive the exact partition certificate (part a)
+        run: PYTHONPATH=src python scripts/gate_partition_certificate.py --part-a-only

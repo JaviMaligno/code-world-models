@@ -365,3 +365,68 @@ simply false)
     $33.9\%$ of the volume, and elsewhere $q$ is smaller by up to $2^{d+m}$. Stated
     rather than fixed. **To earn it back:** a boundary-aware version of the ball
     volume, or a certified region taken as an interior sub-level set.
+
+
+---
+
+# Round 3 (same day): a statement earned back in full, by changing the argument
+
+**The certificate's headline bound: 1.57 (wrong) → 2.93 → 2.97 (right but weak) →
+1.534 (right and strong).**
+
+The three peer-review corrections to the certificate all landed on the same object: a
+geometric factor in the PACKING instantiation. The cardinality had to be a packing
+number rather than a covering number; the ball mass had to be intersected with $U$;
+and the corner factor $2^{-(d+m)}$ turned out not to be shear-invariant. Each fix made
+the bound worse, and the honest report was $\rho = 1.165$, bound $2.97$.
+
+But those losses are artifacts of the ARGUMENT, not facts about the gate. A packing
+bound pays for the covering number twice — once in $K$, once in the ball mass — and
+both payments are geometry that has to be estimated, which is exactly where we kept
+going wrong. **A partition argument pays neither.** Partition $U$ into $K$ cells of
+diameter $\leq \rho$; the failure probability is $\sum_i (1-q_i)^M$, with no density
+constant, no covering number and no ball--boundary intersection anywhere in it.
+
+And on this instrument it is *exact*, not merely cleaner: the step-1 law is uniform on
+a SHEARED box, so in $y = x - dt\,v$ it is uniform on a box and equal sub-boxes have
+probability exactly $1/K$. The shear costs one thing only, the net radius measured in
+the original metric ($\rho = \max(\Delta_y + dt\,\Delta_v, \Delta_v, \Delta_a)$).
+At $M = N = 40$ the largest admissible partition is $K = 8$ ($8(7/8)^{40} = 0.038 \leq
+\delta$, while $9(8/9)^{40} = 0.081$ exceeds it), the optimal split is $(2,1,4)$, and
+
+$$\rho = 0.600, \qquad \sup_U \|f - \hat f\|_\infty \leq \varepsilon + 2L\rho =
+\mathbf{1.534}.$$
+
+Two things this also earns back. The excluded Lipschitz class widens from
+$L \leq 1.80$ to $L \leq (4.2-\varepsilon)/2\rho = \mathbf{3.49}$ — now $2.7\times$
+the plant's own constant rather than $1.4\times$, so the statement "a smooth pair
+cannot carry the wall's error past this gate" covers a genuinely broad class. And the
+number $1.534$ is the one the paper had claimed before any of this, via the broken
+grid argument; it is now derived by a different and valid route, with no Monte Carlo
+at all.
+
+What pins $\rho$ is worth naming: the optimum takes $n_v = 1$, i.e. the whole
+reachable velocity range in one cell. At forty samples the certificate cannot resolve
+velocity — a fact about the gate, not about the proof.
+
+**And it composes with the dependence treatment**, which is what finally answers the
+mixing question. Using $p_C = P(\text{one rollout misses } C)$ — measured, with
+$p_C^N$ exact by rollout i.i.d.-ness — a rollout's eighty steps are worth about six
+*effective* independent samples, $K$ grows from 8 to 36, and the certificate reaches
+
+$$\rho = 0.363, \qquad \sup_U \|f - \hat f\|_\infty \leq \mathbf{0.933},$$
+
+with the excluded class widening to $L \leq \mathbf{5.77}$ — $4.5\times$ the plant's
+own constant. The four readings now sit in the right order for the right reasons:
+$2.969$ (packing) $>$ $1.534$ (exact partition) $>$ $0.933$ (dependence handled) $>$
+$0.785$ (the retired promise that assumed independence). Handling the dependence is
+worth $1.6\times$, not the $2\%$ we once claimed nor the $4\times$ the optimistic
+reading suggested.
+
+**Tightness is measured, not asserted:** 400 independent gates cover the $K = 8$
+partition $385$ times, a failure rate of $0.0375$ against the bound's $0.0383$ —
+tight to $2\%$, which is what an exact per-cell probability should give.
+
+`scripts/gate_partition_certificate.py` and `scripts/gate_partition_validation.py`,
+with the audit checking the exactness (K = 8 admissible, K = 9 not) rather than only
+the resulting number, and CI re-deriving part (a) on every push in a verify-only mode.

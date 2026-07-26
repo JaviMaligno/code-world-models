@@ -3051,3 +3051,67 @@ itself so no rho or bound is hand-computed. `truth_plan_invariance_certificate.p
 now runs the harness's 20 episodes per knob (was 2) and reports argmax uniqueness as
 a DIAGNOSTIC — it fails, ties occur because the reward saturates to 1.0 in floating
 point, and the certificate rests instead on the knob-independent enumeration order.
+
+
+---
+
+## Round 3 (same day): the certificate recovered by changing the argument
+
+`scripts/gate_partition_certificate.py` + `scripts/gate_partition_validation.py`.
+
+Three of the four peer-review corrections to the coverage certificate landed on the
+same object: a geometric factor in the PACKING instantiation (covering-vs-packing
+direction; the ball's intersection with U; the corner factor's failure to be
+shear-invariant). Each fix made the bound worse — 1.57 → 2.93 → 2.97 — and that was
+the honest direction, but the losses are artifacts of the ARGUMENT. A packing bound
+pays for the covering number twice, once in K and once in the ball mass, and both
+payments are geometry that has to be estimated. That is precisely where we kept going
+wrong.
+
+**A partition bound pays neither.** Partition U into K cells of diameter <= rho; the
+failure probability is sum_i (1-q_i)^M. No density constant, no covering number, no
+ball-boundary intersection appears anywhere.
+
+**(a) EXACT, no Monte Carlo.** The step-1 law is uniform on a SHEARED box, so in
+y = x - dt*v it is uniform on a box and equal sub-boxes have probability exactly 1/K.
+The shear costs one thing: the net radius in the original metric,
+rho = max(Delta_y + dt*Delta_v, Delta_v, Delta_a). At M = N = 40 the largest
+admissible partition is K = 8 (8*(7/8)^40 = 0.0383 <= delta; 9*(8/9)^40 = 0.0809 does
+not), the optimum is (n_y, n_v, n_a) = (2, 1, 4), and
+
+    rho = 0.600,  sup_U |f - f_hat| <= **1.534**   (against 2.969 by packing)
+
+What pins rho: n_v = 1, i.e. the WHOLE reachable velocity range in one cell. At forty
+independent samples the certificate cannot resolve velocity — a fact about the gate.
+
+**(b) All steps, dependence handled by direct measurement.** The partition needs only
+per-cell hitting probabilities, so use p_C = P(one rollout misses C), measured, with
+P(C unhit) = p_C^N exact by rollout i.i.d.-ness. A rollout gets 80 chances at U rather
+than 1, worth about SIX effective independent samples after the correlation between
+consecutive steps: K grows 8 → 36 and, at 20k MC rollouts with Hoeffding (worst
+p_C = 0.800, UB 0.814, 36*0.814^40 = 0.0096 <= delta/2),
+
+    rho = 0.363,  sup_U |f - f_hat| <= **0.933**
+
+So the readings finally line up for the right reasons: 2.969 (packing) > 1.534 (exact
+partition, independent samples) > 0.933 (dependence handled) > 0.785 (the retired
+all-steps-independent promise). Handling the dependence is worth 1.6x — not the 2% we
+once claimed from a broken grid, and not the 4x the optimistic reading suggested.
+
+**And the excluded Lipschitz class widens from L <= 1.80 to L <= 5.77** (4.5x the
+plant's own 1.27), because eps + 2*L*rho grows with L and rho fell by 3.2x. "No smooth
+pair can carry the wall's error past this gate" now covers a broad class.
+
+**Tightness, measured against the certificate's OWN partition.** 400 independent
+gates: the K = 8 exact partition is covered 385/400, a measured failure of 0.0375
+against the bound's 0.0383 — **tight to 2%**, as it must be, since the per-cell
+probability is an equality and only the union bound gives anything away. The K = 36
+all-steps partition is covered 400/400, failure CI [0, 0.0095] against a bound of
+0.0096. The validation READS the partition from the certificate's output instead of
+re-implementing it: the previous generation of this pair shared a grid bug and so
+validated the bug.
+
+CI re-derives part (a) on every push with `--part-a-only`, which VERIFIES against the
+versioned JSON and never writes. (An earlier version of that CI step ran the script in
+a degraded mode and clobbered part (b)'s result — a reminder that a "cheap CI variant"
+of a script that writes results is a footgun.)
