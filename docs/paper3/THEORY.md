@@ -1398,20 +1398,34 @@ equal to a KNOWN constant, not a fitted one.
 So the dwell difference explains 93% of the variance in the per-contact
 advantage, at the reward amplitude. This is the mechanism.
 
-**T2's remaining half, now a well-posed control question.** With the
-mechanism fixed, the identity pc = Σ_dirty A_t/(J_T − J_rand) becomes
-  pc ≈ amp_phantom · (dirty rate) · E[Δdwell] / (J_T − J_rand),
-and what must be bounded is Δdwell: **how many steps of basin time does
-one wrong action cost the truth planner?** Both continuations follow π_T
-from states at most 2Δ apart, so this is a RECOVERY-TIME question — the
-delay π_T incurs after a bounded perturbation — not an occupation
-estimate and not a geometric one. The measured tail (max A_t = 11.65,
-i.e. ~11 steps of basin time lost from a single step's displacement)
-says the recovery time is not O(1): the perturbation can make the
-trajectory miss the channel on that pass and have to come round again,
-which is consistent with the same-route finding and with the narrow-gap
-concentration. Bounding the recovery time of π_T after a 2Δ perturbation
-is the named target.
+**The sum telescopes back to ONE number: the arrival delay
+(2026-07-26).** Two further measurements collapse the statement.
+*(a) Dwell is sticky.* In 9/9 episodes across γ ∈ {0.3, 0.6, 1.2},
+neither planner ever leaves the basin once it arrives. So
+dwell = h − T_arr exactly, and Δdwell is an ARRIVAL-TIME difference, not
+an occupancy pattern.
+*(b) The per-step terms telescope.* Comparing the hybrid sum with the
+whole-episode dwell difference: J_T − J_B against amp·(Dwell_T −
+Dwell_B) gives ratios 0.81–1.66 (mean ≈ 1.07) over the same 9 episodes.
+Combining with the identity and the delay regression,
+  **pc = amp_phantom · (T_arr^B − T_arr^T) / (J_T − J_rand)** ,
+i.e. the entire aligned-channel play-cost IS the blind planner's
+lateness at the lure. Measured arrival times: truth 33–36, blind 37–38,
+so the delay is **1–5 steps** — and a 1–5 step delay against a
+denominator of ≈ 40 is exactly the pc ≈ 0.02–0.1 the arm reports.
+
+**T2's remaining half, in its final form.** Bound the arrival delay. It
+decomposes further, and the pieces are individually concrete: π_B is
+executed in truth, so it freezes when it clips the band (the arm's
+blind contact rate is 1.0), and each freeze zeroes the velocity. The
+asymptotic distance deficit of one velocity reset is
+v_∞·dt/(1−β) = 33 units — enormous compared with the measured 1–5 step
+delay — so the reason the degeneracy is mild cannot be that freezes are
+cheap; it must be that they happen CLOSE TO THE TARGET, where the
+remaining travel no longer needs top speed. Bounding the delay therefore
+needs the geometry of *where* π_B's freezes occur relative to the lure,
+which is the last piece and is now a statement about one trajectory's
+contact locations rather than about occupation measures or homotopy.
 
 ## T4 — the explicit continuity modulus, RESOLVED (2026-07-25)
 
@@ -1650,18 +1664,31 @@ touched the band is one that reached the ring's neighbourhood, which is
 a prerequisite for threading the channel. The selection effect dominates
 the kinematic handicap by nearly an order of magnitude.
 
-**What that leaves, exactly.** By Bayes the target factorises with no
-slack at all:
+**A factorisation that turns out to be CIRCULAR (correcting my own
+framing).** By Bayes
   c(γ) = f/r_int = P(froze | entered) = r(γ) · κ(γ),
-  κ(γ) := P(enter | froze first)/P(enter)  — the freeze BOOST.
-So c < 1 ⟺ κ < 1/r, and with r ≤ 0.031 on the grid it would suffice to
-prove κ ≤ 32 (measured κ ≈ 4–6). The whole difficulty is now visible in
-one scalar: κ is a bounded-boost statement about conditioning on a
-freeze, and the trivial bound κ ≤ 1/r_int merely reproduces f ≤ r. This
-is the sharpest form of T3's remaining piece — and note it is a
-statement about the entering population, not an occupation estimate,
-which is a different (and possibly easier) kind of question than the one
-recorded before.
+  κ(γ) := P(enter | froze first)/P(enter)  — the freeze BOOST,
+and I presented "prove κ ≤ 32" as a new and possibly easier handle. It
+is not: the only free bound on κ is κ ≤ 1/r_int, which returns
+c ≤ r/r_int — precisely the bound we already had. The factorisation
+renames the difficulty rather than reducing it, and saying otherwise was
+optimism. Recorded so the next attempt does not start there.
+
+**A partial mechanism, measured (2026-07-26).** Where DO funnel entries
+freeze? Over 30 000 rollouts per gap, the angular distance |θ − π| from
+the first freeze to the channel centre:
+  γ = 0.2: funnel entries **0.092** rad vs non-entering freezes 0.272 —
+    three times closer to the mouth;
+  γ = 0.6: 0.296 vs 0.384;  γ = 1.2: 0.577 vs 0.594 — the gap closes.
+Two readings. (i) Funnel entries are trajectories that froze essentially
+AT the channel mouth and then threaded it, which is why the freeze
+"boosts" entry: it is a proxy for arriving at the right place. (ii) The
+non-entering medians track γ/2 (0.1 / 0.3 / 0.6) because a freeze cannot
+occur inside the channel, so all freezes pile up against its edge — and
+once the channel is wide, "at the edge" and "at the mouth" coincide,
+which is why the discriminating power vanishes by γ = 1.2. So mouth
+proximity explains the funnel at narrow gaps only. It is a partial
+mechanism and we label it as such rather than extrapolating it.
 
 ## T7 (first half) — infinite censoring artifacts characterized and made
 ## DECIDABLE (2026-07-25). Second half and stability: see below; T7 is
