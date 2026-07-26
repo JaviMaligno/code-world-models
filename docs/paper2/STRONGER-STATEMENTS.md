@@ -430,3 +430,52 @@ tight to $2\%$, which is what an exact per-cell probability should give.
 `scripts/gate_partition_certificate.py` and `scripts/gate_partition_validation.py`,
 with the audit checking the exactness (K = 8 admissible, K = 9 not) rather than only
 the resulting number, and CI re-deriving part (a) on every push in a verify-only mode.
+
+
+---
+
+# Round 4: "is everything provable proved?" — one more converted, and the honest list
+
+Asked directly whether anything still measured could be proved, the inventory turned
+up one real case, and chasing it corrected TWO of my own readings.
+
+**$\varepsilon^\star$: there is no population threshold, and the rate is provable.**
+The threshold form was weakened twice today — first from "a constant of the
+instrument" to "a sample minimum", then scoped to the sample after peer review showed
+it moves with $n$. Chasing what it converges to, I first believed a diagnostic showing
+a hard floor at $0.0405$; that diagnostic took the minimum over a **sorted** prefix,
+which is the global minimum by construction. Measured properly the running minimum
+falls monotonically and does not settle ($0.420 \to 0.123 \to 0.041$).
+
+So the essential infimum is $0$ and no positive threshold exists. What replaces it is
+strictly stronger, because it holds at every $\varepsilon$ rather than below a cutoff:
+
+$$r_{\mathrm{fire}} - \mathrm{reveal\text{-}rarity}(\varepsilon) = P(0 < D \leq
+\varepsilon) \leq C\varepsilon^2, \qquad C = \frac{TM}{2\,\mathrm{gain}\,a_{\max}}.$$
+
+Two constraints multiply: a faintly-revealed contact needs a nearly-zero post-action
+velocity AND a position already inside a strip of width $\varepsilon\,dt$. The
+constant ($222$) is loose; the exponent is the content, and it is measured at $2.57$
+(wall@4) and **$2.10$** (stop@1.0) — the pendulum sitting essentially on the
+theoretical $2$ is the evidence that this mechanism and no other produces the
+flatness. It also explains the instability that forced the scoping: a minimum of $n$
+draws from an $\varepsilon^p$ tail falls like $n^{-1/p}$, so $\varepsilon^\star$ was
+never going to converge. `scripts/eps_flatness_rate.py`.
+
+## Still measured, and worth attacking (in order of how provable they look)
+
+1. **$J_{\max}$ is a measured supremum.** The play-cost corollary's $1.0447$ rests on
+   $J_{\max} = 18.009$, the best CONSTANT policy's realized return from the most
+   favourable start. Nothing proves no policy beats it. A reachability argument
+   (bound $\sum_t r(x_t)$ using the drag-limited displacement per step) would turn it
+   into a proved upper bound and make "the measurement sits at $98.7\%$ of the bound"
+   fully rigorous.
+2. **$J_{\mathrm{blind}} \approx J_{\min}$**, the observation that actually drives
+   play\_cost to the top of its range, is measured at $1.9\times10^{-5}$. Since the
+   blind planner pins at the wall and the reward is a sum of sigmoids, an explicit
+   bound $J_{\mathrm{blind}} \leq T\,r(x_\mathrm{wall})$ looks straightforward.
+3. **contact $= 1.00$ at every knob** (the blind planner always pins). This is a
+   property of a random-shooting argmax and probably admits only a probabilistic
+   version, $P(\text{pin}) \geq 1 - \delta$; worth one attempt, not more.
+4. **The 2D lock-in rate (7/20)** and the LLM repair counts are empirical by nature.
+   No proof is available or appropriate.

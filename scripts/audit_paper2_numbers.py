@@ -712,6 +712,26 @@ claim("uniqueness (C3) is a diagnostic and does in fact fail -- ties occur, and 
 claim("every sweep knob is certified", all(r["certificate"] for r in _inv["rows"]
                                            if r["in_sweep"]))
 
+# --- the eps-flatness RATE: the population statement behind eps* ---------------
+_rt = {r["arm"]: r for r in load("eps_flatness_rate")["rows"]}
+claim("the running minimum of D falls and does not settle (no positive floor): "
+      "wall@4 goes 0.420 at 25 firing rollouts to 0.041 at 3200",
+      abs(dict(_rt["cart wall@4"]["running_min"])[25] - 0.4195) < 5e-4
+      and abs(dict(_rt["cart wall@4"]["running_min"])[3200] - 0.0405) < 5e-4)
+claim("the measured tail exponents are 2.57 (wall@4) and 2.10 (stop@1.0), both at "
+      "or above the proved 2",
+      abs(_rt["cart wall@4"]["measured_exponent"] - 2.57) < 0.02
+      and abs(_rt["pendulum stop@1.0"]["measured_exponent"] - 2.10) < 0.02
+      and all(r["measured_exponent"] >= 2.0 for r in _rt.values()),
+      f"{_rt['cart wall@4']['measured_exponent']:.2f}, "
+      f"{_rt['pendulum stop@1.0']['measured_exponent']:.2f}")
+claim("the proved constant is C = 222 and its bound holds at every grid point on "
+      "both arms",
+      all(abs(r["C_quadratic"] - 222.2) < 0.2 and r["bound_holds_on_grid"]
+          for r in _rt.values()))
+claim("M <= 16.67 bounds the position density with no extra hypothesis",
+      all(abs(r["M_position_density_bound"] - 16.667) < 0.01 for r in _rt.values()))
+
 # --- the partition certificate: the recovery, and it must stay exact ----------
 _part = load("gate_partition_certificate")
 claim("partition route: the largest admissible K at N = 40 is 8",

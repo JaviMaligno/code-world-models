@@ -149,6 +149,26 @@ with $D(\omega) = 0$ if $\omega$ never contacts the mode. Then the reveal-rarity
 and $\mathrm{pass@}N = (1-r)^N$ is \emph{exactly} $\varepsilon$-invariant on that range, degrading only above $\varepsilon^\ast$. So writing one symbol $r$ for the two rarities is licensed precisely for $\varepsilon < \varepsilon^\ast$, and the flatness the sweep measures is an identity there rather than a coincidence.
 \end{proposition}
 
+There is a further question the threshold form invites and does not answer: what does $\varepsilon^\ast$ converge to? We chased it in both wrong directions before getting it right --- first treating it as a constant of the instrument, then, after peer review showed it moves with $n$, scoping every flatness claim to the sample, and then briefly believing a diagnostic that showed a hard floor (it took the minimum over a \emph{sorted} prefix, which is the global minimum by construction). Measured properly the running minimum falls monotonically and does not settle: on \texttt{wall@4}, $0.420$ at $25$ firing rollouts, $0.123$ at $200$, $0.041$ at $3200$. The population threshold is zero, and what stands in its place is a rate --- which is the stronger object, since it holds at every $\varepsilon$ rather than below an unstable cutoff.
+
+\begin{proposition}[flatness at a rate; no population threshold]
+\label{prop:epsrate}
+Let $D(w)$ be a rollout's largest sup-norm disagreement over its mode contacts and $r_{\mathrm{fire}} = P(D > 0)$ the mode-firing rarity. Then for every $\varepsilon > 0$,
+\[
+  0 \;\leq\; r_{\mathrm{fire}} - \mathrm{reveal\text{-}rarity}(\varepsilon) \;=\; P(0 < D \leq \varepsilon) \;\leq\; C\,\varepsilon^2,
+  \qquad C = \frac{T\,M}{2\,\mathrm{gain}\,a_{\max}},
+\]
+where $T$ is the horizon and $M$ bounds the density of the clamped coordinate. Moreover $\operatorname*{ess\,inf}\{D : D > 0\} = 0$, so no positive $\varepsilon$ makes the two rarities equal: they agree only in the limit, at the quadratic rate above.
+\end{proposition}
+
+\begin{proof}
+At a contact the truth clamps the velocity to $0$ while the model returns the pre-clamp post-action velocity $v'_t$, so $D \geq |v'_t|$; and the clamp fires only if $x_t + v'_t\,dt \geq x_\mathrm{wall}$ with $x_t < x_\mathrm{wall}$, so $v'_t \leq \varepsilon$ forces $x_t \in [x_\mathrm{wall} - \varepsilon\,dt,\, x_\mathrm{wall})$. Hence $\{0 < D \leq \varepsilon\} \subseteq \bigcup_{t \leq T}\{0 < v'_t \leq \varepsilon\} \cap \{x_t \in [x_\mathrm{wall} - \varepsilon dt, x_\mathrm{wall})\}$. Now $a_t$ is drawn independently of $(x_t, v_t)$ and $v'_t = (1-\mathrm{drag}\,dt)v_t + \mathrm{gain}\,dt\,a_t$, so conditionally on $v_t$ it is uniform on an interval of length $2\,\mathrm{gain}\,dt\,a_{\max}$ and $P(0 < v'_t \leq \varepsilon \mid x_t, v_t) \leq \varepsilon/(2\,\mathrm{gain}\,dt\,a_{\max})$. Multiplying by $P(x_t \in [x_\mathrm{wall} - \varepsilon dt, x_\mathrm{wall})) \leq M\varepsilon\,dt$ and union-bounding over $t \leq T$ gives the display. The density bound needs no hypothesis: $x_t$ equals terms free of $a_{t-1}$ plus $\mathrm{gain}\,dt^2 a_{t-1}$, so conditionally it is uniform on an interval of width $2\,\mathrm{gain}\,dt^2 a_{\max}$, whence $M \leq 1/(2\,\mathrm{gain}\,dt^2 a_{\max})$. For the essential infimum, each event in the union has positive probability for every $\varepsilon > 0$, since $a_{t-1}$ and $a_t$ have full support and can steer $x_t$ into the strip and then $v'_t$ into $(0,\varepsilon]$.
+\end{proof}
+
+Two constraints multiply, which is the whole content: a contact revealed only faintly needs both a nearly-zero post-action velocity \emph{and} a position already inside a strip of width $\varepsilon\,dt$. On the paper's constants $M \leq 16.67$ and $C = 222$, loose by orders of magnitude --- it is a union bound over eighty steps times two worst-case densities --- so the exponent is the content and we measure it too (\texttt{scripts/\allowbreak eps\_\allowbreak flatness\_\allowbreak rate.py}, 60{,}000 rollouts/arm): $2.57$ on \texttt{wall@4} and $2.10$ on \texttt{stop@1.0}, both at or above the proved $2$, and the bound holds at every grid point on both arms. The pendulum's $2.10$ sitting essentially on the theoretical exponent is the evidence that the two-constraint mechanism, and not something else, is what makes the flatness.
+
+This also explains the instability that forced the scoping above: the minimum of $n$ draws from a law whose tail vanishes like $\varepsilon^{p}$ falls like $n^{-1/p}$, so $\varepsilon^\ast$ was never going to converge. Table~\ref{tab:epsstar} therefore reports an in-sample identity, which is what it is, and the population statement is Proposition~\ref{prop:epsrate}.
+
 Note what $\varepsilon^\ast$ is: a per-rollout \emph{minimum} of a per-contact \emph{maximum}. A pinned rollout contacts the mode many times, and it only has to contact it coarsely \emph{once} to be revealed, which is why $\varepsilon^\ast$ sits two orders of magnitude above the smallest single-contact disagreement ($0.0018$ over the $919$ contacts on \texttt{wall@4}; \texttt{scripts/eps\_invariance\_threshold.py}).
 
 Two things follow about how the threshold may be used, and an earlier draft of this section violated both. First, $\varepsilon^\ast$ is a property of a \emph{sample}, so comparing a threshold computed on one rollout stream against dips measured on another is not a prediction --- it is a comparison of two random quantities, and it failed on two of four arms when we did it. Computed on the sweep's own stream, the relation is an \emph{identity}: reveal-rarity equals firing-rarity at every grid $\varepsilon$ below $\varepsilon^\ast$ and the first grid point at or above it is where the sweep dips. Table~\ref{tab:epsstar} reports it that way, in-sample, and it is worth nothing more than an identity.
@@ -609,7 +629,7 @@ The collapse is large at every knob (Table~\ref{tab:mitigation}): \texttt{pc\_bl
 
 \paragraph{Why exactly one violation, and what sets the count in general.} The single-violation sufficiency is not a lucky measurement either --- it is a covering number equal to one.
 
-\begin{proposition}[the mitigation's violation count is bounded by a covering number]
+\begin{proposition}[the mitigation's new-coverage violations are bounded by a packing number]
 \label{prop:fencecover}
 Run distrust-region replanning with band $\varepsilon$. Let $F$ be the \emph{fence locus} --- the set of points at which a violation can record a fence, i.e.\ the possible refuted predictions --- and let $B$ be the \emph{entry barrier}, the set of points at which an imagined trajectory can enter the mode region. Assume $B \subseteq F \oplus B_\varepsilon$: every barrier point is within $\varepsilon$ of some fenceable point. Then the number of violations that place a fence farther than $\varepsilon$ from every fence already placed is at most $N_{\mathrm{pack}}(F,\varepsilon)$, the $\varepsilon$-packing number of $F$, and $N_{\mathrm{pack}}(F,\varepsilon) \leq N_{\mathrm{cov}}(F,\varepsilon/2)$.
 \end{proposition}
@@ -827,6 +847,8 @@ PYTHONPATH=src python scripts/continuous_eps_sweep_patch2d.py
                      # PatchField2D eps rows (tab:eps-sweep text; ~8 min)
 PYTHONPATH=src python scripts/continuous_mitigation_patch2d.py
                      # PatchField2D mitigation (tab:patch2d-mitigation)
+PYTHONPATH=src python scripts/eps_flatness_rate.py
+                     # the quadratic flatness rate (prop:epsrate; ~6 min)
 PYTHONPATH=src python scripts/gate_partition_certificate.py
                      # the partition certificate: exact (a) + all-steps (b)
                      # (prop:partition; ~25 min)
