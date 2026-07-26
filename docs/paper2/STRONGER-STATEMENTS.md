@@ -557,9 +557,12 @@ quadratic rate) --- separated explicitly.
 affine monotonicity ("x_t is affine in the actions with positive coefficients"), but
 the clamp lowers *both* coordinates, so the affine envelope does not immediately
 apply to a clamped trajectory --- which is exactly what the exploited planner
-produces. The conclusion survives (40,000 clamp-forcing trajectories, zero violations,
-minimum slack exactly 0) because the oracle test covers clamped runs; the *proof* was
-incomplete. Added: after the last clamp at time tau the state is (x_wall, 0), the
+produces. While that step was missing the statement was simply **unproved** for clamped
+trajectories, and the corollary resting on it rested on an incomplete proof. (An
+earlier version of this entry said the conclusion "survives" because 40,000
+clamp-forcing trajectories showed zero violations. That is the wrong epistemics: a
+finite search cannot establish a claim quantified over uncountably many policies, only
+fail to refute it. What the search was for is catching a sign error in the argument.) Added: after the last clamp at time tau the state is (x_wall, 0), the
 leftmost continuation is x_wall - L(t-tau), and this exceeds x_min(t) because
 x_wall >= -x0_range and L is increasing.
 

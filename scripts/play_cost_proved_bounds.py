@@ -40,9 +40,11 @@ explicit positive number (1.3e-6 at x_wall = 8, attained near x = 2.7 where the 
 plateau's tail has died and the right one has not begun). That is what makes "the
 blind planner is pinned at the realizable floor" a statement with a floor in it.
 
-The oracle test searches policies -- random, bang-bang, and switching -- and confirms
-none exceeds the derived ceiling, which is the check that would catch a sign error in
-the monotonicity argument.
+The oracle test searches policies -- random, bang-bang, and switching -- and reports
+whether any exceeds the derived ceiling. It cannot establish the bound: that is what
+the monotonicity argument is for, and a search over finitely many policies says
+nothing about the uncountably many others. Its job is the opposite one, to catch a
+sign error in that argument before it reaches print.
 
 Run: PYTHONPATH=src python scripts/play_cost_proved_bounds.py   (~3 min CPU)
 """
