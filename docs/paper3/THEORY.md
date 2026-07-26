@@ -537,10 +537,13 @@ they conflict.
   both follow π_T, which knows the mode). The tail instead scales with
   remaining horizon (corr +0.325) and concentrates at narrow gaps
   (18/6/3 of the top decile at γ = 0.3/0.6/1.2), pointing at
-  ROUTE COMMITMENT. REMAINING (a-priori half): a CUT-LOCUS bound —
-  P(dirty step within 2Δ of the route-switching locus) × (value jump)
-  + Lipschitz term — which makes T2's open half the planner-side face of
-  the paper's own topology rather than a separate analytic chore.
+  route commitment — WHICH WAS THEN REFUTED (2026-07-26): tail events
+  split the two routes LESS often than the bulk (0.190 vs 0.299) and
+  same-side pairs carry the larger |A|. So the cut-locus target is
+  withdrawn. REMAINING (a-priori half): no validated mechanism. The
+  surviving facts (horizon correlation, narrow-gap concentration,
+  same-route) suggest a DELAY cost, recorded as an untested hypothesis
+  with its test named, not as a target.
 - **T3 — M1/M2 distributional monotonicity of r_int(γ).** **PARTIALLY
   RESOLVED (2026-07-25): M1 and M2 are now THEOREMS with an explicit,
   measured defect.** Theorem T3-P: r_int(γ₂) ≥ r_int(γ₁) − f(γ₁) for
@@ -1331,22 +1334,39 @@ What the tail actually correlates with (same run, top decile
   • **channel narrowness** — 18 / 6 / 3 of the tail at γ = 0.3 / 0.6 /
     1.2, i.e. the tail concentrates where the two routes around the mode
     differ most.
-*Reading* (consistent with both facts, not itself measured): A_t is a
-ROUTE-COMMITMENT cost. One bad first action commits the truth-following
-continuation to the long way around the annulus instead of through the
-channel, and the two mode-free futures then differ for the whole
-remaining horizon. On that reading V_T is Lipschitz along the reachable
-set except across the locus where the optimal route switches sense — the
-CUT LOCUS of the obstacle-avoiding metric — and the heavy tail is
-precisely V_T's jump across it.
+*A reading, proposed and then REFUTED (2026-07-26).* I read A_t as a
+ROUTE-COMMITMENT cost — one bad first action committing the
+truth-following continuation to the other way around the annulus, so
+that V_T jumps across the CUT LOCUS where the optimal route switches
+sense — and named a cut-locus bound as the target. That reading was an
+interpretation of two correlations, not a measurement, so I measured it:
+`scripts/t2_route_commitment.py` runs both continuations under π_T and
+records which side of the ring each passes (sign of y at closest
+approach). If route commitment were the mechanism, tail events would be
+the opposite-side ones. Result, 215 dirty steps at γ ∈ {0.3, 0.6}:
+  P(opposite sides | TAIL) = **0.190**,
+  P(opposite sides | bulk) = **0.299**,
+  mean |A|: opposite **0.623** vs same-side **0.920**.
+The correlation runs BACKWARDS: tail events are *less* likely to split
+the routes, and same-side pairs carry the larger advantages. Route
+commitment is refuted, and with it the cut-locus target — which was
+attractive precisely because it would have tied T2 to the paper's
+topology, a reason to distrust it rather than to believe it.
 
-**Revised target for the open half.** Not a moment bound on A_t, but
-  pc ≤ P(a dirty step lands within 2Δ of the cut locus) × (the value
-  jump across it) + L_V · 2Δ · (dirty rate),
-i.e. a cut-locus estimate plus a Lipschitz constant off it. This is the
-same geometric object the rest of the paper is about — where the two
-homotopy classes of route meet — so T2's remaining half is not an
-isolated analytic chore but the planner-side face of the topology.
+**What survives, and the next hypothesis (untested — labelled as such).**
+Two facts stand: |A_t| grows with the remaining horizon (corr +0.325)
+and concentrates at narrow gaps; and the two continuations take the same
+route. Both are consistent with a DELAY cost — a wrong first action
+loses time, the return is dominated by time spent in the phantom basin,
+and lost time compounds over the remaining horizon while a narrow
+channel makes it harder to recover. On that reading the target would be
+  pc ≤ (dirty rate) × (delay per wrong action) × (reward rate),
+a Lipschitz-in-time statement rather than a geometric one. But this is
+exactly the same KIND of claim as the refuted one — an interpretation
+fitted to the surviving correlations — so it is recorded as a HYPOTHESIS
+with its test named (compare the two continuations' first-arrival times
+at the phantom basin, and correlate the difference with |A_t|), not as
+the target. T2's open half currently has no validated mechanism.
 
 ## T4 — the explicit continuity modulus, RESOLVED (2026-07-25)
 
@@ -1541,16 +1561,37 @@ not measured. (At γ = 4.6 the probe also reports r = 0, but that is a
 0/4000 measurement, not a proof; the distinction matters and we keep it.)
 Checked on the grid: f ≤ r holds at every γ, though loosely — r/f runs
 from 24× (γ = 1.2) to 356× (γ = 0.1), because most fires never go on to
-enter. So the two bounds are complementary rather than competing: at
-small and middle γ the measured f of the table above is far tighter and
-is the operative bound; at the wall-free end, where f measures 0/50 000
-and a measurement can prove nothing, T3-P′ supplies the proof.
+enter.
 
-Full closure of T3 = an a-priori bound on f(γ) that is TIGHTER than
-r(γ) at small γ — i.e. control of the conditional "enter after having
-frozen", which is where the occupation estimate genuinely enters. That
-is now the only remaining piece, and the target's shape is known: it
-must vanish at both γ → 0 and γ → 2π.
+*Where T3-P′ actually bites (2026-07-26 — sharper than "loose").* The
+defect bound r(γ) is useful for M1 only where r(γ) < r_int(γ); otherwise
+r_int(γ₂) ≥ r_int(γ₁) − r(γ₁) has a negative right-hand side and says
+nothing. On the grid, r < r_int exactly for **γ ≥ 1.2**; at every
+γ ≤ 0.9 the bound is **VACUOUS for M1**, not merely loose. So T3-P′
+proves the monotonicity defect only on the upper half of the range
+(including the wall-free end, where f measures 0/50 000 and measurement
+could prove nothing), and the lower half rests entirely on the measured
+f. The two are complementary, but the split is at γ ≈ 1.0, not
+everywhere.
+
+*The target, now stated exactly.* What the small-γ half needs is not "a
+bound on f" but a bound of the form
+  **f(γ) ≤ c · r_int(γ) with a constant c < 1**,
+i.e. *funnel entries are a bounded FRACTION of all entries*. That is
+what makes T3-P read r_int(γ₂) ≥ (1−c)·r_int(γ₁), a genuine
+monotonicity-up-to-a-factor. Note the two easy bounds sit exactly at the
+boundary of usefulness: f ≤ r_int is trivially true (funnel ⊆ enter) and
+gives c = 1, which is vacuous; f ≤ r gives c = r/r_int, which exceeds 1
+below γ = 1.2. So ANY constant c < 1 proved uniformly would be new.
+Measured c = f/r_int: 0.222 / 0.141 / 0.050 / 0.075 / 0.055 at
+γ = 0.1 / 0.2 / 0.4 / 0.6 / 0.9 — so even c = 1/4 would cover the
+measured range, and c = 1/2 would already halve the defect.
+
+Full closure of T3 = a bound f(γ) ≤ c·r_int(γ) with c < 1 uniform (see
+the sharpened statement above). Any such c is new; c = 1/4 would cover
+the whole measured range. This is where the occupation estimate
+genuinely enters — the conditional "enter after having frozen" — and it
+is now the only remaining piece.
 
 ## T7 (first half) — infinite censoring artifacts characterized and made
 ## DECIDABLE (2026-07-25). Second half and stability: see below; T7 is

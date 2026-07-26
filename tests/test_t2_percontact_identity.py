@@ -108,3 +108,25 @@ def test_t2_truth_continuations_never_freeze():
         s, _, contact = truth.step(s, a)
         freezes += contact
     assert freezes == 0
+
+
+def test_t2_route_side_is_computable_and_discriminating():
+    # Guard for the refuted route-commitment reading: the side-of-ring
+    # signature must be well-defined and must actually vary, so the
+    # refutation rests on a discriminating measurement rather than on a
+    # degenerate one that always returns the same answer.
+    truth = RingField2D(gap=0.3, gap_center=math.pi, x0_center=(0.0, 0.0))
+    cx, cy = truth.center
+    sides = set()
+    for ep in range(6):
+        ep_seed = 400 + 7 * ep
+        s = truth.initial_state(random.Random(ep_seed))
+        best_d, best_y = float("inf"), 0.0
+        for t in range(H):
+            a = _argmax(truth, s, _cands(truth.a_max, ep_seed, t))
+            s, _, _ = truth.step(s, a)
+            d = math.hypot(s[0] - cx, s[1] - cy)
+            if d < best_d:
+                best_d, best_y = d, s[1] - cy
+        sides.add(1 if best_y >= 0 else -1)
+    assert sides == {1, -1}, sides

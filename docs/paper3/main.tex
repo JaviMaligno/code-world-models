@@ -1614,6 +1614,20 @@ $n = 60$ ($3/27$ versus $2/33$); the cross-gap crossover carries H2.
 The Qwen D cell is missing (provider credits), so the D-cell family
 contrast rests on GPT ($1/20$) versus Claude ($3/3$).
 
+\paragraph{Two mechanisms we proposed and then refuted.} Both concern
+the heavy tail of the play-cost decomposition. We first read it as a
+freeze transient; measuring the freeze counts of both continuations gave
+$0/556$, since after the dirty step both follow the truth planner, which
+knows the mode. We then read it as route commitment --- the wrong action
+sending the continuation the other way around the annulus, so that the
+value function jumps across the cut locus --- which was attractive
+because it would have tied the planner-side analysis to this paper's own
+topology. Measured, the correlation runs backwards: tail events split
+the two routes \emph{less} often than the bulk ($0.190$ versus
+$0.299$), and same-side pairs carry the larger advantages. Both readings
+are withdrawn; the tail's mechanism is currently unidentified, and we
+prefer to say so than to advertise the third guess.
+
 \paragraph{The honest math ledger.} The two $\gamma$-curve regularities
 (monotonicity of $r_{\mathrm{int}}$, and that the wall never helps net
 entry) are theorems only \emph{up to the funnel defect}
