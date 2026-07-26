@@ -153,3 +153,30 @@ def test_t2_delay_mechanism_dwell_is_well_defined_and_varies():
         dwells.add(dwell)
     assert max(dwells) > 0, "the basin must actually be reached"
     assert len(dwells) > 1, dwells          # and the statistic must vary
+
+
+def test_t2_quantitative_clean_step_chain():
+    # The corrected chain: V_T(tc) - V_T(bc) <= [V_T(tc)-V_B(tc)]^+ + Delta_over.
+    # Forced by V_B(bc) >= V_B(tc); the first term is what my initial
+    # attempt dropped (it holds only ~half the time without it), so the
+    # guard checks BOTH that the full chain holds and that the truncated
+    # one genuinely fails — otherwise the correction would be untested.
+    truth = RingField2D(gap=0.3, gap_center=math.pi, x0_center=(0.0, 0.0))
+    blind = blind_of(truth)
+    full_ok = trunc_fail = dirty = 0
+    s = truth.initial_state(random.Random(700))
+    for t in range(H):
+        cs = _cands(truth.a_max, 700, t)
+        bc = max(cs, key=lambda acts: _score(blind, s, acts))
+        tc = max(cs, key=lambda acts: _score(truth, s, acts))
+        if bc[0] != tc[0]:
+            dirty += 1
+            over = _score(blind, s, bc) - _score(truth, s, bc)
+            excess = max(0.0, _score(truth, s, tc) - _score(blind, s, tc))
+            gap = _score(truth, s, tc) - _score(truth, s, bc)
+            full_ok += gap <= over + excess + 1e-9
+            trunc_fail += gap > over + 1e-9
+        s, _, _ = truth.step(s, bc[0])
+    assert dirty > 0
+    assert full_ok == dirty, (full_ok, dirty)
+    assert trunc_fail > 0, "the dropped term must actually be needed"

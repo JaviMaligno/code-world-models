@@ -1438,16 +1438,38 @@ turns "arrives 1–4 steps late, never touching the mode" into "hammers
 the wall fifty times and never arrives". (This also reconciles the arm's
 blind contact rate of 1.0, which is measured in a non-facing setting.)
 
-**T2's remaining half, in its final form.** Because the executed blind
-path is contact-free in the facing case, the two models AGREE along it —
-so the realized return equals what the blind model predicted for that
-path, and π_B's whole loss is candidate MIS-RANKING: it prefers
-candidates whose imagined paths cross the band and therefore score too
-high. The delay is thus a ranking error accumulated over dirty steps,
-with no execution error at all. Bounding it means bounding how much a
-mis-ranked first action can cost when the realized dynamics are exactly
-as modelled — the cleanest form this target has taken, and the first one
-not refuted by its own measurement.
+**A quantitative clean-step lemma, with FULL scope (2026-07-26).**
+Because the executed blind path is contact-free, π_B's whole loss is
+candidate MIS-RANKING. That can be bounded, and the bound is forced by
+algebra. Write bc, tc for the blind- and truth-argmax candidates. From
+V_B(bc) ≥ V_B(tc),
+  V_T(tc) − V_T(bc)
+    = [V_T(tc) − V_B(tc)] + [V_B(tc) − V_B(bc)] + [V_B(bc) − V_T(bc)]
+    ≤ [V_T(tc) − V_B(tc)]⁺ + Δ_over,   Δ_over := V_B(bc) − V_T(bc).
+*My first attempt dropped the first term*, assuming the truth's own
+candidate never touches the mode; measured, that bound holds only
+51–71/106 (the truth planner does plan grazing paths, and a freeze can
+RAISE the truth's score by parking the trajectory nearer the lure than
+the blind continuation flies). With both terms the chain holds
+**106/106**, as it must.
+
+The point is not the inequality but its SCOPE. Both terms are
+model-disagreement on the disagreement region E: they vanish identically
+when neither candidate's imagined path touches A. So this is the
+QUANTITATIVE version of the clean-step lemma whose exact version was
+closed by the hypothesis-emptiness certificate (0/48 clean episodes) —
+the exact statement had empty scope, this one has full scope and reduces
+to it. In paper-2's language both terms are μ_query-type quantities, so
+the aligned-channel play-cost is bounded by imagination-side
+disagreement, which is the shape that paper's Proposition 3 predicts.
+
+**What is left.** The chain bounds the CANDIDATE-level gap
+V_T(tc) − V_T(bc), whereas the identity's A_t is a CONTINUATION-level
+term (both branches then follow π_T). They are not the same object and
+the candidate version is far looser — mean 6.26 against mean A_t = 0.175
+— because MPC replans and the candidate is followed for one step only.
+Linking the two is the remaining piece of T2, and it is now a statement
+about replanning, not about geometry, freezes, routes or occupation.
 
 ## T4 — the explicit continuity modulus, RESOLVED (2026-07-25)
 
@@ -1652,6 +1674,17 @@ is confined to γ ≳ 0.9, exactly where T3-P′ already proves the defect
 ≤ r(γ) → 0. So the two halves now overlap rather than leaving a gap; a
 uniform statement would follow from f's unimodality, which is measured
 (f rises to a peak at γ ∈ [0.6, 0.9] and falls to 0) but not proved.
+
+*Sharpest form of what remains (2026-07-26).* Writing the increment out,
+  r_int(γ₂) − r_int(γ₁) = [d(γ₂) − d(γ₁)] + [f(γ₂) − f(γ₁)],
+with the first bracket PROVED nonnegative (Prop 7). So **M1 can fail
+only if f's drop exceeds d's rise** — and the two are wildly different
+in scale: across the grid d rises by 0.0112 while f's entire variation
+is ≤ 4.4·10⁻⁴, and for adjacent pairs the rise beats the drop by 25× to
+100× (e.g. γ = 0.2 → 0.4: d rises 2.2·10⁻³ while f falls 2·10⁻⁵). What
+must be proved is therefore a COMPARISON between two increments, one of
+which is already known to have the right sign — not a bound on f in
+isolation. That is the form the small-γ end should be attacked in.
 
 **Corollary T3-P′ (the defect has an A-PRIORI bound too).** A funnel
 entry lands in A(γ) at least once before entering, so
