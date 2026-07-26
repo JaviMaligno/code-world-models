@@ -110,3 +110,58 @@ def test_t3p_double_prime_defect_is_the_drop_in_f():
         assert r2 >= r1 - drop - 1e-12, (r1, r2, drop)
         # and it is at least as strong as the old bound
         assert drop <= f1 + 1e-12
+
+
+def _variant_enters(env, seed, keep_velocity):
+    """Rollout where a contact blocks the POSITION but optionally leaves the
+    velocity updating freely (the freeze-rescue isolation variant)."""
+    from cwm.continuous.envs import integrate_2d
+    rng = random.Random(50_000 + seed)
+    s = env.initial_state(rng)
+    for _ in range(env.h_episode):
+        a = rng.uniform(-env.a_max, env.a_max)
+        x2, y2, vx2, vy2 = integrate_2d(s, a, env.dt, env.gain, env.drag,
+                                        env.a_max)
+        if env._in_mode(x2, y2):
+            s = (s[0], s[1], vx2, vy2) if keep_velocity else (s[0], s[1],
+                                                              0.0, 0.0)
+        else:
+            s = (x2, y2, vx2, vy2)
+            if env.in_interior(s[0], s[1]):
+                return True
+    return False
+
+
+def test_t3_velocity_preserving_variant_has_no_pathwise_violations():
+    # The non-equivalent route: with the velocity reset removed, M1 looks
+    # PATHWISE (freeze-rescue is the sole obstruction). Guarded at a small
+    # sample; the full measurement is 0/140,000 against it.
+    gaps = [0.2, 0.6, 1.2, 2.4]
+    n = 2500
+    sets = [{i for i in range(n) if _variant_enters(RingField2D(gap=g), i,
+                                                    True)} for g in gaps]
+    for lo, hi, glo, ghi in zip(sets, sets[1:], gaps, gaps[1:]):
+        assert lo <= hi, (glo, ghi, sorted(lo - hi)[:5])
+    assert len(sets[-1]) > len(sets[0])       # non-vacuous
+
+
+def test_t3_velocity_is_gamma_independent_in_the_variant():
+    # The structural reason: with the velocity preserved, the velocity
+    # process does not depend on gamma at all, so CRN copies share it
+    # exactly and diverging copies are pure translates.
+    from cwm.continuous.envs import integrate_2d
+    vels = []
+    for g in (0.2, 1.2, 2.4):
+        env = RingField2D(gap=g)
+        rng = random.Random(50_000 + 7)
+        s = env.initial_state(rng)
+        seq = []
+        for _ in range(env.h_episode):
+            a = rng.uniform(-env.a_max, env.a_max)
+            x2, y2, vx2, vy2 = integrate_2d(s, a, env.dt, env.gain,
+                                            env.drag, env.a_max)
+            s = ((s[0], s[1], vx2, vy2) if env._in_mode(x2, y2)
+                 else (x2, y2, vx2, vy2))
+            seq.append((vx2, vy2))
+        vels.append(seq)
+    assert vels[0] == vels[1] == vels[2]      # bitwise, across gaps

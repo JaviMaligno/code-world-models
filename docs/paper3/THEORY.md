@@ -1475,16 +1475,39 @@ moves both branches, usually rescuing the bad first action (mean A_t
 rescuing the good one more, which reverses the inequality. Open-loop
 candidate values simply do not order closed-loop continuations.
 
-So T2 stands at: an exact decomposition (the hybrid identity), a
+**A closed-loop attempt, and the obstruction it exposes (2026-07-27).**
+The identity is exactly the performance-difference lemma: since π_T(s) =
+τ, one has A^{π_T}(s, τ) = 0 and therefore
+  **A_t = −A^{π_T}(s_t, b_t)** ,
+the cost of a one-step deviation from π_T. Bounding it needs the value
+of the MPC policy, and the one handle MPC gives without any continuity
+assumption is that its argmax beats EVERY candidate in its set —
+including the constant "straight at the lure" candidate. If MPC
+therefore arrived no later than the straight-line policy, the arrival
+time would be bounded by a purely geometric quantity and the delay bound
+would follow. Measured: **0/30**. MPC arrives at step 28 against the
+straight policy's 22, consistently across γ ∈ {0.3, 0.6, 1.2} — it is
+optimising a 40-step return, not arrival, and its executed path is a
+sequence of first actions from successively replanned candidates, which
+is not any single candidate.
+
+**The obstruction is uniform, and that is the finding.** Three
+independent routes — freeze transients, route commitment, candidate
+ranking — plus this fourth one all fail for the same reason:
+**MPC replanning decouples imagined value from realized value**, in both
+directions (the candidate gap over-states A_t by a factor 36 on average
+yet under-states it in 5/106 steps). This is not a defect of the
+particular bounds. It says that no imagination-level quantity can be
+tight for this play cost. Paper 2's play_cost ≤ μ_query(E) is precisely
+such an imagination-level bound: it is VALID here and, by Proposition 4,
+gives μ_query = 1 — correct and vacuous. Sharpening it is what fails.
+A tight bound would need the closed-loop value of the MPC policy itself,
+for which the instrument offers no handle.
+
+So T2 stands at: an exact decomposition (the hybrid identity = PDL), a
 validated mechanism (delay/arrival, R² = 0.93), and a proved per-step
-inequality with full scope (the quantitative clean-step chain) that
-bounds the WRONG object. The aggregate version Σ A_t ≤ Σ (chain bound)
-does hold on the sample (18.6 versus 664) with a factor-36 slack, but
-that is measured, not proved, and a 36× loose bound would not be worth
-much even if it were. What a play-cost bound needs is a closed-loop
-argument — something about π_T's replanning — and every open-loop route
-tried so far (freeze transients, route commitment, candidate ranking)
-has been refuted by its own measurement.
+inequality with full scope that bounds an object the closed loop does
+not respect.
 
 ## T4 — the explicit continuity modulus, RESOLVED (2026-07-25)
 
@@ -1702,14 +1725,54 @@ c = r·κ factorisation, caught here before it was acted on. And a
 pathwise version is impossible: seed 50543 refutes pathwise M1, hence no
 injection from lost funnel entries to gained direct entries can exist.
 
-*Conclusion for T3.* Proposition 7 has now been squeezed dry: T3-P″ is
+*Conclusion for T3-P″.* Proposition 7 has now been squeezed dry: T3-P″ is
 the strongest defect bound it can yield, and it is a bound on the SIZE
-of a failure, not a route to excluding one. The measured scale gap is
-large (across the grid d rises 0.0112 while f's entire variation is
-≤ 4.4·10⁻⁴; for adjacent pairs the rise beats the drop by 25×–100×), but
-converting it into proof needs a genuinely new ingredient — stochastic
-domination of the post-divergence occupation measures — which is exactly
-what the original T3 entry named, and which nothing since has avoided.
+of a failure, not a route to excluding one.
+
+## T3 — the original ingredient, and a NON-equivalent route (2026-07-27)
+
+*The local form of the ingredient is already refuted.* Stochastic
+domination of the post-divergence states would follow if, at the first
+divergence, the γ₂ copy (which continues into the widened channel with
+its velocity) dominated the γ₁ copy (which freezes at the previous
+position). That pointwise statement is exactly (KEY), and (KEY) was
+refuted by the freeze-rescue measurement (91/91 CI-separated
+violations). This is a genuine refutation, not a circularity — the route
+is closed for a reason, and only the distributional form survives.
+
+*Restatements to avoid.* M2 ⟺ f(γ) ≤ d(2π) − d(γ), and M1 ⟺ d's rise
+beats f's drop. Both are equivalences, like c = r·κ before them. Any
+route phrased as "bound this quantity" where the quantity's only free
+bound is the statement itself is a rename.
+
+**A route that is NOT equivalent: isolate the velocity reset.**
+Freeze-rescue is caused by one specific modelling choice — a contact
+zeroes the velocity. Consider the VARIANT in which a contact blocks the
+POSITION but leaves the velocity updating freely. This is a different
+instrument, so proving M1 there is not equivalent to proving it here;
+and if M1 becomes pathwise in the variant, freeze-rescue is
+demonstrably the sole obstruction. Measured, 20 000 CRN rollouts per
+gap over eight gaps:
+  instrument (velocity reset):    **3** pathwise violations
+  variant (velocity preserved):   **0** pathwise violations
+with essentially identical marginals (r_int agrees to ≤ 3·10⁻⁴).
+
+*And the variant has the structural reason a proof would need.* When a
+contact preserves the velocity, the velocity process is
+**γ-INDEPENDENT** — it is a function of the action sequence alone, since
+the mode never touches it. So under CRN both copies share v_t exactly,
+positions are x_0 + dt·Σ_{s free} v_s, and at the first divergence the
+γ₂ copy is the γ₁ copy TRANSLATED by dt·v (same velocity, one free step
+ahead, and that step lands inside the widened channel). The
+post-divergence comparison is therefore between two exact translates
+evolving under a shared velocity process — a far more tractable object
+than two states with different velocities, which is what the reset
+creates. That is the handle, and it exists only in the variant.
+
+Status: T3's remaining gap is now localised to a single modelling
+feature. The variant statement (pathwise M1 under a velocity-preserving
+contact) is the target — non-equivalent, structurally supported, and
+0/140 000 against it so far.
 
 **Corollary T3-P′ (the defect has an A-PRIORI bound too).** A funnel
 entry lands in A(γ) at least once before entering, so
