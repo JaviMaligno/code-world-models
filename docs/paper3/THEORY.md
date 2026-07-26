@@ -629,9 +629,12 @@ they conflict.
   point-cloud instantiation REFUTED by measurement (density mismatch)
   and replaced by path input, discrimination 20/20 at γ > 0 against
   plain Rips's 9/20, and the γ = 0 one-sided miss identified as
-  Proposition 1's gauge rather than an estimator defect. REMAINING: the
-  γ = 0 threshold calibration under two-sided evidence, and the
-  interleaving stability theorem for pairs.
+  Proposition 1's gauge rather than an estimator defect. **T7 CLOSED
+  (2026-07-25):** the γ = 0 two-sided miss is NOT a calibration gap but
+  Prop R4's shell geometry (freeze zeroes the velocity, so evidence hugs
+  the band faces and more data makes it worse), and stability is Prop R5
+  (2ε-interleaving of pairs, its path clause shown necessary by an
+  ε = 0 counterexample). Nothing open.
 - **T8 — Linking-number query lower bound:** **RESOLVED (2026-07-25), in
   two halves.** The UNCONDITIONAL bound is REFUTED with explicit
   landing-free witnesses in BOTH linking classes (even at the dangerous
@@ -797,7 +800,8 @@ checkable and is the same condition as the spurious-class exclusion —
 the caveat structure collapses to one measured-true hypothesis).
 
 ## T5 — route refuted (2026-07-24); replaced by a proved cone bound
-## (2026-07-25). Order now explicit; the sharp rate stays open
+## (2026-07-25) and an unconditional exponential (2026-07-26, Cor T5-U).
+## Only the SHARP CONSTANT on the cube interface rests on measurement.
 
 The worst-case concentration route (Hoeffding/Azuma over the AR(1) weights,
 with Chernoff conditioning on ‖a‖ for the norm-cap's n-scaling) computes
@@ -1105,9 +1109,27 @@ the constant, and staying within a factor 2 of the optimum costs almost
 nothing (q(0.66) = 0.805, q(2.65) = 0.798). Measured spread
 τ = max_i σ_i/min_i σ_i over 300 episodes per dimension: median
 1.11–1.25, 95th percentile 1.25–1.36 for n = 3…20, giving a
-per-dimension rate ≤ **0.789–0.799**. And σ_i² is a sum of 80
-independent terms, so its concentration is a routine estimate — unlike
-ρ, a max-versus-sum ratio, which was not.
+per-dimension rate ≤ **0.789–0.799**.
+
+*Is that comparability provable? I called it "routine"; it is NOT —
+tried and failed, 2026-07-26.* The structure is right, and one piece of
+it I had wrong earlier: M_s = max(1,‖a_s‖) is the norm of the WHOLE
+action, so A_s := (w_s/M_s)² is COMMON to every coordinate, and given
+the norms σ_i² = dt⁴gain²·Σ_s A_s a_{s,i}² genuinely is a sum of 80
+INDEPENDENT terms. But the constants do not deliver a high-probability
+statement at these parameters. For the deviation t = μ/2 (μ = E[σ_i²|
+norms], the same for every i by within-step exchangeability): Hoeffding,
+whose range term is Σ_s A_s², gives exponent ≈ 2.3–2.9, i.e. 5–10% per
+coordinate and a union over the n coordinates that is VACUOUS (0.77 at
+n = 8, 1.00 at n = 20); Bernstein, using Var(a²) = 4/45, lifts the
+exponent to ≈ 2.9–4.4 but the union is still ≈ 0.4–0.5. Nor does "most
+coordinates suffice" rescue it: E[#bad] ≤ 0.03n is only a Markov-level
+statement, and making P(#bad > 0.3n) decay in n needs concentration of
+the bad-count, whose indicators are exchangeable but DEPENDENT (within a
+step the coordinates lie on a sphere-slice). So this is a genuine open
+item, not a formality — and it is the only thing standing between the
+measured 0.80 and a proved 0.80. The exponential itself needs none of
+it (Cor T5-U).
 
 | statement | status |
 |---|---|
@@ -1495,7 +1517,8 @@ is now the only remaining piece, and the target's shape is known: it
 must vanish at both γ → 0 and γ → 2π.
 
 ## T7 (first half) — infinite censoring artifacts characterized and made
-## DECIDABLE (2026-07-25); the estimator's stability theorem stays open
+## DECIDABLE (2026-07-25). Second half and stability: see below; T7 is
+## CLOSED.
 
 Setting. Finite cloud X ⊂ ℝ², censor set F of forbidden (unordered) point
 pairs — here: edges properly crossed by a certified-free trajectory
