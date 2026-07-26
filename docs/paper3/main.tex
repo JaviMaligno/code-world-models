@@ -1440,14 +1440,20 @@ exponential rate --- a product of factors each merely below $1$ need
 not be small, and a rate needs the $u_i = 2\lambda\sigma_i^2$ confined
 to a window --- but it makes the window enormous ($q \le 0.89$ for
 $\sigma_i^2$ within a factor $5$ of its mean either way), so only crude
-control of the per-coordinate scales is required. That control we have
-unconditionally in weak form (a deterministic count on the upper side
-plus a Chernoff bound on the lower gives
-$0.89^{n/2} + 0.12$, exponential but with a constant floor) and in
-sharp form by measurement (spread $\tau \le 1.36$, hence $0.80^n$).
-Removing the floor reduces to one question we could not settle: whether
-the coordinates of a uniform point on cube~$\cap$~sphere are negatively
-associated, which is known for the sphere alone. Details
+control of the per-coordinate scales is required. That control is unconditional. Since
+$\max(1,\lVert a_s\rVert^2) \in [1, n]$ deterministically, one has
+$\sigma_i^2 \ge \tfrac1n\sum_s w_s^2 a_{s,i}^2$ and
+$m \le \tfrac1n \sum_s w_s^2$, so the event that coordinate $i$ is
+badly scaled is contained in one depending on \emph{that coordinate's
+variables alone}. Two things follow: the exact Chernoff bound applies
+with the true moment generating function of $a^2$ (giving
+$9.7 \times 10^{-4}$ where the range-based bound gives $0.31$), and the
+bad-coordinate indicators are \emph{independent}, so their count is
+binomial and Chernoff replaces Markov. The result is
+$P \le 2 \cdot 0.9057^n$ --- exponential, with no floor and nothing
+measured. Measurement then sharpens the constant: the observed spread
+$\tau \le 1.36$ gives $0.80^n$, and $\rho \approx 4$ gives the true
+$0.4167^n$. Details
 and machine checks are in the repository's theory notes (Lemmas~C/E/F/G/
 H/I, Theorems~T5-C and T5-I, Proposition~T5-T).
 

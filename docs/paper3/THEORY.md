@@ -1160,21 +1160,47 @@ E[σ_i²|norms] by within-step exchangeability). Then:
     P(#{i : σ_i² < 0.2m} > 0.3n) ≤ 0.12;
   • off that event at least n/2 coordinates have σ_i²/m ∈ [0.2, 5],
     each contributing q ≤ 0.89.
-Hence **P(cone) ≤ 0.89^{n/2} + 0.12** — unconditional, but with a
-constant floor. The floor is Markov applied to a DEPENDENT count; it
-would vanish if the bad-indicators concentrated. That is the named
-mathematical question: are the coordinates of a uniform point on
-cube ∩ sphere NEGATIVELY ASSOCIATED? For the sphere itself NA is known,
-and NA is preserved by independent blocks and by decreasing indicators,
-which would give a Chernoff bound on #bad and remove the floor
-outright. For cube ∩ sphere I could not find or prove it.
+Hence P(cone) ≤ 0.89^{n/2} + 0.12 — unconditional, but with a constant
+floor, from Markov applied to what I took to be a dependent count.
 
-Summary for the cube interface: exponential decay PROVED with a floor
-(0.89^{n/2} + 0.12); the clean 0.80ⁿ rests on the measured τ ≤ 1.36.
+**Lemma K (norm-free sandwich — the floor was self-inflicted,
+2026-07-26).** Both defects above dissolve at once. Deterministically
+M_s² = max(1,‖a_s‖²) ∈ [1, n], so A_s = w_s²/M_s² ∈ [w_s²/n, w_s²] and
+  σ_i² ≥ (1/n)Σ_s w_s² a_{s,i}²,   m = (1/n)Σ_s w_s² min(1,‖a_s‖²) ≤ S/n,
+with S := Σ_s w_s². Therefore
+  {σ_i² < z·m} ⊆ {Σ_s w_s² a_{s,i}² < z·S},
+and the right-hand event **depends only on coordinate i's own variables**
+(a_{s,i})_s. Two consequences, each killing one defect:
+  (i) the a_{s,i} are i.i.d. U(−1,1) with no conditioning, so the exact
+      Chernoff bound applies with the true MGF of a²,
+        p(z) = min_θ exp(θzS)·Π_s E[e^{−θ w_s² a²}],
+        E[e^{−ca²}] = ½√(π/c)·erf(√c);
+      numerically p(0.2) = 9.7·10⁻⁴ against the range-based bound's 0.31
+      — a factor 300 — and simulation puts the truth at 1.2·10⁻⁴, so the
+      exact bound is only 8× loose;
+  (ii) the bad indicators are INDEPENDENT across i (disjoint variable
+      sets), so #bad is BINOMIAL and Chernoff replaces Markov:
+      P(#bad > αn) ≤ (e·p/α)^{αn} — exponentially small in n.
+So the NA question is not needed at all: it arose only because I had
+conditioned on the norms, which coupled the coordinates artificially.
+
+**Theorem T5-F (cube interface, unconditional and floor-free).** With
+λ = 1.32/(2m), a lower cutoff z, an upper cutoff K (deterministic:
+#{σ_i² > Km} ≤ n/K since Σ_iσ_i² = nm) and a bad-fraction α,
+  P(cone) ≤ q_max^{(1−α−1/K)n} + (e·p(z)/α)^{αn},
+  q_max := max(q(1.32z), q(1.32K)).
+Optimising over (z, K, α) at the instrument's weights gives
+**z = 0.2, K = 10, α = 0.05, hence P(cone) ≤ 2 · 0.9057ⁿ** — a clean
+exponential with NO floor and NO measured input. (Previous: 0.9434ⁿ +
+0.12.)
+
+Summary for the cube interface: exponential decay PROVED outright,
+≤ 2·0.9057ⁿ; the sharper 0.80ⁿ still rests on the measured spread
+τ ≤ 1.36, and the sharp 0.4167ⁿ on the measured ρ ≈ 4.
 
 | statement | status |
 |---|---|
-| r(n) decays exponentially, cube interface | PROVED with a floor: ≤ 0.89^{n/2} + 0.12 |
+| r(n) decays exponentially, cube interface | **PROVED outright: ≤ 2·0.9057ⁿ, no floor, no inputs** (Thm T5-F) |
 | … with σ_i comparable (measured τ ≤ 1.36) | ≤ 0.80 per dimension, no floor |
 | … the sharp rate 0.4167 = r_out/L | measured (ρ ≈ 4) |
 | r(n) ≤ (h/2)(r_out/L)^{n−2}, isotropic | PROVED exactly (T5-I) |

@@ -368,3 +368,76 @@ def test_t5_window_is_wide_but_not_infinite():
     # and a factor-10 window keeps it <= 0.94
     for ratio in (0.1, 10.0):
         assert q(1.32 * ratio) <= 0.94, (ratio, q(1.32 * ratio))
+
+
+def _S_and_w(h=80, dt=0.1, drag=0.3):
+    beta = 1 - drag * dt
+    w = [(1 - beta ** (h - s)) / (1 - beta) for s in range(h)]
+    return w, sum(x * x for x in w)
+
+
+def test_t5_lemma_k_sandwich_is_valid_and_norm_free():
+    # Lemma K: A_s = w_s^2/max(1,||a_s||^2) in [w_s^2/n, w_s^2], so
+    # sigma_i^2 >= (1/n) sum w_s^2 a_{s,i}^2 and m <= S/n. Checked directly.
+    w, S = _S_and_w()
+    rng = random.Random(19)
+    for n in (4, 8, 16):
+        for _ in range(20):
+            cols = [0.0] * n
+            low = [0.0] * n
+            m_num = 0.0
+            for s, ws in enumerate(w):
+                a = [rng.uniform(-1, 1) for _ in range(n)]
+                nrm2 = sum(x * x for x in a)
+                A = ws * ws / max(1.0, nrm2)
+                for i in range(n):
+                    cols[i] += A * a[i] * a[i]
+                    low[i] += ws * ws * a[i] * a[i] / n
+                m_num += A * nrm2
+            m = m_num / n
+            assert m <= S / n + 1e-9
+            for i in range(n):
+                assert cols[i] >= low[i] - 1e-9
+
+
+def test_t5_exact_chernoff_beats_the_range_bound_and_holds():
+    # The exact MGF Chernoff for P(sum w^2 a^2 < z S), against (a) the
+    # crude range-based multiplicative bound and (b) simulation.
+    w, S = _S_and_w()
+
+    def mgf_neg(c):
+        return 1.0 if c < 1e-12 else 0.5 * math.sqrt(math.pi / c) * math.erf(
+            math.sqrt(c))
+
+    z = 0.2
+    best = 1.0
+    for k in range(1, 2000):
+        th = k * 0.004 / (S / len(w))
+        best = min(best, math.exp(th * z * S
+                                  + sum(math.log(mgf_neg(th * x * x))
+                                        for x in w)))
+    crude = math.exp(-((1 - 3 * z) ** 2) * (S / 3)
+                     / max(x * x for x in w) / 2)
+    assert best < crude / 100, (best, crude)      # 300x in practice
+    rng = random.Random(5)
+    hits, T = 0, 20000
+    for _ in range(T):
+        hits += sum(ws * ws * rng.uniform(-1, 1) ** 2
+                    for ws in w) < z * S
+    assert hits / T <= best, (hits / T, best)     # the bound must hold
+
+
+def test_t5_theorem_f_is_floor_free():
+    # Theorem T5-F: with the binomial tail replacing Markov, both terms
+    # decay geometrically — there is no constant floor.
+    x0 = 1.7780
+
+    def q(u):
+        return (1 + u) ** -0.5 + 2 * _phibar(x0 / math.sqrt(u))
+
+    z, K, alpha, p = 0.2, 10, 0.05, 9.72e-4
+    q_max = max(q(1.32 * z), q(1.32 * K))
+    main = q_max ** (1 - alpha - 1.0 / K)
+    tail = (math.e * p / alpha) ** alpha
+    assert main < 1.0 and tail < 1.0
+    assert max(main, tail) < 0.91, (main, tail)
