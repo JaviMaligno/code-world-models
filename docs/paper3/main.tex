@@ -1642,8 +1642,26 @@ The degeneracy is correspondingly a knife edge. Rotating the channel by
 $0.4$ radians turns ``arrives four steps late, zero contacts'' into
 ``fifty contacts and never arrives''. Since the executed path is
 contact-free, the two models agree along it, so the entire loss is
-candidate mis-ranking with no execution error --- which is the sharpest
-form we have of what remains to be bounded.
+candidate mis-ranking with no execution error.
+
+That loss, however, cannot be bounded tightly from the model's own
+imagination, and this can be shown rather than conjectured. Every
+imagination-level quantity at a step --- both models' returns on every
+candidate, and hence the model disagreement and $\mu_{\mathrm{query}}$
+--- is a function of the state, the two models, and that step's
+candidate set. The realized per-step cost is a one-step deviation
+advantage of the truth policy, which depends in addition on the
+candidate sets the planner will draw at every later step, and those
+carry no information about the models. Pinning the imagination data
+exactly at one dirty step and varying only the future planner seeds
+moves the realized cost over $[-1.71, +0.60]$, a spread an order of
+magnitude larger than its mean over all dirty steps. So the vacuity of
+the companion paper's $\mathrm{play\_cost} \le
+\mu_{\mathrm{query}}(E)$ here is not an artifact to be sharpened away:
+a tight bound must condition on the planner's randomness as well, making
+play-cost a property of the model--planner pair rather than of the model
+alone --- the same lesson the action-interface note draws from the other
+direction.
 
 \paragraph{The honest math ledger.} The two $\gamma$-curve regularities
 (monotonicity of $r_{\mathrm{int}}$, and that the wall never helps net

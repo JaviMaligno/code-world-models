@@ -180,3 +180,45 @@ def test_t2_quantitative_clean_step_chain():
     assert dirty > 0
     assert full_ok == dirty, (full_ok, dirty)
     assert trunc_fail > 0, "the dropped term must actually be needed"
+
+
+def test_t2d_imagination_data_does_not_determine_A():
+    # Proposition T2-D, by construction: pin the state and the candidate set
+    # at a dirty step -- so every imagination-level quantity is fixed -- and
+    # vary only the FUTURE planner seeds. If A_t moves, no function of the
+    # imagination data can bound it tightly.
+    truth = RingField2D(gap=0.6, gap_center=math.pi, x0_center=(0.0, 0.0))
+    blind = blind_of(truth)
+    # the real horizon is load-bearing: with the guard's short H nothing
+    # reaches the basin and A_t is identically 0 for every future seed
+    HH = truth.h_episode
+    es = 4000
+    s = truth.initial_state(random.Random(es))
+    found = None
+    for t in range(HH):
+        cs = _cands(truth.a_max, es, t)
+        b = max(cs, key=lambda a: _score(blind, s, a))
+        tc = max(cs, key=lambda a: _score(truth, s, a))
+        if b[0] != tc[0]:
+            found = (t, s, b, tc)
+            break
+        s, _, _ = truth.step(s, b[0])
+    assert found is not None
+    t, s, b, tc = found
+
+    def roll(state, futseed):
+        tot = 0.0
+        for k in range(t + 1, HH):
+            cs = _cands(truth.a_max, futseed, k)
+            a = max(cs, key=lambda acts: _score(truth, state, acts))
+            state, r, _ = truth.step(state, a[0])
+            tot += r
+        return tot
+
+    vals = []
+    for fut in range(4):
+        s_t, r_t, _ = truth.step(s, tc[0])
+        s_b, r_b, _ = truth.step(s, b[0])
+        vals.append((r_t + roll(s_t, 7000 + fut))
+                    - (r_b + roll(s_b, 7000 + fut)))
+    assert max(vals) - min(vals) > 0.5, vals   # A_t genuinely varies

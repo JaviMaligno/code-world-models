@@ -1491,18 +1491,43 @@ optimising a 40-step return, not arrival, and its executed path is a
 sequence of first actions from successively replanned candidates, which
 is not any single candidate.
 
-**The obstruction is uniform, and that is the finding.** Three
-independent routes — freeze transients, route commitment, candidate
-ranking — plus this fourth one all fail for the same reason:
-**MPC replanning decouples imagined value from realized value**, in both
-directions (the candidate gap over-states A_t by a factor 36 on average
-yet under-states it in 5/106 steps). This is not a defect of the
-particular bounds. It says that no imagination-level quantity can be
-tight for this play cost. Paper 2's play_cost ≤ μ_query(E) is precisely
-such an imagination-level bound: it is VALID here and, by Proposition 4,
-gives μ_query = 1 — correct and vacuous. Sharpening it is what fails.
-A tight bound would need the closed-loop value of the MPC policy itself,
-for which the instrument offers no handle.
+**Proposition T2-D (the obstruction, as a theorem rather than a pattern
+of failures — 2026-07-27).** Four routes failing the same way is
+evidence, not proof; the statement can be proved outright by
+construction. Every *imagination-level* quantity at a step — the two
+models' returns on every candidate, hence Δ_over, the excess, whether
+the step is clean, and μ_query — is a function of the triple (state s_t,
+the two models, candidate set C_t). But
+  A_t = −A^{π_T}(s_t, b_t)
+also depends on the candidate sets C_{t+1}, …, C_h, which are planner
+randomness carrying no information about the models. Hence A_t is NOT
+measurable with respect to the imagination-level data, and no bound of
+the form A_t ≤ g(imagination data) can be tight: any valid g must
+dominate the essential supremum over the future planner randomness. ∎
+
+*Measured, at a single step with the imagination data pinned exactly*
+(γ = 0.6, t = 14; V_B(bc) = V_T(bc) = 11.0982 — so even Δ_over = 0 —
+V_T(tc) = 11.5304, V_B(tc) = 8.3519): varying only the future candidate
+seeds moves A_t over **[−1.707, +0.602]**, a spread of **2.309**. That
+is an order of magnitude above the mean |A_t| = 0.175 over all dirty
+steps. The conditional spread is the irreducible looseness of ANY
+imagination-level bound.
+
+*What this does and does not say.* It does not invalidate paper 2's
+play_cost ≤ μ_query(E): that bound is correct here, and by Proposition 4
+equals 1 — correct and vacuous. It says the vacuity is not an artifact
+to be sharpened away. And it identifies the only remaining direction:
+bound **E[A_t | s_t, C_t]**, the conditional mean over planner
+randomness, rather than A_t. That is a statement about the (model,
+planner) PAIR — consistent with the paper's own theme that danger
+requires a competent planner and that competence is an interface
+property, not a model property.
+
+**T2 status: closed as far as the question posed admits.** The original
+target (bound play_cost from the model's own disagreement) is answered
+NEGATIVELY and provably. What survives is the exact decomposition, the
+validated delay mechanism, the full-scope clean-step chain, and a
+precise statement of what a tight bound would have to condition on.
 
 So T2 stands at: an exact decomposition (the hybrid identity = PDL), a
 validated mechanism (delay/arrival, R² = 0.93), and a proved per-step
@@ -1769,10 +1794,27 @@ evolving under a shared velocity process — a far more tractable object
 than two states with different velocities, which is what the reset
 creates. That is the handle, and it exists only in the variant.
 
-Status: T3's remaining gap is now localised to a single modelling
-feature. The variant statement (pathwise M1 under a velocity-preserving
-contact) is the target — non-equivalent, structurally supported, and
-0/140 000 against it so far.
+*The natural invariant for the induction is REFUTED (2026-07-27).* The
+obvious way to prove the variant statement is to show the γ₂ copy stays
+no farther from the centre than the γ₁ copy after divergence, and induct.
+Measured over 18 000 CRN pairs at three adjacent gap pairs: divergence
+occurs in 106 / 94 / 53 pairs, and of those **2 / 5 / 10 have
+d₂ > d₁ at some step**. So the distance ordering is not an invariant —
+the accumulated offset dt·Σv can point outward — and that induction
+cannot work.
+
+*What survives.* Pathwise M1 in the variant held in **0** of those same
+18 000 pairs (on top of the earlier 140 000), so the statement itself is
+not in doubt; what is missing is the right invariant. It is weaker than
+distance ordering, and it must be a property preserved by the shared
+velocity process rather than by the geometry of a single step.
+
+Status: T3's remaining gap is localised to a single modelling feature
+(the velocity reset) and to a single missing object (the invariant for
+the variant's induction). The target is non-equivalent to M1 for the
+instrument, structurally supported by the γ-independence of the velocity
+process, and 0/158 000 against it — with the first candidate invariant
+now ruled out.
 
 **Corollary T3-P′ (the defect has an A-PRIORI bound too).** A funnel
 entry lands in A(γ) at least once before entering, so
