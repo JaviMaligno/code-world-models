@@ -524,3 +524,63 @@ explained rather than proved.
    version, $P(\text{pin}) \geq 1 - \delta$; worth one attempt, not more.
 4. **The 2D lock-in rate (7/20)** and the LLM repair counts are empirical by nature.
    No proof is available or appropriate.
+
+
+---
+
+# Round 5: auditing the proofs, the statements and the narrative
+
+Asked to audit what had accumulated, rather than add to it. Nine findings, three of
+them substantive.
+
+**Structural, and it is the failure mode that hid errors all day.** Four environments
+had commentary --- and in one case a whole nested proposition with its proof ---
+typeset *inside* the statement, which `amsthm`'s plain style renders in italics as
+part of the claim. `cor:playcost` was **8216 characters** containing
+`prop:normalizers`, its proof and four paragraphs of discussion; `cor:cartdensity`
+held its three scope conditions; `prop:coverage` held three paragraphs about what is
+easy to get wrong. All now end at their statement, with the discussion as prose. And
+`prop:coverage`'s proof had drifted *after* that commentary; it is back where it
+belongs. Proof coverage went from 8/19 environments to **13/16** propositions and
+corollaries with an immediate proof; the three without are a pointer to the companion
+paper and two pure instantiations.
+
+**Substantive 1: `prop:epsinv` was a population statement with a sample-defined
+threshold.** It read `P_rho(D > eps)` --- a population probability --- while defining
+`eps* = min{D(w) : D(w) > 0}` over realized values. Since `prop:epsrate` (proved
+earlier the same day) shows the population essential infimum is **0**, the displayed
+identity was empty in population. Restated with `ess inf`, with the two readings
+--- empirical (what Table `epsstar` reports) and population (where the content is the
+quadratic rate) --- separated explicitly.
+
+**Substantive 2: `prop:normalizers`' proof did not cover the clamp.** The argument is
+affine monotonicity ("x_t is affine in the actions with positive coefficients"), but
+the clamp lowers *both* coordinates, so the affine envelope does not immediately
+apply to a clamped trajectory --- which is exactly what the exploited planner
+produces. The conclusion survives (40,000 clamp-forcing trajectories, zero violations,
+minimum slack exactly 0) because the oracle test covers clamped runs; the *proof* was
+incomplete. Added: after the last clamp at time tau the state is (x_wall, 0), the
+leftmost continuation is x_wall - L(t-tau), and this exceeds x_min(t) because
+x_wall >= -x0_range and L is increasing.
+
+**Substantive 3: `prop:fencecover` had an unused hypothesis and an unclaimed
+conclusion.** The packing bound needs no hypothesis at all; `B ⊆ F ⊕ B_eps` is needed
+only for termination, which the statement never claimed while the proof proved it.
+Split into (i) and (ii) so hypotheses and conclusions match.
+
+**Minor.** `prop:detectrate`'s "at worst 2^-(d+m)" needs a box-like S x A (no uniform
+factor exists in general) --- the same class as the sheared-box slip. `rem:bracket`
+used an undefined `r_i'` and an equality condition stronger than needed
+(`P_{rho_i}(R_j) = 0` should be `P_{rho_i}(R_j \ R_i) = 0`). `rem:densitygeneral`
+conflated "ball contained in U" with the interiority hypothesis, which is about
+`∂(S x A)` and not `∂U`. `prop:knobinv`'s hypothesis is an idealization and now says
+so. The three transferred propositions now cite the companion paper by number, and
+`prop:playcost`'s "proof sketch" --- which was the complete argument --- is a proof.
+
+**Narrative.** The contributions list still said "Theory transfer, and one new
+piece". There are **ten** new propositions. Rewritten to say what the paper proves,
+and to state on which side of the proved/measured line each claim sits --- including
+that the pinning's *initiation* is measured after an attempt that got only part of
+the way.
+
+Cross-references: no broken refs, no duplicate labels.
