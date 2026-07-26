@@ -1094,11 +1094,22 @@ u = 1.32**. Both limits approach 1 from below — as u → 0 the first term
 → 1 while the second vanishes super-exponentially; as u → ∞ the first
 vanishes and the second ↑ 2Φ̄(0) = 1 — so the supremum is not attained.
 (Checked on a grid spanning u ∈ [10⁻⁶, 9·10⁶]: not one point reaches 1.)
-Hence the cube interface's per-dimension rate is **≤ 0.7783 with no
-probabilistic input whatever**: no weight profile, no concentration, no
-measurement. The exponential decay of r(n) for the instrument's OWN
-action interface is a theorem outright, and ρ ≈ 4 is needed only to
-sharpen 0.7783 toward the true 0.4167.
+
+**CORRECTION (2026-07-26, second pass — my own error).** I first wrote
+that this gives "per-dimension rate ≤ 0.7783 with no probabilistic input
+whatever". That is WRONG, and the error is instructive. The value 0.7783
+is q at u = 1.32; a single λ makes u_i = 2λσ_i² equal 1.32 for *one*
+scale only. Every coordinate does contribute q(u_i) < 1, but a product
+of factors each merely below 1 is not exponentially small — an
+exponential RATE needs sup_i q(u_i) < 1 uniformly, hence the u_i must lie
+in a bounded window, hence the σ_i must be comparable. So the σ_i
+comparability is not an optional sharpening; it is load-bearing.
+
+What ρ ≥ 1 genuinely buys is that the window is enormous: q ≤ 0.89 for
+σ_i²/m ∈ [0.2, 5] and q ≤ 0.94 for σ_i²/m ∈ [0.1, 10] — a factor 25 to
+100. So only very crude control of the spread is needed, which is why
+the old requirement (a lower bound on ρ, a max-versus-sum ratio) is
+replaced by a much weaker one. But "much weaker" is not "none".
 
 **What the measurement still buys.** With ρ free, the only remaining
 requirement is that a single λ serve all coordinates, i.e. that the
@@ -1126,15 +1137,42 @@ exponent to ≈ 2.9–4.4 but the union is still ≈ 0.4–0.5. Nor does "most
 coordinates suffice" rescue it: E[#bad] ≤ 0.03n is only a Markov-level
 statement, and making P(#bad > 0.3n) decay in n needs concentration of
 the bad-count, whose indicators are exchangeable but DEPENDENT (within a
-step the coordinates lie on a sphere-slice). So this is a genuine open
-item, not a formality — and it is the only thing standing between the
-measured 0.80 and a proved 0.80. The exponential itself needs none of
-it (Cor T5-U).
+step the coordinates lie on a sphere-slice). Numbers for each route
+tried, at the deviation the wide window permits (σ_i² ≥ 0.2m, i.e.
+ζ = 0.2, which still gives q ≤ 0.89):
+  • Hoeffding, range term Σ_s A_s²: exponent 2.3–2.9, union VACUOUS.
+  • Bernstein, Var(a²) = 4/45: exponent 2.9–4.4, union 0.4–0.5.
+  • Multiplicative Chernoff on X_s = A_s a²/A_max ∈ [0,1], exponent
+    (1−ζ)²(m/A_max)/2: m/A_max is only 5–12 because m carries a 1/n and
+    E[a²] = 1/3, so the exponent caps near 3.
+  • Same, after using Lemma I′ to DROP the top-k steps by A_s (which
+    shrinks A_max fast and m slowly): m_S/A_max,S rises 5.1 → 10.3 at
+    k = 10, exponent → 4.2, union still 0.31.
+
+**What IS proved for the cube interface, floor and all.** Take
+λ = 1.32/(2m) with m = (1/n)Σ_iσ_i² (B-measurable, and equal to
+E[σ_i²|norms] by within-step exchangeability). Then:
+  • DETERMINISTICALLY #{i : σ_i² > 5m} ≤ n/5, since Σ_iσ_i² = nm;
+  • by the Chernoff above, E#{i : σ_i² < 0.2m} ≤ 0.04n, so Markov gives
+    P(#{i : σ_i² < 0.2m} > 0.3n) ≤ 0.12;
+  • off that event at least n/2 coordinates have σ_i²/m ∈ [0.2, 5],
+    each contributing q ≤ 0.89.
+Hence **P(cone) ≤ 0.89^{n/2} + 0.12** — unconditional, but with a
+constant floor. The floor is Markov applied to a DEPENDENT count; it
+would vanish if the bad-indicators concentrated. That is the named
+mathematical question: are the coordinates of a uniform point on
+cube ∩ sphere NEGATIVELY ASSOCIATED? For the sphere itself NA is known,
+and NA is preserved by independent blocks and by decreasing indicators,
+which would give a Chernoff bound on #bad and remove the floor
+outright. For cube ∩ sphere I could not find or prove it.
+
+Summary for the cube interface: exponential decay PROVED with a floor
+(0.89^{n/2} + 0.12); the clean 0.80ⁿ rests on the measured τ ≤ 1.36.
 
 | statement | status |
 |---|---|
-| r(n) decays exponentially, cube interface | **PROVED, ≤ 0.7783ⁿ, no inputs** |
-| … with σ_i comparable (measured τ ≤ 1.36) | ≤ 0.80 per dimension |
+| r(n) decays exponentially, cube interface | PROVED with a floor: ≤ 0.89^{n/2} + 0.12 |
+| … with σ_i comparable (measured τ ≤ 1.36) | ≤ 0.80 per dimension, no floor |
 | … the sharp rate 0.4167 = r_out/L | measured (ρ ≈ 4) |
 | r(n) ≤ (h/2)(r_out/L)^{n−2}, isotropic | PROVED exactly (T5-I) |
 
@@ -1159,18 +1197,16 @@ subset version of the argument lands below the trivial ρ ≥ 1). So a good ρ s
 Corollary T5-U above makes that moot for the EXISTENCE of the
 exponential, which needs no ρ at all.
 
-**Status: T5 CLOSED.** The exponential decay is now proved for BOTH
-interfaces with no measured input (isotropic: exactly, Thm T5-I;
-cube: rate ≤ 0.7783ⁿ, Cor T5-U). Only the SHARP constant on the cube
-interface rests on measurement. The chain is complete for both:
+**Status: T5 CLOSED for the isotropic interface; for the cube interface
+the exponential is proved only with a constant floor (below).** The
+chain is complete for both:
 Lemma C (tangent cone) → Lemma H (conditional independence) →
 Prop T5-T (matched-exponent Chernoff) → Lemma I (the Rademacher
 ingredient) gives the spherical-cap rate for the cube-uniform action;
 Lemma G → Theorem T5-I gives it exactly for the isotropic action. The
-only residue is the sharp CONSTANT on the cube interface: the decay
-itself is unconditional at every n (Cor T5-U, ≤ 0.7783 per dimension,
-from ρ ≥ 1 = Cauchy–Schwarz), and closing 0.7783 → 0.4167 is what the
-measured ρ ≈ 4 supplies.
+residue on the cube interface is TWO things, both quantified above: the
+proved bound carries a constant floor 0.12 (Markov on a dependent
+count), and the sharp constant 0.4167 rests on the measured spread.
 Measured decays agree across all three: cube 0.411, isotropic 0.431,
 theory 0.4167.
 

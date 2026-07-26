@@ -347,3 +347,24 @@ def test_t5_corollary_u_unconditional_exponential():
     for cs in ([1.0], [3.0, 0.1], [1.0] * 7, [0.2, 5.0, 1.0]):
         sigma = math.sqrt(sum(c * c for c in cs))
         assert sigma / max(abs(c) for c in cs) >= 1.0 - 1e-15
+
+
+def test_t5_window_is_wide_but_not_infinite():
+    # Guards the CORRECTED reading of Corollary T5-U: q(u) < 1 for all u
+    # does NOT give an exponential rate by itself (sup q = 1), but the
+    # window where q is bounded away from 1 is very wide. Both halves
+    # matter; the first was overclaimed once and must not be again.
+    x0 = 1.7780
+
+    def q(u):
+        return (1 + u) ** -0.5 + 2 * _phibar(x0 / math.sqrt(u))
+
+    # sup over u is 1 and is NOT attained -> no uniform rate for free
+    assert q(1e-8) > 0.999 and q(1e8) > 0.999
+    assert max(q(1e-8), q(1e8)) < 1.0
+    # but a factor-5 window around the optimum keeps q <= 0.89
+    for ratio in (0.2, 0.5, 1.0, 2.0, 5.0):
+        assert q(1.32 * ratio) <= 0.89, (ratio, q(1.32 * ratio))
+    # and a factor-10 window keeps it <= 0.94
+    for ratio in (0.1, 10.0):
+        assert q(1.32 * ratio) <= 0.94, (ratio, q(1.32 * ratio))
