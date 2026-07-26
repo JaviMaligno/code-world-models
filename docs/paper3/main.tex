@@ -202,10 +202,10 @@ $\mathcal{R}$.
   a high-$n$ enclosed mode maxes out both.
 \item \textbf{A behavioral audit methodology} (used throughout): probe each
   artifact's \texttt{step()} on a state grid, classify the shape of its
-  deviation-from-integrator set. It verified the companion paper's hand
-  inspection, corrected our own first reading of the inside-start failures,
-  and separates ``posed the wrong structure'' from ``posed the right
-  structure with unidentifiable parameters.''
+  deviation-from-integrator set. It reproduces the companion paper's hand
+  inspection, reclassifies the inside-start failures, and separates
+  ``posed the wrong structure'' from ``posed the right structure with
+  unidentifiable parameters.''
 \end{enumerate}
 
 The practitioner's summary is one sentence long: \emph{a sampling gate
@@ -545,8 +545,7 @@ $\gamma \ge 3.2$ where the funnel mass measures zero. What remains open
 is an \emph{a priori} bound on the funnel mass; the one pointwise
 estimate that would have given unconditional monotonicity was
 \emph{refuted} by a freeze-rescue effect ($91/91$ CI-separated
-violations), and we record the refutation rather than weaken the claim.
-Nothing below load-bears on M1/M2 (Corollary~\ref{cor:knob}).
+violations). Nothing below load-bears on M1/M2 (Corollary~\ref{cor:knob}).
 \end{remark}
 
 \begin{proposition}[positivity: $r_{\mathrm{int}}(\gamma) > 0$ for every
@@ -864,10 +863,9 @@ truth's \texttt{max}/\texttt{abs} form. The companion paper's
 bidirectional template prior, measured there on small patches, reaches the
 enclosing separator itself: the topology axis and the template-prior axis
 compose, and the certified artifact's \emph{shape} comes from the prior
-even when its \emph{topology} comes from the guidance. We flag a correction of our own along the way: our first reading
-attributed the D failures to template-prior collapse, and the behavioral
-audit --- the same instrument that \emph{verified} the companion paper's
-inspection --- is what corrected it here.
+even when its \emph{topology} comes from the guidance. The D failures
+are not template-prior collapse: the behavioral audit classifies them as
+right-structure-wrong-parameters, which is a different failure mode.
 
 \paragraph{How the one passer passed.} The single certified D recovery
 (large, $1/20$) freezes exactly when the post-integration landing has
@@ -1224,9 +1222,8 @@ long exact sequence its rank is $\operatorname{rank}\ker(H_0(\mathrm{VR}(Y))
 \to H_0(\mathrm{VR}(X \cup Y)))$ whenever the union has trivial $H_1$:
 \emph{the number of certified-free components that the contact evidence
 glues together}, computable by two union-finds rather than a matrix
-reduction. One instantiation detail is load-bearing and we record it
-because we got it wrong first: $Y$ must enter as trajectory
-\emph{polylines}, not as a point cloud. A free trajectory certifies
+reduction. One instantiation detail is load-bearing: $Y$ must enter as
+trajectory \emph{polylines}, not as a point cloud. A free trajectory certifies
 passage between its own consecutive samples; discard that and the
 estimator reports separation almost everywhere, because a curve-dense
 contact cloud glues a scatter-sparse free cloud by density mismatch
@@ -1458,20 +1455,18 @@ and machine checks are in the repository's theory notes (Lemmas~C/E/F/G/
 H/I, Theorems~T5-C and T5-I, Proposition~T5-T).
 
 \paragraph{A methods note: the danger needs a competent planner, and
-``competent'' is an interface property.} Our first $n$-sweep measured
-$\mathrm{play\_cost} \approx 0$ at every $n$ --- a result we initially
-misread twice (dimensional concentration; then phantom distance) before a
-controlled diagnostic isolated the cause: the vector-action MPC's constant
-candidate set lacked the deterministic axial sequences $\pm e_i$ that the
-scalar planner's east/west constants provide, so the blind planner never
-drove straight at the shell. Direction-uniform random candidates do
+``competent'' is an interface property.} An $n$-sweep whose vector-action
+MPC uses only the scalar planner's constant-candidate analogue measures
+$\mathrm{play\_cost} \approx 0$ at every $n$. The cause is neither
+dimensional concentration nor the phantom's distance: that candidate set
+lacks the deterministic axial sequences $\pm e_i$, so the blind planner
+never drives straight at the shell. Direction-uniform random candidates do
 \emph{not} fix it ($\mathrm{pc} = 0$); adding the $2n$ axial candidates
 restores the 2D exploitation exactly ($\mathrm{pc} = 1.04$, contact
 $1.0$). The companion papers' clause that danger requires a \emph{competent}
 planner is thus sharper than it looks: competence is a property of the
-action interface, and an accidental planner weakness can mask a fully
-exploitable model. We record the sequence of misreadings deliberately ---
-the corrected-record discipline is part of the method.
+action interface, and an incidental planner weakness can mask a fully
+exploitable model.
 
 \begin{table}[h]
 \centering
@@ -1620,19 +1615,17 @@ $n = 60$ ($3/27$ versus $2/33$); the cross-gap crossover carries H2.
 The Qwen D cell is missing (provider credits), so the D-cell family
 contrast rests on GPT ($1/20$) versus Claude ($3/3$).
 
-\paragraph{Two mechanisms we proposed and then refuted.} Both concern
-the heavy tail of the play-cost decomposition. We first read it as a
-freeze transient; measuring the freeze counts of both continuations gave
-$0/556$, since after the dirty step both follow the truth planner, which
-knows the mode. We then read it as route commitment --- the wrong action
-sending the continuation the other way around the annulus, so that the
-value function jumps across the cut locus --- which was attractive
-because it would have tied the planner-side analysis to this paper's own
-topology. Measured, the correlation runs backwards: tail events split
-the two routes \emph{less} often than the bulk ($0.190$ versus
-$0.299$), and same-side pairs carry the larger advantages. Both readings are withdrawn. The third
-survived contact with measurement, and it is the dull one: the tail is a
-\emph{delay} cost. Regressing the advantage on the difference in time
+\paragraph{Two candidate mechanisms for the tail, both false.} The heavy
+tail of the play-cost decomposition is not a freeze transient: the freeze
+counts of both continuations are $0/556$, since after a dirty step both
+follow the truth planner, which knows the mode. Nor is it route
+commitment --- the wrong action sending the continuation the other way
+around the annulus, so that the value function jumps across the cut
+locus. That would tie the planner-side analysis to this paper's own
+topology, but the correlation runs backwards: tail events split the two
+routes \emph{less} often than the bulk ($0.190$ versus $0.299$), and
+same-side pairs carry the larger advantages. What the tail is instead is
+a \emph{delay} cost. Regressing the advantage on the difference in time
 the two continuations spend inside the phantom basin gives slope
 $0.94$ against the reward amplitude $1.0$ --- a known constant, not a
 fitted one --- with intercept $\approx 0$ and $R^2 = 0.93$, and every
