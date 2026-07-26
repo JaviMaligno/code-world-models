@@ -712,6 +712,43 @@ claim("uniqueness (C3) is a diagnostic and does in fact fail -- ties occur, and 
 claim("every sweep knob is certified", all(r["certificate"] for r in _inv["rows"]
                                            if r["in_sweep"]))
 
+# --- the play-cost normalizers, derived rather than measured ------------------
+_pcb = load("play_cost_proved_bounds")
+_by_w = {r["x_wall"]: r for r in _pcb["rows"]}
+claim("no policy in the oracle search beats the derived ceiling, at any knob",
+      all(r["oracle_within_bound"] for r in _pcb["rows"]),
+      str(sum(r["oracle_within_bound"] for r in _pcb["rows"])))
+claim("J_max <= 18.0359 at x_wall = 8 (derived), against 18.0091 attained",
+      abs(_by_w[8.0]["J_max_proved"] - 18.0359) < 5e-4
+      and abs(_by_w[8.0]["oracle_best"] - 18.0091) < 5e-4,
+      f"{_by_w[8.0]['J_max_proved']:.4f}")
+claim("the ceiling is ATTAINED to 1.0000 at x_wall <= 6 and slack grows to 1.0799 "
+      "at 10 as the right plateau's tail leaks in",
+      all(abs(_by_w[w]["slack_ratio"] - 1.0) < 5e-5 for w in (2., 3., 4., 5., 6.))
+      and abs(_by_w[8.0]["slack_ratio"] - 1.0015) < 5e-4
+      and abs(_by_w[10.0]["slack_ratio"] - 1.0799) < 5e-4)
+claim("J_min >= 1.33e-6 at x_wall = 8, attained near x = 2.70",
+      abs(_by_w[8.0]["J_min_proved"] - 1.335e-6) < 5e-9
+      and abs(_by_w[8.0]["argmin_x"] - 2.70) < 0.01,
+      f"{_by_w[8.0]['J_min_proved']:.4g} at {_by_w[8.0]['argmin_x']:.2f}")
+claim("at x_wall = 2 the derived floor is 2.87e-6, matching the measured J_min",
+      abs(_by_w[2.0]["J_min_proved"] - 2.866e-6) < 5e-9)
+_proved = ((_by_w[8.0]["J_max_proved"] - _by_w[8.0]["J_min_proved"])
+           / (_pcb["J_truth"] - _pcb["J_rand"]))
+claim("the DERIVED play_cost ceiling is 1.0463 and the measurement sits at 98.5%",
+      abs(_proved - 1.0463) < 5e-4 and abs(100 * 1.0310 / _proved - 98.5) < 0.05,
+      f"{_proved:.4f}")
+claim("deriving the normalizers costs only 1.0017x against the measured-sup version",
+      abs(_proved / 1.0445 - 1.0017) < 5e-4)
+_pin = {r["x_wall"]: r for r in _pcb["pinning_structure"]}
+claim("the wall is reachable in 14 steps at x_wall = 2 and 30 at 10, against T = 80",
+      _pin[2.0]["steps_to_wall_full_thrust"] == 14
+      and _pin[10.0]["steps_to_wall_full_thrust"] == 30)
+claim("the blind model's imagined return is 8.31 right vs 5.70 left, ratio 1.46",
+      abs(_pin[8.0]["imagined_return_right"] - 8.306) < 5e-3
+      and abs(_pin[8.0]["imagined_return_left"] - 5.695) < 5e-3
+      and abs(_pin[8.0]["asymmetry_ratio"] - 1.46) < 5e-3)
+
 # --- the eps-flatness RATE: the population statement behind eps* ---------------
 _rt = {r["arm"]: r for r in load("eps_flatness_rate")["rows"]}
 claim("the running minimum of D falls and does not settle (no positive floor): "

@@ -462,7 +462,34 @@ flatness. It also explains the instability that forced the scoping: a minimum of
 draws from an $\varepsilon^p$ tail falls like $n^{-1/p}$, so $\varepsilon^\star$ was
 never going to converge. `scripts/eps_flatness_rate.py`.
 
-## Still measured, and worth attacking (in order of how provable they look)
+## DONE (2026-07-26): items 1 and 2 below are now derived
+
+**$J_{\max}$ and $J_{\min}$ are no longer measured.** Three facts multiply: the reward
+is a decreasing term plus an increasing one, so over any interval it is bounded by the
+decreasing term at the left end plus the increasing one at the right; the clamp gives
+$x_t \leq x_\mathrm{wall} < x_\mathrm{right}$, so the large plateau is unreachable and
+its contribution is capped uniformly ($3.4\times10^{-4}$ at $x_\mathrm{wall} = 8$); and
+$x_t$ is affine in the actions with all positive coefficients, so the leftmost
+reachable position is the push-left trajectory — an identity, not an assumption.
+
+Result: $J_{\max} \leq 18.0359$ and $J_{\min} \geq 1.33\times10^{-6}$, so the ceiling
+is $\mathbf{1.0463}$ with nothing measured in it, and the measurement sits at
+$98.5\%$ of it. Deriving costs $1.0017\times$ against the measured-sup version. The
+ceiling is **attained** (slack $1.0000$) at $x_\mathrm{wall} \leq 6$, so $J_{\max}$ is
+known and not merely bounded there; slack appears only as the wall nears the right
+plateau ($1.0015$ at $8$, $1.0799$ at $10$). A policy oracle — bang-bang, constant,
+single-switch and $4000$ random block policies at each knob — finds none exceeding it.
+`scripts/play_cost_proved_bounds.py`.
+
+**Item 3 is partly derivable and we stopped where it stops.** Two of pinning's three
+ingredients are structural: the wall is reachable in $14$–$30$ steps against $T = 80$
+(earliest possible, by the same monotonicity), and the blind model offers $8.31$ for
+going right against $5.70$ for going left over the planning horizon. The third is not:
+nothing forces the argmax over $200$ random block candidates to execute a positive
+*first* action, since a trajectory may go left before turning. Pinning stays measured,
+explained rather than proved.
+
+## Superseded — the original list
 
 1. **$J_{\max}$ is a measured supremum.** The play-cost corollary's $1.0447$ rests on
    $J_{\max} = 18.009$, the best CONSTANT policy's realized return from the most
