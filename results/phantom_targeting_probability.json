@@ -1,0 +1,110 @@
+{
+  "script": "phantom_targeting_probability.py",
+  "params": {
+    "horizon": 40,
+    "block": 10,
+    "n_samples": 200,
+    "mc": 200000,
+    "x_wall": 8.0,
+    "seed": 1
+  },
+  "xbar": 11.0,
+  "rows": [
+    {
+      "state": [
+        0.0,
+        0.0
+      ],
+      "U_noreach": 6.975988761338837,
+      "L_full_right": 8.306201936159045,
+      "margin": 1.3302131748202077,
+      "gap_closes": true,
+      "theta": 0.9339019557944549,
+      "p_exact_sub_event": 1.1929835470761214e-06,
+      "P_set_contains_exact": 0.00023856838976799022,
+      "p_estimated_hits": 10,
+      "p_estimated_lower": 2.7159853423582097e-05,
+      "P_set_contains_estimated": 0.005417317576105418
+    },
+    {
+      "state": [
+        0.5,
+        0.0
+      ],
+      "U_noreach": 6.776962795356954,
+      "L_full_right": 9.105875994402552,
+      "margin": 2.3289131990455987,
+      "gap_closes": true,
+      "theta": 0.8860314049635115,
+      "p_exact_sub_event": 1.0544373846897422e-05,
+      "P_set_contains_exact": 0.002106663750337523,
+      "p_estimated_hits": 113,
+      "p_estimated_lower": 0.00047000708971680597,
+      "P_set_contains_estimated": 0.08973864329287118
+    },
+    {
+      "state": [
+        -0.5,
+        0.0
+      ],
+      "U_noreach": 7.1906581022005,
+      "L_full_right": 7.517888920359106,
+      "margin": 0.3272308181586068,
+      "gap_closes": true,
+      "theta": 0.983481126318766,
+      "p_exact_sub_event": 4.653736035230252e-09,
+      "P_set_contains_exact": 9.307467816466186e-07,
+      "p_estimated_hits": 0,
+      "p_estimated_lower": 0.0,
+      "P_set_contains_estimated": 0.0
+    },
+    {
+      "state": [
+        2.0,
+        3.0
+      ],
+      "U_noreach": 4.04842180708864,
+      "L_full_right": 20.000357671981273,
+      "margin": 15.951935864892633,
+      "gap_closes": true,
+      "theta": 0.2322922873020037,
+      "p_exact_sub_event": 0.021710190398769674,
+      "P_set_contains_exact": 0.9875975941085187,
+      "p_estimated_hits": 51645,
+      "p_estimated_lower": 0.2563115343441246,
+      "P_set_contains_estimated": 1.0
+    },
+    {
+      "state": [
+        4.0,
+        4.0
+      ],
+      "U_noreach": 3.321955626409198,
+      "L_full_right": 25.33564710401434,
+      "margin": 22.01369147760514,
+      "gap_closes": true,
+      "theta": 8.673617379884035e-19,
+      "p_exact_sub_event": 0.0625,
+      "P_set_contains_exact": 0.9999975211212762,
+      "p_estimated_hits": 118477,
+      "p_estimated_lower": 0.5902296299028815,
+      "P_set_contains_estimated": 1.0
+    },
+    {
+      "state": [
+        6.0,
+        5.0
+      ],
+      "U_noreach": 3.883480160961583,
+      "L_full_right": 30.133797226957327,
+      "margin": 26.250317065995745,
+      "gap_closes": true,
+      "theta": 8.673617379884035e-19,
+      "p_exact_sub_event": 0.0625,
+      "P_set_contains_exact": 0.9999975211212762,
+      "p_estimated_hits": 174172,
+      "p_estimated_lower": 0.8693831161766089,
+      "P_set_contains_estimated": 1.0
+    }
+  ]
+}

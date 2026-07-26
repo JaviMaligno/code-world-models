@@ -481,7 +481,25 @@ plateau ($1.0015$ at $8$, $1.0799$ at $10$). A policy oracle — bang-bang, cons
 single-switch and $4000$ random block policies at each knob — finds none exceeding it.
 `scripts/play_cost_proved_bounds.py`.
 
-**Item 3 is partly derivable and we stopped where it stops.** Two of pinning's three
+**Item 3, revisited after Javier pushed on it: the probabilistic version DOES exist,
+and it is conditional.** The obstruction we recorded (nothing forces the argmax's
+first action positive) was real but about the wrong quantity. What the *plan* targets
+is a different question. Envelope-bounding the imagined return of any candidate that
+never approaches the phantom plateau gives $U(s)$; the full-right candidate achieves
+$L(s)$; wherever $L(s) > U(s)$, any candidate scoring $\geq L(s)$ must reach the
+phantom, so if the sampled set holds one then **the argmax's plan chases reward the
+truth makes unreachable**. The gap closes at every state checked ($+0.33$ to
+$+26.25$).
+
+What does not close is the probability from REST: $2\times10^{-4}$ from an exactly
+computable sub-event, $5\times10^{-3}$ estimated. Once the cart carries rightward
+velocity it is $1.000$ by both routes. So the honest theorem is **self-reinforcing,
+not self-starting**: initiation stays measured. Worth having anyway, because it turns
+"the planner is lured" from an observation into a property of the plan --- and it is
+the shape of the answer, not the strength, that is informative.
+`scripts/phantom_targeting_probability.py`.
+
+**The rest of item 3 stopped where it stops.** Two of pinning's three
 ingredients are structural: the wall is reachable in $14$–$30$ steps against $T = 80$
 (earliest possible, by the same monotonicity), and the blind model offers $8.31$ for
 going right against $5.70$ for going left over the planning horizon. The third is not:

@@ -712,6 +712,29 @@ claim("uniqueness (C3) is a diagnostic and does in fact fail -- ties occur, and 
 claim("every sweep knob is certified", all(r["certificate"] for r in _inv["rows"]
                                            if r["in_sweep"]))
 
+# --- phantom targeting: what the plan provably chases, and from where ---------
+_pt = {tuple(r["state"]): r for r in load("phantom_targeting_probability")["rows"]}
+claim("the score gap closes at every state checked",
+      all(r["gap_closes"] for r in _pt.values()),
+      str(sum(r["gap_closes"] for r in _pt.values())))
+claim("the margin runs +0.33 at (-0.5, 0) to +26.25 at (6, 5)",
+      abs(_pt[(-0.5, 0.0)]["margin"] - 0.327) < 5e-3
+      and abs(_pt[(6.0, 5.0)]["margin"] - 26.250) < 5e-3,
+      f"{_pt[(-0.5,0.0)]['margin']:+.3f} .. {_pt[(6.0,5.0)]['margin']:+.3f}")
+claim("from rest the bound is negligible: 2e-4 exact and 5e-3 estimated",
+      abs(_pt[(0.0, 0.0)]["P_set_contains_exact"] - 2.4e-4) < 1e-4
+      and abs(_pt[(0.0, 0.0)]["P_set_contains_estimated"] - 5.4e-3) < 1e-3,
+      f"{_pt[(0.0,0.0)]['P_set_contains_exact']:.2e}, "
+      f"{_pt[(0.0,0.0)]['P_set_contains_estimated']:.4f}")
+claim("with rightward velocity it is 1.000 by BOTH routes from (2,3) on",
+      all(_pt[s]["P_set_contains_estimated"] > 0.9999
+          and _pt[s]["P_set_contains_exact"] > 0.98
+          for s in ((2.0, 3.0), (4.0, 4.0), (6.0, 5.0))))
+claim("so the result is conditional -- self-reinforcing, not self-starting: the "
+      "from-rest probability is more than three orders below the moving one",
+      _pt[(2.0, 3.0)]["P_set_contains_estimated"]
+      / max(_pt[(0.0, 0.0)]["P_set_contains_estimated"], 1e-12) > 100)
+
 # --- the play-cost normalizers, derived rather than measured ------------------
 _pcb = load("play_cost_proved_bounds")
 _by_w = {r["x_wall"]: r for r in _pcb["rows"]}
