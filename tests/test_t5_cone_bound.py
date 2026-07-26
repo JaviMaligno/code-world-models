@@ -326,3 +326,24 @@ def test_t5_lemma_i_prime_subset_refinement():
         bound = ((1 + 2 * lam * s2s) ** -0.5
                  + 2 * _phibar(x0 / (math.sqrt(2 * lam) * cms)))
         assert exact <= bound + 1e-12, (trial, exact, bound)
+
+
+def test_t5_corollary_u_unconditional_exponential():
+    # Corollary T5-U: rho >= 1 is Cauchy-Schwarz, and q(u,1) < 1 for EVERY
+    # u > 0, with minimum 0.7783 — so the cube interface decays
+    # exponentially with no probabilistic input at all.
+    x0 = 1.7780
+
+    def q(u):
+        return (1 + u) ** -0.5 + 2 * _phibar(x0 / math.sqrt(u))
+
+    for e in range(-6, 7):
+        for m in range(1, 10):
+            u = m * 10.0 ** e
+            assert q(u) < 1.0, (u, q(u))
+    best = min(q(1.0 + i * 0.001) for i in range(-900, 2000))
+    assert 0.777 < best < 0.779, best
+    # and rho >= 1 really is free
+    for cs in ([1.0], [3.0, 0.1], [1.0] * 7, [0.2, 5.0, 1.0]):
+        sigma = math.sqrt(sum(c * c for c in cs))
+        assert sigma / max(abs(c) for c in cs) >= 1.0 - 1e-15

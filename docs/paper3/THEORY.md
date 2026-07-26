@@ -1078,7 +1078,46 @@ can simply be dropped from S. (Verified on 200 random profiles, half of
 them deliberately given a dominant weight: dropping the largest weight
 always yields a valid bound.)
 
-**On PROVING ρ rather than measuring it — an honest accounting.** The
+**Corollary T5-U (the exponential is UNCONDITIONAL in ρ — 2026-07-26).**
+The attempt below tries to prove a lower bound on ρ, having fixed λ at
+the error-FREE optimum u* = 4.76. That was the mistake. Re-optimising λ
+WITH the error term included changes the picture completely, because
+  ρ ≥ 1 always — it is Cauchy–Schwarz: σ² = Σ_s c_s² ≥ c_max².
+Substituting ρ = 1 in Lemma I,
+  q(u) := (1 + u)^{−1/2} + 2Φ̄(x₀/√u)
+satisfies **q(u) < 1 for every u > 0**, with minimum **0.7783 at
+u = 1.32**. Both limits approach 1 from below — as u → 0 the first term
+→ 1 while the second vanishes super-exponentially; as u → ∞ the first
+vanishes and the second ↑ 2Φ̄(0) = 1 — so the supremum is not attained.
+(Checked on a grid spanning u ∈ [10⁻⁶, 9·10⁶]: not one point reaches 1.)
+Hence the cube interface's per-dimension rate is **≤ 0.7783 with no
+probabilistic input whatever**: no weight profile, no concentration, no
+measurement. The exponential decay of r(n) for the instrument's OWN
+action interface is a theorem outright, and ρ ≈ 4 is needed only to
+sharpen 0.7783 toward the true 0.4167.
+
+**What the measurement still buys.** With ρ free, the only remaining
+requirement is that a single λ serve all coordinates, i.e. that the
+per-coordinate scales σ_i be comparable (u_i = 2λσ_i², and q is
+minimised at u = 1.32). That is a far milder and more robust condition
+than a bound on ρ: since q < 1 at EVERY u, comparability affects only
+the constant, and staying within a factor 2 of the optimum costs almost
+nothing (q(0.66) = 0.805, q(2.65) = 0.798). Measured spread
+τ = max_i σ_i/min_i σ_i over 300 episodes per dimension: median
+1.11–1.25, 95th percentile 1.25–1.36 for n = 3…20, giving a
+per-dimension rate ≤ **0.789–0.799**. And σ_i² is a sum of 80
+independent terms, so its concentration is a routine estimate — unlike
+ρ, a max-versus-sum ratio, which was not.
+
+| statement | status |
+|---|---|
+| r(n) decays exponentially, cube interface | **PROVED, ≤ 0.7783ⁿ, no inputs** |
+| … with σ_i comparable (measured τ ≤ 1.36) | ≤ 0.80 per dimension |
+| … the sharp rate 0.4167 = r_out/L | measured (ρ ≈ 4) |
+| r(n) ≤ (h/2)(r_out/L)^{n−2}, isotropic | PROVED exactly (T5-I) |
+
+**On PROVING ρ — the accounting that led here (superseded above, kept
+because it is what forced the re-optimisation).** The
 chain is: ρ_i² ≥ (M_min/M_max)²·Σ_s v_s²a_{s,i}², where v_s = w_{t,s}/w_max
 is the deterministic AR(1) profile and M_s = max(1,‖a_s‖). For the
 instrument's profile Σv_s² = 44.2 and Σv_s⁴ = 32.8, so Hoeffding on the
@@ -1094,23 +1133,22 @@ So the PROVED constants are:
 Attempts to remove the M-factor by pigeonholing the steps into dyadic
 M-bands, or by restricting to the AR(1) plateau, make the surviving
 subset small enough that the loss exceeds the gain (both were tried; the
-subset version of the argument lands below the trivial ρ ≥ 1). So this
-one constant remains measured rather than proved at the instrument's
-actual dimensions, and we say so instead of quoting the asymptotic
-regime as if it covered n = 8.
+subset version of the argument lands below the trivial ρ ≥ 1). So a good ρ stays measured — but
+Corollary T5-U above makes that moot for the EXISTENCE of the
+exponential, which needs no ρ at all.
 
-**Status: T5 CLOSED up to one measured constant.** The chain is complete
-for both interfaces:
+**Status: T5 CLOSED.** The exponential decay is now proved for BOTH
+interfaces with no measured input (isotropic: exactly, Thm T5-I;
+cube: rate ≤ 0.7783ⁿ, Cor T5-U). Only the SHARP constant on the cube
+interface rests on measurement. The chain is complete for both:
 Lemma C (tangent cone) → Lemma H (conditional independence) →
 Prop T5-T (matched-exponent Chernoff) → Lemma I (the Rademacher
 ingredient) gives the spherical-cap rate for the cube-uniform action;
 Lemma G → Theorem T5-I gives it exactly for the isotropic action. The
-only residue is the single constant ρ: the exponential DECAY is proved
-unconditionally at large n (q ≤ 0.758 once the norm concentration
-bites, ≤ 0.516 asymptotically), while the SHARP constant at the
-instrument's own dimensions rests on the measured ρ ≈ 4. The gap is one
-scalar, and the accounting above says exactly how much each worst-case
-factor costs.
+only residue is the sharp CONSTANT on the cube interface: the decay
+itself is unconditional at every n (Cor T5-U, ≤ 0.7783 per dimension,
+from ρ ≥ 1 = Cauchy–Schwarz), and closing 0.7783 → 0.4167 is what the
+measured ρ ≈ 4 supplies.
 Measured decays agree across all three: cube 0.411, isotropic 0.431,
 theory 0.4167.
 
