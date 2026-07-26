@@ -1637,10 +1637,20 @@ the two continuations spend inside the phantom basin gives slope
 $0.94$ against the reward amplitude $1.0$ --- a known constant, not a
 fitted one --- with intercept $\approx 0$ and $R^2 = 0.93$, and every
 tail event has a nonzero dwell difference against $41\%$ of the bulk.
-One wrong action costs basin time, and with a narrow channel it can cost
-a whole extra pass. What remains to bound is therefore the truth
-planner's recovery time after a bounded perturbation --- a control
-question, not a topological one.
+One wrong action costs basin time. Two further measurements finish the
+picture. Dwell is sticky (neither planner ever leaves the basin once it
+arrives, $9/9$), so the play-cost is exactly the blind planner's
+\emph{lateness}: truth arrives at step $34$--$36$, blind at $37$--$38$.
+And that lateness is not a contact cost --- in the facing configuration
+the blind trajectory never touches the mode at all. It is an
+\emph{aim-point} cost: lacking a wall, the blind planner steers at the
+straight line to the lure, which a facing channel happens to thread.
+The degeneracy is correspondingly a knife edge. Rotating the channel by
+$0.4$ radians turns ``arrives four steps late, zero contacts'' into
+``fifty contacts and never arrives''. Since the executed path is
+contact-free, the two models agree along it, so the entire loss is
+candidate mis-ranking with no execution error --- which is the sharpest
+form we have of what remains to be bounded.
 
 \paragraph{The honest math ledger.} The two $\gamma$-curve regularities
 (monotonicity of $r_{\mathrm{int}}$, and that the wall never helps net

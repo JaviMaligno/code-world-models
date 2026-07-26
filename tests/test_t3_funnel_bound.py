@@ -93,3 +93,20 @@ def test_t3p_prime_no_mode_means_no_defect():
         for _ in range(env.h_episode):
             s, _, contact = env.step(s, rng.uniform(-env.a_max, env.a_max))
             assert not contact
+
+
+def test_t3p_double_prime_defect_is_the_drop_in_f():
+    # Theorem T3-P'': r_int(g2) >= r_int(g1) - [f(g1) - f(g2)]^+, strictly
+    # stronger than T3-P, and exactly zero wherever f is nondecreasing.
+    gaps = [0.2, 0.6, 1.2, 2.4]
+    n = 1500
+    stats = []
+    for g in gaps:
+        d, f = _split(RingField2D(gap=g), n)
+        stats.append((len(d) / n, len(f) / n))
+    for (d1, f1), (d2, f2) in zip(stats, stats[1:]):
+        r1, r2 = d1 + f1, d2 + f2
+        drop = max(0.0, f1 - f2)
+        assert r2 >= r1 - drop - 1e-12, (r1, r2, drop)
+        # and it is at least as strong as the old bound
+        assert drop <= f1 + 1e-12

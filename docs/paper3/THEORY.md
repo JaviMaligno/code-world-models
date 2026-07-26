@@ -393,7 +393,7 @@ for this paper and leave M1/M2 as measured regularities with the identity
 | Prop 9 (KEY ⇒ M1, simultaneous induction) | proved — but (KEY) is FALSE (91/91 CI-separated violations; freeze-rescue) |
 | Lemma 4 (first-divergence identity) | proved; numerically self-validated (0.00250 vs 0.00213) |
 | r_int(0) = 0 | theorem (Lemma 2); measured 0.0000 at n=4000 |
-| M1, M2 | THEOREMS up to an explicit defect (Thm T3-P, 2026-07-25): r_int(γ₂) ≥ r_int(γ₁) − f(γ₁) via Prop 7; certified slack 6.7e-4 vs effect 1.12e-2 (16.9×), exact where f = 0 (γ ≥ 3.2). Earlier routes to the UNCONDITIONAL statement remain closed with evidence (pathwise: seed 50543 — now explained as necessarily a funnel entry; pointwise: (KEY) refuted). Open: an a-priori bound on f |
+| M1, M2 | THEOREMS up to an explicit defect (Thm T3-P″, 2026-07-26): r_int(γ₂) ≥ r_int(γ₁) − [f(γ₁)−f(γ₂)]⁺ via Prop 7 — EXACTLY ZERO wherever f is nondecreasing (6/11 adjacent pairs); certified slack 6.7e-4 vs effect 1.12e-2 (16.9×), exact where f = 0 (γ ≥ 3.2). Earlier routes to the UNCONDITIONAL statement remain closed with evidence (pathwise: seed 50543 — now explained as necessarily a funnel entry; pointwise: (KEY) refuted). Open: an a-priori bound on f |
 | hidden-channel positivity | expected (steering witness deferred); grounds the two-grades remark |
 | n-dim / non-round / non-separating versions | RESEARCH-DIRECTION §8 program |
 
@@ -1414,18 +1414,40 @@ lateness at the lure. Measured arrival times: truth 33–36, blind 37–38,
 so the delay is **1–5 steps** — and a 1–5 step delay against a
 denominator of ≈ 40 is exactly the pc ≈ 0.02–0.1 the arm reports.
 
-**T2's remaining half, in its final form.** Bound the arrival delay. It
-decomposes further, and the pieces are individually concrete: π_B is
-executed in truth, so it freezes when it clips the band (the arm's
-blind contact rate is 1.0), and each freeze zeroes the velocity. The
-asymptotic distance deficit of one velocity reset is
-v_∞·dt/(1−β) = 33 units — enormous compared with the measured 1–5 step
-delay — so the reason the degeneracy is mild cannot be that freezes are
-cheap; it must be that they happen CLOSE TO THE TARGET, where the
-remaining travel no longer needs top speed. Bounding the delay therefore
-needs the geometry of *where* π_B's freezes occur relative to the lure,
-which is the last piece and is now a statement about one trajectory's
-contact locations rather than about occupation measures or homotopy.
+**A freeze-based account of the delay: also REFUTED, and replaced.** I
+next proposed that the delay is (number of π_B freezes) × (recovery cost
+per freeze), since one velocity reset carries an asymptotic distance
+deficit of v_∞·dt/(1−β) = 33 units. Measured: in the facing
+configuration **π_B freezes 0 times** — the blind trajectory never
+touches the band at all. So the delay is not a contact cost, and the
+third mechanism in this family dies with the first two.
+
+**What the delay actually is: the AIM POINT (2026-07-26).** The blind
+model has no wall, so π_B steers at the straight line to the lure. With
+the channel FACING, that line threads it — the aim is nearly right, the
+executed path never contacts, and the planner is merely a few steps
+sloppier than one that steers for the channel itself. Rotating the
+channel off the axis must then break it, and the break is not gradual:
+| channel offset | arrival, truth | arrival, blind | π_B freezes |
+|---|---|---|---|
+| 0.0 (facing) | 34–36 | 37–38 | **0** |
+| 0.4 | 39–41 / never | never (2/3) | **49–50** |
+| 0.8 | never | never | **48–50** |
+So the aligned-channel degeneracy is a knife edge: 0.4 rad of rotation
+turns "arrives 1–4 steps late, never touching the mode" into "hammers
+the wall fifty times and never arrives". (This also reconciles the arm's
+blind contact rate of 1.0, which is measured in a non-facing setting.)
+
+**T2's remaining half, in its final form.** Because the executed blind
+path is contact-free in the facing case, the two models AGREE along it —
+so the realized return equals what the blind model predicted for that
+path, and π_B's whole loss is candidate MIS-RANKING: it prefers
+candidates whose imagined paths cross the band and therefore score too
+high. The delay is thus a ranking error accumulated over dirty steps,
+with no execution error at all. Bounding it means bounding how much a
+mis-ranked first action can cost when the realized dynamics are exactly
+as modelled — the cleanest form this target has taken, and the first one
+not refuted by its own measurement.
 
 ## T4 — the explicit continuity modulus, RESOLVED (2026-07-25)
 
@@ -1606,6 +1628,30 @@ needs BOTH a wall to freeze against and a channel to thread, so it dies
 when either disappears. By T3-P(c), M1 holds EXACTLY (defect provably
 zero if f = 0) throughout the saturated region γ ≥ 3.2, where the
 measurement is 0/50 000.
+
+**Theorem T3-P″ (the defect is the DROP in f, not f — 2026-07-26).**
+The derivation of T3-P discards a positive term. Restoring it:
+  r_int(γ₂) = d(γ₂) + f(γ₂) ≥ d(γ₁) + f(γ₂) = r_int(γ₁) − f(γ₁) + f(γ₂),
+so for γ₁ < γ₂
+  **r_int(γ₂) ≥ r_int(γ₁) − [f(γ₁) − f(γ₂)]⁺** ,
+strictly stronger than T3-P at no cost, and with a qualitative
+consequence: **wherever f is nondecreasing the defect is EXACTLY ZERO**
+and M1 holds outright, with no bound on f needed at all. Only a DROP in
+the funnel mass can break monotonicity.
+*Measured on the grid* (adjacent pairs): the defect is exactly 0 in
+**6 of 11** pairs — every pair on which f rises, i.e. the whole range
+γ ≤ 0.9 where T3-P′ is vacuous and where the old statement was weakest.
+On the remaining pairs the worst defect falls from 4.4·10⁻⁴ to
+**2.4·10⁻⁴**, so the separation against the effect size 0.0112 improves
+from 25.5× to **46.8×**. The two earlier bounds are subsumed: T3-P′
+(f ≤ r) still covers the wall-free end by proof, and the drop form
+covers the small-γ end by making the defect vanish identically.
+*What this changes about the target.* The open problem is no longer "a
+bound on f" but "a bound on how fast f can DECREASE" — and f's decrease
+is confined to γ ≳ 0.9, exactly where T3-P′ already proves the defect
+≤ r(γ) → 0. So the two halves now overlap rather than leaving a gap; a
+uniform statement would follow from f's unimodality, which is measured
+(f rises to a peak at γ ∈ [0.6, 0.9] and falls to 0) but not proved.
 
 **Corollary T3-P′ (the defect has an A-PRIORI bound too).** A funnel
 entry lands in A(γ) at least once before entering, so
