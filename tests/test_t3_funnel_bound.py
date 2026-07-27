@@ -165,3 +165,62 @@ def test_t3_velocity_is_gamma_independent_in_the_variant():
             seq.append((vx2, vy2))
         vels.append(seq)
     assert vels[0] == vels[1] == vels[2]      # bitwise, across gaps
+
+
+def test_t3_running_min_invariant_up_to_entry():
+    # The correct invariant: min_{s<=t} d2 <= min_{s<=t} d1 for every t up
+    # to the gamma1 copy's FIRST ENTRY. It implies pathwise M1 in one line,
+    # and unlike the unconditional version it is not violated.
+    from cwm.continuous.envs import integrate_2d
+    for g1, g2 in ((0.2, 0.6), (1.2, 2.4)):
+        e1, e2 = RingField2D(gap=g1), RingField2D(gap=g2)
+        cx, cy = e1.center
+        entries = 0
+        for i in range(2500):
+            r1 = random.Random(50_000 + i)
+            r2 = random.Random(50_000 + i)
+            s1, s2 = e1.initial_state(r1), e2.initial_state(r2)
+            m1 = m2 = float("inf")
+            for _ in range(e1.h_episode):
+                a = r1.uniform(-e1.a_max, e1.a_max)
+                r2.uniform(-e2.a_max, e2.a_max)
+                x1, y1, vx1, vy1 = integrate_2d(s1, a, e1.dt, e1.gain,
+                                                e1.drag, e1.a_max)
+                x2, y2, vx2, vy2 = integrate_2d(s2, a, e2.dt, e2.gain,
+                                                e2.drag, e2.a_max)
+                s1 = ((s1[0], s1[1], vx1, vy1) if e1._in_mode(x1, y1)
+                      else (x1, y1, vx1, vy1))
+                s2 = ((s2[0], s2[1], vx2, vy2) if e2._in_mode(x2, y2)
+                      else (x2, y2, vx2, vy2))
+                m1 = min(m1, math.hypot(s1[0] - cx, s1[1] - cy))
+                m2 = min(m2, math.hypot(s2[0] - cx, s2[1] - cy))
+                assert m2 <= m1 + 1e-12, (g1, g2, i, m1, m2)
+                if e1.in_interior(s1[0], s1[1]):
+                    entries += 1
+                    break            # the invariant is only needed up to here
+        assert entries > 0, "the condition must be exercised"
+
+
+def test_t3_drag_caps_identical_action_divergence():
+    # The provable half of L_v, and the reason it transfers: with identical
+    # actions the affine plant gives ||dx_t|| <= ||dx_0|| + ||dv_0||/drag
+    # for ALL t -- bounded, not exponential.
+    from cwm.continuous.envs import integrate_2d
+    env = RingField2D()
+    dx0, dv0 = 0.06, 0.6
+    cap = dx0 + dv0 / env.drag
+    rng = random.Random(7)
+    worst = 0.0
+    for _ in range(60):
+        s1 = (rng.uniform(-2, 14), rng.uniform(-6, 6),
+              rng.uniform(-9, 9), rng.uniform(-9, 9))
+        th, th2 = rng.uniform(-math.pi, math.pi), rng.uniform(-math.pi, math.pi)
+        s2 = (s1[0] + dx0 * math.cos(th), s1[1] + dx0 * math.sin(th),
+              s1[2] + dv0 * math.cos(th2), s1[3] + dv0 * math.sin(th2))
+        for _ in range(150):
+            a = rng.uniform(-1, 1)
+            s1 = integrate_2d(s1, a, env.dt, env.gain, env.drag, env.a_max)
+            s2 = integrate_2d(s2, a, env.dt, env.gain, env.drag, env.a_max)
+            worst = max(worst, math.hypot(s1[0] - s2[0], s1[1] - s2[1]))
+    assert worst <= cap + 1e-9, (worst, cap)
+    assert worst > 0.8 * cap, "the cap must be nearly attained"

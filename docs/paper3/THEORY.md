@@ -1558,13 +1558,43 @@ cost that is not vacuous. Note it conditions on the planner exactly as
 Prop T2-D requires: L_v is a property of the MPC policy's averaged value
 function, not of the models.
 
+**Can L_v be proved? Half of it can (2026-07-27).**
+*Provable half — the drag makes divergence bounded, not exponential.*
+With IDENTICAL actions the plant is affine, so δv_t = β^t δv₀ and
+δx_t = δx₀ + dt·Σ_{k≤t} δv_k, giving for all t
+  **‖δx_t‖ ≤ ‖δx₀‖ + ‖δv₀‖·dt/(1−β) = ‖δx₀‖ + ‖δv₀‖/drag**,
+i.e. 0.06 + 0.6/0.3 = **2.06** at the instrument's values — bounded
+forever, and without drag it would grow without bound. Verified against
+the integrator over 400 random states × 200 steps: worst observed
+1.9956 against the cap 2.0600, tight to 3%. This is the structural
+reason W̄ can be Lipschitz at all.
+*The other half is NOT anti-concentration, as I first assumed.* The
+natural completion would be that the argmax rarely switches under a
+small perturbation. Measured, it switches often: an ε = 0.05 velocity
+perturbation already flips the argmax for **10%** of candidate draws,
+rising to 66% at ε = 0.8, with no clean C·ε scaling. So the smoothing
+does not come from switches being rare.
+*Where it does come from.* At a switch the two candidates are TIED in
+imagined value, so the loss from switching is not the value gap but the
+divergence it creates — two states 0.6 apart in velocity, whose future
+value difference is again ≤ L_v·0.6. That yields a self-consistent
+bound
+  L_v·δ ≤ A·δ + p(δ)·L_v·(2·gain·dt),
+with A the identical-actions constant (which the drag cap controls),
+closing whenever p(δ)·2·gain·dt < 1 — measured p ≈ 0.5 at δ = 0.6, so
+p·0.6 ≈ 0.3 < 1 and the fixed point exists. That is the shape of a
+proof of L_v; what remains unproved is A, which needs the reward's
+saturation along the trajectory rather than its global Lipschitz
+constant.
+
 **T2 status.** The original question — bound play_cost from the model's
 own disagreement — is answered NEGATIVELY and provably (T2-D). The
-replacement question — bound it from the planner-averaged value — is
-answered with a non-vacuous estimate whose structure is proved (the
-reduction via Lemma S, with tight caps) and whose single constant L_v is
-measured rather than proved. That constant is what a fully proved bound
-still needs.
+replacement — bound it from the planner-averaged value — has a proved
+reduction (Lemma S, tight caps), a proved divergence cap (the drag
+lemma), an identified reason for smoothness (ties, not rarity, with a
+fixed point that closes numerically), and one constant, A, still
+measured. The bound it yields, pc ≲ 0.18 against 0.02–0.10, is the
+first non-vacuous one.
 
 So T2 stands at: an exact decomposition (the hybrid identity = PDL), a
 validated mechanism (delay/arrival, R² = 0.93), and a proved per-step
@@ -1842,12 +1872,28 @@ at least one violation among those that diverge:
 | (d) path length L₂ ≥ L₁ | 6 | 4 | 1 |
 (divergence occurs in 126 / 119 / 71 pairs.)
 The RUNNING MINIMUM is the right shape — it is exactly what decides
-entry, it is strictly weaker than the pointwise distance ordering, and
-it survives both narrow pairs outright. It is not yet an invariant: two
-pairs violate it at the widest gap pair, where the accumulated offset
-dt·Σv can carry the γ₂ copy outward for a stretch. Those two cases are
-the object to understand; note that violating (b) does not by itself
-violate M1, since neither copy need enter.
+entry, and it is strictly weaker than the pointwise ordering. The two
+violations at the widest pair are explained by the last remark: the
+invariant only has to hold UP TO the γ₁ copy's entry time, since that is
+when it is used.
+
+**The invariant, in its correct form.** For γ₁ < γ₂ in the
+velocity-preserving variant, under CRN:
+  **min_{s ≤ t} d(x²_s) ≤ min_{s ≤ t} d(x¹_s) for every t ≤ τ₁**,
+where τ₁ is the γ₁ copy's first entry time. This implies pathwise M1 in
+one line: if the γ₁ copy enters at τ₁ then min d¹ < r_in there, hence
+min d² < r_in, hence the γ₂ copy has entered by τ₁ as well. ∎
+*Measured*: **0 violations in 24 000 CRN pairs** across all three
+adjacent gap pairs (163 of which have the γ₁ copy entering, so the
+condition is non-vacuously exercised) — against 2 violations for the
+unconditional version and 2/6/13 for the pointwise ordering. The
+conditioning on τ₁ is what makes it exact.
+
+So T3's variant target now has a sharply stated invariant that implies
+it, verified at 0/24 000. What is missing is a proof that the invariant
+is preserved — an induction over the shared velocity process, which is
+the object the γ-independence of that process was identified to
+support.
 
 *What survives.* Pathwise M1 in the variant held in **0** of those same
 18 000 pairs (on top of the earlier 140 000), so the statement itself is
