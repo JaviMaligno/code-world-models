@@ -1523,11 +1523,48 @@ planner) PAIR — consistent with the paper's own theme that danger
 requires a competent planner and that competence is an interface
 property, not a model property.
 
-**T2 status: closed as far as the question posed admits.** The original
-target (bound play_cost from the model's own disagreement) is answered
-NEGATIVELY and provably. What survives is the exact decomposition, the
-validated delay mechanism, the full-scope clean-step chain, and a
-precise statement of what a tight bound would have to condition on.
+**The direction T2-D leaves open, carried out (2026-07-27).** Prop T2-D
+says a tight bound must condition on the planner. Do that: let W̄ be the
+π_T value AVERAGED over the planner's candidate draws. Then, exactly,
+  **E[A_t | s_t, C_t] = Δr + W̄(f(s_t, τ)) − W̄(f(s_t, b))** ,
+a difference of one function at two states that differ by ONE action
+choice. Lemma S caps that difference with no further assumptions: both
+landings lie on the same circle of radius R_L = gain·dt² about the same
+drift centre, and both velocities on a circle of radius gain·dt, so
+  ‖Δposition‖ ≤ 2·gain·dt² = 0.060,  ‖Δvelocity‖ ≤ 2·gain·dt = 0.600.
+*Measured, and the caps are tight*: max ‖Δpos‖ = 0.0590, max ‖Δvel‖ =
+0.5903 over the dirty steps of three episodes. So
+  |E[A_t | s_t, C_t]| ≤ L_p·0.060 + L_v·0.600 + |Δr|,
+and everything reduces to the Lipschitz behaviour of the SEED-AVERAGED
+value — which, unlike the MPC policy itself, is smoothed by averaging
+over candidate draws.
+
+*Measuring L_v needs care.* At K = 10 seeds the estimator's standard
+error (≈ 0.38) exceeds the signal, and the ratios it produces are noise
+— an apparent L_v = 12.7 at the smallest perturbation. With K = 100 and
+CRN pairing:
+  smallest perturbation (‖Δv‖ = 0.029): E[A|s,C] = **−0.015 ± 0.078**,
+    i.e. statistically zero — the apparent blow-up was noise;
+  largest  perturbation (‖Δv‖ = 0.590): E[A|s,C] = **+0.462 ± 0.078**,
+    ratio **0.78 ± 0.13**.
+Consistent with Lipschitz scaling, at L_v ≈ 0.8.
+
+**A non-vacuous play-cost bound, at last.** Combining,
+  pc ≲ D̄ · (L_v·2·gain·dt + L_p·2·gain·dt² + Δr_max) / (J_T − J_rand),
+and at the instrument's values (D̄ ≈ 15 dirty steps, L_v ≈ 0.8,
+denominator ≈ 40) this gives **pc ≲ 0.18** against a measured
+0.02–0.10 — loose by a factor 2–9, but the FIRST bound for this play
+cost that is not vacuous. Note it conditions on the planner exactly as
+Prop T2-D requires: L_v is a property of the MPC policy's averaged value
+function, not of the models.
+
+**T2 status.** The original question — bound play_cost from the model's
+own disagreement — is answered NEGATIVELY and provably (T2-D). The
+replacement question — bound it from the planner-averaged value — is
+answered with a non-vacuous estimate whose structure is proved (the
+reduction via Lemma S, with tight caps) and whose single constant L_v is
+measured rather than proved. That constant is what a fully proved bound
+still needs.
 
 So T2 stands at: an exact decomposition (the hybrid identity = PDL), a
 validated mechanism (delay/arrival, R² = 0.93), and a proved per-step
@@ -1794,14 +1831,23 @@ evolving under a shared velocity process — a far more tractable object
 than two states with different velocities, which is what the reset
 creates. That is the handle, and it exists only in the variant.
 
-*The natural invariant for the induction is REFUTED (2026-07-27).* The
-obvious way to prove the variant statement is to show the γ₂ copy stays
-no farther from the centre than the γ₁ copy after divergence, and induct.
-Measured over 18 000 CRN pairs at three adjacent gap pairs: divergence
-occurs in 106 / 94 / 53 pairs, and of those **2 / 5 / 10 have
-d₂ > d₁ at some step**. So the distance ordering is not an invariant —
-the accumulated offset dt·Σv can point outward — and that induction
-cannot work.
+*Four candidate invariants, and the one that nearly works
+(2026-07-27).* Over 24 000 CRN pairs per gap pair, counting pairs with
+at least one violation among those that diverge:
+| candidate invariant | 0.2→0.6 | 0.6→1.2 | 1.2→2.4 |
+|---|---|---|---|
+| (a) current distance d₂ ≤ d₁ | 2 | 6 | 13 |
+| (b) **running minimum** min d₂ ≤ min d₁ | **0** | **0** | **2** |
+| (c) free-step count |free₂| ≥ |free₁| | 5 | 5 | 1 |
+| (d) path length L₂ ≥ L₁ | 6 | 4 | 1 |
+(divergence occurs in 126 / 119 / 71 pairs.)
+The RUNNING MINIMUM is the right shape — it is exactly what decides
+entry, it is strictly weaker than the pointwise distance ordering, and
+it survives both narrow pairs outright. It is not yet an invariant: two
+pairs violate it at the widest gap pair, where the accumulated offset
+dt·Σv can carry the γ₂ copy outward for a stretch. Those two cases are
+the object to understand; note that violating (b) does not by itself
+violate M1, since neither copy need enter.
 
 *What survives.* Pathwise M1 in the variant held in **0** of those same
 18 000 pairs (on top of the earlier 140 000), so the statement itself is

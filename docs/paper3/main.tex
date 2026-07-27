@@ -1663,6 +1663,24 @@ play-cost a property of the model--planner pair rather than of the model
 alone --- the same lesson the action-interface note draws from the other
 direction.
 
+Conditioning that way does yield a bound. Averaging the truth policy's
+value over the planner's draws gives, exactly, $E[A_t \mid s_t, C_t] =
+\Delta r + \bar W(f(s_t,\tau)) - \bar W(f(s_t,b))$, a difference of one
+function at two states separated by a single action choice --- and
+Proposition~\ref{prop:continuity}'s landing law caps that separation
+with no further assumptions, at $2\,\mathrm{gain}\,dt^2 = 0.06$ in
+position and $2\,\mathrm{gain}\,dt = 0.6$ in velocity (measured maxima
+$0.059$ and $0.590$: the caps are tight). Everything then rests on how
+smooth the \emph{seed-averaged} value is, which unlike the MPC policy
+itself is smoothed by the averaging. Estimating it needs care --- at ten
+seeds the estimator noise exceeds the signal and manufactures an
+apparent blow-up --- but at a hundred CRN-paired seeds the smallest
+perturbation gives $-0.015 \pm 0.078$, statistically zero, and the
+largest gives $+0.462 \pm 0.078$, a ratio of $0.78 \pm 0.13$. Combining
+yields $\mathrm{pc} \lesssim 0.18$ against a measured $0.02$--$0.10$:
+loose by a factor of a few, but the first bound for this play-cost that
+is not vacuous.
+
 \paragraph{The honest math ledger.} The two $\gamma$-curve regularities
 (monotonicity of $r_{\mathrm{int}}$, and that the wall never helps net
 entry) are theorems only \emph{up to the funnel defect}

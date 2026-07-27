@@ -222,3 +222,29 @@ def test_t2d_imagination_data_does_not_determine_A():
         vals.append((r_t + roll(s_t, 7000 + fut))
                     - (r_b + roll(s_b, 7000 + fut)))
     assert max(vals) - min(vals) > 0.5, vals   # A_t genuinely varies
+
+
+def test_t2_lemma_s_caps_the_one_action_perturbation():
+    # The reduction behind the non-vacuous bound: by Lemma S the two
+    # post-step states of a dirty step differ by at most 2*gain*dt^2 in
+    # position and 2*gain*dt in velocity, whatever the two actions are.
+    truth = RingField2D(gap=0.6, gap_center=math.pi, x0_center=(0.0, 0.0))
+    cap_p = 2 * truth.gain * truth.dt ** 2
+    cap_v = 2 * truth.gain * truth.dt
+    rng = random.Random(41)
+    seen_large = False
+    for _ in range(300):
+        s = (rng.uniform(-2, 14), rng.uniform(-6, 6),
+             rng.uniform(-10, 10), rng.uniform(-10, 10))
+        a1 = rng.uniform(-truth.a_max, truth.a_max)
+        a2 = rng.uniform(-truth.a_max, truth.a_max)
+        s1, _, c1 = truth.step(s, a1)
+        s2, _, c2 = truth.step(s, a2)
+        if c1 or c2:
+            continue                     # freezes are a different branch
+        dp = math.hypot(s1[0] - s2[0], s1[1] - s2[1])
+        dv = math.hypot(s1[2] - s2[2], s1[3] - s2[3])
+        assert dp <= cap_p + 1e-12, (dp, cap_p)
+        assert dv <= cap_v + 1e-12, (dv, cap_v)
+        seen_large = seen_large or dv > 0.5 * cap_v
+    assert seen_large, "the caps must be exercised near their value"
