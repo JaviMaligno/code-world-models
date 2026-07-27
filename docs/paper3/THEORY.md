@@ -1583,9 +1583,23 @@ bound
 with A the identical-actions constant (which the drag cap controls),
 closing whenever p(δ)·2·gain·dt < 1 — measured p ≈ 0.5 at δ = 0.6, so
 p·0.6 ≈ 0.3 < 1 and the fixed point exists. That is the shape of a
-proof of L_v; what remains unproved is A, which needs the reward's
-saturation along the trajectory rather than its global Lipschitz
-constant.
+proof of L_v; what remains unproved is A.
+
+*Why A resists, precisely.* Under identical actions the drag lemma caps
+the separation at 2.06 for all time, so the crude bound is
+A ≤ h·Lip(r)·2.06 = 80 × 0.65 × 2.06 = **107** — against a measured
+|ΔW̄| of 0.46, a factor 230. The looseness is entirely the assumption
+that every step pays Lip(r): the reward is a pair of sigmoids that
+SATURATE, so two trajectories 2.06 apart differ in reward only while one
+is inside the transition shell (width w = 0.5) and the other is not.
+Charging only those steps gives A·δ ≤ amp_total × (arrival-time offset)
+≤ 1.3 × 2.06 = **2.7**, within a factor 6 of the measurement. But that
+step needs both trajectories to REACH the basin and stay — a
+reachability property of π_T, not of the plant — and reachability of the
+lure under the truth planner is exactly what the instrument assumes
+rather than proves (it is the (RG)/(C) competence hypothesis of Prop 4
+in another guise). So A is bounded by a proved 107 and, under the
+competence hypothesis already used elsewhere in the paper, by 2.7.
 
 **T2 status.** The original question — bound play_cost from the model's
 own disagreement — is answered NEGATIVELY and provably (T2-D). The
@@ -1877,23 +1891,40 @@ violations at the widest pair are explained by the last remark: the
 invariant only has to hold UP TO the γ₁ copy's entry time, since that is
 when it is used.
 
-**The invariant, in its correct form.** For γ₁ < γ₂ in the
-velocity-preserving variant, under CRN:
-  **min_{s ≤ t} d(x²_s) ≤ min_{s ≤ t} d(x¹_s) for every t ≤ τ₁**,
-where τ₁ is the γ₁ copy's first entry time. This implies pathwise M1 in
-one line: if the γ₁ copy enters at τ₁ then min d¹ < r_in there, hence
-min d² < r_in, hence the γ₂ copy has entered by τ₁ as well. ∎
-*Measured*: **0 violations in 24 000 CRN pairs** across all three
-adjacent gap pairs (163 of which have the γ₁ copy entering, so the
-condition is non-vacuously exercised) — against 2 violations for the
-unconditional version and 2/6/13 for the pointwise ordering. The
-conditioning on τ₁ is what makes it exact.
+**The conditional invariant, and its REFUTATION by adversarial search
+(2026-07-27).** The candidate was: for γ₁ < γ₂ in the velocity-preserving
+variant, under CRN,
+  min_{s ≤ t} d(x²_s) ≤ min_{s ≤ t} d(x¹_s) for every t ≤ τ₁,
+τ₁ the γ₁ copy's first entry time. It would imply pathwise M1 in one
+line (copy 1 entering means min d¹ < r_in at τ₁, hence min d² < r_in,
+hence copy 2 entered by then). It survived 24 000 CRN pairs at ADJACENT
+gap pairs — and adjacency was the flaw in that test. Searching the
+widest separations instead (γ₁ ∈ {0.1, 0.3, 0.6, 1.2, 2.4} against
+γ₂ = 2π, 15 000 pairs each) finds **2 violations in 90 000 pairs**, at
+γ₁ = 0.3 and 0.6. Wilson 95% upper bound on the violation rate
+8.1 × 10⁻⁵, unit = CRN pair. So the conditional invariant is refuted
+too, and the earlier zero was an artifact of sampling only small
+divergences.
 
-So T3's variant target now has a sharply stated invariant that implies
-it, verified at 0/24 000. What is missing is a proof that the invariant
-is preserved — an induction over the shared velocity process, which is
-the object the γ-independence of that process was identified to
-support.
+**What the target itself does, under the same adversarial search.**
+Pathwise M1 in the variant is *sufficient-condition-free*: the invariant
+was only a route to it. Checked directly at the same wide separations —
+and note the unit, which is **not** the rollout count: only a pair in
+which the γ₁ copy enters can falsify M1, so the unit is the ENTERING
+PAIR. Over 75 000 CRN pairs, 517 have the γ₁ copy entering, and
+  **0 of those 517 fail pathwise M1** —
+evidence label *measured*, unit entering pair, n = 517, Wilson 95% upper
+bound on the failure rate **7.4 × 10⁻³**
+(`scripts/` runs recorded in this section). That interval, not the zero,
+is the content: 517 entering pairs cannot support a claim below about
+one in a hundred, which is far weaker than the raw 0/75 000 suggests.
+
+Status of T3's variant route: the statement survives adversarial search
+at the sample its unit affords, and both candidate invariants for
+proving it (pointwise ordering, running minimum) are refuted. No route
+to a proof is currently open, and the honest reading is that 517 units
+is thin evidence for a pathwise claim — the next step is more entering
+pairs, not another invariant.
 
 *What survives.* Pathwise M1 in the variant held in **0** of those same
 18 000 pairs (on top of the earlier 140 000), so the statement itself is
