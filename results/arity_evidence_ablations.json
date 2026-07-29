@@ -925,14 +925,14 @@
           "file": "continuous_synthesis_patch2d_large_k3_7_pv-landing_it15.json",
           "model": "gpt-5.4",
           "n_full": 0,
-          "n_incomplete": 2,
+          "n_incomplete": 20,
           "full_gate_passed": 0,
           "full_zero_iterations": 0,
           "full_mode_encoded": 0,
-          "n_mode_containing": 2,
+          "n_mode_containing": 20,
           "k_repaired_gate_and_probe": 0,
           "k_repaired_behavioural": 0,
-          "best_iou": 0.0321
+          "best_iou": 0.0958
         }
       },
       "artifacts": [
@@ -1375,6 +1375,366 @@
           "integrator_exact": true,
           "repaired_gate_and_probe": false,
           "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 30000,
+          "block": 3,
+          "gate_accuracy": 0.9996875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 40000,
+          "block": 4,
+          "gate_accuracy": 0.98625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0189,
+          "missed_frac": 0.9808,
+          "excess_cells": 3,
+          "cover_p1": 0.025,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 50000,
+          "block": 5,
+          "gate_accuracy": 0.993125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "point",
+          "iou_truth": 0.0651,
+          "missed_frac": 0.9295,
+          "excess_cells": 13,
+          "cover_p1": 0.063,
+          "cover_p2": 0.08,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 60000,
+          "block": 6,
+          "gate_accuracy": 0.9840625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "square-form",
+          "iou_truth": 0.0958,
+          "missed_frac": 0.8974,
+          "excess_cells": 11,
+          "cover_p1": 0.203,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 70000,
+          "block": 7,
+          "gate_accuracy": 0.995,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0255,
+          "missed_frac": 0.9744,
+          "excess_cells": 1,
+          "cover_p1": 0.063,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 80000,
+          "block": 8,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 11,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0449,
+          "missed_frac": 0.9551,
+          "excess_cells": 0,
+          "cover_p1": 0.089,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 90000,
+          "block": 9,
+          "gate_accuracy": 0.996875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 100000,
+          "block": 10,
+          "gate_accuracy": 0.9965625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 110000,
+          "block": 11,
+          "gate_accuracy": 0.9996875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 120000,
+          "block": 12,
+          "gate_accuracy": 0.99125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "point",
+          "iou_truth": 0.0127,
+          "missed_frac": 0.9872,
+          "excess_cells": 1,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 130000,
+          "block": 13,
+          "gate_accuracy": 0.99125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "point",
+          "iou_truth": 0.0064,
+          "missed_frac": 0.9936,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.013,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 140000,
+          "block": 14,
+          "gate_accuracy": 0.9940625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "vdep",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 150000,
+          "block": 15,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 9,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0064,
+          "missed_frac": 0.9936,
+          "excess_cells": 0,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 160000,
+          "block": 16,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 8,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 170000,
+          "block": 17,
+          "gate_accuracy": 0.9953125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 180000,
+          "block": 18,
+          "gate_accuracy": 0.9978125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0064,
+          "missed_frac": 0.9936,
+          "excess_cells": 1,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 190000,
+          "block": 19,
+          "gate_accuracy": 0.98625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0127,
+          "missed_frac": 0.9872,
+          "excess_cells": 2,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 200000,
+          "block": 20,
+          "gate_accuracy": 0.9965625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0128,
+          "missed_frac": 0.9872,
+          "excess_cells": 0,
+          "cover_p1": 0.025,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
         }
       ],
       "env": {
@@ -1401,7 +1761,7 @@
         "seed_offset": 0
       },
       "pooled": {
-        "n_draws": 22,
+        "n_draws": 40,
         "n_distinct_blocks": 20,
         "k_repaired_gate_and_probe": 0,
         "k_repaired_behavioural": 0,
@@ -1411,10 +1771,10 @@
         "best_iou": 0.1471,
         "class_counts": {
           "bounded-other": 2,
-          "point": 10,
-          "blind-textual-patch": 5,
-          "vdep": 1,
-          "square-form": 2,
+          "point": 20,
+          "blind-textual-patch": 11,
+          "vdep": 2,
+          "square-form": 3,
           "disc-form": 2
         }
       }

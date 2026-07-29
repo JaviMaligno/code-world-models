@@ -647,3 +647,27 @@ abandoned. This round the attempt succeeded more often than not.
    repair); the honest figure is 0.708, or 0.772 for the weaker estimand. *Route:* fresh
    seed blocks via `--seed-offset` on the cart's `x_wall = 4` cell, where both exceptions
    live. Cost: one small Azure run.
+
+## 2026-07-29, second pass — what the two ablations settled and what they left
+
+**Settled.** Four candidate causes of the 2D collapse are measured negatives: boundary
+curvature, prompting and budget, the predicate's trigger arity, and identification of the
+variable the trigger reads. The obstruction is in the evidence, and part of it is now a
+theorem (`prop:entryclass`).
+
+**The one experiment that would settle the mechanism.** Every instrument in this paper
+freezes the mover at its *previous* position, which is exactly what keeps the region's
+interior unvisited. An instrument whose mode instead *clamps to the boundary* — as the
+cart's wall does, and the cart is repaired 33/33 — would let a rollout occupy the boundary
+itself, so `prop:entryclass`'s premise fails and the interior becomes witnessable. If
+repair returns there, the mechanism is the censoring and not the synthesizer; if it does
+not, the template prior survives as a mechanism rather than a description. Cost: one CPU
+calibration to match rarity and preserve the exploitation geometry, then one 20-seed × 2-size
+Azure campaign. This is the single highest-value experiment left in the paper.
+
+**A weakening that is now load-bearing and should be watched.** The repair criterion changed
+from the mode probe to the probe *plus* a behavioural exactness check, and that moved the 1D
+headline from 109/111 to 105/111 and the block-level aggregate from 34/36 to 30/36
+[0.672, 0.936]. The probe is still what the pipeline computes online; the exactness check is
+an offline audit. Any future campaign must run both, or it will report repairs it does not
+have — 19 of 20 on the slab, in the case that exposed this.

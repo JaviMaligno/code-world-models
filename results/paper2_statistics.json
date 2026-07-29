@@ -29,7 +29,7 @@
     "draw_level": "computed only as the labelled invalid-if-pooled comparator whenever blocks are shared; pooled_bound(unit='draw') raises otherwise."
   },
   "totals": {
-    "n_draws": 742,
+    "n_draws": 757,
     "n_distinct_blocks": 40,
     "n_treatments": 24,
     "files": [
@@ -1121,38 +1121,54 @@
       "file": [
         "continuous_synthesis_patch2d_large_k3_7_pv-landing_it15.json"
       ],
-      "n_blocks": 5,
-      "n_draws": 5,
+      "n_blocks": 20,
+      "n_draws": 20,
       "blocks": [
         1,
         2,
         3,
         4,
-        5
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
       ],
       "branch_counts": {
         "mode_absent": 0,
-        "mode_present": 5,
+        "mode_present": 20,
         "per_mode_seen": {
-          "patch1_seen": 5,
-          "patch2_seen": 2
+          "patch1_seen": 20,
+          "patch2_seen": 5
         },
         "see_none": 0,
-        "see_one": 3,
-        "see_both": 2
+        "see_one": 15,
+        "see_both": 5
       },
       "outcome_counts": {
-        "partial_repair": 1,
-        "rejected_stalled": 4
+        "blind_and_exploited": 2,
+        "partial_repair": 2,
+        "rejected_stalled": 16
       },
       "repair_bound_block_level": {
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
         "k": 0,
-        "n": 5,
-        "n_draws": 5,
-        "n_distinct_blocks": 5,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
         "n_shared_blocks": 0,
         "max_draws_per_block": 1,
         "n_treatments_pooled": 1,
@@ -1162,11 +1178,11 @@
         "point": 0.0,
         "clopper_pearson_95": [
           0.0,
-          0.5218237501049815
+          0.16843347098308536
         ],
         "wilson_95": [
           0.0,
-          0.43449149475208104
+          0.16113012549493322
         ],
         "valid_for_paper": true,
         "homogeneity_assumed_across_treatments": false,
@@ -3320,7 +3336,7 @@
     "patch2d_repair_negative": {
       "paper_text": "0/156 mode-containing seeds on PatchField2D",
       "what_is_pooled": "two model sizes (mini, large) x the two disc knobs k=(3,7) and k=(5,9) x the zero-curvature square ablation x the region-guided 3x-budget treatment",
-      "n_draws": 221,
+      "n_draws": 236,
       "n_distinct_blocks": 20,
       "draws_per_block": {
         "1": 12,
@@ -3328,21 +3344,21 @@
         "3": 12,
         "4": 12,
         "5": 12,
-        "6": 11,
-        "7": 11,
-        "8": 9,
-        "9": 9,
-        "10": 11,
-        "11": 11,
-        "12": 11,
-        "13": 11,
-        "14": 11,
-        "15": 11,
-        "16": 11,
-        "17": 11,
-        "18": 11,
-        "19": 11,
-        "20": 11
+        "6": 12,
+        "7": 12,
+        "8": 10,
+        "9": 10,
+        "10": 12,
+        "11": 12,
+        "12": 12,
+        "13": 12,
+        "14": 12,
+        "15": 12,
+        "16": 12,
+        "17": 12,
+        "18": 12,
+        "19": 12,
+        "20": 12
       },
       "HONEST_block_level": {
         "unit": "block",
@@ -3350,7 +3366,7 @@
         "block_scoring": "all",
         "k": 0,
         "n": 20,
-        "n_draws": 221,
+        "n_draws": 236,
         "n_distinct_blocks": 20,
         "n_shared_blocks": 20,
         "max_draws_per_block": 12,
@@ -3381,8 +3397,8 @@
         "cluster_key": "by_block",
         "block_scoring": null,
         "k": 0,
-        "n": 221,
-        "n_draws": 221,
+        "n": 236,
+        "n_draws": 236,
         "n_distinct_blocks": 20,
         "n_shared_blocks": 20,
         "max_draws_per_block": 12,
@@ -3398,11 +3414,11 @@
         "point": 0.0,
         "clopper_pearson_95": [
           0.0,
-          0.0165532266445656
+          0.015509317501757436
         ],
         "wilson_95": [
-          1.734723475976807e-18,
-          0.01708580618533225
+          0.0,
+          0.016017238043775556
         ],
         "valid_for_paper": false,
         "homogeneity_assumed_across_treatments": true,
@@ -3531,7 +3547,7 @@
           }
         }
       ],
-      "honest_over_naive_upper_bound_ratio": 10.175265197518565,
+      "honest_over_naive_upper_bound_ratio": 10.860147196290189,
       "heterogeneity_across_campaigns": {
         "block_level_counts": {
           "disc k=(3,7)": {
@@ -3716,7 +3732,7 @@
       "note": "this arm closes the single-family confound, and adds draws, but adds NO new gate samples: its three seeds are blocks the GPT-5.x campaigns already used, so the distinct-block count behind the 2D negative result stays at 20"
     },
     "patch2d_repair_negative_with_claude": {
-      "n_draws": 224,
+      "n_draws": 239,
       "n_distinct_blocks": 20,
       "HONEST_block_level": {
         "unit": "block",
@@ -3724,7 +3740,7 @@
         "block_scoring": "all",
         "k": 0,
         "n": 20,
-        "n_draws": 224,
+        "n_draws": 239,
         "n_distinct_blocks": 20,
         "n_shared_blocks": 20,
         "max_draws_per_block": 13,
@@ -3755,8 +3771,8 @@
         "cluster_key": "by_block",
         "block_scoring": null,
         "k": 0,
-        "n": 224,
-        "n_draws": 224,
+        "n": 239,
+        "n_draws": 239,
         "n_distinct_blocks": 20,
         "n_shared_blocks": 20,
         "max_draws_per_block": 13,
@@ -3773,11 +3789,11 @@
         "point": 0.0,
         "clopper_pearson_95": [
           0.0,
-          0.01633335216210563
+          0.015316138449904648
         ],
         "wilson_95": [
           0.0,
-          0.01686083665142801
+          0.015819365380560824
         ],
         "valid_for_paper": false,
         "homogeneity_assumed_across_treatments": true,
@@ -4668,12 +4684,12 @@
     {
       "key": "censored_zeros.patch2d_pooled_0_of_156",
       "paper_text": "0/156 mode-containing seeds recover the 2D region",
-      "n_draws": 221,
+      "n_draws": 236,
       "n_distinct_blocks": 20,
       "block_level_upper_95_clopper_pearson": 0.16843347098308536,
       "block_level_upper_95_wilson": 0.16113012549493322,
-      "INVALID_draw_level_upper_95_clopper_pearson": 0.0165532266445656,
-      "cite_as": "0 of 221 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.015509317501757436,
+      "cite_as": "0 of 236 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
       "note": "pools 4 treatments over 20 blocks"
     },
     {
@@ -4734,12 +4750,12 @@
     {
       "key": "censored_zeros.patch2d_all_families_0_of_159",
       "paper_text": "0/156 pooled plus 0/3 Claude",
-      "n_draws": 224,
+      "n_draws": 239,
       "n_distinct_blocks": 20,
       "block_level_upper_95_clopper_pearson": 0.16843347098308536,
       "block_level_upper_95_wilson": 0.16113012549493322,
-      "INVALID_draw_level_upper_95_clopper_pearson": 0.01633335216210563,
-      "cite_as": "0 of 224 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.015316138449904648,
+      "cite_as": "0 of 239 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
       "note": "still 20 distinct gate-sample blocks"
     },
     {
@@ -4758,8 +4774,8 @@
     {
       "json_key": "headline.patch2d_repair_negative.HONEST_block_level",
       "paper_currently": "0/156 ... a Wilson 95% upper bound of 0.161 per sample (quoted for the disc cells' 20 blocks)",
-      "replace_with": "0 of 221 mode-containing synthesis draws, over 20 distinct gate-sample blocks: exact (Clopper-Pearson) 95% upper bound 0.168 on the per-block repair probability (Wilson 0.161)",
-      "naive_comparator_to_display": "pooling the 221 draws as independent trials would have claimed 0.0166 -- 10.2x tighter than the evidence supports"
+      "replace_with": "0 of 236 mode-containing synthesis draws, over 20 distinct gate-sample blocks: exact (Clopper-Pearson) 95% upper bound 0.168 on the per-block repair probability (Wilson 0.161)",
+      "naive_comparator_to_display": "pooling the 236 draws as independent trials would have claimed 0.0155 -- 10.9x tighter than the evidence supports"
     },
     {
       "json_key": "headline.onedim_repair.per_instrument.cart",
@@ -4789,7 +4805,7 @@
     {
       "json_key": "headline.patch2d_claude_arm",
       "paper_currently": "78 distinct gate samples each given two independent synthesis draws (38 disc + 20 square + 20 guided)",
-      "replace_with": "20 distinct rollout-seed blocks; the disc knob change reuses the block's random stream, so k=(3,7) and k=(5,9) are two treatments on the same 20 blocks rather than 38 samples. 221 draws over 20 blocks"
+      "replace_with": "20 distinct rollout-seed blocks; the disc knob change reuses the block's random stream, so k=(3,7) and k=(5,9) are two treatments on the same 20 blocks rather than 38 samples. 236 draws over 20 blocks"
     }
   ],
   "assumptions": {

@@ -1376,6 +1376,19 @@ claim("all 19 are behaviourally the same artifact: a half-plane at the near face
       and {a["excess_cells"] for a in _hp} == {2916}
       and abs((2916 + 810) / 810 - 4.6) < 0.05,
       f"{len(_hp)} artifacts, IoU {sorted({round(a['iou_truth'],4) for a in _hp})}")
+_ld = _ae["campaigns"]["landing"]
+claim("the landing arm recovers the disc in 0 of 40 draws over 20 blocks, exact 95% upper "
+      "bound 0.139, best agreement 0.147 against the region arm's 0.286",
+      _ld["pooled"]["n_draws"] == 40 and _ld["pooled"]["n_distinct_blocks"] == 20
+      and _ld["pooled"]["k_repaired_behavioural"] == 0
+      and _ld["pooled"]["k_repaired_gate_and_probe"] == 0
+      and abs(_ld["pooled"]["block_level_cp95_upper"] - 0.139) < 5e-4
+      and abs(_ld["pooled"]["best_iou"] - 0.147) < 5e-4
+      and abs(_ae["campaigns"]["region"]["pooled"]["best_iou"] - 0.286) < 5e-4)
+claim("naming the landing variable shifts the dominant failure to memorisation: 20 of 40 "
+      "artifacts write a point, against 15 of 40 in the region arm",
+      _ld["pooled"]["class_counts"].get("point") == 20
+      and _ae["campaigns"]["region"]["pooled"]["class_counts"].get("point") == 15)
 _re = load("repair_exactness_1d")
 claim("105 of the 109 artifacts the probe criterion calls repaired are exact on a dense "
       "grid; the four exceptions all invent a second stop, two from each GPT-5.x size",

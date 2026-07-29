@@ -15,7 +15,7 @@ failed, and each weakening records what would earn it back.
 | 1 | Synthesis/refinement sample doubles as the gate — "verification" is training-set consistency | Held-out three-way split `D_train`/`D_gate`/`D_eval` scored over all 625 versioned artifacts (no new LLM spend); acceptance redefined on `D_gate`; in-sample notion renamed *sample-consistency gate* | DONE | `scripts/heldout_gate_audit.py` + `heldout_gate_paper_numbers.py` over all 625 artifacts; §sec:heldout. Blocks verified disjoint; train sample reproduced 60/60. **36 of 463** in-sample-accepted artifacts are rejected by an independent gate (7.8%, [0.057,0.106]), 35 of 36 failing only on mode contacts |
 | 2 | `danger = play_cost·(1-r)^N` is not defined as a probabilistic estimand | New risk estimand `D_N = E[PC(A(D))·1{accepted ∧ play-inadequate}]`, factorization conditions proved, bounds when the conditional cost varies; "exact" reserved for the gate-miss factor | DONE | `prop:risk` (risk estimand + factorization iff Cov = 0 + two-sided bounds) and `prop:twofactor` (exponents add) in §sec:estimand; both hypotheses measured: (i) 30/30, (ii) 60/60 exact; two-factor 0.399 inside [0.142,0.402] |
 | 3 | "Smooth learners cannot localize" is too strong (a `C^∞` bump has compact support — our own arm) | Restated as bounded-Lipschitz / fixed-amplitude / arbitrarily-sharp; volume form added; representability vs learnability vs 1e-9 exactness vs the h=8 probe separated; headings and conclusion rewritten | DONE | `cor:locbudget` (volume price) + `rem:fourstatements` (representability / detectability / tolerance / learnability separated); §smooth and the conclusion retitled; our own $C^\infty$ bump named as the counterexample to the old wording |
-| 4 | "Geometry-dependent via a template prior" is not causally identified | Rarity-matched **slab** ablation (trigger arity varied alone, inside the same 4D bi-modal plant) + `landing` prompt variant; claim stated at whatever the ablations identify | PARTIAL | Axis *defined* (`def:arity`: trigger arity vs entry-barrier dimension) and claim rescoped to consistent-with. The rarity-matched `slab` instrument is built and calibrated (`results/patch2d_slab_calibration.json`, admissible config certified) and the `landing` prompt variant is implemented; **neither campaign has been run** (Azure spend). Alternatives not excluded are named in the text |
+| 4 | "Geometry-dependent via a template prior" is not causally identified | Rarity-matched **slab** ablation (trigger arity varied alone, inside the same 4D bi-modal plant) + `landing` prompt variant; claim stated at whatever the ablations identify | DONE | **Both campaigns run** (2026-07-29). The result is not the one the ablations were built to get, and is stronger: four candidate causes are now measured negatives (curvature, prompting/budget, trigger arity, variable identification), and the obstruction is located in the evidence by `prop:entryclass` — the freeze semantics keep every visited state outside the region, so a rule agreeing with the truth on the reachable set is exactly consistent with *every* sample and harmless by the same argument. Whether the target is identifiable is measurable in advance (`scripts/mode_identifiability.py`): the disc's far side is visited 4695 times, a slab's never. On the slab `gpt-5.4` passes the paper's repair criterion on 19/20 and recovers the rule in 0/20; on the disc the landing arm is 0/40. §sec:arity |
 | 5 | Experimental unit unclear; `0/156` and `109/111` carry invalid binomial inference | `scripts/paper2_statistics.py`: unit hierarchy declared, per-treatment tables, block-level bounds, pooled comparator explicitly labelled invalid | DONE | `scripts/paper2_statistics.py`; 0/156 restated as 156 draws over **20 blocks** with an exact per-block upper bound 0.168; 109/111 restated as 36 blocks, 34/36 all-repair, [0.813,0.993]; the cart's 0.851 was **wrong at block level** and is now 0.708/0.772 with the estimand named |
 | 6 | "Certification stayed sound" uses too weak a definition of sound | Vocabulary split: *sample-consistent* / *no observed false acceptance on the gate sample* vs *sound* for the stated logical property | DONE | *sample-consistency gate* vs *held-out gate* defined in §sec:theory; 'certified' in the acceptance sense replaced by 'accepted' throughout; linter rule `soundness-scope` at 0 |
 | 7 | CEM result reads an observed zero as a zero query probability | `scripts/cem_crossing_bound.py`: ≥200× sampling, Clopper-Pearson upper bound, correct conversion to a `q_hit` bound; claim becomes `≤` | DONE | `scripts/cem_crossing_bound.py` at 200× the sample: at $x_\mathrm{wall}=8$ the zero was censoring **18 crossings in 1.28M** and $q_\mathrm{hit}\geq0.0029$, so the 'forces play_cost = 0' claim is refuted; at 10 the zero survives with $q_\mathrm{hit}\leq0.058$. Claim is now an inequality on all rows |
@@ -89,14 +89,19 @@ Run from the repository root; all four were green at the time of writing.
 
 ## What remains open, and why
 
-* **Review point 4 (the causal axis) is PARTIAL by choice.** The rarity-matched `slab`
-  instrument and the `landing` prompt variant are built, tested and calibrated, but the two
-  synthesis campaigns have not been run: each is ~20 seeds × 2 sizes of paid API calls. Until
-  they run, the paper states the template prior as a hypothesis consistent with the artifacts
-  and names the alternatives it does not exclude. The slab calibration also found a
-  structural fact worth keeping: a one-coordinate trigger in this plant necessarily *screens*
-  the far mode, so an arity-1 instrument here is single-mode, and that confound is
-  unavoidable rather than a calibration failure.
+* **Review point 4 is now DONE, and the answer changed the paper.** Both campaigns ran on
+  2026-07-29. The slab ablation could not answer the arity question — its target is not
+  identifiable, which the reachability measurement establishes rather than assumes — but it
+  produced Proposition `prop:entryclass` and, with the landing arm, the contrast that bounds
+  what an independent gate buys: on the disc it rejects 4 of the 4 artifacts that passed
+  their own gate; on the slab, 0 of 19, because there is nothing to reject. Two corrections
+  followed, both lowering a headline: the mode probe is not a sufficient repair criterion,
+  and the 1D count is 105 of 111, block-level 30/36 [0.672, 0.936].
+* **What the ablations leave open.** The remaining candidate is the evidence structure
+  itself. The decisive next experiment is an instrument whose mode does *not* freeze, so the
+  interior is witnessed and `prop:entryclass`'s premise fails; if repair returns there, the
+  mechanism is settled. That is one CPU calibration plus one Azure campaign and is recorded
+  in `STRONGER-STATEMENTS.md`.
 * **Review point 18 (closed-model reproduction) is PARTIAL.** Call counts and transcripts are
   exact; token usage was never recorded and is stated as such; the open-weight arm remains a
   translation control on the 2D instrument because that provider's credits ran out.
