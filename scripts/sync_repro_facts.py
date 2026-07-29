@@ -75,10 +75,10 @@ def main() -> None:
                "Table 3\". A release\ntag (and ideally a Zenodo DOI over the tag) is still "
                "required.")
     if tag_present and old_gap in text:
-        newest = tags[0] if tags else "(none)"
         subs.append(("honest gap (b)", old_gap,
                      f"(b) `dependencies.release_tag_present = true`: the repository now "
-                     f"carries release\ntags ({', '.join(tags)}; newest `{newest}`), so a "
+                     f"carries release\ntags (`git tag --sort=-creatordate`; a tag cannot "
+                     f"list itself, so they are not\nenumerated here), so a "
                      f"citable revision identifies the code that\nproduced each table. What "
                      f"is still absent is a DOI over the tag — a Zenodo or\nfigshare deposit, "
                      f"which no venue this is bound for requires and which needs an\naccount "

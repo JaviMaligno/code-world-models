@@ -9,7 +9,7 @@ with
 PYTHONPATH=src .venv/bin/python scripts/repro_manifest.py
 ```
 
-Snapshot: git `7cf8230` (`2026-07-29 18:15:31 +0100`), branch
+Snapshot: git `15ca6d8` (`2026-07-29 19:23:33 +0100`), branch
 `paper2-major-revision`, working tree dirty (concurrent revision work in the
 same checkout). Manifest generated 2026-07-29. **Where a number below could
 move, the JSON key that holds it is named — quote the key, not this file.**
@@ -78,10 +78,11 @@ environment the results came from.
 *Honest gaps.* (a) `requirements-frozen.txt` has no hashes and no resolver
 metadata — it closes the version gap, not the integrity gap.
 (b) `dependencies.release_tag_present = true`: the repository now carries release
-tags (paper2-v1.1-evidence-dose, paper2-v1.0-review-response; newest `paper2-v1.1-evidence-dose`), so a citable revision identifies the code that
-produced each table. What is still absent is a DOI over the tag — a Zenodo or
-figshare deposit, which no venue this is bound for requires and which needs an
-account rather than a commit. Recorded as absent, not as blocking.
+tags (`git tag --sort=-creatordate`; a tag cannot list itself, so they are not
+enumerated here), so a citable revision identifies the code that produced each
+table. What is still absent is a DOI over the tag — a Zenodo or figshare deposit,
+which no venue this is bound for requires and which needs an account rather than a
+commit. Recorded as absent, not as blocking.
 
 ## 3. MANIFEST — every table and figure → its backing JSON
 
