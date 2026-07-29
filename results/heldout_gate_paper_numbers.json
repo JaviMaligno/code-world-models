@@ -6,7 +6,7 @@
     "N_gate": 40,
     "N_eval": 100,
     "blocks_disjoint": true,
-    "train_reproduced_exactly": "60/60",
+    "train_reproduced_exactly": "99/99",
     "why_full_arm_is_excluded": "prop:twofactor's hypotheses (i) and (ii) concern a mode-blind artifact synthesized from a mode-free training sample. A full-arm artifact carries the mode clause in its specification, so it is correct by construction; it is not a test of either hypothesis and is excluded from every rate below."
   },
   "hypothesis_ii": {
@@ -71,14 +71,14 @@
   },
   "regressions": {
     "claim": "artifacts the sample-consistency gate accepted that an independent acceptance sample of the same size rejects",
-    "n_in_sample_accepted": 463,
-    "n_rejected_by_independent_gate": 36,
-    "rate_over_draws": 0.07775377969762419,
+    "n_in_sample_accepted": 647,
+    "n_rejected_by_independent_gate": 40,
+    "rate_over_draws": 0.061823802163833076,
     "wilson95_over_draws": [
-      0.0566899281824356,
-      0.1057666347206967
+      0.04572766608113012,
+      0.08309242932676296
     ],
-    "n_incomplete_arm": 36,
+    "n_incomplete_arm": 40,
     "n_full_arm": 0,
     "by_campaign": {
       "compat-qwen3-coder-30b-a3b-instruct_xwall8": {
@@ -152,33 +152,71 @@
       "pendulum_mini_thstop1": {
         "n_passed": 40,
         "n_regressed": 0
+      },
+      "patch2d_large_k3_7_hint-radius": {
+        "n_passed": 20,
+        "n_regressed": 0
+      },
+      "patch2dslab_large_k5.5_7": {
+        "n_passed": 39,
+        "n_regressed": 0
+      },
+      "patch2dslab_mini_k5.5_7": {
+        "n_passed": 21,
+        "n_regressed": 0
+      },
+      "patch2d_large_k3_7_arc240": {
+        "n_passed": 20,
+        "n_regressed": 0
+      },
+      "patch2d_large_k3_7_pv-landing_it15": {
+        "n_passed": 4,
+        "n_regressed": 4
+      },
+      "patch2dclamp_large_k3_7": {
+        "n_passed": 20,
+        "n_regressed": 0
+      },
+      "patch2dclamp_mini_k3_7": {
+        "n_passed": 20,
+        "n_regressed": 0
+      },
+      "patch2dlanding_large_k3_7": {
+        "n_passed": 20,
+        "n_regressed": 0
+      },
+      "patch2dlanding_mini_k3_7": {
+        "n_passed": 20,
+        "n_regressed": 0
       }
     },
     "failure_is_on_the_mode": {
-      "n_fail_only_on_mode_contacts": 35,
+      "n_fail_only_on_mode_contacts": 39,
       "n_fail_off_mode_too": 1
     }
   },
   "off_sample_exactness_of_accepted": {
     "claim": "of the artifacts an independent gate accepts, how many are exact OUTSIDE the mode region on a further independent sample",
-    "n_accepted": 430,
-    "n_exact_outside_mode": 430,
+    "n_accepted": 610,
+    "n_exact_outside_mode": 610,
     "n_exceptions": 0,
     "exceptions": [],
-    "clopper_pearson_95_upper_on_exception_rate": 0.0069426072152197205,
-    "note": "the 125 exceptions in the audit's own d_out_of_sample_exactness are over ALL 625 artifacts, most of which never passed any gate; acceptance is the condition the paper's claim is about"
+    "clopper_pearson_95_upper_on_exception_rate": 0.004898997090947155,
+    "n_all_artifacts": 1025,
+    "n_exceptions_over_all_artifacts": 297,
+    "note": "the 297 exceptions in the audit's own d_out_of_sample_exactness are over ALL 1025 artifacts, most of which never passed any gate; acceptance is the condition the paper's claim is about. Both counts are derived here rather than typed: the campaign set grows, and this note named 625 by hand until it went stale"
   },
   "by_arm": {
     "incomplete": {
-      "n": 331,
-      "n_in_sample_passed": 169,
-      "n_heldout_accepted": 133,
-      "n_regressed": 36
+      "n": 591,
+      "n_in_sample_passed": 213,
+      "n_heldout_accepted": 173,
+      "n_regressed": 40
     },
     "full": {
-      "n": 294,
-      "n_in_sample_passed": 294,
-      "n_heldout_accepted": 294,
+      "n": 434,
+      "n_in_sample_passed": 434,
+      "n_heldout_accepted": 434,
       "n_regressed": 0
     }
   }

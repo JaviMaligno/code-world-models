@@ -1590,14 +1590,14 @@ claim("the re-measurement reproduces the published cells it re-measures",
 # --- the held-out acceptance sample (sec:heldout) ---------------------------
 _ho = load("heldout_gate_paper_numbers")
 _hoa = load("heldout_gate_audit")
-claim("the held-out audit covers 625 artifacts over 20 campaigns",
-      _hoa["aggregates"]["totals"]["n_artifacts"] == 625
-      and _hoa["aggregates"]["totals"]["n_files"] == 20)
+claim("the held-out audit covers 1025 artifacts over 33 campaigns",
+      _hoa["aggregates"]["totals"]["n_artifacts"] == 1025
+      and _hoa["aggregates"]["totals"]["n_files"] == 33)
 claim("the three blocks are disjoint at rollout-seed level",
       _hoa["split"]["all_disjoint"] is True)
-claim("the reproduced training block returns the stored accuracy in 60/60 spot-checks",
-      _hoa["aggregates"]["train_reproduction_check"]["n_checked"] == 60
-      and _hoa["aggregates"]["train_reproduction_check"]["n_accuracy_matches"] == 60)
+claim("the reproduced training block returns the stored accuracy in 99/99 spot-checks",
+      _hoa["aggregates"]["train_reproduction_check"]["n_checked"] == 99
+      and _hoa["aggregates"]["train_reproduction_check"]["n_accuracy_matches"] == 99)
 claim("N_gate = 40 and N_eval = 100",
       _ho["design"]["N_gate"] == 40 and _ho["design"]["N_eval"] == 100)
 _h2 = _ho["hypothesis_ii"]
@@ -1628,25 +1628,61 @@ claim("the one-factor rate 0.631 sits inside the measured 20/40 = 0.500 [0.352, 
       and abs(_se["wilson95_train_miss"][1] - 0.648) < 5e-4
       and _se["one_factor_inside_interval"] is True)
 _rg = _ho["regressions"]
-claim("36 of 463 in-sample-accepted artifacts are rejected by an independent gate "
-      "(7.8%, [0.057, 0.106]), all 36 incomplete-arm, 0 of 294 full-arm",
-      _rg["n_in_sample_accepted"] == 463
-      and _rg["n_rejected_by_independent_gate"] == 36
-      and _rg["n_incomplete_arm"] == 36 and _rg["n_full_arm"] == 0
-      and abs(_rg["rate_over_draws"] - 0.078) < 5e-4
-      and abs(_rg["wilson95_over_draws"][0] - 0.057) < 5e-4
-      and abs(_rg["wilson95_over_draws"][1] - 0.106) < 5e-4
-      and _ho["by_arm"]["full"]["n_in_sample_passed"] == 294
+claim("40 of 647 in-sample-accepted artifacts are rejected by an independent gate "
+      "(6.2%, [0.046, 0.083]), all 40 incomplete-arm, 0 of 434 full-arm",
+      _rg["n_in_sample_accepted"] == 647
+      and _rg["n_rejected_by_independent_gate"] == 40
+      and _rg["n_incomplete_arm"] == 40 and _rg["n_full_arm"] == 0
+      and abs(_rg["rate_over_draws"] - 0.062) < 5e-4
+      and abs(_rg["wilson95_over_draws"][0] - 0.046) < 5e-4
+      and abs(_rg["wilson95_over_draws"][1] - 0.083) < 5e-4
+      and _ho["by_arm"]["full"]["n_in_sample_passed"] == 434
       and _ho["by_arm"]["full"]["n_regressed"] == 0)
-claim("35 of the 36 regressions fail ONLY on mode contacts",
-      _rg["failure_is_on_the_mode"]["n_fail_only_on_mode_contacts"] == 35
+claim("the prose's 'about one accepted artifact in sixteen' matches 647/40 = 16.2",
+      round(_rg["n_in_sample_accepted"] / _rg["n_rejected_by_independent_gate"]) == 16)
+claim("39 of the 40 regressions fail ONLY on mode contacts",
+      _rg["failure_is_on_the_mode"]["n_fail_only_on_mode_contacts"] == 39
       and _rg["failure_is_on_the_mode"]["n_fail_off_mode_too"] == 1)
+# --- the disc/slab contrast: what an independent gate is worth ---------------------
+# Not covered by any claim until 2026-07-29, and it had drifted twice: the "4 of 4" was
+# the guided landing-prompt arm rather than the default disc arm, and the accuracy range
+# stopped at 0.9950 when the true upper end is 0.9997. Both are now derived here.
+_recs = _hoa.get("records") or _hoa.get("artifacts")
+_disc_at_one = [r for r in _recs
+                if r["arm"] == "incomplete" and r["instrument"] == "patch2d"
+                and (r["patch_shape"] or "disc") == "disc"
+                and r["in_sample_gate_passed"] and "hint" not in r["file"]]
+_accs = sorted(r["gate"]["accuracy"] for r in _disc_at_one)
+claim("on the disc, every incomplete artifact at in-sample gate 1.000 is rejected by an "
+      "independent sample: 8 of 8 draws over 6 distinct blocks, accuracies 0.9944-0.9997",
+      len(_disc_at_one) == 8
+      and len({r["block_key"] for r in _disc_at_one}) == 6
+      and sum(1 for r in _disc_at_one if r["accepted_heldout"]) == 0
+      and abs(_accs[0] - 0.9944) < 5e-5 and abs(_accs[-1] - 0.9997) < 5e-5,
+      f"{len(_disc_at_one)} draws, {len({r['block_key'] for r in _disc_at_one})} blocks")
+claim("the default disc arm reaches in-sample 1.000 on NO incomplete artifact, so its own "
+      "contribution to the count above is zero",
+      not [r for r in _recs
+           if r["file"] == "continuous_synthesis_patch2d_large_k3_7.json"
+           and r["arm"] == "incomplete" and r["in_sample_gate_passed"]])
+_slab = [r for r in _recs
+         if r["file"] == "continuous_synthesis_patch2dslab_large_k5.5_7.json"
+         and r["arm"] == "incomplete" and r["in_sample_gate_passed"]]
+claim("on the slab, 19 reach in-sample 1.000 and an independent sample rejects 0 of 19",
+      len(_slab) == 19 and sum(1 for r in _slab if not r["accepted_heldout"]) == 0)
+_hint = [r for r in _recs
+         if r["file"] == "continuous_synthesis_patch2d_large_k3_7_hint-radius.json"
+         and r["arm"] == "incomplete"]
+claim("the independent gate is not merely strict: it accepts 20 of 20 of the positive "
+      "control's artifacts at 1.000",
+      len(_hint) == 20 and sum(1 for r in _hint if r["accepted_heldout"]) == 20
+      and all(r["gate"]["accuracy"] == 1.0 for r in _hint))
 _ex = _ho["off_sample_exactness_of_accepted"]
-claim("all 430 independently accepted artifacts are exact outside the mode region on "
-      "D_eval, exact 95% upper bound 0.0069 on the exception rate",
-      _ex["n_accepted"] == 430 and _ex["n_exceptions"] == 0
-      and _ex["n_exact_outside_mode"] == 430
-      and abs(_ex["clopper_pearson_95_upper_on_exception_rate"] - 0.0069) < 5e-5,
+claim("all 610 independently accepted artifacts are exact outside the mode region on "
+      "D_eval, exact 95% upper bound 0.0049 on the exception rate",
+      _ex["n_accepted"] == 610 and _ex["n_exceptions"] == 0
+      and _ex["n_exact_outside_mode"] == 610
+      and abs(_ex["clopper_pearson_95_upper_on_exception_rate"] - 0.0049) < 5e-5,
       f"{_ex['n_exact_outside_mode']}/{_ex['n_accepted']}")
 
 # --- report ----------------------------------------------------------------

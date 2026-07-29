@@ -272,6 +272,14 @@ def test_failure_class_labels():
     ("continuous_synthesis_patch2d_large_k3_7.json", "patch2d_k3_7"),
     ("continuous_synthesis_patch2d_mini_k5_9.json", "patch2d_k5_9"),
     ("continuous_synthesis_patch2dsq_large_k3_7.json", "patch2dsq_k3_7"),
+    # the campaigns added in the major revision, each of which changes the stream
+    ("continuous_synthesis_patch2dslab_large_k5.5_7.json", "patch2dslab_k5.5_7"),
+    ("continuous_synthesis_patch2dlanding_large_k3_7.json", "patch2d_k3_7_landing"),
+    ("continuous_synthesis_patch2dclamp_large_k3_7.json", "patch2d_k3_7_clamp"),
+    ("continuous_synthesis_patch2d_large_k3_7_arc240.json",
+     "patch2d_k3_7_arc240_n15"),
+    ("continuous_synthesis_patch2d_large_k3_7_arc120.json",
+     "patch2d_k3_7_arc120_n15"),
 ])
 def test_env_key_and_type_match_the_filename(fname, expect_key):
     d = json.loads((_REPO / "results" / fname).read_text())
@@ -283,7 +291,11 @@ def test_env_key_and_type_match_the_filename(fname, expect_key):
         assert isinstance(env, PendulumStop) and env.th_stop is not None
     else:
         assert isinstance(env, PatchField2D)
-        assert env.patch_shape == ("square" if "sq" in expect_key else "disc")
+        # read the shape from the params, not by substring-matching the key: guessing
+        # the instrument from the key's spelling is the bug this file now pins
+        assert env.patch_shape == d["params"].get("patch_shape", "disc")
+        assert env.mode_effect == d["params"].get("mode_effect", "freeze")
+        assert env.start_arc_deg == d["params"].get("start_arc")
 
 
 @pytest.mark.parametrize("fname", [
@@ -605,5 +617,88 @@ def test_committed_audit_json_is_self_consistent():
         assert (a["gate"]["n_fail_mode_contact"]
                 + a["gate"]["n_fail_off_mode"] == a["gate"]["n_fail"])
     if doc.get("complete"):
-        assert agg["totals"]["n_artifacts"] == 625
+        # DERIVED, not typed: the count was hardcoded to 625 and went stale the moment the
+        # revision's campaigns landed. What the test is for is COMPLETENESS -- every cell
+        # of every committed campaign was re-scored -- so it counts them.
+        import glob
+        expected = 0
+        for f in glob.glob(str(_REPO / "results" / "continuous_synthesis_*.json")):
+            d = json.loads(pathlib.Path(f).read_text())
+            expected += len(d.get("cells", []))
+        assert agg["totals"]["n_artifacts"] == expected, (
+            f"the audit covers {agg['totals']['n_artifacts']} artifacts but the committed "
+            f"campaigns hold {expected}: re-run scripts/heldout_gate_audit.py")
         assert agg["train_reproduction_check"]["mismatches"] == []
+
+
+def test_env_key_separates_the_slab_from_the_square():
+    """The bug this pins: env_key mapped every non-disc shape to "sq", so a slab and a
+    square at the same knob collapsed onto ONE key -- and the key is what the audit
+    deduplicates samples on and looks the rarity up by. At a shared knob the slab would
+    silently have been scored against the square's rarity. It surfaced only because the
+    slab's calibrated knob (5.5) had no R_SOURCES entry and the guard refused to run,
+    which is luck rather than design."""
+    base = {"instrument": "patch2d", "k1": 3.0, "k2": 7.0}
+    keys = {env_key({**base, "patch_shape": sh})
+            for sh in ("disc", "square", "slab")}
+    assert len(keys) == 3, keys
+
+
+def test_env_key_separates_every_field_the_rollout_stream_depends_on():
+    """The stream depends on the post-state, the start distribution and the rollout
+    count as well as the shape and the knob. Two artifacts sharing an env_key and a seed
+    are asserted elsewhere to share their samples bit-for-bit, so any of these missing
+    from the key makes that assertion false."""
+    base = {"instrument": "patch2d", "k1": 3.0, "k2": 7.0}
+    variants = [
+        base,
+        {**base, "mode_effect": "landing"},
+        {**base, "mode_effect": "clamp"},
+        {**base, "start_arc": 120.0, "n_rollouts": 15},
+        {**base, "start_arc": 240.0, "n_rollouts": 15},
+        {**base, "n_rollouts": 15},
+        {**base, "patch_shape": "slab", "k1": 5.5},
+    ]
+    keys = [env_key(v) for v in variants]
+    assert len(set(keys)) == len(keys), keys
+
+
+def test_the_committed_defaults_keep_their_original_keys():
+    """625 artifacts were audited under the pre-fix keys; the fix must not rename them."""
+    assert env_key({"instrument": "patch2d", "k1": 3.0, "k2": 7.0}) == "patch2d_k3_7"
+    assert env_key({"instrument": "patch2d", "k1": 3.0, "k2": 7.0,
+                    "patch_shape": "square"}) == "patch2dsq_k3_7"
+    # explicit defaults must be indistinguishable from absent ones
+    assert env_key({"instrument": "patch2d", "k1": 3.0, "k2": 7.0,
+                    "mode_effect": "freeze", "start_arc": None,
+                    "n_rollouts": 40}) == "patch2d_k3_7"
+
+
+def test_every_committed_campaign_has_a_rarity_entry():
+    """The guard that caught the collision only fires at audit time, on the campaign it
+    reaches. This makes it fire in CI, for all of them, before any scoring runs."""
+    import glob
+    from cwm.continuous.heldout import R_SOURCES
+    missing = set()
+    for f in glob.glob(str(_REPO / "results" / "continuous_synthesis_*.json")):
+        d = json.loads(pathlib.Path(f).read_text())
+        params = d.get("params") or {}
+        if not params.get("instrument") and "x_wall" not in params:
+            continue
+        try:
+            k = env_key(params)
+        except Exception:
+            continue
+        if k not in R_SOURCES:
+            missing.add((pathlib.Path(f).name, k))
+    assert not missing, f"campaigns with no R_SOURCES entry: {sorted(missing)}"
+
+
+def test_a_surrogate_is_never_built_from_a_missing_rarity():
+    """The slab's patch-2 rarity was never measured. A surrogate built from it would be
+    a fabrication dressed as a derivation, so it must be absent, not filled in."""
+    from cwm.continuous.heldout import R_SOURCES
+    slab = R_SOURCES["patch2dslab_k5.5_7"]
+    assert slab["r"] is None
+    assert slab["per_mode"]["patch2"] is None
+    assert slab["per_mode"]["patch1"] is not None

@@ -26,7 +26,7 @@ Nothing in this module makes a network call.
 """
 import math
 import random
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields as _dc_fields
 
 from .contract import (_compare_transitions, _run_contract_cases,
                        collect_transitions, contract_accuracy)
@@ -124,6 +124,17 @@ def split_for_cell(env, cell: dict, n_eval: int = N_EVAL_DEFAULT,
 
 
 # --- truth-env reconstruction ------------------------------------------------
+# Params whose name differs from the env field they set.
+_PARAM_ALIASES = {"start_arc": "start_arc_deg"}
+# Params that describe the CAMPAIGN, not the truth env, and so must not reach it.
+# Listed explicitly because env_from_params refuses to silently drop anything else.
+_PARAMS_NOT_ENV = frozenset({
+    "arm", "size", "seed_offset", "n_seeds", "n_rollouts", "play_episodes",
+    "max_iters", "eps", "prompt_variant", "mode_hint", "instrument",
+    "compat_model", "compat_base_url", "k1", "k2", "th_stop", "x_wall",
+})
+
+
 def env_from_params(params: dict):
     """Rebuild the truth env from a synthesis file's top-level ``params``,
     exactly as scripts/continuous_danger_synthesis.py builds it.  Older
@@ -134,12 +145,43 @@ def env_from_params(params: dict):
     if instrument == "pendulum":
         return PendulumStop(th_stop=params.get("th_stop", 1.4))
     if instrument == "patch2d":
+        # Pass through EVERY param that names a field of the env rather than an
+        # enumerated few. Enumerating is how `mode_effect` and `start_arc` came to be
+        # dropped: the landing, clamp and evidence-dose campaigns were rebuilt as
+        # `freeze` boxes and therefore scored against the wrong truth. A knob added to
+        # the env in future is carried here automatically or not at all.
+        fields = {f.name for f in _dc_fields(PatchField2D)}
+        kwargs, unknown = {}, []
+        for k, v in params.items():
+            if k in _PARAMS_NOT_ENV:
+                continue
+            name = _PARAM_ALIASES.get(k, k)
+            if name in fields:
+                if v is not None:
+                    kwargs[name] = v
+            else:
+                unknown.append(k)
+        if unknown:
+            # A param that is neither a field, an alias, nor declared irrelevant is a
+            # knob this function would DROP. Dropping `start_arc` (the field is
+            # `start_arc_deg`) rebuilt the dose campaigns as their own controls, which
+            # is a wrong answer rather than a missing one. So it raises.
+            raise ValueError(
+                f"env_from_params does not know what to do with {sorted(unknown)}: add "
+                f"each to _PARAM_ALIASES (it names an env field under another name) or "
+                f"to _PARAMS_NOT_ENV (it does not describe the truth env)")
+        kwargs.pop("p1", None)
+        kwargs.pop("p2", None)
         return PatchField2D(p1=(params.get("k1", 3.0), 0.0),
-                            p2=(params.get("k2", 7.0), 0.0),
-                            patch_shape=params.get("patch_shape", "disc"))
+                            p2=(params.get("k2", 7.0), 0.0), **kwargs)
     if instrument == "cart":
         return CartWall(x_wall=params["x_wall"])
     raise ValueError(f"unknown instrument {instrument!r}")
+
+
+# The shape tag inside env_key.  "sq" is kept for the square because 625 already-audited
+# artifacts carry keys built with it; anything new gets its own unambiguous tag.
+_SHAPE_TAG = {"square": "sq", "slab": "slab"}
 
 
 def env_key(params: dict) -> str:
@@ -152,9 +194,27 @@ def env_key(params: dict) -> str:
     if instrument == "pendulum":
         return f"pendulum_thstop{params.get('th_stop', 1.4):g}"
     if instrument == "patch2d":
+        # Every field the ROLLOUT STREAM depends on has to be in this key, or two
+        # different instruments deduplicate onto one sample.  The original form
+        # mapped any non-disc shape to "sq", so the SLAB collided with the SQUARE:
+        # at a shared knob it would silently have been scored against the square's
+        # rarity.  It was caught only because the slab's calibrated knob (5.5) has no
+        # R_SOURCES entry and the guard refused to run -- luck, not design.  The
+        # mode's post-state and the start arc change the stream too.  Defaults are
+        # omitted so every key computed before this fix is unchanged.
         shape = params.get("patch_shape", "disc")
-        return (f"patch2d{'' if shape == 'disc' else 'sq'}_"
-                f"k{params.get('k1', 3.0):g}_{params.get('k2', 7.0):g}")
+        key = f"patch2d{'' if shape == 'disc' else _SHAPE_TAG[shape]}_"
+        key += f"k{params.get('k1', 3.0):g}_{params.get('k2', 7.0):g}"
+        effect = params.get("mode_effect", "freeze")
+        if effect != "freeze":
+            key += f"_{effect}"
+        arc = params.get("start_arc")
+        if arc is not None:
+            key += f"_arc{arc:g}"
+        n_roll = params.get("n_rollouts", 40)
+        if n_roll != 40:
+            key += f"_n{n_roll}"
+        return key
     return f"cart_xwall{params['x_wall']:g}"
 
 
@@ -211,6 +271,55 @@ R_SOURCES = {
         "per_mode": None, "per_mode_path": None,
         "note": "the (5,9) disc cell has no calibrated rarity in results/; "
                 "the two-factor prediction is reported as null for it"},
+    "patch2dslab_k5.5_7": {
+        "r": None, "kind": "firing_union_unavailable",
+        "source": "results/patch2d_slab_calibration.json",
+        "path": "units.rarity_imperm.measure: r1 only; the slab campaign's "
+                "calibration measured patch-1 contact rarity, not the union",
+        "per_mode": {"patch1": 0.12816666666666668, "patch2": None},
+        "per_mode_path": {"patch1": "units.rarity_imperm.measure.r1",
+                          "patch2": "not measured for the slab"},
+        "note": "the ARITY ablation (2026-07-29), rarity-matched to the disc's "
+                "r1 = 0.1417 by MOVING the mode to k1 = 5.5, at 30k rollouts. "
+                "Its own repair target is identified only up to prop:entryclass "
+                "(results/mode_identifiability.json), so the two-factor "
+                "prediction is reported for it but the repair count is not read "
+                "as an exclusion"},
+    "patch2d_k3_7_landing": {
+        "r": 0.15266666666666667, "kind": "firing_union",
+        "source": "results/mode_effect_calibration.json",
+        "path": "variants.landing.rarity",
+        "per_mode": None, "per_mode_path": None,
+        "note": "1500 rollouts only (CI 0.135-0.172), against the disc's 600-"
+                "rollout 0.15 -- a wider interval than the headline instruments. "
+                "The value is IDENTICAL to freeze's and clamp's to every digit, "
+                "and that is correct rather than a copy error: whether a rollout "
+                "contains an entry is settled by the trajectory UP TO the first "
+                "entry, which the three post-states share"},
+    "patch2d_k3_7_clamp": {
+        "r": 0.15266666666666667, "kind": "firing_union",
+        "source": "results/mode_effect_calibration.json",
+        "path": "variants.clamp.rarity",
+        "per_mode": None, "per_mode_path": None,
+        "note": "see patch2d_k3_7_landing: same sample size, same value, same "
+                "reason it is the same value"},
+    "patch2d_k3_7_arc120_n15": {
+        "r": None, "kind": "uncalibrated",
+        "source": "results/evidence_dose_calibration.json",
+        "path": "arms.arc120: the dose calibration measured CONTACT COUNT and "
+                "angular coverage per seed block, and blocks_with_a_contact "
+                "(20/20) -- none of which is a per-rollout union rarity",
+        "per_mode": None, "per_mode_path": None,
+        "note": "the evidence-dose arm's rarity was never measured at a sample "
+                "size that would support it, so the two-factor prediction is "
+                "reported as null here rather than computed from a surrogate"},
+    "patch2d_k3_7_arc240_n15": {
+        "r": None, "kind": "uncalibrated",
+        "source": "results/evidence_dose_calibration.json",
+        "path": "arms.arc240: as arc120 -- contacts and coverage, not rarity",
+        "per_mode": None, "per_mode_path": None,
+        "note": "as arc120. Note the ring start raises the contact SHARE of the "
+                "sample by construction, so the disc's r cannot be borrowed"},
     "patch2dsq_k5_9": {
         "r": None, "kind": "firing_union_unavailable",
         "source": "results/continuous_patch2d_square.json",

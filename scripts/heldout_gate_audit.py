@@ -88,7 +88,13 @@ def verify_r_sources() -> dict:
     pend = _REPO / "results" / "continuous_pendulum.json"
     p2d = _REPO / "results" / "continuous_patch2d.json"
     p2dsq = _REPO / "results" / "continuous_patch2d_square.json"
+    slab = _REPO / "results" / "patch2d_slab_calibration.json"
+    meff = _REPO / "results" / "mode_effect_calibration.json"
+    _slab = json.loads(slab.read_text())["units"]["rarity_imperm"]["measure"]
+    _meff = json.loads(meff.read_text())["variants"]
     live = {
+        "patch2d_k3_7_landing": _meff["landing"]["rarity"],
+        "patch2d_k3_7_clamp": _meff["clamp"]["rarity"],
         "cart_xwall8": _read_row(reach, {"x_wall": 8.0})["rarity"],
         "cart_xwall4": _read_row(reach, {"x_wall": 4.0})["rarity"],
         "pendulum_thstop1.4": _read_row(pend, {"th_stop": 1.4})["rarity"],
@@ -105,6 +111,7 @@ def verify_r_sources() -> dict:
         "patch2dsq_k5_9": {
             "patch1": _read_row(p2dsq, {"k1": 5.0, "k2": 9.0})["r1"],
             "patch2": _read_row(p2dsq, {"k1": 5.0, "k2": 9.0})["r2"]},
+        "patch2dslab_k5.5_7": {"patch1": _slab["r1"], "patch2": None},
     }
     drift = []
     for key, val in live.items():
@@ -121,14 +128,21 @@ def verify_r_sources() -> dict:
     for key, meta in R_SOURCES.items():
         entry = dict(meta)
         entry["verified_against_source"] = key in live or key in per_mode_live
-        if meta["r"] is None and meta.get("per_mode"):
-            pm = meta["per_mode"]
+        pm = meta.get("per_mode") or {}
+        if meta["r"] is None and pm.get("patch1") is not None \
+                and pm.get("patch2") is not None:
             entry["r_union_independence_surrogate"] = independence_surrogate(
                 pm["patch1"], pm["patch2"])
             entry["r_union_independence_surrogate_note"] = (
                 "DERIVED, not measured: r1 + r2 - r1*r2 assuming the two modes "
                 "fire independently within a rollout; used only because no "
                 "union rarity is committed for this cell")
+        elif meta["r"] is None:
+            entry["r_union_independence_surrogate"] = None
+            entry["r_union_independence_surrogate_note"] = (
+                "ABSENT: not every per-mode rarity for this cell was measured, so "
+                "even the surrogate has no inputs. Reported as null rather than "
+                "filled in from a comparable cell")
         out[key] = entry
     return out
 
@@ -226,9 +240,12 @@ def _two_factor(recs: list[dict], n_train: int, n_gate: int) -> dict:
     meta = R_SOURCES[ek]
     r = meta.get("r")
     surrogate = None
-    if r is None and meta.get("per_mode"):
-        surrogate = independence_surrogate(meta["per_mode"]["patch1"],
-                                          meta["per_mode"]["patch2"])
+    _pm = meta.get("per_mode") or {}
+    # Both per-mode rarities have to exist: the slab's patch-2 rarity was never
+    # measured, and a surrogate built from a missing input would be a fabrication
+    # dressed as a derivation.
+    if r is None and _pm.get("patch1") is not None and _pm.get("patch2") is not None:
+        surrogate = independence_surrogate(_pm["patch1"], _pm["patch2"])
     # blind: the paper's probe-based event (fully blind on every mode).  Cells
     # whose ORIGINAL gate failed have no probe reading -> counted as not blind
     # for the joint event, and reported separately.

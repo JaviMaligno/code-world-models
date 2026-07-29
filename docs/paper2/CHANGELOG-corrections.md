@@ -10,6 +10,62 @@ Kept because it is genuinely useful: the pattern across these entries is that **
 error was in a number or a geometric factor computed by hand in prose**, never in a value
 `scripts/audit_paper2_numbers.py` re-derives from `results/`.
 
+### The disc/slab contrast: right argument, wrong campaign and wrong range
+
+The sentence bounding what an independent acceptance sample buys read "on the disc, four of
+the twenty large-model artifacts reach gate 1.000 ... an independent acceptance sample rejects
+4 of 4 (accuracies 0.9944 to 0.9950)". Two errors, found 2026-07-29 because **no audit claim
+covered that sentence** -- it was prose-only, which is the same exposure every other
+correction in this file had.
+
+* The four artifacts are in the **guided landing-prompt arm**, not the default disc arm. The
+  default disc arm's incomplete artifacts reach 1.000 on *none*, so there was never anything
+  there for a second sample to catch. "On the disc" was true of the instrument and misleading
+  about the campaign.
+* The accuracy range's upper end is **0.9997**, not 0.9950.
+
+The corrected version is stronger than the wrong one, which is why it is worth stating rather
+than trimming: across the disc instrument, **every** incomplete artifact reaching in-sample
+1.000 is rejected -- 8 of 8 draws over **6 distinct rollout-seed blocks** (the two sizes at
+k = (5,9) share their blocks, so 8 draws are not 8 samples; pooling them would repeat the
+error review point #11 caught). And the gate is shown not to be merely strict: on the positive
+control, where the artifacts are exactly right, it accepts 20 of 20. Four claims in
+`scripts/audit_paper2_numbers.py` now derive all of it.
+
+## The reconstruction layer: enumerated fields, three separate omissions
+
+Found 2026-07-29 while extending the held-out re-scoring from the 625 artifacts that
+existed when it was first run to all 1025. Three functions rebuilt an experiment's
+identity by **enumerating** the fields they cared about, and each one silently dropped a
+knob added later. None of these reached the manuscript --- the published held-out numbers
+(625 artifacts, 430 accepted, the disc's 4/4 and the slab's 0/19) were computed before the
+new campaigns existed, so they were never contaminated --- but two of the three would have
+corrupted the extension, and one of them did until a test caught it.
+
+* **`heldout.env_from_params` dropped `mode_effect` and `start_arc`.** It rebuilt the
+  landing, clamp and evidence-dose campaigns as plain freeze discs, i.e. scored 240
+  artifacts against the wrong truth. This is a wrong answer rather than a missing one, and
+  it is the reason the extension was re-run from scratch for those campaigns. The param is
+  named `start_arc` while the field is `start_arc_deg`, so a by-name pass-through would
+  have missed it too: the fix carries every field, maps the aliases explicitly, and
+  **raises** on any param it cannot classify, rather than dropping it.
+* **`heldout.env_key` mapped every non-disc shape to `"sq"`**, so the slab collided with
+  the square. Since the key is what the audit deduplicates samples on and looks the rarity
+  up by, at a shared knob the slab would have been scored against the square's rarity in
+  silence. It surfaced only because the slab's calibrated knob (5.5) had no `R_SOURCES`
+  entry and that guard refuses to run --- luck, not design, so there is now a test that
+  fails in CI when any committed campaign lacks an entry. The key also had to gain
+  `mode_effect`, `start_arc` and `n_rollouts`, all of which change the rollout stream.
+* **`paper2_statistics.treatment_key` omitted the same class of field three times**
+  (`mode_effect`, then `mode_hint`, then `start_arc`/`n_rollouts`), each time collapsing
+  distinct arms into one cell. Each was caught by that module's own one-draw-per-block
+  invariant, which is what it is for.
+
+The pattern is the one this file already records for hand-computed constants, in a
+different layer: an enumerated list of fields is a hand-maintained constant. Where a list
+could be derived from the type, it now is; where it cannot, an unrecognised entry is an
+error rather than a default.
+
 ## Theory and certificates
 
 | # | Wrong claim | Correct claim | Caught by |

@@ -219,6 +219,9 @@ def main() -> None:
     # ---- (4) off-sample exactness, restricted to ACCEPTED artifacts
     acc = [a for a in arts if a["accepted_heldout"]]
     exc = [a for a in acc if not a["eval"]["exact_outside_mode"]]
+    # both derived, because the campaign set grows: this note used to name 625 by hand
+    # and went stale the moment the eighth campaign landed
+    n_exc_all = sum(1 for a in arts if not a["eval"]["exact_outside_mode"])
     out["off_sample_exactness_of_accepted"] = {
         "claim": "of the artifacts an independent gate accepts, how many are exact "
                  "OUTSIDE the mode region on a further independent sample",
@@ -232,9 +235,13 @@ def main() -> None:
                        for a in exc],
         "clopper_pearson_95_upper_on_exception_rate":
             cp_upper(len(exc), len(acc)),
-        "note": "the 125 exceptions in the audit's own d_out_of_sample_exactness are over "
-                "ALL 625 artifacts, most of which never passed any gate; acceptance is the "
-                "condition the paper's claim is about",
+        "n_all_artifacts": len(arts),
+        "n_exceptions_over_all_artifacts": n_exc_all,
+        "note": (f"the {n_exc_all} exceptions in the audit's own "
+                 f"d_out_of_sample_exactness are over ALL {len(arts)} artifacts, most of "
+                 f"which never passed any gate; acceptance is the condition the paper's "
+                 f"claim is about. Both counts are derived here rather than typed: the "
+                 f"campaign set grows, and this note named 625 by hand until it went stale"),
     }
 
     # ---- (5) what the in-sample gate's 1.000 scores were worth, by arm
