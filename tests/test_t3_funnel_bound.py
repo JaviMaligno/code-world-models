@@ -490,3 +490,52 @@ def test_t3_corridor_failure_is_dominated_by_freezing():
         assert fracs[gap]["back"] < 0.10, fracs[gap]     # turning back is rare
     # freezing is the gamma-dependent failure: it falls as the channel widens
     assert fracs[0.6]["froze"] < fracs[0.2]["froze"] - 0.10, fracs
+
+
+def test_t3_lemma_d_arcsine_lower_bound():
+    # Lemma D instance (i): the last step contributes gain*dt*sin(phi - theta)
+    # to v_tan with phi uniform, i.e. the arcsine law, whose density
+    # 1/(pi sqrt(1-x^2)) is bounded below by 1/pi on ALL of (-1,1) -- no
+    # compactness caveat. That is what makes f(0) provable.
+    for x in (0.0, 0.25, 0.5, 0.9, 0.999):
+        assert 1 / (math.pi * math.sqrt(1 - x * x)) >= 1 / math.pi - 1e-15
+    # and the free-coordinate prefactor is 1/(pi * gain * dt)
+    env = RingField2D()
+    assert abs(1 / (math.pi * env.gain * env.dt) - 1.0610) < 1e-3
+
+
+def test_t3_arrival_angle_is_steerable_by_one_action():
+    # Lemma D instance (ii): rho(pi) >= (1/2)/sup|d theta / d a_0|, which is
+    # only useful because a single early action sweeps the arrival angle over
+    # a macroscopic range. Guards the sensitivity that makes it work.
+    from cwm.continuous.envs import integrate_2d
+    env = RingField2D(gap=0.0, r_in=None)
+    cx, cy = env.center
+
+    def arrival(acts):
+        s = (0.0, 0.0, 0.0, 0.0)
+        for t, a in enumerate(acts):
+            s = integrate_2d(s, a, env.dt, env.gain, env.drag, env.a_max)
+            if math.hypot(s[0] - cx, s[1] - cy) <= env.r_out:
+                return math.atan2(s[1] - cy, s[0] - cx), t
+        return None, None
+
+    rng = random.Random(5)
+    ders = []
+    for _ in range(1200):
+        acts = [rng.uniform(-1, 1) for _ in range(env.h_episode)]
+        th0, t0 = arrival(acts)
+        if th0 is None:
+            continue
+        a2 = list(acts)
+        a2[0] = max(-1.0, min(1.0, a2[0] + 1e-4))
+        th1, t1 = arrival(a2)
+        if th1 is None or t1 != t0:
+            continue
+        ders.append(abs((th1 - th0 + math.pi) % (2 * math.pi) - math.pi) / 1e-4)
+    assert len(ders) > 5, len(ders)
+    ders.sort()
+    # the derivative is macroscopic (so the angle has a density) but bounded
+    # (so Lemma D's prefactor is non-trivial)
+    assert 0.05 < ders[len(ders) // 2] < 2.0, ders[len(ders) // 2]
+    assert 0.5 / ders[int(0.9 * len(ders))] < 1.02      # below the measured rho

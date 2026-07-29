@@ -2297,17 +2297,49 @@ threshold is satisfied by 100% of arrivals at γ ≥ 0.4 — which is why that
 threshold carries no information. The variables are right; the constant
 was not.
 
-*Status of T3.* The bound d ≥ 0.0146·γ² has the right order, and its
-constant now has a derivation rather than a fit: c₁ = 2.2·f(0) from the
-ballistic criterion, with f(0) ≈ 1.1 the measured density of |v_tan| at 0.
-Every factor in d = R·∫ρ·T is therefore accounted for
-  R = 0.030 (ring-free, γ-free, Θ(1) — the object Lemma J bounds),
-  ρ(π) = 1.02/rad (ring-free, γ-free, a 1-D marginal density),
-  T ≥ 2.2γ·f(0) − P(horizon) (ballistic corridor survival),
-and what remains unproved is exactly the two density lower bounds — ρ(π)
-and f(0) — plus the horizon term. Both densities are one-dimensional
-marginals of the ring-free landing law, which is the tractable form of the
-local-CLT ingredient; neither is an occupation estimate.
+**Lemma D (free-coordinate density lower bound).** Let Y = Y(a_1,…,a_h) be
+a function of the actions, a_s ~ U(−a_max, a_max) independent, and fix a
+designated step s. On the event that the equation Y = y has a root in a_s
+with |a_s| < a_max while the other actions are held fixed,
+  **f_Y(y) ≥ (1/(2a_max))·P(a root exists)/ sup|∂Y/∂a_s|** ,
+by the change of variables f_Y(y) = E[(2a_max)^{-1}|∂Y/∂a_s|^{-1}] summed
+over roots. Both of T3's remaining densities are instances.
+
+*(i) f(0), the density of |v_tan| at 0 — PROVED.* Tangential velocity is
+  v_tan = Σ_s w_s·sin(φ_s − θ),  w_s = gain·dt·β^{t−s},
+so the LAST step enters with weight w = gain·dt = 0.3 exactly, and its
+contribution is gain·dt·sin(φ − θ) with φ uniform: the arcsine law, whose
+density 1/(π√(1−x²)) is **bounded below by 1/π on all of (−1,1)** — no
+compactness caveat needed. Freeing that step,
+  f(0) ≥ (1/(gain·dt))·(1/π)·P(|R| ≤ gain·dt),  R := v_tan − last term.
+*Measured*: P(|R| ≤ 0.3) = 0.362 at γ = 0.2 and 0.325 at γ = 0.6, giving
+  bound **f(0) ≥ 0.384 / 0.345**  against measured **1.157 / 1.104** —
+valid at both gaps, loose by ≈ 3×. Evidence: *proved* (Lemma D with the
+arcsine bound), with the range factor P(|R| ≤ 0.3) *measured*, unit
+channel arrival, n = 1184 / 3352.
+
+*(ii) ρ(π), the ring-free arrival-angle density — PROVED.* The arrival
+angle is steerable by a single early action: measured |∂θ/∂a_0| at first
+arrival has median 0.362 and 90th percentile 0.532 (n = 115 steerable
+paths, i.e. those whose arrival step is unchanged by the perturbation).
+Lemma D with a_max = 1 gives
+  ρ(π) ≥ (1/2)/sup|∂θ/∂a_0| ≥ 0.5/0.532 = **0.940**
+against measured **1.0167** — valid, and loose by only **1.1×**. The
+sensitivity is what makes this work: one early action sweeps the arrival
+angle over ≈ 1.1 rad, so the angle has a genuine density rather than
+concentrating.
+
+*Status of T3.* The bound d ≥ 0.0146·γ² has the right order, and every
+factor now has a derivation:
+| factor | value | status |
+|---|---|---|
+| R = P(ring-free reach) | 0.030 | measured; Θ(1), γ-free — the object Lemma J bounds |
+| ρ(π) | 1.02/rad | **PROVED ≥ 0.94** (Lemma D), 1.1× loose |
+| f(0) | 1.10–1.16 | **PROVED ≥ 0.35** (Lemma D + arcsine), 3× loose |
+| T ≥ 2.2γ·f(0) − P(horizon) | — | derived (ballistic crossing) |
+What remains unproved is R — a Θ(1) hitting probability with no γ in it —
+and the horizon term. Neither is a density and neither is an occupation
+estimate.
 
 **An intuition about that constant, REFUTED (2026-07-26).** The natural
 hope was that a freeze HANDICAPS entry — Lemma S says the freeze zeroes
