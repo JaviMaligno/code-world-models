@@ -410,10 +410,12 @@ def test_t3_quadratic_lower_bound_on_direct_entries():
         assert d / n >= C * gap ** 2 * 0.8, (gap, d / n, C * gap ** 2)
 
 
-def test_t3_tangential_speed_is_not_the_bottleneck():
-    # The refuted kinematic account, kept as a guard: the tangential speed at
-    # channel arrival does not scale with gamma (so it cannot explain
-    # T ~ gamma), and its median stays well below the crossing criterion.
+def test_t3_tangential_speed_distribution_is_gamma_free():
+    # The tangential speed at channel arrival does NOT scale with gamma -- the
+    # gamma-dependence of the corridor criterion |v_tan| <= r*gamma/(2*k*dt)
+    # comes from the THRESHOLD, not from the distribution. (An earlier test
+    # read this as refuting the mechanism; it refutes only a 3x-too-loose
+    # threshold that used free-flight speed instead of the arrival's v_rad.)
     cx, cy = RingField2D().center
     medians = {}
     for gap in (0.2, 0.6):
@@ -440,3 +442,51 @@ def test_t3_tangential_speed_is_not_the_bottleneck():
         medians[gap] = vt[len(vt) // 2]
     # the median tangential speed is essentially gamma-independent
     assert abs(medians[0.6] - medians[0.2]) < 0.3 * medians[0.2], medians
+
+
+def test_t3_corridor_failure_is_dominated_by_freezing():
+    # What identifies the corridor as the binding constraint: among channel
+    # arrivals that do not enter, freezing on the band dominates and is
+    # strongly gamma-dependent, while turning back out is negligible.
+    cx, cy = RingField2D().center
+    fracs = {}
+    for gap in (0.2, 0.6):
+        env = RingField2D(gap=gap)
+        modes = {"entered": 0, "froze": 0, "back": 0, "horizon": 0}
+        for i in range(40000):
+            rng = random.Random(50_000 + i)
+            s = env.initial_state(rng)
+            arrived = False
+            for _ in range(env.h_episode):
+                s, _, c = env.step(s, rng.uniform(-env.a_max, env.a_max))
+                r = math.hypot(s[0] - cx, s[1] - cy)
+                if not arrived:
+                    if c:
+                        break
+                    if r <= env.r_out:
+                        th = math.atan2(s[1] - cy, s[0] - cx)
+                        off = abs((th - math.pi + math.pi) % (2 * math.pi)
+                                  - math.pi)
+                        if off <= gap / 2:
+                            arrived = True
+                        else:
+                            break
+                    continue
+                if c:
+                    modes["froze"] += 1
+                    break
+                if env.in_interior(s[0], s[1]):
+                    modes["entered"] += 1
+                    break
+                if r > env.r_out:
+                    modes["back"] += 1
+                    break
+            else:
+                if arrived:
+                    modes["horizon"] += 1
+        tot = sum(modes.values())
+        assert tot > 100, (gap, tot)
+        fracs[gap] = {k: v / tot for k, v in modes.items()}
+        assert fracs[gap]["back"] < 0.10, fracs[gap]     # turning back is rare
+    # freezing is the gamma-dependent failure: it falls as the channel widens
+    assert fracs[0.6]["froze"] < fracs[0.2]["froze"] - 0.10, fracs

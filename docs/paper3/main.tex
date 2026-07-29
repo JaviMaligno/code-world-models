@@ -1756,9 +1756,27 @@ the approach is one-sided, which is why a facing channel is the
 consequential case), and $T$ has log-log slope $0.64$, so the
 decomposition predicts $d \sim \gamma^{1.64}$ against the directly
 measured $\gamma^{1.72}$. Two independent estimates of $T$ agree to
-$10\%$. What remains analytic is therefore the throughput alone --- the
-geometry of crossing a band of thickness $1.5$ inside an arc of width
-$\gamma r$ --- since the other two factors are ring-free constants. Elsewhere the ledger has moved the other way, and we
+$10\%$. The throughput has a kinematic account with a derived rather than fitted
+constant. The crossing takes $k \approx 9$ steps (the arrival radial speed
+is ${\approx}1.5$ against a band of thickness $1.5$), while drag's time
+constant is $1/\mathrm{drag} = 33$ steps, so the arrival's tangential
+velocity persists ballistically through the crossing and survival inside
+an arc of half-width $r\gamma/2$ requires
+$|v_{\mathrm{tan}}| \le r\gamma/(2k\,dt) \approx 2.2\gamma$. Since the
+density of $|v_{\mathrm{tan}}|$ at zero is bounded away from zero
+(measured ${\approx}1.1$, independent of $\gamma$), that probability is
+linear in $\gamma$ and the throughput inherits it. The criterion tracks
+the measured non-freezing fraction across the range ($0.25$ versus
+$0.29$, $0.50$ versus $0.47$, $0.93$ versus $0.70$, over-predicting at
+wide gaps where the ballistic approximation loosens), and the failure
+census confirms the corridor is what binds: freezing on the band accounts
+for $0.527$ of channel arrivals at $\gamma = 0.2$ against $0.302$ at
+$0.6$, turning back out for $1$--$2\%$, and the horizon for the rest.
+Assembling the three factors gives $d(\gamma) \ge 0.0146\,\gamma^{2}$,
+which holds at every gap measured. What is not proved is the pair of
+one-dimensional density lower bounds the argument rests on --- the
+arrival-angle density and the tangential-speed density at zero --- both
+marginals of the ring-free landing law rather than occupation estimates. Elsewhere the ledger has moved the other way, and we
 report both directions: the continuity modulus, the barcode sandwich, the
 non-separating query bound, and the play-cost decomposition are now
 theorems with explicit constants (some of them, like the refuted

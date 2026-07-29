@@ -2239,36 +2239,75 @@ right ORDER — γ² against the measured γ^1.72 — and it is *measured*, not
 proved: c₁ is fitted. Evidence label *measured*, unit rollout,
 `results/t3_reach_density_throughput.json`.
 
-**The kinematic derivation of c₁ is REFUTED.** The natural way to earn c₁
-was kinematic: crossing the 1.5-thick band while staying inside an arc of
-half-width r·γ/2 should require a small tangential speed, so
-T(γ) ≈ P(|v_tan| ≤ c·γ) and T ∝ γ. Measured at first arrival in the
-channel sector (200 000 rollouts per gap):
+**The kinematic derivation of c₁, with the constant derived rather than
+guessed.** The crossing is BALLISTIC in the tangential direction: the
+drag time constant is 1/drag = 33 steps while the crossing takes k ≈ 9
+(measured median 8–9 steps, from v_rad ≈ 1.5 and a 1.5-thick band), so
+the arrival tangential velocity PERSISTS through the crossing and the
+tangential travel is ≈ |v_tan|·k·dt. Survival inside the arc of
+half-width r·γ/2 therefore requires
+  **|v_tan| ≤ r·γ/(2·k·dt) ≈ 2.2·γ** ,
+and since |v_tan|'s density at 0 is bounded below, P(that) ≥ 2.2γ·f(0),
+giving T ∝ γ and hence c₁.
+*Measured* (200 000 rollouts per gap; unit = channel arrival):
+| γ | arrivals | threshold 2.2γ | P(satisfied) | non-freeze fraction | f(0) |
+|---|---|---|---|---|---|
+| 0.1 | 594 | 0.222 | 0.251 | 0.288 | 1.044 |
+| 0.2 | 1184 | 0.444 | 0.498 | 0.473 | 1.157 |
+| 0.4 | 2332 | 0.889 | 0.797 | 0.614 | 1.184 |
+| 0.6 | 3352 | 1.333 | 0.927 | 0.698 | 1.104 |
+The criterion tracks the non-freeze fraction across the range (0.25 vs
+0.29, 0.50 vs 0.47, 0.80 vs 0.61, 0.93 vs 0.70 — over-predicting at wide
+gaps, where the ballistic approximation degrades as the crossing has room
+to turn), and **f(0) ≈ 1.1 independent of γ**, which is what makes the
+bound linear in γ.
+
+*A failure mode of the earlier test, for the record.* An initial version
+of this criterion used the threshold 6.7γ and appeared refuted: it was
+satisfied by 100% of arrivals at γ ≥ 0.4 while T stayed at 0.28. The
+threshold was 3× too loose because it used the free-flight speed rather
+than the arrival's v_rad ≈ 1.5 to set the crossing time k. With k derived
+from the measured v_rad the criterion is informative, so the mechanism was
+never the problem.
+
+**How arrivals actually fail** (200 000 rollouts per gap; unit = channel
+arrival) — this is what identifies the corridor as the binding constraint:
+| γ | entered | froze | turned back | horizon |
+|---|---|---|---|---|
+| 0.2 | 0.202 | **0.527** | 0.014 | 0.258 |
+| 0.6 | 0.313 | **0.302** | 0.023 | 0.362 |
+Freezing on the band is the dominant failure and the only strongly
+γ-dependent one (0.527 → 0.302), turning back is negligible (1–2%), and
+the horizon accounts for a further 26–36% because the crossing needs
+≈ 9 of the 80 steps and arrivals are late. The tangential travel during a
+successful crossing has median 0.227 against the arc bound 0.400 at
+γ = 0.2, and 0.339 against 1.200 at γ = 0.6 — tight at the narrow gap,
+slack at the wide one, exactly as the freeze fractions say.
+
+Superseded measurement, kept because its threshold was wrong rather than
+its variables:
 | γ | arrivals | T | median \|v_tan\| | median v_rad | P(\|v_tan\| ≤ 6.7γ) | T given that |
 |---|---|---|---|---|---|---|
 | 0.1 | 594 | 0.115 | 0.441 | 1.505 | 0.707 | 0.155 |
 | 0.2 | 1184 | 0.202 | 0.445 | 1.497 | 0.956 | 0.211 |
 | 0.4 | 2332 | 0.280 | 0.470 | 1.494 | 0.9996 | 0.281 |
 | 0.6 | 3352 | 0.313 | 0.514 | 1.474 | 1.000 | 0.313 |
-Two facts kill the account. The median tangential speed is **≈ 0.45
-regardless of γ** — arrival in the sector already selects near-radial
-motion, so the tangential constraint is not what binds. And at γ ≥ 0.4
-the criterion |v_tan| ≤ 6.7γ is satisfied by **100%** of arrivals while
-T is still only 0.28, so satisfying it is not sufficient either. The
-tangential-speed story is therefore neither necessary nor sufficient, and
-the throughput's true bottleneck is elsewhere — the arrivals have
-v_rad ≈ 1.5, so at dt = 0.1 they need ≈ 10 steps to cross 1.5 radially,
-during which the trajectory is re-randomised by ten fresh actions rather
-than flying ballistically. That points at a multi-step survival problem
-inside the channel, not a one-shot velocity condition.
+The median tangential speed is ≈ 0.45 regardless of γ, and the 6.7γ
+threshold is satisfied by 100% of arrivals at γ ≥ 0.4 — which is why that
+threshold carries no information. The variables are right; the constant
+was not.
 
-*Status of T3.* The bound d ≥ 0.0146·γ² has the right order and one
-fitted constant; the decomposition that produced it is non-circular and
-γ-attributed; and the obvious mechanism for its constant is refuted with
-its numbers. What a proof needs is a survival estimate for ~10 steps
-inside a γ-wide corridor — which is the occupation-type estimate the
-original T3 entry named, now localised to a corridor of known width and a
-known number of steps rather than to the whole trajectory.
+*Status of T3.* The bound d ≥ 0.0146·γ² has the right order, and its
+constant now has a derivation rather than a fit: c₁ = 2.2·f(0) from the
+ballistic criterion, with f(0) ≈ 1.1 the measured density of |v_tan| at 0.
+Every factor in d = R·∫ρ·T is therefore accounted for
+  R = 0.030 (ring-free, γ-free, Θ(1) — the object Lemma J bounds),
+  ρ(π) = 1.02/rad (ring-free, γ-free, a 1-D marginal density),
+  T ≥ 2.2γ·f(0) − P(horizon) (ballistic corridor survival),
+and what remains unproved is exactly the two density lower bounds — ρ(π)
+and f(0) — plus the horizon term. Both densities are one-dimensional
+marginals of the ring-free landing law, which is the tractable form of the
+local-CLT ingredient; neither is an occupation estimate.
 
 **An intuition about that constant, REFUTED (2026-07-26).** The natural
 hope was that a freeze HANDICAPS entry — Lemma S says the freeze zeroes
