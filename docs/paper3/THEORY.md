@@ -1,6 +1,16 @@
-# Paper 3 — formal statements (working draft, 2026-07-19)
+# Paper 3 — formal statements
 
-Companion to `RESEARCH-DIRECTION.md`. These are the "is there a theorem here"
+Companion to `RESEARCH-DIRECTION.md`.
+
+**Scope of this file.** Mathematical content only: statements, proofs,
+refutations, and measured facts with their evidence labels (per
+`.claude/skills/paper-claims`: proved / measured / consistent-with, each with
+its unit and n). A closed route is mathematical content and stays — *which*
+route is closed and *by what* is a fact. The narrative of how the campaign
+reached each state — dates, which reading came first, what was believed and
+then corrected — belongs in `CAMPAIGN-LOG.md`, not here. Paper prose lives in
+`main.tex` and is governed by the same claim contract.
+ These are the "is there a theorem here"
 de-risk items (§7.4 there). Discipline as in papers 1–2: provable vs measured
 kept explicit; every hypothesis checked at its use-site. Instrument:
 `RingField2D` (`src/cwm/continuous/envs.py`), tests in `tests/test_ring2d.py`.
@@ -1123,9 +1133,7 @@ u = 1.32**. Both limits approach 1 from below — as u → 0 the first term
 vanishes and the second ↑ 2Φ̄(0) = 1 — so the supremum is not attained.
 (Checked on a grid spanning u ∈ [10⁻⁶, 9·10⁶]: not one point reaches 1.)
 
-**CORRECTION (2026-07-26, second pass — my own error).** I first wrote
-that this gives "per-dimension rate ≤ 0.7783 with no probabilistic input
-whatever". That is WRONG, and the error is instructive. The value 0.7783
+**Why this does NOT by itself give a rate.** The value 0.7783
 is q at u = 1.32; a single λ makes u_i = 2λσ_i² equal 1.32 for *one*
 scale only. Every coordinate does contribute q(u_i) < 1, but a product
 of factors each merely below 1 is not exponentially small — an
@@ -1152,8 +1160,7 @@ per-dimension rate ≤ **0.789–0.799**.
 
 *Is that comparability provable? I called it "routine"; it is NOT —
 tried and failed, 2026-07-26.* The structure is right, and one piece of
-it I had wrong earlier: M_s = max(1,‖a_s‖) is the norm of the WHOLE
-action, so A_s := (w_s/M_s)² is COMMON to every coordinate, and given
+it: M_s = max(1,‖a_s‖) is the norm of the WHOLE action, so A_s := (w_s/M_s)² is COMMON to every coordinate, and given
 the norms σ_i² = dt⁴gain²·Σ_s A_s a_{s,i}² genuinely is a sum of 80
 INDEPENDENT terms. But the constants do not deliver a high-probability
 statement at these parameters. For the deviation t = μ/2 (μ = E[σ_i²|
@@ -1206,8 +1213,8 @@ and the right-hand event **depends only on coordinate i's own variables**
   (ii) the bad indicators are INDEPENDENT across i (disjoint variable
       sets), so #bad is BINOMIAL and Chernoff replaces Markov:
       P(#bad > αn) ≤ (e·p/α)^{αn} — exponentially small in n.
-So the NA question is not needed at all: it arose only because I had
-conditioned on the norms, which coupled the coordinates artificially.
+So negative association is not needed at all: the coupling that seemed to
+require it is an artifact of conditioning on the norms.
 
 **Theorem T5-F (cube interface, unconditional and floor-free).** With
 λ = 1.32/(2m), a lower cutoff z, an upper cutoff K (deterministic:
@@ -1385,7 +1392,7 @@ What the tail actually correlates with (same run, top decile
   • **channel narrowness** — 18 / 6 / 3 of the tail at γ = 0.3 / 0.6 /
     1.2, i.e. the tail concentrates where the two routes around the mode
     differ most.
-*A reading, proposed and then REFUTED (2026-07-26).* I read A_t as a
+*Route commitment: REFUTED.* The reading under test is that A_t is a
 ROUTE-COMMITMENT cost — one bad first action committing the
 truth-following continuation to the other way around the annulus, so
 that V_T jumps across the CUT LOCUS where the optimal route switches
@@ -1469,8 +1476,8 @@ V_B(bc) ≥ V_B(tc),
   V_T(tc) − V_T(bc)
     = [V_T(tc) − V_B(tc)] + [V_B(tc) − V_B(bc)] + [V_B(bc) − V_T(bc)]
     ≤ [V_T(tc) − V_B(tc)]⁺ + Δ_over,   Δ_over := V_B(bc) − V_T(bc).
-*My first attempt dropped the first term*, assuming the truth's own
-candidate never touches the mode; measured, that bound holds only
+*Both terms are needed.* Dropping the first — i.e. assuming the truth's own
+candidate never touches the mode — leaves a bound that holds only
 51–71/106 (the truth planner does plan grazing paths, and a freeze can
 RAISE the truth's score by parking the trajectory nearer the lure than
 the blind continuation flies). With both terms the chain holds
@@ -1585,12 +1592,10 @@ p ≈ 0.5):
 | 0.77 | measured | 1.5 | 0.35 | non-vacuous |
 | — | measured L_v ≈ 0.8 directly | 0.8 | 0.18 | non-vacuous |
 
-I earlier called pc ≲ 0.18 "the first non-vacuous bound" for this play
-cost. That is only true with a MEASURED constant: pc ≤ 1 holds trivially
-(play_cost 1 means the blind planner is no better than random), so the
-proved chain is vacuous by a factor 48, and even the
-competence-hypothesis chain misses at 1.21. The claim is corrected here
-rather than left standing.
+Since pc ≤ 1 holds trivially (play_cost 1 means the blind planner is no
+better than random), the proved chain is vacuous by a factor 48 and the
+competence-hypothesis chain misses at 1.21: a non-vacuous bound requires a
+measured constant.
 
 *Where the remaining factor sits.* Between the hypothesis chain (1.21)
 and the measurement (0.18) there is a factor 6.7, and it is two things,
@@ -1655,8 +1660,8 @@ forever, and without drag it would grow without bound. Verified against
 the integrator over 400 random states × 200 steps: worst observed
 1.9956 against the cap 2.0600, tight to 3%. This is the structural
 reason W̄ can be Lipschitz at all.
-*The other half is NOT anti-concentration, as I first assumed.* The
-natural completion would be that the argmax rarely switches under a
+*The other half is NOT anti-concentration.* The natural completion would
+be that the argmax rarely switches under a
 small perturbation. Measured, it switches often: an ε = 0.05 velocity
 perturbation already flips the argmax for **10%** of candidate draws,
 rising to 66% at ε = 0.8, with no clean C·ε scaling. So the smoothing
@@ -1917,9 +1922,8 @@ uniform statement would follow from f's unimodality, which is measured
 (2026-07-26, corrected 2026-07-27).* Writing the increment out,
   r_int(γ₂) − r_int(γ₁) = [d(γ₂) − d(γ₁)] + [f(γ₂) − f(γ₁)],
 with the first bracket PROVED nonnegative (Prop 7), so M1 can fail only
-if f's drop exceeds d's rise. I offered "prove d's rise beats f's drop"
-as the form to attack. It is not a target: that inequality is LOGICALLY
-EQUIVALENT to M1 itself (r_int(γ₂) ≥ r_int(γ₁) ⟺ d-rise ≥ f-drop), so
+if f's drop exceeds d's rise. "Prove d's rise beats f's drop" is NOT a
+target: that inequality is LOGICALLY EQUIVALENT to M1 itself (r_int(γ₂) ≥ r_int(γ₁) ⟺ d-rise ≥ f-drop), so
 it restates the problem rather than reducing it — the same trap as the
 c = r·κ factorisation, caught here before it was acted on. And a
 pathwise version is impossible: seed 50543 refutes pathwise M1, hence no
@@ -2175,7 +2179,7 @@ of endpoint displacement, where a single landing moves only R_L = 0.03.
 That factor of ~190 between the per-step landing scale and the
 per-action endpoint scale is exactly what Prop 8's tube throws away.
 
-*"Bound P(prefix)" is CIRCULAR — recorded before acting on it.* Lemma J
+*"Bound P(prefix)" is CIRCULAR.* Lemma J
 removes the exponential but leaves P(prefix), the probability that the
 other h−2 actions bring the trajectory to a state from which two free
 ones finish. That is not a target: a launch state is DEFINED as one from
@@ -2225,6 +2229,47 @@ are γ-independent ring-free quantities. And (iii) is not circular — it
 conditions on arrival IN the channel, an event defined by the geometry
 rather than by the outcome.
 
+**A γ² lower bound, calibrated (2026-07-27).** Taking T(γ) ≥ c₁γ with
+c₁ = min over the grid of T/γ = 0.4695 (T is concave, so the smallest
+ratio is the safe one) gives
+  **d(γ) ≥ R·ρ(π)·c₁·γ² = 0.01456·γ²**,
+which holds at every measured gap with slack 1.0× to 2.6× (exact at
+γ = 0.6, where c₁ is attained). This is the first lower bound on d of the
+right ORDER — γ² against the measured γ^1.72 — and it is *measured*, not
+proved: c₁ is fitted. Evidence label *measured*, unit rollout,
+`results/t3_reach_density_throughput.json`.
+
+**The kinematic derivation of c₁ is REFUTED.** The natural way to earn c₁
+was kinematic: crossing the 1.5-thick band while staying inside an arc of
+half-width r·γ/2 should require a small tangential speed, so
+T(γ) ≈ P(|v_tan| ≤ c·γ) and T ∝ γ. Measured at first arrival in the
+channel sector (200 000 rollouts per gap):
+| γ | arrivals | T | median \|v_tan\| | median v_rad | P(\|v_tan\| ≤ 6.7γ) | T given that |
+|---|---|---|---|---|---|---|
+| 0.1 | 594 | 0.115 | 0.441 | 1.505 | 0.707 | 0.155 |
+| 0.2 | 1184 | 0.202 | 0.445 | 1.497 | 0.956 | 0.211 |
+| 0.4 | 2332 | 0.280 | 0.470 | 1.494 | 0.9996 | 0.281 |
+| 0.6 | 3352 | 0.313 | 0.514 | 1.474 | 1.000 | 0.313 |
+Two facts kill the account. The median tangential speed is **≈ 0.45
+regardless of γ** — arrival in the sector already selects near-radial
+motion, so the tangential constraint is not what binds. And at γ ≥ 0.4
+the criterion |v_tan| ≤ 6.7γ is satisfied by **100%** of arrivals while
+T is still only 0.28, so satisfying it is not sufficient either. The
+tangential-speed story is therefore neither necessary nor sufficient, and
+the throughput's true bottleneck is elsewhere — the arrivals have
+v_rad ≈ 1.5, so at dt = 0.1 they need ≈ 10 steps to cross 1.5 radially,
+during which the trajectory is re-randomised by ten fresh actions rather
+than flying ballistically. That points at a multi-step survival problem
+inside the channel, not a one-shot velocity condition.
+
+*Status of T3.* The bound d ≥ 0.0146·γ² has the right order and one
+fitted constant; the decomposition that produced it is non-circular and
+γ-attributed; and the obvious mechanism for its constant is refuted with
+its numbers. What a proof needs is a survival estimate for ~10 steps
+inside a γ-wide corridor — which is the occupation-type estimate the
+original T3 entry named, now localised to a corridor of known width and a
+known number of steps rather than to the whole trajectory.
+
 **An intuition about that constant, REFUTED (2026-07-26).** The natural
 hope was that a freeze HANDICAPS entry — Lemma S says the freeze zeroes
 the velocity, so the next landing creeps 0.03 and the trajectory has to
@@ -2239,15 +2284,12 @@ touched the band is one that reached the ring's neighbourhood, which is
 a prerequisite for threading the channel. The selection effect dominates
 the kinematic handicap by nearly an order of magnitude.
 
-**A factorisation that turns out to be CIRCULAR (correcting my own
-framing).** By Bayes
+**A factorisation that is CIRCULAR.** By Bayes
   c(γ) = f/r_int = P(froze | entered) = r(γ) · κ(γ),
-  κ(γ) := P(enter | froze first)/P(enter)  — the freeze BOOST,
-and I presented "prove κ ≤ 32" as a new and possibly easier handle. It
-is not: the only free bound on κ is κ ≤ 1/r_int, which returns
-c ≤ r/r_int — precisely the bound we already had. The factorisation
-renames the difficulty rather than reducing it, and saying otherwise was
-optimism. Recorded so the next attempt does not start there.
+  κ(γ) := P(enter | froze first)/P(enter)  — the freeze BOOST.
+"Prove κ ≤ 32" is not a target: the only free bound on κ is κ ≤ 1/r_int,
+which returns c ≤ r/r_int, precisely the bound already available. The
+factorisation renames the difficulty rather than reducing it.
 
 **A partial mechanism, measured (2026-07-26).** Where DO funnel entries
 freeze? Over 30 000 rollouts per gap, the angular distance |θ − π| from
@@ -2404,8 +2446,7 @@ beyond the reachable set there is nothing to identify. Plain β̂₁ scores
 the SEPARATION it induces — and the two questions come apart precisely
 in the gauge region.
   (b) *two-sided evidence: NOT a calibration gap — a structural limit of
-freeze evidence.* This was my first diagnosis and the measurement
-refuted it. See Proposition R4.
+freeze evidence.* See Proposition R4.
 
 **Proposition R4 (freeze evidence cannot resolve enclosure, and more of
 it makes things worse).** Under freeze-on-entry the contact cloud

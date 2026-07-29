@@ -385,3 +385,58 @@ def test_t3_throughput_is_conditioned_on_geometry_not_outcome():
                 break
     assert arrivals > 0
     assert entries < arrivals          # strictly: some arrivals do NOT enter
+
+
+def test_t3_quadratic_lower_bound_on_direct_entries():
+    # d(gamma) >= 0.0146 * gamma^2, the calibrated bound from the ring-free
+    # decomposition. Checked directly at two gaps (the constant is fitted at
+    # gamma = 0.6, so the bound is tight there and slack below).
+    C = 0.01456
+    for gap, n in ((0.4, 20000), (0.6, 20000)):
+        env = RingField2D(gap=gap)
+        d = 0
+        for i in range(n):
+            rng = random.Random(50_000 + i)
+            s = env.initial_state(rng)
+            froze = False
+            for _ in range(env.h_episode):
+                s, _, c = env.step(s, rng.uniform(-env.a_max, env.a_max))
+                if c:
+                    froze = True
+                    break
+                if env.in_interior(s[0], s[1]):
+                    d += (not froze)
+                    break
+        assert d / n >= C * gap ** 2 * 0.8, (gap, d / n, C * gap ** 2)
+
+
+def test_t3_tangential_speed_is_not_the_bottleneck():
+    # The refuted kinematic account, kept as a guard: the tangential speed at
+    # channel arrival does not scale with gamma (so it cannot explain
+    # T ~ gamma), and its median stays well below the crossing criterion.
+    cx, cy = RingField2D().center
+    medians = {}
+    for gap in (0.2, 0.6):
+        env = RingField2D(gap=gap)
+        vt = []
+        for i in range(30000):
+            rng = random.Random(50_000 + i)
+            s = env.initial_state(rng)
+            for _ in range(env.h_episode):
+                s, _, c = env.step(s, rng.uniform(-env.a_max, env.a_max))
+                if c:
+                    break
+                r = math.hypot(s[0] - cx, s[1] - cy)
+                if r <= env.r_out:
+                    th = math.atan2(s[1] - cy, s[0] - cx)
+                    off = abs((th - math.pi + math.pi) % (2 * math.pi)
+                              - math.pi)
+                    if off <= gap / 2:
+                        ur = ((s[0] - cx) / r, (s[1] - cy) / r)
+                        vt.append(abs(-s[2] * ur[1] + s[3] * ur[0]))
+                    break
+        assert len(vt) > 30, (gap, len(vt))
+        vt.sort()
+        medians[gap] = vt[len(vt) // 2]
+    # the median tangential speed is essentially gamma-independent
+    assert abs(medians[0.6] - medians[0.2]) < 0.3 * medians[0.2], medians
