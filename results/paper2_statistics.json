@@ -1,0 +1,4312 @@
+{
+  "script": "paper2_statistics.py",
+  "review_point": "#5 -- statistics by experimental unit",
+  "alpha": 0.05,
+  "unit_hierarchy": {
+    "primary_unit": {
+      "name": "gate-sample block",
+      "identified_by": "(seed_index, seed_offset), i.e. seed // 10000",
+      "why": "collect_transitions draws Random(rollout_seed + i) and rollout_seed = 10000*(seed_index + 1 + seed_offset); the stream does not depend on instrument, knob, patch shape, prompt variant or iteration budget, so campaigns that reuse a seed index reuse the random draw byte for byte",
+      "evidence": "scripts/sample_stream_census.py, src/cwm/continuous/contract.py::collect_transitions"
+    },
+    "secondary_unit": {
+      "name": "synthesis draw",
+      "identified_by": "(block, treatment, model)",
+      "why": "one synthesize+refine attempt; attempts sharing a block share their evidence and are not independent trials"
+    },
+    "treatment": {
+      "name": "treatment",
+      "identified_by": "(instrument, knob, patch shape, prompt variant, iteration budget, arm)",
+      "why": "varying any of these adds a TREATMENT, not a sample; model is excluded on purpose -- it indexes draws"
+    }
+  },
+  "methods": {
+    "interval": "Clopper-Pearson exact two-sided 95% (binomial inversion via math.comb; closed forms at k=0 and k=n). Wilson score interval reported alongside because the current prose quotes Wilson.",
+    "block_scoring": {
+      "all": "block succeeds iff every draw on it succeeded; estimand P(all attempts on a fresh sample succeed). CONSERVATIVE -- quote this one.",
+      "any": "block succeeds iff some draw on it succeeded; estimand P(at least one attempt on a fresh sample succeeds). OPTIMISTIC."
+    },
+    "draw_level": "computed only as the labelled invalid-if-pooled comparator whenever blocks are shared; pooled_bound(unit='draw') raises otherwise."
+  },
+  "totals": {
+    "n_draws": 637,
+    "n_distinct_blocks": 40,
+    "n_treatments": 21,
+    "files": [
+      "continuous_claude_relay.json",
+      "continuous_claude_relay_patch2d_k3_7.json",
+      "continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8.json",
+      "continuous_synthesis_large_xwall8.json",
+      "continuous_synthesis_large_xwall8_off20.json",
+      "continuous_synthesis_mini_xwall4.json",
+      "continuous_synthesis_mini_xwall8.json",
+      "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json",
+      "continuous_synthesis_patch2d_large_k3_7.json",
+      "continuous_synthesis_patch2d_large_k3_7_pv-region_it15.json",
+      "continuous_synthesis_patch2d_large_k5_9.json",
+      "continuous_synthesis_patch2d_mini_k3_7.json",
+      "continuous_synthesis_patch2d_mini_k3_7_pv-region_it15.json",
+      "continuous_synthesis_patch2d_mini_k5_9.json",
+      "continuous_synthesis_patch2dsq_large_k3_7.json",
+      "continuous_synthesis_patch2dsq_mini_k3_7.json",
+      "continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4.json",
+      "continuous_synthesis_pendulum_large_thstop1.4.json",
+      "continuous_synthesis_pendulum_large_thstop1.4_off20.json",
+      "continuous_synthesis_pendulum_large_thstop1.json",
+      "continuous_synthesis_pendulum_mini_thstop1.4.json",
+      "continuous_synthesis_pendulum_mini_thstop1.json"
+    ]
+  },
+  "treatment_table": [
+    {
+      "treatment": "cart | x_wall=4 | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_mini_xwall4.json"
+      ],
+      "n_blocks": 5,
+      "n_draws": 5,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 5
+      },
+      "outcome_counts": {
+        "control_translated": 5
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 5,
+        "n": 5,
+        "n_draws": 5,
+        "n_distinct_blocks": 5,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=4 | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.4781762498950185,
+          1.0
+        ],
+        "wilson_95": [
+          0.5655085052479191,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | cart | x_wall=4 | prompt=default | it=5 | arm=full | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_mini_xwall4.json"
+      ],
+      "n_blocks": 5,
+      "n_draws": 5,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 5
+      },
+      "outcome_counts": {
+        "rejected_stalled": 2,
+        "repaired": 3
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 3,
+        "n": 5,
+        "n_draws": 5,
+        "n_distinct_blocks": 5,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.6,
+        "clopper_pearson_95": [
+          0.14663279963467313,
+          0.9472550494736831
+        ],
+        "wilson_95": [
+          0.23071993220883708,
+          0.8823817688407467
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | cart | x_wall=4 | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "cart | x_wall=8 | prompt=default | it=5 | arm=full",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "family": "qwen",
+      "file": [
+        "continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8.json"
+      ],
+      "n_blocks": 3,
+      "n_draws": 3,
+      "blocks": [
+        1,
+        2,
+        3
+      ],
+      "branch_counts": {
+        "mode_absent": 1,
+        "mode_present": 2
+      },
+      "outcome_counts": {
+        "control_translated": 3
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 2,
+        "n": 2,
+        "n_draws": 2,
+        "n_distinct_blocks": 2,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.15811388300841897,
+          1.0
+        ],
+        "wilson_95": [
+          0.34237195288961925,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | cart | x_wall=8 | prompt=default | it=5 | arm=full | Qwen/Qwen3-Coder-30B-A3B-Instruct"
+      }
+    },
+    {
+      "treatment": "cart | x_wall=8 | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_large_xwall8.json",
+        "continuous_synthesis_large_xwall8_off20.json"
+      ],
+      "n_blocks": 40,
+      "n_draws": 40,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "branch_counts": {
+        "mode_absent": 20,
+        "mode_present": 20
+      },
+      "outcome_counts": {
+        "control_translated": 40
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | cart | x_wall=8 | prompt=default | it=5 | arm=full | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "cart | x_wall=8 | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_mini_xwall8.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 10,
+        "mode_present": 10
+      },
+      "outcome_counts": {
+        "control_translated": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 10,
+        "n": 10,
+        "n_draws": 10,
+        "n_distinct_blocks": 10,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.6915028921812392,
+          1.0
+        ],
+        "wilson_95": [
+          0.7224598312333834,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | cart | x_wall=8 | prompt=default | it=5 | arm=full | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "family": "qwen",
+      "file": [
+        "continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8.json"
+      ],
+      "n_blocks": 3,
+      "n_draws": 3,
+      "blocks": [
+        1,
+        2,
+        3
+      ],
+      "branch_counts": {
+        "mode_absent": 1,
+        "mode_present": 2
+      },
+      "outcome_counts": {
+        "blind_and_exploited": 1,
+        "rejected_stalled": 2
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 2,
+        "n_draws": 2,
+        "n_distinct_blocks": 2,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.841886116991581
+        ],
+        "wilson_95": [
+          0.0,
+          0.6576280471103807
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | cart | x_wall=8 | prompt=default | it=5 | arm=incomplete | Qwen/Qwen3-Coder-30B-A3B-Instruct"
+      },
+      "blind_exploited_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 1,
+        "n": 1,
+        "n_draws": 1,
+        "n_distinct_blocks": 1,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.025,
+          1.0
+        ],
+        "wilson_95": [
+          0.20654329147389294,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "blind-and-exploited | cart | x_wall=8 | prompt=default | it=5 | arm=incomplete | Qwen/Qwen3-Coder-30B-A3B-Instruct"
+      }
+    },
+    {
+      "treatment": "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_large_xwall8.json",
+        "continuous_synthesis_large_xwall8_off20.json"
+      ],
+      "n_blocks": 40,
+      "n_draws": 40,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "branch_counts": {
+        "mode_absent": 20,
+        "mode_present": 20
+      },
+      "outcome_counts": {
+        "blind_and_exploited": 20,
+        "repaired": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | cart | x_wall=8 | prompt=default | it=5 | arm=incomplete | gpt-5.4"
+      },
+      "blind_exploited_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "blind-and-exploited | cart | x_wall=8 | prompt=default | it=5 | arm=incomplete | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_mini_xwall8.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 10,
+        "mode_present": 10
+      },
+      "outcome_counts": {
+        "blind_and_exploited": 10,
+        "repaired": 10
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 10,
+        "n": 10,
+        "n_draws": 10,
+        "n_distinct_blocks": 10,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.6915028921812392,
+          1.0
+        ],
+        "wilson_95": [
+          0.7224598312333834,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | cart | x_wall=8 | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
+      },
+      "blind_exploited_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 10,
+        "n": 10,
+        "n_draws": 10,
+        "n_distinct_blocks": 10,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.6915028921812392,
+          1.0
+        ],
+        "wilson_95": [
+          0.7224598312333834,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "blind-and-exploited | cart | x_wall=8 | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "cart | x_wall=8 | prompt=relay | it=5 | arm=full",
+      "model": "claude-sonnet (agent-relayed)",
+      "size": "sonnet",
+      "family": "claude",
+      "file": [
+        "continuous_claude_relay.json"
+      ],
+      "n_blocks": 1,
+      "n_draws": 1,
+      "blocks": [
+        1
+      ],
+      "branch_counts": {
+        "mode_absent": 1,
+        "mode_present": 0
+      },
+      "outcome_counts": {
+        "control_translated": 1
+      }
+    },
+    {
+      "treatment": "cart | x_wall=8 | prompt=relay | it=5 | arm=incomplete",
+      "model": "claude-sonnet (agent-relayed)",
+      "size": "sonnet",
+      "family": "claude",
+      "file": [
+        "continuous_claude_relay.json"
+      ],
+      "n_blocks": 3,
+      "n_draws": 3,
+      "blocks": [
+        1,
+        2,
+        3
+      ],
+      "branch_counts": {
+        "mode_absent": 1,
+        "mode_present": 2
+      },
+      "outcome_counts": {
+        "blind_and_exploited": 1,
+        "repaired": 2
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 2,
+        "n": 2,
+        "n_draws": 2,
+        "n_distinct_blocks": 2,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=relay | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.15811388300841897,
+          1.0
+        ],
+        "wilson_95": [
+          0.34237195288961925,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | cart | x_wall=8 | prompt=relay | it=5 | arm=incomplete | claude-sonnet (agent-relayed)"
+      },
+      "blind_exploited_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 1,
+        "n": 1,
+        "n_draws": 1,
+        "n_distinct_blocks": 1,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=relay | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.025,
+          1.0
+        ],
+        "wilson_95": [
+          0.20654329147389294,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "blind-and-exploited | cart | x_wall=8 | prompt=relay | it=5 | arm=incomplete | claude-sonnet (agent-relayed)"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=full",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "family": "qwen",
+      "file": [
+        "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json"
+      ],
+      "n_blocks": 3,
+      "n_draws": 3,
+      "blocks": [
+        1,
+        2,
+        3
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 3,
+        "per_mode_seen": {
+          "patch1_seen": 3,
+          "patch2_seen": 1
+        },
+        "see_none": 0,
+        "see_one": 2,
+        "see_both": 1
+      },
+      "outcome_counts": {
+        "control_translated": 3
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 3,
+        "n": 3,
+        "n_draws": 3,
+        "n_distinct_blocks": 3,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.2924017738212866,
+          1.0
+        ],
+        "wilson_95": [
+          0.43849391955098227,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=full | Qwen/Qwen3-Coder-30B-A3B-Instruct"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_large_k3_7.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 5
+        },
+        "see_none": 0,
+        "see_one": 15,
+        "see_both": 5
+      },
+      "outcome_counts": {
+        "control_translated": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=full | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_mini_k3_7.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 5
+        },
+        "see_none": 0,
+        "see_one": 15,
+        "see_both": 5
+      },
+      "outcome_counts": {
+        "control_translated": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=full | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_large_k3_7.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 5
+        },
+        "see_none": 0,
+        "see_one": 15,
+        "see_both": 5
+      },
+      "outcome_counts": {
+        "rejected_stalled": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_mini_k3_7.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 5
+        },
+        "see_none": 0,
+        "see_one": 15,
+        "see_both": 5
+      },
+      "outcome_counts": {
+        "rejected_stalled": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | prompt=region | it=15 | arm=incomplete",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_large_k3_7_pv-region_it15.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 5
+        },
+        "see_none": 0,
+        "see_one": 15,
+        "see_both": 5
+      },
+      "outcome_counts": {
+        "rejected_stalled": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=region | it=15 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | prompt=region | it=15 | arm=incomplete | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | prompt=region | it=15 | arm=incomplete",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_mini_k3_7_pv-region_it15.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 5
+        },
+        "see_none": 0,
+        "see_one": 15,
+        "see_both": 5
+      },
+      "outcome_counts": {
+        "rejected_stalled": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=region | it=15 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | prompt=region | it=15 | arm=incomplete | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | prompt=relay | it=5 | arm=full",
+      "model": "claude-sonnet (agent-relayed)",
+      "size": "sonnet",
+      "family": "claude",
+      "file": [
+        "continuous_claude_relay_patch2d_k3_7.json"
+      ],
+      "n_blocks": 1,
+      "n_draws": 1,
+      "blocks": [
+        1
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 1,
+        "per_mode_seen": {
+          "patch1_seen": 1,
+          "patch2_seen": 0
+        },
+        "see_none": 0,
+        "see_one": 1,
+        "see_both": 0
+      },
+      "outcome_counts": {
+        "control_translated": 1
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 1,
+        "n": 1,
+        "n_draws": 1,
+        "n_distinct_blocks": 1,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=relay | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.025,
+          1.0
+        ],
+        "wilson_95": [
+          0.20654329147389294,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | prompt=relay | it=5 | arm=full | claude-sonnet (agent-relayed)"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | prompt=relay | it=5 | arm=incomplete",
+      "model": "claude-sonnet (agent-relayed)",
+      "size": "sonnet",
+      "family": "claude",
+      "file": [
+        "continuous_claude_relay_patch2d_k3_7.json"
+      ],
+      "n_blocks": 3,
+      "n_draws": 3,
+      "blocks": [
+        1,
+        2,
+        3
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 3,
+        "per_mode_seen": {
+          "patch1_seen": 3,
+          "patch2_seen": 1
+        },
+        "see_none": 0,
+        "see_one": 2,
+        "see_both": 1
+      },
+      "outcome_counts": {
+        "rejected_stalled": 3
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 3,
+        "n_draws": 3,
+        "n_distinct_blocks": 3,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=relay | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.7075982261787134
+        ],
+        "wilson_95": [
+          0.0,
+          0.5615060804490177
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | prompt=relay | it=5 | arm=incomplete | claude-sonnet (agent-relayed)"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2dsq_large_k3_7.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 5
+        },
+        "see_none": 0,
+        "see_one": 15,
+        "see_both": 5
+      },
+      "outcome_counts": {
+        "control_translated": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=full | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2dsq_mini_k3_7.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 5
+        },
+        "see_none": 0,
+        "see_one": 15,
+        "see_both": 5
+      },
+      "outcome_counts": {
+        "control_translated": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=full | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2dsq_large_k3_7.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 5
+        },
+        "see_none": 0,
+        "see_one": 15,
+        "see_both": 5
+      },
+      "outcome_counts": {
+        "rejected_stalled": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=incomplete | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2dsq_mini_k3_7.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 5
+        },
+        "see_none": 0,
+        "see_one": 15,
+        "see_both": 5
+      },
+      "outcome_counts": {
+        "rejected_stalled": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_large_k5_9.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 2,
+        "mode_present": 18,
+        "per_mode_seen": {
+          "patch1_seen": 17,
+          "patch2_seen": 1
+        },
+        "see_none": 2,
+        "see_one": 18,
+        "see_both": 0
+      },
+      "outcome_counts": {
+        "control_translated": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 18,
+        "n": 18,
+        "n_draws": 18,
+        "n_distinct_blocks": 18,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8146980318621477,
+          1.0
+        ],
+        "wilson_95": [
+          0.8241154494176252,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=full | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_mini_k5_9.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 2,
+        "mode_present": 18,
+        "per_mode_seen": {
+          "patch1_seen": 17,
+          "patch2_seen": 1
+        },
+        "see_none": 2,
+        "see_one": 18,
+        "see_both": 0
+      },
+      "outcome_counts": {
+        "control_translated": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 18,
+        "n": 18,
+        "n_draws": 18,
+        "n_distinct_blocks": 18,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8146980318621477,
+          1.0
+        ],
+        "wilson_95": [
+          0.8241154494176252,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=full | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_large_k5_9.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 2,
+        "mode_present": 18,
+        "per_mode_seen": {
+          "patch1_seen": 17,
+          "patch2_seen": 1
+        },
+        "see_none": 2,
+        "see_one": 18,
+        "see_both": 0
+      },
+      "outcome_counts": {
+        "blind_and_exploited": 2,
+        "rejected_stalled": 18
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 18,
+        "n_draws": 18,
+        "n_distinct_blocks": 18,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.18530196813785227
+        ],
+        "wilson_95": [
+          0.0,
+          0.1758845505823749
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete | gpt-5.4"
+      },
+      "blind_exploited_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 2,
+        "n": 2,
+        "n_draws": 2,
+        "n_distinct_blocks": 2,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.15811388300841897,
+          1.0
+        ],
+        "wilson_95": [
+          0.34237195288961925,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "blind-and-exploited | patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_mini_k5_9.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 2,
+        "mode_present": 18,
+        "per_mode_seen": {
+          "patch1_seen": 17,
+          "patch2_seen": 1
+        },
+        "see_none": 2,
+        "see_one": 18,
+        "see_both": 0
+      },
+      "outcome_counts": {
+        "blind_and_exploited": 2,
+        "rejected_stalled": 18
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 18,
+        "n_draws": 18,
+        "n_distinct_blocks": 18,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.18530196813785227
+        ],
+        "wilson_95": [
+          0.0,
+          0.1758845505823749
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
+      },
+      "blind_exploited_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 2,
+        "n": 2,
+        "n_draws": 2,
+        "n_distinct_blocks": 2,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.15811388300841897,
+          1.0
+        ],
+        "wilson_95": [
+          0.34237195288961925,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "blind-and-exploited | patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1 | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_pendulum_large_thstop1.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20
+      },
+      "outcome_counts": {
+        "control_translated": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1 | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | pendulum | th_stop=1 | prompt=default | it=5 | arm=full | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1 | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_pendulum_mini_thstop1.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20
+      },
+      "outcome_counts": {
+        "control_translated": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1 | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | pendulum | th_stop=1 | prompt=default | it=5 | arm=full | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_pendulum_large_thstop1.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20
+      },
+      "outcome_counts": {
+        "repaired": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_pendulum_mini_thstop1.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20
+      },
+      "outcome_counts": {
+        "repaired": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=full",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "family": "qwen",
+      "file": [
+        "continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4.json"
+      ],
+      "n_blocks": 3,
+      "n_draws": 3,
+      "blocks": [
+        1,
+        2,
+        3
+      ],
+      "branch_counts": {
+        "mode_absent": 1,
+        "mode_present": 2
+      },
+      "outcome_counts": {
+        "control_translated": 3
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 2,
+        "n": 2,
+        "n_draws": 2,
+        "n_distinct_blocks": 2,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.15811388300841897,
+          1.0
+        ],
+        "wilson_95": [
+          0.34237195288961925,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=full | Qwen/Qwen3-Coder-30B-A3B-Instruct"
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_pendulum_large_thstop1.4.json",
+        "continuous_synthesis_pendulum_large_thstop1.4_off20.json"
+      ],
+      "n_blocks": 40,
+      "n_draws": 40,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "branch_counts": {
+        "mode_absent": 15,
+        "mode_present": 25
+      },
+      "outcome_counts": {
+        "control_translated": 40
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 25,
+        "n": 25,
+        "n_draws": 25,
+        "n_distinct_blocks": 25,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8628148284692875,
+          1.0
+        ],
+        "wilson_95": [
+          0.8668035060468213,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=full | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_pendulum_mini_thstop1.4.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 9,
+        "mode_present": 11
+      },
+      "outcome_counts": {
+        "control_translated": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 11,
+        "n": 11,
+        "n_draws": 11,
+        "n_distinct_blocks": 11,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.7150858470818455,
+          1.0
+        ],
+        "wilson_95": [
+          0.7411599827511859,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=full | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "family": "qwen",
+      "file": [
+        "continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4.json"
+      ],
+      "n_blocks": 3,
+      "n_draws": 3,
+      "blocks": [
+        1,
+        2,
+        3
+      ],
+      "branch_counts": {
+        "mode_absent": 1,
+        "mode_present": 2
+      },
+      "outcome_counts": {
+        "blind_and_exploited": 1,
+        "rejected_stalled": 2
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 2,
+        "n_draws": 2,
+        "n_distinct_blocks": 2,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.841886116991581
+        ],
+        "wilson_95": [
+          0.0,
+          0.6576280471103807
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete | Qwen/Qwen3-Coder-30B-A3B-Instruct"
+      },
+      "blind_exploited_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 1,
+        "n": 1,
+        "n_draws": 1,
+        "n_distinct_blocks": 1,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.025,
+          1.0
+        ],
+        "wilson_95": [
+          0.20654329147389294,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "blind-and-exploited | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete | Qwen/Qwen3-Coder-30B-A3B-Instruct"
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_pendulum_large_thstop1.4.json",
+        "continuous_synthesis_pendulum_large_thstop1.4_off20.json"
+      ],
+      "n_blocks": 40,
+      "n_draws": 40,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "branch_counts": {
+        "mode_absent": 15,
+        "mode_present": 25
+      },
+      "outcome_counts": {
+        "blind_and_exploited": 15,
+        "repaired": 25
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 25,
+        "n": 25,
+        "n_draws": 25,
+        "n_distinct_blocks": 25,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8628148284692875,
+          1.0
+        ],
+        "wilson_95": [
+          0.8668035060468213,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete | gpt-5.4"
+      },
+      "blind_exploited_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 15,
+        "n": 15,
+        "n_draws": 15,
+        "n_distinct_blocks": 15,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.7819806390894659,
+          1.0
+        ],
+        "wilson_95": [
+          0.7961107336956521,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "blind-and-exploited | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4-mini",
+      "size": "mini",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_pendulum_mini_thstop1.4.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 9,
+        "mode_present": 11
+      },
+      "outcome_counts": {
+        "blind_and_exploited": 9,
+        "repaired": 11
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 11,
+        "n": 11,
+        "n_draws": 11,
+        "n_distinct_blocks": 11,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.7150858470818455,
+          1.0
+        ],
+        "wilson_95": [
+          0.7411599827511859,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
+      },
+      "blind_exploited_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 9,
+        "n": 9,
+        "n_draws": 9,
+        "n_distinct_blocks": 9,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.6637328831200572,
+          1.0
+        ],
+        "wilson_95": [
+          0.7008472464490407,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "blind-and-exploited | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1.4 | prompt=relay | it=5 | arm=full",
+      "model": "claude-sonnet (agent-relayed)",
+      "size": "sonnet",
+      "family": "claude",
+      "file": [
+        "continuous_claude_relay.json"
+      ],
+      "n_blocks": 1,
+      "n_draws": 1,
+      "blocks": [
+        1
+      ],
+      "branch_counts": {
+        "mode_absent": 1,
+        "mode_present": 0
+      },
+      "outcome_counts": {
+        "control_translated": 1
+      }
+    },
+    {
+      "treatment": "pendulum | th_stop=1.4 | prompt=relay | it=5 | arm=incomplete",
+      "model": "claude-sonnet (agent-relayed)",
+      "size": "sonnet",
+      "family": "claude",
+      "file": [
+        "continuous_claude_relay.json"
+      ],
+      "n_blocks": 3,
+      "n_draws": 3,
+      "blocks": [
+        1,
+        2,
+        3
+      ],
+      "branch_counts": {
+        "mode_absent": 1,
+        "mode_present": 2
+      },
+      "outcome_counts": {
+        "blind_and_exploited": 1,
+        "rejected_stalled": 1,
+        "repaired": 1
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 1,
+        "n": 2,
+        "n_draws": 2,
+        "n_distinct_blocks": 2,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=relay | it=5 | arm=incomplete"
+        ],
+        "point": 0.5,
+        "clopper_pearson_95": [
+          0.01257911709342505,
+          0.9874208829065749
+        ],
+        "wilson_95": [
+          0.09452865480086614,
+          0.9054713451991339
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | pendulum | th_stop=1.4 | prompt=relay | it=5 | arm=incomplete | claude-sonnet (agent-relayed)"
+      },
+      "blind_exploited_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 1,
+        "n": 1,
+        "n_draws": 1,
+        "n_distinct_blocks": 1,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=relay | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.025,
+          1.0
+        ],
+        "wilson_95": [
+          0.20654329147389294,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "blind-and-exploited | pendulum | th_stop=1.4 | prompt=relay | it=5 | arm=incomplete | claude-sonnet (agent-relayed)"
+      }
+    }
+  ],
+  "headline": {
+    "patch2d_repair_negative": {
+      "paper_text": "0/156 mode-containing seeds on PatchField2D",
+      "what_is_pooled": "two model sizes (mini, large) x the two disc knobs k=(3,7) and k=(5,9) x the zero-curvature square ablation x the region-guided 3x-budget treatment",
+      "n_draws": 156,
+      "n_distinct_blocks": 20,
+      "draws_per_block": {
+        "1": 8,
+        "2": 8,
+        "3": 8,
+        "4": 8,
+        "5": 8,
+        "6": 8,
+        "7": 8,
+        "8": 6,
+        "9": 6,
+        "10": 8,
+        "11": 8,
+        "12": 8,
+        "13": 8,
+        "14": 8,
+        "15": 8,
+        "16": 8,
+        "17": 8,
+        "18": 8,
+        "19": 8,
+        "20": 8
+      },
+      "HONEST_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 156,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 20,
+        "max_draws_per_block": 8,
+        "n_treatments_pooled": 4,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=region | it=15 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": true,
+        "claim": "per-block probability that a fresh mode-containing gate sample is repaired by any of the attempts run on it"
+      },
+      "INVALID_draw_level_comparator": {
+        "unit": "draw",
+        "cluster_key": "by_block",
+        "block_scoring": null,
+        "k": 0,
+        "n": 156,
+        "n_draws": 156,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 20,
+        "max_draws_per_block": 8,
+        "n_treatments_pooled": 4,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=region | it=15 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.023369271591380247
+        ],
+        "wilson_95": [
+          0.0,
+          0.024033793455520962
+        ],
+        "valid_for_paper": false,
+        "homogeneity_assumed_across_treatments": true,
+        "label": "INVALID-IF-POOLED COMPARATOR: n counts draws that share gate-sample blocks; shown only to display what the naive pooling would have said.",
+        "claim": "what the naive pooling of 156 draws would have said"
+      },
+      "per_campaign_block_level": [
+        {
+          "campaign": "disc k=(3,7)",
+          "bound": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 0,
+            "n": 20,
+            "n_draws": 40,
+            "n_distinct_blocks": 20,
+            "n_shared_blocks": 20,
+            "max_draws_per_block": 2,
+            "n_treatments_pooled": 1,
+            "treatments_pooled": [
+              "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 0.0,
+            "clopper_pearson_95": [
+              0.0,
+              0.16843347098308536
+            ],
+            "wilson_95": [
+              0.0,
+              0.16113012549493322
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": false,
+            "claim": "repair | disc k=(3,7)"
+          }
+        },
+        {
+          "campaign": "disc k=(5,9)",
+          "bound": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 0,
+            "n": 18,
+            "n_draws": 36,
+            "n_distinct_blocks": 18,
+            "n_shared_blocks": 18,
+            "max_draws_per_block": 2,
+            "n_treatments_pooled": 1,
+            "treatments_pooled": [
+              "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 0.0,
+            "clopper_pearson_95": [
+              0.0,
+              0.18530196813785227
+            ],
+            "wilson_95": [
+              0.0,
+              0.1758845505823749
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": false,
+            "claim": "repair | disc k=(5,9)"
+          }
+        },
+        {
+          "campaign": "square k=(3,7)",
+          "bound": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 0,
+            "n": 20,
+            "n_draws": 40,
+            "n_distinct_blocks": 20,
+            "n_shared_blocks": 20,
+            "max_draws_per_block": 2,
+            "n_treatments_pooled": 1,
+            "treatments_pooled": [
+              "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 0.0,
+            "clopper_pearson_95": [
+              0.0,
+              0.16843347098308536
+            ],
+            "wilson_95": [
+              0.0,
+              0.16113012549493322
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": false,
+            "claim": "repair | square k=(3,7)"
+          }
+        },
+        {
+          "campaign": "guided 3x budget k=(3,7)",
+          "bound": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 0,
+            "n": 20,
+            "n_draws": 40,
+            "n_distinct_blocks": 20,
+            "n_shared_blocks": 20,
+            "max_draws_per_block": 2,
+            "n_treatments_pooled": 1,
+            "treatments_pooled": [
+              "patch2d | k1=3,k2=7 | shape=disc | prompt=region | it=15 | arm=incomplete"
+            ],
+            "point": 0.0,
+            "clopper_pearson_95": [
+              0.0,
+              0.16843347098308536
+            ],
+            "wilson_95": [
+              0.0,
+              0.16113012549493322
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": false,
+            "claim": "repair | guided 3x budget k=(3,7)"
+          }
+        }
+      ],
+      "honest_over_naive_upper_bound_ratio": 7.207476293151218,
+      "heterogeneity_across_campaigns": {
+        "block_level_counts": {
+          "disc k=(3,7)": {
+            "k": 0,
+            "n": 20,
+            "n_draws": 40
+          },
+          "disc k=(5,9)": {
+            "k": 0,
+            "n": 18,
+            "n_draws": 36
+          },
+          "square k=(3,7)": {
+            "k": 0,
+            "n": 20,
+            "n_draws": 40
+          },
+          "guided 3x k=(3,7)": {
+            "k": 0,
+            "n": 20,
+            "n_draws": 40
+          }
+        },
+        "block_scoring": "all",
+        "pairwise_fisher": [
+          {
+            "groups": [
+              "disc k=(3,7)",
+              "disc k=(5,9)"
+            ],
+            "fisher_p": 1.0
+          },
+          {
+            "groups": [
+              "disc k=(3,7)",
+              "square k=(3,7)"
+            ],
+            "fisher_p": 1.0
+          },
+          {
+            "groups": [
+              "disc k=(3,7)",
+              "guided 3x k=(3,7)"
+            ],
+            "fisher_p": 1.0
+          },
+          {
+            "groups": [
+              "disc k=(5,9)",
+              "square k=(3,7)"
+            ],
+            "fisher_p": 1.0
+          },
+          {
+            "groups": [
+              "disc k=(5,9)",
+              "guided 3x k=(3,7)"
+            ],
+            "fisher_p": 1.0
+          },
+          {
+            "groups": [
+              "square k=(3,7)",
+              "guided 3x k=(3,7)"
+            ],
+            "fisher_p": 1.0
+          }
+        ],
+        "min_pairwise_fisher_p": 1.0,
+        "min_pair": [
+          "disc k=(3,7)",
+          "disc k=(5,9)"
+        ],
+        "bonferroni_adjusted_p": 1.0,
+        "n_pairs": 6,
+        "verdict": "no evidence against a common rate at the 5% level -- pooling is not contradicted, but the exact bound is still the block-level one",
+        "assumptions": "the test is on the COLLAPSED per-block outcomes, so it inherits no independence assumption about draws within a block; it does assume blocks are independent across groups, which holds only where the groups use disjoint blocks -- where they share blocks (the usual case here) the test is anticonservative and should be read as a descriptive heterogeneity flag, not a p-value"
+      }
+    },
+    "patch2d_partial_repair_negative": {
+      "paper_text": "0/66 partial repair",
+      "n_draws": 66,
+      "n_distinct_blocks": 20,
+      "HONEST_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 66,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 20,
+        "max_draws_per_block": 4,
+        "n_treatments_pooled": 2,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": true,
+        "claim": "per-block probability of repairing the seen patch while staying blind to the unseen one"
+      },
+      "INVALID_draw_level_comparator": {
+        "unit": "draw",
+        "cluster_key": "by_block",
+        "block_scoring": null,
+        "k": 0,
+        "n": 66,
+        "n_draws": 66,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 20,
+        "max_draws_per_block": 4,
+        "n_treatments_pooled": 2,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.05435884717012196
+        ],
+        "wilson_95": [
+          0.0,
+          0.05500446725160935
+        ],
+        "valid_for_paper": false,
+        "homogeneity_assumed_across_treatments": true,
+        "label": "INVALID-IF-POOLED COMPARATOR: n counts draws that share gate-sample blocks; shown only to display what the naive pooling would have said."
+      },
+      "note": "the all-or-nothing gate rejected every one of these artifacts, so partial repair is 0 for the trivial reason that nothing was certified; the bound is on the per-block probability of a certified partial repair"
+    },
+    "patch2d_claude_arm": {
+      "paper_text": "0/3 in a Claude cross-family arm on the same cell",
+      "n_draws": 3,
+      "blocks": [
+        1,
+        2,
+        3
+      ],
+      "blocks_already_in_the_gpt_campaign": [
+        1,
+        2,
+        3
+      ],
+      "adds_new_blocks": 0,
+      "HONEST_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 3,
+        "n_draws": 3,
+        "n_distinct_blocks": 3,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=relay | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.7075982261787134
+        ],
+        "wilson_95": [
+          0.0,
+          0.5615060804490177
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false
+      },
+      "note": "this arm closes the single-family confound, and adds draws, but adds NO new gate samples: its three seeds are blocks the GPT-5.x campaigns already used, so the distinct-block count behind the 2D negative result stays at 20"
+    },
+    "patch2d_repair_negative_with_claude": {
+      "n_draws": 159,
+      "n_distinct_blocks": 20,
+      "HONEST_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 159,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 20,
+        "max_draws_per_block": 9,
+        "n_treatments_pooled": 5,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=region | it=15 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=relay | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": true
+      },
+      "INVALID_draw_level_comparator": {
+        "unit": "draw",
+        "cluster_key": "by_block",
+        "block_scoring": null,
+        "k": 0,
+        "n": 159,
+        "n_draws": 159,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 20,
+        "max_draws_per_block": 9,
+        "n_treatments_pooled": 5,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=region | it=15 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=relay | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=square | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.02293343743096099
+        ],
+        "wilson_95": [
+          0.0,
+          0.023591023423989943
+        ],
+        "valid_for_paper": false,
+        "homogeneity_assumed_across_treatments": true,
+        "label": "INVALID-IF-POOLED COMPARATOR: n counts draws that share gate-sample blocks; shown only to display what the naive pooling would have said."
+      }
+    },
+    "onedim_repair": {
+      "paper_text": "GPT-5.x repaired 109 of 111 revealed modes",
+      "what_is_pooled": "two instruments x two model sizes x three cart knob/offset cells x three pendulum knob/offset cells",
+      "n_draws": 111,
+      "n_repaired_draws": 109,
+      "n_distinct_blocks": 36,
+      "n_distinct_instrument_blocks": 56,
+      "clustered_aggregate_block_level_all_scoring": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 34,
+        "n": 36,
+        "n_draws": 111,
+        "n_distinct_blocks": 36,
+        "n_shared_blocks": 28,
+        "max_draws_per_block": 7,
+        "n_treatments_pooled": 4,
+        "treatments_pooled": [
+          "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete",
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete",
+          "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete",
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.9444444444444444,
+        "clopper_pearson_95": [
+          0.813363293542446,
+          0.9931996993459773
+        ],
+        "wilson_95": [
+          0.8185502589238878,
+          0.9846303362329332
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": true,
+        "claim": "per-block probability that EVERY attempt on a fresh mode-containing sample repairs (conservative; quote this)"
+      },
+      "block_level_any_scoring": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "any",
+        "k": 36,
+        "n": 36,
+        "n_draws": 111,
+        "n_distinct_blocks": 36,
+        "n_shared_blocks": 28,
+        "max_draws_per_block": 7,
+        "n_treatments_pooled": 4,
+        "treatments_pooled": [
+          "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete",
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete",
+          "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete",
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.902606244085508,
+          1.0
+        ],
+        "wilson_95": [
+          0.9035781695514236,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": true,
+        "claim": "per-block probability that SOME attempt repairs (optimistic)"
+      },
+      "clustered_by_instrument_block_comparator": {
+        "unit": "block",
+        "cluster_key": "by_instrument_block",
+        "block_scoring": "all",
+        "k": 54,
+        "n": 56,
+        "n_draws": 111,
+        "n_distinct_blocks": 56,
+        "n_shared_blocks": 30,
+        "max_draws_per_block": 4,
+        "n_treatments_pooled": 4,
+        "treatments_pooled": [
+          "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete",
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete",
+          "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete",
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.9642857142857143,
+        "clopper_pearson_95": [
+          0.8768681925420041,
+          0.9956451872589474
+        ],
+        "wilson_95": [
+          0.8788099414778991,
+          0.9901507814974224
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": true,
+        "claim": "looser clustering: a fresh instrument on the same seed counted as a fresh cluster (common random numbers, different dynamics)"
+      },
+      "INVALID_draw_level_comparator": {
+        "unit": "draw",
+        "cluster_key": "by_block",
+        "block_scoring": null,
+        "k": 109,
+        "n": 111,
+        "n_draws": 111,
+        "n_distinct_blocks": 36,
+        "n_shared_blocks": 28,
+        "max_draws_per_block": 7,
+        "n_treatments_pooled": 4,
+        "treatments_pooled": [
+          "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete",
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete",
+          "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete",
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.9819819819819819,
+        "clopper_pearson_95": [
+          0.9364266753948407,
+          0.9978104371735339
+        ],
+        "wilson_95": [
+          0.9366731979162646,
+          0.9950449251332227
+        ],
+        "valid_for_paper": false,
+        "homogeneity_assumed_across_treatments": true,
+        "label": "INVALID-IF-POOLED COMPARATOR: n counts draws that share gate-sample blocks; shown only to display what the naive pooling would have said.",
+        "claim": "what pooling 111 correlated draws would have said"
+      },
+      "cluster_robust_comparators": {
+        "rao_scott_design_effect": {
+          "icc": 0.0,
+          "m_bar": 3.0833333333333335,
+          "m0": 3.047619047619048,
+          "design_effect": 1.0,
+          "n_effective": 111.0,
+          "n_clusters": 36,
+          "n_draws": 111,
+          "point_estimate": 0.9819819819819819,
+          "rao_scott_wilson_95": [
+            0.9366731979162646,
+            0.9950449251332227
+          ],
+          "valid_for_paper": false,
+          "assumptions": "exchangeable within-block correlation, one common ICC across all blocks and treatments, and a normal approximation on the effective sample size -- the last of which is poor at a proportion this close to 1 with n_eff of this size",
+          "warning": "the ANOVA ICC estimate is <= 0 and was truncated to 0, so the design effect collapses to 1 and this interval is IDENTICAL to the draw-level pooled one that review point #5 rejects. That is not evidence of no clustering: with clusters of size 1-4 and an outcome pinned near the 0/1 boundary, MSW can exceed MSB by chance and the moment estimator has no power. It is recorded to show that the design-effect route silently reproduces the anticonservative answer here, which is the reason the quoted bound is the block-level exact one instead."
+        },
+        "cluster_bootstrap": {
+          "n_boot": 10000,
+          "seed": 0,
+          "n_clusters": 36,
+          "percentile_95": [
+            0.9555555555555556,
+            1.0
+          ],
+          "valid_for_paper": false,
+          "point_estimate": 0.9819819819819819,
+          "assumptions": "blocks i.i.d. from the sample-generating distribution; no assumption on within-block dependence. Undercovers at a boundary proportion (a resample of all-success blocks returns exactly 1.0), so it is a comparator, not the quoted bound"
+        }
+      },
+      "per_instrument": {
+        "cart": {
+          "n_draws": 35,
+          "n_repaired_draws": 33,
+          "n_distinct_blocks": 22,
+          "block_level_all_scoring": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 20,
+            "n": 22,
+            "n_draws": 35,
+            "n_distinct_blocks": 22,
+            "n_shared_blocks": 10,
+            "max_draws_per_block": 3,
+            "n_treatments_pooled": 2,
+            "treatments_pooled": [
+              "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete",
+              "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 0.9090909090909091,
+            "clopper_pearson_95": [
+              0.7083872584460664,
+              0.9887944139758491
+            ],
+            "wilson_95": [
+              0.7218461934161421,
+              0.9747051037171622
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": true,
+            "claim": "cart repair, conservative block scoring"
+          },
+          "block_level_any_scoring": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "any",
+            "k": 21,
+            "n": 22,
+            "n_draws": 35,
+            "n_distinct_blocks": 22,
+            "n_shared_blocks": 10,
+            "max_draws_per_block": 3,
+            "n_treatments_pooled": 2,
+            "treatments_pooled": [
+              "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete",
+              "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 0.9545454545454546,
+            "clopper_pearson_95": [
+              0.7715556023323664,
+              0.9988498524734264
+            ],
+            "wilson_95": [
+              0.7820151050048196,
+              0.9919307806988522
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": true,
+            "claim": "cart repair, optimistic block scoring"
+          },
+          "INVALID_draw_level_comparator": {
+            "unit": "draw",
+            "cluster_key": "by_block",
+            "block_scoring": null,
+            "k": 33,
+            "n": 35,
+            "n_draws": 35,
+            "n_distinct_blocks": 22,
+            "n_shared_blocks": 10,
+            "max_draws_per_block": 3,
+            "n_treatments_pooled": 2,
+            "treatments_pooled": [
+              "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete",
+              "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 0.9428571428571428,
+            "clopper_pearson_95": [
+              0.8084285936547608,
+              0.9930032363716905
+            ],
+            "wilson_95": [
+              0.8139261926062996,
+              0.984187170385956
+            ],
+            "valid_for_paper": false,
+            "homogeneity_assumed_across_treatments": true,
+            "label": "INVALID-IF-POOLED COMPARATOR: n counts draws that share gate-sample blocks; shown only to display what the naive pooling would have said."
+          },
+          "rao_scott_design_effect": {
+            "icc": 0.07729083665338642,
+            "m_bar": 1.5909090909090908,
+            "m0": 1.575510204081633,
+            "design_effect": 1.0456718580224555,
+            "n_effective": 33.47130338401857,
+            "n_clusters": 22,
+            "n_draws": 35,
+            "point_estimate": 0.9428571428571428,
+            "rao_scott_wilson_95": [
+              0.8099355919297859,
+              0.9845887918628673
+            ],
+            "valid_for_paper": false,
+            "assumptions": "exchangeable within-block correlation, one common ICC across all blocks and treatments, and a normal approximation on the effective sample size -- the last of which is poor at a proportion this close to 1 with n_eff of this size"
+          },
+          "cluster_bootstrap": {
+            "n_boot": 10000,
+            "seed": 0,
+            "n_clusters": 22,
+            "percentile_95": [
+              0.8571428571428571,
+              1.0
+            ],
+            "valid_for_paper": false,
+            "point_estimate": 0.9428571428571428,
+            "assumptions": "blocks i.i.d. from the sample-generating distribution; no assumption on within-block dependence. Undercovers at a boundary proportion (a resample of all-success blocks returns exactly 1.0), so it is a comparator, not the quoted bound"
+          }
+        },
+        "pendulum": {
+          "n_draws": 76,
+          "n_repaired_draws": 76,
+          "n_distinct_blocks": 34,
+          "block_level_all_scoring": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 34,
+            "n": 34,
+            "n_draws": 76,
+            "n_distinct_blocks": 34,
+            "n_shared_blocks": 20,
+            "max_draws_per_block": 4,
+            "n_treatments_pooled": 2,
+            "treatments_pooled": [
+              "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete",
+              "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 1.0,
+            "clopper_pearson_95": [
+              0.8971820757409874,
+              1.0
+            ],
+            "wilson_95": [
+              0.8984820937803899,
+              1.0
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": true,
+            "claim": "pendulum repair, conservative block scoring"
+          },
+          "block_level_any_scoring": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "any",
+            "k": 34,
+            "n": 34,
+            "n_draws": 76,
+            "n_distinct_blocks": 34,
+            "n_shared_blocks": 20,
+            "max_draws_per_block": 4,
+            "n_treatments_pooled": 2,
+            "treatments_pooled": [
+              "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete",
+              "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 1.0,
+            "clopper_pearson_95": [
+              0.8971820757409874,
+              1.0
+            ],
+            "wilson_95": [
+              0.8984820937803899,
+              1.0
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": true,
+            "claim": "pendulum repair, optimistic block scoring"
+          },
+          "INVALID_draw_level_comparator": {
+            "unit": "draw",
+            "cluster_key": "by_block",
+            "block_scoring": null,
+            "k": 76,
+            "n": 76,
+            "n_draws": 76,
+            "n_distinct_blocks": 34,
+            "n_shared_blocks": 20,
+            "max_draws_per_block": 4,
+            "n_treatments_pooled": 2,
+            "treatments_pooled": [
+              "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete",
+              "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 1.0,
+            "clopper_pearson_95": [
+              0.9526212461330692,
+              1.0
+            ],
+            "wilson_95": [
+              0.9518847317689024,
+              0.9999999999999999
+            ],
+            "valid_for_paper": false,
+            "homogeneity_assumed_across_treatments": true,
+            "label": "INVALID-IF-POOLED COMPARATOR: n counts draws that share gate-sample blocks; shown only to display what the naive pooling would have said."
+          },
+          "rao_scott_design_effect": {
+            "icc": null,
+            "reason": "outcome has zero variance (every draw identical), so MSB = MSW = 0 and the ICC is 0/0 -- undefined; a hierarchical/GLMM fit is unidentifiable on this data",
+            "n_clusters": 34,
+            "n_draws": 76,
+            "point_estimate": 1.0
+          },
+          "cluster_bootstrap": {
+            "n_boot": 10000,
+            "seed": 0,
+            "n_clusters": 34,
+            "percentile_95": [
+              1.0,
+              1.0
+            ],
+            "valid_for_paper": false,
+            "point_estimate": 1.0,
+            "assumptions": "blocks i.i.d. from the sample-generating distribution; no assumption on within-block dependence. Undercovers at a boundary proportion (a resample of all-success blocks returns exactly 1.0), so it is a comparator, not the quoted bound"
+          }
+        }
+      },
+      "per_knob": {
+        "cart x_wall=4": {
+          "n_draws": 5,
+          "n_repaired_draws": 3,
+          "n_distinct_blocks": 5,
+          "block_level_all_scoring": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 3,
+            "n": 5,
+            "n_draws": 5,
+            "n_distinct_blocks": 5,
+            "n_shared_blocks": 0,
+            "max_draws_per_block": 1,
+            "n_treatments_pooled": 1,
+            "treatments_pooled": [
+              "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 0.6,
+            "clopper_pearson_95": [
+              0.14663279963467313,
+              0.9472550494736831
+            ],
+            "wilson_95": [
+              0.23071993220883708,
+              0.8823817688407467
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": false
+          }
+        },
+        "cart x_wall=8": {
+          "n_draws": 30,
+          "n_repaired_draws": 30,
+          "n_distinct_blocks": 20,
+          "block_level_all_scoring": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 20,
+            "n": 20,
+            "n_draws": 30,
+            "n_distinct_blocks": 20,
+            "n_shared_blocks": 10,
+            "max_draws_per_block": 2,
+            "n_treatments_pooled": 1,
+            "treatments_pooled": [
+              "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 1.0,
+            "clopper_pearson_95": [
+              0.8315665290169146,
+              1.0
+            ],
+            "wilson_95": [
+              0.8388698745050667,
+              1.0
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": false
+          }
+        },
+        "pendulum th_stop=1": {
+          "n_draws": 40,
+          "n_repaired_draws": 40,
+          "n_distinct_blocks": 20,
+          "block_level_all_scoring": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 20,
+            "n": 20,
+            "n_draws": 40,
+            "n_distinct_blocks": 20,
+            "n_shared_blocks": 20,
+            "max_draws_per_block": 2,
+            "n_treatments_pooled": 1,
+            "treatments_pooled": [
+              "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 1.0,
+            "clopper_pearson_95": [
+              0.8315665290169146,
+              1.0
+            ],
+            "wilson_95": [
+              0.8388698745050667,
+              1.0
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": false
+          }
+        },
+        "pendulum th_stop=1.4": {
+          "n_draws": 36,
+          "n_repaired_draws": 36,
+          "n_distinct_blocks": 25,
+          "block_level_all_scoring": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 25,
+            "n": 25,
+            "n_draws": 36,
+            "n_distinct_blocks": 25,
+            "n_shared_blocks": 11,
+            "max_draws_per_block": 2,
+            "n_treatments_pooled": 1,
+            "treatments_pooled": [
+              "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 1.0,
+            "clopper_pearson_95": [
+              0.8628148284692875,
+              1.0
+            ],
+            "wilson_95": [
+              0.8668035060468213,
+              1.0
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": false
+          }
+        }
+      },
+      "per_size": {
+        "large": {
+          "n_draws": 65,
+          "n_repaired_draws": 65,
+          "n_distinct_blocks": 36,
+          "block_level_all_scoring": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 36,
+            "n": 36,
+            "n_draws": 65,
+            "n_distinct_blocks": 36,
+            "n_shared_blocks": 22,
+            "max_draws_per_block": 3,
+            "n_treatments_pooled": 3,
+            "treatments_pooled": [
+              "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete",
+              "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete",
+              "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 1.0,
+            "clopper_pearson_95": [
+              0.902606244085508,
+              1.0
+            ],
+            "wilson_95": [
+              0.9035781695514236,
+              1.0
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": true
+          }
+        },
+        "mini": {
+          "n_draws": 46,
+          "n_repaired_draws": 44,
+          "n_distinct_blocks": 20,
+          "block_level_all_scoring": {
+            "unit": "block",
+            "cluster_key": "by_block",
+            "block_scoring": "all",
+            "k": 18,
+            "n": 20,
+            "n_draws": 46,
+            "n_distinct_blocks": 20,
+            "n_shared_blocks": 15,
+            "max_draws_per_block": 4,
+            "n_treatments_pooled": 4,
+            "treatments_pooled": [
+              "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete",
+              "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete",
+              "pendulum | th_stop=1 | prompt=default | it=5 | arm=incomplete",
+              "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+            ],
+            "point": 0.9,
+            "clopper_pearson_95": [
+              0.6830172859809176,
+              0.9876514728297052
+            ],
+            "wilson_95": [
+              0.6989617935882066,
+              0.9721341060158468
+            ],
+            "valid_for_paper": true,
+            "homogeneity_assumed_across_treatments": true
+          }
+        }
+      },
+      "exceptions": [
+        {
+          "file": "continuous_synthesis_mini_xwall4.json",
+          "seed": 10000,
+          "block": 1,
+          "treatment": "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete",
+          "model": "gpt-5.4-mini",
+          "gate_accuracy": 0.9984375,
+          "outcome": "rejected_stalled"
+        },
+        {
+          "file": "continuous_synthesis_mini_xwall4.json",
+          "seed": 20000,
+          "block": 2,
+          "treatment": "cart | x_wall=4 | prompt=default | it=5 | arm=incomplete",
+          "model": "gpt-5.4-mini",
+          "gate_accuracy": 0.97375,
+          "outcome": "rejected_stalled"
+        }
+      ],
+      "heterogeneity_across_knobs": {
+        "block_level_counts": {
+          "cart x_wall=8": {
+            "k": 20,
+            "n": 20,
+            "n_draws": 30
+          },
+          "cart x_wall=4": {
+            "k": 3,
+            "n": 5,
+            "n_draws": 5
+          },
+          "pendulum th_stop=1.4": {
+            "k": 25,
+            "n": 25,
+            "n_draws": 36
+          },
+          "pendulum th_stop=1": {
+            "k": 20,
+            "n": 20,
+            "n_draws": 40
+          }
+        },
+        "block_scoring": "all",
+        "pairwise_fisher": [
+          {
+            "groups": [
+              "cart x_wall=8",
+              "cart x_wall=4"
+            ],
+            "fisher_p": 0.03333333333333333
+          },
+          {
+            "groups": [
+              "cart x_wall=8",
+              "pendulum th_stop=1.4"
+            ],
+            "fisher_p": 1.0
+          },
+          {
+            "groups": [
+              "cart x_wall=8",
+              "pendulum th_stop=1"
+            ],
+            "fisher_p": 1.0
+          },
+          {
+            "groups": [
+              "cart x_wall=4",
+              "pendulum th_stop=1.4"
+            ],
+            "fisher_p": 0.022988505747126436
+          },
+          {
+            "groups": [
+              "cart x_wall=4",
+              "pendulum th_stop=1"
+            ],
+            "fisher_p": 0.03333333333333333
+          },
+          {
+            "groups": [
+              "pendulum th_stop=1.4",
+              "pendulum th_stop=1"
+            ],
+            "fisher_p": 1.0
+          }
+        ],
+        "min_pairwise_fisher_p": 0.022988505747126436,
+        "min_pair": [
+          "cart x_wall=4",
+          "pendulum th_stop=1.4"
+        ],
+        "bonferroni_adjusted_p": 0.13793103448275862,
+        "n_pairs": 6,
+        "verdict": "no evidence against a common rate at the 5% level -- pooling is not contradicted, but the exact bound is still the block-level one",
+        "assumptions": "the test is on the COLLAPSED per-block outcomes, so it inherits no independence assumption about draws within a block; it does assume blocks are independent across groups, which holds only where the groups use disjoint blocks -- where they share blocks (the usual case here) the test is anticonservative and should be read as a descriptive heterogeneity flag, not a p-value",
+        "why_this_matters": "the pooled 109/111 mixes three cells in which every block repaired with one in which 2 of 5 did not (cart x_wall=4: 3/5 blocks). The raw pairwise Fisher p against that cell is 0.023-0.033, which does NOT survive Bonferroni over the 6 pairs, so the data does not establish heterogeneity -- but it does not license the pooled number either: 0.982 is an average of 1.00, 1.00, 1.00 and 0.60 weighted by how many draws each campaign happened to run, which is a design choice rather than an estimate of a rate. Report the cells."
+      },
+      "heterogeneity_across_sizes": {
+        "block_level_counts": {
+          "large": {
+            "k": 36,
+            "n": 36,
+            "n_draws": 65
+          },
+          "mini": {
+            "k": 18,
+            "n": 20,
+            "n_draws": 46
+          }
+        },
+        "block_scoring": "all",
+        "pairwise_fisher": [
+          {
+            "groups": [
+              "large",
+              "mini"
+            ],
+            "fisher_p": 0.12337662337662338
+          }
+        ],
+        "min_pairwise_fisher_p": 0.12337662337662338,
+        "min_pair": [
+          "large",
+          "mini"
+        ],
+        "bonferroni_adjusted_p": 0.12337662337662338,
+        "n_pairs": 1,
+        "verdict": "no evidence against a common rate at the 5% level -- pooling is not contradicted, but the exact bound is still the block-level one",
+        "assumptions": "the test is on the COLLAPSED per-block outcomes, so it inherits no independence assumption about draws within a block; it does assume blocks are independent across groups, which holds only where the groups use disjoint blocks -- where they share blocks (the usual case here) the test is anticonservative and should be read as a descriptive heterogeneity flag, not a p-value"
+      }
+    },
+    "cart_blind_and_exploited": {
+      "paper_text": "the wall/mode-absent conditional is 20/20 across cart sizes and three runs",
+      "n_draws": 30,
+      "n_blind_exploited_draws": 30,
+      "n_distinct_blocks": 20,
+      "HONEST_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 30,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 10,
+        "max_draws_per_block": 2,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "cart: per-block probability that a mode-absent sample yields a certified, mode-blind, exploited artifact"
+      },
+      "INVALID_draw_level_comparator": {
+        "unit": "draw",
+        "cluster_key": "by_block",
+        "block_scoring": null,
+        "k": 30,
+        "n": 30,
+        "n_draws": 30,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 10,
+        "max_draws_per_block": 2,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "cart | x_wall=8 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8842966917779722,
+          1.0
+        ],
+        "wilson_95": [
+          0.8864829086095221,
+          1.0
+        ],
+        "valid_for_paper": false,
+        "homogeneity_assumed_across_treatments": false,
+        "label": "INVALID-IF-POOLED COMPARATOR: n counts draws that share gate-sample blocks; shown only to display what the naive pooling would have said."
+      }
+    },
+    "pendulum_blind_and_exploited": {
+      "paper_text": "18/18 across pendulum sizes",
+      "n_draws": 24,
+      "n_blind_exploited_draws": 24,
+      "n_distinct_blocks": 15,
+      "HONEST_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 15,
+        "n": 15,
+        "n_draws": 24,
+        "n_distinct_blocks": 15,
+        "n_shared_blocks": 9,
+        "max_draws_per_block": 2,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.7819806390894659,
+          1.0
+        ],
+        "wilson_95": [
+          0.7961107336956521,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "pendulum: per-block probability that a mode-absent sample yields a certified, mode-blind, exploited artifact"
+      },
+      "INVALID_draw_level_comparator": {
+        "unit": "draw",
+        "cluster_key": "by_block",
+        "block_scoring": null,
+        "k": 24,
+        "n": 24,
+        "n_draws": 24,
+        "n_distinct_blocks": 15,
+        "n_shared_blocks": 9,
+        "max_draws_per_block": 2,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8575264022774743,
+          1.0
+        ],
+        "wilson_95": [
+          0.8620194241710247,
+          1.0
+        ],
+        "valid_for_paper": false,
+        "homogeneity_assumed_across_treatments": false,
+        "label": "INVALID-IF-POOLED COMPARATOR: n counts draws that share gate-sample blocks; shown only to display what the naive pooling would have said."
+      }
+    }
+  },
+  "censored_zeros": [
+    {
+      "key": "censored_zeros.patch2d_pooled_0_of_156",
+      "paper_text": "0/156 mode-containing seeds recover the 2D region",
+      "n_draws": 156,
+      "n_distinct_blocks": 20,
+      "block_level_upper_95_clopper_pearson": 0.16843347098308536,
+      "block_level_upper_95_wilson": 0.16113012549493322,
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.023369271591380247,
+      "cite_as": "0 of 156 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "note": "pools 4 treatments over 20 blocks"
+    },
+    {
+      "key": "censored_zeros.patch2d_disc_0_of_76",
+      "paper_text": "0/76 mode-containing disc seeds",
+      "n_draws": 76,
+      "n_distinct_blocks": 20,
+      "block_level_upper_95_clopper_pearson": 0.16843347098308536,
+      "block_level_upper_95_wilson": 0.16113012549493322,
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.0473787538669308,
+      "cite_as": "0 of 76 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "note": ""
+    },
+    {
+      "key": "censored_zeros.patch2d_square_0_of_40",
+      "paper_text": "0/40 repair in the zero-curvature square ablation",
+      "n_draws": 40,
+      "n_distinct_blocks": 20,
+      "block_level_upper_95_clopper_pearson": 0.16843347098308536,
+      "block_level_upper_95_wilson": 0.16113012549493322,
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.08809730287880235,
+      "cite_as": "0 of 40 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "note": ""
+    },
+    {
+      "key": "censored_zeros.patch2d_guided_0_of_40",
+      "paper_text": "0/40 under region-first guidance at 3x budget",
+      "n_draws": 40,
+      "n_distinct_blocks": 20,
+      "block_level_upper_95_clopper_pearson": 0.16843347098308536,
+      "block_level_upper_95_wilson": 0.16113012549493322,
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.08809730287880235,
+      "cite_as": "0 of 40 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "note": ""
+    },
+    {
+      "key": "censored_zeros.patch2d_partial_repair_0_of_66",
+      "paper_text": "0/66 partial repair",
+      "n_draws": 66,
+      "n_distinct_blocks": 20,
+      "block_level_upper_95_clopper_pearson": 0.16843347098308536,
+      "block_level_upper_95_wilson": 0.16113012549493322,
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.05435884717012196,
+      "cite_as": "0 of 66 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "note": "the disc cells' see-one-miss-the-other branch; the gate refused every artifact, so no certified partial repair could exist"
+    },
+    {
+      "key": "censored_zeros.patch2d_claude_0_of_3",
+      "paper_text": "0/3 in the Claude cross-family arm",
+      "n_draws": 3,
+      "n_distinct_blocks": 3,
+      "block_level_upper_95_clopper_pearson": 0.7075982261787134,
+      "block_level_upper_95_wilson": 0.5615060804490177,
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.7075982261787134,
+      "cite_as": "0 of 3 draws over 3 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.708",
+      "note": "its 3 blocks are already among the GPT campaign's 20"
+    },
+    {
+      "key": "censored_zeros.patch2d_all_families_0_of_159",
+      "paper_text": "0/156 pooled plus 0/3 Claude",
+      "n_draws": 159,
+      "n_distinct_blocks": 20,
+      "block_level_upper_95_clopper_pearson": 0.16843347098308536,
+      "block_level_upper_95_wilson": 0.16113012549493322,
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.02293343743096099,
+      "cite_as": "0 of 159 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "note": "still 20 distinct gate-sample blocks"
+    },
+    {
+      "key": "censored_zeros.qwen_1d_repair_0_of_4",
+      "paper_text": "Qwen 0/2 mode-present (superstitious patches)",
+      "n_draws": 4,
+      "n_distinct_blocks": 2,
+      "block_level_upper_95_clopper_pearson": 0.841886116991581,
+      "block_level_upper_95_wilson": 0.6576280471103807,
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.6023646356164747,
+      "cite_as": "0 of 4 draws over 2 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.842",
+      "note": "the gate refused every one; n is draws over 2 blocks"
+    }
+  ],
+  "paper_replacements": [
+    {
+      "json_key": "headline.patch2d_repair_negative.HONEST_block_level",
+      "paper_currently": "0/156 ... a Wilson 95% upper bound of 0.161 per sample (quoted for the disc cells' 20 blocks)",
+      "replace_with": "0 of 156 mode-containing synthesis draws, over 20 distinct gate-sample blocks: exact (Clopper-Pearson) 95% upper bound 0.168 on the per-block repair probability (Wilson 0.161)",
+      "naive_comparator_to_display": "pooling the 156 draws as independent trials would have claimed 0.0234 -- 7.2x tighter than the evidence supports"
+    },
+    {
+      "json_key": "headline.onedim_repair.per_instrument.cart",
+      "paper_currently": "all-repair gives a Wilson 95% lower bound of 0.851 on the cart",
+      "replace_with": "the cart is NOT all-repair at block level: 20/22 blocks have every draw repaired (and only 21/22 have any draw repaired: one of the two exceptions is the ONLY mode-present cart draw its block ever produced), giving an exact 95% lower bound of 0.708 (Wilson 0.722). The 0.851 figure is the OPTIMISTIC scoring -- P(some attempt on a fresh sample repairs) -- whose exact lower bound is 0.772; quote it only with that estimand spelled out"
+    },
+    {
+      "json_key": "headline.onedim_repair.per_instrument.pendulum",
+      "paper_currently": "0.898 on the pendulum",
+      "replace_with": "pendulum 34/34 blocks all-repair, exact 95% lower bound 0.897 (Wilson 0.898)"
+    },
+    {
+      "json_key": "headline.onedim_repair.clustered_aggregate_block_level_all_scoring",
+      "paper_currently": "109 of 111 revealed modes",
+      "replace_with": "109 of 111 synthesis draws over 36 distinct gate-sample blocks; clustered at block level 34/36 blocks repair on every attempt, exact 95% CI [0.813, 0.993]"
+    },
+    {
+      "json_key": "headline.cart_blind_and_exploited.HONEST_block_level",
+      "paper_currently": "per size that is 10/10 (Wilson lower bound 0.72) ... against pooled 0.84 whose trials share samples",
+      "replace_with": "20/20 distinct mode-absent gate-sample blocks yield a certified, blind, exploited artifact on every draw: exact 95% lower bound 0.832 (Wilson 0.839). This is a legitimately block-level bound because --seed-offset 20 supplied fresh blocks, so the 0.84 survives as a BLOCK-level figure -- but it should be stated over blocks, not over draws"
+    },
+    {
+      "json_key": "headline.pendulum_blind_and_exploited.HONEST_block_level",
+      "paper_currently": "18/18 across pendulum sizes ... 9/9 (0.70)",
+      "replace_with": "15/15 distinct mode-absent blocks, exact 95% lower bound 0.782 (Wilson 0.796)"
+    },
+    {
+      "json_key": "headline.patch2d_claude_arm",
+      "paper_currently": "78 distinct gate samples each given two independent synthesis draws (38 disc + 20 square + 20 guided)",
+      "replace_with": "20 distinct rollout-seed blocks; the disc knob change reuses the block's random stream, so k=(3,7) and k=(5,9) are two treatments on the same 20 blocks rather than 38 samples. 156 draws over 20 blocks"
+    }
+  ],
+  "assumptions": {
+    "block_level_clopper_pearson": "Blocks are i.i.d. draws of the gate sample (they are: distinct seed indices seed a fresh random stream) and the collapsed per-block outcome is Bernoulli. No assumption whatever is made about the dependence between draws inside a block -- collapsing removes it. Cost: the estimand becomes a per-block one ('every attempt on a fresh sample succeeds' under 'all' scoring), which is what the paper should state.",
+    "why_not_a_hierarchical_model": "Clusters here hold 1-4 draws and the outcome is at or next to the 0/1 boundary in every cell (pendulum repair is 76/76, PatchField2D repair is 0/156). A random-intercept GLMM or a beta-binomial has no identifiable variance component on zero-variance data: the ANOVA ICC is literally 0/0 there (see headline.*.icc.reason). Where it IS defined -- the pooled 1D repair set -- the moment estimator returns ICC <= 0, so the Rao-Scott design effect collapses to 1 and hands back the very draw-level interval we are rejecting (see headline.onedim_repair.cluster_robust_comparators.rao_scott_design_effect.warning). Both failure modes point the same way: at these cluster sizes the variance component is not estimable, so we quote the conservative block-level exact bound and report the design-effect interval and a cluster bootstrap only as labelled comparators.",
+    "pooling_across_treatments": "Any interval whose n pools several treatments additionally assumes a common success probability across them, which the ablations were designed to vary. Each pooled bound carries homogeneity_assumed_across_treatments and the treatment list, so the assumption is visible where it is made. For a NEGATIVE result (0 successes) pooling heterogeneous treatments is the benign direction: the bound holds for the mixture actually run.",
+    "exploited_threshold": "'exploited' means play_cost >= 0.9; the observed mode-absent play_cost values are 0.9990 (cart) and 0.9949 (pendulum), so the classification is not near the threshold."
+  }
+}

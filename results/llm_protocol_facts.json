@@ -1,0 +1,596 @@
+{
+ "script": "scripts/llm_protocol_facts.py",
+ "purpose": "numbers behind docs/paper2/PROTOCOL-FACTS.md (review #17)",
+ "calls_per_seed_formula": "1 synthesis call + refine_iterations refine calls",
+ "provider_sampling_params": {
+  "azure_openai": {
+   "kwargs_sent": [
+    "messages",
+    "model"
+   ],
+   "temperature_sent": false,
+   "top_p_sent": false,
+   "seed_sent": false
+  },
+  "openai_compat": {
+   "kwargs_sent": [
+    "max_tokens",
+    "messages",
+    "model"
+   ],
+   "temperature_sent": false,
+   "top_p_sent": false,
+   "seed_sent": false
+  }
+ },
+ "example_budget": {
+  "cart": {
+   "h_episode": 80,
+   "n_transitions_at_N40": 3200,
+   "n_example_lines_at_max_examples_30": 30,
+   "frac_of_sample_shown_at_30": 0.00937,
+   "n_example_lines_at_max_examples_120": 120,
+   "frac_of_sample_shown_at_120": 0.0375
+  },
+  "pendulum": {
+   "h_episode": 80,
+   "n_transitions_at_N40": 3200,
+   "n_example_lines_at_max_examples_30": 30,
+   "frac_of_sample_shown_at_30": 0.00937,
+   "n_example_lines_at_max_examples_120": 120,
+   "frac_of_sample_shown_at_120": 0.0375
+  },
+  "patch2d": {
+   "h_episode": 80,
+   "n_transitions_at_N40": 3200,
+   "n_example_lines_at_max_examples_30": 30,
+   "frac_of_sample_shown_at_30": 0.00937,
+   "n_example_lines_at_max_examples_120": 120,
+   "frac_of_sample_shown_at_120": 0.0375
+  }
+ },
+ "campaigns": [
+  {
+   "tag": "compat-qwen3-coder-30b-a3b-instruct_xwall8",
+   "path": "results/continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8.json",
+   "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+   "instrument": "cart",
+   "patch_shape": null,
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 6,
+   "llm_calls_total": 16,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 4,
+    "5": 2
+   },
+   "n_cells_at_iteration_cap": 2
+  },
+  {
+   "tag": "large_xwall8",
+   "path": "results/continuous_synthesis_large_xwall8.json",
+   "model": "gpt-5.4",
+   "instrument": "cart",
+   "patch_shape": null,
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 48,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 2,
+   "refine_iterations_hist": {
+    "0": 32,
+    "1": 8
+   },
+   "n_cells_at_iteration_cap": 0
+  },
+  {
+   "tag": "large_xwall8_off20",
+   "path": "results/continuous_synthesis_large_xwall8_off20.json",
+   "model": "gpt-5.4",
+   "instrument": "cart",
+   "patch_shape": "disc",
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 50,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 2,
+   "refine_iterations_hist": {
+    "0": 30,
+    "1": 10
+   },
+   "n_cells_at_iteration_cap": 0
+  },
+  {
+   "tag": "mini_xwall4",
+   "path": "results/continuous_synthesis_mini_xwall4.json",
+   "model": "gpt-5.4-mini",
+   "instrument": "cart",
+   "patch_shape": null,
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 10,
+   "llm_calls_total": 27,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 6,
+    "2": 1,
+    "5": 3
+   },
+   "n_cells_at_iteration_cap": 3
+  },
+  {
+   "tag": "mini_xwall8",
+   "path": "results/continuous_synthesis_mini_xwall8.json",
+   "model": "gpt-5.4-mini",
+   "instrument": "cart",
+   "patch_shape": null,
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 62,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 31,
+    "1": 4,
+    "3": 3,
+    "4": 1,
+    "5": 1
+   },
+   "n_cells_at_iteration_cap": 1
+  },
+  {
+   "tag": "patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7",
+   "path": "results/continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json",
+   "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+   "instrument": "patch2d",
+   "patch_shape": "disc",
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full"
+   ],
+   "n_cells": 3,
+   "llm_calls_total": 3,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 1,
+   "refine_iterations_hist": {
+    "0": 3
+   },
+   "n_cells_at_iteration_cap": 0
+  },
+  {
+   "tag": "patch2d_large_k3_7",
+   "path": "results/continuous_synthesis_patch2d_large_k3_7.json",
+   "model": "gpt-5.4",
+   "instrument": "patch2d",
+   "patch_shape": "disc",
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 140,
+   "llm_calls_min": 1,
+   "llm_calls_median": 3.5,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 20,
+    "5": 20
+   },
+   "n_cells_at_iteration_cap": 20
+  },
+  {
+   "tag": "patch2d_large_k3_7_pv-region_it15",
+   "path": "results/continuous_synthesis_patch2d_large_k3_7_pv-region_it15.json",
+   "model": "gpt-5.4",
+   "instrument": "patch2d",
+   "patch_shape": "disc",
+   "prompt_variant": "region",
+   "max_iters": 15,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "incomplete"
+   ],
+   "n_cells": 20,
+   "llm_calls_total": 320,
+   "llm_calls_min": 16,
+   "llm_calls_median": 16,
+   "llm_calls_max": 16,
+   "refine_iterations_hist": {
+    "15": 20
+   },
+   "n_cells_at_iteration_cap": 20
+  },
+  {
+   "tag": "patch2d_large_k5_9",
+   "path": "results/continuous_synthesis_patch2d_large_k5_9.json",
+   "model": "gpt-5.4",
+   "instrument": "patch2d",
+   "patch_shape": "disc",
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 130,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 22,
+    "5": 18
+   },
+   "n_cells_at_iteration_cap": 18
+  },
+  {
+   "tag": "patch2d_mini_k3_7",
+   "path": "results/continuous_synthesis_patch2d_mini_k3_7.json",
+   "model": "gpt-5.4-mini",
+   "instrument": "patch2d",
+   "patch_shape": "disc",
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 140,
+   "llm_calls_min": 1,
+   "llm_calls_median": 3.5,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 20,
+    "5": 20
+   },
+   "n_cells_at_iteration_cap": 20
+  },
+  {
+   "tag": "patch2d_mini_k3_7_pv-region_it15",
+   "path": "results/continuous_synthesis_patch2d_mini_k3_7_pv-region_it15.json",
+   "model": "gpt-5.4-mini",
+   "instrument": "patch2d",
+   "patch_shape": "disc",
+   "prompt_variant": "region",
+   "max_iters": 15,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "incomplete"
+   ],
+   "n_cells": 20,
+   "llm_calls_total": 320,
+   "llm_calls_min": 16,
+   "llm_calls_median": 16,
+   "llm_calls_max": 16,
+   "refine_iterations_hist": {
+    "15": 20
+   },
+   "n_cells_at_iteration_cap": 20
+  },
+  {
+   "tag": "patch2d_mini_k5_9",
+   "path": "results/continuous_synthesis_patch2d_mini_k5_9.json",
+   "model": "gpt-5.4-mini",
+   "instrument": "patch2d",
+   "patch_shape": "disc",
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 130,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 22,
+    "5": 18
+   },
+   "n_cells_at_iteration_cap": 18
+  },
+  {
+   "tag": "patch2dsq_large_k3_7",
+   "path": "results/continuous_synthesis_patch2dsq_large_k3_7.json",
+   "model": "gpt-5.4",
+   "instrument": "patch2d",
+   "patch_shape": "square",
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 140,
+   "llm_calls_min": 1,
+   "llm_calls_median": 3.5,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 20,
+    "5": 20
+   },
+   "n_cells_at_iteration_cap": 20
+  },
+  {
+   "tag": "patch2dsq_mini_k3_7",
+   "path": "results/continuous_synthesis_patch2dsq_mini_k3_7.json",
+   "model": "gpt-5.4-mini",
+   "instrument": "patch2d",
+   "patch_shape": "square",
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 140,
+   "llm_calls_min": 1,
+   "llm_calls_median": 3.5,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 20,
+    "5": 20
+   },
+   "n_cells_at_iteration_cap": 20
+  },
+  {
+   "tag": "pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4",
+   "path": "results/continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4.json",
+   "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+   "instrument": "pendulum",
+   "patch_shape": null,
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 6,
+   "llm_calls_total": 16,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 4,
+    "5": 2
+   },
+   "n_cells_at_iteration_cap": 2
+  },
+  {
+   "tag": "pendulum_large_thstop1.4",
+   "path": "results/continuous_synthesis_pendulum_large_thstop1.4.json",
+   "model": "gpt-5.4",
+   "instrument": "pendulum",
+   "patch_shape": null,
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 50,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 2,
+   "refine_iterations_hist": {
+    "0": 30,
+    "1": 10
+   },
+   "n_cells_at_iteration_cap": 0
+  },
+  {
+   "tag": "pendulum_large_thstop1.4_off20",
+   "path": "results/continuous_synthesis_pendulum_large_thstop1.4_off20.json",
+   "model": "gpt-5.4",
+   "instrument": "pendulum",
+   "patch_shape": "disc",
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 54,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 2,
+   "refine_iterations_hist": {
+    "0": 26,
+    "1": 14
+   },
+   "n_cells_at_iteration_cap": 0
+  },
+  {
+   "tag": "pendulum_large_thstop1",
+   "path": "results/continuous_synthesis_pendulum_large_thstop1.json",
+   "model": "gpt-5.4",
+   "instrument": "pendulum",
+   "patch_shape": null,
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 59,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 2,
+   "refine_iterations_hist": {
+    "0": 21,
+    "1": 19
+   },
+   "n_cells_at_iteration_cap": 0
+  },
+  {
+   "tag": "pendulum_mini_thstop1.4",
+   "path": "results/continuous_synthesis_pendulum_mini_thstop1.4.json",
+   "model": "gpt-5.4-mini",
+   "instrument": "pendulum",
+   "patch_shape": null,
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 56,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 30,
+    "1": 8,
+    "3": 1,
+    "5": 1
+   },
+   "n_cells_at_iteration_cap": 1
+  },
+  {
+   "tag": "pendulum_mini_thstop1",
+   "path": "results/continuous_synthesis_pendulum_mini_thstop1.json",
+   "model": "gpt-5.4-mini",
+   "instrument": "pendulum",
+   "patch_shape": null,
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 40,
+   "llm_calls_total": 58,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1,
+   "llm_calls_max": 2,
+   "refine_iterations_hist": {
+    "0": 22,
+    "1": 18
+   },
+   "n_cells_at_iteration_cap": 0
+  }
+ ],
+ "relay_campaigns": [
+  {
+   "tag": "claude_relay_1d",
+   "path": "results/continuous_claude_relay.json",
+   "model": "claude-sonnet (agent-relayed)",
+   "n_cells": 8,
+   "llm_calls_total": 20,
+   "llm_calls_min": 1,
+   "llm_calls_median": 1.5,
+   "llm_calls_max": 6,
+   "llm_calls_from_transcripts_on_disk": 20,
+   "transcripts_agree": true
+  },
+  {
+   "discarded_duplicate_relays": [
+    "patch2d_k3_7_incomplete_seed10000_msg3_duplicate_relay_DISCARDED.txt",
+    "patch2d_k3_7_incomplete_seed10000_msg5_duplicate_relay_DISCARDED.txt"
+   ],
+   "tag": "claude_relay_patch2d_k3_7",
+   "path": "results/continuous_claude_relay_patch2d_k3_7.json",
+   "model": "claude-sonnet (agent-relayed)",
+   "n_cells": 4,
+   "llm_calls_total": 19,
+   "llm_calls_min": 1,
+   "llm_calls_median": 6,
+   "llm_calls_max": 6,
+   "llm_calls_from_transcripts_on_disk": 19,
+   "transcripts_agree": true
+  }
+ ],
+ "totals": {
+  "n_campaigns": 20,
+  "n_cells_all_campaigns": 625,
+  "llm_calls_all_campaigns": 1959,
+  "n_relay_campaigns": 2,
+  "n_relay_cells": 12,
+  "relay_calls": 39,
+  "llm_calls_including_relay": 1998,
+  "calls_per_cell_min": 1,
+  "calls_per_cell_max": 16,
+  "mean_calls_per_cell": 3.1344
+ }
+}

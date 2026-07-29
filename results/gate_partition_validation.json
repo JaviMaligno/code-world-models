@@ -11,15 +11,16 @@
       "n_v": 1,
       "n_a": 4,
       "K": 8,
-      "covered": 385,
+      "covered": 384,
       "trials": 400,
-      "cover_rate": 0.9625,
-      "measured_failure": 0.03749999999999998,
+      "cover_rate": 0.96,
+      "measured_failure": 0.040000000000000036,
       "measured_failure_ci": [
-        0.022854824841380277,
-        0.06094436771332434
+        0.024768847722620668,
+        0.06398278162908555
       ],
       "certificate_failure_bound": 0.038318818328224556,
+      "bound_falsified": false,
       "bound_holds": true
     },
     {
@@ -37,6 +38,7 @@
         0.009512640599680667
       ],
       "certificate_failure_bound": 0.009556683283846498,
+      "bound_falsified": false,
       "bound_holds": true
     }
   ]

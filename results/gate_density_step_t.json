@@ -20,6 +20,9 @@
     "eps_gate": 0.01,
     "seed": 99
   },
+  "n_cells_apriori": 9806,
+  "wilson_z_simultaneous": 4.412935509864061,
+  "wilson_per_cell_level": 5.098919029165817e-06,
   "M": [
     [
       0.030000000000000006,
@@ -44,30 +47,30 @@
     {
       "step": 2,
       "n_cells_seen": 404,
-      "max_density_3d": 0.5848371733719712,
+      "max_density_3d": 0.5793545289628648,
       "level_sets": [
         {
           "alpha": 0.5,
-          "n_cells": 45,
-          "vol_sa": 0.20250000000000007,
+          "n_cells": 42,
+          "vol_sa": 0.18900000000000006,
           "certificate": null
         },
         {
           "alpha": 0.2,
-          "n_cells": 253,
-          "vol_sa": 1.1385000000000003,
+          "n_cells": 249,
+          "vol_sa": 1.1205000000000003,
           "certificate": null
         },
         {
           "alpha": 0.1,
-          "n_cells": 320,
-          "vol_sa": 1.4400000000000004,
+          "n_cells": 318,
+          "vol_sa": 1.4310000000000005,
           "certificate": null
         },
         {
           "alpha": 0.05,
-          "n_cells": 365,
-          "vol_sa": 1.6425000000000005,
+          "n_cells": 364,
+          "vol_sa": 1.6380000000000006,
           "certificate": null
         },
         {
@@ -87,7 +90,7 @@
     {
       "step": 5,
       "n_cells_seen": 1147,
-      "max_density_3d": 0.32175509277837483,
+      "max_density_3d": 0.3177241782820365,
       "level_sets": [
         {
           "alpha": 0.5,
@@ -97,32 +100,32 @@
         },
         {
           "alpha": 0.2,
-          "n_cells": 241,
-          "vol_sa": 1.0845000000000002,
+          "n_cells": 238,
+          "vol_sa": 1.0710000000000004,
           "certificate": null
         },
         {
           "alpha": 0.1,
-          "n_cells": 416,
-          "vol_sa": 1.8720000000000006,
+          "n_cells": 414,
+          "vol_sa": 1.8630000000000007,
           "certificate": null
         },
         {
           "alpha": 0.05,
-          "n_cells": 558,
-          "vol_sa": 2.5110000000000006,
+          "n_cells": 547,
+          "vol_sa": 2.461500000000001,
           "certificate": null
         },
         {
           "alpha": 0.02,
-          "n_cells": 688,
-          "vol_sa": 3.096000000000001,
+          "n_cells": 677,
+          "vol_sa": 3.046500000000001,
           "certificate": null
         },
         {
           "alpha": 0.01,
-          "n_cells": 774,
-          "vol_sa": 3.483000000000001,
+          "n_cells": 771,
+          "vol_sa": 3.469500000000001,
           "certificate": null
         }
       ]
@@ -130,7 +133,7 @@
     {
       "step": 10,
       "n_cells_seen": 2281,
-      "max_density_3d": 0.21694442823750978,
+      "max_density_3d": 0.21367178891220515,
       "level_sets": [
         {
           "alpha": 0.5,
@@ -140,32 +143,32 @@
         },
         {
           "alpha": 0.2,
-          "n_cells": 54,
-          "vol_sa": 0.24300000000000008,
+          "n_cells": 45,
+          "vol_sa": 0.20250000000000007,
           "certificate": null
         },
         {
           "alpha": 0.1,
-          "n_cells": 426,
-          "vol_sa": 1.9170000000000007,
+          "n_cells": 417,
+          "vol_sa": 1.8765000000000005,
           "certificate": null
         },
         {
           "alpha": 0.05,
-          "n_cells": 677,
-          "vol_sa": 3.046500000000001,
+          "n_cells": 668,
+          "vol_sa": 3.006000000000001,
           "certificate": null
         },
         {
           "alpha": 0.02,
-          "n_cells": 965,
-          "vol_sa": 4.342500000000001,
+          "n_cells": 949,
+          "vol_sa": 4.270500000000001,
           "certificate": null
         },
         {
           "alpha": 0.01,
-          "n_cells": 1155,
-          "vol_sa": 5.197500000000002,
+          "n_cells": 1148,
+          "vol_sa": 5.166000000000001,
           "certificate": null
         }
       ]
@@ -173,7 +176,7 @@
     {
       "step": 20,
       "n_cells_seen": 4821,
-      "max_density_3d": 0.1251407929524361,
+      "max_density_3d": 0.12271106843397696,
       "level_sets": [
         {
           "alpha": 0.5,
@@ -189,26 +192,26 @@
         },
         {
           "alpha": 0.1,
-          "n_cells": 131,
-          "vol_sa": 0.5895000000000001,
+          "n_cells": 122,
+          "vol_sa": 0.5490000000000002,
           "certificate": null
         },
         {
           "alpha": 0.05,
-          "n_cells": 686,
-          "vol_sa": 3.087000000000001,
+          "n_cells": 671,
+          "vol_sa": 3.0195000000000007,
           "certificate": null
         },
         {
           "alpha": 0.02,
-          "n_cells": 1369,
-          "vol_sa": 6.160500000000002,
+          "n_cells": 1329,
+          "vol_sa": 5.980500000000002,
           "certificate": null
         },
         {
           "alpha": 0.01,
-          "n_cells": 1817,
-          "vol_sa": 8.176500000000003,
+          "n_cells": 1789,
+          "vol_sa": 8.050500000000003,
           "certificate": null
         }
       ]
@@ -216,7 +219,7 @@
     {
       "step": 40,
       "n_cells_seen": 7361,
-      "max_density_3d": 0.04913275516066134,
+      "max_density_3d": 0.047697068898241934,
       "level_sets": [
         {
           "alpha": 0.5,
@@ -244,14 +247,14 @@
         },
         {
           "alpha": 0.02,
-          "n_cells": 1361,
-          "vol_sa": 6.124500000000002,
+          "n_cells": 1283,
+          "vol_sa": 5.773500000000002,
           "certificate": null
         },
         {
           "alpha": 0.01,
-          "n_cells": 2628,
-          "vol_sa": 11.826000000000004,
+          "n_cells": 2538,
+          "vol_sa": 11.421000000000003,
           "certificate": null
         }
       ]
@@ -259,7 +262,7 @@
     {
       "step": 80,
       "n_cells_seen": 8596,
-      "max_density_3d": 0.01974284068596878,
+      "max_density_3d": 0.018908660119838952,
       "level_sets": [
         {
           "alpha": 0.5,
@@ -293,8 +296,8 @@
         },
         {
           "alpha": 0.01,
-          "n_cells": 1379,
-          "vol_sa": 6.205500000000002,
+          "n_cells": 1172,
+          "vol_sa": 5.274000000000002,
           "certificate": null
         }
       ]

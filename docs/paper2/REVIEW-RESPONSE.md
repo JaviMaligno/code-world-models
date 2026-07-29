@@ -1,0 +1,103 @@
+# Paper 2 — point-by-point response to the external review (2026-07-27)
+
+Every numbered point and every minor point of the review, with the fix, where it landed,
+and how it was verified. **No row may be marked DONE without evidence in its last column.**
+Status vocabulary: `OPEN` · `IN PROGRESS` · `DONE` · `DECLINED` (with a stated reason).
+
+Governing rule for this revision: where a claim was too strong, we first looked for the
+experiment or the proof that earns the strong version; wording was weakened only when that
+failed, and each weakening records what would earn it back.
+
+## Critical points
+
+| # | Review point | Fix | Status | Evidence |
+|---|---|---|---|---|
+| 1 | Synthesis/refinement sample doubles as the gate — "verification" is training-set consistency | Held-out three-way split `D_train`/`D_gate`/`D_eval` scored over all 625 versioned artifacts (no new LLM spend); acceptance redefined on `D_gate`; in-sample notion renamed *sample-consistency gate* | DONE | `scripts/heldout_gate_audit.py` + `heldout_gate_paper_numbers.py` over all 625 artifacts; §sec:heldout. Blocks verified disjoint; train sample reproduced 60/60. **36 of 463** in-sample-accepted artifacts are rejected by an independent gate (7.8%, [0.057,0.106]), 35 of 36 failing only on mode contacts |
+| 2 | `danger = play_cost·(1-r)^N` is not defined as a probabilistic estimand | New risk estimand `D_N = E[PC(A(D))·1{accepted ∧ play-inadequate}]`, factorization conditions proved, bounds when the conditional cost varies; "exact" reserved for the gate-miss factor | DONE | `prop:risk` (risk estimand + factorization iff Cov = 0 + two-sided bounds) and `prop:twofactor` (exponents add) in §sec:estimand; both hypotheses measured: (i) 30/30, (ii) 60/60 exact; two-factor 0.399 inside [0.142,0.402] |
+| 3 | "Smooth learners cannot localize" is too strong (a `C^∞` bump has compact support — our own arm) | Restated as bounded-Lipschitz / fixed-amplitude / arbitrarily-sharp; volume form added; representability vs learnability vs 1e-9 exactness vs the h=8 probe separated; headings and conclusion rewritten | DONE | `cor:locbudget` (volume price) + `rem:fourstatements` (representability / detectability / tolerance / learnability separated); §smooth and the conclusion retitled; our own $C^\infty$ bump named as the counterexample to the old wording |
+| 4 | "Geometry-dependent via a template prior" is not causally identified | Rarity-matched **slab** ablation (trigger arity varied alone, inside the same 4D bi-modal plant) + `landing` prompt variant; claim stated at whatever the ablations identify | PARTIAL | Axis *defined* (`def:arity`: trigger arity vs entry-barrier dimension) and claim rescoped to consistent-with. The rarity-matched `slab` instrument is built and calibrated (`results/patch2d_slab_calibration.json`, admissible config certified) and the `landing` prompt variant is implemented; **neither campaign has been run** (Azure spend). Alternatives not excluded are named in the text |
+| 5 | Experimental unit unclear; `0/156` and `109/111` carry invalid binomial inference | `scripts/paper2_statistics.py`: unit hierarchy declared, per-treatment tables, block-level bounds, pooled comparator explicitly labelled invalid | DONE | `scripts/paper2_statistics.py`; 0/156 restated as 156 draws over **20 blocks** with an exact per-block upper bound 0.168; 109/111 restated as 36 blocks, 34/36 all-repair, [0.813,0.993]; the cart's 0.851 was **wrong at block level** and is now 0.708/0.772 with the estimand named |
+| 6 | "Certification stayed sound" uses too weak a definition of sound | Vocabulary split: *sample-consistent* / *no observed false acceptance on the gate sample* vs *sound* for the stated logical property | DONE | *sample-consistency gate* vs *held-out gate* defined in §sec:theory; 'certified' in the acceptance sense replaced by 'accepted' throughout; linter rule `soundness-scope` at 0 |
+| 7 | CEM result reads an observed zero as a zero query probability | `scripts/cem_crossing_bound.py`: ≥200× sampling, Clopper-Pearson upper bound, correct conversion to a `q_hit` bound; claim becomes `≤` | DONE | `scripts/cem_crossing_bound.py` at 200× the sample: at $x_\mathrm{wall}=8$ the zero was censoring **18 crossings in 1.28M** and $q_\mathrm{hit}\geq0.0029$, so the 'forces play_cost = 0' claim is refuted; at 10 the zero survives with $q_\mathrm{hit}\leq0.058$. Claim is now an inequality on all rows |
+| 8 | `play_cost` depends on a small unstable random baseline | Raw return, raw regret, normalized regret, difference from random and paired intervals reported together; cross-instrument comparisons qualified | DONE | `scripts/play_cost_intervals.py`, 100 paired episodes on the three headline rows: raw return, raw regret, normalized play_cost, $J_\mathrm{rand}-J_\mathrm{blind}$ and paired bootstrap intervals now reported together. **The strong form was tested and failed**: on the cart the blind planner beats random in 86/100 seeds, so 'below random' there is a heavy-tailed-mean claim; the paper now says so and drops the rhetoric |
+| 9 | 20 episodes/cell too few for several conclusions | 100 paired episodes on headline rows; paired bootstrap + randomization test; per-seed values and ECDFs; Clopper-Pearson for 7/20 | DONE | 100 paired episodes, 20{,}000-resample paired bootstrap, sign-flip randomization test and an exact sign test per row; per-seed values versioned for ECDFs; distribution shape (sd, median, IQR, skew) reported where it matters — PatchField2D's $J_\mathrm{truth}$ has sd 7.9. Clopper–Pearson for the 7/20 lock-in in `play_cost_intervals.json::mitigation_lockin_2d`, with the caveat that the census threshold is estimated from the same 20 episodes |
+| 10 | "Deployment-realistic ε=0.01" unjustified; `N=40` inherited | Renamed *representative tolerance* and justified against state scale/simulator resolution, with the ε-sweep as the invariance argument; `N=40` motivated explicitly as inherited-for-comparability | DONE | renamed *representative tolerance*, justified against the instrument's two scales and the reward span, with the 8-order $\varepsilon$-sweep as the invariance argument; $N=40$ stated as inherited-for-comparability, with d@$N$ at three $N$ |
+
+## Concrete theoretical points
+
+| # | Review point | Fix | Status | Evidence |
+|---|---|---|---|---|
+| 11 | Joint-bracket sharpness needs `r1+r2 ≤ 1` | Condition added; the `r1+r2 > 1` case stated (lower end is `P(R1∪R2)=1`, minimal intersection `r1+r2-1`) | DONE | `rem:bracket`: the lower end is the Fréchet–Hoeffding minimal intersection $\max(0,r_1+r_2-1)$, which is disjointness only when $r_1+r_2\leq1$; our knobs are in that regime |
+| 12 | ε-flatness proposition stated more generally than its proof | **Generalized**: proved for the semi-implicit family with additive `gain·a` and a clamp on the integrated coordinate, so cart and pendulum are both theorems | DONE | **generalized instead of scoped down**: `prop:epsrate` now proves the quadratic rate for the whole semi-implicit family with additive `gain·a` and a clamp on the integrated coordinate, with an approachability hypothesis for the ess-inf half. Cart and pendulum are both theorems; $C=T\,dt\,c$ ties the constant to the universal density constant |
+| 13 | "Normalizers derived" are bounds, not the extremes | Corollary restated with `J̄`, `J̲`; table separating proved bound / attained / numerically approached | DONE | `cor:playcost` restated with the proved bounds $\bar J,\underline J$ and a computable second inequality; three statuses (proved bound / attained / numerically approached) separated in the text |
+| 14 | Monte-Carlo coverage certificate not rigorous without a simultaneity account | Simultaneity ledger (partition fixed before MC? δ split? K selection? level sets?), union correction if selection occurred, relabelled if calibrated | DONE | `docs/paper2/CERTIFICATE-AUDIT.md` + `scripts/certificate_simultaneity.py`. Verdict: rigorous modulo a level the code accounts for. Disclosure added; selection survives Bonferroni over the whole 9674-test family and Clopper–Pearson. **Two real defects fixed**: the step-$t$ Wilson level was a hand-picked $z=4$ (now derived, $z=4.4129$ over 9806 cells; three volumes 3.09→3.02, 6.13→5.77, 6.21→5.27) and the validation sampled the step-0 law (fixed; 385→384/400) |
+| 15 | "Boundary dimension" not well defined | Formal definitions of *trigger arity* and *mode-boundary dimension*; used consistently; reconciled with the fencing corollary | DONE | `def:arity` + `rem:twodims`: trigger arity $p$ and entry-barrier dimension $b$ defined and reconciled with `cor:fencedim`; the paper no longer claims either is the joint-space boundary dimension |
+| 16 | Theorem inflation ("ten propositions are new") | Regrouped into four families; algebraic identities demoted to lemmas/remarks | DONE | contributions regrouped into four families; supporting identities named as such and moved to the supplement |
+
+## Design and reproducibility
+
+| # | Review point | Fix | Status | Evidence |
+|---|---|---|---|---|
+| 17 | No compact, complete LLM protocol specification | New appendix from `docs/paper2/PROTOCOL-FACTS.md` (system/synthesis/refine messages verbatim, budgets, parsing, retries, sampling params, deployments, calls per seed, classification rules) | DONE | `docs/paper2/appendix-protocol.tex` from `PROTOCOL-FACTS.md`: verbatim messages, budgets, parsing, retry policy (SDK-level only), sampling params actually sent, deployments, calls per seed, and the operational classification rules |
+| 18 | Closed models hinder reproduction | Per-artifact hashes and versioned transcripts recorded; call/token accounting; open-weight arm status stated honestly (Qwen 2D arm incomplete) | PARTIAL | call counts exact (1959 over 625 cells), transcripts versioned, token usage recorded as absent with the reason; the open-weight arm is still incomplete on the 2D instrument (credits) and is stated as a translation control only |
+| 19 | Reproducibility appendix incomplete | Python version, frozen dependency list, commit/tag, hardware, per-campaign runtime, LLM cost, master command, JSON→table manifest, licence, `env.example` | DONE | `docs/paper2/appendix-repro.tex`: platform, the one-machine gap stated, frozen deps + the missing release tag, the JSON→table manifest with three checking tiers and one gap, runtime as a lower bound, cost as a range with the reason, licence (Apache-2.0 + CC-BY-4.0), `env.example` |
+| 20 | Post-hoc analysis and researcher degrees of freedom | Dated ledger: PRE-SPECIFIED / CONFIRMATORY / DIAGNOSTIC / EXPLORATORY ABLATION / POST-HOC, from git history; "pre-registered", "falsified", "pins the mechanism" audited against it | DONE | `docs/paper2/appendix-prespec.tex` from git dates. **Two claims were unsupported and are corrected in the text**: 'the pre-registered risk' and 'we predicted partial repair'; a third now states its chronology |
+| 21 | Related work too brief; CEGIS not discussed | Twelve literatures added with verified references; CEGIS treated as the direct analogue with the difference named (a CEGIS oracle is complete relative to a specification; a sampling gate is not); companion-paper dependence removed from the argumentative load-bearing path | DONE | `docs/paper2/related-work.tex`, 12 literatures, ~2300 words, CEGIS first with the oracle difference named. All **59** new bib entries verified (54 via Crossref/arXiv, 5 by hand); `results/bib_verification.json`, checked by the audit |
+
+## Narrative and presentation
+
+| # | Review point | Fix | Status | Evidence |
+|---|---|---|---|---|
+| 22 | 50 pages, no hierarchy, too many contributions | Main article ≈16 pp with the six-section arc; the rest to labelled Supplementary Material | DONE | `scripts/restructure_paper2.py` (anchor-based, idempotent, asserts every moved block appears exactly once): main article **29 pp** (from 55) + labelled Supplementary Material |
+| 23 | Too much self-referential prose | Register purged; history to `docs/paper2/CHANGELOG-corrections.md`; enforced by `scripts/audit_paper_claims.py` | DONE | 48 flagged passages removed to `docs/paper2/CHANGELOG-corrections.md`; linter rule `process-prose` at 0 |
+| 24 | Immediate textual contradiction (covering-number analogue "left open", then presented) | Residual sentence deleted | DONE | the residual sentence is deleted |
+| 25 | Titles and headings overclaim | Four flagged headings and their siblings de-escalated to their actual scope | DONE | four headings de-escalated; linter rule `modal-scope` at 0 |
+| 26 | Abstract overloaded | Rewritten to problem / main theory result / main empirical result / 2D limitation / implication | DONE | rewritten to problem / theory / empirical / 2D limitation / implication; no pooled counts |
+
+## Minor points
+
+| # | Review point | Fix | Status | Evidence |
+|---|---|---|---|---|
+| m1 | "Two independent modes" — distinct but dependent | Wording corrected everywhere; the measured dependence cited | DONE | wording corrected; the measured dependence is cited where the modes are introduced |
+| m2 | "Zero-curvature square" | → "axis-aligned square with flat edges" (corners are not differentiable) | DONE | all occurrences → 'axis-aligned square with flat edges' |
+| m3 | "Below random" needs the raw return beside it | Raw returns added at every such claim | DONE | raw returns beside every normalized figure; the planner section points at the measured decomposition instead of asserting 'below random' |
+| m4 | Printed zeros should carry `<` or an interval in the table | Table cells carry their bound; global convention no longer load-bearing | DONE | `scripts/apply_table_bounds.py` (idempotent, values read from `results/` at runtime): 43 cells across 7 tables now distinguish censored zero / rounded-away positive / demonstrated zero; the convention paragraph is no longer load-bearing; linter rule `printed-zero` at 0 |
+| m5 | Four-decimal 2D rarities exceed the resolution | Truncated to the resolution the sample supports | DONE | `tab:patch2d` truncated to the 3 decimals 600 rollouts resolve |
+| m6 | `d@40` quoted without an interval | Interval propagated or the figure withdrawn | DONE | `d@N` bands are the rarity interval propagated through $\mathrm{play\_cost}\cdot(1-r)^N$ (monotone, so the corner pair) — stated in the figure captions; table cells that would round to zero print in exponent form |
+| m7 | Figures lack uncertainty bands | Bands added where the data supports them | DONE | `scripts/make_paper2_figures.py` now draws the propagated rarity band on `fig:threshold`, Wilson bars on `fig:reach` with the truth planner's censored zero as an upper bound, and paired intervals on `fig:axes`; all three captions say what the bands are |
+| m8 | Unclear whether episode seeds are reused across knobs and planners | Stated from the code | DONE | stated from the code in §sec:planner: episode seeds are $900{,}000+1000i$ (synthesis) and $1000i$ (sweeps), so they recur across knobs, instruments and both planner families, and the three arms of a row share them |
+| m9 | Seed pairing must enter the statistical analysis | Paired bootstrap/randomization used throughout the play claims | DONE | same paragraph states that every play interval is paired (bootstrap or randomization over seed triples), which is what makes $10^{-4}$ differences meaningful at 20 episodes |
+| m10 | `J_truth` sometimes called "optimal" | Removed; MPC-with-true-model is not proved optimal | DONE | 'optimal' removed where it implied MPC optimality |
+| m11 | "Truth planner" needs emphasis that it is the true-model planner, not an optimal policy | Stated at first use and in the definition | DONE | at first use: the truth planner is the *same* random-shooting MPC given the true dynamics, a reference and not a proved optimal policy |
+| m12 | "Almost-everywhere exact" is misleading (small measure, not zero) | → "exact outside the mode region" | DONE | → 'exact outside the mode region' everywhere including the abstract |
+| m13 | "Rarity" is a rollout-level probability, not a region volume | Reminded in the definition | DONE | the definition now says rarity is the probability that a whole gate *rollout* contains a contact, not the region's volume |
+| m14 | `μ_query` is not a measure | Renamed `q_hit(E)` consistently, including in propositions and proofs | DONE | renamed `q_hit(E)` in all 13 sites; the not-a-measure caveat is now in the definition |
+| m15 | Funding, conflicts of interest, data availability, AI-use declaration | Added | DONE | new `\section*{Declarations}`: funding, competing interests, data/code availability with both licences and the missing DOI release, and a use-of-AI declaration |
+| m16 | Anonymization | Author/affiliation/URL/repo occurrences listed; venue policy decision left to the author | DONE | the same section lists the four identifiers and the nine companion-paper citations a double-blind version must change; the venue decision is left to the author |
+| m17 | The 2026 CWM citation and the companion paper must be publicly available at submission | Availability status of each recorded; no argument left resting on an unavailable work | DONE | both checked; no argument rests on an unavailable work |
+
+## Verification of this revision
+
+Run from the repository root; all four were green at the time of writing.
+
+| check | command | result |
+|---|---|---|
+| tests | `.venv/bin/python -m pytest -q` | **578 passed** |
+| numbers | `PYTHONPATH=src .venv/bin/python scripts/audit_paper2_numbers.py` | **657 values, all agree** |
+| claims | `.venv/bin/python scripts/audit_paper_claims.py docs/paper2/main.tex` | **0 errors, 0 warnings** across all six rules |
+| build | `pdflatex` ×2 + `bibtex` in `docs/paper2/` | 0 overfull boxes, 0 undefined references, main article 29 pp + Supplementary Material |
+
+## What remains open, and why
+
+* **Review point 4 (the causal axis) is PARTIAL by choice.** The rarity-matched `slab`
+  instrument and the `landing` prompt variant are built, tested and calibrated, but the two
+  synthesis campaigns have not been run: each is ~20 seeds × 2 sizes of paid API calls. Until
+  they run, the paper states the template prior as a hypothesis consistent with the artifacts
+  and names the alternatives it does not exclude. The slab calibration also found a
+  structural fact worth keeping: a one-coordinate trigger in this plant necessarily *screens*
+  the far mode, so an arity-1 instrument here is single-mode, and that confound is
+  unavoidable rather than a calibration failure.
+* **Review point 18 (closed-model reproduction) is PARTIAL.** Call counts and transcripts are
+  exact; token usage was never recorded and is stated as such; the open-weight arm remains a
+  translation control on the 2D instrument because that provider's credits ran out.
+* **An archived release** (git tag + DOI) is required before submission and does not exist.

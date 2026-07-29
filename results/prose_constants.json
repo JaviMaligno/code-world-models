@@ -1,0 +1,93 @@
+{
+  "script": "derive_prose_constants.py",
+  "why": "Constants quoted in docs/paper2/main.tex's prose that no other artifact produced. Each is re-derived here from a committed measurement so the numeric audit reads it from data rather than from the sentence.",
+  "reads": [
+    "continuous_reach",
+    "continuous_axes",
+    "gate_density_constant",
+    "play_cost_proved_bounds",
+    "gate_partition_certificate",
+    "phantom_targeting_probability"
+  ],
+  "detectrate_coefficient": {
+    "value": 3.636507001559314,
+    "printed_in_tex": 3.636,
+    "formula": "(c*N/ln(1/delta))^(1/(d+m)), c = 5/6, N = 40, delta = 1/2, d+m = 3",
+    "c": 0.8333333333333334,
+    "c_source": "gate_density_constant.json",
+    "note": "L >= 3.636*(eta - eps) in cor:cartdensity"
+  },
+  "ball_radius_uniform_over_rows": {
+    "value": 0.13749457921725514,
+    "printed_in_tex": 0.1375,
+    "formula": "rho = 1/(2*coefficient): eta - eps cancels, so the radius is the same in every row of the corollary"
+  },
+  "ball_radius_at_plant_lipschitz": {
+    "value": 1.6496062992125986,
+    "printed_in_tex": 1.65,
+    "formula": "(eta - eps)/(2L) with eta = 4.2 (the wall probe error), eps = 0.01, L = the plant's sup-metric Lipschitz constant",
+    "L_plant": 1.27,
+    "L_plant_source": "gate_partition_certificate.json::L_plant"
+  },
+  "packing_corner_hypothesis": {
+    "rho": 1.1649999999999971,
+    "half_rho": 0.5824999999999986,
+    "printed_in_tex": 0.583,
+    "uniform_bound": 2.9690999999999925,
+    "narrowest_extent_of_U": 0.6000000000000001,
+    "hypothesis_satisfied": true,
+    "margin": 0.017500000000001514,
+    "note": "the corner argument needs every extent of U to be at least rho/2; the paper says it holds 'if barely', and the margin quantifies that"
+  },
+  "play_cost_ceiling_xwall8": {
+    "J_max_proved": 18.035941712190255,
+    "J_min_proved": 1.3346885460905155e-06,
+    "J_truth": 17.7722,
+    "J_rand": 0.5343,
+    "denominator": 17.237900000000003,
+    "printed_denominator_in_tex": 17.238,
+    "ceiling": 1.0462956843642037,
+    "printed_ceiling_in_tex": 1.0463,
+    "measured_play_cost": 1.0299102844577417,
+    "pct_of_ceiling_attained": 98.43396086294489,
+    "printed_pct_in_tex": 98.4
+  },
+  "two_rarity_estimates_xwall8": {
+    "firing_rarity_30k": 0.011433333333333334,
+    "printed_firing_in_tex": 0.0114,
+    "reveal_rarity_20k": 0.01025,
+    "predicted_pass_from_firing": 0.6313039379908071,
+    "printed_pass_from_firing_in_tex": 0.631,
+    "predicted_pass_from_reveal": 0.662247636430045,
+    "reveal_rarity_ci": [
+      0.008945085151637971,
+      0.011743021076917652
+    ],
+    "predicted_pass_interval": [
+      0.6234413418015746,
+      0.6980857696059878
+    ],
+    "printed_interval_in_tex": [
+      0.623,
+      0.698
+    ],
+    "measured_pass": 0.6666666666666666,
+    "note": "propagating the rarity's own interval through (1-r)^40 is what makes the comparison against the measured pass rate legitimate"
+  },
+  "phantom_lure_asymmetry": {
+    "imagined_return_right": 8.306201936159045,
+    "imagined_return_left": 5.694909259757923,
+    "printed_left_in_tex": 5.7,
+    "printed_right_in_tex": 8.31,
+    "asymmetry_ratio": 1.4585310418997128,
+    "printed_ratio_in_tex": 1.46,
+    "source": "play_cost_proved_bounds.json::pinning_structure",
+    "note": "the asymmetry that makes 'right' the argmax under the blind model"
+  },
+  "best_constant_policy_expected_return": {
+    "printed_in_tex": 17.697,
+    "measured_J_truth": 17.7722,
+    "below_measured_J_truth": true,
+    "note": "quoted in main.tex only to show that the EXPECTED-return reading of J_max falls below the measured J_truth, so it cannot be the normalizer prop:playcost needs; the inequality is the claim, not the digits"
+  }
+}

@@ -90,6 +90,31 @@ FAILS = []
 CHECKS = [0]
 
 
+def cell_value(cell: str):
+    """Parse a table cell into ('point'|'bound'|'exact_zero', value).
+
+    The tables carry three kinds of cell since the censored-zero patch
+    (scripts/apply_table_bounds.py):
+      'point'      a printed value, possibly in the exponent form $m{\\times}10^{e}$
+      'bound'      $<X$, an upper bound on a censored quantity
+      'exact_zero' $0$ (exact), a demonstrated zero (bit-identical returns)
+    Returning the KIND is what lets agree() apply the right test to each, instead of
+    reading the digits of a bound as if they were a measurement.
+    """
+    c = cell.strip()
+    if "(exact)" in c:
+        return ("exact_zero", 0.0, 0)
+    m = re.search(r"\$?(-?\d+(?:\.\d+)?)\s*\{?\\times\}?\s*10\^\{(-?\d+)\}", c)
+    if m:
+        return ("point", float(m.group(1)) * 10.0 ** int(m.group(2)), None)
+    bound = c.lstrip("$").startswith("<")
+    nums = numbers(c)
+    if not nums:
+        return (None, None, None)
+    val, dec = nums[0]
+    return ("bound" if bound else "point", val, dec)
+
+
 def agree(label, row_id, col, printed, actual):
     """printed = (value, decimals) as it appears in the paper."""
     CHECKS[0] += 1
@@ -98,6 +123,33 @@ def agree(label, row_id, col, printed, actual):
         tol = abs(val) * 0.05 + 1e-30
     else:
         tol = 0.5 * 10 ** (-dec) + 1e-12
+    if abs(val - actual) > tol:
+        FAILS.append(f"{label} [{row_id}] {col}: paper {val} vs data {actual}")
+
+
+def agree_cell(label, row_id, col, cell, actual):
+    """Check a raw table cell against the data, respecting the cell's KIND.
+
+    A bound is satisfied when the measured value lies at or below it (and, for a
+    censored zero, the measurement is 0); a demonstrated zero must be exactly 0; a
+    point value is compared at its printed precision, as before.
+    """
+    CHECKS[0] += 1
+    kind, val, dec = cell_value(cell)
+    if kind is None:
+        FAILS.append(f"{label} [{row_id}] {col}: cannot parse cell {cell!r}")
+        return
+    if kind == "exact_zero":
+        if actual != 0.0:
+            FAILS.append(f"{label} [{row_id}] {col}: cell says an exact zero but the "
+                         f"data is {actual}")
+        return
+    if kind == "bound":
+        if actual > val + 1e-12:
+            FAILS.append(f"{label} [{row_id}] {col}: bound {val} is violated by the "
+                         f"data {actual}")
+        return
+    tol = abs(val) * 0.05 + 1e-30 if dec is None else 0.5 * 10 ** (-dec) + 1e-12
     if abs(val - actual) > tol:
         FAILS.append(f"{label} [{row_id}] {col}: paper {val} vs data {actual}")
 
@@ -115,13 +167,16 @@ for cells in tabular_rows("tab:danger"):
             ("rarity", j["rarity"]), ("J_truth", j["j_truth"]),
             ("J_blind", j["j_blind"]), ("J_rand", j["j_random"]),
             ("play_cost", j["play_cost"]), ("blind hit", j["blind_contact_rate"]),
-            ("truth hit", j["truth_contact_rate"]),
             ("d@20", d(j["play_cost"], j["rarity"], 20)),
             ("d@40", d(j["play_cost"], j["rarity"], 40)),
             ("d@80", d(j["play_cost"], j["rarity"], 80))):
+        # The truth-hit column was moved into the caption: it is the same censored bound
+        # (0/20 episodes at every knob) in every row. It is checked once, below.
         i = ["x_wall", "rarity", "J_truth", "J_blind", "J_rand", "play_cost",
-             "blind hit", "truth hit", "d@20", "d@40", "d@80"].index(col)
-        agree("tab:danger", k, col, numbers(cells[i])[0], actual)
+             "blind hit", "d@20", "d@40", "d@80"].index(col)
+        agree_cell("tab:danger", k, col, cells[i], actual)
+_TRUTH_HIT_ALL_ZERO = all(r["truth_contact_rate"] == 0.0
+                          for r in load("continuous_reach")["rows"])
 
 # --- tab:pendulum -----------------------------------------------------------
 pend = {row["th_stop"]: row for row in load("continuous_pendulum")["rows"]}
@@ -138,7 +193,7 @@ for cells in tabular_rows("tab:pendulum"):
                            ("play_cost", 4, j["play_cost"]),
                            ("blind hit", 5, j["blind_contact_rate"]),
                            ("d@40", 6, d(j["play_cost"], j["rarity"], 40))):
-        agree("tab:pendulum", k, col, numbers(cells[i])[0], actual)
+        agree_cell("tab:pendulum", k, col, cells[i], actual)
 
 # --- tab:patch2d ------------------------------------------------------------
 p2d = {(row["k1"], row["k2"]): row for row in load("continuous_patch2d")["rows"]}
@@ -154,9 +209,10 @@ for cells in tabular_rows("tab:patch2d"):
             # the joint factor is the law at the union event, NOT the product of
             # the per-mode factors (that would assume within-rollout independence)
             ("d@40 joint", 9, d(j["play_cost"], j["r_either"], 40))):
-        agree("tab:patch2d", key, col, numbers(cells[i])[0], actual)
+        agree_cell("tab:patch2d", key, col, cells[i], actual)
 
 # --- tab:cem (with the cross-source play_cost check) ------------------------
+_CCB = load("cem_crossing_bound")
 cem = {(r["instrument"], r["knob"] if not isinstance(r["knob"], list)
         else tuple(r["knob"])): r for r in load("continuous_cem")["rows"]}
 for cells in tabular_rows("tab:cem"):
@@ -166,11 +222,29 @@ for cells in tabular_rows("tab:cem"):
     mech = reach[knob] if inst == "cart" else pend[knob]
     agree("tab:cem", (inst, knob), "pc MPC (cross-source)",
           numbers(cells[2])[0], mech["play_cost"])
+    # The crossing-CEM column's zeros were censored at 6400 sampled trajectories.
+    # results/cem_crossing_bound.json re-measures each cart row at 200x that sample, so
+    # for those rows the table quotes the re-measurement -- which at x_wall = 8 is a
+    # POSITIVE value the original zero was hiding. Check the cell against whichever
+    # source it quotes, and assert that the two agree about the direction.
+    cross_actual = j["crossing_frac_cem_blind"]
+    if inst == "cart":
+        _m = [b for b in _CCB["rows"] if abs(b["x_wall"] - knob) < 1e-9]
+        if _m:
+            _isc = _m[0]["initial_state"]
+            assert _m[0]["published_crossing_cem_table_cell"] == cross_actual, (
+                f"cem_crossing_bound.json disagrees with continuous_cem.json about the "
+                f"published cell at x_wall={knob}")
+            # only the CENSORED cells (published exactly 0) are re-quoted; a row whose
+            # published value was positive keeps its original estimate, so the two
+            # samples are not silently mixed in one column
+            if cross_actual == 0.0 and _isc["crossings_observed"] > 0:
+                cross_actual = _isc["crossing_frac_point"]
     for col, i, actual in (("pc CEM", 3, j["play_cost_blind_cem"]),
                            ("contact CEM", 4, j["blind_contact_rate"]),
-                           ("crossing CEM", 5, j["crossing_frac_cem_blind"]),
+                           ("crossing CEM", 5, cross_actual),
                            ("crossing MPC", 6, j["crossing_frac_mpc_blind"])):
-        agree("tab:cem", (inst, knob), col, numbers(cells[i])[0], actual)
+        agree_cell("tab:cem", (inst, knob), col, cells[i], actual)
 
 # --- tab:axes ---------------------------------------------------------------
 axes = load("continuous_axes")["rows"]
@@ -194,7 +268,7 @@ for cells in tabular_rows("tab:axes"):
                            ("pass@40", 3, j["pass_rate"]),
                            ("play_cost", 4, j["play_cost"]),
                            ("d@40", 5, d(j["play_cost"], j["rarity"], 40))):
-        agree("tab:axes", j["arm"], col, numbers(cells[i])[0], actual)
+        agree_cell("tab:axes", j["arm"], col, cells[i], actual)
 
 # --- tab:eps-sweep (cart rows) ---------------------------------------------
 eps_rows = load("continuous_eps_sweep")["rows"]
@@ -219,7 +293,7 @@ for cells in tabular_rows("tab:eps-sweep"):
         if actual is None:
             FAILS.append(f"tab:eps-sweep: no unique cart row for {arm} at eps={eps}")
             continue
-        agree("tab:eps-sweep", eps, col, numbers(cells[i])[0], actual)
+        agree_cell("tab:eps-sweep", eps, col, cells[i], actual)
 
 # --- tab:mitigation ---------------------------------------------------------
 mit = load("continuous_mitigation")["rows"]
@@ -241,7 +315,7 @@ for cells in tabular_rows("tab:mitigation"):
     for col, i, actual in (("pc_blind", 1, j["play_cost_blind"]),
                            ("pc_mit", 2, j["play_cost_mitigated"]),
                            ("first contact", 3, j["mean_first_contact_step"])):
-        agree("tab:mitigation", knob, col, numbers(cells[i])[0], actual)
+        agree_cell("tab:mitigation", knob, col, cells[i], actual)
 
 # --- tab:patch2d-mitigation ------------------------------------------------
 mitp = {(r["k1"], r["k2"]): r for r in load("continuous_mitigation_patch2d")["rows"]}
@@ -253,7 +327,7 @@ for cells in tabular_rows("tab:patch2d-mitigation"):
                            ("pc_mit", 2, j["play_cost_mitigated"]),
                            ("mean viol", 3, j["mean_violations"]),
                            ("first contact", 4, j["mean_first_contact_step"])):
-        agree("tab:patch2d-mitigation", key, col, numbers(cells[i])[0], actual)
+        agree_cell("tab:patch2d-mitigation", key, col, cells[i], actual)
 
 # --- tab:smooth -------------------------------------------------------------
 smooth = {(r["model"], r["trained_on"]): r for r in load("continuous_smooth_probe")["rows"]}
@@ -682,12 +756,18 @@ claim("with a shape-free ball-mass bound, N = 40 certifies NOTHING on any step-t
       _certs == [] and dst["best"] is None, str(len(_certs)))
 _vols = {(r["step"], ls["alpha"]): ls["vol_sa"]
          for r in dst["rows"] for ls in r["level_sets"]}
-claim("step-20 {p>=0.05} has volume 3.09 in (x,v,a)",
-      abs(_vols[(20, 0.05)] - 3.087) < 0.02, f"{_vols[(20, 0.05)]:.3f}")
-claim("step-40 {p>=0.02} has volume 6.13 and step-80 {p>=0.01} has 6.21",
-      abs(_vols[(40, 0.02)] - 6.125) < 0.02
-      and abs(_vols[(80, 0.01)] - 6.206) < 0.02,
+claim("step-20 {p>=0.05} has volume 3.02 in (x,v,a)",
+      abs(_vols[(20, 0.05)] - 3.0195) < 0.02, f"{_vols[(20, 0.05)]:.3f}")
+claim("step-40 {p>=0.02} has volume 5.77 and step-80 {p>=0.01} has 5.27",
+      abs(_vols[(40, 0.02)] - 5.7735) < 0.02
+      and abs(_vols[(80, 0.01)] - 5.274) < 0.02,
       f"{_vols[(40, 0.02)]:.3f}, {_vols[(80, 0.01)]:.3f}")
+_stept = load("gate_density_step_t")
+claim("the step-t per-cell Wilson level is DERIVED from the a-priori cell family "
+      "(9806 cells, z = 4.41), not a hand-picked z",
+      _stept["n_cells_apriori"] == 9806
+      and abs(_stept["wilson_z_simultaneous"] - 4.4129) < 1e-3,
+      f"n={_stept['n_cells_apriori']}, z={_stept['wilson_z_simultaneous']:.4f}")
 val = {round(r["rho"], 3): r for r in load("gate_coverage_validation")["rows"]}
 claim("validation: 200/200 gates cover at the licensed net radius 1.0",
       val[1.0]["covered"] == 200, str(val[1.0]["covered"]))
@@ -836,12 +916,33 @@ claim("and it is only 1.2x worse than the retired all-steps-independent promise"
       abs(_bb["uniform_bound"] / 0.7847 - 1.19) < 0.03)
 _pv = {r["regime"]: r for r in load("gate_partition_validation")["rows"]}
 _va = _pv["(a) one step per rollout"]
-claim("validation (a): 385/400 gates cover the K = 8 partition",
-      _va["covered"] == 385 and _va["trials"] == 400, str(_va["covered"]))
-claim("measured failure 0.0375 against the bound 0.0383 -- tight to 2%",
-      abs(_va["measured_failure"] - 0.0375) < 5e-4
-      and _va["measured_failure"] <= _va["certificate_failure_bound"],
-      f"{_va['measured_failure']:.4f} vs {_va['certificate_failure_bound']:.4f}")
+claim("validation (a): 384/400 gates cover the K = 8 partition",
+      _va["covered"] == 384 and _va["trials"] == 400, str(_va["covered"]))
+claim("measured failure 0.0400 [0.0248, 0.0640] contains the union bound 0.0383 "
+      "and the exact probability 0.038038",
+      abs(_va["measured_failure"] - 0.0400) < 5e-4
+      and _va["measured_failure_ci"][0] <= _va["certificate_failure_bound"]
+      and abs(_va["certificate_failure_bound"] - 0.038319) < 1e-5,
+      f"{_va['measured_failure']:.4f} in {[round(x,4) for x in _va['measured_failure_ci']]} "
+      f"vs bound {_va['certificate_failure_bound']:.4f}")
+_sim = load("certificate_simultaneity")
+_ex8 = next(r for r in _sim["part_a_exact_oracle"]["rows"] if r["K"] == 8)
+_ex9 = next(r for r in _sim["part_a_exact_oracle"]["rows"] if r["K"] == 9)
+claim("K = 8 is the largest admissible partition under the EXACT failure probability "
+      "(0.038038 at K=8, 0.0794 at K=9), not only under the union bound",
+      abs(_ex8["exact"] - 0.038038) < 1e-5 and _ex8["admissible_exact"]
+      and abs(_ex9["exact"] - 0.079393) < 1e-5 and not _ex9["admissible_exact"],
+      f"K8 {_ex8['exact']:.6f}, K9 {_ex9['exact']:.6f}")
+claim("the K = 36 selection is unchanged under every simultaneity correction tried, "
+      "including Bonferroni over the whole a-priori family and Clopper-Pearson",
+      _sim["headline_robustness"]["unchanged_under_every_correction"] is True)
+claim("the worst-cell p_C replicates on a DISJOINT 20,000-rollout stream "
+      "(0.8001 -> 0.7996, same binding cell)",
+      abs(_sim["out_of_sample_p_C"]["fresh_worst_p_C"] - 0.7996) < 1e-4
+      and _sim["out_of_sample_p_C"]["fresh_argmax_cell"]
+          == _sim["out_of_sample_p_C"]["published_argmax_cell"]
+      and _sim["out_of_sample_p_C"]["certificate_still_holds_on_fresh_sample"] is True,
+      f"{_sim['out_of_sample_p_C']['fresh_worst_p_C']:.4f}")
 _vb = _pv["(b) all steps"]
 claim("validation (b): 400/400 cover the K = 36 partition, failure CI upper 0.0095 "
       "against a bound of 0.0096",
@@ -1133,6 +1234,209 @@ claim("Claude's fitted disc constants (2.3275291505576885 / -0.13505551993070315
       any(all(v in c for v in ("2.3275291505576885", "-0.13505551993070315",
                                "0.824")) for c in _claude_disc),
       f"{len(_claude_disc)} artifact(s) with OBSTACLE_R")
+
+claim("the truth planner fires the wall mode in no episode at any knob, which is why "
+      "tab:danger states it in the caption rather than in a constant column",
+      _TRUTH_HIT_ALL_ZERO)
+
+# --- 100 paired episodes on the headline rows (review points 8, 9) -----------
+_pi = load("play_cost_intervals")
+claim("the paired-interval run is complete: 3 rows x 100 episodes",
+      _pi["truncated"] is False and _pi["units_done"] == _pi["units_total"]
+      and all(r["n_episodes"] == 100 for r in _pi["rows"]))
+_by = {r["key"]: r for r in _pi["rows"]}
+for _k, _pc, _lo, _hi, _reg in (
+        ("cart_xwall8", 1.014, 1.001, 1.033, 17.72),
+        ("pend_thstop1.4", 0.996, 0.996, 0.997, 19.96),
+        ("patch2d_k3_7", 1.044, 1.020, 1.075, 19.75)):
+    _r = _by[_k]; _b = _r["bootstrap"]["play_cost_ci95"]
+    claim(f"{_k} at 100 paired episodes: play_cost {_pc} [{_lo}, {_hi}], raw regret {_reg}",
+          abs(_r["play_cost"] - _pc) < 5e-4
+          and abs(_b["lo"] - _lo) < 5e-4 and abs(_b["hi"] - _hi) < 5e-4
+          and abs(_r["regret_raw"] - _reg) < 5e-3,
+          f"{_r['play_cost']:.4f} [{_b['lo']:.4f}, {_b['hi']:.4f}]")
+_c = _by["cart_xwall8"]
+claim("on the cart the blind planner beats random in 86 of 100 seeds, so 'below random' "
+      "there is a claim about a heavy-tailed mean (J_rand - J_blind = 0.249 [0.024, 0.559], "
+      "sign-flip p = 0.040) and not about a typical episode",
+      _c["randomization_blind_worse_than_random"]["exact_sign_test"]
+        ["k_seeds_random_beats_blind"] == 14
+      and abs(_c["randomization_blind_worse_than_random"]["observed_mean_d"] - 0.249) < 5e-4
+      and abs(_c["randomization_blind_worse_than_random"]["p_onesided_signflip"] - 0.040)
+          < 5e-4
+      and abs(_c["bootstrap"]["j_random_minus_j_blind_ci95"]["lo"] - 0.024) < 5e-4
+      and abs(_c["bootstrap"]["j_random_minus_j_blind_ci95"]["hi"] - 0.559) < 5e-4
+      and _c["shape"]["j_random"]["skew_g1"] > 5,
+      f"{100 - _c['randomization_blind_worse_than_random']['exact_sign_test']['k_seeds_random_beats_blind']}/100")
+_p = _by["pend_thstop1.4"]
+claim("at the pendulum's headline knob 'below random' is false at 100 episodes "
+      "(J_rand - J_blind = -0.078, random better in 7 of 100 seeds)",
+      abs(_p["randomization_blind_worse_than_random"]["observed_mean_d"] + 0.078) < 5e-4
+      and _p["randomization_blind_worse_than_random"]["exact_sign_test"]
+            ["k_seeds_random_beats_blind"] == 7)
+_q = _by["patch2d_k3_7"]
+claim("on PatchField2D 'below random' holds per seed: 100 of 100, p = 1.2e-14, "
+      "J_rand - J_blind = 0.834 [0.395, 1.357]",
+      _q["randomization_blind_worse_than_random"]["exact_sign_test"]
+        ["k_seeds_random_beats_blind"] == 100
+      and _q["randomization_blind_worse_than_random"]["exact_sign_test"]["p_onesided"]
+          < 2e-14
+      and abs(_q["randomization_blind_worse_than_random"]["observed_mean_d"] - 0.834) < 5e-4
+      and abs(_q["bootstrap"]["j_random_minus_j_blind_ci95"]["lo"] - 0.395) < 5e-4
+      and abs(_q["bootstrap"]["j_random_minus_j_blind_ci95"]["hi"] - 1.357) < 5e-4)
+claim("on PatchField2D the truth planner's own return is dispersed (sd 7.9, median 17.0, "
+      "max 41.6), so the per-seed play cost is dispersed too (median 0.899, IQR "
+      "[0.860, 0.932])",
+      abs(_q["shape"]["j_truth"]["sd"] - 7.9) < 0.05
+      and abs(_q["shape"]["j_truth"]["median"] - 17.0) < 0.05
+      and abs(_q["shape"]["j_truth"]["max"] - 41.6) < 0.05
+      and abs(_q["shape"]["per_seed_play_cost"]["median"] - 0.899) < 5e-4
+      and abs(_q["shape"]["per_seed_play_cost"]["q25"] - 0.860) < 5e-4
+      and abs(_q["shape"]["per_seed_play_cost"]["q75"] - 0.932) < 5e-4)
+
+# --- constants that live only in prose (the repo's known weak class) ---------
+_pc = load("prose_constants")
+claim("cor:cartdensity's coefficient 3.636 is derived from c = 5/6, N = 40, delta = 1/2",
+      abs(_pc["detectrate_coefficient"]["value"] - 3.636) < 1e-3
+      and _pc["detectrate_coefficient"]["c"] == 5 / 6,
+      f"{_pc['detectrate_coefficient']['value']:.4f}")
+claim("the guaranteed ball radius is 0.1375 in every row of that corollary",
+      abs(_pc["ball_radius_uniform_over_rows"]["value"] - 0.1375) < 5e-5)
+claim("the ball radius at the plant's own Lipschitz constant is 1.65",
+      abs(_pc["ball_radius_at_plant_lipschitz"]["value"] - 1.65) < 5e-3)
+claim("the PACKING route's corner hypothesis holds barely: rho/2 = 0.583 against U's "
+      "narrowest extent 0.6",
+      abs(_pc["packing_corner_hypothesis"]["half_rho"] - 0.583) < 1e-3
+      and _pc["packing_corner_hypothesis"]["hypothesis_satisfied"] is True
+      and abs(_pc["packing_corner_hypothesis"]["narrowest_extent_of_U"] - 0.6) < 5e-4,
+      f"{_pc['packing_corner_hypothesis']['half_rho']:.4f}")
+_cl = _pc["play_cost_ceiling_xwall8"]
+claim("the play-cost ceiling at x_wall = 8 is 1.0463 over a denominator of 17.238, and "
+      "the play cost measured AT THAT KNOB attains 98.4% of it",
+      abs(_cl["ceiling"] - 1.0463) < 5e-5
+      and abs(_cl["denominator"] - 17.238) < 5e-4
+      and abs(_cl["pct_of_ceiling_attained"] - 98.4) < 0.06,
+      f"{_cl['ceiling']:.4f}, {_cl['pct_of_ceiling_attained']:.2f}%")
+_tr = _pc["two_rarity_estimates_xwall8"]
+claim("the two rarity estimates of the same event predict 0.631 (firing, 30k) and an "
+      "interval [0.623, 0.698] (reveal, 20k) that contains the measured pass rate",
+      abs(_tr["firing_rarity_30k"] - 0.01140) < 5e-5
+      and abs(_tr["predicted_pass_from_firing"] - 0.631) < 5e-4
+      and abs(_tr["predicted_pass_interval"][0] - 0.623) < 5e-4
+      and abs(_tr["predicted_pass_interval"][1] - 0.698) < 5e-4
+      and _tr["predicted_pass_interval"][0] <= _tr["measured_pass"]
+                                            <= _tr["predicted_pass_interval"][1])
+_ph = _pc["phantom_lure_asymmetry"]
+claim("the blind model offers 8.31 for going right against 5.70 for going left, a ratio "
+      "of 1.46",
+      abs(_ph["imagined_return_right"] - 8.31) < 5e-3
+      and abs(_ph["imagined_return_left"] - 5.70) < 6e-3
+      and abs(_ph["asymmetry_ratio"] - 1.46) < 2e-3)
+claim("the expected-return reading of J_max (17.697) falls BELOW the measured J_truth, "
+      "which is why prop:playcost needs the pointwise extremes",
+      _pc["best_constant_policy_expected_return"]["below_measured_J_truth"] is True)
+
+# --- bibliography verification (review point 21) -----------------------------
+_bib = load("bib_verification")
+claim("every related-work bibliography entry was verified against Crossref/arXiv or "
+      "confirmed by hand; no entry is unverified and none was mis-attributed",
+      _bib["all_entries_verified"] is True and not _bib["problems"]
+      and _bib["n_verified_total"] == _bib["n_entries"],
+      f"{_bib['n_verified_total']}/{_bib['n_entries']}")
+
+# --- the CEM censored zeros, re-measured (review point 7) -------------------
+claim("the CEM crossing re-measurement is complete and 200x the published sample",
+      _CCB["truncated"] is False
+      and all(r["initial_state"]["sample_multiple_of_published"] == 200.0
+              for r in _CCB["rows"]))
+_c8 = next(r for r in _CCB["rows"] if r["x_wall"] == 8.0)
+_c10 = next(r for r in _CCB["rows"] if r["x_wall"] == 10.0)
+claim("at x_wall = 8 the published crossing zero was censoring 18 crossings in 1.28M "
+      "trajectories (rate 1.4e-5), so q_hit is NOT zero there",
+      _c8["published_crossing_cem_table_cell"] == 0.0
+      and _c8["initial_state"]["crossings_observed"] == 18
+      and _c8["initial_state"]["n_trajectories_examined"] == 1280000
+      and abs(_c8["initial_state"]["crossing_frac_point"] - 1.4e-5) < 5e-7,
+      f"{_c8['initial_state']['crossings_observed']} crossings")
+claim("the first-plan argument gives a LOWER bound q_hit >= 0.0029 at x_wall = 8",
+      abs(_c8["mu_query_lower_bound_from_first_plan"]["lower_cp95_onesided"] - 0.0029)
+      < 5e-5)
+claim("at x_wall = 10 the zero survives 200x resampling (0 of 1.28M, rate < 2.3e-6) "
+      "but stays censored, with q_hit <= 0.058",
+      _c10["initial_state"]["crossings_observed"] == 0
+      and abs(_c10["initial_state"]["p_upper_cp95_onesided"] - 2.34e-6) < 5e-8
+      and abs(_c10["mu_query_upper_best"] - 0.058) < 5e-4)
+claim("the planner config behind the 6400-trajectory denominator is the committed one "
+      "(horizon 40, 5 iterations, 64 samples, 320 trajectories per plan)",
+      _CCB["planner_config"]["horizon"] == 40
+      and _CCB["planner_config"]["n_iters"] == 5
+      and _CCB["planner_config"]["n_samples"] == 64
+      and _CCB["planner_config"]["n_trajectories_per_plan"] == 320
+      and all(r["published_n_trajectories"] == 6400 for r in _CCB["rows"]))
+claim("the re-measurement reproduces the published cells it re-measures",
+      all(c["match"] for c in _CCB["validation"]["checks"]))
+
+# --- the held-out acceptance sample (sec:heldout) ---------------------------
+_ho = load("heldout_gate_paper_numbers")
+_hoa = load("heldout_gate_audit")
+claim("the held-out audit covers 625 artifacts over 20 campaigns",
+      _hoa["aggregates"]["totals"]["n_artifacts"] == 625
+      and _hoa["aggregates"]["totals"]["n_files"] == 20)
+claim("the three blocks are disjoint at rollout-seed level",
+      _hoa["split"]["all_disjoint"] is True)
+claim("the reproduced training block returns the stored accuracy in 60/60 spot-checks",
+      _hoa["aggregates"]["train_reproduction_check"]["n_checked"] == 60
+      and _hoa["aggregates"]["train_reproduction_check"]["n_accuracy_matches"] == 60)
+claim("N_gate = 40 and N_eval = 100",
+      _ho["design"]["N_gate"] == 40 and _ho["design"]["N_eval"] == 100)
+_h2 = _ho["hypothesis_ii"]
+claim("hypothesis (ii) is exact on 60 mode-blind artifacts: 25 accepted with a mode-free "
+      "acceptance sample, 35 rejected with the mode present, no off-diagonal cell",
+      _h2["n"] == 60 and _h2["coincides_exactly"] is True
+      and _h2["table"]["gate_mode_absent"]["accepted"] == 25
+      and _h2["table"]["gate_mode_absent"]["rejected"] == 0
+      and _h2["table"]["gate_mode_present"]["rejected"] == 35
+      and _h2["table"]["gate_mode_present"]["accepted"] == 0,
+      f"{_h2['n_agree']}/{_h2['n']}")
+_tf = _ho["two_factor_cart_xwall8"]
+_se, _hi = _tf["sampling_event"], _tf["hypothesis_i"]
+claim("hypothesis (i) holds for 30/30 mode-free-training draws on the cart headline cell",
+      _hi["k_mode_blind"] == 30 and _hi["n_mode_free_training_draws"] == 30)
+claim("the two-factor prediction 0.399 sits inside the measured 10/40 = 0.250 "
+      "[0.142, 0.402] over 40 distinct blocks",
+      _tf["n_distinct_blocks"] == 40 and _se["k_train_miss_and_gate_miss"] == 10
+      and abs(_se["predicted_two_factor"] - 0.399) < 5e-4
+      and abs(_se["wilson95"][0] - 0.142) < 5e-4
+      and abs(_se["wilson95"][1] - 0.402) < 5e-4
+      and _se["two_factor_inside_interval"] is True,
+      f"{_se['measured']:.3f} vs {_se['predicted_two_factor']:.4f}")
+claim("the one-factor rate 0.631 sits inside the measured 20/40 = 0.500 [0.352, 0.648]",
+      _se["k_train_miss_only"] == 20
+      and abs(_se["predicted_one_factor"] - 0.631) < 5e-4
+      and abs(_se["wilson95_train_miss"][0] - 0.352) < 5e-4
+      and abs(_se["wilson95_train_miss"][1] - 0.648) < 5e-4
+      and _se["one_factor_inside_interval"] is True)
+_rg = _ho["regressions"]
+claim("36 of 463 in-sample-accepted artifacts are rejected by an independent gate "
+      "(7.8%, [0.057, 0.106]), all 36 incomplete-arm, 0 of 294 full-arm",
+      _rg["n_in_sample_accepted"] == 463
+      and _rg["n_rejected_by_independent_gate"] == 36
+      and _rg["n_incomplete_arm"] == 36 and _rg["n_full_arm"] == 0
+      and abs(_rg["rate_over_draws"] - 0.078) < 5e-4
+      and abs(_rg["wilson95_over_draws"][0] - 0.057) < 5e-4
+      and abs(_rg["wilson95_over_draws"][1] - 0.106) < 5e-4
+      and _ho["by_arm"]["full"]["n_in_sample_passed"] == 294
+      and _ho["by_arm"]["full"]["n_regressed"] == 0)
+claim("35 of the 36 regressions fail ONLY on mode contacts",
+      _rg["failure_is_on_the_mode"]["n_fail_only_on_mode_contacts"] == 35
+      and _rg["failure_is_on_the_mode"]["n_fail_off_mode_too"] == 1)
+_ex = _ho["off_sample_exactness_of_accepted"]
+claim("all 430 independently accepted artifacts are exact outside the mode region on "
+      "D_eval, exact 95% upper bound 0.0069 on the exception rate",
+      _ex["n_accepted"] == 430 and _ex["n_exceptions"] == 0
+      and _ex["n_exact_outside_mode"] == 430
+      and abs(_ex["clopper_pearson_95_upper_on_exception_rate"] - 0.0069) < 5e-5,
+      f"{_ex['n_exact_outside_mode']}/{_ex['n_accepted']}")
 
 # --- report ----------------------------------------------------------------
 print(f"checked {CHECKS[0]} values from docs/paper2/main.tex against results/")

@@ -192,6 +192,21 @@ class PatchField2D:
     shapes are contractible and bi-modal; only boundary curvature and the
     predicate's descriptive form differ — the contrast that separates
     "repair fails on curved boundaries" from "repair fails on 2D regions".
+
+    patch_shape="slab" is the rarity-matched PREDICATE-ARITY ablation
+    (2026-07-27, review point #4): patch i becomes the axis-aligned slab
+    |x - c_i[0]| <= slab_half_width, so membership depends on the landing x
+    ALONE and is independent of y. Everything else — 4D state, scalar action
+    mapped to a heading, two modes, the same lodes, the same one-sided contact
+    evidence, the same freeze-at-previous-position semantics — is unchanged, so
+    the only difference from the disc arm is how many landing coordinates enter
+    the trigger (1 vs 2). `slab_half_width` is the rarity knob that makes the
+    comparison like-for-like: it is calibrated (scripts/calibrate_patch2d_slab.py
+    -> results/patch2d_slab_calibration.json) so that patch-1 contact rarity
+    under the gate's random-rollout policy matches the disc's r1 at k=(3,7);
+    the default below IS that calibrated value. Note the slab is unbounded in
+    y, so it is not a bounded patch — that is the point: an arity ablation,
+    not a shape ablation.
     """
     dt: float = 0.1
     gain: float = 3.0
@@ -208,7 +223,25 @@ class PatchField2D:
     width: float = 0.5
     h_episode: int = 80
     x0_range: float = 0.5
-    patch_shape: str = "disc"   # "disc" | "square" (fixed-topology ablation)
+    patch_shape: str = "disc"   # "disc" | "square" | "slab" (see docstring)
+    # Half-width of the patch_shape="slab" predicate; IGNORED by disc/square.
+    #
+    # 0.5 is the IMPERMEABLE width: the largest single-step displacement the gate
+    # policy can produce is 0.381 (measured, `max_abs_dx` in the calibration
+    # artifact), so a half-width of 0.5 cannot be jumped over and the slab is a
+    # true barrier. Rarity is then matched to the disc the way every other
+    # instrument in this paper matches it -- by MOVING the mode, not by resizing
+    # it: at k1 = 5.5 the slab's contact rarity is 0.128 against the disc's 0.132
+    # at k=(3,7), with the exploitation geometry intact (play_cost 1.006 against
+    # the disc's 1.006, blind contact rate 1.0).
+    #
+    # Matching rarity by WIDTH instead requires 0.0206, and the calibration
+    # records why that configuration is inadmissible rather than merely thin: a
+    # slab that narrow is permeable (leak rate 0.64), so the corridor to the
+    # phantom lode is open, the truth planner scores 41.2 instead of 17.3, and
+    # play_cost collapses to 0.012. There is then no trap left to omit.
+    # See results/patch2d_slab_calibration.json -> summary.verdict.
+    slab_half_width: float = 0.5
 
     def initial_state(self, rng) -> State:
         return (rng.uniform(-self.x0_range, self.x0_range),
@@ -228,6 +261,9 @@ class PatchField2D:
             return False
         if self.patch_shape == "square":
             return max(abs(x - c[0]), abs(y - c[1])) <= self.R
+        if self.patch_shape == "slab":
+            # 1-coordinate predicate: y is not consulted at all.
+            return abs(x - c[0]) <= self.slab_half_width
         return (x - c[0]) ** 2 + (y - c[1]) ** 2 <= self.R ** 2
 
     def _integrate(self, state: State, action: float):

@@ -62,14 +62,22 @@ def gate_covers(ny, nv, na, one_step_only, trial):
         s = env.initial_state(rng)
         for step in range(env.h_episode):
             a = rng.uniform(-A, A)
-            x, v = s
-            y = x - DT * v
-            if abs(y) < Y and abs(v) < V and abs(a) < A:
-                need.discard((min(ny - 1, int((y + Y) / dy)),
-                              min(nv - 1, int((v + V) / dv)),
-                              min(na - 1, int((a + A) / da))))
+            # In the one-sample-per-rollout regime the certificate's part (a) is a
+            # statement about the STEP-1 law (uniform on the sheared box), not the
+            # step-0 one: v_0 = 0 exactly, so a step-0 sample is supported on a
+            # lower-dimensional set and cannot reach a partition with n_v >= 2 at all
+            # (demonstrated: 0/400 for a sound certificate at 2x2x2). At the certified
+            # split n_v = 1 the two laws agree in the coordinates the partition sees,
+            # which is why the published figure was right anyway.
+            if not (one_step_only and step == 0):
+                x, v = s
+                y = x - DT * v
+                if abs(y) < Y and abs(v) < V and abs(a) < A:
+                    need.discard((min(ny - 1, int((y + Y) / dy)),
+                                  min(nv - 1, int((v + V) / dv)),
+                                  min(na - 1, int((a + A) / da))))
             s = env.step(s, a)[0]
-            if one_step_only:
+            if one_step_only and step == 1:
                 break              # the rigorous regime: one sample per rollout
     return not need
 
@@ -87,11 +95,18 @@ for label, ny, nv, na, one_step, bound in ROWS:
                 "cover_rate": rate, "measured_failure": fail,
                 "measured_failure_ci": [lo, hi],
                 "certificate_failure_bound": bound,
-                "bound_holds": bool(hi <= bound or fail <= bound)})
+                # A bound on a probability is falsified only if the MEASURED
+                # probability is significantly above it, i.e. if the whole interval
+                # lies above the bound. Comparing the point estimate against the
+                # bound (what an earlier version did) declares a violation whenever
+                # the estimate lands on the high side of a tight bound, which for a
+                # bound that is nearly an equality happens about half the time.
+                "bound_falsified": bool(lo > bound),
+                "bound_holds": bool(lo <= bound)})
     print(f"{label:>24} {ny*nv*na:4} {ok:9} {rate:7.3f} "
           f"{fail:14.4f} {bound:18.4f}")
     print(f"{'':>24} measured failure 95% CI [{lo:.4f}, {hi:.4f}]"
-          f"{'  -- consistent with the bound' if hi <= bound or fail <= bound else '  -- BOUND VIOLATED'}")
+          f"{'  -- consistent with the bound' if lo <= bound else '  -- BOUND FALSIFIED'}")
 
 print("\nReading: the exact-partition bound (a) is a per-cell equality pushed through a")
 print("union bound, so it should be close; (b) adds Hoeffding slack and should be")

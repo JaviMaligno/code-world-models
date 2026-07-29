@@ -1,9 +1,18 @@
-\begin{thebibliography}{21}
+\begin{thebibliography}{80}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Abate et~al.(2018)Abate, David, Kesseli, Kroening, and
+  Polgreen]{abate2018cegist}
+Alessandro Abate, Cristina David, Pascal Kesseli, Daniel Kroening, and
+  Elizabeth Polgreen.
+\newblock Counterexample guided inductive synthesis modulo theories.
+\newblock In \emph{Computer Aided Verification (CAV)}, Lecture Notes in
+  Computer Science, pages 270--288. Springer, 2018.
+\newblock \doi{10.1007/978-3-319-96145-3_15}.
 
 \bibitem[Aguilar~Mart\'in(2026)]{aguilar2026verified}
 Javier Aguilar~Mart\'in.
@@ -21,6 +30,30 @@ Mohammed Alshiekh, Roderick Bloem, R{\"u}diger Ehlers, Bettina K{\"o}nighofer,
 \newblock In \emph{Proceedings of the Thirty-Second {AAAI} Conference on
   Artificial Intelligence (AAAI)}, pages 2669--2678, 2018.
 
+\bibitem[Alur et~al.(2006)Alur, Dang, and Ivan{\v{c}}i{\'c}]{alur2006predicate}
+Rajeev Alur, Thao Dang, and Franjo Ivan{\v{c}}i{\'c}.
+\newblock Counterexample-guided predicate abstraction of hybrid systems.
+\newblock \emph{Theoretical Computer Science}, 354\penalty0 (2):\penalty0
+  250--271, 2006.
+\newblock \doi{10.1016/j.tcs.2005.11.026}.
+
+\bibitem[Alur et~al.(2013)Alur, Bod{\'i}k, Juniwal, Martin, Raghothaman,
+  Seshia, Singh, Solar-Lezama, Torlak, and Udupa]{alur2013sygus}
+Rajeev Alur, Rastislav Bod{\'i}k, Garvit Juniwal, Milo M.~K. Martin, Mukund
+  Raghothaman, Sanjit~A. Seshia, Rishabh Singh, Armando Solar-Lezama, Emina
+  Torlak, and Abhishek Udupa.
+\newblock Syntax-guided synthesis.
+\newblock In \emph{Formal Methods in Computer-Aided Design (FMCAD)}, pages
+  1--8. {IEEE}, 2013.
+\newblock \doi{10.1109/FMCAD.2013.6679385}.
+
+\bibitem[Angluin(1987)]{angluin1987learning}
+Dana Angluin.
+\newblock Learning regular sets from queries and counterexamples.
+\newblock \emph{Information and Computation}, 75\penalty0 (2):\penalty0
+  87--106, 1987.
+\newblock \doi{10.1016/0890-5401(87)90052-6}.
+
 \bibitem[Annpureddy et~al.(2011)Annpureddy, Liu, Fainekos, and
   Sankaranarayanan]{annpureddy2011staliro}
 Yashwanth Annpureddy, Che Liu, Georgios Fainekos, and Sriram Sankaranarayanan.
@@ -35,6 +68,29 @@ Alberto Bemporad and Manfred Morari.
 \newblock Control of systems integrating logic, dynamics, and constraints.
 \newblock \emph{Automatica}, 35\penalty0 (3):\penalty0 407--427, 1999.
 
+\bibitem[Bemporad et~al.(2005)Bemporad, Garulli, Paoletti, and
+  Vicino]{bemporad2005boundederror}
+Alberto Bemporad, Andrea Garulli, Simone Paoletti, and Antonio Vicino.
+\newblock A bounded-error approach to piecewise affine system identification.
+\newblock \emph{{IEEE} Transactions on Automatic Control}, 50\penalty0
+  (10):\penalty0 1567--1580, 2005.
+\newblock \doi{10.1109/TAC.2005.856667}.
+
+\bibitem[Bortolussi et~al.(2019)Bortolussi, Cairoli, Paoletti, Smolka, and
+  Stoller]{bortolussi2019npm}
+Luca Bortolussi, Francesca Cairoli, Nicola Paoletti, Scott~A. Smolka, and
+  Scott~D. Stoller.
+\newblock Neural predictive monitoring.
+\newblock In \emph{Runtime Verification (RV)}, Lecture Notes in Computer
+  Science, pages 129--147. Springer, 2019.
+\newblock \doi{10.1007/978-3-030-32079-9_8}.
+
+\bibitem[Chen et~al.(2021)Chen, Amos, and Nickel]{chen2021eventfn}
+Ricky T.~Q. Chen, Brandon Amos, and Maximilian Nickel.
+\newblock Learning neural event functions for ordinary differential equations.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2021.
+
 \bibitem[Chua et~al.(2018)Chua, Calandra, McAllister, and Levine]{chua2018deep}
 Kurtland Chua, Roberto Calandra, Rowan McAllister, and Sergey Levine.
 \newblock Deep reinforcement learning in a handful of trials using
@@ -48,6 +104,25 @@ Koen Claessen and John Hughes.
   programs.
 \newblock In \emph{Proceedings of the Fifth {ACM} {SIGPLAN} International
   Conference on Functional Programming (ICFP)}, pages 268--279, 2000.
+
+\bibitem[Clarke et~al.(2000)Clarke, Grumberg, Jha, Lu, and
+  Veith]{clarke2000cegar}
+Edmund~M. Clarke, Orna Grumberg, Somesh Jha, Yuan Lu, and Helmut Veith.
+\newblock Counterexample-guided abstraction refinement.
+\newblock In \emph{Computer Aided Verification (CAV)}, Lecture Notes in
+  Computer Science, pages 154--169. Springer, 2000.
+\newblock \doi{10.1007/10722167_15}.
+
+\bibitem[Clarke et~al.(2003)Clarke, Fehnker, Han, Krogh, Stursberg, and
+  Theobald]{clarke2003hybridcegar}
+Edmund~M. Clarke, Ansgar Fehnker, Zhi Han, Bruce Krogh, Olaf Stursberg, and
+  Michael Theobald.
+\newblock Verification of hybrid systems based on counterexample-guided
+  abstraction refinement.
+\newblock In \emph{Tools and Algorithms for the Construction and Analysis of
+  Systems (TACAS)}, Lecture Notes in Computer Science, pages 192--207.
+  Springer, 2003.
+\newblock \doi{10.1007/3-540-36577-X_14}.
 
 \bibitem[Corso et~al.(2021)Corso, Moss, Koren, Lee, and
   Kochenderfer]{corso2021survey}
@@ -65,6 +140,39 @@ R{\'e}mi Coulom.
 \newblock In \emph{Computers and Games (CG 2006)}, volume 4630 of \emph{Lecture
   Notes in Computer Science}, pages 72--83. Springer, 2006.
 
+\bibitem[Dreossi et~al.(2018)Dreossi, Ghosh, Yue, Keutzer,
+  Sangiovanni-Vincentelli, and Seshia]{dreossi2018cegda}
+Tommaso Dreossi, Shromona Ghosh, Xiangyu Yue, Kurt Keutzer, Alberto~L.
+  Sangiovanni-Vincentelli, and Sanjit~A. Seshia.
+\newblock Counterexample-guided data augmentation.
+\newblock In \emph{Proceedings of the 27th International Joint Conference on
+  Artificial Intelligence (IJCAI)}, pages 2071--2078, 2018.
+\newblock \doi{10.24963/ijcai.2018/286}.
+
+\bibitem[Dreossi et~al.(2019)Dreossi, Fremont, Ghosh, Kim, Ravanbakhsh,
+  Vazquez-Chanlatte, and Seshia]{dreossi2019verifai}
+Tommaso Dreossi, Daniel~J. Fremont, Shromona Ghosh, Edward Kim, Hadi
+  Ravanbakhsh, Marcell Vazquez-Chanlatte, and Sanjit~A. Seshia.
+\newblock {VerifAI}: A toolkit for the formal design and analysis of artificial
+  intelligence-based systems.
+\newblock In \emph{Computer Aided Verification (CAV)}, Lecture Notes in
+  Computer Science, pages 432--442. Springer, 2019.
+\newblock \doi{10.1007/978-3-030-25540-4_25}.
+
+\bibitem[Farahmand(2018)]{farahmand2018itervaml}
+Amir-massoud Farahmand.
+\newblock Iterative value-aware model learning.
+\newblock In \emph{Advances in Neural Information Processing Systems 31
+  (NeurIPS)}, 2018.
+
+\bibitem[Farahmand et~al.(2017)Farahmand, Barreto, and
+  Nikovski]{farahmand2017vaml}
+Amir-massoud Farahmand, Andre Barreto, and Daniel Nikovski.
+\newblock Value-aware loss function for model-based reinforcement learning.
+\newblock In \emph{Proceedings of the 20th International Conference on
+  Artificial Intelligence and Statistics (AISTATS)}, volume~54 of
+  \emph{Proceedings of Machine Learning Research}, pages 1486--1494, 2017.
+
 \bibitem[Fazeli et~al.(2017)Fazeli, Kolbert, Tedrake, and
   Rodriguez]{fazeli2017contact}
 Nima Fazeli, Roman Kolbert, Russ Tedrake, and Alberto Rodriguez.
@@ -72,6 +180,23 @@ Nima Fazeli, Roman Kolbert, Russ Tedrake, and Alberto Rodriguez.
   undergoing frictional contact.
 \newblock \emph{The International Journal of Robotics Research}, 36\penalty0
   (13--14):\penalty0 1437--1454, 2017.
+
+\bibitem[Fazeli et~al.(2020)Fazeli, Zapolsky, Drumwright, and
+  Rodriguez]{fazeli2020limitations}
+Nima Fazeli, Samuel Zapolsky, Evan Drumwright, and Alberto Rodriguez.
+\newblock Fundamental limitations in performance and interpretability of common
+  planar rigid-body contact models.
+\newblock In \emph{Robotics Research}, Springer Proceedings in Advanced
+  Robotics, pages 555--571. Springer, 2020.
+\newblock \doi{10.1007/978-3-030-28619-4_41}.
+
+\bibitem[Ferrari-Trecate et~al.(2003)Ferrari-Trecate, Muselli, Liberati, and
+  Morari]{ferraritrecate2003clustering}
+Giancarlo Ferrari-Trecate, Marco Muselli, Diego Liberati, and Manfred Morari.
+\newblock A clustering technique for the identification of piecewise affine
+  systems.
+\newblock \emph{Automatica}, 39\penalty0 (2):\penalty0 205--217, 2003.
+\newblock \doi{10.1016/S0005-1098(02)00224-8}.
 
 \bibitem[Gao et~al.(2023)Gao, Madaan, Zhou, Alon, Liu, Yang, Callan, and
   Neubig]{gao2023pal}
@@ -82,6 +207,62 @@ Luyu Gao, Aman Madaan, Shuyan Zhou, Uri Alon, Pengfei Liu, Yiming Yang, Jamie
   Learning (ICML)}, volume 202 of \emph{Proceedings of Machine Learning
   Research}, pages 10764--10799, 2023.
 
+\bibitem[Garc{\'i}a~Soto et~al.(2019)Garc{\'i}a~Soto, Henzinger, Schilling, and
+  Zeleznik]{soto2019membership}
+Miriam Garc{\'i}a~Soto, Thomas~A. Henzinger, Christian Schilling, and Luka
+  Zeleznik.
+\newblock Membership-based synthesis of linear hybrid automata.
+\newblock In \emph{Computer Aided Verification (CAV)}, Lecture Notes in
+  Computer Science, pages 297--314. Springer, 2019.
+\newblock \doi{10.1007/978-3-030-25540-4_16}.
+
+\bibitem[Garc{\'i}a~Soto et~al.(2021)Garc{\'i}a~Soto, Henzinger, and
+  Schilling]{soto2021synthesis}
+Miriam Garc{\'i}a~Soto, Thomas~A. Henzinger, and Christian Schilling.
+\newblock Synthesis of hybrid automata with affine dynamics from time-series
+  data.
+\newblock In \emph{Proceedings of the 24th International Conference on Hybrid
+  Systems: Computation and Control (HSCC)}, pages 1--11. {ACM}, 2021.
+\newblock \doi{10.1145/3447928.3456704}.
+
+\bibitem[Gevers(2005)]{gevers2005identification}
+Michel Gevers.
+\newblock Identification for control: From the early achievements to the
+  revival of experiment design.
+\newblock \emph{European Journal of Control}, 11\penalty0 (4--5):\penalty0
+  335--352, 2005.
+\newblock \doi{10.3166/ejc.11.335-352}.
+
+\bibitem[Gold(1978)]{gold1978complexity}
+E.~Mark Gold.
+\newblock Complexity of automaton identification from given data.
+\newblock \emph{Information and Control}, 37\penalty0 (3):\penalty0 302--320,
+  1978.
+\newblock \doi{10.1016/S0019-9958(78)90562-4}.
+
+\bibitem[Grimm et~al.(2020)Grimm, Barreto, Singh, and Silver]{grimm2020vep}
+Christopher Grimm, Andr{\'e} Barreto, Satinder Singh, and David Silver.
+\newblock The value equivalence principle for model-based reinforcement
+  learning.
+\newblock In \emph{Advances in Neural Information Processing Systems 33
+  (NeurIPS)}, 2020.
+
+\bibitem[Gulwani(2011)]{gulwani2011flashfill}
+Sumit Gulwani.
+\newblock Automating string processing in spreadsheets using input-output
+  examples.
+\newblock In \emph{Proceedings of the 38th Annual {ACM} {SIGPLAN}-{SIGACT}
+  Symposium on Principles of Programming Languages (POPL)}, pages 317--330.
+  {ACM}, 2011.
+\newblock \doi{10.1145/1926385.1926423}.
+
+\bibitem[Gulwani et~al.(2017)Gulwani, Polozov, and Singh]{gulwani2017synthesis}
+Sumit Gulwani, Oleksandr Polozov, and Rishabh Singh.
+\newblock Program synthesis.
+\newblock \emph{Foundations and Trends in Programming Languages}, 4\penalty0
+  (1--2):\penalty0 1--119, 2017.
+\newblock \doi{10.1561/2500000010}.
+
 \bibitem[Hafner et~al.(2020)Hafner, Lillicrap, Ba, and
   Norouzi]{hafner2020dreamer}
 Danijar Hafner, Timothy Lillicrap, Jimmy Ba, and Mohammad Norouzi.
@@ -89,11 +270,57 @@ Danijar Hafner, Timothy Lillicrap, Jimmy Ba, and Mohammad Norouzi.
 \newblock In \emph{International Conference on Learning Representations
   (ICLR)}, 2020.
 
+\bibitem[H{\'e}rault et~al.(2004)H{\'e}rault, Lassaigne, Magniette, and
+  Peyronnet]{herault2004apmc}
+Thomas H{\'e}rault, Richard Lassaigne, Fr{\'e}d{\'e}ric Magniette, and Sylvain
+  Peyronnet.
+\newblock Approximate probabilistic model checking.
+\newblock In \emph{Verification, Model Checking, and Abstract Interpretation
+  (VMCAI)}, Lecture Notes in Computer Science, pages 73--84. Springer, 2004.
+\newblock \doi{10.1007/978-3-540-24622-0_8}.
+
+\bibitem[Hewing et~al.(2020)Hewing, Wabersich, Menner, and
+  Zeilinger]{hewing2020learningmpc}
+Lukas Hewing, Kim~P. Wabersich, Marcel Menner, and Melanie~N. Zeilinger.
+\newblock Learning-based model predictive control: Toward safe learning in
+  control.
+\newblock \emph{Annual Review of Control, Robotics, and Autonomous Systems},
+  3:\penalty0 269--296, 2020.
+\newblock \doi{10.1146/annurev-control-090419-075625}.
+
+\bibitem[Jacobs et~al.(1991)Jacobs, Jordan, Nowlan, and Hinton]{jacobs1991moe}
+Robert~A. Jacobs, Michael~I. Jordan, Steven~J. Nowlan, and Geoffrey~E. Hinton.
+\newblock Adaptive mixtures of local experts.
+\newblock \emph{Neural Computation}, 3\penalty0 (1):\penalty0 79--87, 1991.
+\newblock \doi{10.1162/neco.1991.3.1.79}.
+
 \bibitem[Janner et~al.(2019)Janner, Fu, Zhang, and Levine]{janner2019mbpo}
 Michael Janner, Justin Fu, Marvin Zhang, and Sergey Levine.
 \newblock When to trust your model: Model-based policy optimization.
 \newblock In \emph{Advances in Neural Information Processing Systems
   (NeurIPS)}, 2019.
+
+\bibitem[Jha and Seshia(2017)]{jha2017theory}
+Susmit Jha and Sanjit~A. Seshia.
+\newblock A theory of formal synthesis via inductive learning.
+\newblock \emph{Acta Informatica}, 54\penalty0 (7):\penalty0 693--726, 2017.
+\newblock \doi{10.1007/s00236-017-0294-5}.
+
+\bibitem[Jha et~al.(2010)Jha, Gulwani, Seshia, and Tiwari]{jha2010oracle}
+Susmit Jha, Sumit Gulwani, Sanjit~A. Seshia, and Ashish Tiwari.
+\newblock Oracle-guided component-based program synthesis.
+\newblock In \emph{Proceedings of the 32nd {ACM/IEEE} International Conference
+  on Software Engineering (ICSE)}, volume~1, pages 215--224. {ACM}, 2010.
+\newblock \doi{10.1145/1806799.1806833}.
+
+\bibitem[Kapinski et~al.(2014)Kapinski, Deshmukh, Sankaranarayanan, and
+  Arechiga]{kapinski2014simulation}
+James Kapinski, Jyotirmoy~V. Deshmukh, Sriram Sankaranarayanan, and Nikos
+  Arechiga.
+\newblock Simulation-guided {Lyapunov} analysis for hybrid dynamical systems.
+\newblock In \emph{Proceedings of the 17th International Conference on Hybrid
+  Systems: Computation and Control (HSCC)}, pages 133--142. {ACM}, 2014.
+\newblock \doi{10.1145/2562059.2562139}.
 
 \bibitem[Kocsis and Szepesv{\'a}ri(2006)]{kocsis2006bandit}
 Levente Kocsis and Csaba Szepesv{\'a}ri.
@@ -109,6 +336,22 @@ Nathan~O. Lambert, Brandon Amos, Omry Yadan, and Roberto Calandra.
   and Control (L4DC)}, volume 120 of \emph{Proceedings of Machine Learning
   Research}, pages 761--770, 2020.
 \newblock arXiv:2002.04523.
+
+\bibitem[Lampropoulos et~al.(2017)Lampropoulos, Gallois-Wong, Hri{\c{t}}cu,
+  Hughes, Pierce, and Xia]{lampropoulos2017luck}
+Leonidas Lampropoulos, Diane Gallois-Wong, C{\u{a}}t{\u{a}}lin Hri{\c{t}}cu,
+  John Hughes, Benjamin~C. Pierce, and Li-yao Xia.
+\newblock Beginner's luck: A language for property-based generators.
+\newblock In \emph{Proceedings of the 44th {ACM} {SIGPLAN} Symposium on
+  Principles of Programming Languages (POPL)}, pages 114--129. {ACM}, 2017.
+\newblock \doi{10.1145/3009837.3009868}.
+
+\bibitem[Legay et~al.(2010)Legay, Delahaye, and Bensalem]{legay2010smc}
+Axel Legay, Beno{\^i}t Delahaye, and Saddek Bensalem.
+\newblock Statistical model checking: An overview.
+\newblock In \emph{Runtime Verification (RV)}, Lecture Notes in Computer
+  Science, pages 122--135. Springer, 2010.
+\newblock \doi{10.1007/978-3-642-16612-9_11}.
 
 \bibitem[Lehrach et~al.(2026)Lehrach, Hennes, Lazaro-Gredilla, Lou, Wendelken,
   Li, Dedieu, Grau-Moya, Lanctot, Iscen, Schultz, Chiam, Gemp, Zielinski,
@@ -130,6 +373,70 @@ Jacky Liang, Wenlong Huang, Fei Xia, Peng Xu, Karol Hausman, Brian Ichter, Pete
 \newblock In \emph{{IEEE} International Conference on Robotics and Automation
   (ICRA)}, pages 9493--9500, 2023.
 
+\bibitem[Lindemann et~al.(2023)Lindemann, Cleaveland, Shim, and
+  Pappas]{lindemann2023conformal}
+Lars Lindemann, Matthew Cleaveland, Gihyun Shim, and George~J. Pappas.
+\newblock Safe planning in dynamic environments using conformal prediction.
+\newblock \emph{{IEEE} Robotics and Automation Letters}, 8\penalty0
+  (8):\penalty0 5116--5123, 2023.
+\newblock \doi{10.1109/LRA.2023.3292071}.
+
+\bibitem[Linderman et~al.(2017)Linderman, Johnson, Miller, Adams, Blei, and
+  Paninski]{linderman2017rslds}
+Scott~W. Linderman, Matthew~J. Johnson, Andrew~C. Miller, Ryan~P. Adams,
+  David~M. Blei, and Liam Paninski.
+\newblock Bayesian learning and inference in recurrent switching linear
+  dynamical systems.
+\newblock In \emph{Proceedings of the 20th International Conference on
+  Artificial Intelligence and Statistics (AISTATS)}, volume~54 of
+  \emph{Proceedings of Machine Learning Research}, pages 914--922, 2017.
+
+\bibitem[Ljung(1999)]{ljung1999sysid}
+Lennart Ljung.
+\newblock \emph{System Identification: Theory for the User}.
+\newblock Prentice Hall {PTR}, Upper Saddle River, NJ, 2nd edition, 1999.
+\newblock ISBN 0-13-656695-2.
+
+\bibitem[L{\"o}scher and Sagonas(2017)]{loscher2017targeted}
+Andreas L{\"o}scher and Konstantinos Sagonas.
+\newblock Targeted property-based testing.
+\newblock In \emph{Proceedings of the 26th {ACM} {SIGSOFT} International
+  Symposium on Software Testing and Analysis (ISSTA)}, pages 46--56. {ACM},
+  2017.
+\newblock \doi{10.1145/3092703.3092711}.
+
+\bibitem[L{\"o}scher and Sagonas(2018)]{loscher2018automating}
+Andreas L{\"o}scher and Konstantinos Sagonas.
+\newblock Automating targeted property-based testing.
+\newblock In \emph{{IEEE} 11th International Conference on Software Testing,
+  Verification and Validation (ICST)}, pages 70--80. {IEEE}, 2018.
+\newblock \doi{10.1109/ICST.2018.00017}.
+
+\bibitem[Majumdar et~al.(2021)Majumdar, Farid, and Sonar]{majumdar2021pacbayes}
+Anirudha Majumdar, Alec Farid, and Anoopkumar Sonar.
+\newblock {PAC}-{Bayes} control: Learning policies that provably generalize to
+  novel environments.
+\newblock \emph{The International Journal of Robotics Research}, 40\penalty0
+  (2--3):\penalty0 574--593, 2021.
+\newblock \doi{10.1177/0278364920959444}.
+\newblock Published online 3 October 2020; print issue February 2021.
+
+\bibitem[Medhat et~al.(2015)Medhat, Ramesh, Bonakdarpour, and
+  Fischmeister]{medhat2015mining}
+Ramy Medhat, S.~Ramesh, Borzoo Bonakdarpour, and Sebastian Fischmeister.
+\newblock A framework for mining hybrid automata from input/output traces.
+\newblock In \emph{International Conference on Embedded Software (EMSOFT)},
+  pages 177--186. {IEEE}, 2015.
+\newblock \doi{10.1109/EMSOFT.2015.7318273}.
+
+\bibitem[Mehra(1974)]{mehra1974optimal}
+Raman~K. Mehra.
+\newblock Optimal input signals for parameter estimation in dynamic systems ---
+  survey and new results.
+\newblock \emph{{IEEE} Transactions on Automatic Control}, 19\penalty0
+  (6):\penalty0 753--768, 1974.
+\newblock \doi{10.1109/TAC.1974.1100701}.
+
 \bibitem[Nagabandi et~al.(2018)Nagabandi, Kahn, Fearing, and
   Levine]{nagabandi2018neural}
 Anusha Nagabandi, Gregory Kahn, Ronald~S. Fearing, and Sergey Levine.
@@ -137,6 +444,15 @@ Anusha Nagabandi, Gregory Kahn, Ronald~S. Fearing, and Sergey Levine.
   with model-free fine-tuning.
 \newblock In \emph{{IEEE} International Conference on Robotics and Automation
   (ICRA)}, 2018.
+
+\bibitem[Padhye et~al.(2019)Padhye, Lemieux, Sen, Papadakis, and
+  Le~Traon]{padhye2019zest}
+Rohan Padhye, Caroline Lemieux, Koushik Sen, Mike Papadakis, and Yves Le~Traon.
+\newblock Semantic fuzzing with {Zest}.
+\newblock In \emph{Proceedings of the 28th {ACM} {SIGSOFT} International
+  Symposium on Software Testing and Analysis (ISSTA)}, pages 329--340. {ACM},
+  2019.
+\newblock \doi{10.1145/3293882.3330576}.
 
 \bibitem[Paoletti et~al.(2007)Paoletti, Juloski, Ferrari-Trecate, and
   Vidal]{paoletti2007hybrid}
@@ -146,20 +462,176 @@ Simone Paoletti, Aleksandar~Lj. Juloski, Giancarlo Ferrari-Trecate, and Ren\'e
 \newblock \emph{European Journal of Control}, 13\penalty0 (2-3):\penalty0
   242--260, 2007.
 
+\bibitem[Parmar et~al.(2021)Parmar, Halm, and Posa]{parmar2021stiff}
+Mihir Parmar, Mathew Halm, and Michael Posa.
+\newblock Fundamental challenges in deep learning for stiff contact dynamics.
+\newblock In \emph{{IEEE/RSJ} International Conference on Intelligent Robots
+  and Systems (IROS)}, pages 5181--5188. {IEEE}, 2021.
+\newblock \doi{10.1109/IROS51168.2021.9636383}.
+
+\bibitem[Pfrommer et~al.(2021)Pfrommer, Halm, and
+  Posa]{pfrommer2021contactnets}
+Samuel Pfrommer, Mathew Halm, and Michael Posa.
+\newblock {ContactNets}: Learning discontinuous contact dynamics with smooth,
+  implicit representations.
+\newblock In \emph{Proceedings of the 2020 Conference on Robot Learning
+  (CoRL)}, volume 155 of \emph{Proceedings of Machine Learning Research}, pages
+  2279--2291, 2021.
+\newblock Conference held 16--18 November 2020; proceedings volume published
+  2021.
+
+\bibitem[Poli et~al.(2021)Poli, Massaroli, Scimeca, Oh, Chun, Yamashita, Asama,
+  Park, and Garg]{poli2021nha}
+Michael Poli, Stefano Massaroli, Luca Scimeca, Seong~Joon Oh, Sanghyuk Chun,
+  Atsushi Yamashita, Hajime Asama, Jinkyoo Park, and Animesh Garg.
+\newblock Neural hybrid automata: Learning dynamics with multiple modes and
+  stochastic transitions.
+\newblock In \emph{Advances in Neural Information Processing Systems 34
+  (NeurIPS)}, 2021.
+
+\bibitem[Ravanbakhsh and Sankaranarayanan(2019)]{ravanbakhsh2019clf}
+Hadi Ravanbakhsh and Sriram Sankaranarayanan.
+\newblock Learning control {Lyapunov} functions from counterexamples and
+  demonstrations.
+\newblock \emph{Autonomous Robots}, 43\penalty0 (2):\penalty0 275--307, 2019.
+\newblock \doi{10.1007/s10514-018-9791-9}.
+\newblock Published online 6 August 2018; print issue February 2019.
+
 \bibitem[Rawlings et~al.(2017)Rawlings, Mayne, and Diehl]{rawlings2017mpc}
 James~B. Rawlings, David~Q. Mayne, and Moritz~M. Diehl.
 \newblock \emph{Model Predictive Control: Theory, Computation, and Design}.
 \newblock Nob Hill Publishing, 2nd edition, 2017.
+
+\bibitem[Roll et~al.(2004)Roll, Bemporad, and Ljung]{roll2004identification}
+Jacob Roll, Alberto Bemporad, and Lennart Ljung.
+\newblock Identification of piecewise affine systems via mixed-integer
+  programming.
+\newblock \emph{Automatica}, 40\penalty0 (1):\penalty0 37--50, 2004.
+\newblock \doi{10.1016/j.automatica.2003.08.006}.
+
+\bibitem[Rosolia and Borrelli(2018)]{rosolia2018lmpc}
+Ugo Rosolia and Francesco Borrelli.
+\newblock Learning model predictive control for iterative tasks. a data-driven
+  control framework.
+\newblock \emph{{IEEE} Transactions on Automatic Control}, 63\penalty0
+  (7):\penalty0 1883--1896, 2018.
+\newblock \doi{10.1109/TAC.2017.2753460}.
 
 \bibitem[Rubinstein and Kroese(2017)]{rubinstein2017montecarlo}
 Reuven~Y. Rubinstein and Dirk~P. Kroese.
 \newblock \emph{Simulation and the {Monte} {Carlo} Method}.
 \newblock Wiley, 3rd edition, 2017.
 
+\bibitem[Schrittwieser et~al.(2020)Schrittwieser, Antonoglou, Hubert, Simonyan,
+  Sifre, Schmitt, Guez, Lockhart, Hassabis, Graepel, Lillicrap, and
+  Silver]{schrittwieser2020muzero}
+Julian Schrittwieser, Ioannis Antonoglou, Thomas Hubert, Karen Simonyan,
+  Laurent Sifre, Simon Schmitt, Arthur Guez, Edward Lockhart, Demis Hassabis,
+  Thore Graepel, Timothy Lillicrap, and David Silver.
+\newblock Mastering {Atari}, {Go}, chess and {Shogi} by planning with a learned
+  model.
+\newblock \emph{Nature}, 588\penalty0 (7839):\penalty0 604--609, 2020.
+\newblock \doi{10.1038/s41586-020-03051-4}.
+
+\bibitem[Sen et~al.(2004)Sen, Viswanathan, and Agha]{sen2004blackbox}
+Koushik Sen, Mahesh Viswanathan, and Gul Agha.
+\newblock Statistical model checking of black-box probabilistic systems.
+\newblock In \emph{Computer Aided Verification (CAV)}, Lecture Notes in
+  Computer Science, pages 202--215. Springer, 2004.
+\newblock \doi{10.1007/978-3-540-27813-9_16}.
+
+\bibitem[Seto et~al.(1998)Seto, Krogh, Sha, and Chutinan]{seto1998simplex}
+Danbing Seto, Bruce Krogh, Lui Sha, and Alongkrit Chutinan.
+\newblock The {Simplex} architecture for safe online control system upgrades.
+\newblock In \emph{Proceedings of the American Control Conference (ACC)},
+  volume~6, pages 3504--3508. {IEEE}, 1998.
+\newblock \doi{10.1109/ACC.1998.703255}.
+
+\bibitem[Settles(2012)]{settles2012active}
+Burr Settles.
+\newblock \emph{Active Learning}.
+\newblock Synthesis Lectures on Artificial Intelligence and Machine Learning.
+  Springer, 2012.
+\newblock \doi{10.1007/978-3-031-01560-1}.
+
+\bibitem[Sha(2001)]{sha2001simplicity}
+Lui Sha.
+\newblock Using simplicity to control complexity.
+\newblock \emph{{IEEE} Software}, 18\penalty0 (4):\penalty0 20--28, 2001.
+\newblock \doi{10.1109/MS.2001.936213}.
+
+\bibitem[Solar-Lezama(2008)]{solarlezama2008thesis}
+Armando Solar-Lezama.
+\newblock \emph{Program Synthesis by Sketching}.
+\newblock Ph.{D}. thesis, University of California, Berkeley, 2008.
+\newblock EECS Department technical report UCB/EECS-2008-177, 19 December 2008.
+
+\bibitem[Solar-Lezama et~al.(2006)Solar-Lezama, Tancau, Bodik, Seshia, and
+  Saraswat]{solarlezama2006sketching}
+Armando Solar-Lezama, Liviu Tancau, Rastislav Bodik, Sanjit Seshia, and Vijay
+  Saraswat.
+\newblock Combinatorial sketching for finite programs.
+\newblock In \emph{Proceedings of the 12th International Conference on
+  Architectural Support for Programming Languages and Operating Systems
+  (ASPLOS)}, pages 404--415. {ACM}, 2006.
+\newblock \doi{10.1145/1168857.1168907}.
+
+\bibitem[Vaandrager(2017)]{vaandrager2017model}
+Frits Vaandrager.
+\newblock Model learning.
+\newblock \emph{Communications of the {ACM}}, 60\penalty0 (2):\penalty0 86--95,
+  2017.
+\newblock \doi{10.1145/2967606}.
+
+\bibitem[Vidal et~al.(2003)Vidal, Soatto, Ma, and Sastry]{vidal2003algebraic}
+Ren{\'e} Vidal, Stefano Soatto, Yi~Ma, and Shankar Sastry.
+\newblock An algebraic geometric approach to the identification of a class of
+  linear hybrid systems.
+\newblock In \emph{Proceedings of the 42nd {IEEE} Conference on Decision and
+  Control (CDC)}, volume~1, pages 167--172. {IEEE}, 2003.
+\newblock \doi{10.1109/CDC.2003.1272554}.
+
+\bibitem[Vovk et~al.(2022)Vovk, Gammerman, and Shafer]{vovk2022alrw}
+Vladimir Vovk, Alexander Gammerman, and Glenn Shafer.
+\newblock \emph{Algorithmic Learning in a Random World}.
+\newblock Springer, 2nd edition, 2022.
+\newblock \doi{10.1007/978-3-031-06649-8}.
+
+\bibitem[Wabersich and Zeilinger(2021)]{wabersich2021safetyfilter}
+Kim~P. Wabersich and Melanie~N. Zeilinger.
+\newblock A predictive safety filter for learning-based control of constrained
+  nonlinear dynamical systems.
+\newblock \emph{Automatica}, 129:\penalty0 109597, 2021.
+\newblock \doi{10.1016/j.automatica.2021.109597}.
+
+\bibitem[Wagenmaker and Jamieson(2020)]{wagenmaker2020active}
+Andrew Wagenmaker and Kevin Jamieson.
+\newblock Active learning for identification of linear dynamical systems.
+\newblock In \emph{Proceedings of the 33rd Conference on Learning Theory
+  (COLT)}, volume 125 of \emph{Proceedings of Machine Learning Research}, pages
+  3487--3582, 2020.
+
 \bibitem[Wilson(1927)]{wilson1927}
 Edwin~B. Wilson.
 \newblock Probable inference, the law of succession, and statistical inference.
 \newblock \emph{Journal of the American Statistical Association}, 22\penalty0
   (158):\penalty0 209--212, 1927.
+
+\bibitem[Yamagata et~al.(2021)Yamagata, Liu, Akazaki, Duan, and
+  Hao]{yamagata2021falsification}
+Yoriyuki Yamagata, Shuang Liu, Takumi Akazaki, Yihai Duan, and Jianye Hao.
+\newblock Falsification of cyber-physical systems using deep reinforcement
+  learning.
+\newblock \emph{{IEEE} Transactions on Software Engineering}, 47\penalty0
+  (12):\penalty0 2823--2840, 2021.
+\newblock \doi{10.1109/TSE.2020.2969178}.
+
+\bibitem[Younes and Simmons(2002)]{younes2002acceptance}
+H{\aa}kan L.~S. Younes and Reid~G. Simmons.
+\newblock Probabilistic verification of discrete event systems using acceptance
+  sampling.
+\newblock In \emph{Computer Aided Verification (CAV)}, Lecture Notes in
+  Computer Science, pages 223--235. Springer, 2002.
+\newblock \doi{10.1007/3-540-45657-0_17}.
 
 \end{thebibliography}

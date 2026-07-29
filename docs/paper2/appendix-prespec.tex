@@ -1,0 +1,93 @@
+% Body of the pre-specification appendix (review point #20).
+% No \section line: main.tex supplies the heading and the label.
+% Every date is re-derivable from git; the commands are in docs/paper2/PRESPEC-LEDGER.md.
+
+A study that reports negative results, ablations built to explain them, and theory derived
+after the fact owes the reader a way to tell those apart. This section is that ledger. Every
+date below is read from the repository's history rather than recalled, and the commands that
+re-derive each one are listed in \texttt{docs/\allowbreak paper2/\allowbreak PRESPEC-LEDGER.\allowbreak md}. Five labels are
+used: \textbf{pre-specified} (a dated design document predicted it before any run),
+\textbf{confirmatory} (ran as specified), \textbf{diagnostic} (added to explain or repair an
+observed result), \textbf{exploratory ablation} (added after seeing a result, to test a
+hypothesis the result suggested), and \textbf{post-hoc} (an analysis or a theorem chosen
+after the data existed).
+
+\paragraph{What was pre-specified.} The design document is dated 2026-07-06 and its
+predictions were committed before the first run. Fourteen items are pre-specified and
+confirmatory: the threshold law's expected shape; the reach mechanism as an explicit
+\emph{go/no-go} gate on the whole study; the wall position as the rarity knob; the
+gate-miss exactness check against $(1-r)^N$; the pervasive-error control arm that makes the
+axis separation a separation; the smooth-bump contrast, with ``danger stays low'' predicted;
+the smooth-learner probe; the full-spec synthesis control; the mode-absent conditional,
+including the ${\approx}60\%$ rate; the $\varepsilon$-sensitivity sweep, which the spec
+listed under \emph{Risks} as required; the pendulum as the second instrument; the Qwen
+cross-family check; and the pendulum synthesis arm. The tightest of these is worth naming,
+because it is the strongest pre-specification claim the paper can make: the spec's runbook
+predicted the mode-present branch as a \emph{contingency} --- ``either outcome is a finding;
+if it repairs, that becomes its own section'' --- so the repair result is a pre-registered
+branch and not a post-hoc pivot. The first confirmation landed $2$\,h $40$\,min after the
+prediction was committed.
+
+\paragraph{What was added after the result it responds to.} Fifteen items, and the five the
+review asks about specifically are all in this group. The PatchField2D instrument was named
+in the spec as one of two options for a second instrument, with no predictions attached, and
+its campaign was built eleven days later in response to a review of the 1D work. The
+\textbf{square ablation} was added two to three days after the 2D repair failure it explains,
+and it is a genuine falsification test of a hypothesis that was itself post-hoc: the
+curvature reading was born of the result the ablation then excluded. The
+\textbf{guided-prompt ablation} was added two days after the same failure, and its two cells
+are the most expensive in the paper ($320$ calls each, $640$ of the campaign's $1959$). The
+\textbf{disjoint seed blocks} and the \textbf{$50{,}000$-rollout dependence re-measurement}
+are both repairs of errors a review found --- pooled intervals over shared samples, and an
+unstated independence assumption --- eighteen and eight days after the results they correct.
+The \textbf{sharp-plateau reward variant} was added nineteen days after the ``below random at
+every knob'' claim it rescues. The distrust-region mitigation appears in no version of the
+design document at all; the paper presents it as a contribution rather than as a prediction,
+which is the correct framing. Two further items changed the paper's own reading of a result
+rather than confirming it: the per-episode fence census turned a ``boundary-mapping
+transient'' into ``a growing fraction of outright failures'', and the behavioural artifact
+audit shipped once with a vacuous check (a mis-keyed dictionary lookup meant its
+partial-repair condition never fired), whose correction moved a headline count.
+
+\paragraph{The theory is post-hoc, and part of it was explicitly out of scope.} Every
+proposition-backing artifact in this paper was produced after all the data existed, most of
+them because a measurement looked suspiciously exact and the question was whether something
+could be proved. That is a legitimate way to find a theorem and an illegitimate way to claim
+a prediction, so none of the theory is presented as predicted. One item is more than
+post-hoc: the design document said of exactly this material, ``covering-number analogues are
+open; mention as a limitation, do not attempt for paper 2''. The paper now contains four
+such results. They were added late, and the first version of the fencing bound was wrong in
+the direction that mattered --- a covering number where a packing number was needed, with a
+hand-computed constant that was also wrong --- caught by a reader's question rather than by
+the numeric audit, and corrected the same day.
+
+\paragraph{The manuscript's own claims of pre-registration and falsification.} Ten phrases
+in this paper assert something about our process. Seven are supported, one is supported as a
+statistical rather than a temporal claim (the coverage certificate's cell family is fixed
+before the data by \emph{construction}, which is what that argument needs and does not
+require a dated record), and \textbf{two were not supported by any dated record} and have
+been corrected in this revision:
+\begin{itemize}
+\item The sharp-plateau variant's competence risk was described as ``the pre-registered
+risk''. No dated text records it before the result; the pre-run note for that variant states
+a cost, a payoff and a different caveat. The text now says ``the risk recorded with the
+variant's script''.
+\item The 2D section said ``we predicted partial repair''. The instrumentation that detects
+partial repair --- the per-mode sample flags and the four-way branch summary --- was written
+in the same commit as the run, so the expectation is real and designed for; but the sentence
+itself first appears one day \emph{after} the measurement. The text now says the instrument
+was built to detect partial repair and that none occurred.
+\end{itemize}
+A third phrase, ``an axis-aligned square with flat edges excludes the curvature reading'',
+is sound as logic but was silent about chronology; it now states that the ablation was added
+after the result it responds to.
+
+\paragraph{Summary.} Fourteen pre-specified and confirmatory items, all on the
+one-dimensional story: the mechanism, the axis separation, the smooth contrast, both 1D
+instruments, and the synthesis trichotomy including its contingency branch. Fifteen items
+added after the results they respond to, of which five are diagnostic repairs driven by
+review, five are exploratory ablations, three are post-hoc analyses and two are mixed. Ten
+post-hoc theory results. The reader should treat the 1D synthesis result as confirmatory and
+everything about the two-dimensional mode --- including the two ablations that exclude
+curvature and prompting --- as exploratory work whose hypotheses were formed after the
+finding.

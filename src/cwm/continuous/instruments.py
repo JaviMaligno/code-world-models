@@ -196,6 +196,23 @@ def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
                     "[x, y, 0.0, 0.0]",
                     "  (the PREVIOUS position, with zero velocity).",
                 ]
+            elif env.patch_shape == "slab":
+                # The rarity-matched predicate-ARITY ablation (2026-07-27):
+                # membership depends on the landing x alone. Written in the same
+                # shape as the square clause (one abs comparison instead of a
+                # max of two) so the only textual difference between the arms is
+                # how many landing coordinates the trigger names.
+                lines += [
+                    "",
+                    "Additional dynamics rule:",
+                    f"  There is a sticky vertical slab centered at x = {c[0]}",
+                    f"  with half-width W = {env.slab_half_width}. After "
+                    f"computing x2 and y2 as above,",
+                    f"  if abs(x2 - {c[0]}) <= {env.slab_half_width}, the mover "
+                    f"sticks (whatever y2 is):",
+                    "  the next state is exactly [x, y, 0.0, 0.0]",
+                    "  (the PREVIOUS position, with zero velocity).",
+                ]
             else:
                 lines += [
                     "",
@@ -209,18 +226,35 @@ def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
     return "\n".join(lines)
 
 
+def _slab_probes_for(env: PatchField2D, c: tuple) -> list:
+    """Probes for one patch_shape="slab" patch: states whose next position lands
+    exactly on the slab's center line x = c[0], at three DIFFERENT y (including
+    y far from c[1]), reached by inverting the shared integrator. They fire the
+    slab in truth for any positive half-width (the landing x is the center), and
+    the spread in y is deliberate: a model that copied the disc/square template
+    and consulted y2 is wrong on them."""
+    ys = (c[1], c[1] + 2.0, c[1] - 3.0)
+    return [(invert_integrator((c[0], y), 0.0, 0.0, 0.0, env.dt, env.gain,
+                               env.drag, env.a_max), 0.0)
+            for y in ys]
+
+
 def _patch2d_probes(env: PatchField2D):
     # states just outside each patch's west edge moving east — each fires
     # only its own patch in truth.
     probes = {}
     if env.p1 is not None:
         c = env.p1
-        probes["patch1"] = [((c[0] - env.R - 0.1, c[1], v, 0.0), 0.0)
-                            for v in (1.0, 2.0, 3.0)]
+        probes["patch1"] = (
+            _slab_probes_for(env, c) if env.patch_shape == "slab"
+            else [((c[0] - env.R - 0.1, c[1], v, 0.0), 0.0)
+                  for v in (1.0, 2.0, 3.0)])
     if env.p2 is not None:
         c = env.p2
-        probes["patch2"] = [((c[0] - env.R - 0.1, c[1], v, 0.0), 0.0)
-                            for v in (1.0, 2.0, 3.0)]
+        probes["patch2"] = (
+            _slab_probes_for(env, c) if env.patch_shape == "slab"
+            else [((c[0] - env.R - 0.1, c[1], v, 0.0), 0.0)
+                  for v in (1.0, 2.0, 3.0)])
     return probes
 
 
