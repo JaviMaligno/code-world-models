@@ -93,6 +93,24 @@ CAMPAIGNS = {
         "varies": ["the mode's post-state: the boundary projection, which breaks the "
                    "premise but makes the post-state a function of the landing"],
     },
+    "hint_radius": {
+        "label": "POSITIVE CONTROL: the form and the centres given, the RADIUS withheld "
+                 "-- one unknown scalar, and the test of whether this pipeline can fit "
+                 "constants from the contacts a sample contains at all",
+        "files": {"large": "continuous_synthesis_patch2d_large_k3_7_hint-radius.json"},
+        "comparator": "disc",
+        "holds_fixed": ["instrument", "knob", "prompt", "budget", "samples", "the effect"],
+        "varies": ["the incomplete arm's clause states the form and the centres and "
+                   "withholds the radius"],
+    },
+    "hint_centre": {
+        "label": "POSITIVE CONTROL: the form given, the CENTRES and the RADIUS withheld "
+                 "-- three unknown scalars, still no form to induce",
+        "files": {"large": "continuous_synthesis_patch2d_large_k3_7_hint-centre.json"},
+        "comparator": "hint_radius",
+        "holds_fixed": ["instrument", "knob", "prompt", "budget", "samples", "the effect"],
+        "varies": ["the clause states the form only"],
+    },
     "disc": {
         "label": "baseline: the disc at k = (3,7), default prompt",
         "files": {"mini": "continuous_synthesis_patch2d_mini_k3_7.json",

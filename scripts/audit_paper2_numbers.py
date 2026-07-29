@@ -1389,6 +1389,40 @@ claim("naming the landing variable shifts the dominant failure to memorisation: 
       "artifacts write a point, against 15 of 40 in the region arm",
       _ld["pooled"]["class_counts"].get("point") == 20
       and _ae["campaigns"]["region"]["pooled"]["class_counts"].get("point") == 15)
+# --- the positive controls (the 2D negatives' upper bound on difficulty) -------
+_hr = _ae["campaigns"]["hint_radius"]["per_size"]["large"]
+_hc = _ae["campaigns"]["hint_centre"]["per_size"]["large"]
+claim("given the form AND the centres, the withheld radius is inferred EXACTLY in 20 of "
+      "20 seeds -- every artifact at IoU 1.000 and exact on all 9020 grid points",
+      _hr["n_mode_containing"] == 20 and _hr["k_repaired_behavioural"] == 20
+      and _hr["k_repaired_gate_and_probe"] == 20
+      and abs(_hr["best_iou"] - 1.0) < 1e-9
+      and all(a["iou_truth"] == 1.0 and a["grid_exact"] and a["grid_mismatch"] == 0
+              and a["grid_n"] == 9020
+              for a in _ae["campaigns"]["hint_radius"]["artifacts"]),
+      f"{_hr['k_repaired_behavioural']}/{_hr['n_mode_containing']}")
+_hrj = load("continuous_synthesis_patch2d_large_k3_7_hint-radius")
+claim("four of those twenty need no refinement iteration at all",
+      sum(1 for c in _hrj["cells"]
+          if c["arm"] == "incomplete" and c["refine_iterations"] == 0) == 4)
+claim("given the form ALONE, 0 of 20 recover the region, best agreement 0.132, and 16 of "
+      "the 20 write a point",
+      _hc["n_mode_containing"] == 20 and _hc["k_repaired_behavioural"] == 0
+      and _hc["k_repaired_gate_and_probe"] == 0
+      and abs(_hc["best_iou"] - 0.132) < 5e-4
+      and _ae["campaigns"]["hint_centre"]["pooled"]["class_counts"].get("point") == 16,
+      f"best IoU {_hc['best_iou']:.4f}")
+_rf = load("region_fit_baseline")
+claim("a plain least-squares circle fit on the same evidence recovers both constants on "
+      "12 of 20 samples and the centre alone on 13, at a median landing arc of 111 deg",
+      _rf["n_seeds"] == 20 and _rf["n_recovering_both"] == 12
+      and _rf["n_recovering_centre"] == 13
+      and abs(_rf["median_landing_arc_deg"] - 110.7) < 0.05,
+      f"{_rf['n_recovering_both']}/20 both, {_rf['n_recovering_centre']}/20 centre")
+claim("the fit succeeds on samples where the synthesizer given the form does not, which "
+      "is what makes the negative an induction failure rather than a limit of the evidence",
+      _rf["n_recovering_both"] > _hc["k_repaired_behavioural"])
+
 # --- ablations 6 and 7: lifting prop:entryclass's premise ----------------------
 _mec = load("mode_effect_calibration")
 _mv = _mec["variants"]

@@ -710,3 +710,39 @@ ever catch.
    bearings* the sample shows (achievable by seeding rollouts around the patch). The prior
    should yield to enough two-sided evidence, or it is not a prior but a hard limit.
 3. Neither is a substitute for the other: (1) bounds the pipeline, (2) bounds the prior.
+
+## 2026-07-29, fourth pass — the positive control, and the frontier located
+
+The previous entry's item 1 (a positive control on 2D induction) was run, as a graded scale
+rather than a single point, so it locates the frontier instead of merely bounding it.
+
+* **Form + centres given, radius withheld (one unknown scalar): 20/20 EXACT.** Every
+  artifact at IoU 1.000, exact on all 9020 state-action grid points, all 20 accepted by an
+  independent gate and an independent 100-rollout evaluation at 1e-9. Four need no
+  refinement iteration. One comments "radius inferred from the provided transitions".
+* **Form alone, centres and radius withheld (three unknowns): 0/20**, best agreement 0.132,
+  16 of 20 writing a point — memorisation.
+* **A control from outside the pipeline**: a plain algebraic least-squares circle fit on the
+  same contact landings recovers both constants to within a tenth of the radius on **12 of
+  20** samples, the centre alone on 13, with no prior and no LLM.
+
+**The frontier, stated as sharply as this instrument allows:** what is not induced is the
+region's FORM, and once the form and its location are given the remaining constant follows
+to float precision. It is not the evidence (12 of 20 samples yield to three lines of linear
+algebra that the synthesizer given the form does not perform), not an inability to fit
+constants, and not representational (told the rule, every arm writes it at gate 1.000 in
+zero iterations). On the 8 samples where the trivial fit also fails, the negative is not
+attributable to the synthesizer, and the paper does not attribute it.
+
+**A number I got wrong and the check caught:** I wrote "nine of the twenty need no
+refinement iteration" from memory of the log; it is four. It is now asserted from the JSON by
+the numeric audit. Same class of error as every one the peer reviews found —
+[[hand-computed-constants-are-the-weak-class]] — and the same fix.
+
+**What is left, in priority order.**
+1. **Evidence dose.** Hold everything fixed and raise only the number of distinct contact
+   bearings the sample shows (seed rollouts around the patch rather than only from the
+   start box). The prior should yield to enough coverage or it is a hard limit rather than a
+   prior. This is the last mechanism question the instrument can answer.
+2. **An archived release** — a git tag with a DOI. The tag is trivial; the DOI needs a
+   Zenodo/figshare deposit under the author's account, so it is the author's call.

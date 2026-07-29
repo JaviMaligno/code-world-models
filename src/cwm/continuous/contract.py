@@ -29,9 +29,16 @@ from ..synthesizer import extract_code
 from .instruments import spec_for
 
 
-def build_contract(env, include_mode: bool, omit: tuple = ()) -> str:
+def build_contract(env, include_mode: bool, omit: tuple = (),
+                   hint: str | None = None) -> str:
+    """`hint` is the positive-control knob: a PARTIAL mode clause that states the rule's
+    form and effect while withholding constants (see instruments.patch2d_hint_lines).
+    None -- the default -- reproduces every committed run byte for byte."""
     spec = spec_for(env)
-    return spec.api_text + "\n" + spec.rules_text(env, include_mode, omit=omit)
+    if hint is None:
+        return spec.api_text + "\n" + spec.rules_text(env, include_mode, omit=omit)
+    return (spec.api_text + "\n"
+            + spec.rules_text(env, include_mode, omit=omit, hint=hint))
 
 
 def collect_transitions(env, n_rollouts: int, seed: int = 0) -> list[dict]:
@@ -273,7 +280,8 @@ def synthesize_and_evaluate(provider, model_name, env,
                             eps: float = 1e-9, max_iters: int = 5,
                             max_examples: int = 30, omit: tuple = (),
                             guidance: str = "",
-                            max_failures: int = 20) -> dict:
+                            max_failures: int = 20,
+                            hint: str | None = None) -> dict:
     """One cell of the synthesis experiment: collect the sample, synthesize,
     refine on the sample (the gate), then classify the artifact. Returns a
     JSON-ready dict; play evaluation is done by the caller (it needs the
@@ -283,7 +291,7 @@ def synthesize_and_evaluate(provider, model_name, env,
     "sample_contains_mode_per" (dict), while "wall_blindness" becomes the mean
     of the mode_blindness dict (or None when the gate failed)."""
     transitions = collect_transitions(env, n_rollouts, seed=seed)
-    contract = build_contract(env, include_mode, omit=omit)
+    contract = build_contract(env, include_mode, omit=omit, hint=hint)
     msgs = build_synthesis_messages(contract, transitions, max_examples,
                                     guidance=guidance)
     completion = provider.complete(msgs, model=model_name)

@@ -171,6 +171,44 @@ def _patch2d_constants_block(env) -> list:
     ]
 
 
+def patch2d_hint_lines(env: PatchField2D, level: str) -> list:
+    """A PARTIAL mode clause: the positive control for the 2D negative results.
+
+    Every 2D repair result in this paper is a negative, and a negative is only as strong
+    as the guarantee that its target is learnable by this pipeline at all. These graded
+    hints withhold progressively more of the rule, so the frontier is located rather than
+    merely bounded:
+
+      radius   the form, the centre and the effect are given; only the RADIUS is withheld,
+               a single unknown scalar. If the pipeline cannot fit one scalar from the
+               contacts a sample contains, the failure is upstream of region induction and
+               the whole 2D story needs re-scoping rather than more ablations.
+      centre   the form and the effect are given; the CENTRE and the RADIUS are withheld,
+               three unknown scalars, no form to induce.
+
+    Neither states the number of patches beyond what the level says, and neither names a
+    withheld constant anywhere in the text -- asserted in tests/test_mode_hint.py, since a
+    leak would turn the control into a translation exercise.
+    """
+    if level == "radius":
+        head = [f"  There is a sticky circular patch centred at (x, y) = "
+                f"({env.p1[0]}, {env.p1[1]}), and a second one",
+                f"  centred at (x, y) = ({env.p2[0]}, {env.p2[1]}). Both have the SAME "
+                f"radius R,",
+                "  whose value is NOT given: infer it from the observed transitions.",
+                "  After computing x2 and y2 as above, if (x2 - cx) ** 2 + (y2 - cy) ** 2",
+                "  <= R ** 2 for either patch, the mode fires."]
+    elif level == "centre":
+        head = ["  There are two sticky circular patches. Their centres and their common",
+                "  radius are NOT given: infer all of them from the observed transitions.",
+                "  After computing x2 and y2 as above, if the landing (x2, y2) lies inside",
+                "  either patch, the mode fires."]
+    else:
+        raise ValueError(f"unknown hint level {level!r}")
+    return ["", "Additional dynamics rule (INCOMPLETE -- constants withheld):"] + head \
+        + _patch2d_post_state_lines(env, env.p1)
+
+
 def _patch2d_post_state_lines(env: PatchField2D, c: tuple) -> list:
     """The sentence describing WHERE the mover ends up when the mode fires.
 
@@ -196,8 +234,13 @@ def _patch2d_post_state_lines(env: PatchField2D, c: tuple) -> list:
 
 
 def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
-                        omit: tuple = ()) -> str:
+                        omit: tuple = (), hint: str | None = None) -> str:
     lines = _patch2d_constants_block(env)
+    if hint:
+        if include_mode:
+            raise ValueError("a hint is a PARTIAL clause: it replaces the full one, so "
+                             "include_mode must be False")
+        return "\n".join(lines + patch2d_hint_lines(env, hint))
     if include_mode:
         patches = []
         if env.p1 is not None and "p1" not in omit:

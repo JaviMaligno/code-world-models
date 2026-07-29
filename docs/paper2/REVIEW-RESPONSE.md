@@ -48,7 +48,7 @@ failed, and each weakening records what would earn it back.
 
 | # | Review point | Fix | Status | Evidence |
 |---|---|---|---|---|
-| 22 | 50 pages, no hierarchy, too many contributions | Main article ≈16 pp with the six-section arc; the rest to labelled Supplementary Material | DONE | `scripts/restructure_paper2.py` (anchor-based, idempotent, asserts every moved block appears exactly once): main article **29 pp** (from 55) + labelled Supplementary Material |
+| 22 | 50 pages, no hierarchy, too many contributions | Main article ≈16 pp with the six-section arc; the rest to labelled Supplementary Material | PARTIAL | PARTIAL, and the reason is a tension inside the review itself. `scripts/restructure_paper2.py` split the manuscript into a main article plus a labelled Supplementary Material and moved thirteen blocks across; the per-campaign ablation write-ups followed, leaving a seven-row ledger table in the main text. The main article is **~33 pp**, not the 12–16 asked for. Two reasons, both stated rather than worked around: point #21 asked related work to *grow* (one paragraph → twelve literatures, ~4 pp), and answering the review added three propositions, a held-out re-scoring of all 625 artifacts and four new campaigns. Cutting to 16 would mean burying the answers to the review's own points in an appendix. What was achieved is the structural fix — a reader can now see the arc, and every supporting result is behind a divider that says so. |
 | 23 | Too much self-referential prose | Register purged; history to `docs/paper2/CHANGELOG-corrections.md`; enforced by `scripts/audit_paper_claims.py` | DONE | 48 flagged passages removed to `docs/paper2/CHANGELOG-corrections.md`; linter rule `process-prose` at 0 |
 | 24 | Immediate textual contradiction (covering-number analogue "left open", then presented) | Residual sentence deleted | DONE | the residual sentence is deleted |
 | 25 | Titles and headings overclaim | Four flagged headings and their siblings de-escalated to their actual scope | DONE | four headings de-escalated; linter rule `modal-scope` at 0 |
@@ -108,10 +108,18 @@ Run from the repository root; all four were green at the time of writing.
   the region-template prior survives as a mechanism after seven ablations rather than as a
   description. `prop:entryclass` keeps its two jobs: explaining the slab's nineteen
   accepted-but-wrong artifacts, and bounding what an independent gate can catch.
-* **What is open now** is one thing the paper should not be read without: every 2D result is
-  a negative, and a negative needs a positive control that the target is learnable by this
-  pipeline at all. `STRONGER-STATEMENTS.md` records that control (the disc's centre given,
-  its radius withheld) and the evidence-dose experiment, in priority order.
+* **That positive control was run too, and it locates the frontier.** Two levels, 20 seeds
+  each: given the region's form AND its centres, the withheld radius is inferred **exactly in
+  20 of 20** (IoU 1.000, exact on all 9020 grid points, all 20 accepted by an independent
+  gate); given the form alone, **0 of 20**, with 16 writing a point. A second control from
+  outside the pipeline — a plain least-squares circle fit on the same evidence — recovers both
+  constants on **12 of 20** samples. So the failure is not the evidence, not an inability to
+  fit constants, and not representational: what is not induced is the region's **form**, and
+  once the form and its location are given the constants follow to float precision. On the 8
+  samples where the trivial fit also fails, the negative is not attributed to the synthesizer.
+* **Open**: the evidence-dose experiment (raise the number of distinct contact bearings and
+  see whether the prior yields), and an archived DOI-bearing release. Both in
+  `STRONGER-STATEMENTS.md`.
 * **Review point 18 (closed-model reproduction) is PARTIAL.** Call counts and transcripts are
   exact; token usage was never recorded and is stated as such; the open-weight arm remains a
   translation control on the 2D instrument because that provider's credits ran out.

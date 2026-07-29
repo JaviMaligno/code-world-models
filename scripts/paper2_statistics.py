@@ -257,6 +257,7 @@ def load_draws(results_dir: pathlib.Path = R) -> list:
                 "knob": _knob(instrument, params),
                 "patch_shape": shape,
                 "mode_effect": params.get("mode_effect", "freeze"),
+                "mode_hint": params.get("mode_hint"),
                 "prompt_variant": prompt,
                 "max_iters": max_iters,
                 "arm": cell["arm"],
@@ -296,7 +297,7 @@ def _load_claude_relay(results_dir: pathlib.Path) -> list:
                     else {"th_stop": 1.4})
             out.append({
                 "file": p1.name, "instrument": instrument, "knob": knob,
-                "patch_shape": None, "mode_effect": "freeze",
+                "patch_shape": None, "mode_effect": "freeze", "mode_hint": None,
                 "prompt_variant": "relay", "max_iters": 5,
                 "arm": cell["arm"], "model": cell["model"], "size": "sonnet",
                 "family": "claude", "seed": cell["seed"],
@@ -324,7 +325,7 @@ def _load_claude_relay(results_dir: pathlib.Path) -> list:
             out.append({
                 "file": p2.name, "instrument": "patch2d",
                 "knob": {"k1": d["k1"], "k2": d["k2"]},
-                "patch_shape": "disc", "mode_effect": "freeze",
+                "patch_shape": "disc", "mode_effect": "freeze", "mode_hint": None,
                 "prompt_variant": "relay",
                 "max_iters": 5, "arm": arm,
                 "model": "claude-sonnet (agent-relayed)", "size": "sonnet",
@@ -356,6 +357,11 @@ def treatment_key(d: dict) -> str:
     # committed default so every pre-existing key is unchanged.
     if d.get("mode_effect", "freeze") != "freeze":
         parts.append(f"effect={d['mode_effect']}")
+    # A partial mode clause is a TREATMENT too: the hint levels sit at the same knob,
+    # shape, prompt and budget as the disc baseline, so omitting this collapsed all three
+    # into one cell -- the same failure `mode_effect` had, caught by the same invariant.
+    if d.get("mode_hint"):
+        parts.append(f"hint={d['mode_hint']}")
     parts.append(f"prompt={d['prompt_variant']}")
     parts.append(f"it={d['max_iters']}")
     parts.append(f"arm={d['arm']}")

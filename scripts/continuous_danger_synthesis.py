@@ -85,7 +85,7 @@ def _seed_index(cell: dict, seed_offset: int = 0) -> int:
 
 
 def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
-                  seed_offset: int = 0,
+                  seed_offset: int = 0, hint=None,
                    n_rollouts, eps, max_iters, max_examples=30, guidance="",
                    max_failures=20, play_episodes=6, j_truth, j_random,
                    meta, print_fn=print) -> dict:
@@ -123,7 +123,7 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
         stored_p = results.get("params", {}) or {}
         current_p = meta.get("params", {}) or {}
         _RESULT_KEYS = ("instrument", "x_wall", "th_stop", "k1", "k2",
-                        "patch_shape", "mode_effect", "prompt_variant",
+                        "patch_shape", "mode_effect", "mode_hint", "prompt_variant",
                         "n_rollouts", "eps", "max_iters", "play_episodes",
                         "compat_model")
         mismatch = {k: (stored_p[k], current_p[k]) for k in _RESULT_KEYS
@@ -164,7 +164,7 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
                 n_rollouts=n_rollouts,
                 seed=10_000 * (seed + 1 + seed_offset),
                 eps=eps, max_iters=max_iters, max_examples=max_examples,
-                guidance=guidance, max_failures=max_failures)
+                guidance=guidance, max_failures=max_failures, hint=hint)
             if cell["gate_passed"]:
                 model = SynthesizedModel(cell["code"], env)
                 eps_play = []
@@ -262,6 +262,15 @@ def build_parser() -> argparse.ArgumentParser:
                     help="patch2d: x of patch 1 center (nearer patch, common mode)")
     ap.add_argument("--k2", type=float, default=7.0,
                     help="patch2d: x of patch 2 center (farther patch, rare mode)")
+    ap.add_argument("--mode-hint", choices=["radius", "centre"], default=None,
+                    help="patch2d only. The POSITIVE CONTROL for the 2D negatives "
+                    "(2026-07-29): replace the incomplete arm's missing clause with a "
+                    "PARTIAL one that states the rule's form and effect while withholding "
+                    "constants. 'radius' withholds one scalar (centres given); 'centre' "
+                    "withholds three (no form to induce). Every 2D result in this paper is "
+                    "a negative, and a negative is only as strong as the guarantee that "
+                    "its target is learnable by this pipeline at all: if 'radius' is not "
+                    "repaired, the failure is upstream of region induction.")
     ap.add_argument("--mode-effect", choices=["freeze", "landing", "clamp"],
                     default="freeze",
                     help="patch2d only. WHERE the mover ends up when the mode fires; the "
@@ -388,6 +397,8 @@ if __name__ == "__main__":
     SUFFIX = ""
     if args.seed_offset:
         SUFFIX += f"_off{args.seed_offset}"
+    if args.mode_hint:
+        SUFFIX += f"_hint-{args.mode_hint}"
     if args.prompt_variant != "default":
         SUFFIX += f"_pv-{args.prompt_variant}"
     if args.max_iters != 5:
@@ -409,7 +420,7 @@ if __name__ == "__main__":
             "size": args.size, "tag": TAG, "params": vars(args)}
     results = run_synthesis(
         provider, MODEL, ENV, ARMS, args.n_seeds, out,
-        seed_offset=args.seed_offset,
+        seed_offset=args.seed_offset, hint=args.mode_hint,
         n_rollouts=args.n_rollouts, eps=args.eps, max_iters=args.max_iters,
         max_examples=VARIANT["max_examples"], guidance=VARIANT["guidance"],
         max_failures=VARIANT["max_failures"], play_episodes=args.play_episodes,

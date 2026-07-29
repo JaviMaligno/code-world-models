@@ -1,0 +1,343 @@
+{
+  "script": "region_fit_baseline.py",
+  "why": "an upper bound on the 2D task's difficulty, from outside the pipeline",
+  "truth": {
+    "centre": [
+      3.0,
+      0.0
+    ],
+    "R": 1.0
+  },
+  "tol_centre": 0.1,
+  "tol_radius": 0.1,
+  "n_seeds": 20,
+  "n_recovering_centre": 13,
+  "n_recovering_both": 12,
+  "n_with_enough_contacts": 20,
+  "median_contacts": 14.5,
+  "median_landing_arc_deg": 110.65309387677075,
+  "median_prev_arc_deg": 103.89427855421165,
+  "rows": [
+    {
+      "seed": 10000,
+      "n_contacts_p1": 21,
+      "fit_centre": [
+        3.0089352091099957,
+        0.004007365670810166
+      ],
+      "fit_R": 0.975607716171934,
+      "cond": 40.60794905316317,
+      "centre_error": 0.009792698374755427,
+      "radius_error": 0.02439228382806602,
+      "landing_arc_deg": 110.95979301183445,
+      "prev_arc_deg": 100.97890130602923,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 20000,
+      "n_contacts_p1": 12,
+      "fit_centre": [
+        2.1269880245076753,
+        -0.09542485356138423
+      ],
+      "fit_R": 0.13555479262577128,
+      "cond": 150.04437176956986,
+      "centre_error": 0.8782117125330445,
+      "radius_error": 0.8644452073742287,
+      "landing_arc_deg": 16.63015847467699,
+      "prev_arc_deg": 10.99738824073654,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 30000,
+      "n_contacts_p1": 10,
+      "fit_centre": [
+        2.9109612168367476,
+        -0.04570376066096767
+      ],
+      "fit_R": 0.8752869975476723,
+      "cond": 38.89200002201149,
+      "centre_error": 0.10008365823523688,
+      "radius_error": 0.12471300245232775,
+      "landing_arc_deg": 96.96417453827166,
+      "prev_arc_deg": 94.04617140167119,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 40000,
+      "n_contacts_p1": 16,
+      "fit_centre": [
+        2.9346274882908205,
+        -0.04395468359274465
+      ],
+      "fit_R": 0.8943235849382255,
+      "cond": 85.32564465678671,
+      "centre_error": 0.07877550061348453,
+      "radius_error": 0.1056764150617745,
+      "landing_arc_deg": 79.16708469662001,
+      "prev_arc_deg": 71.6310330749277,
+      "recovers_centre": true,
+      "recovers_both": false
+    },
+    {
+      "seed": 50000,
+      "n_contacts_p1": 9,
+      "fit_centre": [
+        2.795750946208803,
+        0.08073707147317058
+      ],
+      "fit_R": 0.7768647762577368,
+      "cond": 69.04057661337085,
+      "centre_error": 0.21962729949772458,
+      "radius_error": 0.22313522374226324,
+      "landing_arc_deg": 67.08270624548231,
+      "prev_arc_deg": 69.51119007853129,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 60000,
+      "n_contacts_p1": 21,
+      "fit_centre": [
+        2.9601097422601144,
+        -0.011676771348268604
+      ],
+      "fit_R": 0.9276500287715086,
+      "cond": 27.973884961350652,
+      "centre_error": 0.04156416306957537,
+      "radius_error": 0.0723499712284914,
+      "landing_arc_deg": 138.87596818971087,
+      "prev_arc_deg": 136.16090802948258,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 70000,
+      "n_contacts_p1": 20,
+      "fit_centre": [
+        2.9978826600032673,
+        0.0123439596649658
+      ],
+      "fit_R": 0.963658054426631,
+      "cond": 32.84280806912457,
+      "centre_error": 0.012524235260967695,
+      "radius_error": 0.036341945573369006,
+      "landing_arc_deg": 141.16821671893328,
+      "prev_arc_deg": 128.01367923284062,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 80000,
+      "n_contacts_p1": 7,
+      "fit_centre": [
+        2.9768070395312938,
+        -0.000628215241035807
+      ],
+      "fit_R": 0.9557385309996074,
+      "cond": 18.01971237614176,
+      "centre_error": 0.023201466972845475,
+      "radius_error": 0.04426146900039263,
+      "landing_arc_deg": 162.93129182868296,
+      "prev_arc_deg": 168.5687224659475,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 90000,
+      "n_contacts_p1": 11,
+      "fit_centre": [
+        2.6118222366584707,
+        -0.034287098650104056
+      ],
+      "fit_R": 0.6099009880750897,
+      "cond": 118.64613114873427,
+      "centre_error": 0.38968908258594354,
+      "radius_error": 0.39009901192491026,
+      "landing_arc_deg": 45.3034402540232,
+      "prev_arc_deg": 39.55425408871713,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 100000,
+      "n_contacts_p1": 9,
+      "fit_centre": [
+        2.8387754402401955,
+        -0.017092175045699157
+      ],
+      "fit_R": 0.8243675639443628,
+      "cond": 31.925491301773533,
+      "centre_error": 0.1621280392700029,
+      "radius_error": 0.17563243605563716,
+      "landing_arc_deg": 110.34639474170706,
+      "prev_arc_deg": 106.80965580239408,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 110000,
+      "n_contacts_p1": 14,
+      "fit_centre": [
+        2.9714775125883763,
+        0.004070476004202383
+      ],
+      "fit_R": 0.9561823378434791,
+      "cond": 16.329131375112336,
+      "centre_error": 0.02881147450317352,
+      "radius_error": 0.04381766215652094,
+      "landing_arc_deg": 187.42609564480608,
+      "prev_arc_deg": 178.62063836128675,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 120000,
+      "n_contacts_p1": 25,
+      "fit_centre": [
+        2.9977151400307624,
+        0.012596852121459026
+      ],
+      "fit_R": 0.9706724908578995,
+      "cond": 14.087570904273166,
+      "centre_error": 0.012802393075082914,
+      "radius_error": 0.029327509142100472,
+      "landing_arc_deg": 187.84884862944477,
+      "prev_arc_deg": 184.84175640576223,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 130000,
+      "n_contacts_p1": 15,
+      "fit_centre": [
+        2.9578917483349088,
+        -0.027642715240412827
+      ],
+      "fit_R": 0.9301145892860243,
+      "cond": 31.325130772148775,
+      "centre_error": 0.05037087019452028,
+      "radius_error": 0.06988541071397569,
+      "landing_arc_deg": 136.80274808162972,
+      "prev_arc_deg": 124.62715392841551,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 140000,
+      "n_contacts_p1": 21,
+      "fit_centre": [
+        3.043428768598946,
+        0.02666798419186502
+      ],
+      "fit_R": 1.019156043849548,
+      "cond": 36.678845289144206,
+      "centre_error": 0.05096311727983628,
+      "radius_error": 0.019156043849547943,
+      "landing_arc_deg": 106.46953522917909,
+      "prev_arc_deg": 97.75321123116191,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 150000,
+      "n_contacts_p1": 5,
+      "fit_centre": [
+        2.6747855029865844,
+        -0.1758903118078507
+      ],
+      "fit_R": 0.6156905701430998,
+      "cond": 92.40041857155222,
+      "centre_error": 0.36973216097000794,
+      "radius_error": 0.3843094298569002,
+      "landing_arc_deg": 58.60540593435047,
+      "prev_arc_deg": 63.966141271762126,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 160000,
+      "n_contacts_p1": 7,
+      "fit_centre": [
+        3.0181650709068033,
+        -0.013782315047506415
+      ],
+      "fit_R": 0.9949827180441596,
+      "cond": 40.6384113322403,
+      "centre_error": 0.022801798374643908,
+      "radius_error": 0.005017281955840391,
+      "landing_arc_deg": 94.58230397329169,
+      "prev_arc_deg": 94.27156968749,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 170000,
+      "n_contacts_p1": 24,
+      "fit_centre": [
+        2.983522784973081,
+        -0.014308489953871587
+      ],
+      "fit_R": 0.957785304307142,
+      "cond": 19.398096432842294,
+      "centre_error": 0.021822728972412452,
+      "radius_error": 0.04221469569285796,
+      "landing_arc_deg": 177.23080546079194,
+      "prev_arc_deg": 172.26504707802684,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 180000,
+      "n_contacts_p1": 11,
+      "fit_centre": [
+        2.96636765680067,
+        0.019251246774705747
+      ],
+      "fit_R": 0.9438913667373859,
+      "cond": 32.62268879451454,
+      "centre_error": 0.038752354915000314,
+      "radius_error": 0.05610863326261406,
+      "landing_arc_deg": 116.87801030772226,
+      "prev_arc_deg": 125.47596137472573,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 190000,
+      "n_contacts_p1": 27,
+      "fit_centre": [
+        3.022628711463108,
+        0.01921586325794023
+      ],
+      "fit_R": 0.9731577991379216,
+      "cond": 15.658399425866365,
+      "centre_error": 0.029686831815275542,
+      "radius_error": 0.026842200862078447,
+      "landing_arc_deg": 182.21545161574636,
+      "prev_arc_deg": 180.31929251167526,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 200000,
+      "n_contacts_p1": 18,
+      "fit_centre": [
+        2.7872680750204144,
+        -0.0852893869179534
+      ],
+      "fit_R": 0.7713235121179964,
+      "cond": 89.3418007386932,
+      "centre_error": 0.22919238954721075,
+      "radius_error": 0.22867648788200357,
+      "landing_arc_deg": 69.22657297147225,
+      "prev_arc_deg": 62.5645078970889,
+      "recovers_centre": false,
+      "recovers_both": false
+    }
+  ],
+  "reading": "The contact landings cover a median ~110 degrees of the circle, so the evidence is partial rather than either full or a thin crescent. Even so, a plain least-squares circle fit on those landings -- three lines of linear algebra, no prior, no LLM -- recovers both constants within a tenth of the radius on 12 of 20 samples and the centre alone on 13. GPT-5.x, given the form and asked for the constants, recovers them on 0 of 20, INCLUDING on the samples where the fit succeeds. So on those samples the region is recoverable from the evidence and the synthesizer does not recover it: the negative is an induction failure, not a limit of the evidence and not an inability to fit constants (given the centres it fits the radius exactly, 20 of 20). On the 8 samples where the trivial fit also fails, the negative is NOT attributable to the synthesizer, and we do not attribute it."
+}
