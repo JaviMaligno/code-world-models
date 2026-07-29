@@ -272,3 +272,67 @@ def test_t3_prop8_witness_tube_is_freeze_free():
                     break
             assert not froze, (gap, y0)     # freeze-free: the direct claim
         assert entered > 0, gap
+
+
+def test_t3_lemma_j_jacobian_formula():
+    # Lemma J: the Jacobian of (a_s1, a_s2) -> x_T in free flight is
+    # K^2 W(T-s1) W(T-s2) |sin(phi_s1 - phi_s2)|, K = gain*pi*dt^2.
+    # This is what removes the rho^h factor from Prop 8's tube bound.
+    from cwm.continuous.envs import integrate_2d
+    env = RingField2D()
+    beta = 1 - env.drag * env.dt
+    K = env.gain * math.pi * env.dt * env.dt
+
+    def W(m):
+        return sum(beta ** k for k in range(m))
+
+    def endpoint(acts):
+        s = (0.0, 0.0, 0.0, 0.0)
+        for a in acts:
+            s = integrate_2d(s, a, env.dt, env.gain, env.drag, env.a_max)
+        return (s[0], s[1])
+
+    rng = random.Random(11)
+    T, eps = 80, 1e-4
+    for s1, s2 in ((10, 50), (20, 60), (5, 40)):
+        acts = [rng.uniform(-0.8, 0.8) for _ in range(T)]
+
+        def ep(d1, d2):
+            a = list(acts)
+            a[s1] += d1
+            a[s2] += d2
+            return endpoint(a)
+
+        p0, p1, p2 = ep(0, 0), ep(eps, 0), ep(0, eps)
+        num = abs((p1[0] - p0[0]) * (p2[1] - p0[1])
+                  - (p1[1] - p0[1]) * (p2[0] - p0[0])) / eps ** 2
+        formula = (K * K * W(T - s1) * W(T - s2)
+                   * abs(math.sin(math.pi * (acts[s1] - acts[s2]))))
+        assert abs(num - formula) <= 1e-6 * max(formula, 1e-9), (s1, s2,
+                                                                 num, formula)
+
+
+def test_t3_one_action_moves_the_endpoint_macroscopically():
+    # The quantitative content of Lemma J: a single action at a long lag
+    # moves the endpoint by ~2.9 units per unit of action, against a
+    # per-landing scale of only gain*dt^2 = 0.03. That factor is what
+    # Prop 8's all-steps tube discards.
+    from cwm.continuous.envs import integrate_2d
+    env = RingField2D()
+    beta = 1 - env.drag * env.dt
+    K = env.gain * env.dt * env.dt
+    rng = random.Random(3)
+    acts = [rng.uniform(-1, 1) for _ in range(80)]
+
+    def endpoint(a):
+        s = (0.0, 0.0, 0.0, 0.0)
+        for x in a:
+            s = integrate_2d(s, x, env.dt, env.gain, env.drag, env.a_max)
+        return (s[0], s[1])
+
+    a2 = list(acts)
+    a2[0] = max(-1.0, min(1.0, a2[0] + 0.02))
+    p0, p1 = endpoint(acts), endpoint(a2)
+    sens = math.hypot(p1[0] - p0[0], p1[1] - p0[1]) / 0.02
+    assert sens > 30 * K, (sens, K)          # macroscopic vs the landing scale
+    assert sens <= env.gain * math.pi * env.dt ** 2 / (1 - beta) + 1e-9

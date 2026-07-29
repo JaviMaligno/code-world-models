@@ -2141,18 +2141,50 @@ scale gap is decisive: at γ = 0.1 the proved tube bound is of order
 10⁻¹⁰⁰ while d is 3.4·10⁻⁴, so the tube argument is wrong by ~96 orders
 of magnitude. Evidence label *measured*, unit rollout, n = 200 000 per
 gap.
-*Consequence.* d is a hitting probability, so the missing ingredient is a
-LOCAL LIMIT THEOREM for the landing law: the displacement is a sum of
-h independent bounded vectors with a density (Lemma S gives each summand
-an exactly circular-uniform direction), so a local CLT would give
-P(reach the channel mouth) ≥ (density) × (target measure), polynomial in
-γ and in 1/h rather than ρ^h. The exponent 1.72 rather than 1 says the
-target is not simply the channel's angular measure — plausibly because
-entry needs both the right angle AND enough radial speed, two conditions
-each scaling with γ — so the theorem to prove is a local CLT for the
-JOINT (angle, radial speed) law at the mouth. That is a concrete
-analytic target with the right shape, and it replaces "an occupation
-estimate" as the description of what T3 needs.
+*Consequence.* d is a hitting probability, and the ingredient it needs is
+not a local CLT after all: something more elementary and fully provable
+does the job, because the plant's smoothing makes a SINGLE action move
+the endpoint macroscopically.
+
+**Lemma J (two-action steering — the exponent ρ^h is unnecessary).** In
+the free-flight (freeze-free) regime the endpoint is a smooth function of
+the action sequence with
+  ∂x_T/∂a_s = K·W(T−s)·(−sin φ_s, cos φ_s),  K := gain·π·dt²,
+  W(m) := Σ_{k<m} β^k = (1−β^m)/(1−β),  β = 1 − drag·dt,
+so for any two steps s₁ ≠ s₂ the Jacobian of (a_{s₁}, a_{s₂}) ↦ x_T is
+  **|J| = K²·W(T−s₁)·W(T−s₂)·|sin(φ_{s₁} − φ_{s₂})|** ,
+bounded above by (K/(1−β))² = 9.87 and bounded below away from the
+degenerate coincidence φ_{s₁} = ±φ_{s₂}. Consequently, freeing just TWO
+actions and fixing the rest, the map to the endpoint is a local
+diffeomorphism onto a region of area up to 4·(K/(1−β))² ≈ 39.5 — larger
+than the whole instrument's scale — and the entry probability factorises
+as
+  d ≥ ¼·inf|J|·area(target) × P(prefix event),
+polynomial in the target's measure with NO exponential-in-h factor.
+*Proof.* Differentiate the affine free-flight recursion: a change δa_s
+alters the thrust by K/dt²·δa_s·(−sin φ_s, cos φ_s), which the velocity
+recursion carries forward with weights β^k, and the position accumulates
+dt·Σ of those — giving the stated derivative. The Jacobian is the cross
+product of the two derivative vectors, whose directions are the two
+rotated thrust directions, giving the sine factor. ∎
+*Verified numerically to 8·10⁻⁹ relative error* at four (s₁, s₂) pairs
+(`recorded in this section`), and the one-action sensitivity separately:
+measured |∂x_T/∂a_s| rises from 0.186 at lag 1 to 2.865 at lag 79 against
+the analytic 0.094…2.858 — i.e. one early action alone sweeps ≈ 5.7 units
+of endpoint displacement, where a single landing moves only R_L = 0.03.
+That factor of ~190 between the per-step landing scale and the
+per-action endpoint scale is exactly what Prop 8's tube throws away.
+
+*What is measured, not proved.* Lemma J removes the exponential but
+leaves P(prefix event) — the probability that the other h−2 actions bring
+the trajectory to a state from which two free actions can finish. Measured
+directly: over states visited by random rollouts near the ring, there
+exist LAUNCH states whose k-step action window has measure **w = 1.000
+at k = 2** for γ = 0.6 (i.e. every action pair finishes), and w > 0 at
+k = 3 for γ ∈ {0.2, 0.4} — so the launch set is non-empty with Θ(1)
+windows, and the exponential really is an artifact of the tube. Bounding
+P(prefix) below is the remaining step, and it is now a Θ(1)-scale
+geometric question rather than an exponentially small one.
 
 **An intuition about that constant, REFUTED (2026-07-26).** The natural
 hope was that a freeze HANDICAPS entry — Lemma S says the freeze zeroes

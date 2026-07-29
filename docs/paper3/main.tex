@@ -1723,8 +1723,27 @@ pathwise, isolate that choice as the sole obstruction. It does not:
 pathwise monotonicity fails in the variant as well, in $13$ of $30{,}764$
 entering pairs (the unit here is the entering pair, since only those can
 falsify the ordering). The position block alone suffices to break it. What
-remains is an a-priori bound on one scalar, the funnel mass --- named,
-not waved at. Elsewhere the ledger has moved the other way, and we
+remains is an a-priori bound on one scalar, the funnel mass. A strictly
+positive answer already follows from
+Proposition~\ref{prop:positivity}, whose witness tube is freeze-free and
+therefore lower-bounds the \emph{direct} component; but that bound
+carries the tube's factor $\rho^{h}$ and is some ninety orders of
+magnitude below the measured value. The tube is the wrong instrument, and
+measurement says why: the direct-entry probability is a clean power law in
+the channel width (log-log slope $1.72$ over $\gamma \in [0.05, 0.4]$,
+$200{,}000$ rollouts per gap), i.e. a hitting probability rather than a
+tube probability. The plant explains it. In free flight the endpoint
+depends on each action with sensitivity
+$\mathrm{gain}\,\pi\,dt^{2}(1-\beta^{m})/(1-\beta)$ at lag $m$, rising
+to $3.14$, so a \emph{single} action sweeps the endpoint across some five
+units where one landing moves only $\mathrm{gain}\,dt^{2} = 0.03$; freeing
+two actions gives a Jacobian
+$K^{2}W(T-s_1)W(T-s_2)|\sin(\phi_{s_1}-\phi_{s_2})|$ and a
+diffeomorphic image of area up to $39.5$. So the exponential factor is an
+artifact of constraining all $h$ actions when two suffice, and the
+remaining question --- the probability that the other actions deliver the
+trajectory to a state from which two free ones finish --- is a
+constant-scale geometric one. Elsewhere the ledger has moved the other way, and we
 report both directions: the continuity modulus, the barcode sandwich, the
 non-separating query bound, and the play-cost decomposition are now
 theorems with explicit constants (some of them, like the refuted
