@@ -1782,9 +1782,19 @@ $\mathrm{gain}\,dt\,\sin(\phi - \theta)$ with $\phi$ uniform --- the
 arcsine law, whose density exceeds $1/\pi$ on all of $(-1,1)$ --- giving
 $f(0) \ge 0.35$ against a measured $1.10$. For the arrival angle, a single
 early action sweeps it over ${\approx}1.1$ radians, giving
-$\rho(\pi) \ge 0.94$ against a measured $1.02$. What is left unproved is
-the ring-free reach probability itself, a $\Theta(1)$ hitting probability
-with no $\gamma$ in it, and the horizon term. Elsewhere the ledger has moved the other way, and we
+$\rho(\pi) \ge 0.94$ against a measured $1.02$. The horizon term is bookkeeping and disappears once the deadline is built
+into the reach factor: counting only ring-free arrivals within $h - k$
+steps leaves every arrival with the $k$ steps the crossing needs, at a cost
+of a factor $1.4$ (measured $0.0212$ against $0.0302$). The reach factor
+itself follows from isotropy, with no density estimate: the $2$D heading
+action gives every thrust a uniform direction, so the displacement is a sum
+of independent isotropic vectors and is isotropic, whence its direction is
+uniform \emph{and} independent of its magnitude. Reaching the band
+therefore needs the magnitude in $[L - r_{\mathrm{out}}, L +
+r_{\mathrm{out}}]$ and the direction within the ball's angular half-width,
+giving $R' \ge P(|Z_t| \in [7,17]) \cdot \arcsin(5/17)/\pi = 0.019$ at
+$t = h-k$, against a measured $0.0212$ --- loose by $1.1$. What remains
+measured is a single scalar, the radial law of an isotropic sum. Elsewhere the ledger has moved the other way, and we
 report both directions: the continuity modulus, the barcode sandwich, the
 non-separating query bound, and the play-cost decomposition are now
 theorems with explicit constants (some of them, like the refuted

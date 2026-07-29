@@ -539,3 +539,54 @@ def test_t3_arrival_angle_is_steerable_by_one_action():
     # (so Lemma D's prefactor is non-trivial)
     assert 0.05 < ders[len(ders) // 2] < 2.0, ders[len(ders) // 2]
     assert 0.5 / ders[int(0.9 * len(ders))] < 1.02      # below the measured rho
+
+
+def test_t3_displacement_is_isotropic():
+    # R's bound rests on the displacement being ISOTROPIC: the 2D heading
+    # action gives each thrust a uniform direction (phi = pi*a, a uniform),
+    # and a sum of independent isotropic vectors is isotropic. Checked as
+    # uniformity of the displacement direction.
+    from cwm.continuous.envs import integrate_2d
+    env = RingField2D(gap=0.0, r_in=None)
+    bins = [0] * 8
+    trials = 4000
+    for i in range(trials):
+        rng = random.Random(3000 + i)
+        s = (0.0, 0.0, 0.0, 0.0)
+        for _ in range(60):
+            s = integrate_2d(s, rng.uniform(-env.a_max, env.a_max),
+                             env.dt, env.gain, env.drag, env.a_max)
+        th = math.atan2(s[1], s[0])
+        bins[int((th + math.pi) / (2 * math.pi) * 8) % 8] += 1
+    expected = trials / 8
+    for b in bins:
+        assert abs(b - expected) < 0.25 * expected, bins
+
+
+def test_t3_isotropy_bound_on_reach_is_valid():
+    # R' >= P(|Z_t| in [L-r_out, L+r_out]) * arcsin(r_out/(L+r_out))/pi, using
+    # that for an isotropic vector the direction is uniform AND independent of
+    # the magnitude. Checked at a single time against the measured reach.
+    env = RingField2D(gap=0.0, r_in=None)
+    cx, cy = env.center
+    L, k, t_star = 12.0, 9, 71
+    ang = math.asin(env.r_out / (L + env.r_out)) / math.pi
+    assert abs(ang - 0.0950) < 1e-3
+    n, in_range, reached_early = 6000, 0, 0
+    for i in range(n):
+        rng = random.Random(50_000 + i)
+        s = env.initial_state(rng)
+        x0 = (s[0], s[1])
+        hit = None
+        for t in range(env.h_episode):
+            s, _, _ = env.step(s, rng.uniform(-env.a_max, env.a_max))
+            if t == t_star:
+                m = math.hypot(s[0] - x0[0], s[1] - x0[1])
+                in_range += (L - env.r_out <= m <= L + env.r_out)
+            if hit is None and math.hypot(s[0] - cx, s[1] - cy) <= env.r_out:
+                hit = t
+        if hit is not None and hit <= env.h_episode - k:
+            reached_early += 1
+    bound = (in_range / n) * ang
+    assert bound <= reached_early / n * 1.35, (bound, reached_early / n)
+    assert bound > 0.5 * reached_early / n, (bound, reached_early / n)

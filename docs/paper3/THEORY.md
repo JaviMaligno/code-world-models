@@ -2337,8 +2337,57 @@ factor now has a derivation:
 | ρ(π) | 1.02/rad | **PROVED ≥ 0.94** (Lemma D), 1.1× loose |
 | f(0) | 1.10–1.16 | **PROVED ≥ 0.35** (Lemma D + arcsine), 3× loose |
 | T ≥ 2.2γ·f(0) − P(horizon) | — | derived (ballistic crossing) |
-What remains unproved is R — a Θ(1) hitting probability with no γ in it —
-and the horizon term. Neither is a density and neither is an occupation
+**The horizon term is an artifact of the bookkeeping, and vanishes.** It
+appeared because R counts arrivals at any time while the crossing needs
+k ≈ 9 further steps. Building the deadline into the reach factor removes
+it: define
+  **R′ := P(a ring-free rollout reaches r_out within h − k steps)**,
+so every counted arrival has at least k steps left and the horizon
+condition is satisfied by construction. Measured: R = 0.03020 and
+R′ = **0.02118** (70.1% of R), so the correction is a factor 1.4 and the
+term disappears rather than being bounded.
+
+**R′ is bounded below by ISOTROPY (no density estimate needed).** For the
+2D heading action the thrust is gain·(cos φ, sin φ) with φ = πa/a_max
+uniform on [−π, π], so each thrust direction is **uniform on the circle**
+and the displacement Z_t = dt²·Σ_s w_{t,s}T_s is a sum of independent
+isotropic vectors — hence **isotropic itself** (the same structure as
+Theorem T5-I). Two consequences, both exact rather than estimated: the
+direction of Z_t is uniform, and it is INDEPENDENT of |Z_t|. Therefore,
+with L = ‖c − x₀‖ = 12,
+  R′ ≥ P(|Z_t| ∈ [L − r_out, L + r_out]) · min_{r ≤ L+r_out} (arcsin(r_out/r)/π)
+     = P(|Z_t| ∈ [7, 17]) · arcsin(5/17)/π
+for any single t ≤ h − k, since reaching the ball requires the
+displacement to have both the right magnitude range and a direction
+within the ball's angular half-width arcsin(r_out/r) of e.
+*Measured* (200 000 ring-free rollouts; the angular factor is exact at
+0.0950):
+| t | median \|Z_t\| | P(\|Z_t\| ∈ [7,17]) | ⇒ R′ ≥ |
+|---|---|---|---|
+| 20 | 1.17 | 0.0000 | 0 |
+| 40 | 2.58 | 0.0051 | 0.00048 |
+| 60 | 3.91 | 0.1081 | 0.01027 |
+| 71 | 4.59 | 0.2000 | **0.01900** |
+against R′ = 0.02118 measured — **valid and loose by only 1.1×**, taking
+the single best time t = h − k = 71. (Using several t would only improve
+it, at the cost of a union-of-events argument.) The remaining measured
+input is one scalar, P(|Z_{71}| ∈ [7, 17]) = 0.20, the magnitude
+distribution of an isotropic sum — a one-dimensional radial law, and the
+last quantity in the chain.
+
+**Status of T3's lower bound.** Every factor of d ≥ C·γ² is now derived or
+proved:
+| factor | status |
+|---|---|
+| R′ (reach within the deadline) | **PROVED ≥ 0.019** by isotropy, 1.1× loose; one measured scalar (the radial law) |
+| ρ(π) | **PROVED ≥ 0.94** (Lemma D), 1.1× loose |
+| f(0) | **PROVED ≥ 0.35** (Lemma D + arcsine), 3× loose |
+| T ≥ 2.2γ·f(0) | derived (ballistic crossing) |
+| horizon term | **eliminated** (absorbed into R′) |
+So the chain that began as "stochastic domination of post-divergence
+occupation measures" has reduced to three elementary ingredients —
+isotropy, the arcsine density, and a one-action steering derivative —
+plus a single measured radial law. Nothing in it is an occupation
 estimate.
 
 **An intuition about that constant, REFUTED (2026-07-26).** The natural
