@@ -1,0 +1,86 @@
+{
+  "script": "mode_identifiability.py",
+  "question": "can a rollout reach the FAR side of the near mode patch? if not, the membership rule is identified only up to the equivalence class of Proposition prop:entryclass",
+  "params": {
+    "n_rollouts": 2000,
+    "seed": 31337
+  },
+  "arms": {
+    "disc_k3_7": {
+      "arm": "disc_k3_7",
+      "patch_shape": "disc",
+      "p1": [
+        3.0,
+        0.0
+      ],
+      "p2": [
+        7.0,
+        0.0
+      ],
+      "near_west_face": 2.0,
+      "near_east_face": 4.0,
+      "n_rollouts": 2000,
+      "horizon": 80,
+      "n_steps": 160000,
+      "n_contacts": 678,
+      "max_position_x": 14.114494402179563,
+      "max_landing_x": 14.114494402179563,
+      "states_east_of_near_patch": 4695,
+      "states_inside_region": 0,
+      "far_side_reachable": true,
+      "target_identifiable": true,
+      "prop_entryclass_premise_holds": true
+    },
+    "square_k3_7": {
+      "arm": "square_k3_7",
+      "patch_shape": "square",
+      "p1": [
+        3.0,
+        0.0
+      ],
+      "p2": [
+        7.0,
+        0.0
+      ],
+      "near_west_face": 2.0,
+      "near_east_face": 4.0,
+      "n_rollouts": 2000,
+      "horizon": 80,
+      "n_steps": 160000,
+      "n_contacts": 883,
+      "max_position_x": 11.447221350364293,
+      "max_landing_x": 11.447221350364293,
+      "states_east_of_near_patch": 3757,
+      "states_inside_region": 0,
+      "far_side_reachable": true,
+      "target_identifiable": true,
+      "prop_entryclass_premise_holds": true
+    },
+    "slab_k5.5_W0.5": {
+      "arm": "slab_k5.5_W0.5",
+      "patch_shape": "slab",
+      "p1": [
+        5.5,
+        0.0
+      ],
+      "p2": [
+        7.0,
+        0.0
+      ],
+      "near_west_face": 5.0,
+      "near_east_face": 6.0,
+      "n_rollouts": 2000,
+      "horizon": 80,
+      "n_steps": 160000,
+      "n_contacts": 559,
+      "max_position_x": 4.9999181886435675,
+      "max_landing_x": 5.244971031211357,
+      "states_east_of_near_patch": 0,
+      "states_inside_region": 0,
+      "far_side_reachable": false,
+      "target_identifiable": false,
+      "prop_entryclass_premise_holds": true
+    }
+  },
+  "reading": "disc and square: the far side is witnessed, so the membership rule is identified and the campaigns' 0/156 is a genuine induction failure. slab: the region is unbounded in y, cannot be circumvented, and nothing east of it is reachable, so its rule is identified only up to prop:entryclass's equivalence class and the slab campaign does NOT isolate trigger arity."
+}

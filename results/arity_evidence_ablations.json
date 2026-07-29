@@ -1,0 +1,3179 @@
+{
+  "script": "arity_evidence_ablations.py",
+  "review_point": 4,
+  "repair_criteria": {
+    "gate_and_probe": "gate_accuracy == 1.0 and every per-mode blindness == 0.0 (the paper's 1D definition)",
+    "behavioural": "IoU of the freeze set against the truth's > 0.9 on the audit probe grid (shape-independent; oracle-tested)"
+  },
+  "campaigns": {
+    "slab": {
+      "label": "trigger arity: a one-coordinate predicate in the same 4D plant",
+      "comparator": "disc",
+      "holds_fixed": [
+        "plant",
+        "action parametrization",
+        "lodes",
+        "evidence side",
+        "prompt",
+        "budget",
+        "rarity (matched by moving the mode)"
+      ],
+      "varies": [
+        "predicate arity (2 landing coordinates -> 1)",
+        "mode count (2 -> 1, unavoidably: a slab screens what is behind it)"
+      ],
+      "per_size": {
+        "mini": {
+          "file": "continuous_synthesis_patch2dslab_mini_k5.5_7.json",
+          "model": "gpt-5.4-mini",
+          "n_full": 20,
+          "n_incomplete": 20,
+          "full_gate_passed": 20,
+          "full_zero_iterations": 20,
+          "full_mode_encoded": 20,
+          "n_mode_containing": 20,
+          "k_repaired_gate_and_probe": 0,
+          "k_repaired_behavioural": 0,
+          "best_iou": 0.2174
+        },
+        "large": {
+          "file": "continuous_synthesis_patch2dslab_large_k5.5_7.json",
+          "model": "gpt-5.4",
+          "n_full": 20,
+          "n_incomplete": 20,
+          "full_gate_passed": 20,
+          "full_zero_iterations": 20,
+          "full_mode_encoded": 20,
+          "n_mode_containing": 20,
+          "k_repaired_gate_and_probe": 19,
+          "k_repaired_behavioural": 0,
+          "best_iou": 0.2174
+        }
+      },
+      "artifacts": [
+        {
+          "size": "mini",
+          "seed": 10000,
+          "block": 1,
+          "gate_accuracy": 0.993125,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 314,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 20000,
+          "block": 2,
+          "gate_accuracy": 0.9984375,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 30000,
+          "block": 3,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.1,
+          "missed_frac": 0.9,
+          "excess_cells": 0,
+          "cover_p1": 0.167,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 40000,
+          "block": 4,
+          "gate_accuracy": 0.0165625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.1235,
+          "missed_frac": 0.0,
+          "excess_cells": 5751,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 50000,
+          "block": 5,
+          "gate_accuracy": 0.9871875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 314,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 60000,
+          "block": 6,
+          "gate_accuracy": 0.994375,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 314,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 70000,
+          "block": 7,
+          "gate_accuracy": 0.9953125,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 80000,
+          "block": 8,
+          "gate_accuracy": 0.9975,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 90000,
+          "block": 9,
+          "gate_accuracy": 0.99875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0012,
+          "missed_frac": 0.9988,
+          "excess_cells": 0,
+          "cover_p1": 0.002,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 100000,
+          "block": 10,
+          "gate_accuracy": 0.980625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0909,
+          "missed_frac": 0.9,
+          "excess_cells": 81,
+          "cover_p1": 0.167,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 110000,
+          "block": 11,
+          "gate_accuracy": 0.5678125,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.2072,
+          "missed_frac": 0.4123,
+          "excess_cells": 1487,
+          "cover_p1": 0.611,
+          "cover_p2": 0.563,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 120000,
+          "block": 12,
+          "gate_accuracy": 0.9971875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 130000,
+          "block": 13,
+          "gate_accuracy": 0.9809375,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.1,
+          "missed_frac": 0.9,
+          "excess_cells": 0,
+          "cover_p1": 0.167,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 140000,
+          "block": 14,
+          "gate_accuracy": 0.984375,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 314,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 150000,
+          "block": 15,
+          "gate_accuracy": 0.99125,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0049,
+          "missed_frac": 0.9951,
+          "excess_cells": 1,
+          "cover_p1": 0.008,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 160000,
+          "block": 16,
+          "gate_accuracy": 0.9775,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 317,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 170000,
+          "block": 17,
+          "gate_accuracy": 0.996875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 180000,
+          "block": 18,
+          "gate_accuracy": 0.986875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 190000,
+          "block": 19,
+          "gate_accuracy": 0.9940625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 200000,
+          "block": 20,
+          "gate_accuracy": 0.9996875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 10000,
+          "block": 1,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 20000,
+          "block": 2,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 30000,
+          "block": 3,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 40000,
+          "block": 4,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 50000,
+          "block": 5,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 60000,
+          "block": 6,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 3,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 70000,
+          "block": 7,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 80000,
+          "block": 8,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 90000,
+          "block": 9,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 100000,
+          "block": 10,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 110000,
+          "block": 11,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 120000,
+          "block": 12,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 130000,
+          "block": 13,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 140000,
+          "block": 14,
+          "gate_accuracy": 0.9728125,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "square-form",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 58,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 150000,
+          "block": 15,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 160000,
+          "block": 16,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 170000,
+          "block": 17,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 180000,
+          "block": 18,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 3,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 190000,
+          "block": 19,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 200000,
+          "block": 20,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 1,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.2174,
+          "missed_frac": 0.0,
+          "excess_cells": 2916,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": true,
+          "repaired_behavioural": false
+        }
+      ],
+      "env": {
+        "patch_shape": "slab",
+        "p1": [
+          5.5,
+          0.0
+        ],
+        "p2": [
+          7.0,
+          0.0
+        ],
+        "R": 1.0,
+        "slab_half_width": 0.5
+      },
+      "params": {
+        "k1": 5.5,
+        "k2": 7.0,
+        "patch_shape": "slab",
+        "prompt_variant": "default",
+        "max_iters": 5,
+        "n_rollouts": 40,
+        "eps": 1e-09,
+        "seed_offset": 0
+      },
+      "pooled": {
+        "n_draws": 40,
+        "n_distinct_blocks": 20,
+        "k_repaired_gate_and_probe": 19,
+        "k_repaired_behavioural": 0,
+        "k_blocks_with_any_behavioural_repair": 0,
+        "block_level_cp95_upper": 0.13910834066826516,
+        "unit_note": "these campaigns reuse the disc campaign's gate-sample blocks (the rollout stream depends on the seed index alone), so they add TREATMENTS, not samples; the block-level bound is the one to quote",
+        "best_iou": 0.2174,
+        "class_counts": {
+          "disc-form": 5,
+          "blind": 7,
+          "halfplane": 25,
+          "point": 2,
+          "square-form": 1
+        }
+      }
+    },
+    "landing": {
+      "label": "variable identification: the trigger's argument named, shape not",
+      "comparator": "region",
+      "holds_fixed": [
+        "instrument",
+        "knob",
+        "examples",
+        "failure lines",
+        "iteration budget",
+        "samples"
+      ],
+      "varies": [
+        "one sentence naming the landing state as the trigger's argument"
+      ],
+      "per_size": {
+        "mini": {
+          "file": "continuous_synthesis_patch2d_mini_k3_7_pv-landing_it15.json",
+          "model": "gpt-5.4-mini",
+          "n_full": 0,
+          "n_incomplete": 20,
+          "full_gate_passed": 0,
+          "full_zero_iterations": 0,
+          "full_mode_encoded": 0,
+          "n_mode_containing": 20,
+          "k_repaired_gate_and_probe": 0,
+          "k_repaired_behavioural": 0,
+          "best_iou": 0.1471
+        },
+        "large": {
+          "file": "continuous_synthesis_patch2d_large_k3_7_pv-landing_it15.json",
+          "model": "gpt-5.4",
+          "n_full": 0,
+          "n_incomplete": 2,
+          "full_gate_passed": 0,
+          "full_zero_iterations": 0,
+          "full_mode_encoded": 0,
+          "n_mode_containing": 2,
+          "k_repaired_gate_and_probe": 0,
+          "k_repaired_behavioural": 0,
+          "best_iou": 0.0321
+        }
+      },
+      "artifacts": [
+        {
+          "size": "mini",
+          "seed": 10000,
+          "block": 1,
+          "gate_accuracy": 0.95625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "bounded-other",
+          "iou_truth": 0.0174,
+          "missed_frac": 0.9808,
+          "excess_cells": 16,
+          "cover_p1": 0.038,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 20000,
+          "block": 2,
+          "gate_accuracy": 0.993125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0064,
+          "missed_frac": 0.9936,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 30000,
+          "block": 3,
+          "gate_accuracy": 0.9965625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 40000,
+          "block": 4,
+          "gate_accuracy": 0.9903125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "vdep",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 50000,
+          "block": 5,
+          "gate_accuracy": 0.9940625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 60000,
+          "block": 6,
+          "gate_accuracy": 0.986875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 70000,
+          "block": 7,
+          "gate_accuracy": 0.9903125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0064,
+          "missed_frac": 0.9936,
+          "excess_cells": 1,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 80000,
+          "block": 8,
+          "gate_accuracy": 0.9890625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0063,
+          "missed_frac": 0.9936,
+          "excess_cells": 3,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 90000,
+          "block": 9,
+          "gate_accuracy": 0.980625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "square-form",
+          "iou_truth": 0.0542,
+          "missed_frac": 0.9423,
+          "excess_cells": 10,
+          "cover_p1": 0.101,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 100000,
+          "block": 10,
+          "gate_accuracy": 0.9875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 1,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 110000,
+          "block": 11,
+          "gate_accuracy": 0.9734375,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "point",
+          "iou_truth": 0.0309,
+          "missed_frac": 0.9679,
+          "excess_cells": 6,
+          "cover_p1": 0.051,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 120000,
+          "block": 12,
+          "gate_accuracy": 0.955,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "point",
+          "iou_truth": 0.0175,
+          "missed_frac": 0.9808,
+          "excess_cells": 15,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 130000,
+          "block": 13,
+          "gate_accuracy": 0.973125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "disc-form",
+          "iou_truth": 0.0599,
+          "missed_frac": 0.9359,
+          "excess_cells": 11,
+          "cover_p1": 0.114,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 140000,
+          "block": 14,
+          "gate_accuracy": 0.9921875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 150000,
+          "block": 15,
+          "gate_accuracy": 0.9915625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0123,
+          "missed_frac": 0.9872,
+          "excess_cells": 6,
+          "cover_p1": 0.025,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 160000,
+          "block": 16,
+          "gate_accuracy": 0.9878125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "square-form",
+          "iou_truth": 0.0539,
+          "missed_frac": 0.9423,
+          "excess_cells": 11,
+          "cover_p1": 0.127,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 170000,
+          "block": 17,
+          "gate_accuracy": 0.978125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.037,
+          "missed_frac": 0.9615,
+          "excess_cells": 6,
+          "cover_p1": 0.076,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 180000,
+          "block": 18,
+          "gate_accuracy": 0.92375,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.1471,
+          "missed_frac": 0.8077,
+          "excess_cells": 48,
+          "cover_p1": 0.38,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 190000,
+          "block": 19,
+          "gate_accuracy": 0.990625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 200000,
+          "block": 20,
+          "gate_accuracy": 0.9771875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "bounded-other",
+          "iou_truth": 0.0485,
+          "missed_frac": 0.9487,
+          "excess_cells": 9,
+          "cover_p1": 0.089,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 10000,
+          "block": 1,
+          "gate_accuracy": 0.995,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0321,
+          "missed_frac": 0.9679,
+          "excess_cells": 0,
+          "cover_p1": 0.063,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 20000,
+          "block": 2,
+          "gate_accuracy": 1.0,
+          "refine_iterations": 6,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0128,
+          "missed_frac": 0.9872,
+          "excess_cells": 0,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        }
+      ],
+      "env": {
+        "patch_shape": "disc",
+        "p1": [
+          3.0,
+          0.0
+        ],
+        "p2": [
+          7.0,
+          0.0
+        ],
+        "R": 1.0,
+        "slab_half_width": 0.5
+      },
+      "params": {
+        "k1": 3.0,
+        "k2": 7.0,
+        "patch_shape": "disc",
+        "prompt_variant": "landing",
+        "max_iters": 15,
+        "n_rollouts": 40,
+        "eps": 1e-09,
+        "seed_offset": 0
+      },
+      "pooled": {
+        "n_draws": 22,
+        "n_distinct_blocks": 20,
+        "k_repaired_gate_and_probe": 0,
+        "k_repaired_behavioural": 0,
+        "k_blocks_with_any_behavioural_repair": 0,
+        "block_level_cp95_upper": 0.13910834066826516,
+        "unit_note": "these campaigns reuse the disc campaign's gate-sample blocks (the rollout stream depends on the seed index alone), so they add TREATMENTS, not samples; the block-level bound is the one to quote",
+        "best_iou": 0.1471,
+        "class_counts": {
+          "bounded-other": 2,
+          "point": 10,
+          "blind-textual-patch": 5,
+          "vdep": 1,
+          "square-form": 2,
+          "disc-form": 2
+        }
+      }
+    },
+    "disc": {
+      "label": "baseline: the disc at k = (3,7), default prompt",
+      "comparator": null,
+      "holds_fixed": [],
+      "varies": [],
+      "per_size": {
+        "mini": {
+          "file": "continuous_synthesis_patch2d_mini_k3_7.json",
+          "model": "gpt-5.4-mini",
+          "n_full": 20,
+          "n_incomplete": 20,
+          "full_gate_passed": 20,
+          "full_zero_iterations": 20,
+          "full_mode_encoded": 20,
+          "n_mode_containing": 20,
+          "k_repaired_gate_and_probe": 0,
+          "k_repaired_behavioural": 0,
+          "best_iou": 0.498
+        },
+        "large": {
+          "file": "continuous_synthesis_patch2d_large_k3_7.json",
+          "model": "gpt-5.4",
+          "n_full": 20,
+          "n_incomplete": 20,
+          "full_gate_passed": 20,
+          "full_zero_iterations": 20,
+          "full_mode_encoded": 20,
+          "n_mode_containing": 20,
+          "k_repaired_gate_and_probe": 0,
+          "k_repaired_behavioural": 0,
+          "best_iou": 0.312
+        }
+      },
+      "artifacts": [
+        {
+          "size": "mini",
+          "seed": 10000,
+          "block": 1,
+          "gate_accuracy": 0.105,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0211,
+          "missed_frac": 0.3397,
+          "excess_cells": 4734,
+          "cover_p1": 0.329,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 20000,
+          "block": 2,
+          "gate_accuracy": 0.99625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 30000,
+          "block": 3,
+          "gate_accuracy": 0.996875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "point",
+          "iou_truth": 0.0064,
+          "missed_frac": 0.9936,
+          "excess_cells": 0,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 40000,
+          "block": 4,
+          "gate_accuracy": 0.864375,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0316,
+          "missed_frac": 0.0,
+          "excess_cells": 4785,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 50000,
+          "block": 5,
+          "gate_accuracy": 0.16625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "bounded-other",
+          "iou_truth": 0.0499,
+          "missed_frac": 0.5,
+          "excess_cells": 1408,
+          "cover_p1": 1.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 60000,
+          "block": 6,
+          "gate_accuracy": 0.475625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 314,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 70000,
+          "block": 7,
+          "gate_accuracy": 0.9934375,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 80000,
+          "block": 8,
+          "gate_accuracy": 0.9978125,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 90000,
+          "block": 9,
+          "gate_accuracy": 0.9946875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 100000,
+          "block": 10,
+          "gate_accuracy": 0.9971875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 110000,
+          "block": 11,
+          "gate_accuracy": 0.9321875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "disc-form",
+          "iou_truth": 0.1471,
+          "missed_frac": 0.8077,
+          "excess_cells": 48,
+          "cover_p1": 0.38,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 120000,
+          "block": 12,
+          "gate_accuracy": 0.8575,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "square-form",
+          "iou_truth": 0.498,
+          "missed_frac": 0.1923,
+          "excess_cells": 97,
+          "cover_p1": 0.975,
+          "cover_p2": 0.64,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 130000,
+          "block": 13,
+          "gate_accuracy": 0.99125,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 317,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 140000,
+          "block": 14,
+          "gate_accuracy": 0.9834375,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 314,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 150000,
+          "block": 15,
+          "gate_accuracy": 0.8790625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.031,
+          "missed_frac": 0.609,
+          "excess_cells": 1813,
+          "cover_p1": 0.759,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 160000,
+          "block": 16,
+          "gate_accuracy": 0.9978125,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 170000,
+          "block": 17,
+          "gate_accuracy": 0.9575,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 314,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 180000,
+          "block": 18,
+          "gate_accuracy": 0.496875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 810,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": false,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 190000,
+          "block": 19,
+          "gate_accuracy": 0.03125,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0238,
+          "missed_frac": 0.0,
+          "excess_cells": 6405,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 200000,
+          "block": 20,
+          "gate_accuracy": 0.9415625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0127,
+          "missed_frac": 0.8654,
+          "excess_cells": 1495,
+          "cover_p1": 0.266,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 10000,
+          "block": 1,
+          "gate_accuracy": 0.9296875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0316,
+          "missed_frac": 0.0,
+          "excess_cells": 4785,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 20000,
+          "block": 2,
+          "gate_accuracy": 0.940625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0316,
+          "missed_frac": 0.0,
+          "excess_cells": 4785,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 30000,
+          "block": 3,
+          "gate_accuracy": 0.0034375,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0238,
+          "missed_frac": 0.0,
+          "excess_cells": 6405,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 40000,
+          "block": 4,
+          "gate_accuracy": 0.995,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 50000,
+          "block": 5,
+          "gate_accuracy": 0.448125,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0275,
+          "missed_frac": 0.0,
+          "excess_cells": 5514,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 60000,
+          "block": 6,
+          "gate_accuracy": 0.9021875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0316,
+          "missed_frac": 0.0,
+          "excess_cells": 4785,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 70000,
+          "block": 7,
+          "gate_accuracy": 0.99,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 80000,
+          "block": 8,
+          "gate_accuracy": 0.56875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0275,
+          "missed_frac": 0.0,
+          "excess_cells": 5514,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 90000,
+          "block": 9,
+          "gate_accuracy": 0.9696875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0316,
+          "missed_frac": 0.0,
+          "excess_cells": 4785,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 100000,
+          "block": 10,
+          "gate_accuracy": 0.9190625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0316,
+          "missed_frac": 0.0,
+          "excess_cells": 4785,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 110000,
+          "block": 11,
+          "gate_accuracy": 0.88625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0316,
+          "missed_frac": 0.0,
+          "excess_cells": 4785,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 120000,
+          "block": 12,
+          "gate_accuracy": 0.496875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "square-form",
+          "iou_truth": 0.312,
+          "missed_frac": 0.0,
+          "excess_cells": 344,
+          "cover_p1": 0.987,
+          "cover_p2": 0.973,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 130000,
+          "block": 13,
+          "gate_accuracy": 0.99125,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "disc-form",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 314,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 140000,
+          "block": 14,
+          "gate_accuracy": 0.8221875,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0316,
+          "missed_frac": 0.0,
+          "excess_cells": 4785,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 150000,
+          "block": 15,
+          "gate_accuracy": 0.8525,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0316,
+          "missed_frac": 0.0,
+          "excess_cells": 4785,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 160000,
+          "block": 16,
+          "gate_accuracy": 0.9084375,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0317,
+          "missed_frac": 0.0128,
+          "excess_cells": 4706,
+          "cover_p1": 0.987,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 170000,
+          "block": 17,
+          "gate_accuracy": 0.9615625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.2629,
+          "missed_frac": 0.7051,
+          "excess_cells": 19,
+          "cover_p1": 0.582,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 180000,
+          "block": 18,
+          "gate_accuracy": 0.8540625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0316,
+          "missed_frac": 0.0,
+          "excess_cells": 4785,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 190000,
+          "block": 19,
+          "gate_accuracy": 0.8415625,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0316,
+          "missed_frac": 0.0,
+          "excess_cells": 4785,
+          "cover_p1": 1.0,
+          "cover_p2": 1.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 200000,
+          "block": 20,
+          "gate_accuracy": 0.9925,
+          "refine_iterations": 5,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        }
+      ],
+      "env": {
+        "patch_shape": "disc",
+        "p1": [
+          3.0,
+          0.0
+        ],
+        "p2": [
+          7.0,
+          0.0
+        ],
+        "R": 1.0,
+        "slab_half_width": 0.5
+      },
+      "params": {
+        "k1": 3.0,
+        "k2": 7.0,
+        "patch_shape": null,
+        "prompt_variant": null,
+        "max_iters": 5,
+        "n_rollouts": 40,
+        "eps": 1e-09,
+        "seed_offset": null
+      },
+      "pooled": {
+        "n_draws": 40,
+        "n_distinct_blocks": 20,
+        "k_repaired_gate_and_probe": 0,
+        "k_repaired_behavioural": 0,
+        "k_blocks_with_any_behavioural_repair": 0,
+        "block_level_cp95_upper": 0.13910834066826516,
+        "unit_note": "these campaigns reuse the disc campaign's gate-sample blocks (the rollout stream depends on the seed index alone), so they add TREATMENTS, not samples; the block-level bound is the one to quote",
+        "best_iou": 0.498,
+        "class_counts": {
+          "halfplane": 21,
+          "blind": 5,
+          "point": 1,
+          "bounded-other": 1,
+          "disc-form": 6,
+          "blind-textual-patch": 4,
+          "square-form": 2
+        }
+      }
+    },
+    "region": {
+      "label": "baseline: the disc with region guidance at 3x budget",
+      "comparator": null,
+      "holds_fixed": [],
+      "varies": [],
+      "per_size": {
+        "mini": {
+          "file": "continuous_synthesis_patch2d_mini_k3_7_pv-region_it15.json",
+          "model": "gpt-5.4-mini",
+          "n_full": 0,
+          "n_incomplete": 20,
+          "full_gate_passed": 0,
+          "full_zero_iterations": 0,
+          "full_mode_encoded": 0,
+          "n_mode_containing": 20,
+          "k_repaired_gate_and_probe": 0,
+          "k_repaired_behavioural": 0,
+          "best_iou": 0.2635
+        },
+        "large": {
+          "file": "continuous_synthesis_patch2d_large_k3_7_pv-region_it15.json",
+          "model": "gpt-5.4",
+          "n_full": 0,
+          "n_incomplete": 20,
+          "full_gate_passed": 0,
+          "full_zero_iterations": 0,
+          "full_mode_encoded": 0,
+          "n_mode_containing": 20,
+          "k_repaired_gate_and_probe": 0,
+          "k_repaired_behavioural": 0,
+          "best_iou": 0.2857
+        }
+      },
+      "artifacts": [
+        {
+          "size": "mini",
+          "seed": 10000,
+          "block": 1,
+          "gate_accuracy": 0.9934375,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 20000,
+          "block": 2,
+          "gate_accuracy": 0.99625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 30000,
+          "block": 3,
+          "gate_accuracy": 0.961875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "bounded-other",
+          "iou_truth": 0.1105,
+          "missed_frac": 0.8718,
+          "excess_cells": 25,
+          "cover_p1": 0.241,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 40000,
+          "block": 4,
+          "gate_accuracy": 0.984375,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0126,
+          "missed_frac": 0.9872,
+          "excess_cells": 3,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 50000,
+          "block": 5,
+          "gate_accuracy": 0.9571875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "square-form",
+          "iou_truth": 0.0282,
+          "missed_frac": 0.9679,
+          "excess_cells": 21,
+          "cover_p1": 0.063,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 60000,
+          "block": 6,
+          "gate_accuracy": 0.9609375,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "bounded-other",
+          "iou_truth": 0.08,
+          "missed_frac": 0.9103,
+          "excess_cells": 19,
+          "cover_p1": 0.165,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 70000,
+          "block": 7,
+          "gate_accuracy": 0.9775,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "bounded-other",
+          "iou_truth": 0.0526,
+          "missed_frac": 0.9423,
+          "excess_cells": 15,
+          "cover_p1": 0.101,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 80000,
+          "block": 8,
+          "gate_accuracy": 0.9978125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 90000,
+          "block": 9,
+          "gate_accuracy": 0.9809375,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0245,
+          "missed_frac": 0.9744,
+          "excess_cells": 7,
+          "cover_p1": 0.038,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 100000,
+          "block": 10,
+          "gate_accuracy": 0.9746875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0184,
+          "missed_frac": 0.9808,
+          "excess_cells": 7,
+          "cover_p1": 0.051,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 110000,
+          "block": 11,
+          "gate_accuracy": 0.9953125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 120000,
+          "block": 12,
+          "gate_accuracy": 0.98125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 130000,
+          "block": 13,
+          "gate_accuracy": 0.98625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "point",
+          "iou_truth": 0.0248,
+          "missed_frac": 0.9744,
+          "excess_cells": 5,
+          "cover_p1": 0.013,
+          "cover_p2": 0.027,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 140000,
+          "block": 14,
+          "gate_accuracy": 0.9821875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "square-form",
+          "iou_truth": 0.1341,
+          "missed_frac": 0.859,
+          "excess_cells": 8,
+          "cover_p1": 0.253,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 150000,
+          "block": 15,
+          "gate_accuracy": 0.99125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0189,
+          "missed_frac": 0.9808,
+          "excess_cells": 3,
+          "cover_p1": 0.038,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 160000,
+          "block": 16,
+          "gate_accuracy": 0.99125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0375,
+          "missed_frac": 0.9615,
+          "excess_cells": 4,
+          "cover_p1": 0.089,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 170000,
+          "block": 17,
+          "gate_accuracy": 0.98375,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0187,
+          "missed_frac": 0.9808,
+          "excess_cells": 4,
+          "cover_p1": 0.038,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 180000,
+          "block": 18,
+          "gate_accuracy": 0.9684375,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "square-form",
+          "iou_truth": 0.0286,
+          "missed_frac": 0.9679,
+          "excess_cells": 19,
+          "cover_p1": 0.076,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 190000,
+          "block": 19,
+          "gate_accuracy": 0.9490625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "bounded-other",
+          "iou_truth": 0.2635,
+          "missed_frac": 0.7179,
+          "excess_cells": 11,
+          "cover_p1": 0.557,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "mini",
+          "seed": 200000,
+          "block": 20,
+          "gate_accuracy": 0.9753125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0063,
+          "missed_frac": 0.9936,
+          "excess_cells": 4,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 10000,
+          "block": 1,
+          "gate_accuracy": 0.9915625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "bounded-other",
+          "iou_truth": 0.0892,
+          "missed_frac": 0.9103,
+          "excess_cells": 1,
+          "cover_p1": 0.19,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 20000,
+          "block": 2,
+          "gate_accuracy": 0.9953125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0064,
+          "missed_frac": 0.9936,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 30000,
+          "block": 3,
+          "gate_accuracy": 0.9875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "square-form",
+          "iou_truth": 0.2857,
+          "missed_frac": 0.5385,
+          "excess_cells": 96,
+          "cover_p1": 0.911,
+          "cover_p2": 0.013,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 40000,
+          "block": 4,
+          "gate_accuracy": 0.98875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.044,
+          "missed_frac": 0.9551,
+          "excess_cells": 3,
+          "cover_p1": 0.076,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 50000,
+          "block": 5,
+          "gate_accuracy": 0.518125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "halfplane",
+          "iou_truth": 0.0229,
+          "missed_frac": 0.5128,
+          "excess_cells": 3165,
+          "cover_p1": 0.443,
+          "cover_p2": 0.44,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 60000,
+          "block": 6,
+          "gate_accuracy": 0.9934375,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 70000,
+          "block": 7,
+          "gate_accuracy": 0.9921875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0191,
+          "missed_frac": 0.9808,
+          "excess_cells": 1,
+          "cover_p1": 0.025,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 80000,
+          "block": 8,
+          "gate_accuracy": 0.998125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 90000,
+          "block": 9,
+          "gate_accuracy": 0.9965625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 100000,
+          "block": 10,
+          "gate_accuracy": 0.944375,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.1576,
+          "missed_frac": 0.7949,
+          "excess_cells": 47,
+          "cover_p1": 0.405,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 110000,
+          "block": 11,
+          "gate_accuracy": 0.9740625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "point",
+          "iou_truth": 0.0482,
+          "missed_frac": 0.9487,
+          "excess_cells": 10,
+          "cover_p1": 0.101,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 120000,
+          "block": 12,
+          "gate_accuracy": 0.98625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 130000,
+          "block": 13,
+          "gate_accuracy": 0.9409375,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": true
+          },
+          "class": "bounded-other",
+          "iou_truth": 0.1914,
+          "missed_frac": 0.7436,
+          "excess_cells": 53,
+          "cover_p1": 0.43,
+          "cover_p2": 0.053,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 140000,
+          "block": 14,
+          "gate_accuracy": 0.9875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0063,
+          "missed_frac": 0.9936,
+          "excess_cells": 4,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 150000,
+          "block": 15,
+          "gate_accuracy": 0.9875,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "square-form",
+          "iou_truth": 0.0688,
+          "missed_frac": 0.9295,
+          "excess_cells": 4,
+          "cover_p1": 0.127,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 160000,
+          "block": 16,
+          "gate_accuracy": 0.9825,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "disc-form",
+          "iou_truth": 0.0599,
+          "missed_frac": 0.9359,
+          "excess_cells": 11,
+          "cover_p1": 0.114,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 170000,
+          "block": 17,
+          "gate_accuracy": 0.9953125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 180000,
+          "block": 18,
+          "gate_accuracy": 0.9928125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 2,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 190000,
+          "block": 19,
+          "gate_accuracy": 0.9815625,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "point",
+          "iou_truth": 0.0126,
+          "missed_frac": 0.9872,
+          "excess_cells": 3,
+          "cover_p1": 0.013,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        },
+        {
+          "size": "large",
+          "seed": 200000,
+          "block": 20,
+          "gate_accuracy": 0.99125,
+          "refine_iterations": 15,
+          "modes_in_sample": {
+            "patch1": true,
+            "patch2": false
+          },
+          "class": "blind-textual-patch",
+          "iou_truth": 0.0,
+          "missed_frac": 1.0,
+          "excess_cells": 0,
+          "cover_p1": 0.0,
+          "cover_p2": 0.0,
+          "integrator_exact": true,
+          "repaired_gate_and_probe": false,
+          "repaired_behavioural": false
+        }
+      ],
+      "env": {
+        "patch_shape": "disc",
+        "p1": [
+          3.0,
+          0.0
+        ],
+        "p2": [
+          7.0,
+          0.0
+        ],
+        "R": 1.0,
+        "slab_half_width": 0.5
+      },
+      "params": {
+        "k1": 3.0,
+        "k2": 7.0,
+        "patch_shape": "disc",
+        "prompt_variant": "region",
+        "max_iters": 15,
+        "n_rollouts": 40,
+        "eps": 1e-09,
+        "seed_offset": null
+      },
+      "pooled": {
+        "n_draws": 40,
+        "n_distinct_blocks": 20,
+        "k_repaired_gate_and_probe": 0,
+        "k_repaired_behavioural": 0,
+        "k_blocks_with_any_behavioural_repair": 0,
+        "block_level_cp95_upper": 0.13910834066826516,
+        "unit_note": "these campaigns reuse the disc campaign's gate-sample blocks (the rollout stream depends on the seed index alone), so they add TREATMENTS, not samples; the block-level bound is the one to quote",
+        "best_iou": 0.2857,
+        "class_counts": {
+          "blind": 4,
+          "blind-textual-patch": 7,
+          "bounded-other": 6,
+          "point": 15,
+          "square-form": 5,
+          "halfplane": 1,
+          "disc-form": 2
+        }
+      }
+    }
+  }
+}

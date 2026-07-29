@@ -587,3 +587,63 @@ that the pinning's *initiation* is measured after an attempt that got only part 
 the way.
 
 Cross-references: no broken refs, no duplicate labels.
+
+---
+
+# 2026-07-29 — the external review's weakenings, and what was earned back
+
+Written after the 26-point external review. The rule Javier set is that a precision which
+costs strength gets recorded, so the strong version can be attempted rather than silently
+abandoned. This round the attempt succeeded more often than not.
+
+## Earned back (the strong version now holds)
+
+1. **"Verification" → an independent gate, at no cost in danger.** The review's fatal
+   objection was that the acceptance sample was the training sample. Rather than rename the
+   gate and reduce the claims, all 625 versioned artifacts were re-scored on independent
+   acceptance and evaluation blocks — free, because every artifact is committed with its
+   source. The result is *stronger* than the original claim: 36 of 463 accepted artifacts
+   fail an independent gate, and Proposition `prop:twofactor` shows the two exponents add,
+   so an independent gate costs nothing at fixed total budget. Both of its hypotheses are
+   measured (30/30 and 60/60 exact) rather than assumed.
+2. **ε-flatness: generalized, not scoped down.** The review asked for the proposition to be
+   restricted to the system its proof covered. Instead it now covers the whole semi-implicit
+   family with additive `gain·a` and a clamp on the integrated coordinate, so the cart *and*
+   the pendulum are theorems and the measured exponents became confirmations.
+3. **The Lipschitz claim → a localization budget.** "Smooth learners cannot localize" was
+   false as stated (our own compactly supported bump falsifies it). The replacement is
+   quantitative rather than merely hedged: `vol(E_ε) ≥ ((η-ε)/L)^(d+m)`, i.e. localization
+   is purchased, not forbidden.
+4. **A new obstruction, found by running the ablation.** Proposition `prop:entryclass`: the
+   freeze semantics guarantee that every state a rollout visits lies outside the mode
+   region, so a predicate agreeing with membership on the reachable set is exactly equal to
+   the truth on *every* sample — unfalsifiable at any N and any tolerance, and provably
+   harmless because the same argument gives `q_hit(E) = 0`. A synthesized artifact in that
+   class was found in the slab campaign and verified on three disjoint blocks. This is
+   stronger than anything the review asked for, and it is also an honest limit on the
+   independent gate of item 1.
+
+## Weakened, with the route to the strong version recorded
+
+5. **"Below random at every knob."** At 100 paired episodes the blind planner beats the
+   random policy in 86 of 100 cart seeds; the positive mean is carried by a heavy-tailed
+   baseline. *Route to the strong version:* the sharp-phantom-plateau variant already gives
+   6/6 and 7/7 knobs below random with a surviving random baseline — promote that variant to
+   the default instrument and re-run the four mechanism tables. Cost: four CPU sweeps and
+   every number in those tables changes. Not done, because `play_cost ≈ 1` and the raw
+   regret carry the content and the comparison against random was rhetorical.
+6. **`q_hit = 0` on the two zero-crossing CEM rows.** Refuted at `x_wall = 8` by 200×
+   resampling (18 crossings in 1.28M). *Route:* at `x_wall = 10` the zero survives, so an
+   exhaustive-geometry argument that CEM's candidate set cannot reach the wall at that knob
+   would convert the censored zero into a theorem. Cost: a reachability argument over the
+   CEM proposal distribution. Not attempted.
+7. **The template prior as a mechanism.** Now stated as consistent-with. *Route:* the two
+   ablations run on 2026-07-29 (trigger arity, and the landing variable) exclude two of the
+   candidate causes; what remains is the evidence structure, and Proposition
+   `prop:entryclass` is the beginning of a proof that the structure — not the synthesizer —
+   is the obstruction. The next experiment is an instrument whose mode does *not* freeze
+   (so the interior is witnessed), which would test the proposition's premise directly.
+8. **The cart's 109/111 lower bound.** 0.851 was invalid at block level (20/22 blocks all-
+   repair); the honest figure is 0.708, or 0.772 for the weaker estimand. *Route:* fresh
+   seed blocks via `--seed-offset` on the cart's `x_wall = 4` cell, where both exceptions
+   live. Cost: one small Azure run.

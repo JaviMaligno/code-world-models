@@ -374,12 +374,21 @@ def test_1d_repair_counts_reproduce_the_paper_and_then_correct_the_unit(real_dra
     one = [d for d in real_draws
            if d["instrument"] in ("cart", "pendulum") and d["arm"] == "incomplete"
            and d["family"] == "gpt-5.x" and d["mode_present"]]
-    assert (sum(1 for d in one if P.is_repair(d)), len(one)) == (109, 111)
+    # 105, not the 109 the mode-probe criterion reports: four artifacts pass the probe
+    # while carrying an INVENTED second stop, which a probe firing only where the truth's
+    # mode is active cannot see (results/repair_exactness_1d.json). is_repair consults
+    # that audit, so this asserts the corrected count and, below, that the correction is
+    # exactly four.
+    assert (sum(1 for d in one if P.is_repair(d)), len(one)) == (105, 111)
+    probe_only = sum(1 for d in one
+                     if d["gate_passed"] and (d["blindness"] or 0.0) == 0.0
+                     and not P.is_repair(d))
+    assert probe_only == 4, "the probe/behaviour gap must be exactly the audited four"
     # ... over how many blocks?
     assert len({d["block"] for d in one}) == 36
     assert len({(d["instrument"], d["block"]) for d in one}) == 56
     agg = P.pooled_bound(one, P.is_repair, unit="block", scoring="all")
-    assert (agg["k"], agg["n"]) == (34, 36)
+    assert (agg["k"], agg["n"]) == (30, 36)
     with pytest.raises(P.SharedBlockPoolingError):
         P.pooled_bound(one, P.is_repair, unit="draw")
 
@@ -406,11 +415,26 @@ def test_cart_is_not_all_repair_at_block_level(real_draws):
     assert sizes == [1, 3], sizes
 
 
+# The three treatments the paper's 0/156 pools. Named explicitly, because later campaigns
+# (the trigger-arity slab, the landing-variable arm) are FURTHER treatments on the same
+# blocks and must not silently enlarge an aggregate the paper quotes.
+_NEGATIVE_TREATMENTS = ("continuous_synthesis_patch2d_mini_k3_7.json",
+                        "continuous_synthesis_patch2d_large_k3_7.json",
+                        "continuous_synthesis_patch2d_mini_k5_9.json",
+                        "continuous_synthesis_patch2d_large_k5_9.json",
+                        "continuous_synthesis_patch2dsq_mini_k3_7.json",
+                        "continuous_synthesis_patch2dsq_large_k3_7.json",
+                        "continuous_synthesis_patch2d_mini_k3_7_pv-region_it15.json",
+                        "continuous_synthesis_patch2d_large_k3_7_pv-region_it15.json")
+
+
 def test_patch2d_negative_is_156_draws_over_20_blocks(real_draws):
     p2d = [d for d in real_draws if d["instrument"] == "patch2d"
            and d["arm"] == "incomplete" and d["family"] == "gpt-5.x"
-           and d["mode_present"]]
-    assert len(p2d) == 156
+           and d["mode_present"] and d["file"] in _NEGATIVE_TREATMENTS]
+    assert len(p2d) == 156, (
+        "the 0/156 aggregate must stay the disc + square + guided treatments; a new "
+        "campaign on the same blocks is a further treatment, not more of this one")
     assert sum(1 for d in p2d if P.is_repair(d)) == 0
     assert len({d["block"] for d in p2d}) == 20
     b = P.pooled_bound(p2d, P.is_repair, unit="block", scoring="all")
@@ -539,7 +563,21 @@ def test_report_states_its_assumptions(report):
     assert "assumptions" in cr["cluster_bootstrap"]
     pend = (report["headline"]["onedim_repair"]["per_instrument"]["pendulum"]
             ["rao_scott_design_effect"])
-    assert pend["icc"] is None and "zero variance" in pend["reason"]
+    # Before the exactness audit every pendulum draw repaired, so the within-block
+    # variance was exactly zero and the ICC was undefined. Four draws now differ, so the
+    # ICC is defined; assert whichever branch the data supports, and that the report says
+    # which it took.
+    if pend["icc"] is None:
+        assert "zero variance" in pend["reason"]
+    else:
+        # a defined ICC must come with a design effect above 1 (blocks correlate), an
+        # effective n below the draw count, its stated assumptions, and the flag saying
+        # it is a comparator rather than the bound the paper quotes
+        assert 0.0 <= pend["icc"] <= 1.0
+        assert pend["design_effect"] > 1.0
+        assert pend["n_effective"] < pend["n_draws"]
+        assert len(pend["assumptions"]) > 80
+        assert pend["valid_for_paper"] is False
 
 
 def test_committed_json_is_current(report):

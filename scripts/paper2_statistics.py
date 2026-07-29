@@ -555,9 +555,44 @@ def cluster_bootstrap(draws, predicate, n_boot=10000, seed=0,
 # --------------------------------------------------------------------------- #
 # predicates                                                                  #
 # --------------------------------------------------------------------------- #
+# Artifacts whose mode-probe score says "repaired" but whose behaviour says otherwise,
+# keyed by (file, seed) and read from the two exactness audits rather than restated here.
+# The probe fires only where the TRUTH's mode is active, so it cannot see an artifact that
+# INVENTS a mode elsewhere (measured: 4 pendulum artifacts, results/repair_exactness_1d.json)
+# or that OVER-COVERS the true one (measured: 19 of the slab campaign's 20 large-model
+# artifacts are the half-plane at the near face, which scores blindness 0 while freezing
+# 4.6x the true region -- results/arity_evidence_ablations.json).
+# Counting either as a repair would let the paper claim a recovery that did not happen.
+def _probe_false_positives() -> set:
+    out = set()
+    f = R / "repair_exactness_1d.json"
+    if f.exists():
+        for arm in json.loads(f.read_text())["arms"].values():
+            for e in arm["exceptions"]:
+                out.add((pathlib.Path(e["file"]).name, e["seed"]))
+    f = R / "arity_evidence_ablations.json"
+    if f.exists():
+        rep = json.loads(f.read_text())
+        for camp in rep["campaigns"].values():
+            files = {sz: v["file"] for sz, v in camp["per_size"].items()}
+            for a in camp["artifacts"]:
+                if a["repaired_gate_and_probe"] and not a["repaired_behavioural"]:
+                    out.add((files.get(a["size"], ""), a["seed"]))
+    return out
+
+
+_PROBE_FALSE_POSITIVES = _probe_false_positives()
+
+
 def is_repair(d) -> bool:
-    """The artifact was accepted by the gate AND encodes the mode exactly."""
-    return d["gate_passed"] and (d["blindness"] or 0.0) == 0.0
+    """Accepted by the gate AND the mode recovered.
+
+    "Recovered" is the probe score EXCEPT where a behavioural audit has shown the probe
+    to be a false positive for that artifact -- an invented extra mode, or a rule that
+    over-covers the true region. See _probe_false_positives above."""
+    if not (d["gate_passed"] and (d["blindness"] or 0.0) == 0.0):
+        return False
+    return (pathlib.Path(d["file"]).name, d["seed"]) not in _PROBE_FALSE_POSITIVES
 
 
 def is_blind_exploited(d) -> bool:

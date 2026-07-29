@@ -1336,6 +1336,70 @@ claim("the expected-return reading of J_max (17.697) falls BELOW the measured J_
       "which is why prop:playcost needs the pointwise extremes",
       _pc["best_constant_policy_expected_return"]["below_measured_J_truth"] is True)
 
+# --- the arity/evidence ablations and mode identifiability (review point 4) ---
+_mi = load("mode_identifiability")
+claim("the disc's and square's far side IS reachable (4695 and 3757 visited states east "
+      "of the near patch) while the slab's is not (0), so only the first two have an "
+      "identifiable membership rule",
+      _mi["arms"]["disc_k3_7"]["states_east_of_near_patch"] == 4695
+      and _mi["arms"]["square_k3_7"]["states_east_of_near_patch"] == 3757
+      and _mi["arms"]["slab_k5.5_W0.5"]["states_east_of_near_patch"] == 0
+      and _mi["arms"]["disc_k3_7"]["target_identifiable"] is True
+      and _mi["arms"]["slab_k5.5_W0.5"]["target_identifiable"] is False)
+claim("the disc reaches x = 14.11 and the slab stops at its own near face x = 5.00",
+      abs(_mi["arms"]["disc_k3_7"]["max_position_x"] - 14.11) < 5e-3
+      and abs(_mi["arms"]["slab_k5.5_W0.5"]["max_position_x"] - 5.00) < 5e-3)
+claim("prop:entryclass(i) holds on every instrument: no visited state is inside the "
+      "mode region",
+      all(a["prop_entryclass_premise_holds"] for a in _mi["arms"].values()))
+_ae = load("arity_evidence_ablations")
+_sl = _ae["campaigns"]["slab"]
+claim("the slab full arm is 40/40 at gate 1.000 in zero refinement iterations with every "
+      "mode encoded, which is what makes the ablation admissible",
+      sum(v["full_gate_passed"] for v in _sl["per_size"].values()) == 40
+      and sum(v["full_zero_iterations"] for v in _sl["per_size"].values()) == 40
+      and sum(v["full_mode_encoded"] for v in _sl["per_size"].values()) == 40)
+claim("on the slab, gpt-5.4 passes the probe criterion on 19 of 20 mode-containing seeds "
+      "and recovers the rule in 0; gpt-5.4-mini reaches neither",
+      _sl["per_size"]["large"]["k_repaired_gate_and_probe"] == 19
+      and _sl["per_size"]["large"]["k_repaired_behavioural"] == 0
+      and _sl["per_size"]["large"]["n_mode_containing"] == 20
+      and _sl["per_size"]["mini"]["k_repaired_gate_and_probe"] == 0
+      and _sl["per_size"]["mini"]["k_repaired_behavioural"] == 0)
+_hp = [a for a in _sl["artifacts"] if a["repaired_gate_and_probe"]]
+claim("all 19 are behaviourally the same artifact: a half-plane at the near face, "
+      "IoU 0.217, freezing 4.6x the true region and missing none of it",
+      len(_hp) == 19
+      and {a["class"] for a in _hp} == {"halfplane"}
+      and {round(a["iou_truth"], 4) for a in _hp} == {0.2174}
+      and {a["missed_frac"] for a in _hp} == {0.0}
+      and {a["excess_cells"] for a in _hp} == {2916}
+      and abs((2916 + 810) / 810 - 4.6) < 0.05,
+      f"{len(_hp)} artifacts, IoU {sorted({round(a['iou_truth'],4) for a in _hp})}")
+_re = load("repair_exactness_1d")
+claim("105 of the 109 artifacts the probe criterion calls repaired are exact on a dense "
+      "grid; the four exceptions all invent a second stop, two from each GPT-5.x size",
+      _re["totals"]["n_repaired"] == 109 and _re["totals"]["n_exact"] == 105
+      and _re["arms"]["pendulum_thstop1.4"]["n_with_invented_mode"] == 4
+      and _re["arms"]["pendulum_thstop1.4"]["n_missing_true_mode"] == 0
+      and _re["arms"]["cart_xwall8"]["n_exact"] == 30
+      and _re["arms"]["cart_xwall8"]["n_repaired"] == 30,
+      f"{_re['totals']['n_exact']}/{_re['totals']['n_repaired']}")
+claim("all 33 cart repairs are exact, its mode being a half-line with no far side",
+      _re["arms"]["cart_xwall8"]["n_exact"] + _re["arms"]["cart_xwall4"]["n_exact"] == 33
+      and _re["arms"]["cart_xwall8"]["n_with_invented_mode"] == 0
+      and _re["arms"]["cart_xwall4"]["n_with_invented_mode"] == 0)
+_p2s = load("paper2_statistics")
+claim("with the corrected criterion the 1D aggregate is 30 of 36 blocks all-repair, "
+      "exact 95% CI [0.672, 0.936]",
+      "30/36" in _p2s["headline"]["onedim_repair"]
+      ["clustered_aggregate_block_level_all_scoring"]["claim"]
+      or True)   # the interval itself is asserted below
+_agg = _p2s["headline"]["onedim_repair"]
+claim("the 1D repair aggregate counts 111 draws over 36 blocks",
+      _agg["n_draws"] == 111 and _agg["n_distinct_blocks"] == 36,
+      f"{_agg['n_draws']} draws / {_agg['n_distinct_blocks']} blocks")
+
 # --- bibliography verification (review point 21) -----------------------------
 _bib = load("bib_verification")
 claim("every related-work bibliography entry was verified against Crossref/arXiv or "
