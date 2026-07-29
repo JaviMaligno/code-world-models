@@ -336,3 +336,52 @@ def test_t3_one_action_moves_the_endpoint_macroscopically():
     sens = math.hypot(p1[0] - p0[0], p1[1] - p0[1]) / 0.02
     assert sens > 30 * K, (sens, K)          # macroscopic vs the landing scale
     assert sens <= env.gain * math.pi * env.dt ** 2 / (1 - beta) + 1e-9
+
+
+def test_t3_decomposition_factors_are_ring_free():
+    # The non-circular decomposition d = R * (density x channel) * T needs
+    # its first two factors to be properties of the RING-FREE dynamics, i.e.
+    # independent of gamma. Checked bitwise: the ring-free rollout does not
+    # depend on the gap at all.
+    envs = [RingField2D(gap=g, r_in=None) for g in (0.0, 0.6, 2.4)]
+    paths = []
+    for env in envs:
+        rng = random.Random(50_007)
+        s = env.initial_state(rng)
+        seq = []
+        for _ in range(env.h_episode):
+            s, _, c = env.step(s, rng.uniform(-env.a_max, env.a_max))
+            assert not c                       # no ring: never contacts
+            seq.append((s[0], s[1]))
+        paths.append(seq)
+    assert paths[0] == paths[1] == paths[2]
+
+
+def test_t3_throughput_is_conditioned_on_geometry_not_outcome():
+    # The remaining factor T is P(enter | first arrival inside the channel
+    # SECTOR) -- the conditioning event is geometric, so unlike
+    # "P(reach a launch state)" it is not the entry event in disguise:
+    # arrivals in the sector genuinely include non-entering rollouts.
+    env = RingField2D(gap=0.6)
+    cx, cy = env.center
+    arrivals = entries = 0
+    for i in range(4000):
+        rng = random.Random(50_000 + i)
+        s = env.initial_state(rng)
+        in_ch = False
+        for _ in range(env.h_episode):
+            s, _, c = env.step(s, rng.uniform(-env.a_max, env.a_max))
+            if c:
+                break
+            r = math.hypot(s[0] - cx, s[1] - cy)
+            if not in_ch and r <= env.r_out:
+                th = math.atan2(s[1] - cy, s[0] - cx)
+                off = abs((th - math.pi + math.pi) % (2 * math.pi) - math.pi)
+                if off <= env.gap / 2:
+                    in_ch = True
+                    arrivals += 1
+            if env.in_interior(s[0], s[1]):
+                entries += in_ch
+                break
+    assert arrivals > 0
+    assert entries < arrivals          # strictly: some arrivals do NOT enter

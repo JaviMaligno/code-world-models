@@ -2175,16 +2175,55 @@ of endpoint displacement, where a single landing moves only R_L = 0.03.
 That factor of ~190 between the per-step landing scale and the
 per-action endpoint scale is exactly what Prop 8's tube throws away.
 
-*What is measured, not proved.* Lemma J removes the exponential but
-leaves P(prefix event) — the probability that the other h−2 actions bring
-the trajectory to a state from which two free actions can finish. Measured
-directly: over states visited by random rollouts near the ring, there
-exist LAUNCH states whose k-step action window has measure **w = 1.000
-at k = 2** for γ = 0.6 (i.e. every action pair finishes), and w > 0 at
-k = 3 for γ ∈ {0.2, 0.4} — so the launch set is non-empty with Θ(1)
-windows, and the exponential really is an artifact of the tube. Bounding
-P(prefix) below is the remaining step, and it is now a Θ(1)-scale
-geometric question rather than an exponentially small one.
+*"Bound P(prefix)" is CIRCULAR — recorded before acting on it.* Lemma J
+removes the exponential but leaves P(prefix), the probability that the
+other h−2 actions bring the trajectory to a state from which two free
+ones finish. That is not a target: a launch state is DEFINED as one from
+which the remaining actions enter, and entry requires passing through
+one, so P(reach a launch state, freeze-free) = d identically. This is the
+fourth restatement this section has produced (after c = r·κ, d-rise ≥
+f-drop, and f ≤ d(2π) − d(γ)); the pattern is that any decomposition of
+the entry event into "get into position" × "finish" recovers the entry
+event, because position is defined by the finish.
+
+**A decomposition that is NOT circular (2026-07-27).** Break the entry
+event using the RING-FREE dynamics, whose quantities cannot mention entry
+at all:
+  **d(γ) = R · ∫_channel ρ(θ) dθ · T(γ)**
+  R := P(a ring-free rollout ever reaches radius r_out) — γ-INDEPENDENT;
+  ρ := density of the FIRST-ARRIVAL angle at r_out, ring-free —
+       γ-INDEPENDENT;
+  T(γ) := throughput, the fraction of channel-sector arrivals that reach
+       the interior — the only γ-dependent factor.
+Measured (`scripts/t3_reach_density_throughput.py`, 120 000 ring-free
+rollouts and 200 000 per gap):
+  **R = 0.03049**, and ρ(π) = **1.0167 per rad** (zero at π/2 and 0 — the
+approach is one-sided, which is why the facing channel matters);
+| γ | d measured | R·ρ·γ | T (ratio) | T (from counts) |
+|---|---|---|---|---|
+| 0.05 | 9.5·10⁻⁵ | 1.55·10⁻³ | 0.061 | 0.069 |
+| 0.10 | 3.4·10⁻⁴ | 3.10·10⁻³ | 0.110 | 0.115 |
+| 0.20 | 1.2·10⁻³ | 6.20·10⁻³ | 0.193 | 0.202 |
+| 0.40 | 3.3·10⁻³ | 1.24·10⁻² | 0.264 | 0.280 |
+| 0.60 | 5.2·10⁻³ | 1.86·10⁻² | 0.282 | 0.313 |
+The two independent estimates of T agree to 10%, and T(γ) has log-log
+slope **0.640**, so the decomposition predicts d ∼ γ^{1.64} against the
+directly measured **γ^{1.72}** — it closes.
+
+**What that leaves, and why it is the right shape.** The lower bound now
+factors into three pieces with different characters:
+  (i) R = 3.0% — a Θ(1) hitting probability for the RING-FREE plant,
+      which is exactly the object Lemma J's two-action steering bounds
+      below, with no γ and no exponential;
+  (ii) ρ(π) ≈ 1 per rad — a one-dimensional density for the ring-free
+      first-arrival angle. Bounding a marginal density below is the
+      tractable form of the local-CLT idea, and it is γ-free;
+  (iii) T(γ) ∼ γ^{0.64} — the throughput, which is where the geometry of
+      crossing a 1.5-thick band inside an arc of width γ·r lives.
+So T3's remaining analytic content is (iii) alone: the other two factors
+are γ-independent ring-free quantities. And (iii) is not circular — it
+conditions on arrival IN the channel, an event defined by the geometry
+rather than by the outcome.
 
 **An intuition about that constant, REFUTED (2026-07-26).** The natural
 hope was that a freeze HANDICAPS entry — Lemma S says the freeze zeroes

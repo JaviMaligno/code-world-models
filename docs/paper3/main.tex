@@ -1740,10 +1740,25 @@ units where one landing moves only $\mathrm{gain}\,dt^{2} = 0.03$; freeing
 two actions gives a Jacobian
 $K^{2}W(T-s_1)W(T-s_2)|\sin(\phi_{s_1}-\phi_{s_2})|$ and a
 diffeomorphic image of area up to $39.5$. So the exponential factor is an
-artifact of constraining all $h$ actions when two suffice, and the
-remaining question --- the probability that the other actions deliver the
-trajectory to a state from which two free ones finish --- is a
-constant-scale geometric one. Elsewhere the ledger has moved the other way, and we
+artifact of constraining all $h$ actions when two suffice.
+
+Asking for the probability that the \emph{other} actions deliver the
+trajectory into position is, however, circular: a launch state is defined
+as one from which the remainder enters, so that probability is the entry
+probability again. A decomposition through the \emph{ring-free} dynamics
+avoids this, because its factors cannot mention entry:
+$d(\gamma) = R \cdot \int_{\mathrm{channel}} \rho \cdot T(\gamma)$, with
+$R$ the probability that a ring-free rollout ever reaches the band radius
+and $\rho$ the density of its first-arrival angle --- both independent of
+$\gamma$ --- and $T$ the throughput of the channel. Measured,
+$R = 0.030$ and $\rho(\pi) = 1.02$ per radian (zero at $\pi/2$ and $0$:
+the approach is one-sided, which is why a facing channel is the
+consequential case), and $T$ has log-log slope $0.64$, so the
+decomposition predicts $d \sim \gamma^{1.64}$ against the directly
+measured $\gamma^{1.72}$. Two independent estimates of $T$ agree to
+$10\%$. What remains analytic is therefore the throughput alone --- the
+geometry of crossing a band of thickness $1.5$ inside an arc of width
+$\gamma r$ --- since the other two factors are ring-free constants. Elsewhere the ledger has moved the other way, and we
 report both directions: the continuity modulus, the barcode sandwich, the
 non-separating query bound, and the play-cost decomposition are now
 theorems with explicit constants (some of them, like the refuted
