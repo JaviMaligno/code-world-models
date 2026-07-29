@@ -543,9 +543,20 @@ they conflict.
   **MECHANISM FOUND (2026-07-26): DELAY COST**, measured not asserted —
   A_t regressed on the basin-dwell difference gives slope 0.9404 against
   the known amp_phantom = 1.0, intercept ≈ 0, R² = 0.9275, and 100% of
-  tail events have a nonzero dwell difference (bulk 41%). REMAINING: a
-  bound on Δdwell — the RECOVERY TIME of π_T after a ≤ 2Δ perturbation.
-  A control question, not an occupation or geometric one.
+  tail events have a nonzero dwell difference (bulk 41%).
+  **NEGATIVE RESULT PROVED (Prop T2-D):** every imagination-level
+  quantity is a function of (s_t, models, C_t) while A_t also depends on
+  C_{t+1..h}, so NO bound from the model's own disagreement can be tight
+  — measured with the imagination data pinned, A_t still spans
+  [−1.707, +0.602]. Paper 2's play_cost ≤ μ_query is valid here, equals 1,
+  and its vacuity is not sharpenable. The replacement (bound the
+  planner-averaged value) has a proved reduction (Lemma S caps, measured
+  tight) and a proved divergence cap (drag lemma, tight to 3%), but is
+  NON-VACUOUS ONLY WITH A MEASURED CONSTANT: pc ≤ 48 with A proved,
+  ≤ 1.21 under the competence hypothesis (both vacuous since pc ≤ 1 is
+  trivial), ≤ 0.18 with L_v measured. REMAINING: the distribution of the
+  angle between the two argmax actions — a planner property, exactly what
+  T2-D says a tight bound must characterise.
 - **T3 — M1/M2 distributional monotonicity of r_int(γ).** **PARTIALLY
   RESOLVED (2026-07-25): M1 and M2 are now THEOREMS with an explicit,
   measured defect.** Theorem T3-P: r_int(γ₂) ≥ r_int(γ₁) − f(γ₁) for
@@ -556,10 +567,17 @@ they conflict.
   f = 0 measured throughout γ ≥ 3.2 where T3-P(c) then gives EXACT
   monotonicity. The seed-50543 counterexample is now explained, not just
   recorded: Prop 7 forbids a direct violation, so it must be a funnel
-  entry — it lives precisely in the term T3-P isolates. REMAINING (the
-  genuinely hard core, now the ONLY place occupation estimates enter):
-  an a-priori bound on f(γ), known to be unimodal and to vanish at both
-  γ → 0 and γ → 2π.
+  entry — it lives precisely in the term T3-P isolates. Strongest defect
+  bound from Prop 7 is T3-P″ ([f(γ₁)−f(γ₂)]⁺, exactly zero on 6/11
+  adjacent pairs). ALL ROUTES TO PROVING M1/M2 ARE CLOSED WITH EVIDENCE:
+  pathwise (seed 50543), pointwise (KEY refuted 91/91), the
+  velocity-preserving variant (refuted 13/30 764 entering pairs — the
+  position block alone breaks pathwise inclusion), and three
+  restatements that are logically equivalent to M1/M2 rather than
+  reductions (c = r·κ; d-rise ≥ f-drop; f ≤ d(2π) − d(γ)). REMAINING
+  (the genuinely hard core, and the ONLY place occupation estimates
+  enter): an a-priori bound on f(γ) — equivalently f ≤ c·r_int with a
+  uniform c < 1 — known to be unimodal and to vanish at both ends.
 - **T4 — Prop 6's explicit density constant:** **RESOLVED (2026-07-25).**
   The one-step landing law is EXACTLY circular-uniform (Lemma S), so the
   γ-curves are uniformly Hölder-1/2 with the fully explicit constant
