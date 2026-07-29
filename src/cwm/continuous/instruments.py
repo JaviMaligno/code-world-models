@@ -171,6 +171,30 @@ def _patch2d_constants_block(env) -> list:
     ]
 
 
+def _patch2d_post_state_lines(env: PatchField2D, c: tuple) -> list:
+    """The sentence describing WHERE the mover ends up when the mode fires.
+
+    Kept in one place because it varies with `mode_effect` and is repeated across three
+    patch shapes: a variant whose contract still said "the PREVIOUS position" would make
+    the full arm a control for a rule the truth does not implement, so the whole
+    comparison would be void."""
+    if env.mode_effect == "freeze":
+        return ["  the mover sticks: the next state is exactly [x, y, 0.0, 0.0]",
+                "  (the PREVIOUS position, with zero velocity)."]
+    if env.mode_effect == "landing":
+        return ["  the mover sticks where it entered: the next state is exactly",
+                "  [x2, y2, 0.0, 0.0] (the LANDING position, with zero velocity)."]
+    if env.mode_effect == "clamp":
+        return [f"  the mover is pushed back to the patch's edge: the next state is",
+                f"  exactly [{c[0]} + R * dx / d, {c[1]} + R * dy / d, 0.0, 0.0]",
+                f"  where dx = x2 - {c[0]}, dy = y2 - {c[1]} and "
+                f"d = math.hypot(dx, dy)",
+                "  (the point of the boundary circle nearest the landing, with zero",
+                "  velocity; if d == 0 use the direction of travel instead, and if that",
+                "  is also zero use dx, dy = 1.0, 0.0)."]
+    raise ValueError(f"no contract text for mode_effect {env.mode_effect!r}")
+
+
 def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
                         omit: tuple = ()) -> str:
     lines = _patch2d_constants_block(env)
@@ -192,10 +216,7 @@ def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
                     f"  with half-side R = {env.R}. After computing x2 and y2 "
                     f"as above,",
                     f"  if max(abs(x2 - {c[0]}), abs(y2 - {c[1]})) <= {env.R},",
-                    "  the mover sticks: the next state is exactly "
-                    "[x, y, 0.0, 0.0]",
-                    "  (the PREVIOUS position, with zero velocity).",
-                ]
+                ] + _patch2d_post_state_lines(env, c)
             elif env.patch_shape == "slab":
                 # The rarity-matched predicate-ARITY ablation (2026-07-27):
                 # membership depends on the landing x alone. Written in the same
@@ -210,9 +231,16 @@ def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
                     f"computing x2 and y2 as above,",
                     f"  if abs(x2 - {c[0]}) <= {env.slab_half_width}, the mover "
                     f"sticks (whatever y2 is):",
-                    "  the next state is exactly [x, y, 0.0, 0.0]",
-                    "  (the PREVIOUS position, with zero velocity).",
                 ]
+                # The committed slab campaign was run with this exact wording, so the
+                # freeze branch must reproduce it byte for byte; only a NEW mode_effect
+                # takes the shared post-state sentence. (Checked by
+                # tests/test_mode_effect.py against `git show HEAD`.)
+                if env.mode_effect == "freeze":
+                    lines += ["  the next state is exactly [x, y, 0.0, 0.0]",
+                              "  (the PREVIOUS position, with zero velocity)."]
+                else:
+                    lines += _patch2d_post_state_lines(env, c)
             else:
                 lines += [
                     "",
@@ -220,9 +248,7 @@ def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
                     f"  There is a sticky patch centered at (x, y) = ({c[0]}, {c[1]})",
                     f"  with radius R = {env.R}. After computing x2 and y2 as above,",
                     f"  if (x2 - {c[0]}) ** 2 + (y2 - {c[1]}) ** 2 <= {env.R ** 2},",
-                    "  the mover sticks: the next state is exactly [x, y, 0.0, 0.0]",
-                    "  (the PREVIOUS position, with zero velocity).",
-                ]
+                ] + _patch2d_post_state_lines(env, c)
     return "\n".join(lines)
 
 

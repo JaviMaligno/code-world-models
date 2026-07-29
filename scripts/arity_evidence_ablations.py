@@ -72,6 +72,27 @@ CAMPAIGNS = {
                         "iteration budget", "samples"],
         "varies": ["one sentence naming the landing state as the trigger's argument"],
     },
+    "landing_effect": {
+        "label": "prop:entryclass tested: the mover stops WHERE IT ENTERED, inside the "
+                 "region, so the interior is witnessed and the rule is no harder to write",
+        "files": {"mini": "continuous_synthesis_patch2dlanding_mini_k3_7.json",
+                  "large": "continuous_synthesis_patch2dlanding_large_k3_7.json"},
+        "comparator": "disc",
+        "holds_fixed": ["plant", "action", "lodes", "prompt", "budget", "samples",
+                        "the firing predicate, hence the rarity exactly"],
+        "varies": ["the mode's post-state: the landing instead of the previous position, "
+                   "which breaks prop:entryclass's premise"],
+    },
+    "clamp_effect": {
+        "label": "prop:entryclass tested: the mover is projected onto the boundary",
+        "files": {"mini": "continuous_synthesis_patch2dclamp_mini_k3_7.json",
+                  "large": "continuous_synthesis_patch2dclamp_large_k3_7.json"},
+        "comparator": "disc",
+        "holds_fixed": ["plant", "action", "lodes", "prompt", "budget", "samples",
+                        "the firing predicate, hence the rarity exactly"],
+        "varies": ["the mode's post-state: the boundary projection, which breaks the "
+                   "premise but makes the post-state a function of the landing"],
+    },
     "disc": {
         "label": "baseline: the disc at k = (3,7), default prompt",
         "files": {"mini": "continuous_synthesis_patch2d_mini_k3_7.json",
@@ -87,6 +108,41 @@ CAMPAIGNS = {
 }
 
 IOU_REPAIR = 0.90
+
+# The IoU compares the artifact's freeze SET against the truth's, so it sees a wrong
+# region. It cannot see a right region with the wrong POST-STATE -- an artifact that
+# writes the disc but returns the previous position where the truth returns the landing
+# deviates from the integrator in exactly the same cells. So every 2D campaign is also
+# checked for exact agreement with the truth on a state-action grid, which subsumes both.
+GRID_XS = [round(-2 + 0.4 * i, 4) for i in range(41)]
+GRID_YS = [round(-4 + 0.8 * i, 4) for i in range(11)]
+GRID_VS = ((0.0, 0.0), (3.0, 0.0), (0.0, 2.0), (-2.0, -1.0))
+GRID_ACTS = (-1.0, -0.3, 0.0, 0.3, 1.0)
+
+
+def grid_exact(code, env, tol=1e-9):
+    """Exact agreement with the truth over a state-action grid: region AND post-state."""
+    from cwm.continuous.contract import SynthesizedModel
+    try:
+        m = SynthesizedModel(code, env)
+    except Exception:
+        return {"grid_exact": False, "grid_error": "load failed"}
+    bad = tot = fired = 0
+    for x in GRID_XS:
+        for y in GRID_YS:
+            for vx, vy in GRID_VS:
+                for a in GRID_ACTS:
+                    t, _, contact = env.step((x, y, vx, vy), a)
+                    try:
+                        g = m.step((x, y, vx, vy), a)[0]
+                    except Exception:
+                        return {"grid_exact": False, "grid_error": "step raised"}
+                    tot += 1
+                    fired += bool(contact)
+                    if max(abs(gg - tt) for gg, tt in zip(g, t)) > tol:
+                        bad += 1
+    return {"grid_exact": bad == 0, "grid_n": tot, "grid_mismatch": bad,
+            "grid_mode_firings": fired}
 
 
 def audit_module():
@@ -122,7 +178,8 @@ def env_of(params: dict) -> PatchField2D:
         kw["slab_half_width"] = params.get("slab_half_width",
                                            PatchField2D().slab_half_width)
     return PatchField2D(p1=(params.get("k1", 3.0), 0.0),
-                        p2=(params.get("k2", 7.0), 0.0), patch_shape=shape, **kw)
+                        p2=(params.get("k2", 7.0), 0.0), patch_shape=shape,
+                        mode_effect=params.get("mode_effect", "freeze"), **kw)
 
 
 def main() -> None:
@@ -134,7 +191,10 @@ def main() -> None:
                                        "blindness == 0.0 (the paper's 1D definition)",
                      "behavioural": f"IoU of the freeze set against the truth's > "
                                     f"{IOU_REPAIR} on the audit probe grid "
-                                    f"(shape-independent; oracle-tested)"},
+                                    f"(shape-independent; oracle-tested) AND exact "
+                                    f"agreement with the truth on a state-action grid, "
+                                    f"which also catches a right region with the wrong "
+                                    f"post-state"},
                  "campaigns": {}}
 
     for name, spec in CAMPAIGNS.items():
@@ -178,6 +238,8 @@ def main() -> None:
                     and all(v == 0.0 for v in mb.values())
                 iou = a.get("iou_truth")
                 beh_ok = iou is not None and iou > IOU_REPAIR
+                ge = grid_exact(c["code"], env)
+                beh_ok = beh_ok and ge["grid_exact"]
                 k_gate += gate_ok
                 k_beh += beh_ok
                 if iou is not None and iou > best_iou:
@@ -192,6 +254,7 @@ def main() -> None:
                     "excess_cells": a.get("excess_cells"),
                     "cover_p1": a.get("cover_p1"), "cover_p2": a.get("cover_p2"),
                     "integrator_exact": a.get("integrator_exact"),
+                    **ge,
                     "repaired_gate_and_probe": gate_ok,
                     "repaired_behavioural": beh_ok})
             per.update({"n_mode_containing": n_mode,

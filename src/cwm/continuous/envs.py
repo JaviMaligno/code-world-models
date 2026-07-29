@@ -242,6 +242,9 @@ class PatchField2D:
     # play_cost collapses to 0.012. There is then no trap left to omit.
     # See results/patch2d_slab_calibration.json -> summary.verdict.
     slab_half_width: float = 0.5
+    # What happens when the mode fires; see _mode_post_state. "freeze" is the committed
+    # default and reproduces every run in the paper bit-for-bit.
+    mode_effect: str = "freeze"
 
     def initial_state(self, rng) -> State:
         return (rng.uniform(-self.x0_range, self.x0_range),
@@ -273,10 +276,53 @@ class PatchField2D:
         x2, y2, _, _ = self._integrate(state, action)
         return self._inside(x2, y2, self.p1), self._inside(x2, y2, self.p2)
 
+    def _mode_post_state(self, state: State, x2: float, y2: float) -> State:
+        """Where the mover ends up when the mode fires.
+
+        The three variants exist to test Proposition prop:entryclass, whose premise is
+        that the mover never occupies the mode region. That premise is what makes an
+        ENTRY rule indistinguishable from the true MEMBERSHIP rule on any sample, so
+        breaking it is the experiment that decides whether the censoring or the
+        synthesizer's prior is what blocks repair.
+
+        freeze    the mover returns to its PREVIOUS position (the committed default,
+                  bit-identical to every run in the paper). The previous position is
+                  outside the region, so the interior is never witnessed.
+        landing   the mover stops WHERE IT ENTERED, inside the region, with zero
+                  velocity -- an inelastic stop at the point of contact. The rule a
+                  synthesizer has to write is no harder than freeze's (zero the
+                  velocity, keep the landing), so a repair difference between the two
+                  is attributable to the evidence and not to the rule's complexity.
+        clamp     the mover is projected radially onto the region's boundary, the 2D
+                  analogue of the cart's wall clamp. This also breaks the premise --
+                  a state ON the boundary is in the closed region -- but the rule is
+                  strictly harder to write than the other two, because the post-state
+                  is a FUNCTION of the landing rather than a copy of a state, so a
+                  negative result here is confounded and a positive one is not.
+        """
+        if self.mode_effect == "freeze":
+            return (state[0], state[1], 0.0, 0.0)
+        if self.mode_effect == "landing":
+            return (x2, y2, 0.0, 0.0)
+        if self.mode_effect == "clamp":
+            c = self.p1 if self._inside(x2, y2, self.p1) else self.p2
+            dx, dy = x2 - c[0], y2 - c[1]
+            d = math.hypot(dx, dy)
+            if d == 0.0:
+                # the landing is exactly the centre: project along the direction of
+                # travel, and if that is degenerate too, along +x. Deterministic, so
+                # the pinned-integrator contract still makes correct code float-exact.
+                dx, dy = x2 - state[0], y2 - state[1]
+                d = math.hypot(dx, dy)
+                if d == 0.0:
+                    dx, dy, d = 1.0, 0.0, 1.0
+            return (c[0] + self.R * dx / d, c[1] + self.R * dy / d, 0.0, 0.0)
+        raise ValueError(f"unknown mode_effect {self.mode_effect!r}")
+
     def step(self, state: State, action: float):
         x2, y2, vx2, vy2 = self._integrate(state, action)
         if self._inside(x2, y2, self.p1) or self._inside(x2, y2, self.p2):
-            s2 = (state[0], state[1], 0.0, 0.0)
+            s2 = self._mode_post_state(state, x2, y2)
             return s2, self.reward(s2), True
         s2 = (x2, y2, vx2, vy2)
         return s2, self.reward(s2), False

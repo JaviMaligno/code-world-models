@@ -123,8 +123,9 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
         stored_p = results.get("params", {}) or {}
         current_p = meta.get("params", {}) or {}
         _RESULT_KEYS = ("instrument", "x_wall", "th_stop", "k1", "k2",
-                        "patch_shape", "prompt_variant", "n_rollouts", "eps",
-                        "max_iters", "play_episodes", "compat_model")
+                        "patch_shape", "mode_effect", "prompt_variant",
+                        "n_rollouts", "eps", "max_iters", "play_episodes",
+                        "compat_model")
         mismatch = {k: (stored_p[k], current_p[k]) for k in _RESULT_KEYS
                     if k in stored_p and k in current_p
                     and stored_p[k] != current_p[k]}
@@ -261,6 +262,17 @@ def build_parser() -> argparse.ArgumentParser:
                     help="patch2d: x of patch 1 center (nearer patch, common mode)")
     ap.add_argument("--k2", type=float, default=7.0,
                     help="patch2d: x of patch 2 center (farther patch, rare mode)")
+    ap.add_argument("--mode-effect", choices=["freeze", "landing", "clamp"],
+                    default="freeze",
+                    help="patch2d only. WHERE the mover ends up when the mode fires; the "
+                    "experiment that tests prop:entryclass (2026-07-29). 'freeze' returns "
+                    "it to its PREVIOUS position, so the region's interior is never "
+                    "witnessed and an entry rule is unfalsifiable by any sample. "
+                    "'landing' stops it where it entered, strictly INSIDE the region, "
+                    "breaking that premise without making the rule harder to write -- the "
+                    "confound-free test. 'clamp' projects it onto the boundary, which also "
+                    "breaks the premise but makes the post-state a function of the "
+                    "landing. 'freeze' is byte-identical to every committed run (tested).")
     ap.add_argument("--patch-shape", choices=["disc", "square", "slab"],
                     default="disc",
                     help="patch2d only. square = the fixed-topology ablation "
@@ -340,10 +352,13 @@ if __name__ == "__main__":
         INSTR_TAG = "pendulum_"
     elif args.instrument == "patch2d":
         ENV = PatchField2D(p1=(args.k1, 0.0), p2=(args.k2, 0.0),
-                           patch_shape=args.patch_shape)
+                           patch_shape=args.patch_shape,
+                           mode_effect=args.mode_effect)
         KNOB = f"k{args.k1:g}_{args.k2:g}"
         INSTR_TAG = {"disc": "patch2d_", "square": "patch2dsq_",
                      "slab": "patch2dslab_"}[args.patch_shape]
+        if args.mode_effect != "freeze":
+            INSTR_TAG = INSTR_TAG[:-1] + args.mode_effect + "_"
     else:
         ENV = CartWall(x_wall=args.x_wall)
         KNOB = f"xwall{args.x_wall:g}"
