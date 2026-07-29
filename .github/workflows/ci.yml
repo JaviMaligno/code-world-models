@@ -19,6 +19,20 @@ jobs:
             texlive-fonts-recommended texlive-science texlive-bibtex-extra biber
       - name: Compile paper and check overfull / undefined refs
         run: bash scripts/check_latex.sh
+      # check_latex.sh reads the LOG; this reads the SOURCE too, and catches the classes it
+      # cannot: duplicate labels (a cross-reference silently resolving to the wrong section),
+      # section headers left empty by a restructuring, and numbered results that are stated
+      # and never cited. The last is the one LaTeX never warns about.
+      - name: Structural guard (duplicate labels, empty sections, orphaned results)
+        run: |
+          for d in docs/paper docs/paper2; do
+            ( cd "$d" \
+              && pdflatex -interaction=nonstopmode main.tex >/dev/null 2>&1 \
+              && bibtex main >/dev/null 2>&1 \
+              && pdflatex -interaction=nonstopmode main.tex >/dev/null 2>&1 \
+              && pdflatex -interaction=nonstopmode main.tex >/dev/null 2>&1 )
+          done
+          python scripts/check_paper_build.py docs/paper/main.tex docs/paper2/main.tex
 
   tests:
     name: Python tests (Azure-free)

@@ -10,6 +10,40 @@ Kept because it is genuinely useful: the pattern across these entries is that **
 error was in a number or a geometric factor computed by hand in prose**, never in a value
 `scripts/audit_paper2_numbers.py` re-derives from `results/`.
 
+### Structural defects a log filter cannot see, and the guard that now sees them
+
+Found 2026-07-29, prompted by the observation that judging a paper by its page count is the
+wrong criterion -- what matters is what sits in the body and what sits behind the divider.
+Applying that criterion by content rather than by length surfaced defects the page count never
+would have:
+
+* **`sec:mitigation` was multiply defined**, once in the body (Section 6) and once in the
+  supplement (appendix G), because `scripts/restructure_paper2.py` inserted a new heading and
+  moved the original one without merging. A cross-reference in Limitations therefore sent the
+  reader to the appendix instead of the body summary. LaTeX warned about it for days; the
+  build check was `grep -E "^! |Warning: Citation|Warning: Reference"`, a filter that only
+  looks where you already know to look.
+* **Two section headers were left empty** by the same move (`sup:mitigation`, `sup:cem`).
+* **Five numbered results were stated and never cited** --- `def:arity`, `rem:twodims`,
+  `rem:fourstatements`, `prop:knobinv`, `rem:bracket`. None was filler: each is a guard
+  against a misreading (what arity means, why "1D versus 2D" is ambiguous as a causal claim,
+  why "smooth models cannot localize" is not what the paper says, why knob-invariance is
+  arithmetic rather than a regularity, why the two-mode bracket is sharp). They were
+  *disconnected*, so they were wired in where the text already leaned on them rather than cut.
+* **Two scope qualifiers sat seven pages from the numbers they qualify.** `prop:risk` says the
+  danger product is the risk exactly when its covariance hypothesis holds; it is now cited at
+  the head of the section that reports the danger column, where the qualifier is live.
+  `cor:locbudget` is now cited where the leak volume does its work.
+
+The criterion that produced this is worth keeping: **a numbered result earns body space if a
+measurement leans on it.** By that test the body was 11/13; it is now 13/13.
+
+`scripts/check_paper_build.py` enforces all of it, with `tests/test_check_paper_build.py`
+planting each defect to prove the detections fire, and it runs in CI. It also flagged one real
+orphan in the companion paper (`cor:dangerlaw`), left untouched as out of scope. One of its
+rules was wrong in its first form --- it treated a `\section` followed by a `\subsection` as
+empty, which is ordinary structure --- caught by running it against paper 1.
+
 ### The disc/slab contrast: right argument, wrong campaign and wrong range
 
 The sentence bounding what an independent acceptance sample buys read "on the disc, four of
