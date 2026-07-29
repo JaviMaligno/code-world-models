@@ -1389,6 +1389,54 @@ claim("naming the landing variable shifts the dominant failure to memorisation: 
       "artifacts write a point, against 15 of 40 in the region arm",
       _ld["pooled"]["class_counts"].get("point") == 20
       and _ae["campaigns"]["region"]["pooled"]["class_counts"].get("point") == 15)
+# --- ablations 6 and 7: lifting prop:entryclass's premise ----------------------
+_mec = load("mode_effect_calibration")
+_mv = _mec["variants"]
+claim("the firing predicate is untouched, so the rollout-level rarity is IDENTICAL across "
+      "the three mode-effect variants (0.1527) -- what makes each a one-variable comparison",
+      len({round(_mv[e]["rarity"], 6) for e in ("freeze", "landing", "clamp")}) == 1
+      and abs(_mv["freeze"]["rarity"] - 0.1527) < 5e-5,
+      f"{[round(_mv[e]['rarity'], 4) for e in ('freeze','landing','clamp')]}")
+claim("freeze yields NO transition separating the membership rule from an entry rule, "
+      "while landing yields 4614 and clamp 233 -- the premise measured, then lifted",
+      _mv["freeze"]["transitions_separating_membership_from_entry"] == 0
+      and _mv["landing"]["transitions_separating_membership_from_entry"] == 4614
+      and _mv["clamp"]["transitions_separating_membership_from_entry"] == 233
+      and _mv["freeze"]["premise_broken"] is False
+      and _mv["landing"]["premise_broken"] and _mv["clamp"]["premise_broken"])
+claim("the trap survives both variants: play_cost 1.058 and 1.059 against freeze's 1.059, "
+      "blind contact rate 1.00 throughout",
+      abs(_mv["landing"]["play_cost"] - 1.058) < 5e-4
+      and abs(_mv["clamp"]["play_cost"] - 1.059) < 5e-4
+      and abs(_mv["freeze"]["play_cost"] - 1.059) < 5e-4
+      and all(_mv[e]["blind_contact_rate"] == 1.0
+              for e in ("freeze", "landing", "clamp")))
+claim("landing raises the mode's share of the sample from 0.66% to 7.25% (11x more mode "
+      "evidence, a confound FAVOURABLE to repair) while clamp holds it at 0.75%",
+      abs(_mv["freeze"]["gate_sample_contact_share"] - 0.0066) < 5e-5
+      and abs(_mv["landing"]["gate_sample_contact_share"] - 0.0725) < 5e-5
+      and abs(_mv["clamp"]["gate_sample_contact_share"] - 0.0075) < 5e-5,
+      f"{_mv['landing']['gate_sample_contact_share']:.4f} vs "
+      f"{_mv['freeze']['gate_sample_contact_share']:.4f}")
+for _name, _iou, _hp in (("landing_effect", 0.102, 24), ("clamp_effect", 0.260, 25)):
+    _c = _ae["campaigns"][_name]
+    claim(f"{_name}: 0 of 40 mode-containing draws over 20 blocks recover the region, NO "
+          f"artifact passes the gate at all, best agreement {_iou}, and the dominant class "
+          f"is again the half-plane ({_hp}/40)",
+          _c["pooled"]["n_draws"] == 40 and _c["pooled"]["n_distinct_blocks"] == 20
+          and _c["pooled"]["k_repaired_behavioural"] == 0
+          and _c["pooled"]["k_repaired_gate_and_probe"] == 0
+          and abs(_c["pooled"]["best_iou"] - _iou) < 5e-4
+          and _c["pooled"]["class_counts"].get("halfplane") == _hp
+          and sum(v["full_gate_passed"] for v in _c["per_size"].values()) == 40,
+          f"best IoU {_c['pooled']['best_iou']:.4f}, halfplane "
+          f"{_c['pooled']['class_counts'].get('halfplane')}")
+claim("the disc's own best agreement (0.498) is higher than either interior-witnessing "
+      "campaign's, so witnessing the interior did not even move the artifacts closer",
+      _ae["campaigns"]["disc"]["pooled"]["best_iou"]
+      > max(_ae["campaigns"]["landing_effect"]["pooled"]["best_iou"],
+            _ae["campaigns"]["clamp_effect"]["pooled"]["best_iou"]))
+
 _re = load("repair_exactness_1d")
 claim("105 of the 109 artifacts the probe criterion calls repaired are exact on a dense "
       "grid; the four exceptions all invent a second stop, two from each GPT-5.x size",

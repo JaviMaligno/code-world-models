@@ -671,3 +671,42 @@ headline from 109/111 to 105/111 and the block-level aggregate from 34/36 to 30/
 [0.672, 0.936]. The probe is still what the pipeline computes online; the exactness check is
 an offline audit. Any future campaign must run both, or it will report repairs it does not
 have — 19 of 20 on the slab, in the case that exposed this.
+
+## 2026-07-29, third pass — the experiment I called decisive, and it went against me
+
+The previous entry named one experiment as the highest-value one left: an instrument whose
+mode does not freeze the mover at its previous position, so `prop:entryclass`'s premise
+fails and the region's interior becomes witnessable. It was run in two forms and **the
+hypothesis it was built to confirm is refuted**.
+
+* `landing` (the mover stops where it entered, strictly inside) and `clamp` (projected onto
+  the boundary) both break the premise — measured on the gate sample: 4614 and 233
+  transitions that separate the membership rule from an entry rule, against freeze's zero.
+* Both preserve the trap (play_cost 1.058 / 1.059 against freeze's 1.059) and rarity is
+  *identical* (0.1527) because the firing predicate is untouched.
+* Repair does not return: **0 of 40** in each, no artifact passing the gate at all, and the
+  dominant class is again the half-plane at `x2 > 2.0` — the same template at the same
+  constant as the freeze campaigns.
+* The two confounds are complementary and both are covered: `landing` supplies **11x** more
+  mode evidence (contact share 7.25% against 0.66%) and still fails; `clamp` holds the
+  contact share at freeze's level (0.75%) and pays in rule complexity instead, and fails
+  with the same classes.
+
+**What this costs and what it buys.** It costs the reading I preferred: the censoring is not
+why region induction fails. It buys the one thing the paper had been careful never to claim —
+the region-template prior now survives as a *mechanism* after seven ablations, rather than as
+a description of the artifacts. `prop:entryclass` keeps its two jobs: it explains the slab's
+nineteen accepted-but-wrong artifacts, and it bounds what an independent acceptance gate can
+ever catch.
+
+**What would now be the strongest next move**, in order:
+1. **A positive control on 2D induction.** Every 2D campaign so far is a negative, and a
+   negative is only as good as the guarantee that the target is learnable *by this pipeline*
+   at all. Give the incomplete arm the disc's centre but not its radius (a template with one
+   unknown constant). If that is repaired, the frontier is "constants yes, forms no", which
+   is a sharp and falsifiable statement about the prior. If it is not, the failure is
+   upstream of region induction and the whole 2D story needs re-scoping. One Azure campaign.
+2. **Evidence dose.** Hold everything fixed and raise only the number of *distinct contact
+   bearings* the sample shows (achievable by seeding rollouts around the patch). The prior
+   should yield to enough two-sided evidence, or it is not a prior but a hard limit.
+3. Neither is a substitute for the other: (1) bounds the pipeline, (2) bounds the prior.

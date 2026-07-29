@@ -97,11 +97,21 @@ Run from the repository root; all four were green at the time of writing.
   their own gate; on the slab, 0 of 19, because there is nothing to reject. Two corrections
   followed, both lowering a headline: the mode probe is not a sufficient repair criterion,
   and the 1D count is 105 of 111, block-level 30/36 [0.672, 0.936].
-* **What the ablations leave open.** The remaining candidate is the evidence structure
-  itself. The decisive next experiment is an instrument whose mode does *not* freeze, so the
-  interior is witnessed and `prop:entryclass`'s premise fails; if repair returns there, the
-  mechanism is settled. That is one CPU calibration plus one Azure campaign and is recorded
-  in `STRONGER-STATEMENTS.md`.
+* **That decisive experiment was run, and it refuted the hypothesis behind it.** Two
+  instruments lift `prop:entryclass`'s premise — the mover stops inside the region
+  (`landing`) or is projected onto its boundary (`clamp`) — with rarity identical, the trap
+  intact, and the premise verifiably broken (4614 and 233 separating transitions against
+  freeze's zero). Repair does not return: 0 of 40 each, no artifact passing the gate at all,
+  the same half-plane template at the same constant. The two confounds are complementary and
+  both covered: `landing` gives 11× more mode evidence and fails; `clamp` matches freeze's
+  evidence quantity and fails. So the censoring is **not** why region induction fails, and
+  the region-template prior survives as a mechanism after seven ablations rather than as a
+  description. `prop:entryclass` keeps its two jobs: explaining the slab's nineteen
+  accepted-but-wrong artifacts, and bounding what an independent gate can catch.
+* **What is open now** is one thing the paper should not be read without: every 2D result is
+  a negative, and a negative needs a positive control that the target is learnable by this
+  pipeline at all. `STRONGER-STATEMENTS.md` records that control (the disc's centre given,
+  its radius withheld) and the evidence-dose experiment, in priority order.
 * **Review point 18 (closed-model reproduction) is PARTIAL.** Call counts and transcripts are
   exact; token usage was never recorded and is stated as such; the open-weight arm remains a
   translation control on the 2D instrument because that provider's credits ran out.

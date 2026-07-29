@@ -29,7 +29,9 @@
       "j_random": 1.0328732370463987,
       "play_cost": 1.059495373359909,
       "blind_contact_rate": 1.0,
-      "gate_sample_contacts": 21
+      "gate_sample_contacts": 21,
+      "gate_sample_contact_share": 0.0065625,
+      "gate_sample_transitions": 3200
     },
     "landing": {
       "mode_effect": "landing",
@@ -58,7 +60,9 @@
         "rarity_within_2x_of_freeze": true,
         "trap_preserved": true,
         "all": true
-      }
+      },
+      "gate_sample_contact_share": 0.0725,
+      "gate_sample_transitions": 3200
     },
     "clamp": {
       "mode_effect": "clamp",
@@ -87,7 +91,10 @@
         "rarity_within_2x_of_freeze": true,
         "trap_preserved": true,
         "all": true
-      }
+      },
+      "gate_sample_contact_share": 0.0075,
+      "gate_sample_transitions": 3200
     }
-  }
+  },
+  "contact_share_note": "Rollout-level rarity is identical across variants because the firing predicate is untouched, but the mode's share of the SAMPLE's transitions is not: `landing` leaves the mover inside the region, where most thrusts keep it, so its dwell time and hence its contact share rise 11x. That is a confound in the direction FAVOURABLE to repair (more mode evidence), and it is why `clamp` -- whose contact share matches freeze's -- is the better-controlled of the two on this axis while being the worse-controlled on rule complexity. The two confounds are complementary."
 }

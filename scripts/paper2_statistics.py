@@ -256,6 +256,7 @@ def load_draws(results_dir: pathlib.Path = R) -> list:
                 "instrument": instrument,
                 "knob": _knob(instrument, params),
                 "patch_shape": shape,
+                "mode_effect": params.get("mode_effect", "freeze"),
                 "prompt_variant": prompt,
                 "max_iters": max_iters,
                 "arm": cell["arm"],
@@ -295,7 +296,8 @@ def _load_claude_relay(results_dir: pathlib.Path) -> list:
                     else {"th_stop": 1.4})
             out.append({
                 "file": p1.name, "instrument": instrument, "knob": knob,
-                "patch_shape": None, "prompt_variant": "relay", "max_iters": 5,
+                "patch_shape": None, "mode_effect": "freeze",
+                "prompt_variant": "relay", "max_iters": 5,
                 "arm": cell["arm"], "model": cell["model"], "size": "sonnet",
                 "family": "claude", "seed": cell["seed"],
                 "block": block_of(cell["seed"]), "mode_present": present,
@@ -322,7 +324,8 @@ def _load_claude_relay(results_dir: pathlib.Path) -> list:
             out.append({
                 "file": p2.name, "instrument": "patch2d",
                 "knob": {"k1": d["k1"], "k2": d["k2"]},
-                "patch_shape": "disc", "prompt_variant": "relay",
+                "patch_shape": "disc", "mode_effect": "freeze",
+                "prompt_variant": "relay",
                 "max_iters": 5, "arm": arm,
                 "model": "claude-sonnet (agent-relayed)", "size": "sonnet",
                 "family": "claude", "seed": seed, "block": block_of(seed),
@@ -346,6 +349,13 @@ def treatment_key(d: dict) -> str:
     parts = [d["instrument"], knob]
     if d["patch_shape"]:
         parts.append(f"shape={d['patch_shape']}")
+    # The mode's post-state is a TREATMENT: `landing` and `clamp` sit at the same knob,
+    # shape, prompt and budget as the disc, so leaving this out of the key collapsed all
+    # three into one cell (60 draws over 20 blocks) -- caught by this module's own
+    # one-draw-per-block invariant, which is what it is for. Omitted when it is the
+    # committed default so every pre-existing key is unchanged.
+    if d.get("mode_effect", "freeze") != "freeze":
+        parts.append(f"effect={d['mode_effect']}")
     parts.append(f"prompt={d['prompt_variant']}")
     parts.append(f"it={d['max_iters']}")
     parts.append(f"arm={d['arm']}")
