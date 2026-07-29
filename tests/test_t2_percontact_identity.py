@@ -248,3 +248,36 @@ def test_t2_lemma_s_caps_the_one_action_perturbation():
         assert dv <= cap_v + 1e-12, (dv, cap_v)
         seen_large = seen_large or dv > 0.5 * cap_v
     assert seen_large, "the caps must be exercised near their value"
+
+
+def test_t2_argmax_angle_is_dominated_by_independent_uniform():
+    # The dominance claim behind the non-vacuous bound: |sin((phi_tau -
+    # phi_b)/2)| over dirty steps is stochastically dominated by its value
+    # for two INDEPENDENT uniform actions (mean 2/pi). Checked as CDF
+    # dominance, plus the mean, on a small sample.
+    import bisect
+    vals = []
+    for gap in (0.3, 0.6):
+        truth = RingField2D(gap=gap, gap_center=math.pi, x0_center=(0.0, 0.0))
+        blind = blind_of(truth)
+        for ep in range(2):
+            es = 4000 + 1000 * ep
+            s = truth.initial_state(random.Random(es))
+            for t in range(truth.h_episode):
+                cs = _cands(truth.a_max, es, t)
+                b = max(cs, key=lambda a: _score(blind, s, a))[0]
+                tau = max(cs, key=lambda a: _score(truth, s, a))[0]
+                if b != tau:
+                    vals.append(abs(math.sin(math.pi * (tau - b) / 2)))
+                s, _, _ = truth.step(s, b)
+    assert len(vals) > 30, len(vals)
+    rng = random.Random(1)
+    ref = sorted(abs(math.sin(math.pi * (rng.uniform(-1, 1)
+                                         - rng.uniform(-1, 1)) / 2))
+                 for _ in range(20000))
+    vals.sort()
+    for q in (i / 20 for i in range(1, 20)):
+        f_m = bisect.bisect_right(vals, q) / len(vals)
+        f_r = bisect.bisect_right(ref, q) / len(ref)
+        assert f_m >= f_r - 0.12, (q, f_m, f_r)     # sampling slack
+    assert sum(vals) / len(vals) <= 2 / math.pi + 0.05

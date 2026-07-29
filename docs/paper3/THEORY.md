@@ -1591,12 +1591,34 @@ rather than left standing.
 and the measurement (0.18) there is a factor 6.7, and it is two things,
 both of which charge worst cases: every dirty step is charged the MAXIMUM
 perturbation 2·gain·dt = 0.6, whereas the measured ‖Δv‖ over dirty steps
-averages ≈ 0.28 (values 0.029…0.590); and the fixed point costs
-1/(1−p) = 2 at p = 0.5. Both are averages over the PLANNER's action
-choices — ‖Δv‖ = 2·gain·dt·|sin((φ_τ−φ_b)/2)| depends on the angle
-between the two argmax actions — so tightening them means characterising
-the planner's argmax distribution, which is what Prop T2-D says any
-tight bound must do.
+averages ≈ 0.28; and the fixed point costs 1/(1−p) = 2 at p = 0.5. Both
+are averages over the PLANNER's action choices, since
+‖Δv‖ = 2·gain·dt·|sin((φ_τ−φ_b)/2)| with φ = πa/a_max.
+
+**Closing the first of the two: the argmax angle is no more spread than
+independent (2026-07-27).** The sum, not the max, is what the identity
+needs: Σ_dirty A_t ≤ L_v·Σ_dirty ‖Δv_t‖ = L_v·D̄·E‖Δv‖, so a bound on the
+MEAN suffices. Candidate claim, in the only form that avoids a fitted
+constant: |sin((φ_τ−φ_b)/2)| is stochastically dominated by its value for
+two INDEPENDENT uniform actions, whose mean is exactly 2/π (the mean of
+|sin| over a period). Tested over the dirty steps of 18 episodes at
+γ ∈ {0.3, 0.6, 1.2}: the measured CDF is **≥ the independent-uniform CDF
+at every one of 49 quantiles — worst deficit 0.0000** — with
+E|sin| = 0.5037 against 0.6360 for independent draws (ratio 0.79). The
+direction is intuitive: both planners rank the same candidate set with
+models that agree off A, so their argmaxes are closer than independent
+draws, not further. Evidence label *measured*, unit dirty step, n = 278.
+With E‖Δv‖ ≤ 2·gain·dt·(2/π) = 0.382 the chain gives
+  **pc ≤ 0.767 under the competence hypothesis** — NON-VACUOUS, and with
+no fitted constant: the only measured input is a distributional SHAPE
+claim (dominance), not a number read off a regression.
+Using the measured mean 0.28 instead gives pc ≤ 0.562; the earlier
+pc ≤ 0.18 came from using L_v ≈ 0.8 directly rather than through the
+fixed point.
+*What is still not proved:* the dominance itself. It is the statement
+that selection-by-score does not push two argmaxes apart, which is a
+property of the (model, planner) pair — exactly the object Prop T2-D
+identifies as unavoidable.
 
 **Can L_v be proved? Half of it can (2026-07-27).**
 *Provable half — the drag makes divergence bounded, not exponential.*
@@ -1641,7 +1663,8 @@ rather than proves (it is the (RG)/(C) competence hypothesis of Prop 4
 in another guise). So A is bounded by a proved 107 and, under the
 competence hypothesis already used elsewhere in the paper, by 2.7.
 
-**T2 status: NOT finished, and the gap is now quantified.** The original
+**T2 status: a non-vacuous bound now exists (pc ≤ 0.767) resting on one
+hypothesis already used in the paper plus one measured dominance claim.** The original
 question — bound play_cost from the model's own disagreement — is
 answered NEGATIVELY and provably (Prop T2-D). The replacement — bound it
 from the planner-averaged value — has a proved reduction (Lemma S, with
@@ -2048,6 +2071,33 @@ measured range, and c = 1/2 would already halve the defect.
 Full closure of T3 = a bound f(γ) ≤ c·r_int(γ) with c < 1 uniform (see
 the sharpened statement above). Any such c is new; c = 1/4 would cover
 the whole measured range.
+
+**c < 1 is PROVED — and the constant is useless (2026-07-27).** Since
+c = f/r_int = 1 − d/r_int, a strict c < 1 is equivalent to d(γ) > 0, and
+that is already a theorem: Proposition 8's witness tube is explicitly
+FREEZE-FREE (it maintains distance ≥ c(γ) = min(0.8γ, 0.9) from A along
+the way), so every trajectory in it is a DIRECT entry, giving
+  d(γ) ≥ P(|y₀| ≤ η(γ)) · ρ^h > 0,  ρ = c(γ)/(2L_h).
+Hence
+  **r_int(γ₂) ≥ (1 − c(γ))·r_int(γ₁) with c(γ) < 1, proved**, and by
+Prop 5's chain this is a genuine (if weak) monotonicity-up-to-a-factor.
+The catch is the size: ρ^h is 10⁻⁸⁶ at γ = 0.6 and 10⁻⁶⁴ at γ = 1.2, so
+1 − c is astronomically small and the statement, while strictly true, is
+quantitatively vacuous. The measured c is 0.05–0.22.
+*What that isolates.* The obstruction is no longer "is any c < 1
+available" — it is that the only proved lower bound on d is an
+action-tube probability ρ^h, exponentially small in the horizon because
+it forces the entire action sequence into a narrow window. A useful c
+needs a lower bound on d that does NOT go through a single tube:
+essentially a small-ball estimate for the freeze-free entry event, which
+is the occupation-measure ingredient under another name. The
+T5 machinery does not transfer — the tangent cone from a frozen position
+at distance ≈ 4 to a target of radius r_in = 3.5 has half-angle sine
+0.875, so the per-step cone bound is 0.34 and the union over h = 80 steps
+is vacuous; and the channel sector sits in a strip of width ≈ r_out·γ = 3
+against a landing circle of radius R_L = 0.03, where Lemma A gives
+√(w/2R_L) = 7 > 1 per step. Both computations are recorded so the next
+attempt does not repeat them.
 
 **An intuition about that constant, REFUTED (2026-07-26).** The natural
 hope was that a freeze HANDICAPS entry — Lemma S says the freeze zeroes

@@ -244,3 +244,31 @@ def test_t3_variant_pathwise_m1_is_refuted():
     assert summary["entering_units"] > 10_000, summary
     # the unit is the entering pair, two orders below the rollout count
     assert summary["entering_units"] < summary["pairs"] / 50
+
+
+def test_t3_prop8_witness_tube_is_freeze_free():
+    # c < 1 is proved because Proposition 8's witness tube gives DIRECT
+    # entries: the constant action a = 0 from a small |y0| enters without
+    # ever contacting the band. That is what makes d(gamma) > 0, hence
+    # c = 1 - d/r_int < 1 (with an astronomically small margin).
+    from cwm.continuous.envs import integrate_2d
+    for gap in (0.6, 1.2):
+        env = RingField2D(gap=gap, gap_center=math.pi)
+        eta = min((3.5 / 8) * gap, 0.4)
+        entered = 0
+        for k in range(12):
+            y0 = -eta + 2 * eta * k / 11
+            s = (0.0, y0, 0.0, 0.0)
+            froze = False
+            for _ in range(env.h_episode):
+                x2, y2, vx2, vy2 = integrate_2d(s, 0.0, env.dt, env.gain,
+                                                env.drag, env.a_max)
+                if env._in_mode(x2, y2):
+                    froze = True
+                    break
+                s = (x2, y2, vx2, vy2)
+                if env.in_interior(s[0], s[1]):
+                    entered += 1
+                    break
+            assert not froze, (gap, y0)     # freeze-free: the direct claim
+        assert entered > 0, gap
