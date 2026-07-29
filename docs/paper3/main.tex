@@ -1688,17 +1688,24 @@ the planner's action choices: every deviating step is charged the
 what the decomposition actually needs is the mean, since it bounds a sum.
 Writing the perturbation as
 $2\,\mathrm{gain}\,dt\,|\sin((\phi_\tau - \phi_b)/2)|$, the mean is
-controlled by one distributional claim: that selection by score does not
-push the two arg-maxes \emph{apart}, so the angle is no more spread than
-between two independent uniform actions, whose $|\sin|$ has mean exactly
-$2/\pi$. Over the deviating steps of eighteen episodes the measured
-distribution dominates the independent one at every quantile tested
-(worst deficit $0.0000$; mean $0.504$ against $0.636$). That yields
-$\mathrm{pc} \le 0.77$ --- non-vacuous, and with no fitted constant: the
-measured input is the \emph{shape} claim, not a number. What stays
-unproved is that claim itself, which is a property of the model--planner
-pair --- exactly what the negative result above says any tight bound must
-characterise.
+controlled by one inequality: that the angle between the two arg-maxes is
+no wider \emph{on average} than between two independent uniform actions,
+whose $|\sin|$ has mean exactly $2/\pi$. Measured over $10{,}105$
+deviating steps across four gaps, two channel orientations and two
+planner budgets, that inequality separates the two orientations sharply.
+With the channel \emph{facing}, every cell satisfies it
+($0.409$--$0.625$ against $2/\pi = 0.637$), giving
+$\mathrm{pc} \le 0.77$: non-vacuous, and with no fitted constant, since
+the measured input is an inequality between means rather than a number.
+With the channel \emph{hidden} it fails in every cell, and instructively
+--- the two arg-maxes are then near-antipodal ($|\sin| \approx 0.94$)
+and \emph{every} step deviates, because a hidden channel makes the truth
+observationally a closed ring, so the truth planner turns west to the
+real lode while the blind planner charges east at the phantom. The bound
+is therefore a facing-channel statement, which is the configuration the
+aligned-channel degeneracy is about. What stays unproved is the
+inequality itself, a property of the model--planner pair --- exactly what
+the negative result above says any tight bound must characterise.
 
 \paragraph{The honest math ledger.} The two $\gamma$-curve regularities
 (monotonicity of $r_{\mathrm{int}}$, and that the wall never helps net

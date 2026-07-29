@@ -575,9 +575,14 @@ they conflict.
   position block alone breaks pathwise inclusion), and three
   restatements that are logically equivalent to M1/M2 rather than
   reductions (c = r·κ; d-rise ≥ f-drop; f ≤ d(2π) − d(γ)). REMAINING
-  (the genuinely hard core, and the ONLY place occupation estimates
-  enter): an a-priori bound on f(γ) — equivalently f ≤ c·r_int with a
-  uniform c < 1 — known to be unimodal and to vanish at both ends.
+  an a-priori bound on f(γ) — equivalently f ≤ c·r_int with a
+  uniform c < 1. c < 1 IS PROVED (Prop 8's witness tube is freeze-free,
+  so d > 0) but with a ρ^h-order margin, wrong by ~96 orders of magnitude
+  against the measured d. The route the measurement points to is a LOCAL
+  LIMIT THEOREM, not an occupation estimate: d(γ) is a clean power law
+  (slope 1.72 over γ ∈ [0.05, 0.4]), i.e. a hitting probability, and a
+  local CLT for the joint (angle, radial speed) law at the channel mouth
+  would give a polynomial bound.
 - **T4 — Prop 6's explicit density constant:** **RESOLVED (2026-07-25).**
   The one-step landing law is EXACTLY circular-uniform (Lemma S), so the
   γ-curves are uniformly Hölder-1/2 with the fully explicit constant
@@ -1595,30 +1600,50 @@ averages ≈ 0.28; and the fixed point costs 1/(1−p) = 2 at p = 0.5. Both
 are averages over the PLANNER's action choices, since
 ‖Δv‖ = 2·gain·dt·|sin((φ_τ−φ_b)/2)| with φ = πa/a_max.
 
-**Closing the first of the two: the argmax angle is no more spread than
-independent (2026-07-27).** The sum, not the max, is what the identity
-needs: Σ_dirty A_t ≤ L_v·Σ_dirty ‖Δv_t‖ = L_v·D̄·E‖Δv‖, so a bound on the
-MEAN suffices. Candidate claim, in the only form that avoids a fitted
-constant: |sin((φ_τ−φ_b)/2)| is stochastically dominated by its value for
-two INDEPENDENT uniform actions, whose mean is exactly 2/π (the mean of
-|sin| over a period). Tested over the dirty steps of 18 episodes at
-γ ∈ {0.3, 0.6, 1.2}: the measured CDF is **≥ the independent-uniform CDF
-at every one of 49 quantiles — worst deficit 0.0000** — with
-E|sin| = 0.5037 against 0.6360 for independent draws (ratio 0.79). The
-direction is intuitive: both planners rank the same candidate set with
-models that agree off A, so their argmaxes are closer than independent
-draws, not further. Evidence label *measured*, unit dirty step, n = 278.
-With E‖Δv‖ ≤ 2·gain·dt·(2/π) = 0.382 the chain gives
-  **pc ≤ 0.767 under the competence hypothesis** — NON-VACUOUS, and with
-no fitted constant: the only measured input is a distributional SHAPE
-claim (dominance), not a number read off a regression.
-Using the measured mean 0.28 instead gives pc ≤ 0.562; the earlier
-pc ≤ 0.18 came from using L_v ≈ 0.8 directly rather than through the
-fixed point.
-*What is still not proved:* the dominance itself. It is the statement
-that selection-by-score does not push two argmaxes apart, which is a
-property of the (model, planner) pair — exactly the object Prop T2-D
-identifies as unavoidable.
+**Closing the first of the two, and the SCOPE that emerged
+(2026-07-27).** The sum, not the max, is what the identity needs:
+Σ_dirty A_t ≤ L_v·Σ_dirty ‖Δv_t‖ = L_v·D̄·E‖Δv‖, so a bound on the MEAN
+suffices, and with ‖Δv‖ = 2·gain·dt·|sin((φ_τ−φ_b)/2)| the question is
+E|sin((φ_τ−φ_b)/2)| against 2/π, the mean of |sin| over a period (its
+value for two INDEPENDENT uniform actions).
+
+*Full stochastic dominance is FALSE.* An initial check over 278 dirty
+steps at facing γ ∈ {0.3, 0.6, 1.2} found the measured CDF above the
+independent-uniform CDF at every quantile. Stress-tested at ~10× the
+sample and over a wider grid (`scripts/t2_angle_dominance.py`: 4 gaps ×
+{facing, hidden} × 2 planner budgets, 10 105 dirty steps), dominance
+fails in **11 of 16 cells**, with worst deficit +0.60. The earlier
+zero was again a power/coverage artifact — this time of coverage, since
+the failures are concentrated in a configuration the first check did not
+sample.
+
+*The mean claim survives, with a sharp scope.* What the bound needs is
+only E|sin| ≤ 2/π, and the split is clean:
+| configuration | cells | E|sin| | dirty steps/cell |
+|---|---|---|---|
+| **facing** channel | 8 | 0.409–0.625, **all < 2/π** | 39–277 |
+| **hidden** channel | 8 | 0.940–0.941, **all > 2/π** | 1119–1120 |
+So the mean bound holds in every facing cell and fails in every hidden
+one. The mechanism is transparent and is the R2 remark again: with the
+channel hidden the truth model is observationally a CLOSED ring, so the
+truth planner heads west to the real lode while the blind planner charges
+east at the phantom — the two argmaxes are near-ANTIPODAL (|sin| ≈ 0.94)
+and, tellingly, **every single step is dirty** (n = 1120 = 14 episodes ×
+80 steps, in all four hidden gap cells, whose numbers are identical
+because a hidden channel leaves the truth's behaviour γ-independent).
+
+*The bound, correctly scoped.* With E‖Δv‖ ≤ 2·gain·dt·(2/π) = 0.382,
+  **pc ≤ 0.767 for the FACING channel** — non-vacuous, and with no
+fitted constant: the measured input is a distributional claim (a mean
+inequality), not a number read off a regression. Evidence label
+*measured*, unit dirty step, n = 1109 facing dirty steps across 8 cells,
+`results/t2_angle_dominance.json`. It does NOT extend to the hidden
+channel, where the same chain is vacuous — appropriately, since that is
+the configuration in which the blind model is maximally wrong about
+direction. Scope matters here rather than being a caveat: the
+aligned-channel degeneracy this section is about IS the facing case.
+*Still unproved:* the mean inequality itself, a property of the (model,
+planner) pair — exactly the object Prop T2-D identifies as unavoidable.
 
 **Can L_v be proved? Half of it can (2026-07-27).**
 *Provable half — the drag makes divergence bounded, not exponential.*
@@ -1663,8 +1688,10 @@ rather than proves (it is the (RG)/(C) competence hypothesis of Prop 4
 in another guise). So A is bounded by a proved 107 and, under the
 competence hypothesis already used elsewhere in the paper, by 2.7.
 
-**T2 status: a non-vacuous bound now exists (pc ≤ 0.767) resting on one
-hypothesis already used in the paper plus one measured dominance claim.** The original
+**T2 status: a non-vacuous bound exists for the FACING channel
+(pc ≤ 0.767), resting on one hypothesis already used in the paper plus a
+measured mean inequality that holds in the facing configuration and fails
+in the hidden one.** The original
 question — bound play_cost from the model's own disagreement — is
 answered NEGATIVELY and provably (Prop T2-D). The replacement — bound it
 from the planner-averaged value — has a proved reduction (Lemma S, with
@@ -2087,17 +2114,45 @@ quantitatively vacuous. The measured c is 0.05–0.22.
 *What that isolates.* The obstruction is no longer "is any c < 1
 available" — it is that the only proved lower bound on d is an
 action-tube probability ρ^h, exponentially small in the horizon because
-it forces the entire action sequence into a narrow window. A useful c
-needs a lower bound on d that does NOT go through a single tube:
-essentially a small-ball estimate for the freeze-free entry event, which
-is the occupation-measure ingredient under another name. The
-T5 machinery does not transfer — the tangent cone from a frozen position
-at distance ≈ 4 to a target of radius r_in = 3.5 has half-angle sine
-0.875, so the per-step cone bound is 0.34 and the union over h = 80 steps
+it forces the entire action sequence into a narrow window. Two transfers
+from T5 were computed and do NOT work: the tangent cone from a frozen
+position at distance ≈ 4 to a target of radius r_in = 3.5 has half-angle
+sine 0.875, so the per-step cone bound is 0.34 and the union over h = 80
 is vacuous; and the channel sector sits in a strip of width ≈ r_out·γ = 3
 against a landing circle of radius R_L = 0.03, where Lemma A gives
-√(w/2R_L) = 7 > 1 per step. Both computations are recorded so the next
-attempt does not repeat them.
+√(w/2R_L) = 7 > 1 per step. Both are recorded so the next attempt does
+not repeat them.
+
+**What the right route looks like, measured (2026-07-27).** A tube bound
+and a hitting bound differ in a testable way: a tube probability is
+exponential in the horizon, whereas hitting a target of angular measure
+γ with a density-bounded landing law is POWER-LAW in γ. Measured
+(200 000 rollouts per gap, direct entries only):
+| γ | d(γ) |
+|---|---|
+| 0.05 | 9.5·10⁻⁵ |
+| 0.10 | 3.4·10⁻⁴ |
+| 0.15 | 6.3·10⁻⁴ |
+| 0.20 | 1.2·10⁻³ |
+| 0.30 | 2.2·10⁻³ |
+| 0.40 | 3.3·10⁻³ |
+log-log slope **1.72** — a clean power law, not an exponential. And the
+scale gap is decisive: at γ = 0.1 the proved tube bound is of order
+10⁻¹⁰⁰ while d is 3.4·10⁻⁴, so the tube argument is wrong by ~96 orders
+of magnitude. Evidence label *measured*, unit rollout, n = 200 000 per
+gap.
+*Consequence.* d is a hitting probability, so the missing ingredient is a
+LOCAL LIMIT THEOREM for the landing law: the displacement is a sum of
+h independent bounded vectors with a density (Lemma S gives each summand
+an exactly circular-uniform direction), so a local CLT would give
+P(reach the channel mouth) ≥ (density) × (target measure), polynomial in
+γ and in 1/h rather than ρ^h. The exponent 1.72 rather than 1 says the
+target is not simply the channel's angular measure — plausibly because
+entry needs both the right angle AND enough radial speed, two conditions
+each scaling with γ — so the theorem to prove is a local CLT for the
+JOINT (angle, radial speed) law at the mouth. That is a concrete
+analytic target with the right shape, and it replaces "an occupation
+estimate" as the description of what T3 needs.
 
 **An intuition about that constant, REFUTED (2026-07-26).** The natural
 hope was that a freeze HANDICAPS entry — Lemma S says the freeze zeroes

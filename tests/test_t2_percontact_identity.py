@@ -281,3 +281,32 @@ def test_t2_argmax_angle_is_dominated_by_independent_uniform():
         f_r = bisect.bisect_right(ref, q) / len(ref)
         assert f_m >= f_r - 0.12, (q, f_m, f_r)     # sampling slack
     assert sum(vals) / len(vals) <= 2 / math.pi + 0.05
+
+
+def test_t2_angle_mean_bound_is_facing_only():
+    # The scoped claim: E|sin((phi_tau - phi_b)/2)| <= 2/pi holds for a
+    # FACING channel and fails for a HIDDEN one, where the two argmaxes are
+    # near-antipodal and every step deviates. Guards the scope, so the
+    # bound cannot be quoted without it.
+    ref = 2 / math.pi
+    means = {}
+    for channel, centre in (("facing", math.pi), ("hidden", 0.0)):
+        truth = RingField2D(gap=0.6, gap_center=centre, x0_center=(0.0, 0.0))
+        blind = blind_of(truth)
+        vals, steps = [], 0
+        for ep in range(2):
+            es = 4000 + 1000 * ep
+            s = truth.initial_state(random.Random(es))
+            for t in range(truth.h_episode):
+                cs = _cands(truth.a_max, es, t)
+                b = max(cs, key=lambda a: _score(blind, s, a))[0]
+                tau = max(cs, key=lambda a: _score(truth, s, a))[0]
+                steps += 1
+                if b != tau:
+                    vals.append(abs(math.sin(math.pi * (tau - b) / 2)))
+                s, _, _ = truth.step(s, b)
+        means[channel] = (sum(vals) / len(vals), len(vals) / steps)
+    assert means["facing"][0] < ref, means
+    assert means["hidden"][0] > ref, means
+    # and in the hidden configuration essentially every step deviates
+    assert means["hidden"][1] > 0.9, means
