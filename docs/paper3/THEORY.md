@@ -1549,14 +1549,36 @@ CRN pairing:
     ratio **0.78 ± 0.13**.
 Consistent with Lipschitz scaling, at L_v ≈ 0.8.
 
-**A non-vacuous play-cost bound, at last.** Combining,
-  pc ≲ D̄ · (L_v·2·gain·dt + L_p·2·gain·dt² + Δr_max) / (J_T − J_rand),
-and at the instrument's values (D̄ ≈ 15 dirty steps, L_v ≈ 0.8,
-denominator ≈ 40) this gives **pc ≲ 0.18** against a measured
-0.02–0.10 — loose by a factor 2–9, but the FIRST bound for this play
-cost that is not vacuous. Note it conditions on the planner exactly as
-Prop T2-D requires: L_v is a property of the MPC policy's averaged value
-function, not of the models.
+**Assembling the bound — and what it costs to use proved constants
+only (2026-07-27, corrected).** The chain is
+  pc ≤ D̄ · (L_v·2·gain·dt + L_p·2·gain·dt² + Δr_max) / (J_T − J_rand),
+with L_v itself bounded through the fixed point L_v ≤ A/(1−p). Feeding
+each available value of A (D̄ ≈ 15 dirty steps, denominator ≈ 40,
+p ≈ 0.5):
+| constant A | source | ⇒ L_v ≤ | ⇒ pc ≤ | |
+|---|---|---|---|---|
+| 107 | PROVED (drag cap × h·Lip r) | 214 | **48.2** | vacuous |
+| 2.7 | competence hypothesis (saturation) | 5.4 | **1.21** | vacuous |
+| 0.77 | measured | 1.5 | 0.35 | non-vacuous |
+| — | measured L_v ≈ 0.8 directly | 0.8 | 0.18 | non-vacuous |
+
+I earlier called pc ≲ 0.18 "the first non-vacuous bound" for this play
+cost. That is only true with a MEASURED constant: pc ≤ 1 holds trivially
+(play_cost 1 means the blind planner is no better than random), so the
+proved chain is vacuous by a factor 48, and even the
+competence-hypothesis chain misses at 1.21. The claim is corrected here
+rather than left standing.
+
+*Where the remaining factor sits.* Between the hypothesis chain (1.21)
+and the measurement (0.18) there is a factor 6.7, and it is two things,
+both of which charge worst cases: every dirty step is charged the MAXIMUM
+perturbation 2·gain·dt = 0.6, whereas the measured ‖Δv‖ over dirty steps
+averages ≈ 0.28 (values 0.029…0.590); and the fixed point costs
+1/(1−p) = 2 at p = 0.5. Both are averages over the PLANNER's action
+choices — ‖Δv‖ = 2·gain·dt·|sin((φ_τ−φ_b)/2)| depends on the angle
+between the two argmax actions — so tightening them means characterising
+the planner's argmax distribution, which is what Prop T2-D says any
+tight bound must do.
 
 **Can L_v be proved? Half of it can (2026-07-27).**
 *Provable half — the drag makes divergence bounded, not exponential.*
@@ -1601,14 +1623,18 @@ rather than proves (it is the (RG)/(C) competence hypothesis of Prop 4
 in another guise). So A is bounded by a proved 107 and, under the
 competence hypothesis already used elsewhere in the paper, by 2.7.
 
-**T2 status.** The original question — bound play_cost from the model's
-own disagreement — is answered NEGATIVELY and provably (T2-D). The
-replacement — bound it from the planner-averaged value — has a proved
-reduction (Lemma S, tight caps), a proved divergence cap (the drag
-lemma), an identified reason for smoothness (ties, not rarity, with a
-fixed point that closes numerically), and one constant, A, still
-measured. The bound it yields, pc ≲ 0.18 against 0.02–0.10, is the
-first non-vacuous one.
+**T2 status: NOT finished, and the gap is now quantified.** The original
+question — bound play_cost from the model's own disagreement — is
+answered NEGATIVELY and provably (Prop T2-D). The replacement — bound it
+from the planner-averaged value — has a proved reduction (Lemma S, with
+caps measured tight at 0.0590/0.5903), a proved divergence cap (the drag
+lemma, tight to 3%), and an identified source of smoothness (ties at a
+switch, not rarity of switches, with a fixed point that closes since
+p·2·gain·dt ≈ 0.3 < 1). What it does NOT yet have is a non-vacuous bound
+from proved constants: that requires A, and A's proved value is 40×
+too large while its hypothesis value is still 20% short of useful. The
+missing ingredient is the distribution of the angle between the two
+argmax actions — a planner property, as Prop T2-D requires.
 
 So T2 stands at: an exact decomposition (the hybrid identity = PDL), a
 validated mechanism (delay/arrival, R² = 0.93), and a proved per-step
@@ -1906,25 +1932,48 @@ widest separations instead (γ₁ ∈ {0.1, 0.3, 0.6, 1.2, 2.4} against
 too, and the earlier zero was an artifact of sampling only small
 divergences.
 
-**What the target itself does, under the same adversarial search.**
-Pathwise M1 in the variant is *sufficient-condition-free*: the invariant
-was only a route to it. Checked directly at the same wide separations —
-and note the unit, which is **not** the rollout count: only a pair in
-which the γ₁ copy enters can falsify M1, so the unit is the ENTERING
-PAIR. Over 75 000 CRN pairs, 517 have the γ₁ copy entering, and
-  **0 of those 517 fail pathwise M1** —
-evidence label *measured*, unit entering pair, n = 517, Wilson 95% upper
-bound on the failure rate **7.4 × 10⁻³**
-(`scripts/` runs recorded in this section). That interval, not the zero,
-is the content: 517 entering pairs cannot support a claim below about
-one in a hundred, which is far weaker than the raw 0/75 000 suggests.
+**The variant statement itself is REFUTED (2026-07-27).** The invariants
+were only routes to pathwise M1 in the variant; the statement can be
+tested directly, and the unit matters — only a pair in which the γ₁ copy
+ENTERS can falsify it, so the unit is the entering pair, not the
+rollout. The first check gave 0 failures in 517 entering pairs, which is
+a Wilson 95% upper bound of 7.4 × 10⁻³ and no more: it cannot support a
+claim below about one in a hundred. Accumulating units until the interval
+is worth quoting (`scripts/t3_variant_pairs.py`, resumable,
+3 000 000 CRN pairs at γ₁ ∈ {1.2, 2.4, 3.2} against γ₂ = 2π):
 
-Status of T3's variant route: the statement survives adversarial search
-at the sample its unit affords, and both candidate invariants for
-proving it (pointwise ordering, running minimum) are refuted. No route
-to a proof is currently open, and the honest reading is that 517 units
-is thin evidence for a pathwise claim — the next step is more entering
-pairs, not another invariant.
+| cell | failures | entering units | rate |
+|---|---|---|---|
+| 1.2 → 2π | 5 | 9 088 | 5.5·10⁻⁴ |
+| 2.4 → 2π | 5 | 10 793 | 4.6·10⁻⁴ |
+| 3.2 → 2π | 3 | 10 883 | 2.8·10⁻⁴ |
+| **total** | **13** | **30 764** | 4.2·10⁻⁴ [2.5·10⁻⁴, 7.2·10⁻⁴] |
+
+Evidence label *measured*; unit entering pair; n = 30 764;
+`results/t3_variant_pairs.json`. So **pathwise M1 fails in the
+velocity-preserving variant too**, at a rate of roughly 4 in 10 000
+entering pairs, consistently across all three cells.
+
+*What that settles.* Removing the velocity reset does NOT make M1
+pathwise; freeze-rescue is therefore **not** the sole obstruction, and
+the whole variant route — the isolation argument, the γ-independence
+handle, both candidate invariants — is closed. The residual mechanism
+must be the position block alone: a blocked copy is re-anchored in
+POSITION, which suffices to destroy pathwise inclusion without any
+velocity effect.
+
+*What it does not settle.* The distributional statements M1 and M2
+remain measured-consistent and are unaffected: they never claimed a
+pathwise ordering, and T3-P″ still bounds their defect. What is refuted
+is the last route that would have proved them.
+
+**Method note, and the reason to record it.** Both of this section's
+zeros — 0/24 000 for the invariant and 0/517 for the statement — were
+artifacts of insufficient power, one from sampling only adjacent gap
+pairs and one from counting rollouts instead of units. Both fell to a
+targeted search. A censored zero is an interval, and its width is set by
+the number of experimental UNITS, which here is two orders of magnitude
+below the rollout count.
 
 *What survives.* Pathwise M1 in the variant held in **0** of those same
 18 000 pairs (on top of the earlier 140 000), so the statement itself is

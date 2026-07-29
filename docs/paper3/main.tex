@@ -1672,14 +1672,24 @@ with no further assumptions, at $2\,\mathrm{gain}\,dt^2 = 0.06$ in
 position and $2\,\mathrm{gain}\,dt = 0.6$ in velocity (measured maxima
 $0.059$ and $0.590$: the caps are tight). Everything then rests on how
 smooth the \emph{seed-averaged} value is, which unlike the MPC policy
-itself is smoothed by the averaging. Estimating it needs care --- at ten
-seeds the estimator noise exceeds the signal and manufactures an
-apparent blow-up --- but at a hundred CRN-paired seeds the smallest
+itself is smoothed by the averaging. At a hundred CRN-paired seeds the smallest
 perturbation gives $-0.015 \pm 0.078$, statistically zero, and the
-largest gives $+0.462 \pm 0.078$, a ratio of $0.78 \pm 0.13$. Combining
-yields $\mathrm{pc} \lesssim 0.18$ against a measured $0.02$--$0.10$:
-loose by a factor of a few, but the first bound for this play-cost that
-is not vacuous.
+largest $+0.462 \pm 0.078$: a ratio of $0.78 \pm 0.13$, consistent with
+Lipschitz scaling. Combining yields $\mathrm{pc} \lesssim 0.18$ against
+a measured $0.02$--$0.10$ --- but with that constant \emph{measured}.
+Substituting instead the constant this argument proves (the drag cap
+times a per-step reward Lipschitz bound) gives $48$, and the value it
+yields under the competence hypothesis of
+Proposition~\ref{prop:query} gives $1.21$; since
+$\mathrm{play\_cost} \le 1$ holds trivially, both are vacuous. The
+factor of $6.7$ between the hypothesis chain and the measurement is
+worst-casing over the planner's action choices: every deviating step is
+charged the maximum velocity perturbation $2\,\mathrm{gain}\,dt = 0.6$
+where the measured mean is ${\approx}0.28$, and the fixed point costs a
+further factor two. Both are properties of the distribution of the angle
+between the two arg-max actions --- so closing the gap means
+characterising the planner, which is exactly what the negative result
+above says a tight bound must do.
 
 \paragraph{The honest math ledger.} The two $\gamma$-curve regularities
 (monotonicity of $r_{\mathrm{int}}$, and that the wall never helps net
@@ -1689,8 +1699,16 @@ entry) are theorems only \emph{up to the funnel defect}
 unconditional statement are closed \emph{with evidence}, not abandoned:
 the pathwise route by an explicit counterexample (seed $50543$), the
 pointwise estimate by refutation in the data ($91/91$ CI-separated
-violations via a freeze-rescue effect). What remains is an a-priori bound
-on one scalar, the funnel mass --- named, not waved at. Elsewhere the ledger has moved the other way, and we
+violations via a freeze-rescue effect). A third route closed the same
+way. Since freeze-rescue is caused by one modelling choice --- a contact
+zeroes the velocity --- a variant in which contact blocks the position
+but leaves the velocity updating freely would, if it made the ordering
+pathwise, isolate that choice as the sole obstruction. It does not:
+pathwise monotonicity fails in the variant as well, in $13$ of $30{,}764$
+entering pairs (the unit here is the entering pair, since only those can
+falsify the ordering). The position block alone suffices to break it. What
+remains is an a-priori bound on one scalar, the funnel mass --- named,
+not waved at. Elsewhere the ledger has moved the other way, and we
 report both directions: the continuity modulus, the barcode sandwich, the
 non-separating query bound, and the play-cost decomposition are now
 theorems with explicit constants (some of them, like the refuted

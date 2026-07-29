@@ -167,10 +167,12 @@ def test_t3_velocity_is_gamma_independent_in_the_variant():
     assert vels[0] == vels[1] == vels[2]      # bitwise, across gaps
 
 
-def test_t3_running_min_invariant_up_to_entry():
-    # The correct invariant: min_{s<=t} d2 <= min_{s<=t} d1 for every t up
-    # to the gamma1 copy's FIRST ENTRY. It implies pathwise M1 in one line,
-    # and unlike the unconditional version it is not violated.
+def test_t3_running_min_holds_on_adjacent_pairs_only():
+    # REFUTED as an invariant: it holds on ADJACENT gap pairs (this test)
+    # but fails at wide separations, and pathwise M1 in the variant fails
+    # too (13/30,764 entering units, results/t3_variant_pairs.json). Kept
+    # as a regression guard on the adjacent-pair regime, and as the record
+    # of why adjacency was the flaw in the original check.
     from cwm.continuous.envs import integrate_2d
     for g1, g2 in ((0.2, 0.6), (1.2, 2.4)):
         e1, e2 = RingField2D(gap=g1), RingField2D(gap=g2)
@@ -224,3 +226,21 @@ def test_t3_drag_caps_identical_action_divergence():
             worst = max(worst, math.hypot(s1[0] - s2[0], s1[1] - s2[1]))
     assert worst <= cap + 1e-9, (worst, cap)
     assert worst > 0.8 * cap, "the cap must be nearly attained"
+
+
+def test_t3_variant_pathwise_m1_is_refuted():
+    # The velocity-preserving variant does NOT make M1 pathwise: removing
+    # the velocity reset leaves the POSITION block, which alone destroys
+    # pathwise inclusion. Guarded with the JSON's counts so the refuted
+    # claim cannot be quietly re-asserted.
+    import json
+    import pathlib
+    path = pathlib.Path("results/t3_variant_pairs.json")
+    if not path.exists():                     # measurement not present
+        return
+    data = json.loads(path.read_text())
+    summary = data["summary"]
+    assert summary["failures"] > 0, summary
+    assert summary["entering_units"] > 10_000, summary
+    # the unit is the entering pair, two orders below the rollout count
+    assert summary["entering_units"] < summary["pairs"] / 50

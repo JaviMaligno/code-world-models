@@ -1,0 +1,33 @@
+{
+ "block_size": 5000,
+ "cells": {
+  "1.2->6.2832": {
+   "blocks_done": 200,
+   "pairs": 1000000,
+   "entering": 9088,
+   "failures": 5
+  },
+  "2.4->6.2832": {
+   "blocks_done": 200,
+   "pairs": 1000000,
+   "entering": 10793,
+   "failures": 5
+  },
+  "3.2->6.2832": {
+   "blocks_done": 200,
+   "pairs": 1000000,
+   "entering": 10883,
+   "failures": 3
+  }
+ },
+ "summary": {
+  "pairs": 3000000,
+  "entering_units": 30764,
+  "failures": 13,
+  "failure_rate": 0.0004225718372123261,
+  "wilson95": [
+   0.0002469777321107309,
+   0.0007229180567443443
+  ]
+ }
+}
