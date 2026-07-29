@@ -112,7 +112,8 @@ unspecified in the design doc, whatever its scientific merit.
 
 ### B. Added after the results they respond to
 
-Ordered by date. The five items the review asks about specifically are B5–B9;
+Ordered by date. The five items the review asks about specifically are B5–B9,
+and B16–B21 are this revision's campaigns;
 each date below is verified from `git log`, not assumed.
 
 | # | experiment | dated record that first specifies it | first measured | gap after the result it responds to | classification |
@@ -132,6 +133,12 @@ each date below is verified from `git log`, not assumed.
 | B13 | **Sample-stream census** (`sample_stream_census.json`: rollout-seed blocks, block-level Wilson) | none — the unit of analysis was changed *because* a review pointed out the pooling was over shared samples | `6f3b852` **2026-07-25 17:58** | 18 days | POST-HOC (choice of the sampling unit after the data) |
 | B14 | **Fence separation census** (`fence_separation_census.json`) | none | `6f3b852` **2026-07-25 17:58** | 8 days after the 2D mitigation result | DIAGNOSTIC — it *replaced* the paper's own reading of that result: "boundary-mapping transient" became "a growing fraction of outright failures (0/20, 2/20, 7/20 pinned episodes)" |
 | B15 | **Rarity re-measurement at 30k / 20k rollouts** (censored zeros in `tab:pendulum`, `tab:axes`) | `STRONGER-STATEMENTS.md` item 4, `26d45c1` 2026-07-25 09:06 | `be648f8` **2026-07-25 10:28** | 82 min / 18 days | DIAGNOSTIC (removes two censored zeros a review flagged) |
+| B16 | **Slab (unbounded-in-$y$) instrument** and its calibration (Ablation 4) | none before the 2D failure it probes; the arity hypothesis is itself post-hoc | calibration `0f8e482` **2026-07-29 10:18**, synthesis `f2b9450` **2026-07-29 11:50** | 12 days after `dc27f7b` | EXPLORATORY ABLATION that **excludes nothing**: `mode_identifiability.json`, run after it, shows the slab's rule is identified only up to `prop:entryclass`, so its 0/40 is recorded and not reported as evidence. Its by-product is the proposition |
+| B17 | **Region-first landing prompt at 3x budget** (`pv-landing_it15`) | none | `f2b9450` **2026-07-29 11:50** | 12 days | EXPLORATORY ABLATION |
+| B18 | **Mode-effect campaigns: `landing` and `clamp`** (Ablations 6, 7) | `STRONGER-STATEMENTS.md` names the censoring hypothesis and the campaign that would test it, committed before the run | mini `4db6fa3` **2026-07-29 14:07**, large `1c074ff` **2026-07-29 15:47** | same day as its route note | EXPLORATORY, and it **refuted the hypothesis it was built to confirm**: both lift the interior's censoring and neither restores repair (0/40 each). Recorded as a refutation of our own mechanism |
+| B19 | **Graded mode hints** (`--mode-hint radius`, `--mode-hint centre`) --- the in-pipeline positive control | none before the negatives they bound | `d1839d4` **2026-07-29 17:07** | 12 days | DIAGNOSTIC POSITIVE CONTROL. It is what makes the negatives interpretable: form+centres 20/20 exact, form alone 0/20 |
+| B20 | **Trivial circle-fit baseline** (`region_fit_baseline.py`) --- the out-of-pipeline positive control | none | `d1839d4` **2026-07-29 17:07** | 12 days | DIAGNOSTIC POSITIVE CONTROL, no LLM involved |
+| B21 | **Evidence dose** (`--start-arc`; arms at $120^\circ$ and $240^\circ$ with the contact count matched) | `STRONGER-STATEMENTS.md`, pre-run: "Hold everything fixed and raise only the number of distinct contact bearings the sample shows... The prior should yield to enough coverage or it is a hard limit rather than a prior." Committed **before** the calibration and the campaign | calibration and campaigns **2026-07-29**, after the route note | EXPLORATORY with a **written directional prediction**, and both of its outcomes were named in advance so neither could be claimed after the fact --- the closest the 2D program comes to a pre-registered test |
 
 ### C. The theory: all of it post-hoc, and one part explicitly out of scope
 

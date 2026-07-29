@@ -1422,6 +1422,58 @@ claim("a plain least-squares circle fit on the same evidence recovers both const
 claim("the fit succeeds on samples where the synthesizer given the form does not, which "
       "is what makes the negative an induction failure rather than a limit of the evidence",
       _rf["n_recovering_both"] > _hc["k_repaired_behavioural"])
+# --- the evidence dose: the one 2D treatment whose direction was recorded first ----
+_dc = load("evidence_dose_calibration")
+_arms = _rf["dose_arms"]
+_d240 = _ae["campaigns"]["dose_arc240"]["per_size"]["large"]
+_d240h = _ae["campaigns"]["dose_arc240_hint"]["per_size"]["large"]
+_d120 = _ae["campaigns"]["dose_arc120"]["per_size"]["large"]
+claim("the dose raises COVERAGE and not quantity: the ring arms hold the contact count at "
+      "the baseline's 15 while the covered arc goes 111 -> 129 -> 185 deg",
+      _arms["default"]["median_contacts"] == 14.5
+      and _arms["arc120"]["median_contacts"] == 16.0
+      and _arms["arc240"]["median_contacts"] == 15.0
+      # what "matched" means: within 3 contacts of the baseline, the calibration's own
+      # admissibility criterion, so the dose cannot smuggle in extra evidence
+      and all(abs(_arms[k]["median_contacts"] - _arms["default"]["median_contacts"]) <= 3
+              for k in ("arc120", "arc240"))
+      and abs(_arms["default"]["median_landing_arc_deg"] - 110.7) < 0.05
+      and abs(_arms["arc120"]["median_landing_arc_deg"] - 128.9) < 0.05
+      and abs(_arms["arc240"]["median_landing_arc_deg"] - 185.0) < 0.05,
+      "contacts " + "/".join(f"{_arms[k]['median_contacts']:g}"
+                             for k in ("default", "arc120", "arc240"))
+      + ", arc " + "/".join(f"{_arms[k]['median_landing_arc_deg']:.1f}"
+                            for k in ("default", "arc120", "arc240")))
+claim("the trap survives the wider start ring: play-cost above 0.8 and the blind planner "
+      "still driven into the region",
+      _dc["arms"]["arc240"]["play_play_cost"] > 0.8
+      and _dc["arms"]["arc240"]["play_blind_contact_rate"] >= 0.9
+      and _dc["arms"]["arc240"]["admissible"]["all"] is True,
+      f"play_cost {_dc['arms']['arc240']['play_play_cost']:.4f}")
+claim("at 185 deg the trivial fit recovers BOTH constants on 20 of 20 samples, so the "
+      "evidence determines the region on every sample in the dose arm",
+      _arms["arc240"]["n_recovering_both"] == 20
+      and _arms["arc240"]["n_recovering_centre"] == 20
+      and _arms["arc120"]["n_recovering_both"] > _arms["default"]["n_recovering_both"],
+      f"{_arms['arc240']['n_recovering_both']}/20 at 185 deg, "
+      f"{_arms['arc120']['n_recovering_both']}/20 at 129, "
+      f"{_arms['default']['n_recovering_both']}/20 at 111")
+claim("at that same coverage the synthesizer recovers the region in NONE of the draws, "
+      "with the form given and without it",
+      _d240h["n_mode_containing"] == 20 and _d240h["k_repaired_behavioural"] == 0
+      and _d240["n_mode_containing"] == 20 and _d240["k_repaired_behavioural"] == 0,
+      f"hint {_d240h['k_repaired_behavioural']}/{_d240h['n_mode_containing']}, "
+      f"plain {_d240['k_repaired_behavioural']}/{_d240['n_mode_containing']}")
+claim("the ring itself is not what does it: the 129-deg control behaves like the baseline",
+      _d120["n_mode_containing"] == 20 and _d120["k_repaired_behavioural"] == 0)
+claim("the translation arm still writes the rule on the wider sample, so the null is the "
+      "induction and not the instrument",
+      _d240["n_full"] == 20 and _d240["full_gate_passed"] == 20
+      and _d240["full_zero_iterations"] == 20 and _d240["full_mode_encoded"] == 20)
+claim("the attribution has no residue at 185 deg: the earlier control had to set aside the "
+      "8 samples where the trivial fit also fails, and here there are none",
+      20 - _arms["default"]["n_recovering_both"] == 8
+      and 20 - _arms["arc240"]["n_recovering_both"] == 0)
 
 # --- ablations 6 and 7: lifting prop:entryclass's premise ----------------------
 _mec = load("mode_effect_calibration")

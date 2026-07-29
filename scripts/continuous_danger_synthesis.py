@@ -123,7 +123,8 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
         stored_p = results.get("params", {}) or {}
         current_p = meta.get("params", {}) or {}
         _RESULT_KEYS = ("instrument", "x_wall", "th_stop", "k1", "k2",
-                        "patch_shape", "mode_effect", "mode_hint", "prompt_variant",
+                        "patch_shape", "mode_effect", "mode_hint", "start_arc",
+                        "prompt_variant",
                         "n_rollouts", "eps", "max_iters", "play_episodes",
                         "compat_model")
         mismatch = {k: (stored_p[k], current_p[k]) for k in _RESULT_KEYS
@@ -262,6 +263,16 @@ def build_parser() -> argparse.ArgumentParser:
                     help="patch2d: x of patch 1 center (nearer patch, common mode)")
     ap.add_argument("--k2", type=float, default=7.0,
                     help="patch2d: x of patch 2 center (farther patch, rare mode)")
+    ap.add_argument("--start-arc", type=float, default=None,
+                    help="patch2d only. The EVIDENCE-DOSE knob (2026-07-29): start episodes "
+                    "on a ring just outside the near patch, at a bearing drawn from an arc "
+                    "of this width centred on the patch's west side, instead of from the box "
+                    "at the origin. It raises the angular coverage of the contacts a sample "
+                    "contains -- a default sample covers a median 111 degrees, an arc of 240 "
+                    "gives 185 -- so it tests whether the failure to induce the region's "
+                    "form yields to wider evidence. Pair it with --n-rollouts to hold the "
+                    "contact COUNT fixed (15 at --start-arc 240), or coverage and quantity "
+                    "move together and neither is answered. Omit for the committed default.")
     ap.add_argument("--mode-hint", choices=["radius", "centre"], default=None,
                     help="patch2d only. The POSITIVE CONTROL for the 2D negatives "
                     "(2026-07-29): replace the incomplete arm's missing clause with a "
@@ -362,7 +373,8 @@ if __name__ == "__main__":
     elif args.instrument == "patch2d":
         ENV = PatchField2D(p1=(args.k1, 0.0), p2=(args.k2, 0.0),
                            patch_shape=args.patch_shape,
-                           mode_effect=args.mode_effect)
+                           mode_effect=args.mode_effect,
+                           start_arc_deg=args.start_arc)
         KNOB = f"k{args.k1:g}_{args.k2:g}"
         INSTR_TAG = {"disc": "patch2d_", "square": "patch2dsq_",
                      "slab": "patch2dslab_"}[args.patch_shape]
@@ -397,6 +409,8 @@ if __name__ == "__main__":
     SUFFIX = ""
     if args.seed_offset:
         SUFFIX += f"_off{args.seed_offset}"
+    if args.start_arc:
+        SUFFIX += f"_arc{args.start_arc:g}"
     if args.mode_hint:
         SUFFIX += f"_hint-{args.mode_hint}"
     if args.prompt_variant != "default":

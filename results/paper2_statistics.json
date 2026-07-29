@@ -29,9 +29,9 @@
     "draw_level": "computed only as the labelled invalid-if-pooled comparator whenever blocks are shared; pooled_bound(unit='draw') raises otherwise."
   },
   "totals": {
-    "n_draws": 957,
+    "n_draws": 1037,
     "n_distinct_blocks": 40,
-    "n_treatments": 30,
+    "n_treatments": 34,
     "files": [
       "continuous_claude_relay.json",
       "continuous_claude_relay_patch2d_k3_7.json",
@@ -42,6 +42,9 @@
       "continuous_synthesis_mini_xwall8.json",
       "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json",
       "continuous_synthesis_patch2d_large_k3_7.json",
+      "continuous_synthesis_patch2d_large_k3_7_arc120.json",
+      "continuous_synthesis_patch2d_large_k3_7_arc240.json",
+      "continuous_synthesis_patch2d_large_k3_7_arc240_hint-centre.json",
       "continuous_synthesis_patch2d_large_k3_7_hint-centre.json",
       "continuous_synthesis_patch2d_large_k3_7_hint-radius.json",
       "continuous_synthesis_patch2d_large_k3_7_pv-landing_it15.json",
@@ -767,6 +770,228 @@
       }
     },
     {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | arc=120 | roll=15 | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_large_k3_7_arc120.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 5
+        },
+        "see_none": 0,
+        "see_one": 15,
+        "see_both": 5
+      },
+      "outcome_counts": {
+        "rejected_stalled": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | arc=120 | roll=15 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | arc=120 | roll=15 | prompt=default | it=5 | arm=incomplete | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=full",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_large_k3_7_arc240.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 10
+        },
+        "see_none": 0,
+        "see_one": 10,
+        "see_both": 10
+      },
+      "outcome_counts": {
+        "control_translated": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 20,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=full"
+        ],
+        "point": 1.0,
+        "clopper_pearson_95": [
+          0.8315665290169146,
+          1.0
+        ],
+        "wilson_95": [
+          0.8388698745050667,
+          1.0
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=full | gpt-5.4"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_large_k3_7_arc240.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 10
+        },
+        "see_none": 0,
+        "see_one": 10,
+        "see_both": 10
+      },
+      "outcome_counts": {
+        "rejected_stalled": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete | gpt-5.4"
+      }
+    },
+    {
       "treatment": "patch2d | k1=3,k2=7 | shape=disc | effect=clamp | prompt=default | it=5 | arm=full",
       "model": "gpt-5.4",
       "size": "large",
@@ -1357,6 +1582,80 @@
         "valid_for_paper": true,
         "homogeneity_assumed_across_treatments": false,
         "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | effect=landing | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | hint=centre | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
+      "model": "gpt-5.4",
+      "size": "large",
+      "family": "gpt-5.x",
+      "file": [
+        "continuous_synthesis_patch2d_large_k3_7_arc240_hint-centre.json"
+      ],
+      "n_blocks": 20,
+      "n_draws": 20,
+      "blocks": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 20,
+        "per_mode_seen": {
+          "patch1_seen": 20,
+          "patch2_seen": 10
+        },
+        "see_none": 0,
+        "see_one": 10,
+        "see_both": 10
+      },
+      "outcome_counts": {
+        "rejected_stalled": 20
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 20,
+        "n_draws": 20,
+        "n_distinct_blocks": 20,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | hint=centre | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.16843347098308536
+        ],
+        "wilson_95": [
+          0.0,
+          0.16113012549493322
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | hint=centre | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete | gpt-5.4"
       }
     },
     {
@@ -4083,29 +4382,29 @@
     "patch2d_repair_negative": {
       "paper_text": "0/156 mode-containing seeds on PatchField2D",
       "what_is_pooled": "two model sizes (mini, large) x the two disc knobs k=(3,7) and k=(5,9) x the zero-curvature square ablation x the region-guided 3x-budget treatment",
-      "n_draws": 356,
+      "n_draws": 416,
       "n_distinct_blocks": 20,
       "draws_per_block": {
-        "1": 18,
-        "2": 18,
-        "3": 18,
-        "4": 18,
-        "5": 18,
-        "6": 18,
-        "7": 18,
-        "8": 16,
-        "9": 16,
-        "10": 18,
-        "11": 18,
-        "12": 18,
-        "13": 18,
-        "14": 18,
-        "15": 18,
-        "16": 18,
-        "17": 18,
-        "18": 18,
-        "19": 18,
-        "20": 18
+        "1": 21,
+        "2": 21,
+        "3": 21,
+        "4": 21,
+        "5": 21,
+        "6": 21,
+        "7": 21,
+        "8": 19,
+        "9": 19,
+        "10": 21,
+        "11": 21,
+        "12": 21,
+        "13": 21,
+        "14": 21,
+        "15": 21,
+        "16": 21,
+        "17": 21,
+        "18": 21,
+        "19": 21,
+        "20": 21
       },
       "HONEST_block_level": {
         "unit": "block",
@@ -4113,14 +4412,17 @@
         "block_scoring": "all",
         "k": 0,
         "n": 20,
-        "n_draws": 356,
+        "n_draws": 416,
         "n_distinct_blocks": 20,
         "n_shared_blocks": 20,
-        "max_draws_per_block": 18,
-        "n_treatments_pooled": 10,
+        "max_draws_per_block": 21,
+        "n_treatments_pooled": 13,
         "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | arc=120 | roll=15 | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=clamp | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=landing | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | hint=centre | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=centre | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=radius | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
@@ -4148,15 +4450,18 @@
         "cluster_key": "by_block",
         "block_scoring": null,
         "k": 20,
-        "n": 356,
-        "n_draws": 356,
+        "n": 416,
+        "n_draws": 416,
         "n_distinct_blocks": 20,
         "n_shared_blocks": 20,
-        "max_draws_per_block": 18,
-        "n_treatments_pooled": 10,
+        "max_draws_per_block": 21,
+        "n_treatments_pooled": 13,
         "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | arc=120 | roll=15 | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=clamp | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=landing | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | hint=centre | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=centre | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=radius | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
@@ -4166,14 +4471,14 @@
           "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=5.5,k2=7 | shape=slab | prompt=default | it=5 | arm=incomplete"
         ],
-        "point": 0.056179775280898875,
+        "point": 0.04807692307692308,
         "clopper_pearson_95": [
-          0.034650083966173875,
-          0.08543401074357299
+          0.029610481609522177,
+          0.07327656295939083
         ],
         "wilson_95": [
-          0.03665848687683722,
-          0.08517734311057946
+          0.03133482486760569,
+          0.07308931985745251
         ],
         "valid_for_paper": false,
         "homogeneity_assumed_across_treatments": true,
@@ -4189,14 +4494,17 @@
             "block_scoring": "all",
             "k": 0,
             "n": 20,
-            "n_draws": 160,
+            "n_draws": 220,
             "n_distinct_blocks": 20,
             "n_shared_blocks": 20,
-            "max_draws_per_block": 8,
-            "n_treatments_pooled": 5,
+            "max_draws_per_block": 11,
+            "n_treatments_pooled": 8,
             "treatments_pooled": [
+              "patch2d | k1=3,k2=7 | shape=disc | arc=120 | roll=15 | prompt=default | it=5 | arm=incomplete",
+              "patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
               "patch2d | k1=3,k2=7 | shape=disc | effect=clamp | prompt=default | it=5 | arm=incomplete",
               "patch2d | k1=3,k2=7 | shape=disc | effect=landing | prompt=default | it=5 | arm=incomplete",
+              "patch2d | k1=3,k2=7 | shape=disc | hint=centre | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
               "patch2d | k1=3,k2=7 | shape=disc | hint=centre | prompt=default | it=5 | arm=incomplete",
               "patch2d | k1=3,k2=7 | shape=disc | hint=radius | prompt=default | it=5 | arm=incomplete",
               "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete"
@@ -4306,13 +4614,13 @@
           }
         }
       ],
-      "honest_over_naive_upper_bound_ratio": 1.9715037315599309,
+      "honest_over_naive_upper_bound_ratio": 2.2985995000397272,
       "heterogeneity_across_campaigns": {
         "block_level_counts": {
           "disc k=(3,7)": {
             "k": 0,
             "n": 20,
-            "n_draws": 160
+            "n_draws": 220
           },
           "disc k=(5,9)": {
             "k": 0,
@@ -4388,7 +4696,7 @@
     },
     "patch2d_partial_repair_negative": {
       "paper_text": "0/66 partial repair",
-      "n_draws": 156,
+      "n_draws": 191,
       "n_distinct_blocks": 20,
       "HONEST_block_level": {
         "unit": "block",
@@ -4396,14 +4704,17 @@
         "block_scoring": "all",
         "k": 0,
         "n": 20,
-        "n_draws": 156,
+        "n_draws": 191,
         "n_distinct_blocks": 20,
         "n_shared_blocks": 20,
-        "max_draws_per_block": 10,
-        "n_treatments_pooled": 6,
+        "max_draws_per_block": 13,
+        "n_treatments_pooled": 9,
         "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | arc=120 | roll=15 | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=clamp | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=landing | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | hint=centre | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=centre | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=radius | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
@@ -4427,15 +4738,18 @@
         "cluster_key": "by_block",
         "block_scoring": null,
         "k": 0,
-        "n": 156,
-        "n_draws": 156,
+        "n": 191,
+        "n_draws": 191,
         "n_distinct_blocks": 20,
         "n_shared_blocks": 20,
-        "max_draws_per_block": 10,
-        "n_treatments_pooled": 6,
+        "max_draws_per_block": 13,
+        "n_treatments_pooled": 9,
         "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | arc=120 | roll=15 | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=clamp | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=landing | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | hint=centre | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=centre | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=radius | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
@@ -4444,11 +4758,11 @@
         "point": 0.0,
         "clopper_pearson_95": [
           0.0,
-          0.023369271591380247
+          0.019128194175846325
         ],
         "wilson_95": [
           0.0,
-          0.024033793455520962
+          0.019716528708448297
         ],
         "valid_for_paper": false,
         "homogeneity_assumed_across_treatments": true,
@@ -4499,7 +4813,7 @@
       "note": "this arm closes the single-family confound, and adds draws, but adds NO new gate samples: its three seeds are blocks the GPT-5.x campaigns already used, so the distinct-block count behind the 2D negative result stays at 20"
     },
     "patch2d_repair_negative_with_claude": {
-      "n_draws": 359,
+      "n_draws": 419,
       "n_distinct_blocks": 20,
       "HONEST_block_level": {
         "unit": "block",
@@ -4507,14 +4821,17 @@
         "block_scoring": "all",
         "k": 0,
         "n": 20,
-        "n_draws": 359,
+        "n_draws": 419,
         "n_distinct_blocks": 20,
         "n_shared_blocks": 20,
-        "max_draws_per_block": 19,
-        "n_treatments_pooled": 11,
+        "max_draws_per_block": 22,
+        "n_treatments_pooled": 14,
         "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | arc=120 | roll=15 | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=clamp | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=landing | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | hint=centre | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=centre | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=radius | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
@@ -4542,15 +4859,18 @@
         "cluster_key": "by_block",
         "block_scoring": null,
         "k": 20,
-        "n": 359,
-        "n_draws": 359,
+        "n": 419,
+        "n_draws": 419,
         "n_distinct_blocks": 20,
         "n_shared_blocks": 20,
-        "max_draws_per_block": 19,
-        "n_treatments_pooled": 11,
+        "max_draws_per_block": 22,
+        "n_treatments_pooled": 14,
         "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | arc=120 | roll=15 | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=clamp | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | effect=landing | prompt=default | it=5 | arm=incomplete",
+          "patch2d | k1=3,k2=7 | shape=disc | hint=centre | arc=240 | roll=15 | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=centre | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | hint=radius | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
@@ -4561,14 +4881,14 @@
           "patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete",
           "patch2d | k1=5.5,k2=7 | shape=slab | prompt=default | it=5 | arm=incomplete"
         ],
-        "point": 0.055710306406685235,
+        "point": 0.0477326968973747,
         "clopper_pearson_95": [
-          0.03435770112826826,
-          0.08473114482682925
+          0.029396707994379982,
+          0.07275885555443035
         ],
         "wilson_95": [
-          0.03634969868793285,
-          0.0844787840439259
+          0.031108941166771542,
+          0.07257432935344216
         ],
         "valid_for_paper": false,
         "homogeneity_assumed_across_treatments": true,
@@ -5459,23 +5779,23 @@
     {
       "key": "censored_zeros.patch2d_pooled_0_of_156",
       "paper_text": "0/156 mode-containing seeds recover the 2D region",
-      "n_draws": 356,
+      "n_draws": 416,
       "n_distinct_blocks": 20,
       "block_level_upper_95_clopper_pearson": 0.16843347098308536,
       "block_level_upper_95_wilson": 0.16113012549493322,
-      "INVALID_draw_level_upper_95_clopper_pearson": 0.08543401074357299,
-      "cite_as": "0 of 356 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.07327656295939083,
+      "cite_as": "0 of 416 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
       "note": "pools 4 treatments over 20 blocks"
     },
     {
       "key": "censored_zeros.patch2d_disc_0_of_76",
       "paper_text": "0/76 mode-containing disc seeds",
-      "n_draws": 196,
+      "n_draws": 256,
       "n_distinct_blocks": 20,
       "block_level_upper_95_clopper_pearson": 0.16843347098308536,
       "block_level_upper_95_wilson": 0.16113012549493322,
-      "INVALID_draw_level_upper_95_clopper_pearson": 0.15318969119394116,
-      "cite_as": "0 of 196 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.1180801247845023,
+      "cite_as": "0 of 256 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
       "note": ""
     },
     {
@@ -5503,12 +5823,12 @@
     {
       "key": "censored_zeros.patch2d_partial_repair_0_of_66",
       "paper_text": "0/66 partial repair",
-      "n_draws": 156,
+      "n_draws": 191,
       "n_distinct_blocks": 20,
       "block_level_upper_95_clopper_pearson": 0.16843347098308536,
       "block_level_upper_95_wilson": 0.16113012549493322,
-      "INVALID_draw_level_upper_95_clopper_pearson": 0.023369271591380247,
-      "cite_as": "0 of 156 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.019128194175846325,
+      "cite_as": "0 of 191 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
       "note": "the disc cells' see-one-miss-the-other branch; the gate refused every artifact, so no certified partial repair could exist"
     },
     {
@@ -5525,12 +5845,12 @@
     {
       "key": "censored_zeros.patch2d_all_families_0_of_159",
       "paper_text": "0/156 pooled plus 0/3 Claude",
-      "n_draws": 359,
+      "n_draws": 419,
       "n_distinct_blocks": 20,
       "block_level_upper_95_clopper_pearson": 0.16843347098308536,
       "block_level_upper_95_wilson": 0.16113012549493322,
-      "INVALID_draw_level_upper_95_clopper_pearson": 0.08473114482682925,
-      "cite_as": "0 of 359 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
+      "INVALID_draw_level_upper_95_clopper_pearson": 0.07275885555443035,
+      "cite_as": "0 of 419 draws over 20 distinct gate-sample blocks; exact 95% upper bound on the per-block rate 0.168",
       "note": "still 20 distinct gate-sample blocks"
     },
     {
@@ -5549,8 +5869,8 @@
     {
       "json_key": "headline.patch2d_repair_negative.HONEST_block_level",
       "paper_currently": "0/156 ... a Wilson 95% upper bound of 0.161 per sample (quoted for the disc cells' 20 blocks)",
-      "replace_with": "0 of 356 mode-containing synthesis draws, over 20 distinct gate-sample blocks: exact (Clopper-Pearson) 95% upper bound 0.168 on the per-block repair probability (Wilson 0.161)",
-      "naive_comparator_to_display": "pooling the 356 draws as independent trials would have claimed 0.0854 -- 2.0x tighter than the evidence supports"
+      "replace_with": "0 of 416 mode-containing synthesis draws, over 20 distinct gate-sample blocks: exact (Clopper-Pearson) 95% upper bound 0.168 on the per-block repair probability (Wilson 0.161)",
+      "naive_comparator_to_display": "pooling the 416 draws as independent trials would have claimed 0.0733 -- 2.3x tighter than the evidence supports"
     },
     {
       "json_key": "headline.onedim_repair.per_instrument.cart",
@@ -5580,7 +5900,7 @@
     {
       "json_key": "headline.patch2d_claude_arm",
       "paper_currently": "78 distinct gate samples each given two independent synthesis draws (38 disc + 20 square + 20 guided)",
-      "replace_with": "20 distinct rollout-seed blocks; the disc knob change reuses the block's random stream, so k=(3,7) and k=(5,9) are two treatments on the same 20 blocks rather than 38 samples. 356 draws over 20 blocks"
+      "replace_with": "20 distinct rollout-seed blocks; the disc knob change reuses the block's random stream, so k=(3,7) and k=(5,9) are two treatments on the same 20 blocks rather than 38 samples. 416 draws over 20 blocks"
     }
   ],
   "assumptions": {

@@ -245,10 +245,33 @@ class PatchField2D:
     # What happens when the mode fires; see _mode_post_state. "freeze" is the committed
     # default and reproduces every run in the paper bit-for-bit.
     mode_effect: str = "freeze"
+    # Evidence-dose knobs; None reproduces the committed start distribution exactly.
+    start_arc_deg: float | None = None
+    start_ring_margin: float = 0.35
 
     def initial_state(self, rng) -> State:
-        return (rng.uniform(-self.x0_range, self.x0_range),
-                rng.uniform(-self.x0_range, self.x0_range), 0.0, 0.0)
+        """Start states. `start_arc_deg` is None for the committed default (a box at the
+        origin, bit-identical to every run in the paper).
+
+        A positive `start_arc_deg` is the EVIDENCE-DOSE intervention: episodes begin on a
+        ring just outside the near patch, at a bearing drawn uniformly from an arc of that
+        width centred on the patch's west side. It exists because the contact landings a
+        default sample contains cover a median 111 degrees of the circle
+        (scripts/region_fit_baseline.py), and the open question is whether the synthesizer's
+        failure to induce the region's FORM yields to wider coverage. The arc width is the
+        dose; the number of rollouts sets the contact count, so coverage and quantity can be
+        varied independently -- which is the whole point, since a single knob that moved both
+        would answer neither."""
+        if self.start_arc_deg is None:
+            return (rng.uniform(-self.x0_range, self.x0_range),
+                    rng.uniform(-self.x0_range, self.x0_range), 0.0, 0.0)
+        half = math.radians(self.start_arc_deg) / 2.0
+        # bearing 180 deg = due west of the patch, the direction a default rollout arrives
+        # from, so the narrow-arc setting reproduces the default's geometry
+        th = math.pi + rng.uniform(-half, half)
+        rad = self.R + self.start_ring_margin
+        return (self.p1[0] + rad * math.cos(th), self.p1[1] + rad * math.sin(th),
+                0.0, 0.0)
 
     def _lode(self, x: float, y: float, lode: tuple, amp: float) -> float:
         d = math.hypot(x - lode[0], y - lode[1])

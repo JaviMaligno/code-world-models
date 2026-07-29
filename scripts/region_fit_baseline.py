@@ -39,6 +39,9 @@ from cwm.continuous.contract import collect_transitions  # noqa: E402
 
 RES = _REPO / "results"
 N_SEEDS = 20
+# (label, start_arc_deg, n_rollouts) -- the dose arms, matched on contact COUNT by
+# scripts/calibrate_evidence_dose.py so that only the coverage differs
+ARMS = [("default", None, 40), ("arc120", 120.0, 15), ("arc240", 240.0, 15)]
 TOL_CENTRE = 0.10        # a tenth of the radius
 TOL_RADIUS = 0.10
 
@@ -63,13 +66,12 @@ def angular_extent(pts, c):
     return float(360.0 - gaps.max())      # the arc actually covered
 
 
-def main() -> None:
-    env = PatchField2D(p1=(3.0, 0.0), p2=(7.0, 0.0))
-    truth = {"centre": list(env.p1), "R": env.R}
+def measure_arm(label, arc, n_roll):
+    env = PatchField2D(p1=(3.0, 0.0), p2=(7.0, 0.0), start_arc_deg=arc)
     rows = []
     for i in range(N_SEEDS):
         seed = 10_000 * (i + 1)
-        tr = collect_transitions(env, 40, seed=seed)
+        tr = collect_transitions(env, n_roll, seed=seed)
         land, prev = [], []
         for t in tr:
             if not t["contact"]:
@@ -95,7 +97,25 @@ def main() -> None:
             row["recovers_centre"] = row["recovers_both"] = False
             row["note"] = "fewer than three contacts: a circle is not determined"
         rows.append(row)
+    ok = [r for r in rows if r.get("recovers_both")]
+    okc = [r for r in rows if r.get("recovers_centre")]
+    fit = [r for r in rows if "cond" in r]
+    return {"label": label, "start_arc_deg": arc, "n_rollouts": n_roll,
+            "n_recovering_centre": len(okc), "n_recovering_both": len(ok),
+            "n_with_enough_contacts": len(fit),
+            "median_contacts": float(np.median([r["n_contacts_p1"] for r in rows])),
+            "median_landing_arc_deg":
+                float(np.median([r["landing_arc_deg"] for r in fit])) if fit else 0.0,
+            "median_prev_arc_deg":
+                float(np.median([r["prev_arc_deg"] for r in fit])) if fit else 0.0,
+            "rows": rows}
 
+
+def main() -> None:
+    env = PatchField2D(p1=(3.0, 0.0), p2=(7.0, 0.0))
+    truth = {"centre": list(env.p1), "R": env.R}
+    arms = {lab: measure_arm(lab, arc, n) for lab, arc, n in ARMS}
+    rows = arms["default"]["rows"]
     ok = [r for r in rows if r.get("recovers_both")]
     okc = [r for r in rows if r.get("recovers_centre")]
     fit = [r for r in rows if "cond" in r]
@@ -110,6 +130,7 @@ def main() -> None:
         "median_landing_arc_deg": float(np.median([r["landing_arc_deg"] for r in fit])),
         "median_prev_arc_deg": float(np.median([r["prev_arc_deg"] for r in fit])),
         "rows": rows,
+        "dose_arms": arms,
         "reading": (
             "The contact landings cover a median ~110 degrees of the circle, so the evidence "
             "is partial rather than either full or a thin crescent. Even so, a plain "
@@ -138,7 +159,14 @@ def main() -> None:
           f"BOTH constants in {len(ok)}/{N_SEEDS}")
     print(f"median landing arc {out['median_landing_arc_deg']:.1f} deg vs pre-freeze "
           f"{out['median_prev_arc_deg']:.1f} deg")
-    print(f"wrote {RES / 'region_fit_baseline.json'}")
+    print("\n--- the evidence-dose arms (contact count matched; only coverage differs) ---")
+    print(f"{'arm':>9} {'arc':>6} {'N':>4} {'contacts':>9} {'coverage':>9} "
+          f"{'centre ok':>10} {'both ok':>8}")
+    for lab, a in arms.items():
+        print(f"{lab:>9} {str(a['start_arc_deg']):>6} {a['n_rollouts']:>4} "
+              f"{a['median_contacts']:>9.1f} {a['median_landing_arc_deg']:>8.1f}° "
+              f"{a['n_recovering_centre']:>7}/20 {a['n_recovering_both']:>5}/20")
+    print(f"\nwrote {RES / 'region_fit_baseline.json'}")
 
 
 if __name__ == "__main__":

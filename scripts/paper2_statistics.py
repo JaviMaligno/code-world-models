@@ -258,6 +258,8 @@ def load_draws(results_dir: pathlib.Path = R) -> list:
                 "patch_shape": shape,
                 "mode_effect": params.get("mode_effect", "freeze"),
                 "mode_hint": params.get("mode_hint"),
+                "start_arc": params.get("start_arc"),
+                "n_rollouts": params.get("n_rollouts", 40),
                 "prompt_variant": prompt,
                 "max_iters": max_iters,
                 "arm": cell["arm"],
@@ -298,6 +300,7 @@ def _load_claude_relay(results_dir: pathlib.Path) -> list:
             out.append({
                 "file": p1.name, "instrument": instrument, "knob": knob,
                 "patch_shape": None, "mode_effect": "freeze", "mode_hint": None,
+                "start_arc": None, "n_rollouts": 40,
                 "prompt_variant": "relay", "max_iters": 5,
                 "arm": cell["arm"], "model": cell["model"], "size": "sonnet",
                 "family": "claude", "seed": cell["seed"],
@@ -326,6 +329,7 @@ def _load_claude_relay(results_dir: pathlib.Path) -> list:
                 "file": p2.name, "instrument": "patch2d",
                 "knob": {"k1": d["k1"], "k2": d["k2"]},
                 "patch_shape": "disc", "mode_effect": "freeze", "mode_hint": None,
+                "start_arc": None, "n_rollouts": 40,
                 "prompt_variant": "relay",
                 "max_iters": 5, "arm": arm,
                 "model": "claude-sonnet (agent-relayed)", "size": "sonnet",
@@ -362,6 +366,14 @@ def treatment_key(d: dict) -> str:
     # into one cell -- the same failure `mode_effect` had, caught by the same invariant.
     if d.get("mode_hint"):
         parts.append(f"hint={d['mode_hint']}")
+    # The EVIDENCE is a treatment: the start arc changes which contacts the sample shows
+    # and the rollout count changes how many, at the same knob, shape, prompt and budget.
+    # Third instance of the same omission, so this key now covers every field the sample
+    # depends on rather than the ones a campaign happened to vary.
+    if d.get("start_arc") is not None:
+        parts.append(f"arc={d['start_arc']:g}")
+    if d.get("n_rollouts", 40) != 40:
+        parts.append(f"roll={d['n_rollouts']}")
     parts.append(f"prompt={d['prompt_variant']}")
     parts.append(f"it={d['max_iters']}")
     parts.append(f"arm={d['arm']}")

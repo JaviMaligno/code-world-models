@@ -746,3 +746,60 @@ the numeric audit. Same class of error as every one the peer reviews found —
    prior. This is the last mechanism question the instrument can answer.
 2. **An archived release** — a git tag with a DOI. The tag is trivial; the DOI needs a
    Zenodo/figshare deposit under the author's account, so it is the author's call.
+
+## 2026-07-29, fifth pass — the evidence dose, and a prior that does not yield
+
+The fourth pass left one open item — "the prior should yield to enough coverage or it is a
+hard limit rather than a prior" — and named both outcomes before the run. It was run.
+
+**The intervention.** `PatchField2D.start_arc_deg` begins episodes on a ring just outside the
+near patch at a bearing drawn from an arc centred on the default arrival direction. The arc
+width is the dose. The rollout count is lowered to hold the *number* of contacts at the
+baseline's median, so coverage and quantity move independently — a single knob that moved
+both would have answered neither. Verified: the contract text is byte-identical across arms
+(the dose is evidence, not instruction), `start_arc_deg=None` reproduces the committed box
+start bit for bit, and the trap survives (play-cost 0.8701, blind
+contact rate 0.92).
+
+**The dose is real and it saturates.** Coverage — the arc the landings actually span,
+$360°$ less the largest gap — goes 111° →
+129° → 185° at contact counts
+14 / 16 / 15. It
+saturates near 185° because the freeze semantics forbid
+occupying the region's interior, so the far side is reachable only by going around: the
+instrument cannot deliver full coverage, and `prop:entryclass` is why.
+
+**What the evidence supports at each dose.** The trivial least-squares circle fit recovers
+both constants on 12/20 samples at
+111°, 16/20 at
+129°, and **20/20** at
+185°. At the top dose the evidence determines the region on
+*every* sample.
+
+**What the synthesizer does at that dose.** Given the form and asked only for location and
+size: **0/20** (best agreement
+0.191). Given no clause at all:
+**0/20** (best 0.220).
+The machinery control at 129°:
+0/20, so the null is the coverage and not
+the ring. The translation arm on the same wider sample: 20/20 at gate 1.000 in zero
+iterations, so the null is the induction and not the instrument.
+
+**Two statements this earns, in opposite directions.**
+
+1. *Stronger.* The attribution now has no residue. The earlier control had to set aside the
+   8 samples on which the trivial fit also fails; at the top dose
+   there are none to set aside. On **every** sample in that arm the region is recoverable
+   from the evidence and the synthesizer does not recover it. "Not the evidence" stops being
+   a statement about most samples and becomes one about all of them.
+2. *Bounded, not stronger.* Within the range this instrument can reach the failure does not
+   respond to the dose **at all** — not partially, not with a trend. So "prior" should be
+   read as a fixed disposition rather than a weight more evidence outweighs. What lies beyond
+   185° is not knowable here, and the paper says so instead of
+   generalising past the instrument.
+
+**What is still open.** Nothing this instrument can answer about the mechanism. Beyond it:
+an instrument whose mode does *not* freeze the mover would permit full coverage and could
+separate "a disposition" from "a weight no reachable dose outweighs" — a different paper's
+experiment, and named as such rather than promised. The remaining non-experimental item is a
+DOI deposit for the archived tag, which needs an account and is the author's call.

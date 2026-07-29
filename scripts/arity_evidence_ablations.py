@@ -111,6 +111,33 @@ CAMPAIGNS = {
         "holds_fixed": ["instrument", "knob", "prompt", "budget", "samples", "the effect"],
         "varies": ["the clause states the form only"],
     },
+    "dose_arc240": {
+        "label": "EVIDENCE DOSE: coverage 185 deg at the default's contact count, where a "
+                 "three-line circle fit recovers the region on 20 of 20 samples",
+        "files": {"large": "continuous_synthesis_patch2d_large_k3_7_arc240.json"},
+        "comparator": "disc",
+        "holds_fixed": ["instrument", "knob", "prompt", "budget", "the effect",
+                        "the contact COUNT (15, matched by calibration)"],
+        "varies": ["the angular coverage of the contacts: 111 deg -> 185 deg"],
+    },
+    "dose_arc240_hint": {
+        "label": "EVIDENCE DOSE with the form given: coverage 185 deg, centres withheld",
+        "files": {"large":
+                  "continuous_synthesis_patch2d_large_k3_7_arc240_hint-centre.json"},
+        "comparator": "hint_centre",
+        "holds_fixed": ["instrument", "knob", "prompt", "budget", "the effect",
+                        "the partial clause", "the contact count"],
+        "varies": ["the angular coverage, against the 111-deg form-only arm's 0/20"],
+    },
+    "dose_arc120": {
+        "label": "DOSE CONTROL: the same ring machinery at coverage 129 deg, close to the "
+                 "default's 111 -- so a difference at 240 is the coverage and not the ring",
+        "files": {"large": "continuous_synthesis_patch2d_large_k3_7_arc120.json"},
+        "comparator": "dose_arc240",
+        "holds_fixed": ["instrument", "knob", "prompt", "budget", "the effect",
+                        "the contact count", "the ring start distribution"],
+        "varies": ["the arc width only"],
+    },
     "disc": {
         "label": "baseline: the disc at k = (3,7), default prompt",
         "files": {"mini": "continuous_synthesis_patch2d_mini_k3_7.json",
@@ -197,7 +224,8 @@ def env_of(params: dict) -> PatchField2D:
                                            PatchField2D().slab_half_width)
     return PatchField2D(p1=(params.get("k1", 3.0), 0.0),
                         p2=(params.get("k2", 7.0), 0.0), patch_shape=shape,
-                        mode_effect=params.get("mode_effect", "freeze"), **kw)
+                        mode_effect=params.get("mode_effect", "freeze"),
+                        start_arc_deg=params.get("start_arc"), **kw)
 
 
 def main() -> None:
