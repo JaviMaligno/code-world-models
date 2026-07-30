@@ -1,0 +1,35 @@
+{
+  "L_range": [
+    11.500223946904814,
+    12.507804988601405
+  ],
+  "P_window": 0.0832493793021151,
+  "annulus_mass_below_claimed_floor": 0.4889696286319834,
+  "exact_identity_worst_start": 0.013804391934324475,
+  "min_half_angle_over_window": 0.3067598840610133,
+  "n_radial": 400000,
+  "note": "reach_lower_bound is the optimised VALID window bound, rounded down. superseded_invalid_bound is what the tangent-cone reading gave; annulus_mass_below_claimed_floor is the fraction of the annulus whose true half-angle is below that reading's floor, which is why the tangent-cone version is not a bound.",
+  "partition_ladder": {
+    "1": 0.0,
+    "128": 0.013493881185468177,
+    "16": 0.010948514032706172,
+    "2": 0.0,
+    "256": 0.013663883441627627,
+    "32": 0.012426899754914,
+    "4": 0.003931150095570392,
+    "64": 0.013149710154757695,
+    "8": 0.008157548132175696
+  },
+  "r_out": 5.0,
+  "reach_lower_bound": 0.013,
+  "reach_lower_bound_raw": 0.013663883441627627,
+  "reach_lower_bound_single_window": 0.008,
+  "reach_lower_bound_single_window_raw": 0.008128860981924954,
+  "seed": 90001,
+  "superseded_invalid_bound": 0.02207477271758643,
+  "t_steps": 71,
+  "window": [
+    8.200223946904808,
+    15.200223946904783
+  ]
+}

@@ -1,0 +1,321 @@
+{
+  "binding_gap": 0.6,
+  "cells": {
+    "0.05|1100000|20000": {
+      "direct": 0,
+      "gap": 0.05,
+      "n": 20000,
+      "seed_base": 1100000
+    },
+    "0.05|1100000|200000": {
+      "direct": 13,
+      "gap": 0.05,
+      "n": 200000,
+      "seed_base": 1100000
+    },
+    "0.05|300000|20000": {
+      "direct": 1,
+      "gap": 0.05,
+      "n": 20000,
+      "seed_base": 300000
+    },
+    "0.05|300000|200000": {
+      "direct": 15,
+      "gap": 0.05,
+      "n": 200000,
+      "seed_base": 300000
+    },
+    "0.05|500000|20000": {
+      "direct": 0,
+      "gap": 0.05,
+      "n": 20000,
+      "seed_base": 500000
+    },
+    "0.05|500000|200000": {
+      "direct": 10,
+      "gap": 0.05,
+      "n": 200000,
+      "seed_base": 500000
+    },
+    "0.05|50000|20000": {
+      "direct": 1,
+      "gap": 0.05,
+      "n": 20000,
+      "seed_base": 50000
+    },
+    "0.05|50000|200000": {
+      "direct": 19,
+      "gap": 0.05,
+      "n": 200000,
+      "seed_base": 50000
+    },
+    "0.05|700000|20000": {
+      "direct": 3,
+      "gap": 0.05,
+      "n": 20000,
+      "seed_base": 700000
+    },
+    "0.05|700000|200000": {
+      "direct": 15,
+      "gap": 0.05,
+      "n": 200000,
+      "seed_base": 700000
+    },
+    "0.1|1100000|20000": {
+      "direct": 6,
+      "gap": 0.1,
+      "n": 20000,
+      "seed_base": 1100000
+    },
+    "0.1|1100000|200000": {
+      "direct": 67,
+      "gap": 0.1,
+      "n": 200000,
+      "seed_base": 1100000
+    },
+    "0.1|300000|20000": {
+      "direct": 8,
+      "gap": 0.1,
+      "n": 20000,
+      "seed_base": 300000
+    },
+    "0.1|300000|200000": {
+      "direct": 73,
+      "gap": 0.1,
+      "n": 200000,
+      "seed_base": 300000
+    },
+    "0.1|500000|20000": {
+      "direct": 5,
+      "gap": 0.1,
+      "n": 20000,
+      "seed_base": 500000
+    },
+    "0.1|500000|200000": {
+      "direct": 82,
+      "gap": 0.1,
+      "n": 200000,
+      "seed_base": 500000
+    },
+    "0.1|50000|20000": {
+      "direct": 8,
+      "gap": 0.1,
+      "n": 20000,
+      "seed_base": 50000
+    },
+    "0.1|50000|200000": {
+      "direct": 68,
+      "gap": 0.1,
+      "n": 200000,
+      "seed_base": 50000
+    },
+    "0.1|700000|20000": {
+      "direct": 5,
+      "gap": 0.1,
+      "n": 20000,
+      "seed_base": 700000
+    },
+    "0.1|700000|200000": {
+      "direct": 61,
+      "gap": 0.1,
+      "n": 200000,
+      "seed_base": 700000
+    },
+    "0.2|1100000|20000": {
+      "direct": 36,
+      "gap": 0.2,
+      "n": 20000,
+      "seed_base": 1100000
+    },
+    "0.2|300000|20000": {
+      "direct": 26,
+      "gap": 0.2,
+      "n": 20000,
+      "seed_base": 300000
+    },
+    "0.2|500000|20000": {
+      "direct": 26,
+      "gap": 0.2,
+      "n": 20000,
+      "seed_base": 500000
+    },
+    "0.2|50000|20000": {
+      "direct": 33,
+      "gap": 0.2,
+      "n": 20000,
+      "seed_base": 50000
+    },
+    "0.2|700000|20000": {
+      "direct": 20,
+      "gap": 0.2,
+      "n": 20000,
+      "seed_base": 700000
+    },
+    "0.3|1100000|20000": {
+      "direct": 59,
+      "gap": 0.3,
+      "n": 20000,
+      "seed_base": 1100000
+    },
+    "0.3|300000|20000": {
+      "direct": 48,
+      "gap": 0.3,
+      "n": 20000,
+      "seed_base": 300000
+    },
+    "0.3|500000|20000": {
+      "direct": 49,
+      "gap": 0.3,
+      "n": 20000,
+      "seed_base": 500000
+    },
+    "0.3|50000|20000": {
+      "direct": 61,
+      "gap": 0.3,
+      "n": 20000,
+      "seed_base": 50000
+    },
+    "0.3|700000|20000": {
+      "direct": 47,
+      "gap": 0.3,
+      "n": 20000,
+      "seed_base": 700000
+    },
+    "0.4|1100000|20000": {
+      "direct": 77,
+      "gap": 0.4,
+      "n": 20000,
+      "seed_base": 1100000
+    },
+    "0.4|300000|20000": {
+      "direct": 65,
+      "gap": 0.4,
+      "n": 20000,
+      "seed_base": 300000
+    },
+    "0.4|500000|20000": {
+      "direct": 71,
+      "gap": 0.4,
+      "n": 20000,
+      "seed_base": 500000
+    },
+    "0.4|50000|20000": {
+      "direct": 83,
+      "gap": 0.4,
+      "n": 20000,
+      "seed_base": 50000
+    },
+    "0.4|700000|20000": {
+      "direct": 76,
+      "gap": 0.4,
+      "n": 20000,
+      "seed_base": 700000
+    },
+    "0.6|1100000|20000": {
+      "direct": 103,
+      "gap": 0.6,
+      "n": 20000,
+      "seed_base": 1100000
+    },
+    "0.6|300000|20000": {
+      "direct": 93,
+      "gap": 0.6,
+      "n": 20000,
+      "seed_base": 300000
+    },
+    "0.6|500000|20000": {
+      "direct": 103,
+      "gap": 0.6,
+      "n": 20000,
+      "seed_base": 500000
+    },
+    "0.6|50000|20000": {
+      "direct": 125,
+      "gap": 0.6,
+      "n": 20000,
+      "seed_base": 50000
+    },
+    "0.6|700000|20000": {
+      "direct": 110,
+      "gap": 0.6,
+      "n": 20000,
+      "seed_base": 700000
+    }
+  },
+  "note": "quadratic_constant is derived from the pooled Wilson 95% LOWER limit at the binding gap, rounded down. It is deliberately NOT min d/gamma^2 on a sample: that value is violated by roughly half of fresh seed blocks. The bound is claimed on [0.05, 0.6] only -- d saturates above, so no quadratic bound holds for gamma >= 0.9.",
+  "per_gap": {
+    "0.05": {
+      "block_rates_max": 0.00015,
+      "block_rates_min": 0.0,
+      "blocks_below_point_estimate": 6,
+      "point": 7e-05,
+      "pooled_direct": 77,
+      "pooled_n": 1100000,
+      "power_penalty": 0.005594426737802891,
+      "ratio_from_lower_limit": 0.022405573262197102,
+      "ratio_from_point_estimate": 0.027999999999999994,
+      "wilson_lower_95": 5.6013933155492765e-05
+    },
+    "0.1": {
+      "block_rates_max": 0.00041,
+      "block_rates_min": 0.00025,
+      "blocks_below_point_estimate": 6,
+      "point": 0.0003481818181818182,
+      "pooled_direct": 383,
+      "pooled_n": 1100000,
+      "power_penalty": 0.0033163417167406534,
+      "ratio_from_lower_limit": 0.03150184010144116,
+      "ratio_from_point_estimate": 0.03481818181818181,
+      "wilson_lower_95": 0.00031501840101441164
+    },
+    "0.2": {
+      "block_rates_max": 0.0018,
+      "block_rates_min": 0.001,
+      "blocks_below_point_estimate": 3,
+      "point": 0.00141,
+      "pooled_direct": 141,
+      "pooled_n": 100000,
+      "power_penalty": 0.005355068579489999,
+      "ratio_from_lower_limit": 0.029894931420509998,
+      "ratio_from_point_estimate": 0.03525,
+      "wilson_lower_95": 0.0011957972568204002
+    },
+    "0.3": {
+      "block_rates_max": 0.00305,
+      "block_rates_min": 0.00235,
+      "blocks_below_point_estimate": 3,
+      "point": 0.00264,
+      "pooled_direct": 264,
+      "pooled_n": 100000,
+      "power_penalty": 0.0033278119084675963,
+      "ratio_from_lower_limit": 0.026005521424865737,
+      "ratio_from_point_estimate": 0.029333333333333333,
+      "wilson_lower_95": 0.0023404969282379163
+    },
+    "0.4": {
+      "block_rates_max": 0.00415,
+      "block_rates_min": 0.00325,
+      "blocks_below_point_estimate": 2,
+      "point": 0.00372,
+      "pooled_direct": 372,
+      "pooled_n": 100000,
+      "power_penalty": 0.0022421063894007207,
+      "ratio_from_lower_limit": 0.021007893610599276,
+      "ratio_from_point_estimate": 0.023249999999999996,
+      "wilson_lower_95": 0.003361262977695885
+    },
+    "0.6": {
+      "block_rates_max": 0.00625,
+      "block_rates_min": 0.00465,
+      "blocks_below_point_estimate": 3,
+      "point": 0.00534,
+      "pooled_direct": 534,
+      "pooled_n": 100000,
+      "power_penalty": 0.00120306444182125,
+      "ratio_from_lower_limit": 0.013630268891512084,
+      "ratio_from_point_estimate": 0.014833333333333334,
+      "wilson_lower_95": 0.00490689680094435
+    }
+  },
+  "quadratic_constant": 0.0136
+}

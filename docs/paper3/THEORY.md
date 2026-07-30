@@ -10,6 +10,31 @@ route is closed and *by what* is a fact. The narrative of how the campaign
 reached each state — dates, which reading came first, what was believed and
 then corrected — belongs in `CAMPAIGN-LOG.md`, not here. Paper prose lives in
 `main.tex` and is governed by the same claim contract.
+
+**Provenance of the numbers.** Every derived CONSTANT is emitted by
+`scripts/t_campaign_constants.py` from the instruments' own attributes and
+checked against both documents at the printed precision by
+`scripts/audit_paper3_numbers.py` (both run in CI). Constants are therefore
+never transcribed. MEASUREMENTS are a separate matter, and the following
+load-bearing ones have **no committed script or `results/*.json`** — they are
+*unrecorded runs*, and a reader cannot re-derive them from this repository:
+
+  • L_v's K = 100 CRN estimate (−0.015 ± 0.078 and +0.462 ± 0.078);
+  • the [−1.707, +0.602] per-step advantage spread;
+  • the 106/106 and 101/106 counts, the 0/30, and the 9/9 stickiness;
+  • the p(ε) drag-cap curve (the committed test also runs 60×150, not the
+    400×200 quoted with it);
+  • R′ = 0.02118 and the |Z_t| median/probability table;
+  • the corridor table (P(satisfied), non-freeze fraction, f(0) — whose
+    kernel bandwidth is nowhere recorded and which does not reproduce at
+    the obvious choice);
+  • the failure census (0.202/0.527/0.014/0.258 and 0.313/0.302/0.023/0.362);
+  • the steering derivatives (median 0.362, p90 0.532, n = 115);
+  • the margin-0.3 β̂₁ counts (5/5 and 5/5).
+
+Treat each as *measured, unrecorded*: the claim it supports is no stronger
+than a number nobody else can reproduce. Emitting them is tracked in
+`REVIEW-FINDINGS.md`.
  These are the "is there a theorem here"
 de-risk items (§7.4 there). Discipline as in papers 1–2: provable vs measured
 kept explicit; every hypothesis checked at its use-site. Instrument:
@@ -231,7 +256,11 @@ explicit uniform modulus |q(γ) − q(γ′)| ≤ h·√(r_out·|γ−γ′|/(ga
 (Theorem T4: Hölder-1/2, ≈ 1033·√ε at the defaults; linear in ε off
 tangencies with explicit C(m), Theorem T4′, and per-step √ε is attained at
 tangency, so Hölder-1/2 is sharp per-state). Corollary: r_int(γ) ≤ 1033·√γ
-→ r_int(0) = 0 as γ → 0 — the continuity-at-0 claim, now quantitative. ∎
+→ r_int(0) = 0 as γ → 0 — the continuity-at-0 claim. The constant is not
+the content: since r_int is a probability and 1033·√γ ≥ 1 for every
+γ ≥ 9.4·10⁻⁷, the numeric bound is vacuous at every runnable gap. What the
+theorem gives is that the modulus is FINITE, EXPLICIT and UNIFORM over all
+trajectory events — a structural fact — not a usable numeric envelope. ∎
 
 **Proposition 7 (direct entries are pathwise monotone).** Call an interior
 entry *direct* (at gap γ) if the trajectory never lands in A(γ) before its
@@ -522,7 +551,9 @@ they conflict.
   when √3·r_min − 2·r_max·sin(Δθ_max/2) > τ; guaranteed no persistent
   winding bar when 2·r_max·sin(θ*/2) − 2·r_min·sin(Δθ_max/2) < τ.
   Validation: 78/80 pointwise law (`t1_flip_law_validation.py`, the 2
-  misses inside the proved undecided band), sandwich 57/57 winding bars
+  misses inside the proved undecided band), sandwich 36/36 for the
+  window-spanning bar where Lemma P applies (plus 21 further bars where
+  it holds as measurement, r₀ undefined)
   + 34 guaranteed-1 and 5 guaranteed-0 rows with 0 violations
   (`scripts/t1_death_sandwich.py`). The class-to-BAR transfer is Lemma P
   (2026-07-25 second pass, prompted by Javier's pairing question): under
@@ -541,8 +572,8 @@ they conflict.
   γ goes 0.3 → 1.2) while the per-contact cost Ā is flat (≈0.12–0.17);
   40% of A_t are NEGATIVE at every γ (blind's action often better under
   the truth continuation — play_cost is a small difference of large
-  cancelling terms); and the tail is heavy (max A_t = 11.65 vs mean
-  0.13 at γ = 0.3). The freeze-transient explanation of that tail is
+  cancelling terms); and the tail is heavy on both sides, with the larger
+  extreme NEGATIVE (min A_t = −13.67, max +11.65, mean 0.13 at γ = 0.3). The freeze-transient explanation of that tail is
   **REFUTED** (0/556 freezes in both continuations: after the dirty step
   both follow π_T, which knows the mode). The tail instead scales with
   remaining horizon (corr +0.325) and concentrates at narrow gaps
@@ -573,7 +604,9 @@ they conflict.
   γ₁ < γ₂, where f = the funnel component — immediate from Prop 7's
   pathwise inclusion of DIRECT entries, needing no occupation measures.
   Certified slack 6.7·10⁻⁴ vs effect 0.0112 (**16.9×**), Prop 7
-  re-verified at 550 000 pathwise comparisons with 0 violations, and
+  re-verified with 0 violations on 3 582 informative units (550 000 CRN
+  rollout pairs, of which only the direct entries at the smaller gap can
+  falsify the inclusion), and
   f = 0 measured throughout γ ≥ 3.2 where T3-P(c) then gives EXACT
   monotonicity. The seed-50543 counterexample is now explained, not just
   recorded: Prop 7 forbids a direct violation, so it must be a funnel
@@ -588,11 +621,12 @@ they conflict.
   an a-priori bound on f(γ) — equivalently f ≤ c·r_int with a
   uniform c < 1. c < 1 IS PROVED (Prop 8's witness tube is freeze-free,
   so d > 0) but with a ρ^h-order margin, wrong by ~96 orders of magnitude
-  against the measured d. The route the measurement points to is a LOCAL
-  LIMIT THEOREM, not an occupation estimate: d(γ) is a clean power law
-  (slope 1.72 over γ ∈ [0.05, 0.4]), i.e. a hitting probability, and a
-  local CLT for the joint (angle, radial speed) law at the channel mouth
-  would give a polynomial bound.
+  against the measured d. **A local CLT is NOT needed** — Lemma J's
+  two-action steering removes the exponential outright (see the T3 section
+  below), which is why this summary no longer points there. What the
+  measurement points to is that d(γ) is a clean power law (slope 1.72 over
+  γ ∈ [0.05, 0.4]), i.e. a hitting probability, and the ring-free
+  decomposition supplies the polynomial bound directly.
 - **T4 — Prop 6's explicit density constant:** **RESOLVED (2026-07-25).**
   The one-step landing law is EXACTLY circular-uniform (Lemma S), so the
   γ-curves are uniformly Hölder-1/2 with the fully explicit constant
@@ -624,11 +658,14 @@ they conflict.
   **EXPONENTIAL RATE PROVED for the ISOTROPIC action interface
   (2026-07-25):** if the thrust direction is uniform on S^{n−1} then Z is
   spherically symmetric, its direction is EXACTLY uniform, and Lemma G
-  (self-contained cap bound) gives r(n) ≤ (h/2)(r_out/L)^{n−2} = 40 ·
-  0.4167^{n−2} — the measured law, now a theorem, non-vacuous from n ≈ 7
-  against n ≈ 400 for the exchangeability bound. Verified at n = 3…8
-  (isotropic decay 0.431 vs predicted 0.4167; cap bound checked to
-  n = 30). **INTERFACE TRANSFER largely closed too (Lemma H + Prop
+  (self-contained cap bound) gives r(n) ≤ (h/2)(r_out/L_min)^{n−2} = 40 ·
+  **0.4344**^{n−2} — the measured law, now a theorem, non-vacuous from
+  n ≈ 7 against n ≈ 400 for the exchangeability bound. The rate is taken at
+  L_min = 11.511, the smallest attainable start distance: L is random
+  (uniform start on a unit box, L ∈ [11.511, 12.510]) and a bound must use
+  the largest ratio, so the nominal 5/12 = 0.4167 is the mean-start value,
+  not the bound's. Verified at n = 3…8 (isotropic decay 0.431, between the
+  two; cap bound checked to n = 30). **INTERFACE TRANSFER largely closed too (Lemma H + Prop
   T5-T):** conditioning on the action's absolute values makes the
   displacement coordinates INDEPENDENT (the norm cap is sign-invariant,
   so the signs are i.i.d. Rademacher — checked bitwise), and a single
@@ -693,17 +730,33 @@ they conflict.
 
 Setting. X = {x₁,…,x_m} ⊂ ℝ², all points star-shaped about the center O
 with radii rᵢ = ‖xᵢ − O‖ ∈ [r_min, r_max] and angles θᵢ (our landing
-clouds: r ∈ [3.5, ≈3.8]). Sort angles cyclically; let Δθ_max be the largest
+clouds: r ∈ [3.5, 5.0], concentrated on two thin shells at the band faces
+— Prop R4; the bar-geometry subsample spans the narrower [3.54, 3.78],
+which is why every width below, scaling with r_max, must be read against
+the wider range). Sort angles cyclically; let Δθ_max be the largest
 cyclic angular gap. For an edge (u, v) write δ(u,v) ∈ (−π, π] for the
 minimal angular increment. The winding number of a simplicial 1-cycle z
 (integer coefficients) is w(z) = (1/2π) Σ_{edges} δ — an integer, since the
 increments telescope mod 2π.
 
-**Lemma B (birth of the winding class — exact).** The smallest VR scale at
-which a cycle with w ≠ 0 exists is
+**Lemma B (birth of the winding class — exact).** *Standing hypothesis:*
+**Δθ_max ≤ π.** Then the smallest VR scale at which a cycle with w ≠ 0
+exists is
   s_w ∈ [ 2 r_min sin(Δθ_max/2), 2 r_max sin(Δθ_max/2) ],
 and for points exactly on a circle (r_min = r_max = ρ) it equals
 2ρ sin(Δθ_max/2).
+**If Δθ_max > π the conclusion is FALSE and there is no winding class at
+any scale**: all points then lie in an arc shorter than π, the angle
+function is single-valued there, and no cycle has w ≠ 0, so s_w = ∞ — yet
+the displayed interval *decreases* toward 0 as Δθ_max → 2π. The upper
+bound's proof breaks at exactly the same place: the consecutive-neighbours
+cycle's minimal increments are then (g₁ − 2π, g₂, …), which sum to 0, so it
+has winding 0 rather than 1. This is not hypothetical — 4 rows of
+`results/t1_death_sandwich.json` have Δθ_max = 3.380 or 3.201, both > π —
+which is why the validator computes the CLAMPED form
+  **B± = 2 r_{min/max} sin(min(Δθ_max, π)/2)** ,
+and that clamped form, not the display above, is what the measurements
+below are checked against (7.001 rather than 6.952 for the widest row).
 
 *Proof.* (Lower bound.) Let z have w(z) ≠ 0 and let G be the open sector of
 the maximal gap. The cumulative angle along z advances by 2πw, so some edge
@@ -732,9 +785,12 @@ w = 1 cannot be null-homologous. ∎
 
 **Corollary (the detector law, proved half).** The bridged bar has
 birth = 2ρ̃₁ sin(Δθ_max/2) and death ≥ √3 ρ̃₂ with ρ̃₁, ρ̃₂ ∈
-[r_min, r_max]; the measured death/ρ̄ spread [1.70, 1.82] around √3 = 1.732
-is exactly the radial thickness of the landing cloud (r ∈ [3.5, ~3.8]:
-√3·3.5/3.65 ≈ 1.66 to √3·3.8/3.65 ≈ 1.80). The law
+[r_min, r_max]; the measured death/ρ̄ spread is **[1.674, 1.816]**
+(15 finite bars, `results/t1_bar_geometry.json`; min at γ = 1.5 seed 20000,
+max at γ = 1.8 seed 10000), straddling √3 = 1.732. The radial-thickness
+band accounts for the lower part of that spread but NOT for its maximum:
+√3·[3.5, 3.8]/3.65 = [1.661, 1.803], which excludes 1.816. So the
+thickness explains the spread's origin, not its full extent. The law
 "β̂₁ = 1 iff √3ρ − 2ρ sin(Δθ_max/2) > τ" is therefore proved as a
 GUARANTEE in one direction: whenever √3 r_min − 2 r_max sin(Δθ_max/2) > τ,
 the bar exists and is persistent (Lemma B upper + Lemma D⁻), so the
@@ -742,13 +798,28 @@ detector MUST report β̂₁ ≥ 1.
 
 **Lemma D⁺ (death upper bound — the filling lemma, RESOLVED 2026-07-25).**
 Let Δθ_max be the largest angular gap and Δθ₂ the second-largest
-(Δθ₂ ≤ Δθ_max). Then the winding bar's death satisfies
+(Δθ₂ ≤ Δθ_max). *Standing hypotheses:* **Δθ_max < π** (inherited from
+Lemma B, without which there is no winding class) and
+**(H) Δθ₂ ≤ θ*/2**. Then the winding bar's death satisfies
   death ≤ 2 r_max · sin(θ*/2),
 with θ* given by whichever regime applies (take the smaller when both do):
   (i) if Δθ_max ≤ 2π/3 and Δθ₂ < π/3:  θ* = 2π/3 + Δθ₂;
   (ii) if Δθ₂ < Δθ_max < π:  θ* = max(Δθ_max, (2π − Δθ_max)/2 + Δθ₂/2).
 Both θ* ≤ π, so the bound is genuine; and always death ≤ diam(X) ≤ 2 r_max
-(cone). KEY REDUCTION: no general "winding-0 ⇒ boundary" filling lemma is
+(cone), which is the fallback when no regime applies.
+**(H) is AUTOMATIC in regime (i)** — there θ*/2 = π/3 + Δθ₂/2 > Δθ₂ iff
+Δθ₂ < 2π/3, which Δθ₂ < π/3 implies — but in regime (ii) it is a genuine
+assumption, and it must be checked per sample rather than assumed. It is
+stated here because the proof uses it (the chord comparison
+sin(θ*/4 + Δθ₂/2) ≤ sin(θ*/2) holds iff (H)) and an earlier version of
+this lemma carried it only inside the proof.
+Coverage on the committed factorial (`results/t1_death_sandwich.json`,
+80 rows): (H) never fails; **29/80 rows are regime (ii) only** (Δθ₂ up to
+1.259), where (H) is load-bearing; and **4/80 rows satisfy neither
+regime**, where the validator silently falls back to the cone bound
+D⁺ = 2 r_max. So the death bound is proved under a per-sample-checkable
+angular hypothesis, true in every factorial row, with 4 rows carrying only
+the cone bound. KEY REDUCTION: no general "winding-0 ⇒ boundary" filling lemma is
 needed — the bar dies as soon as ITS OWN class [z₀] (the
 consecutive-neighbors cycle born at Lemma B's scale) becomes a boundary,
 and the proof exhibits an explicit 2-chain doing exactly that.
@@ -800,8 +871,20 @@ as #{bars: birth ≤ B⁺, death ≥ √3 r_min}. Then:
       and w is defined below √3 r_min (Lemma D⁻'s triangle computation);
   (b) if r₀ = 1, the UNIQUE window-spanning bar has birth ∈ [B⁻, B⁺]
       and death ∈ [√3 r_min, s*] — the sandwich holds for THE BAR.
+**Coefficients: 𝔽₂, and w's well-definedness needs an argument.** The
+winding functional w is defined by REAL angular increments on INTEGRAL
+cycles, while the measured module is over **𝔽₂** — `tda.rips_persistence`
+reduces triangle columns by symmetric difference. Over 𝔽_p a 0/1 lift of a
+mod-p cycle need not be an integral cycle, so `w: H₁(K; 𝔽) → 𝔽` is not
+automatic. Over 𝔽₂ it is repairable: every 𝔽₂-cycle has an integral lift
+(its support has all even degrees, so it admits an Eulerian orientation),
+and two lifts differ by twice an integral cycle, so **w mod 2 is well
+defined**. The conclusion below survives because w(z₀) = 1 is ODD; the same
+step would FAIL for a winding class of even index, so the parity is part of
+the hypothesis, not an incidental fact.
 *Proof of (b).* Fix an interval decomposition V ≅ ⊕ I[bᵢ, dᵢ) of the H₁
-persistence module (field coefficients; transition maps act as identity-
+persistence module (coefficients 𝔽₂, matching the implementation;
+transition maps act as identity-
 or-zero per summand, so a class born by scale x has constant bar
 coefficients along s ≥ x). Expand ι[z₀] at s = √3 r_min − ε: only bars
 containing [B⁺, s] can carry nonzero coefficients; by r₀ = 1 there is
@@ -864,11 +947,18 @@ half-angle has sine r_out/L.
 ⟨Z,e⟩ ≥ (‖Z‖² + L² − r_out²)/(2L) ≥ ‖Z‖·√(L² − r_out²)/L by AM–GM. ∎
 
 **Lemma E (exchangeable cone bound).** Let Z be a random vector in ℝⁿ
-whose coordinates are exchangeable and jointly sign-symmetric, and let
-e be a unit vector lying in the span of two coordinate axes. Then for
-κ ∈ (0, 1],
+whose coordinates are exchangeable and jointly sign-symmetric, **with
+P(Z = 0) = 0**, and let e be a unit vector lying in the span of two
+coordinate axes. Then for κ ∈ (0, 1],
   P(⟨Z, e⟩ ≥ κ‖Z‖) ≤ 4/(nκ²),
 and if e is itself a coordinate axis, P ≤ 1/(2nκ²).
+**The non-atom hypothesis is necessary, not decorative.** On {Z = 0} the
+event reads 0 ≥ 0 and holds, while the proof's set
+S = {i : Z_i² ≥ (κ²/2)‖Z‖²} becomes all of {1,…,n}, so the deterministic
+step |S| ≤ 2/κ² fails there; without the hypothesis the lemma is false for
+any law with an atom at the origin (take Z ≡ 0: the left side is 1). The
+instrument satisfies it — Z_t has a density (Lemma F) — so nothing
+downstream changes.
 *Proof.* Let S = {i : Z_i² ≥ (κ²/2)‖Z‖²}. Since Σ_i Z_i² = ‖Z‖², we have
 |S| ≤ 2/κ² deterministically, so by exchangeability
 P(1 ∈ S) = E|S|/n ≤ 2/(nκ²). With e ∈ span(e₁, e₂), Cauchy–Schwarz gives
@@ -905,8 +995,10 @@ than guessed:
       vectors are strongly dependent, and a maximal version of Lemma E
       would remove most of it;
   (b) *exchangeability is too weak to see the exponential rate.* Lemma E
-      is sharp for exchangeable laws (a Z supported on the coordinate
-      axes attains it), but the actual Z is diffuse: for i.i.d.-Gaussian
+      is sharp in ORDER for exchangeable laws — a Z supported on the
+      coordinate axes attains the 1/n rate, though not the constant (the
+      gap there is a factor ≈ 9.7), so "sharp" below means order-sharp and
+      nothing more. The actual Z is diffuse: for i.i.d.-Gaussian
       coordinates, Z₁²/‖Z‖² ~ Beta(½, (n−1)/2) and the cone probability
       decays like (1 − κ²)^{(n−1)/2} — EXPONENTIALLY. The instrument
       should be at least this fast, since the cube-uniform thrust
@@ -1005,7 +1097,15 @@ vectors, hence spherically symmetric, so Z_t/‖Z_t‖ is EXACTLY uniform on
 S^{n−1}. With Lemma C and Lemma G,
   P(reach the shell at step t) ≤ ½(1 − κ²)^{(n−2)/2} = ½ (r_out/L)^{n−2},
 and therefore
-  **r(n) ≤ (h/2) · (r_out/L)^{n−2}**  — at the defaults, 40 · 0.4167^{n−2}.
+  **r(n) ≤ (h/2) · (r_out/L_min)^{n−2}** ,
+where L_min is the SMALLEST attainable distance from the start to the
+shell centre. L is random — the start is uniform on a unit box — so
+substituting a nominal L = 12 states the bound for one start rather than
+for the instrument: L ranges over [11.511, 12.510], and an upper bound on
+r(n) must use the smallest L, i.e. the largest ratio. At the defaults
+r_out/L_min = 5/11.511 = **0.4344**, not 5/12 = 0.4167. The nominal 0.4167
+is the value at the mean start and is quoted below as such; every place the
+rate appears in a BOUND takes 0.4344.
 *Proof.* Spherical symmetry is preserved by independent sums (a rotation
 acts on each summand separately) and by the deterministic weights;
 Lemma C makes the tangent cone necessary; Lemma G bounds its measure;
@@ -1018,13 +1118,14 @@ approximate. It is non-vacuous from n ≈ 7 (against n ≈ 400 for the
 exchangeability bound). *Verified* (`scripts/t5_isotropic_bound.py`):
 the cap bound holds against the exact cap integral at n = 3…30, the
 isotropic simulation obeys T5-I at every n = 3…8, and its per-dimension
-decay is 0.431 against the predicted sin θ = 0.4167.
+decay is 0.431 — which sits between the nominal 0.4167 and the bound's
+0.4344, as it must, since the simulation draws L from its own law.
 
 ## The interface transfer (2026-07-25): the cube case, reduced to one
 ## Berry–Esseen estimate, with the scheme proved SHARP
 
 The cube-uniform thrust has a finite symmetry group, so no symmetry
-argument can reach the exponential rate (Lemma E is sharp for
+argument can reach the exponential rate (Lemma E is order-sharp for
 exchangeable laws). But the cube has a structure the isotropic proof
 throws away, and it is exactly the one needed: independence.
 
@@ -1043,8 +1144,16 @@ deterministic weights c_{s,i} = dt² w_{t,s} b_{s,i}. ∎
 changes coordinate j and no other, bitwise, in 1500 checks — and the cap
 is sign-invariant, which is the step the lemma turns on.
 
-**Proposition T5-T (transfer scheme; sharp in the exponent).** Write
-γ² = (1−κ²)/κ². The cone event implies R² ≤ γ²Z₁² with
+**Proposition T5-T (transfer scheme; sharp in the exponent).** *Standing
+hypothesis:* **e = e₁**, i.e. the cone axis is a coordinate axis. This is
+NOT what Lemma F supplies — there e ∈ span(e₁, e₂), since c and x₀ lie in
+the first-two-coordinates plane — so the two are stated separately rather
+than chained. For a general e ∈ span(e₁, e₂) the cone event implies
+R² ≤ γ²(Z₁² + Z₂²) and the argument below runs with the pair (Z₁, Z₂) in
+place of Z₁, at the cost of one more factor; the instrument's own geometry
+can also be brought into the e = e₁ case by rotating within that plane,
+which is legitimate only because Lemma F's coordinates are exchangeable.
+Write γ² = (1−κ²)/κ². Under e = e₁ the cone event implies R² ≤ γ²Z₁² with
 R² = Σ_{i≥2}Z_i², so by Lemma H's independence, for any λ > 0 with
 2λγ²σ₁² < 1,
   P(cone | B) ≤ E[e^{λγ²Z₁²} | B] · Π_{i≥2} E[e^{−λZ_i²} | B].
@@ -1118,9 +1227,13 @@ so the sharp cap constant is recovered as soon as ρ is bounded away from
 |a_{s,i}|/M_s: the AR(1) weights spread the mass over ≈ 80 steps and the
 |a_{s,i}| are i.i.d. uniform, so no single step can dominate. Measured
 over ≈ 8000 coordinate profiles at n = 3…20: ρ has **median 4.0, 5th
-percentile 3.4, minimum 2.34**, giving a per-dimension rate of
-**0.4177–0.4179** (worst single sample 0.474) against the sharp 0.4167 —
-a cost of about 3·10⁻³.
+percentile 3.4, minimum 2.34**. The rate the bound may claim is the one at
+the MINIMUM ρ, not at the median: the bound is a product over coordinates,
+so every factor has to be controlled at the worst ρ. That gives a
+per-dimension rate of **≤ 0.474** (0.4177–0.4179 at the median and 5th
+percentile, against the isotropic 0.4167). Quoting 0.418 describes the
+typical coordinate and is not a bound; the honest cost is 0.474 − 0.4167 =
+5.7·10⁻², not 3·10⁻³.
 
 **Lemma I′ (subset refinement).** For ANY subset S of the steps,
   E[e^{−λZ²}] ≤ (1 + 2λσ_S²)^{−1/2} + 2Φ̄( x₀/(√(2λ)·max_{s∈S}|c_s|) ),
@@ -1197,16 +1310,24 @@ tried, at the deviation the wide window permits (σ_i² ≥ 0.2m, i.e.
     shrinks A_max fast and m slowly): m_S/A_max,S rises 5.1 → 10.3 at
     k = 10, exponent → 4.2, union still 0.31.
 
-**What IS proved for the cube interface, floor and all.** Take
+**What IS proved for the cube interface, floor and all — SUPERSEDED by
+Lemma K immediately below, and retained only because the arithmetic is
+reused there.** Nothing in this block is asserted as current: Lemma K
+removes the floor, and Theorem T5-F removes it again with no measured
+input. Read the two displays that follow as the route, not the result — in
+particular 0.04/0.3 = **0.133**, not the 0.12 printed below, which is the
+Markov bound rounded the convenient way. Take
 λ = 1.32/(2m) with m = (1/n)Σ_iσ_i² (B-measurable, and equal to
 E[σ_i²|norms] by within-step exchangeability). Then:
   • DETERMINISTICALLY #{i : σ_i² > 5m} ≤ n/5, since Σ_iσ_i² = nm;
   • by the Chernoff above, E#{i : σ_i² < 0.2m} ≤ 0.04n, so Markov gives
-    P(#{i : σ_i² < 0.2m} > 0.3n) ≤ 0.12;
+    P(#{i : σ_i² < 0.2m} > 0.3n) ≤ 0.04/0.3 = 0.133 (not 0.12);
   • off that event at least n/2 coordinates have σ_i²/m ∈ [0.2, 5],
     each contributing q ≤ 0.89.
-Hence P(cone) ≤ 0.89^{n/2} + 0.12 — unconditional, but with a constant
-floor, from Markov applied to what I took to be a dependent count.
+Hence P(cone) ≤ 0.89^{n/2} + 0.133 — unconditional, but with a constant
+floor, from Markov applied to what was taken to be a dependent count. This
+inequality is what Lemma K supersedes; it must not be quoted alongside
+Lemma K's conclusion, which contradicts it.
 
 **Lemma K (norm-free sandwich — the floor was self-inflicted,
 2026-07-26).** Both defects above dissolve at once. Deterministically
@@ -1235,20 +1356,38 @@ require it is an artifact of conditioning on the norms.
   P(cone) ≤ q_max^{(1−α−1/K)n} + (e·p(z)/α)^{αn},
   q_max := max(q(1.32z), q(1.32K)).
 Optimising over (z, K, α) at the instrument's weights gives
-**z = 0.2, K = 10, α = 0.05, hence P(cone) ≤ 2 · 0.9104ⁿ** — a clean
-exponential with NO floor and NO measured input. (Previous: 0.9434ⁿ +
-0.12.)
+**z = 0.2, K = 10, α = 0.05, hence P(cone at a FIXED step) ≤ 2·0.9104ⁿ** —
+a clean exponential with no floor and no measured input. (Previous:
+0.9434ⁿ + 0.12.)
 
-Summary for the cube interface: exponential decay PROVED outright,
-≤ 2·0.9104ⁿ; the sharper 0.80ⁿ still rests on the measured spread
-τ ≤ 1.36, and the sharp 0.4167ⁿ on the measured ρ ≈ 4.
+**Two scope facts that must travel with this number.**
+  • **It is a single-step bound, and r(n) needs the union over the
+    horizon**: r(n) ≤ h·2·0.9104ⁿ = 160·0.9104ⁿ, which exceeds 1 until
+    n ≥ 55. So as a bound on the CONTACT RATE the theorem is vacuous
+    below n ≈ 55, and the "exponential decay proved outright" reading is
+    about the per-step probability. The isotropic bound T5-I, by contrast,
+    already carries its h/2.
+  • **OPEN: the Z₁ factor.** The displayed product bounds only the
+    Π_{i≥2} E[e^{−λZ_i²}] side; the upper-side factor E[e^{λγ²Z₁²}] from
+    Prop T5-T is not visible in it, which is why no κ appears in the rate.
+    Relatedly K = 10 violates T5-T's own side condition σ₁²/m < 3.606, and
+    at that K the floor reappears one coordinate over. Until this is
+    resolved the theorem should be read as proved for the Π_{i≥2} side with
+    the Z₁ side asserted, not established. Recorded in
+    `REVIEW-FINDINGS.md`.
+
+Summary for the cube interface: exponential per-step decay
+≤ 2·0.9104ⁿ subject to the open Z₁ factor; the sharper 0.80ⁿ rests on the
+measured spread τ ≤ 1.36, and the sharp rate on the measured ρ — at whose
+MINIMUM (2.34) the rate is 0.474.
 
 | statement | status |
 |---|---|
-| r(n) decays exponentially, cube interface | **PROVED outright: ≤ 2·0.9104ⁿ, no floor, no inputs** (Thm T5-F) |
+| P(cone at a fixed step), cube interface | ≤ 2·0.9104ⁿ, no floor, no measured input — **modulo the open Z₁ factor** (Thm T5-F) |
+| ⇒ r(n) after the union over h = 80 | ≤ 160·0.9104ⁿ, non-vacuous only from n ≈ 55 |
 | … with σ_i comparable (measured τ ≤ 1.36) | ≤ 0.80 per dimension, no floor |
-| … the sharp rate 0.4167 = r_out/L | measured (ρ ≈ 4) |
-| r(n) ≤ (h/2)(r_out/L)^{n−2}, isotropic | PROVED exactly (T5-I) |
+| … the sharp rate, at min ρ = 2.34 | ≤ 0.474 per dimension; 0.418 at the median is not a bound |
+| r(n) ≤ (h/2)(r_out/L_min)^{n−2}, isotropic | PROVED exactly (T5-I), h already included |
 
 **On PROVING ρ — the accounting that led here (superseded above, kept
 because it is what forced the re-optimisation).** The
@@ -1278,11 +1417,14 @@ Lemma C (tangent cone) → Lemma H (conditional independence) →
 Prop T5-T (matched-exponent Chernoff) → Lemma I (the Rademacher
 ingredient) gives the spherical-cap rate for the cube-uniform action;
 Lemma G → Theorem T5-I gives it exactly for the isotropic action. The
-residue on the cube interface is TWO things, both quantified above: the
-proved bound carries a constant floor 0.12 (Markov on a dependent
-count), and the sharp constant 0.4167 rests on the measured spread.
-Measured decays agree across all three: cube 0.411, isotropic 0.431,
-theory 0.4167.
+residue on the cube interface is the sharp constant: it rests on the
+measured spread of ρ, and the rate a bound may claim is the one at the
+MINIMUM ρ (≤ 0.474), not at the median (0.418). **The constant floor 0.12
+is NOT part of the residue** — Lemma K removes it (the count is not
+dependent) and Theorem T5-F removes it again with no measured input; the
+block that derives it is marked superseded above, and its value is 0.133
+in any case. Measured decays: cube 0.411, isotropic 0.431, nominal
+theory 0.4167, bound 0.4344.
 
 An irony worth keeping: the isotropic interface is provable because its
 symmetry is exact, the cube interface because its coordinates are
@@ -1357,11 +1499,11 @@ continuation), which is why dirty return gaps were occasionally negative.
 **Measured decomposition** (`scripts/t2_percontact_identity.py`, Markov
 planner horizon 40 / 48 samples, 6 episodes × γ ∈ {0.3, 0.6, 1.2}):
 
-| γ | dirty steps / 80 | Ā | max A_t | frac(A_t < 0) |
-|---|---|---|---|---|
-| 0.3 | 20–23 (mean 21.2) | +0.129 | 11.65 | 0.40 |
-| 0.6 | 13–19 (mean 14.7) | +0.169 | 2.70 | 0.40 |
-| 1.2 | 8–12 (mean 10.5) | +0.118 | 2.26 | 0.40 |
+| γ | dirty steps / 80 | Ā | max A_t | min A_t | frac(A_t < 0) |
+|---|---|---|---|---|---|
+| 0.3 | 20–23 (mean 21.2) | +0.129 | +11.65 | **−13.67** | 0.40 |
+| 0.6 | 13–19 (mean 14.7) | +0.169 | +2.70 | −2.41 | 0.40 |
+| 1.2 | 8–12 (mean 10.5) | +0.118 | +2.26 | −2.84 | 0.40 |
 
 Identity residual ≤ 4.6·10⁻¹⁴ in 18/18 episodes. Three readings:
 (i) **the contact RATE, not the per-contact cost, carries the γ-trend** —
@@ -1372,9 +1514,11 @@ D̄·Â, exactly where the reachability story predicts it;
 often BETTER under the truth continuation, so play_cost is a small
 difference of large cancelling terms, which is why bounding it by
 |A_t| alone must be loose;
-(iii) the γ = 0.3 outlier max A_t = 11.65 against a mean of 0.13 is a
-heavy tail: any useful a-priori bound must control the tail, not the
-mean. *(Planner note: the Markov variant with 48 samples is not the
+(iii) the γ = 0.3 tail is heavy on BOTH sides and the larger extreme is
+the negative one: min A_t = **−13.67** against max +11.65 and a mean of
++0.13. Since the bound has to control |A_t|, quoting only the positive
+extreme understates what must be controlled by 17%. Any useful a-priori
+bound must control the tail, not the mean. *(Planner note: the Markov variant with 48 samples is not the
 registered arm's 200-sample sequential planner, so absolute pc here is
 not comparable to the paper's 0.02–0.03 — the structure is the claim,
 not the level.)*
@@ -1449,19 +1593,24 @@ to identify the mechanism as dwell difference, not enough to claim the
 slope equals a known constant to 6%. Unit: 215 dirty steps over 12
 episodes, `results/t2_delay_cost.json`.
 
-**The sum telescopes back to ONE number: the arrival delay
-(2026-07-26).** Two further measurements collapse the statement.
+**The sum is dominated by ONE number: the arrival delay.** Two further
+measurements collapse the statement, one exactly and one to ±60%.
 *(a) Dwell is sticky.* In 9/9 episodes across γ ∈ {0.3, 0.6, 1.2},
-neither planner ever leaves the basin once it arrives. So
+neither planner ever leaves the basin once it arrives — a 0/9 censored
+zero, so its content is the interval (Wilson upper ≈ 0.30), not a
+guarantee. So
 dwell = h − T_arr exactly, and Δdwell is an ARRIVAL-TIME difference, not
 an occupancy pattern.
-*(b) The per-step terms telescope.* Comparing the hybrid sum with the
-whole-episode dwell difference: J_T − J_B against amp·(Dwell_T −
-Dwell_B) gives ratios 0.81–1.66 (mean ≈ 1.07) over the same 9 episodes.
-Combining with the identity and the delay regression,
-  **pc = amp_phantom · (T_arr^B − T_arr^T) / (J_T − J_rand)** ,
-i.e. the entire aligned-channel play-cost IS the blind planner's
-lateness at the lure. Measured arrival times: truth 33–36, blind 37–38,
+*(b) The per-step terms telescope — to within ±60%, which is the claim's
+real strength.* Comparing the hybrid sum with the whole-episode dwell
+difference: J_T − J_B against amp·(Dwell_T − Dwell_B) gives ratios
+**0.81–1.66** (mean ≈ 1.07) over the same 9 episodes. A mean near 1 with a
+spread that wide supports the delay as the DOMINANT term, not as an
+identity; the display below is therefore an approximation whose error bar
+is the observed spread, not an exact rewriting:
+  **pc ≈ amp_phantom · (T_arr^B − T_arr^T) / (J_T − J_rand)**  (±60%),
+i.e. the aligned-channel play-cost is mostly the blind planner's
+lateness at the lure. Evidence label *measured*, unit episode, n = 9. Measured arrival times: truth 33–36, blind 37–38,
 so the delay is **1–5 steps** — and a 1–5 step delay against a
 denominator of ≈ 40 is exactly the pc ≈ 0.02–0.1 the arm reports.
 
@@ -1603,7 +1752,9 @@ Consistent with Lipschitz scaling, at L_v ≈ 0.8.
 **Assembling the bound — and what it costs to use proved constants
 only (2026-07-27, corrected).** The chain is
   pc ≤ D̄ · (L_v·2·gain·dt + L_p·2·gain·dt² + Δr_max) / (J_T − J_rand),
-with L_v itself bounded through the fixed point L_v ≤ A/(1−p). Feeding
+with L_v itself bounded through the fixed point L_v ≤ A·δ/(δ − p(δ)·2·gain·dt),
+which at δ = 2·gain·dt = 0.6 reduces to A/(1−p) — and which does not close
+at small δ (see below). Feeding
 each available value of A (D̄ ≈ 15 dirty steps, denominator ≈ 40,
 p ≈ 0.5). Three corrections to an earlier version of this table, each of
 which changes the conclusion:
@@ -1717,10 +1868,23 @@ divergence it creates — two states 0.6 apart in velocity, whose future
 value difference is again ≤ L_v·0.6. That yields a self-consistent
 bound
   L_v·δ ≤ A·δ + p(δ)·L_v·(2·gain·dt),
-with A the identical-actions constant (which the drag cap controls),
-closing whenever p(δ)·2·gain·dt < 1 — measured p ≈ 0.5 at δ = 0.6, so
-p·0.6 ≈ 0.3 < 1 and the fixed point exists. That is the shape of a
-proof of L_v; what remains unproved is A.
+with A the identical-actions constant (which the drag cap controls).
+Solving for L_v gives
+  **L_v ≤ A·δ / (δ − p(δ)·2·gain·dt)** ,
+so the closure condition is **p(δ)·2·gain·dt < δ** — comparing a
+displacement against a displacement. (The condition "< 1" stated in an
+earlier version is dimensionally wrong: it compares a displacement against
+a dimensionless 1, and it is satisfied vacuously.) The distinction is not
+cosmetic, because the condition is δ-DEPENDENT and fails at small δ:
+  δ = 0.6, p ≈ 0.5: p·0.6 = 0.30 < 0.6 ✓ — closes, with
+    L_v ≤ A·0.6/0.3 = 2A, i.e. the familiar A/(1−p) at δ = 2·gain·dt;
+  δ = 0.05, measured p(0.05) = 0.10: p·0.6 = 0.060 > 0.05 ✗ — the
+    denominator is NEGATIVE and the fixed point does not exist.
+So the argument gives L_v at the coarse perturbation only; there is no
+uniform-in-δ fixed point, and taking δ → 0 (the natural reading of a
+Lipschitz constant) diverges. That is the shape of a proof of L_v at a
+FIXED δ; what remains unproved is A, and what remains unavailable is the
+δ → 0 limit.
 
 *Why A resists, precisely.* Under identical actions the drag lemma caps
 the separation at 2.06 for all time, so the crude bound is
@@ -1824,8 +1988,10 @@ the probability q of ANY trajectory-determined event —
 At the defaults (h = 80, r_out = 5, gain = 3, dt = 0.1) the modulus is
 80·√(500ε/3) ≈ 1033·√ε: r and r_int are uniformly Hölder-1/2 on [0, 2π]
 with a fully explicit constant. Corollary, quantitative continuity at 0:
-r_int(γ) = |r_int(γ) − r_int(0)| ≤ 1033·√γ (with r_int(0) = 0 exact).
-Prop 6's TODO is closed.
+r_int(γ) = |r_int(γ) − r_int(0)| ≤ 1033·√γ (with r_int(0) = 0 exact),
+vacuous for γ ≥ 9.4·10⁻⁷ and therefore at every measured gap: the claim is
+the Hölder-1/2 STRUCTURE with an explicit uniform constant, not this
+number. Prop 6's TODO is closed.
 *Proof.* Lemma 3 gives the first inequality. For the second, the coupled
 trajectory's state before step t is ℱ_{t−1}-measurable and a_t is an
 independent uniform, so by Lemma S the conditional landing law is
@@ -1857,9 +2023,16 @@ between √ε and ε.
   *Measured scaling — the tangency term is REAL, not a technicality*
 (`results/t4_continuity_modulus.json`): P(hit D) over ε ∈ [0.0125, 0.2]
 at γ = 0.6 fits log-log slope **0.30** (ε ×16 ⇒ P ×2.3) — strictly
-sublinear. So a LINEAR bound on the divergence probability — the
-intermediate quantity every coupling proof controls — is refuted at the
-measured scale, not merely unprovable per-state; whether |Δr_int| itself
+sublinear. **This does NOT refute a linear bound**, and an earlier version
+of this paragraph said it did: sublinear GROWTH is compatible with a linear
+UPPER bound, and here one holds — P/ε = 0.380, 0.270, 0.170, 0.103, 0.054
+on the five committed points, so P(ε) ≤ 0.38·ε over the whole measured
+range. What the data show is that any linear modulus needs a constant
+≥ 0.38 on [0.0125, 0.2] and that the constant must diverge as ε → 0 IF the
+fitted power law persists below 0.0125 — an extrapolation, and at the
+smallest ε the estimate is 19/4000 with a ±0.001 standard error. The
+content is that the tangency term dominates the scaling, not that a linear
+bound is impossible. Whether |Δr_int| itself
 is Lipschitz stays open (its increments, 0.0005–0.001, are below CRN
 resolution at n = 4000). Mechanism: the funnel states (the same mouth-hovering freeze-re-anchor
 population behind seed 50543) sit with drift centers within ~R_L of the
@@ -1923,9 +2096,15 @@ the counterexample lives exactly in the term T3-P isolates.
 | ≥3.2 | 562 | 0 | 7.7·10⁻⁵ |
 
 Three things this buys:
-(i) **Proposition 7 re-verified at 550 000 pathwise comparisons** (11
-adjacent pairs × 50 000 CRN seeds): 0 violations, as proved — the
-theorem's engine is machine-confirmed at 12.5× the earlier sample.
+(i) **Proposition 7 re-verified on 3 582 informative units**: 0
+violations, as proved. The run is 11 adjacent pairs × 50 000 CRN seeds =
+550 000 rollout pairs, but a pair can only FALSIFY the inclusion
+`direct(γ₁) ⊆ direct(γ₂)` through a seed that is in `direct(γ₁)`, so the
+unit is the direct entry at the smaller gap, and there are 3 582 of them
+(0, 14, 61, 172, 272, 378, 459, 542, 560, 562, 562 across the pairs).
+Quoting 550 000 inflates the evidence 154-fold, and it is the exact error
+the method note below names. Note the first pair contributes 0: at
+γ₁ = 0 nothing enters directly, so Prop 7 is untested there.
 (ii) **The certified slack is 6.7·10⁻⁴ against an effect of 0.0112 —
 a factor 16.9.** M1 and M2 are therefore established to within a defect
 17× smaller than the phenomenon they describe, with 0 empirical
@@ -2207,8 +2386,13 @@ actions and fixing the rest, the map to the endpoint is a local
 diffeomorphism onto a region of area up to 4·(K/(1−β))² ≈ 39.5 — larger
 than the whole instrument's scale — and the entry probability factorises
 as
-  d ≥ ¼·inf|J|·area(target) × P(prefix event),
+  **d ≥ ¼·area(target)/sup|J| × P(prefix event) = area/39.5 × P(prefix)**,
 polynomial in the target's measure with NO exponential-in-h factor.
+The Jacobian enters the DENOMINATOR: the two-action change of variables
+gives p(x) = Σ_{roots} (2a_max)⁻²/|J(root)|, so a lower bound on a density
+divides by sup|J|. (Multiplying by inf|J| would be both the wrong direction
+and vacuous, since the factor |sin(φ_{s₁} − φ_{s₂})| has infimum 0.) This
+is the same orientation as Lemma D below, which divides by sup|∂Y/∂a_s|.
 *Proof.* Differentiate the affine free-flight recursion: a change δa_s
 alters the thrust by K/dt²·δa_s·(−sin φ_s, cos φ_s), which the velocity
 recursion carries forward with weights β^k, and the position accumulates
@@ -2217,8 +2401,12 @@ product of the two derivative vectors, whose directions are the two
 rotated thrust directions, giving the sine factor. ∎
 *Verified numerically to 8·10⁻⁹ relative error* at four (s₁, s₂) pairs
 (`recorded in this section`), and the one-action sensitivity separately:
-measured |∂x_T/∂a_s| rises from 0.186 at lag 1 to 2.865 at lag 79 against
-the analytic 0.094…2.858 — i.e. one early action alone sweeps ≈ 5.7 units
+measured |∂x_T/∂a_s| rises from 0.186 at lag 2 to 2.865 at lag 79 against
+the analytic 0.094 at lag 1 and 2.858 at lag 79. The two series are offset
+by one lag — 0.186 = K·W(2) and 0.094 = K·W(1) — so they are the same law
+read at different starting lags, not two estimates of the same number; at
+the short end the printed pair differs by 2× for that reason alone. One
+early action alone sweeps ≈ 5.7 units
 of endpoint displacement, where a single landing moves only R_L = 0.03.
 That factor of ~190 between the per-step landing scale and the
 per-action endpoint scale is exactly what Prop 8's tube throws away.
@@ -2254,9 +2442,22 @@ approach is one-sided, which is why the facing channel matters);
 | 0.20 | 1.2·10⁻³ | 6.20·10⁻³ | 0.193 | 0.202 |
 | 0.40 | 3.3·10⁻³ | 1.24·10⁻² | 0.264 | 0.280 |
 | 0.60 | 5.2·10⁻³ | 1.86·10⁻² | 0.282 | 0.313 |
-The two independent estimates of T agree to 10%, and T(γ) has log-log
-slope **0.640**, so the decomposition predicts d ∼ γ^{1.64} against the
-directly measured **γ^{1.72}** — it closes.
+**The exponent comparison is an identity, not a validation.** The `T
+(ratio)` column is *defined* as d/(R·ρ(π)·γ), so slope(T_ratio) + 1 ≡
+slope(d) on any fixed grid — exactly, to four decimals (0.6396 + 1 =
+1.6396). The "γ^{1.64} predicted against γ^{1.72} measured" once reported
+here is that identity plus a change of grid: 1.72 is the fit on
+{0.05, …, 0.40} and 1.64 on the six gaps above. The decomposition cannot
+predict the exponent.
+The one non-tautological check is `T (ratio)` against `T (from counts)`,
+and they do NOT agree to 10% in the sense of independent estimates: the
+ratio is below the count at EVERY gap (0.894, 0.958, 0.955, 0.949, 0.940,
+0.901) — a one-sided bias, not scatter. Its source is the substitution
+∫_channel ρ ≈ ρ(π)·γ. Measured folded profile of the first-arrival angle
+(60 000 rollouts, 1 823 arrivals, per 0.1-rad bin): 1.023, 0.982, 0.839,
+0.669, 0.535, 0.398 — π is the MAXIMUM of ρ, so ∫_channel ρ ≤ ρ(π)·γ and
+substituting ρ(π) OVERSTATES the middle factor (by 8% at γ = 0.6, more
+above). A lower bound needs inf_{|θ−π| ≤ γ/2} ρ instead.
 
 **What that leaves, and why it is the right shape.** The lower bound now
 factors into three pieces with different characters:
@@ -2273,27 +2474,43 @@ are γ-independent ring-free quantities. And (iii) is not circular — it
 conditions on arrival IN the channel, an event defined by the geometry
 rather than by the outcome.
 
-**A γ² lower bound, calibrated and RANGE-LIMITED (2026-07-27, scope
-corrected).** Taking T(γ) ≥ c₁γ with c₁ = min over the grid of T/γ =
-0.4695 (T is concave, so the smallest ratio is the safe one) gives
-  **d(γ) ≥ R·ρ(π)·c₁·γ² = 0.0145556·γ² for γ ∈ [0.05, 0.6]**,
-with slack 1.0× to 2.6× and exact at γ = 0.6 where c₁ is attained.
-Two scope conditions, both load-bearing:
-  • **The constant must not be rounded up.** At γ = 0.6 the bound equals
-    the measurement exactly, so printing 0.0146 instead of 0.0145556 makes
-    it 0.005256 against a measured 0.005240 — FALSE at the one gap where
-    it binds. A lower bound's constant is rounded DOWN or not at all.
+**A γ² lower bound, calibrated on DISJOINT seed blocks and
+RANGE-LIMITED.**
+  **d(γ) ≥ 0.0136·γ² for γ ∈ [0.05, 0.6]**.
+Three scope conditions, all load-bearing:
+  • **The constant may not be the sample's own minimum of d/γ².** Defining
+    it that way — which is what taking c₁ = min_grid T/γ amounts to, since
+    T is itself estimated as d/(R·ρ(π)·γ) — makes the bound true by
+    construction at the grid and a coin flip off it. Measured on five
+    disjoint 20 000-rollout blocks at the binding gap 0.6 (seed bases
+    50 000 / 300 000 / 500 000 / 700 000 / 1 100 000): d = 0.006250,
+    0.004650, 0.005150, 0.005500, 0.005150 against the old bound's
+    0.005240 — **violated in 3 of 5**. A bound's constant must sit below
+    the SAMPLING INTERVAL of the quantity it bounds, not on its point
+    estimate.
+  • **The constant is therefore the pooled Wilson 95% LOWER limit at the
+    binding gap, rounded down**: 0.004907/0.36 = 0.01363 → **0.0136**.
+    Derived by `scripts/t3_quadratic_constant.py`
+    (`results/t3_quadratic_constant.json`), which also records per gap how
+    much of the penalty is statistical POWER rather than the shape of d —
+    without that split the constant looks like a property of the instrument
+    when it can be a property of n. It matters here: at 20 000 rollouts per
+    block the binding gap was 0.05, purely from power; raising the two
+    smallest gaps to 1 100 000 rollouts each moved it back to 0.6, whose
+    power penalty (0.0012) is the smallest of the six. So the shape binds,
+    as claimed.
   • **It holds only on [0.05, 0.6].** Beyond that d SATURATES (the wall
     stops intersecting entering trajectories) while γ² keeps growing, so
-    the bound fails at every γ ≥ 0.9: 0.0118 vs 0.00756 at γ = 0.9, and
-    0.575 vs 0.0112 at γ = 2π (`results/t3_funnel_bound.json`).
+    the bound fails at every γ ≥ 0.9: 0.0110 vs 0.00756 at γ = 0.9, and
+    0.537 vs 0.0112 at γ = 2π (`results/t3_funnel_bound.json`).
 This is the first lower bound on d of the right ORDER on that range — γ²
 against the measured γ^1.72 — and it is *measured*, not proved: c₁ is
-fitted. Evidence label *measured*, unit rollout, n = 200 000 per gap,
-`results/t3_reach_density_throughput.json`.
+fitted. Evidence label *measured*, unit rollout,
+n = 1 100 000 (γ ≤ 0.1) / 100 000 (γ ≥ 0.2) per gap,
+`results/t3_quadratic_constant.json`.
 
-**The kinematic derivation of c₁, with the constant derived rather than
-guessed.** The crossing is BALLISTIC in the tangential direction: the
+**The ballistic corridor bounds T from ABOVE; c₁ stays fitted.** The
+crossing is BALLISTIC in the tangential direction: the
 drag time constant is 1/drag = 33 steps while the crossing takes k ≈ 9
 (measured median 8–9 steps, from v_rad ≈ 1.5 and a 1.5-thick band), so
 the arrival tangential velocity PERSISTS through the crossing and the
@@ -2304,10 +2521,27 @@ whose coefficient depends on the radius at which the arc is measured and
 therefore varies over the crossing: r_in/(2k·dt) = **1.944** (the
 conservative choice — shortest arc — and the one a lower bound must use),
 r_out/(2k·dt) = 2.778, and 2.222 at r = 4.0, which is the value the
-measurement below used. Since |v_tan|'s density at 0 is bounded below,
-P(criterion) ≥ (r_in/(2k·dt))·γ·f(0), giving T ∝ γ and hence c₁. All
+measurement below used. All
 three coefficients are emitted by `scripts/t_campaign_constants.py`
 rather than computed by hand.
+
+**The direction of this inequality is the whole point, and an earlier
+version of this section had it backwards.** The corridor condition is
+NECESSARY for a successful crossing, not sufficient: a rollout can satisfy
+|v_tan| ≤ r·γ/(2k·dt) and still freeze, for reasons the ballistic
+approximation does not see. So the corridor yields
+  **T(γ) ≤ P(|v_tan| ≤ r_out·γ/(2k·dt))** ,
+and the loosest radius r_out is the one an upper bound must use. Bounding
+P(criterion) from BELOW by (r_in/(2k·dt))·γ·f(0) — as a density-at-0
+argument does — is a lower bound on an upper bound, which says nothing
+about T. Numerically it says something false: that quantity is
+2.1–4.3× the measured T and exceeds 1 from γ = 0.4 upward, and 1 is a
+ceiling for a conditional probability. The upper bound, by contrast, holds
+throughout (0.25/0.49/0.79/0.92 against T = 0.11/0.20/0.28/0.31).
+Consequently **c₁ = 0.4695 is fitted, not derived**: the kinematic account
+would give 2.4, a factor 5 away, in the direction that makes the derived
+version false. The corridor explains T's LINEARITY in γ, not its
+constant.
 *Measured* (200 000 rollouts per gap; unit = channel arrival):
 | γ | arrivals | threshold 2.222γ (r = 4.0) | P(satisfied) | non-freeze fraction | f(0) |
 |---|---|---|---|---|---|
@@ -2377,38 +2611,55 @@ valid at both gaps, loose by ≈ 3×. Evidence: *proved* (Lemma D with the
 arcsine bound), with the range factor P(|R| ≤ 0.3) *measured*, unit
 channel arrival, n = 1184 / 3352.
 
-*(ii) ρ(π), the ring-free arrival-angle density — PROVED.* The arrival
+*(ii) ρ(π), the ring-free arrival-angle density — MEASURED, 2.3× loose.* The arrival
 angle is steerable by a single early action: measured |∂θ/∂a_0| at first
 arrival has median 0.362 and 90th percentile 0.532 (n = 115 steerable
 paths, i.e. those whose arrival step is unchanged by the perturbation).
-Lemma D with a_max = 1 gives ρ(π) ≥ (1/2)/sup|∂θ/∂a_0|. Using the
-measured **90th percentile** 0.532 in place of the supremum yields 0.940
-against a measured 1.0167 — but a percentile is NOT a supremum (the
-observed max is 0.5865, which would give 0.853), so this instance is
-*consistent-with*, not proved, until the sensitivity is bounded above
-analytically. Evidence label *consistent-with*; the alternative that
-cannot be excluded is a heavier tail of |∂θ/∂a_0| than 115 paths reveal. The
+Lemma D with a_max = 1 gives
+  **ρ_sub(π) ≥ (1/2)·P(a root exists)/sup|∂θ/∂a_0|**,
+and BOTH factors on the right have to be carried. Two errors were made here
+together, and they cancelled numerically, which is why the wrong value
+looked right:
+  (a) **P(root) was silently set to 1.** Measured by scanning a₀ over 900
+      independent configurations of the other 79 actions, a root of
+      θ(a₀) = π exists in only **14/900 = 0.0156** of configurations.
+  (b) **The two sides were different measures.** Lemma D's left-hand side is
+      a density with respect to ALL rollouts — a sub-density integrating to
+      R ≈ 0.030 — while the decomposition's ρ, and the measured 1.0167, are
+      per ARRIVAL. Read as stated, "ρ(π) ≥ 0.94" is false by ≈ 30×; read as
+      a per-arrival bound it requires dividing by R, which reinstates (a).
+Applied consistently, with a_max = 1 and the sensitivity at its observed
+sup 0.5865: ρ_sub(π) ≥ (1/2)·0.0156/0.5865 = **0.0133 per rad**, i.e.
+per-arrival **ρ(π) ≥ 0.44** against the measured 1.0167 — 2.3× loose, with
+two measured ingredients (a root probability and a sampled sup). Evidence
+label *measured*, not proved: the alternative that cannot be excluded is a
+heavier tail of |∂θ/∂a_0| than 115 paths reveal, and P(root) is itself a
+grid-scan floor (17 roots found, so the scan under-counts). The
 sensitivity is what makes this work: one early action sweeps the arrival
 angle over ≈ 1.1 rad, so the angle has a genuine density rather than
 concentrating.
 
-*Status of T3.* The bound d ≥ 0.0146·γ² has the right order, and every
+*Status of T3.* The bound d ≥ 0.0136·γ² has the right order, and every
 factor now has a derivation:
 | factor | value | status |
 |---|---|---|
 | R = P(ring-free reach) | 0.030 | measured; Θ(1), γ-free — the object Lemma J bounds |
-| ρ(π) | 1.02/rad | ≥ 0.94 (Lemma D) but with a PERCENTILE for the sup: *consistent-with*, not proved |
-| f(0) | 1.10–1.16 | ≥ 0.35 (Lemma D + arcsine); the arcsine floor is proved, the root factor 0.325 measured |
-| T ≥ 2.2γ·f(0) − P(horizon) | — | derived (ballistic crossing) |
-**The horizon term is an artifact of the bookkeeping, and vanishes.** It
+| ρ(π) | 1.02/rad | ≥ 0.44 per arrival (Lemma D, with P(root) = 0.0156 and a sampled sup): *measured*, 2.3× loose |
+| f(0) | 1.10–1.16 folded | ≥ 0.35 signed / 0.77 folded (Lemma D + arcsine); the CONVENTION differs between the bound and its use — see below |
+| T ≤ P(\|v_tan\| ≤ r_out·γ/(2k·dt)) | — | derived (ballistic corridor), an UPPER bound: the corridor condition is necessary, not sufficient |
+**The horizon term shrinks by a factor 1.4 but does not vanish.** It
 appeared because R counts arrivals at any time while the crossing needs
-k ≈ 9 further steps. Building the deadline into the reach factor removes
-it: define
-  **R′ := P(a ring-free rollout reaches r_out within h − k steps)**,
-so every counted arrival has at least k steps left and the horizon
-condition is satisfied by construction. Measured: R = 0.03020 and
-R′ = **0.02118** (70.1% of R), so the correction is a factor 1.4 and the
-term disappears rather than being bounded.
+k further steps. Building a deadline into the reach factor reduces it:
+define
+  **R′ := P(a ring-free rollout reaches r_out within h − k steps)**.
+Measured: R = 0.03020 and R′ = **0.02118** (70.1% of R). But k ≈ 9 is the
+MEDIAN crossing duration, not a bound — the measured p90 is 13–16 steps
+at γ ∈ [0.1, 2.4], and unsuccessful crossings run longer still — so an
+arrival at exactly h − k still fails the horizon for ≳10% of crossings.
+The deadline therefore leaves a residue of order P(crossing time > k) ≈ 0.1
+rather than removing the term. (The implementation checks
+`hit ≤ h_episode − k` on a 0-based index, so it in fact leaves 8 steps,
+not 9; the reported R′ is the 8-step quantity.)
 
 **R′ is bounded below by ISOTROPY (no density estimate needed).** For the
 2D heading action the thrust is gain·(cos φ, sin φ) with φ = πa/a_max
@@ -2416,31 +2667,51 @@ uniform on [−π, π], so each thrust direction is **uniform on the circle**
 and the displacement Z_t = dt²·Σ_s w_{t,s}T_s is a sum of independent
 isotropic vectors — hence **isotropic itself** (the same structure as
 Theorem T5-I). Two consequences, both exact rather than estimated: the
-direction of Z_t is uniform, and it is INDEPENDENT of |Z_t|. Therefore,
-with L = ‖c − x₀‖ = 12,
-  R′ ≥ P(|Z_t| ∈ [L − r_out, L + r_out]) · min_{r ≤ L+r_out} (arcsin(r_out/r)/π)
-     = P(|Z_t| ∈ [7, 17]) · arcsin(5/17)/π
-for any single t ≤ h − k, since reaching the ball requires the
-displacement to have both the right magnitude range and a direction
-within the ball's angular half-width arcsin(r_out/r) of e.
-*Measured* (200 000 ring-free rollouts; the angular factor is exact at
-0.0950):
-| t | median \|Z_t\| | P(\|Z_t\| ∈ [7,17]) | ⇒ R′ ≥ |
-|---|---|---|---|
-| 20 | 1.17 | 0.0000 | 0 |
-| 40 | 2.58 | 0.0051 | 0.00048 |
-| 60 | 3.91 | 0.1081 | 0.01027 |
-| 71 | 4.59 | 0.2000 | **0.01900** |
-against R′ = 0.02118 measured — **valid and loose by only 1.1×**, taking
-the single best time t = h − k = 71. (Using several t would only improve
-it, at the cost of a union-of-events argument.) The remaining measured
-input is one scalar, P(|Z_{71}| ∈ [7, 17]) = 0.20, the magnitude
-distribution of an isotropic sum — a one-dimensional radial law, and the
-last quantity in the chain.
+direction of Z_t is uniform, and it is INDEPENDENT of |Z_t|. The
+admissible set of directions at magnitude ρ is an arc, and its exact
+half-angle is the law-of-cosines angle
+  **β(ρ) = arccos((ρ² + L² − r_out²)/(2ρL))**,
+so for any single t ≤ h − k and any partition {W_j} of the annulus into
+disjoint magnitude windows,
+  **R′ ≥ Σ_j P(|Z_t| ∈ W_j) · (min_{W_j} β)/π**.
+Each summand is a lower bound on the probability of a disjoint event, and
+the sum converges upward to the exact identity R′ = E[β(|Z_t|)/π] as the
+partition refines — so every entry of the ladder below is itself a bound,
+not an approximation. Derived by `scripts/t3_isotropy_window_bound.py`
+(`results/t3_isotropy_window_bound.json`), which optimises the partition
+rather than choosing one by hand, and which minimises over the ATTAINABLE
+range of L (the start is uniform on a unit box, so L ∈ [11.511, 12.510];
+substituting the midpoint 12 would give a bound valid for no actual start):
 
-**The remaining radial law IS the instrument's rarity r (2026-07-29).**
-The last measured input, P(|Z_{h−k}| ∈ [L − r_out, L + r_out]), is not a
-technical residue: it coincides with the instrument's contact rate.
+| windows m | 1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | exact |
+|---|---|---|---|---|---|---|---|---|---|---|
+| bound | 0 | 0 | 0.0039 | 0.0082 | 0.0109 | 0.0124 | 0.0131 | 0.0135 | 0.0137 | 0.0138 |
+
+So **R′ ≥ 0.013 is PROVED**, against R′ = 0.02118 measured — loose by
+1.6×, with one measured ingredient (the radial law of |Z_t| on the
+annulus) and no other input. Taking several t would improve it further,
+at the cost of a union-of-events argument.
+
+*Why the half-angle must be β and not arcsin(r_out/ρ).* The latter is the
+half-angle of the tangent cone from distance ρ, an upper-bound quantity:
+it is the largest deviation for which the ray still grazes the ball, not
+the largest for which a displacement OF LENGTH ρ lands inside it. β
+vanishes at both ends of the annulus (a displacement of exactly length
+L ± r_out reaches the ball only along the radial ray) and peaks at
+arcsin(r_out/L) in the middle, so its infimum over the full annulus is 0.
+Using arcsin as a per-radius floor turns a necessary condition into a
+sufficient one, and it is not a bound: **48.9% of the annulus mass has
+true half-angle below that floor** (measured, same script). The value it
+produced, 0.019, exceeded the correct 0.013 and happened to fall below
+the truth 0.0212 only because of this radial law.
+
+**The ring-free reach R equals the instrument's rarity r(0) — but that is
+an identity about the factor the deadline argument SUPERSEDED.**
+P(|Z_{h−k}| ∈ [L − r_out, L + r_out]) = 0.20 is not the contact rate; the
+ring-free reach R = 0.0302 is. R′ = 0.0212 differs from it by the
+deadline's factor 1.4, so no factor of the current chain equals r, and the
+chain's residue is the radial law of |Z_t| on the annulus. The identity
+below is worth recording anyway, and it is exact rather than numerical:
 Measured on 200 000 rollouts each,
   **r(γ = 0) = R** — necessarily, not numerically: a ring-free rollout reaches the band radius exactly
 when the same rollout would have contacted the band, since the band spans
@@ -2470,10 +2741,10 @@ moment bounds are the same fact.
 proved:
 | factor | status |
 |---|---|
-| R′ (reach within the deadline) | **PROVED ≥ 0.019** by isotropy, 1.1× loose; one measured scalar (the radial law) |
+| R′ (reach within the deadline) | **PROVED ≥ 0.013** by isotropy + the exact half-angle β, partitioned into 256 windows and minimised over the attainable L; 1.6× loose; measured ingredient: the radial law of \|Z_t\| on the annulus |
 | ρ(π) | ≥ 0.94 (Lemma D) with a percentile for the sup: *consistent-with* |
 | f(0) | ≥ 0.35; arcsine floor proved, root factor measured |
-| T ≥ 2.2γ·f(0) | derived (ballistic crossing) |
+| T ≤ P(\|v_tan\| ≤ r_out·γ/(2k·dt)) | derived (ballistic corridor); an UPPER bound — the corridor condition is necessary, not sufficient, so it cannot lower-bound T, and c₁ stays fitted |
 | horizon term | **eliminated** (absorbed into R′) |
 So the chain that began as "stochastic domination of post-divergence
 occupation measures" has reduced to three elementary ingredients —
@@ -2598,8 +2869,10 @@ half of T7.
 The censoring pathology (infinite bars) came from deleting edges, which
 leaves a limit complex that is not a cone. The principled replacement
 uses the pair (K, L) = (VR(X ∪ Y; s), VR(Y; s)) with X the contact cloud
-and Y the certified-free evidence, and reads the relative group
-H₁(K, L). Two structural facts make it the right object.
+and Y the certified-free evidence, and computes a **lower bound** for the
+relative group H₁(K, L) — the free-merge count. Two structural facts make
+the pair the right object; Prop R2 states exactly what the estimator does
+and does not read.
 
 **Proposition R1 (no infinite bars, by construction).** For s ≥ diam both
 K_s and L_s are full simplices, so H₁(K_s, L_s) = 0: every relative bar
@@ -2608,12 +2881,32 @@ limit complex is Cl(G_F) ≠ full (Prop C1); the relative construction
 removes the pathology rather than certifying its absence per sample.
 (Machine-checked in every cell run below and asserted in the estimator.)
 
-**Proposition R2 (the estimator is a union-find).** The long exact
-sequence of the pair gives
+**Proposition R2 (the free-merge estimator is a union-find, and it is a
+LOWER bound).** The long exact sequence of the pair gives
   H₁(K) → H₁(K, L) → H₀(L) → H₀(K),
-so rank H₁(K, L) = rank(im H₁(K)) + rank ker(H₀(L) → H₀(K)); when
-H₁(K) = 0 it equals rank ker(H₀(L) → H₀(K)) exactly, and lower-bounds it
-otherwise. That kernel rank is
+so
+  **rank ker(H₀(L) → H₀(K)) ≤ rank H₁(K, L)** ,
+with equality iff H₁(K) = im H₁(L). The estimator computes the KERNEL
+rank, i.e. the lower bound — the direction matters and an earlier version
+of this proposition had it inverted, reading rank H₁(K, L) as bounded above
+by the kernel rank.
+The equality hypothesis is not satisfied on our data and is never tested by
+the estimator (neither `free_merge_persistence` nor
+`scripts/t7_relative_estimator.py` computes H₁(K)). On the committed cell
+(γ = 0, seed 10000, one-sided; 74 contact + 360 path points) β₁(K_s) is
+125/166/164/114 at s = 0.20/0.30/0.40/0.50 against β₁(L_s) =
+119/164/162/113, so rank H₁(K, L) ≥ β₁(K) − β₁(L) ≥ 1 at every one of
+those scales while the union-find returns max_rank = 0. A minimal exhibit:
+contact = a 24-point circle of radius 1, free evidence = its centre as a
+one-vertex path — union-find 0, brute-force rank H₁(K, L) = 1 for
+s ∈ [0.26, 0.9].
+**Consequence for what the numbers below mean.** Every reported figure —
+the 20/20 vs 9/20 discrimination, "at γ = 0 it does not fire", Prop R4's
+structural limit — is a statement about the free-merge estimator, a
+computable lower bound for the relative rank, NOT about relative homology.
+In particular the one-sided γ = 0 geometry is the exhibit above, so the
+"gauge ⇒ vacuously zero" reading is a property of the surrogate.
+That kernel rank is
   #components of VR(Y; s) − #components of VR(X ∪ Y; s) that contain a
   point of Y,
 i.e. **the number of certified-free components that the contact evidence
@@ -2721,7 +3014,7 @@ points are singletons. The point sets are IDENTICAL, so d_H = 0 and any
 point-set-only hypothesis is satisfied with ε = 0, which would force
 d_bottleneck = 0. Measured (`test_r5_path_structure_is_necessary`,
 coarse bridge of spacing 1.8): P yields one bar, P′ yields two, and the
-unmatched bar puts **d_bottleneck ≥ 0.317 while 2ε = 0**. So the
+unmatched bar puts **d_bottleneck = 0.310 while 2ε = 0** (the identical bars match at cost 0 and the extra bar goes to the diagonal at cost (1.8 − 1.1798)/2 = 0.31012, confirmed by brute force over all partial matchings). So the
 hypothesis cannot be weakened to Hausdorff closeness of the points.
 
 *Why this is the right situation rather than a defect.* The estimator's
@@ -2804,14 +3097,26 @@ start region to B(c, r₀), at the aligned AND at the offset geometry:
   - thread = 0 (around): (0,0,0) → (0, 6, 0) → (12, 6, 0) → (12, 0, 0);
     at the plane crossing (8, 6, 0), dyz − R_c ≥ 2.5 (offset) so
     g ≥ 2.5, and the crossing is outside D.
-  Subdivide each route into steps ≤ Δ: all landings keep g > ρ_t. So NO
+  Subdivide each route into steps ≤ Δ: all landings keep g > ρ_t. So no
   positive lower bound on query mass follows from topology alone —
-  "obstruction is path-relative" is now a THEOREM about the instrument,
-  not only the measured 0.019-vs-0.898 dichotomy; even at the dangerous
-  offset a query-free threading plan of trivial extra length exists, so
-  the measured 0.898 is a property of the planner's SEARCH (random
-  shooting concentrates near the straight corridor), not of the geometry
-  of feasible plans.
+  "obstruction is path-relative" is a THEOREM **for the class of
+  step-bounded polygonal paths**, which is the class T8(a)'s gate
+  quantifies over, not only the measured 0.019-vs-0.898 dichotomy.
+  **Scope, and it is a real restriction.** That class strictly CONTAINS the
+  plans this instrument can imagine (action sequences through
+  `integrate_nd`), and refuting a bound over a superset does not refute it
+  over the subclass. Only the aligned witness (a straight line) is
+  dynamically realisable. The two offset witnesses are right-angle routes
+  subdivided at 0.97Δ, i.e. traversed at ‖v‖ ≈ 9.7, so the corner demands
+  ‖Δv‖ = 9.7·√2 ≈ 13.7 in one step against a plant limit of
+  (gain + drag·‖v‖)·dt ≈ 0.59; `scripts/t8_linking_dichotomy.py` checks
+  only `min g > ρ_t` and `thread`, with no feasibility check anywhere (no
+  action sequence, no velocity state). So at o = 1.5 the claim holds for
+  step-bounded polylines only, and "the measured 0.898 is a property of the
+  planner's search rather than of the geometry of feasible plans" is
+  UNEARNED there until a witness is exhibited as an action sequence — e.g.
+  decelerating to rest before each turn — whose realised landings are
+  verified to keep g > ρ_t.
 (c) *Real dynamics:* real trajectories never land in T (freeze semantics:
 a proposed landing in T freezes at the previous position — the same
 argument that makes the ring band reach-null in position), and real steps

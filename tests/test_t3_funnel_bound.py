@@ -65,7 +65,7 @@ def test_t3p_prime_funnel_is_contained_in_fire():
         env = RingField2D(gap=gap)
         n, funnel, fire = 1200, 0, 0
         for i in range(n):
-            rng = random.Random(50_000 + i)
+            rng = random.Random(2_000_000 + i)
             s = env.initial_state(rng)
             froze = entered_after_freeze = fired = False
             for _ in range(env.h_episode):
@@ -387,16 +387,39 @@ def test_t3_throughput_is_conditioned_on_geometry_not_outcome():
     assert entries < arrivals          # strictly: some arrivals do NOT enter
 
 
+def _wilson_upper(k, n, z=1.96):
+    p = k / n
+    denom = 1 + z * z / n
+    centre = p + z * z / (2 * n)
+    half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))
+    return (centre + half) / denom
+
+
 def test_t3_quadratic_lower_bound_on_direct_entries():
-    # d(gamma) >= 0.0146 * gamma^2, the calibrated bound from the ring-free
-    # decomposition. Checked directly at two gaps (the constant is fitted at
-    # gamma = 0.6, so the bound is tight there and slack below).
-    C = 0.01456
-    for gap, n in ((0.4, 20000), (0.6, 20000)):
+    # d(gamma) >= 0.0136 * gamma^2 on [0.05, 0.6], the constant calibrated from
+    # the pooled Wilson 95% lower limit at the binding gap over DISJOINT seed
+    # blocks (scripts/t3_quadratic_constant.py).
+    #
+    # The assertion is against the sample's Wilson UPPER limit, not its point
+    # estimate, and that is not a fudge factor -- it is the only statement a
+    # 20k block can make about the bound. The claim is about the true d; at the
+    # binding gap the bound's slack is 8% while a 20k block's standard error is
+    # 10% of d, so asserting the point estimate tests the sample rather than the
+    # claim: it fails on any block that lands 2 sigma low (seed base 2_000_000
+    # gives 86/20000 = 0.00430 against a true d of 0.00534). A significant
+    # violation -- the upper limit below the bound -- is a real refutation and
+    # still fails here.
+    #
+    # The previous version instead multiplied the bound by 0.8. That IS a fudge
+    # factor: it hides a 20% error at any sample size, and it is why a constant
+    # defined as the sample's own min d/gamma^2 survived this test while being
+    # violated by 3 of 5 fresh seed blocks.
+    C = 0.0136
+    for gap, n in ((0.2, 20000), (0.4, 20000), (0.6, 20000)):
         env = RingField2D(gap=gap)
         d = 0
         for i in range(n):
-            rng = random.Random(50_000 + i)
+            rng = random.Random(2_000_000 + i)
             s = env.initial_state(rng)
             froze = False
             for _ in range(env.h_episode):
@@ -407,7 +430,8 @@ def test_t3_quadratic_lower_bound_on_direct_entries():
                 if env.in_interior(s[0], s[1]):
                     d += (not froze)
                     break
-        assert d / n >= C * gap ** 2 * 0.8, (gap, d / n, C * gap ** 2)
+        assert _wilson_upper(d, n) >= C * gap ** 2, (
+            gap, d / n, _wilson_upper(d, n), C * gap ** 2)
 
 
 def test_t3_tangential_speed_distribution_is_gamma_free():
@@ -422,7 +446,7 @@ def test_t3_tangential_speed_distribution_is_gamma_free():
         env = RingField2D(gap=gap)
         vt = []
         for i in range(30000):
-            rng = random.Random(50_000 + i)
+            rng = random.Random(2_000_000 + i)
             s = env.initial_state(rng)
             for _ in range(env.h_episode):
                 s, _, c = env.step(s, rng.uniform(-env.a_max, env.a_max))
@@ -454,7 +478,7 @@ def test_t3_corridor_failure_is_dominated_by_freezing():
         env = RingField2D(gap=gap)
         modes = {"entered": 0, "froze": 0, "back": 0, "horizon": 0}
         for i in range(40000):
-            rng = random.Random(50_000 + i)
+            rng = random.Random(2_000_000 + i)
             s = env.initial_state(rng)
             arrived = False
             for _ in range(env.h_episode):
@@ -588,7 +612,13 @@ def test_t3_isotropy_bound_on_reach_is_valid():
         if hit is not None and hit <= env.h_episode - k:
             reached_early += 1
     bound = (in_range / n) * ang
-    assert bound <= reached_early / n * 1.35, (bound, reached_early / n)
+    # NO fudge factor: a bound that may exceed the quantity it bounds by 35%
+    # is not a bound, and the previous 1.35 here is exactly why an invalid
+    # isotropy bound survived (it used the tangent-cone half-angle
+    # arcsin(r_out/rho) as a per-radius floor, which 48.9% of the annulus mass
+    # violates). The valid bound is the partition sum over the exact
+    # law-of-cosines half-angle; see scripts/t3_isotropy_window_bound.py.
+    assert bound <= reached_early / n, (bound, reached_early / n)
     assert bound > 0.5 * reached_early / n, (bound, reached_early / n)
 
 

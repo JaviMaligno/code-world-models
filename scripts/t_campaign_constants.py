@@ -68,8 +68,18 @@ def main():
     env = RingField2D()
     gain, dt, drag = env.gain, env.dt, env.drag
     beta = 1 - drag * dt
+    # L is RANDOM: the start is uniform on a box of half-width x0_range about
+    # x0_center, so the distance to the shell centre spans an interval. Emit all
+    # three so a bound can never silently take the nominal (mean-start) value:
+    # an UPPER bound on a reach rate needs the SMALLEST L, a lower bound the
+    # largest. Deriving them here rather than quoting 12 is the point.
     L = math.hypot(env.center[0] - env.x0_center[0],
                    env.center[1] - env.x0_center[1])
+    _rng = env.x0_range
+    _corners = [math.hypot(env.center[0] - (env.x0_center[0] + sx * _rng),
+                           env.center[1] - (env.x0_center[1] + sy * _rng))
+                for sx in (-1, 1) for sy in (-1, 1)]
+    L_min, L_max = min(_corners), max(_corners)
     h = env.h_episode
     C = {}
 
@@ -135,6 +145,10 @@ def main():
         "kappa_squared": k2,
         "kappa": math.sqrt(k2),
         "sin_theta_cap_rate": math.sqrt(1 - k2),
+        # The rate a BOUND may use: largest ratio, i.e. smallest L.
+        "sin_theta_cap_rate_at_L_min": shell.r_out / L_min,
+        "L_nominal": L,
+        "L_range": [L_min, L_max],
         "gamma_squared_ratio": g2,
         "exchangeability_bound_numerator": 4.0,
         "T5C_bound_at_n": {str(n): min(1.0, h * 4.0 / (n * k2))
@@ -204,11 +218,32 @@ def main():
             env.r_out / (2 * k_cross * dt),
         "ballistic_v_tan_coefficient_used_in_measurement":
             4.0 / (2 * k_cross * dt),
-        "isotropy_angular_factor": math.asin(env.r_out / (L + env.r_out))
-        / math.pi,
+        # The tangent-cone factor: SUPERSEDED, kept so the audit can catch a
+        # document still quoting it. It is not a valid per-radius floor -- the
+        # exact half-angle is the law-of-cosines beta, which vanishes at both
+        # ends of the annulus. See scripts/t3_isotropy_window_bound.py.
+        "isotropy_angular_factor_superseded":
+            math.asin(env.r_out / (L + env.r_out)) / math.pi,
+        # The valid reach bound, read from the script that derives it so the
+        # two cannot drift apart.
+        "reach_lower_bound_partitioned":
+            measured("t3_isotropy_window_bound", ["reach_lower_bound"]),
+        "reach_annulus_mass_below_tangent_cone_floor":
+            measured("t3_isotropy_window_bound",
+                     ["annulus_mass_below_claimed_floor"]),
         "magnitude_window": [L - env.r_out, L + env.r_out],
-        "quadratic_bound_coefficient": (R * rho_pi * c1
-                                        if None not in (R, rho_pi, c1) else None),
+        # The published constant is the CALIBRATED one: the pooled Wilson 95%
+        # lower limit at the binding gap, from disjoint seed blocks. The
+        # product R*rho*c1 below reproduces the old value and is kept only so
+        # the audit can catch a document still quoting it -- that value is the
+        # sample's own minimum of d/gamma^2, hence violated by roughly half of
+        # fresh seed blocks. See scripts/t3_quadratic_constant.py.
+        "quadratic_bound_coefficient":
+            measured("t3_quadratic_constant", ["quadratic_constant"]),
+        "quadratic_bound_coefficient_from_sample_minimum_superseded":
+            (R * rho_pi * c1 if None not in (R, rho_pi, c1) else None),
+        "quadratic_bound_binding_gap":
+            measured("t3_quadratic_constant", ["binding_gap"]),
     }
     # Pearson-walk moments at t = h - k
     t_star = h - k_cross

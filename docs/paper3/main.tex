@@ -468,7 +468,11 @@ $0 \le \gamma \le \gamma' \le 2\pi$ with $\varepsilon = \gamma' - \gamma$,
 \]
 so both curves are uniformly H\"older-$\tfrac12$ on $[0, 2\pi]$; in
 particular $r_{\mathrm{int}}(\gamma) \le 1033\sqrt{\gamma} \to
-r_{\mathrm{int}}(0) = 0$.
+r_{\mathrm{int}}(0) = 0$. The constant is not the content: $r_{\mathrm{int}}$
+is a probability and $1033\sqrt{\gamma} \ge 1$ for every
+$\gamma \ge 9.4 \times 10^{-7}$, so the numeric envelope is vacuous at
+every runnable gap. What the proposition supplies is that the modulus is
+finite, explicit, and uniform over all trajectory events.
 \end{proposition}
 \begin{proof}
 The one-step proposed landing from any state is \emph{exactly} uniform on
@@ -486,10 +490,13 @@ and sum over $h$ steps via Lemma~\ref{lem:divergence}. The exponent
 $\tfrac12$ is not pessimism: a drift center at distance exactly $R_L$
 from a sliver line has single-step hitting probability
 $\ge \sqrt{w/R_L}/\pi$, and the measured divergence probability scales as
-$\varepsilon^{0.30}$ over $\varepsilon \in [0.0125, 0.2]$ --- the
-channel-mouth (funnel) states occupy this tangency band and saturate per
-episode --- so a linear bound on the coupling's divergence term is
-refuted at the measured scale. Full statements, the linear
+$\varepsilon^{0.30}$ over $\varepsilon \in [0.0125, 0.2]$, the
+channel-mouth (funnel) states occupying this tangency band and saturating
+per episode. Sublinear growth does not contradict a linear \emph{upper}
+bound --- $P \le 0.38\,\varepsilon$ holds across the measured range --- so
+what the measurement establishes is that the tangency term dominates the
+scaling and that any linear modulus needs a constant that diverges as
+$\varepsilon \to 0$ if the fitted law persists below $0.0125$. Full statements, the linear
 off-tangency refinement, and machine checks are in the repository's
 theory notes (Lemmas~S/A/W, Theorems~T4/T4$'$).
 \end{proof}
@@ -1178,14 +1185,22 @@ whenever exactly one bar spans
 $[2 r_{\max}\sin(\Delta\theta_{\max}/2),\, \sqrt3\,r_{\min})$, a rank
 condition read off the barcode and true in every factorial row;
 $\theta^* \to 2\pi/3$ for dense samples, recovering the Vietoris--Rips
-circle constant \citep{adamaszek2017vietoris}, and the measured
-death$/\bar\rho \in [1.70, 1.82]$ around $\sqrt 3 = 1.732$ is the radial
-thickness). The law is therefore \emph{two-sided}: $\hat\beta_1 \ge 1$ is
+circle constant \citep{adamaszek2017vietoris}. Two standing hypotheses
+carry the death bound and are stated with it rather than buried in the
+proof: $\Delta\theta_{\max} < \pi$, without which no winding class exists
+at any scale, and $\Delta\theta_2 \le \theta^*/2$, automatic in the dense
+regime but a genuine assumption in $29$ of $80$ factorial rows (it holds in
+all of them; $4$ rows fall outside both regimes and carry only the cone
+bound $2r_{\max}$). The measured
+death$/\bar\rho \in [1.674, 1.816]$ straddles $\sqrt 3 = 1.732$, and the
+radial-thickness band $\sqrt3\,[r_{\min}, r_{\max}]/\bar\rho =
+[1.661, 1.803]$ accounts for the lower part of that spread but not its
+maximum). The law is therefore \emph{two-sided}: $\hat\beta_1 \ge 1$ is
 guaranteed when $\sqrt3\,r_{\min} - 2 r_{\max}\sin(\Delta\theta_{\max}/2)
 > \tau$, and no persistent winding bar exists when
 $2 r_{\max}\sin(\theta^*/2) - 2 r_{\min}\sin(\Delta\theta_{\max}/2) <
 \tau$ (only a spurious non-winding class could still fire --- never
-observed). On the factorial: the sandwich holds for $57/57$ winding bars,
+observed). On the factorial: the sandwich holds for the window-spanning bar in all $36$ rows with a nonempty window ($r_0 = 1$, so Lemma~P transfers the class bound to the bar); in the remaining $21$ rows the bar identified by Lemma~B's birth interval also satisfies $D^- \le \text{death} \le D^+$, but Lemma~P does not apply there, so that half is measurement rather than theorem. Winding is inferred from the birth location, not computed,
 the guaranteed bands have $0$ violations ($34$ and $5$ rows), and the
 pointwise law reproduces $78/80$ rows, the $2$ misses falling in the
 proved undecided band ($\gamma = 1.8$ boundary, subsampling-gap
@@ -1218,19 +1233,29 @@ $(\mathrm{VR}(X \cup Y), \mathrm{VR}(Y))$, contact evidence $X$ against
 certified-free evidence $Y$. Two things make it the right object. It
 cannot produce infinite bars at all --- both complexes are full
 simplices past the diameter, so every relative class dies --- and by the
-long exact sequence its rank is $\operatorname{rank}\ker(H_0(\mathrm{VR}(Y))
-\to H_0(\mathrm{VR}(X \cup Y)))$ whenever the union has trivial $H_1$:
-\emph{the number of certified-free components that the contact evidence
-glues together}, computable by two union-finds rather than a matrix
-reduction. One instantiation detail is load-bearing: $Y$ must enter as
+long exact sequence its rank is bounded \emph{below} by
+$\operatorname{rank}\ker(H_0(\mathrm{VR}(Y))
+\to H_0(\mathrm{VR}(X \cup Y)))$, \emph{the number of certified-free
+components that the contact evidence glues together}, computable by two
+union-finds rather than a matrix reduction. That kernel rank is what we
+compute, and it is what every number below reports: the two ranks coincide
+only when the union contributes no $H_1$ classes of its own, which is not
+the case here (measured $\beta_1$ of the union runs $114$--$166$ across
+scales on the committed cells), so the quantity is the \emph{free-merge}
+estimator --- a sound lower bound for the relative rank --- and not the
+relative rank itself. One instantiation detail is load-bearing: $Y$ must enter as
 trajectory \emph{polylines}, not as a point cloud. A free trajectory certifies
 passage between its own consecutive samples; discard that and the
 estimator reports separation almost everywhere, because a curve-dense
 contact cloud glues a scatter-sparse free cloud by density mismatch
-alone. With paths, the estimator is correct on $20/20$ open-ring cells
-where the pre-registered detector scores $9/20$, with no censoring and
-no infinite bars. At $\gamma = 0$ it fires on $0/5$ one-sided and $1/5$ two-sided seeds
-(unit = seed), i.e.\ not reliably, for two reasons we keep separate: with one-sided (inside) evidence the interior is
+alone. With paths, the free-merge estimator is correct on $20/20$
+open-ring cells where the pre-registered detector scores $9/20$, with no
+censoring and no infinite bars. At $\gamma = 0$ it fires on $0/5$ one-sided
+and $1/5$ two-sided seeds (unit = seed), i.e.\ not reliably, for two
+reasons we keep separate --- and since the estimator is a lower bound
+rather than the relative rank, a non-firing cell is evidence about the
+surrogate, not a proof that the relative group vanishes. With one-sided
+(inside) evidence the interior is
 reach-null, nothing outside is sampled, and separation is
 \emph{unidentifiable by any estimator} --- Proposition~\ref{prop:quotient}
 asserting itself, with plain $\hat\beta_1$ scoring well there only
@@ -1390,13 +1415,15 @@ with the elementary bound
 $P(\langle U, e\rangle \ge \kappa) \le \tfrac12 (1-\kappa^2)^{(n-2)/2}$
 this gives
 \[
-  r(n) \;\le\; \tfrac{h}{2}\,(r_{\mathrm{out}}/L)^{\,n-2}
-  \;=\; 40 \cdot 0.4167^{\,n-2}
+  r(n) \;\le\; \tfrac{h}{2}\,(r_{\mathrm{out}}/L_{\min})^{\,n-2}
+  \;=\; 40 \cdot 0.4344^{\,n-2}
   \quad\text{at the defaults,}
 \]
 non-vacuous from $n \approx 7$ against $n \approx 400$ for the
 exchangeability bound, and verified at $n = 3\ldots8$ (simulated decay
-$0.431$ against the predicted $0.4167$).
+$0.431$). The rate takes $L_{\min} = 11.511$, the smallest attainable
+start distance: $L$ is random, so a bound needs the largest ratio, and the
+nominal $5/12 = 0.4167$ is the mean-start value rather than the bound's.
 
 The instrument's own thrust is cube-uniform and norm-capped, whose
 symmetry group is finite, so that argument does not apply to it --- but
@@ -1430,12 +1457,15 @@ here rests on a decimal expansion ---
 \]
 with no hypothesis on the weights for validity. The instrument's own
 conditional profile has $\rho$ of median $4.0$ and minimum $2.34$ over
-${\approx}8000$ samples, so the error costs ${\approx}3\times10^{-3}$:
-the per-dimension rate is $0.418$ against the sharp $0.4167$. Two things then matter about $\rho$. It is bounded below by $1$ for
+${\approx}8000$ samples. The \emph{minimum} is what binds: the bound is a
+product over coordinates, so each factor must be controlled at the worst
+$\rho$, not the typical one. At $\rho = 2.34$ the per-dimension rate is
+$0.474$, against $0.418$ at the median and the isotropic $0.4167$; the
+median value describes the typical coordinate and is not a bound. Two things then matter about $\rho$. It is bounded below by $1$ for
 free (Cauchy--Schwarz), and once $\lambda$ is optimised \emph{with} the
 error term included the resulting factor
 $(1+u)^{-1/2} + 2\bar\Phi\bigl((7/4)/\sqrt u\bigr)$ is below $1$ for
-\emph{every} $u>0$, minimum $0.7782$. That does not by itself give an
+\emph{every} $u>0$, minimum $0.784$. That does not by itself give an
 exponential rate --- a product of factors each merely below $1$ need
 not be small, and a rate needs the $u_i = 2\lambda\sigma_i^2$ confined
 to a window --- but it makes the window enormous ($q \le 0.89$ for
@@ -1452,7 +1482,13 @@ bad-coordinate indicators are \emph{independent}, so their count is
 binomial and Chernoff replaces Markov. The result is
 $P(\text{cone at a fixed step}) \le 2 \cdot 0.9104^n$ --- exponential,
 with no floor and nothing measured --- whence
-$r(n) \le 160 \cdot 0.9104^n$ after the union over the horizon. Measurement then sharpens the constant: the observed spread's $95$th percentile
+$r(n) \le 160 \cdot 0.9104^n$ after the union over the horizon, which
+exceeds $1$ until $n \ge 55$: as a bound on the contact rate it is vacuous
+below that, and the floor-free claim is about the per-step probability. One
+step of the derivation remains open, and we flag it rather than carry it
+silently: the displayed product controls the $\prod_{i \ge 2}$ side, while
+the upper-side factor in $Z_1$ is asserted rather than established, which is
+also why no $\kappa$ appears in the rate. Measurement then sharpens the constant: the observed spread's $95$th percentile
 $\tau_{95} \le 1.36$ (300 episodes per dimension) gives $0.80^n$ on that
 event, and $\rho \approx 4$ gives the true
 $0.4167^n$. Details
@@ -1544,13 +1580,18 @@ $R_c - (\rho_t - \Delta/2)$, and its linking number with $K$ (equal to
 its signed $D$-crossing count; machine-checked against the Gauss
 integral) is realized entirely by hole-threadings. \textbf{Dichotomy:} a
 plan that links the core either queries the tube or threads $D_m$.
-\textbf{Refutation:} both linking classes contain landing-free ---
-query-free --- plans from start to lure, \emph{even at the dangerous
-offset} (thread the displaced hole with clearance $2\rho_t$, or go
-around), so no positive query mass follows from topology alone:
-obstruction is path-relative as a \emph{theorem}, and the measured
-$0.898$ is the search's concentration near the straight corridor, not a
-geometric necessity. \textbf{What survives:} if every candidate's
+\textbf{Refutation, scoped to step-bounded polygonal paths:} both linking
+classes contain landing-free --- query-free --- plans from start to lure,
+\emph{even at the dangerous offset} (thread the displaced hole with
+clearance $2\rho_t$, or go around), so no positive query mass follows from
+topology alone over that class, which is the class the gate quantifies
+over. The class strictly contains the plans the instrument can imagine, and
+only the aligned witness is dynamically realisable: the offset witnesses
+are right-angle routes traversed at $\|v\| \approx 9.7$, whose corners
+demand $\|\Delta v\| \approx 13.7$ in one step against a plant limit of
+$0.59$. So at the registered offset the measured $0.898$ is not yet shown
+to be the search's concentration rather than a property of the feasible
+plans; that would need a witness exhibited as an action sequence. \textbf{What survives:} if every candidate's
 imagined path stays within $\varepsilon$ of the straight segment, whose
 clearance to the core is $|o - R_c|$ exactly (offset knob $o$), then
 $|o - R_c| < \rho_t - \Delta/2 - \varepsilon$ forces
@@ -1762,21 +1803,33 @@ and $\rho$ the density of its first-arrival angle --- both independent of
 $\gamma$ --- and $T$ the throughput of the channel. Measured,
 $R = 0.030$ and $\rho(\pi) = 1.02$ per radian (zero at $\pi/2$ and $0$:
 the approach is one-sided, which is why a facing channel is the
-consequential case), and $T$ has log-log slope $0.64$, so the
-decomposition predicts $d \sim \gamma^{1.64}$ against the directly
-measured $\gamma^{1.72}$. Two independent estimates of $T$ agree to
-$10\%$. The throughput has a kinematic account with a derived rather than fitted
+consequential case). The exponent is not a check on the decomposition:
+because $T$ is estimated as the residual $d/(R\rho\gamma)$, its slope plus
+one \emph{equals} $d$'s slope on any fixed grid, identically --- the
+$1.64$ against $1.72$ once reported as agreement is that identity plus a
+change of grid. The one non-tautological comparison available is the
+residual estimate of $T$ against a direct count, and it shows a systematic
+$5$--$11\%$ gap of known sign, traceable to substituting $\rho(\pi)$ --- the
+\emph{maximum} of the angular density --- into a lower bound.
+The throughput has a kinematic account that fixes its shape but not its
 constant. The crossing takes $k \approx 9$ steps (the arrival radial speed
 is ${\approx}1.5$ against a band of thickness $1.5$), while drag's time
 constant is $1/\mathrm{drag} = 33$ steps, so the arrival's tangential
 velocity persists ballistically through the crossing and survival inside
 an arc of half-width $r\gamma/2$ requires
 $|v_{\mathrm{tan}}| \le r\gamma/(2k\,dt)$, a coefficient between $1.94$
-and $2.78$ as $r$ runs across the band, the lower value being the one a
-lower bound must use. Since the
-density of $|v_{\mathrm{tan}}|$ at zero is bounded away from zero
-(measured ${\approx}1.1$, independent of $\gamma$), that probability is
-linear in $\gamma$ and the throughput inherits it. The criterion tracks
+and $2.78$ as $r$ runs across the band. The condition is
+\emph{necessary}, not sufficient --- a rollout can satisfy it and still
+freeze --- so it bounds $T$ from above,
+$T(\gamma) \le P(|v_{\mathrm{tan}}| \le r_{\mathrm{out}}\gamma/(2k\,dt))$,
+which the data support ($0.25/0.49/0.79/0.92$ against
+$T = 0.11/0.20/0.28/0.31$). It cannot bound $T$ from below: a
+density-at-zero argument lower-bounds the corridor probability, and a lower
+bound on an upper bound is vacuous. Numerically that vacuous version
+exceeds the measured $T$ by $2$--$4\times$ and exceeds $1$ from
+$\gamma = 0.4$ up. So the corridor explains why $T$ is linear in $\gamma$
+while $c_1 = 0.4695$ remains \emph{fitted}: the kinematic constant is
+$2.4$, a factor $5$ away. The criterion tracks
 the measured non-freezing fraction across the range ($0.25$ versus
 $0.29$, $0.50$ versus $0.47$, $0.93$ versus $0.70$, over-predicting at
 wide gaps where the ballistic approximation loosens), and the failure
@@ -1784,12 +1837,16 @@ census confirms the corridor is what binds: freezing on the band accounts
 for $0.527$ of channel arrivals at $\gamma = 0.2$ against $0.302$ at
 $0.6$, turning back out for $1$--$2\%$, and the horizon for the rest.
 Assembling the three factors gives
-$d(\gamma) \ge 0.01455\,\gamma^{2}$ for $\gamma \in [0.05, 0.6]$, with
-the constant rounded down because the bound is exact at the upper end;
-beyond that range the direct-entry probability saturates while
-$\gamma^{2}$ does not, and the bound fails. The constant is
-\emph{fitted} to the throughput's smallest measured ratio, so this is a
-measured bound of the right order, not a proved one. Both one-dimensional densities the argument rests on admit \emph{partly
+$d(\gamma) \ge 0.0136\,\gamma^{2}$ for $\gamma \in [0.05, 0.6]$; beyond
+that range the direct-entry probability saturates while $\gamma^{2}$ does
+not, and the bound fails. The constant is not the sample's own minimum of
+$d/\gamma^{2}$: defining it that way makes the bound true by construction
+at the measured grid and a coin flip off it --- at the binding gap $0.6$
+that version is violated by $3$ of $5$ disjoint seed blocks. It is instead
+the pooled Wilson $95\%$ lower limit at the binding gap, rounded down, so
+that it sits below the sampling interval of the quantity it bounds rather
+than on its point estimate. The constant remains \emph{fitted}, so this is
+a measured bound of the right order, not a proved one. Both one-dimensional densities the argument rests on admit \emph{partly
 measured} lower bounds by the same elementary device: if a quantity is
 steerable by a single action whose law has a density, its own density is at
 least $(2a_{\max})^{-1}$ times the probability that the steering equation
@@ -1797,31 +1854,55 @@ has a root, divided by the steering sensitivity. For the tangential speed
 the designated step contributes
 $\mathrm{gain}\,dt\,\sin(\phi - \theta)$ with $\phi$ uniform --- the
 arcsine law, whose density exceeds $1/\pi$ on all of $(-1,1)$, with no
-compactness caveat --- giving $f(0) \ge 0.35$ against a measured $1.10$,
-where the root probability $0.325$ is itself measured (unit channel
-arrival, $n = 3352$). For the arrival angle, a single early action sweeps
-it over ${\approx}1.1$ radians, giving $\rho(\pi) \ge 0.94$ against a
-measured $1.02$ --- but with the sensitivity taken at its measured
-$90$th percentile over $115$ steerable paths rather than at a supremum, so
-that one is \emph{consistent-with} rather than proved. The horizon term is bookkeeping and disappears once the deadline is built
+compactness caveat --- giving $f(0) \ge 0.35$ for the \emph{signed}
+density against a measured $0.54$, where the root probability $0.325$ is
+itself measured (unit channel arrival, $n = 3352$). The convention matters
+and must be stated with the number: the folded density, which is the one the
+corridor criterion consumes, has bound $0.77$ against a measured $1.09$.
+For the arrival angle, a single early action sweeps it over
+${\approx}1.1$ radians. Two factors have to be carried and both were once
+dropped: the probability that the steering equation has a root (measured
+$0.0156$ over $900$ configurations) and the distinction between a
+sub-density over all rollouts and a density per arrival, which differ by
+the reach $R \approx 0.030$. Carrying both gives a sub-density
+$\ge 0.0133$ per radian, i.e. $\rho(\pi) \ge 0.44$ per arrival against a
+measured $1.02$ --- $2.3$ times loose, with two measured ingredients, so
+\emph{measured} rather than proved. The horizon term shrinks by a factor
+$1.4$ but does not vanish when the deadline is built
 into the reach factor: counting only ring-free arrivals within $h - k$
-steps leaves every arrival with the $k$ steps the crossing needs, at a cost
-of a factor $1.4$ (measured $0.0212$ against $0.0302$). The reach factor
+steps costs a factor $1.4$ (measured $0.0212$ against $0.0302$), but
+$k \approx 9$ is the \emph{median} crossing duration and its $90$th
+percentile is $13$--$16$ steps, so a residue of order
+$P(\text{crossing} > k) \approx 0.1$ remains. The reach factor
 itself follows from isotropy, with no density estimate: the $2$D heading
 action gives every thrust a uniform direction, so the displacement is a sum
 of independent isotropic vectors and is isotropic, whence its direction is
-uniform \emph{and} independent of its magnitude. Reaching the band
-therefore needs the magnitude in $[L - r_{\mathrm{out}}, L +
-r_{\mathrm{out}}]$ and the direction within the ball's angular half-width,
-giving $R' \ge P(|Z_t| \in [7,17]) \cdot \arcsin(5/17)/\pi = 0.019$ at
-$t = h-k$, against a measured $0.0212$ --- loose by $1.1$. What remains
-measured is a single scalar, the radial law of an isotropic sum --- and it
-is not a residue of this argument but the instrument's rarity itself. At
-$\gamma = 0$ the band spans the whole annulus, so a ring-free rollout
-reaches the band radius exactly when the same rollout would have contacted
-it: the two rates agree to five decimals ($0.03020$), and seed by seed
-without a single mismatch. The factor is therefore $r$, the quantity the
-danger law takes as its argument and this series measures per instrument.
+uniform \emph{and} independent of its magnitude. At magnitude $\rho$ the
+admissible directions form an arc whose exact half-angle is the
+law-of-cosines value $\beta(\rho) = \arccos((\rho^2 + L^2 -
+r_{\mathrm{out}}^2)/(2\rho L))$, so for any partition of the annulus into
+disjoint magnitude windows $W_j$,
+\[
+  R' \;\ge\; \sum_j P(|Z_t| \in W_j)\cdot \frac{\min_{W_j}\beta}{\pi},
+\]
+each summand bounding a disjoint event and the sum converging upward to the
+exact $\mathbb{E}[\beta(|Z_t|)/\pi]$. Refining to $256$ windows, and
+minimising over the attainable $L \in [11.511, 12.510]$ rather than
+substituting its midpoint, gives $R' \ge 0.013$ at $t = h-k$ against a
+measured $0.0212$ --- loose by $1.6$. The half-angle must be $\beta$ and
+not $\arcsin(r_{\mathrm{out}}/\rho)$: the latter is the tangent cone's
+half-angle, an upper-bound quantity, and $48.9\%$ of the annulus mass has
+true half-angle below it, so substituting it would turn a necessary
+condition into a sufficient one. What remains measured is the radial law of
+an isotropic sum on the annulus. That law is not the instrument's rarity;
+the \emph{ring-free} reach $R$ is, and $R$ is the factor this deadline
+argument supersedes. At $\gamma = 0$ the band spans the whole annulus, so a
+ring-free rollout reaches the band radius exactly when the same rollout
+would have contacted it --- the two rates agree to five decimals
+($0.03020$), seed by seed without a single mismatch --- but $R' = 0.0212$
+differs from $r(0) = 0.0302$ by the deadline's own factor $1.4$, and the
+identity holds only at $\gamma = 0$, whereas the danger law's argument is
+$r(\gamma)$.
 It also explains why no moment bound reaches it: the exact second moment of
 the Pearson walk puts the target at $1.3$ times the rms displacement, so
 the event is in the tail --- the mode's rarity and the failure of

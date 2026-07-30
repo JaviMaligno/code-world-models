@@ -40,6 +40,13 @@ def value(path):
 # (group/key path, printed forms) with an optional third field:
 #   "lower"    the constant of a LOWER bound: printing below the computed value
 #              is safe, printing above it makes the bound false.
+#   "upper"    the constant of an UPPER bound: printing ABOVE the computed
+#              value is safe (a looser but true bound), printing below it makes
+#              the bound false. The mirror image of "lower" -- getting these
+#              two backwards is how a rounding turns a true bound into a false
+#              one, so each entry must name which side it is on.
+#   "percent"  the document prints the value as a percentage, so compare
+#              against 100x the computed fraction.
 #   "endpoint" an interval endpoint INSIDE a proof (e.g. Lemma I's x0, where the
 #              termwise inequality holds on [0, x0]): the printed value must
 #              still satisfy the property, so it may only be rounded DOWN.
@@ -54,15 +61,25 @@ CHECKS = [
     (["plant", "two_action_jacobian_max"], ["9.87"]),
     (["plant", "two_action_image_area"], ["39.5"]),
     (["T4", "holder_constant"], ["1033"]),
+    # The nominal (mean-start) rate; the BOUND uses r_out/L_min = 0.4348,
+    # since L is random and an upper bound needs the largest ratio.
     (["T5", "sin_theta_cap_rate"], ["0.4167"]),
+    (["T5", "sin_theta_cap_rate_at_L_min"], ["0.4344"], "upper"),
     (["T5", "kappa"], ["0.909"]),
     (["T5", "lemma_I_x0"], ["7/4"], "endpoint"),
     (["T5", "q_rho1_min"], ["0.7842"]),
     (["T5", "chernoff_u_star_asymptotic"], ["4.76"]),
     (["T5", "one_over_pi_gain_dt"], ["1.061"]),
     (["T5", "T5F_rate_per_dimension"], ["0.9104"], "lower"),
-    (["T3", "isotropy_angular_factor"], ["0.0950"]),
-    (["T3", "quadratic_bound_coefficient"], ["0.0145556", "0.01455"], "lower"),
+    (["T3", "reach_lower_bound_partitioned"], ["0.013"], "lower"),
+    # Quoted as a percentage in both documents, so the printed form is 48.9
+    # and the computed value must be scaled; PERCENT entries do that.
+    (["T3", "reach_annulus_mass_below_tangent_cone_floor"],
+     ["48.9"], "percent"),
+    (["T3", "isotropy_angular_factor_superseded"], ["0.0950"]),
+    (["T3", "quadratic_bound_coefficient"], ["0.0136"], "lower"),
+    (["T3", "quadratic_bound_coefficient_from_sample_minimum_superseded"],
+     ["0.0145556", "0.01455"], "lower"),
     (["T3", "ballistic_v_tan_coefficient_conservative"], ["1.944", "1.94"]),
     (["T3", "ballistic_v_tan_coefficient_at_r_out"], ["2.778", "2.78"]),
     (["T3", "pearson_walk", "E_Z2"], ["29.48"]),
@@ -105,6 +122,8 @@ MUST_APPEAR = {
     "T2/A_slope_proved",
     "T2/pc_hypothesis_with_dominance",
     "T3/quadratic_bound_coefficient",
+    "T3/reach_lower_bound_partitioned",
+    "T3/reach_annulus_mass_below_tangent_cone_floor",
 }
 
 
@@ -125,6 +144,8 @@ def main():
         kind = entry[2] if len(entry) > 2 else "exact"
         try:
             computed = float(value(path))
+            if kind == "percent":
+                computed *= 100.0
         except (KeyError, TypeError):
             failures.append(f"{'/'.join(path)}: not emitted by "
                             f"t_campaign_constants.py")
@@ -142,6 +163,8 @@ def main():
                     if kind in ("lower", "endpoint"):
                         bad = err > (0.0 if kind == "endpoint"
                                      else tolerance(printed))
+                    elif kind == "upper":
+                        bad = err < -tolerance(printed)
                     else:
                         bad = abs(err) > tolerance(printed)
                     if bad:
@@ -150,6 +173,8 @@ def main():
                                      "it states is false",
                             "endpoint": "EXCEEDS the computed endpoint, so the "
                                         "proof step it feeds is invalid there",
+                            "upper": "is BELOW the computed value, so the "
+                                     "upper bound it states is false",
                         }.get(kind, "disagrees with the computed value")
                         failures.append(
                             f"{name}: prints {printed} for "
