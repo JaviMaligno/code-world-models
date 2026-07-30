@@ -218,6 +218,16 @@ def test_twofactor_equality_iff_blind_only_from_miss(r, n_tr, n_g):
     assert p_hit == 0 and p_ship == (1 - r) ** (n_tr + n_g)
 
 
+def test_twofactor_equality_clause_is_vacuous_at_r_one():
+    """The degenerate case the statement now excludes: at r = 1 both sides vanish, so
+    'equality' holds even for a synthesizer that is blind on hitting samples --- the iff
+    reads only over r < 1."""
+    r, n_tr, n_g = Fraction(1), 2, 2
+    _, p_ship, p_hit = enumerate_pipeline(r, n_tr, n_g, lambda tr: True)
+    assert p_hit > 0                                   # blindness NOT only from the miss
+    assert p_ship == 0 == (1 - r) ** (n_tr + n_g)      # yet both sides are equal (vacuous)
+
+
 def test_gatemiss_exact():
     """(1-r)^N by enumeration, the base case everything above leans on."""
     for r in (Fraction(1, 3), Fraction(1, 8)):

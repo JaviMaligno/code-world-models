@@ -1655,6 +1655,39 @@ claim("3 draws move the other way (below 1.000 in-sample, at 0.9975 to 0.9991, y
       and abs(min(r["in_sample_gate_accuracy"] for r in _rev_recs) - 0.9975) < 5e-5
       and abs(max(r["in_sample_gate_accuracy"] for r in _rev_recs) - 0.9991) < 5e-5
       and 647 - 40 + 3 == _hoa["aggregates"]["totals"]["n_heldout_accepted"] == 610)
+# --- the four phantom-stop artifacts, third review points 2-3: the accounting the
+# prose now states is derived here so it cannot drift to a stale story again (the
+# regression exception was attributed to a Qwen artifact from the 625-era snapshot;
+# after the 1025 re-scoring the only off-mode regression is the fourth phantom).
+_re1d = load("repair_exactness_1d")
+_ph_keys = [(e["file"], e["seed"]) for e in _re1d["arms"]["pendulum_thstop1.4"]["exceptions"]]
+_ph = [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
+       if (r["file"], r["seed"]) in _ph_keys and r["arm"] == "incomplete"]
+claim("the four phantom-stop artifacts all have the TRUE mode in their training block "
+      "(one contact transition each), so none violates hypothesis (i)",
+      len(_ph) == 4
+      and all(r["mode_in_train"]["any"] is True for r in _ph)
+      and all(r["mode_in_train"]["n_contact_transitions"] == 1 for r in _ph))
+claim("three of the four are accepted by the independent gate at eval 1.000 (no rollout "
+      "visits the invented stop); the fourth is rejected with 11 off-mode gate failures "
+      "and 13 off-mode eval failures",
+      sum(1 for r in _ph if r["accepted_heldout"]) == 3
+      and all(r["eval"]["accuracy"] == 1.0 for r in _ph if r["accepted_heldout"])
+      and [(r["gate"]["n_fail_off_mode"], r["eval"]["n_fail_off_mode"])
+           for r in _ph if not r["accepted_heldout"]] == [(11, 13)])
+claim("the grid convicts all four: 131 to 280 mismatched state-action points each",
+      sorted(e["n_mismatch"] for e in _re1d["arms"]["pendulum_thstop1.4"]["exceptions"])
+      == [131, 131, 131, 280])
+claim("the one off-mode regression among the 40 IS the fourth phantom, not a Qwen "
+      "artifact (the Qwen regressions now classify mode_only)",
+      [(r["file"], r["seed"]) for r in _regs_recs if r["gate"]["n_fail_off_mode"] > 0]
+      == [("continuous_synthesis_pendulum_mini_thstop1.4.json", 50000)])
+claim("hypothesis (i) has no violation in the audited arms: all 60 mode-free-train "
+      "incomplete draws are probe-blind",
+      (lambda fb: len(fb) == 60 and all(r["probe_blind_all_modes"] is True for r in fb))(
+          [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
+           if r["arm"] == "incomplete" and r["mode_in_train"]
+           and r["mode_in_train"].get("any") is False]))
 claim("the prose's 'about one accepted artifact in sixteen' matches 647/40 = 16.2",
       round(_rg["n_in_sample_accepted"] / _rg["n_rejected_by_independent_gate"]) == 16)
 claim("39 of the 40 regressions fail ONLY on mode contacts",

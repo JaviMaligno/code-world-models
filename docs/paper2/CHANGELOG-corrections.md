@@ -10,6 +10,45 @@ Kept because it is genuinely useful: the pattern across these entries is that **
 error was in a number or a geometric factor computed by hand in prose**, never in a value
 `scripts/audit_paper2_numbers.py` re-derives from `results/`.
 
+## Third review round (2026-07-30): the essential infimum, and an accounting error of our own
+
+* **`prop:epsrate`, essential infimum, second repair.** The round-2 "clamp-free window"
+  hypothesis guaranteed one reachable point below the stop; at positive distance from the
+  stop it proves nothing for small ε (the reviewer's example: distance 0.1, ε·dt < 0.1).
+  Re-deriving the proof also surfaced a gap the reviewer did not flag: D is a *maximum*
+  over a rollout's contacts, so the constructed soft contact must be the rollout's only
+  one. The hypothesis is now *slow approachability at the horizon's end* — contact-free
+  histories accumulating at a boundary state with a two-sided velocity margin, window at
+  the final two steps — and the proof constructs a single-contact rollout. Also fixed: M
+  describes the absolutely continuous part below the stop (the law carries an atom), and
+  the observed 0.0018 is stated as consistency with the hypothesis, not a witness of a
+  for-every-ε property.
+* **The four GPT phantom stops: our round-2 sentence about them was wrong.** We wrote that
+  they were synthesized from blocks the true mode never enters and violate hypothesis (i).
+  Verified against the data: all four training blocks CONTAIN the true mode (one contact
+  transition each); they are inside the 111, not (i) violations — and (i) in fact has no
+  violation among the audited arms (60/60 mode-free-train draws are probe-blind). What the
+  phantoms bound is evaluation-sample exactness, and the accounting is sharper than either
+  round had it: three of the four are accepted by the independent gate at eval 1.000
+  because no rollout visits the invented stop's region; the fourth drew samples that do
+  and is rejected. Chance decided which.
+* **A stale identity survived a re-run.** "The one exception is a Qwen artifact whose
+  integrator was wrong to begin with" described the 625-artifact snapshot; after the
+  1025 re-scoring the only off-mode regression among the 40 is the fourth phantom, and the
+  Qwen regressions classify mode_only. The counts (39/1) were audited; the IDENTITY was
+  prose. Six new audit claims now pin identity, not just counts.
+* Abstract's "confining it exactly requires a discontinuity" replaced by the
+  fixed-amplitude, uniform-Lipschitz budget statement (a C∞ bump satisfies the budget by
+  occupying it). "Eight single-variable interventions" → targeted interventions with the
+  induced side-changes enumerated. "Excludes prompting and budget" → did not suffice as
+  tested. Population identifiability, finite-sample recoverability (12/20 baseline vs
+  20/20 at 185°) and template-library identifiability (not proven, not relied on)
+  separated. The universal density constant scoped to the conditional density on
+  clamp-free images (the marginal needs a coverage fraction, established only on the
+  cart). The fencing corollary scoped to a cap on new-coverage fences, with completion,
+  time and total violations explicitly not guaranteed. r=1 excluded from the two-factor
+  equality clause, with a vacuity test in the falsification suite.
+
 ## Second review round (2026-07-30): three proofs, one slogan class, one statistics class
 
 The second external review found no missing experiment. What it found was in the layer the
