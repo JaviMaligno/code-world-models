@@ -1079,9 +1079,22 @@ Let Z = Σ_s c_s ε_s with i.i.d. Rademacher ε, σ² = Σ_s c_s²,
 c_max = max_s|c_s|, ρ := σ/c_max ≥ 1, and u := 2λσ². Then for every
 λ > 0:
   E[e^{−λZ²}] ≤ (1 + u)^{−1/2} + 2Φ̄( x₀·ρ/√u ),
-with x₀ = 1.7780 the largest x satisfying |cos x| ≤ e^{−x²/2}, and Φ̄ the
+with x₀ = **7/4**, for which the pointwise inequality is exact (below), and Φ̄ the
 standard normal tail. No weight-profile hypothesis is needed for
 validity; ρ controls only the error's size.
+*The constant x₀ is symbolic, not numerical.* The lemma needs only that
+SOME x₀ > 0 has |cos x| ≤ e^{−x²/2} on [0, x₀], and that is a two-line
+Taylor argument: cos x = 1 − x²/2 + x⁴/24 − … and e^{−x²/2} =
+1 − x²/2 + x⁴/8 − …, so
+  e^{−x²/2} − cos x = x⁴(1/8 − 1/24) + O(x⁶) = x⁴/12 + O(x⁶) > 0
+near 0. Only the CONSTANT depends on which x₀ one takes, and we take the
+rational **x₀ = 7/4**, for which |cos(7/4)| = 0.1782 ≤ 0.2163 =
+e^{−(7/4)²/2} with 21% slack — so no conclusion rests on a decimal
+expansion. (The first crossing is near 1.7781; using it instead would
+improve min q from 0.7842 to 0.7782, which changes nothing downstream. An
+earlier version quoted the crossing to five decimals as if it were the
+definition, and at 1.77809 the inequality already FAILS by 2.3·10⁻⁶ — the
+hazard of pinning a proof endpoint to a rounded decimal.)
 *Proof.* Since e^{−λz²} = E_g[e^{i√(2λ)gz}] for g ~ N(0,1), Fubini and
 independence of the ε_s give
   E[e^{−λZ²}] = E_g[ Π_s cos(√(2λ)·g·c_s) ].
@@ -1099,7 +1112,7 @@ where it is valid but loose) through geometric decay to 20 equal weights
 
 **Closing the transfer with the instrument's own profile.** At the
 scheme's optimum u* ≈ 4.76 the per-coordinate factor is
-  q(ρ) = (1+u*)^{−1/2} + 2Φ̄(1.778ρ/2.182) = 0.4167 + 2Φ̄(0.815ρ),
+  q(ρ) = (1+u*)^{−1/2} + 2Φ̄(x₀ρ/√u*) = 0.4167 + 2Φ̄(0.815ρ),
 so the sharp cap constant is recovered as soon as ρ is bounded away from
 1. The instrument's conditional weights are c_{s,i} = dt²·w_{t,s}·gain·
 |a_{s,i}|/M_s: the AR(1) weights spread the mass over ≈ 80 steps and the
@@ -1127,13 +1140,13 @@ WITH the error term included changes the picture completely, because
   ρ ≥ 1 always — it is Cauchy–Schwarz: σ² = Σ_s c_s² ≥ c_max².
 Substituting ρ = 1 in Lemma I,
   q(u) := (1 + u)^{−1/2} + 2Φ̄(x₀/√u)
-satisfies **q(u) < 1 for every u > 0**, with minimum **0.7783 at
-u = 1.32**. Both limits approach 1 from below — as u → 0 the first term
+satisfies **q(u) < 1 for every u > 0**, with minimum **0.7842 at
+u ≈ 1.29** (at x₀ = 7/4; 0.7782 at the crossing). Both limits approach 1 from below — as u → 0 the first term
 → 1 while the second vanishes super-exponentially; as u → ∞ the first
 vanishes and the second ↑ 2Φ̄(0) = 1 — so the supremum is not attained.
 (Checked on a grid spanning u ∈ [10⁻⁶, 9·10⁶]: not one point reaches 1.)
 
-**Why this does NOT by itself give a rate.** The value 0.7783
+**Why this does NOT by itself give a rate.** The value 0.7782
 is q at u = 1.32; a single λ makes u_i = 2λσ_i² equal 1.32 for *one*
 scale only. Every coordinate does contribute q(u_i) < 1, but a product
 of factors each merely below 1 is not exponentially small — an
@@ -1222,17 +1235,17 @@ require it is an artifact of conditioning on the norms.
   P(cone) ≤ q_max^{(1−α−1/K)n} + (e·p(z)/α)^{αn},
   q_max := max(q(1.32z), q(1.32K)).
 Optimising over (z, K, α) at the instrument's weights gives
-**z = 0.2, K = 10, α = 0.05, hence P(cone) ≤ 2 · 0.9057ⁿ** — a clean
+**z = 0.2, K = 10, α = 0.05, hence P(cone) ≤ 2 · 0.9104ⁿ** — a clean
 exponential with NO floor and NO measured input. (Previous: 0.9434ⁿ +
 0.12.)
 
 Summary for the cube interface: exponential decay PROVED outright,
-≤ 2·0.9057ⁿ; the sharper 0.80ⁿ still rests on the measured spread
+≤ 2·0.9104ⁿ; the sharper 0.80ⁿ still rests on the measured spread
 τ ≤ 1.36, and the sharp 0.4167ⁿ on the measured ρ ≈ 4.
 
 | statement | status |
 |---|---|
-| r(n) decays exponentially, cube interface | **PROVED outright: ≤ 2·0.9057ⁿ, no floor, no inputs** (Thm T5-F) |
+| r(n) decays exponentially, cube interface | **PROVED outright: ≤ 2·0.9104ⁿ, no floor, no inputs** (Thm T5-F) |
 | … with σ_i comparable (measured τ ≤ 1.36) | ≤ 0.80 per dimension, no floor |
 | … the sharp rate 0.4167 = r_out/L | measured (ρ ≈ 4) |
 | r(n) ≤ (h/2)(r_out/L)^{n−2}, isotropic | PROVED exactly (T5-I) |
@@ -1402,11 +1415,14 @@ interpretation of two correlations, not a measurement, so I measured it:
 records which side of the ring each passes (sign of y at closest
 approach). If route commitment were the mechanism, tail events would be
 the opposite-side ones. Result, 215 dirty steps at γ ∈ {0.3, 0.6}:
-  P(opposite sides | TAIL) = **0.190**,
-  P(opposite sides | bulk) = **0.299**,
-  mean |A|: opposite **0.623** vs same-side **0.920**.
-The correlation runs BACKWARDS: tail events are *less* likely to split
-the routes, and same-side pairs carry the larger advantages. Route
+  P(opposite sides | TAIL) = 0.190 (4/21),
+  P(opposite sides | bulk) = 0.299 (58/194),
+  mean |A|: opposite 0.623 vs same-side 0.920.
+Tail events split the routes NO MORE OFTEN than the bulk — but the Wilson
+intervals overlap heavily ([0.077, 0.402] vs [0.239, 0.367], and the
+counts come from dirty steps inside 12 episodes, not independent units),
+so this refutes route commitment as an EXPLANATION OF THE TAIL rather than
+establishing a reversal. Route
 commitment is refuted, and with it the cut-locus target — which was
 attractive precisely because it would have tied T2 to the paper's
 topology, a reason to distrust it rather than to believe it.
@@ -1421,12 +1437,17 @@ quantitative prediction, so it was measured rather than asserted. With
 the prediction is A_t ≈ amp_phantom·(dwell_τ − dwell_blind) — slope
 equal to a KNOWN constant, not a fitted one.
 `scripts/t2_delay_cost.py`, 215 dirty steps at γ ∈ {0.3, 0.6}:
-  **slope 0.9404** against amp_phantom = **1.0** (6% off),
-  **intercept 0.0141** (≈ 0), **R² = 0.9275**,
-  nonzero dwell difference in **100%** of tail events vs **41%** of the
-  bulk.
-So the dwell difference explains 93% of the variance in the per-contact
-advantage, at the reward amplitude. This is the mechanism.
+  slope 0.9404 against amp_phantom = 1.0 (6% off),
+  intercept 0.0141 (≈ 0), R² = 0.9275,
+  nonzero dwell difference in 100% of tail events vs 41% of the bulk.
+*Leverage caveat, load-bearing:* two adjacent steps of ONE episode
+(γ = 0.3, episode 4, t = 2 and 4) supply 56% of the regression's Sxy.
+Dropping them gives slope 0.868 / R² 0.850; on the bulk alone
+(|A| < 1.882) slope 0.738 / R² 0.719. So the honest statement is a
+proportionality with slope 0.74–0.94 depending on tail inclusion — enough
+to identify the mechanism as dwell difference, not enough to claim the
+slope equals a known constant to 6%. Unit: 215 dirty steps over 12
+episodes, `results/t2_delay_cost.json`.
 
 **The sum telescopes back to ONE number: the arrival delay
 (2026-07-26).** Two further measurements collapse the statement.
@@ -1584,18 +1605,40 @@ only (2026-07-27, corrected).** The chain is
   pc ≤ D̄ · (L_v·2·gain·dt + L_p·2·gain·dt² + Δr_max) / (J_T − J_rand),
 with L_v itself bounded through the fixed point L_v ≤ A/(1−p). Feeding
 each available value of A (D̄ ≈ 15 dirty steps, denominator ≈ 40,
-p ≈ 0.5):
-| constant A | source | ⇒ L_v ≤ | ⇒ pc ≤ | |
-|---|---|---|---|---|
-| 107 | PROVED (drag cap × h·Lip r) | 214 | **48.2** | vacuous |
-| 2.7 | competence hypothesis (saturation) | 5.4 | **1.21** | vacuous |
-| 0.77 | measured | 1.5 | 0.35 | non-vacuous |
-| — | measured L_v ≈ 0.8 directly | 0.8 | 0.18 | non-vacuous |
+p ≈ 0.5). Three corrections to an earlier version of this table, each of
+which changes the conclusion:
 
-Since pc ≤ 1 holds trivially (play_cost 1 means the blind planner is no
-better than random), the proved chain is vacuous by a factor 48 and the
-competence-hypothesis chain misses at 1.21: a non-vacuous bound requires a
-measured constant.
+*(a) A is a SLOPE, not a value.* A is defined by
+L_v·δ ≤ A·δ + p(δ)·L_v·(2·gain·dt), so it carries units of value per unit
+velocity. The drag cap 2.06 = 2·gain·dt² + 2·gain·dt/drag already has
+δ_v = 2·gain·dt substituted and is therefore a VALUE; using it as A and
+then multiplying by 2·gain·dt again double-counts the perturbation.
+Correctly A_proved = h·Lip(r)·2.06/(2·gain·dt) = **178.5** (not 107) and
+A_hyp = amp_total·2.06/(2·gain·dt) = **4.46** (not 2.7).
+
+*(b) There is no trivial baseline of 1.* play_cost =
+(J_T − J_B)/(J_T − J_rand) EXCEEDS 1 whenever the blind planner scores
+below random, which this instrument reports (pc = 1.77 from inside, 1.12
+on the n-dim arm). "Vacuous because above 1" was the wrong test; the only
+meaningful comparison is against the MEASURED facing pc.
+
+*(c) Two of three terms were dropped.* The position term contributes
+D̄·L_p·2·gain·dt²/(J_T − J_rand) with L_p ≤ h·Lip(r) = 52, i.e. **1.17 on
+its own**, so the proved chain fails through L_p regardless of L_v.
+
+All values below are emitted by `scripts/t_campaign_constants.py`:
+| A (slope) | source | pc ≤, velocity term | + position term |
+|---|---|---|---|
+| 178.5 | PROVED (h·Lip(r)·2.06 ÷ δ_v) | **80.3** | 81.5 |
+| 4.46 | competence hypothesis (saturation) | **2.01** | 2.46 |
+| 4.46 | same, with the dominance mean 0.382 | **1.28** | 1.74 |
+| 0.77 | measured | 0.35 | — |
+
+*Against the measured facing pc of 0.02–0.10*, the best bound from
+non-measured constants is **1.28 — between 13× and 64× too loose**. So
+this chain does not deliver a bound at the instrument's level from proved
+or hypothesised constants; only the measured L_v ≈ 0.8 reaches 0.18, and
+that is a measurement, not a bound.
 
 *Where the remaining factor sits.* Between the hypothesis chain (1.21)
 and the measurement (0.18) there is a factor 6.7, and it is two things,
@@ -1637,16 +1680,18 @@ and, tellingly, **every single step is dirty** (n = 1120 = 14 episodes ×
 80 steps, in all four hidden gap cells, whose numbers are identical
 because a hidden channel leaves the truth's behaviour γ-independent).
 
-*The bound, correctly scoped.* With E‖Δv‖ ≤ 2·gain·dt·(2/π) = 0.382,
-  **pc ≤ 0.767 for the FACING channel** — non-vacuous, and with no
-fitted constant: the measured input is a distributional claim (a mean
-inequality), not a number read off a regression. Evidence label
-*measured*, unit dirty step, n = 1109 facing dirty steps across 8 cells,
-`results/t2_angle_dominance.json`. It does NOT extend to the hidden
-channel, where the same chain is vacuous — appropriately, since that is
-the configuration in which the blind model is maximally wrong about
-direction. Scope matters here rather than being a caveat: the
-aligned-channel degeneracy this section is about IS the facing case.
+*What the mean inequality buys, correctly scoped.* With
+E‖Δv‖ ≤ 2·gain·dt·(2/π) = 0.382 the hypothesis chain improves from 2.01 to
+**1.28 for the FACING channel** — still 13–64× above the measured 0.02–0.10,
+so it is a real improvement and not a useful bound. Evidence label
+*measured*, unit dirty step, n = **1149** facing dirty steps across 8
+cells (`results/t2_angle_dominance.json`); note the 16 cells reduce to 10
+distinct computations, since the four hidden-γ cells at each planner budget
+are bit-identical (a hidden channel makes the truth γ-independent). Two of
+the eight facing cells clear 2/π by less than half a standard error
+(γ = 1.8: 0.6249 vs 0.6366 at n = 113; γ = 1.2: 0.6153 at n = 47), so at
+wide facing gaps the inequality is not established — only at narrow ones,
+which is where the degeneracy lives.
 *Still unproved:* the mean inequality itself, a property of the (model,
 planner) pair — exactly the object Prop T2-D identifies as unavoidable.
 
@@ -1693,10 +1738,9 @@ rather than proves (it is the (RG)/(C) competence hypothesis of Prop 4
 in another guise). So A is bounded by a proved 107 and, under the
 competence hypothesis already used elsewhere in the paper, by 2.7.
 
-**T2 status: a non-vacuous bound exists for the FACING channel
-(pc ≤ 0.767), resting on one hypothesis already used in the paper plus a
-measured mean inequality that holds in the facing configuration and fails
-in the hidden one.** The original
+**T2 status: NO bound at the instrument's level exists from proved or
+hypothesised constants.** The best is 1.28 (facing, competence hypothesis,
+dominance mean) against a measured 0.02–0.10. The original
 question — bound play_cost from the model's own disagreement — is
 answered NEGATIVELY and provably (Prop T2-D). The replacement — bound it
 from the planner-averaged value — has a proved reduction (Lemma S, with
@@ -2229,14 +2273,23 @@ are γ-independent ring-free quantities. And (iii) is not circular — it
 conditions on arrival IN the channel, an event defined by the geometry
 rather than by the outcome.
 
-**A γ² lower bound, calibrated (2026-07-27).** Taking T(γ) ≥ c₁γ with
-c₁ = min over the grid of T/γ = 0.4695 (T is concave, so the smallest
-ratio is the safe one) gives
-  **d(γ) ≥ R·ρ(π)·c₁·γ² = 0.01456·γ²**,
-which holds at every measured gap with slack 1.0× to 2.6× (exact at
-γ = 0.6, where c₁ is attained). This is the first lower bound on d of the
-right ORDER — γ² against the measured γ^1.72 — and it is *measured*, not
-proved: c₁ is fitted. Evidence label *measured*, unit rollout,
+**A γ² lower bound, calibrated and RANGE-LIMITED (2026-07-27, scope
+corrected).** Taking T(γ) ≥ c₁γ with c₁ = min over the grid of T/γ =
+0.4695 (T is concave, so the smallest ratio is the safe one) gives
+  **d(γ) ≥ R·ρ(π)·c₁·γ² = 0.0145556·γ² for γ ∈ [0.05, 0.6]**,
+with slack 1.0× to 2.6× and exact at γ = 0.6 where c₁ is attained.
+Two scope conditions, both load-bearing:
+  • **The constant must not be rounded up.** At γ = 0.6 the bound equals
+    the measurement exactly, so printing 0.0146 instead of 0.0145556 makes
+    it 0.005256 against a measured 0.005240 — FALSE at the one gap where
+    it binds. A lower bound's constant is rounded DOWN or not at all.
+  • **It holds only on [0.05, 0.6].** Beyond that d SATURATES (the wall
+    stops intersecting entering trajectories) while γ² keeps growing, so
+    the bound fails at every γ ≥ 0.9: 0.0118 vs 0.00756 at γ = 0.9, and
+    0.575 vs 0.0112 at γ = 2π (`results/t3_funnel_bound.json`).
+This is the first lower bound on d of the right ORDER on that range — γ²
+against the measured γ^1.72 — and it is *measured*, not proved: c₁ is
+fitted. Evidence label *measured*, unit rollout, n = 200 000 per gap,
 `results/t3_reach_density_throughput.json`.
 
 **The kinematic derivation of c₁, with the constant derived rather than
@@ -2246,11 +2299,17 @@ drag time constant is 1/drag = 33 steps while the crossing takes k ≈ 9
 the arrival tangential velocity PERSISTS through the crossing and the
 tangential travel is ≈ |v_tan|·k·dt. Survival inside the arc of
 half-width r·γ/2 therefore requires
-  **|v_tan| ≤ r·γ/(2·k·dt) ≈ 2.2·γ** ,
-and since |v_tan|'s density at 0 is bounded below, P(that) ≥ 2.2γ·f(0),
-giving T ∝ γ and hence c₁.
+  **|v_tan| ≤ r·γ/(2·k·dt)** ,
+whose coefficient depends on the radius at which the arc is measured and
+therefore varies over the crossing: r_in/(2k·dt) = **1.944** (the
+conservative choice — shortest arc — and the one a lower bound must use),
+r_out/(2k·dt) = 2.778, and 2.222 at r = 4.0, which is the value the
+measurement below used. Since |v_tan|'s density at 0 is bounded below,
+P(criterion) ≥ (r_in/(2k·dt))·γ·f(0), giving T ∝ γ and hence c₁. All
+three coefficients are emitted by `scripts/t_campaign_constants.py`
+rather than computed by hand.
 *Measured* (200 000 rollouts per gap; unit = channel arrival):
-| γ | arrivals | threshold 2.2γ | P(satisfied) | non-freeze fraction | f(0) |
+| γ | arrivals | threshold 2.222γ (r = 4.0) | P(satisfied) | non-freeze fraction | f(0) |
 |---|---|---|---|---|---|
 | 0.1 | 594 | 0.222 | 0.251 | 0.288 | 1.044 |
 | 0.2 | 1184 | 0.444 | 0.498 | 0.473 | 1.157 |
@@ -2262,8 +2321,8 @@ gaps, where the ballistic approximation degrades as the crossing has room
 to turn), and **f(0) ≈ 1.1 independent of γ**, which is what makes the
 bound linear in γ.
 
-*A failure mode of the earlier test, for the record.* An initial version
-of this criterion used the threshold 6.7γ and appeared refuted: it was
+*A failure mode of the earlier test.* An initial version of this
+criterion used the threshold 6.7γ and appeared refuted: it was
 satisfied by 100% of arrivals at γ ≥ 0.4 while T stayed at 0.28. The
 threshold was 3× too loose because it used the free-flight speed rather
 than the arrival's v_rad ≈ 1.5 to set the crossing time k. With k derived
@@ -2322,9 +2381,13 @@ channel arrival, n = 1184 / 3352.
 angle is steerable by a single early action: measured |∂θ/∂a_0| at first
 arrival has median 0.362 and 90th percentile 0.532 (n = 115 steerable
 paths, i.e. those whose arrival step is unchanged by the perturbation).
-Lemma D with a_max = 1 gives
-  ρ(π) ≥ (1/2)/sup|∂θ/∂a_0| ≥ 0.5/0.532 = **0.940**
-against measured **1.0167** — valid, and loose by only **1.1×**. The
+Lemma D with a_max = 1 gives ρ(π) ≥ (1/2)/sup|∂θ/∂a_0|. Using the
+measured **90th percentile** 0.532 in place of the supremum yields 0.940
+against a measured 1.0167 — but a percentile is NOT a supremum (the
+observed max is 0.5865, which would give 0.853), so this instance is
+*consistent-with*, not proved, until the sensitivity is bounded above
+analytically. Evidence label *consistent-with*; the alternative that
+cannot be excluded is a heavier tail of |∂θ/∂a_0| than 115 paths reveal. The
 sensitivity is what makes this work: one early action sweeps the arrival
 angle over ≈ 1.1 rad, so the angle has a genuine density rather than
 concentrating.
@@ -2334,8 +2397,8 @@ factor now has a derivation:
 | factor | value | status |
 |---|---|---|
 | R = P(ring-free reach) | 0.030 | measured; Θ(1), γ-free — the object Lemma J bounds |
-| ρ(π) | 1.02/rad | **PROVED ≥ 0.94** (Lemma D), 1.1× loose |
-| f(0) | 1.10–1.16 | **PROVED ≥ 0.35** (Lemma D + arcsine), 3× loose |
+| ρ(π) | 1.02/rad | ≥ 0.94 (Lemma D) but with a PERCENTILE for the sup: *consistent-with*, not proved |
+| f(0) | 1.10–1.16 | ≥ 0.35 (Lemma D + arcsine); the arcsine floor is proved, the root factor 0.325 measured |
 | T ≥ 2.2γ·f(0) − P(horizon) | — | derived (ballistic crossing) |
 **The horizon term is an artifact of the bookkeeping, and vanishes.** It
 appeared because R counts arrivals at any time while the crossing needs
@@ -2379,10 +2442,14 @@ last quantity in the chain.
 The last measured input, P(|Z_{h−k}| ∈ [L − r_out, L + r_out]), is not a
 technical residue: it coincides with the instrument's contact rate.
 Measured on 200 000 rollouts each,
-  **r(γ = 0) = 0.03020  and  R = 0.03020** — equal to five decimals,
-and necessarily so: a ring-free rollout reaches the band radius exactly
+  **r(γ = 0) = R** — necessarily, not numerically: a ring-free rollout reaches the band radius exactly
 when the same rollout would have contacted the band, since the band spans
-the full annulus at γ = 0. So the chain's final factor is r itself, the
+the full annulus at γ = 0. (The committed decomposition JSON reports R = 0.03049 from 120 000
+rollouts and the identity check 0.03020 from 200 000; the agreement is
+exact as an EVENT — 0 mismatches seed by seed — while the two numbers
+differ by sampling, so "agree to five decimals" was luck of two equal
+sample sizes, not a precision claim.) So the chain's final factor is r
+itself, the
 quantity the danger law of all three papers takes as its ARGUMENT and
 measures per instrument (papers 1–2's danger = play_cost·(1−r)^N; this
 paper's γ-curves are r(γ) and r_int(γ)). Leaving it measured is therefore
@@ -2404,8 +2471,8 @@ proved:
 | factor | status |
 |---|---|
 | R′ (reach within the deadline) | **PROVED ≥ 0.019** by isotropy, 1.1× loose; one measured scalar (the radial law) |
-| ρ(π) | **PROVED ≥ 0.94** (Lemma D), 1.1× loose |
-| f(0) | **PROVED ≥ 0.35** (Lemma D + arcsine), 3× loose |
+| ρ(π) | ≥ 0.94 (Lemma D) with a percentile for the sup: *consistent-with* |
+| f(0) | ≥ 0.35; arcsine floor proved, root factor measured |
 | T ≥ 2.2γ·f(0) | derived (ballistic crossing) |
 | horizon term | **eliminated** (absorbed into R′) |
 So the chain that began as "stochastic domination of post-divergence

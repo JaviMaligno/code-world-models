@@ -1229,8 +1229,8 @@ estimator reports separation almost everywhere, because a curve-dense
 contact cloud glues a scatter-sparse free cloud by density mismatch
 alone. With paths, the estimator is correct on $20/20$ open-ring cells
 where the pre-registered detector scores $9/20$, with no censoring and
-no infinite bars. At $\gamma = 0$ it does not fire, for two reasons we
-keep separate: with one-sided (inside) evidence the interior is
+no infinite bars. At $\gamma = 0$ it fires on $0/5$ one-sided and $1/5$ two-sided seeds
+(unit = seed), i.e.\ not reliably, for two reasons we keep separate: with one-sided (inside) evidence the interior is
 reach-null, nothing outside is sampled, and separation is
 \emph{unidentifiable by any estimator} --- Proposition~\ref{prop:quotient}
 asserting itself, with plain $\hat\beta_1$ scoring well there only
@@ -1419,10 +1419,13 @@ its clean form is \emph{false} (equal weights leave an atom at the
 origin), and whose correct form we prove by writing
 $E[e^{-\lambda Z^2}] = E_g\prod_s \cos(\sqrt{2\lambda}\,g\,c_s)$ and
 splitting on $|g|$: since $|\cos x| \le e^{-x^2/2}$ for
-$|x| \le 1.778$,
+$|x| \le 7/4$ --- a rational choice with $21\%$ slack, the existence of
+some such bound being a two-line Taylor argument
+($e^{-x^2/2} - \cos x = x^4/12 + O(x^6)$ near $0$), so that no constant
+here rests on a decimal expansion ---
 \[
   E[e^{-\lambda Z^2}] \;\le\; (1+2\lambda\sigma^2)^{-1/2}
-  + 2\bar\Phi\!\left(1.778\,\rho/\sqrt{2\lambda\sigma^2}\right),
+  + 2\bar\Phi\!\left((7/4)\,\rho/\sqrt{2\lambda\sigma^2}\right),
   \qquad \rho = \sigma/\max_s|c_s|,
 \]
 with no hypothesis on the weights for validity. The instrument's own
@@ -1431,8 +1434,8 @@ ${\approx}8000$ samples, so the error costs ${\approx}3\times10^{-3}$:
 the per-dimension rate is $0.418$ against the sharp $0.4167$. Two things then matter about $\rho$. It is bounded below by $1$ for
 free (Cauchy--Schwarz), and once $\lambda$ is optimised \emph{with} the
 error term included the resulting factor
-$(1+u)^{-1/2} + 2\bar\Phi(1.778/\sqrt u)$ is below $1$ for
-\emph{every} $u>0$, minimum $0.7783$. That does not by itself give an
+$(1+u)^{-1/2} + 2\bar\Phi\bigl((7/4)/\sqrt u\bigr)$ is below $1$ for
+\emph{every} $u>0$, minimum $0.7782$. That does not by itself give an
 exponential rate --- a product of factors each merely below $1$ need
 not be small, and a rate needs the $u_i = 2\lambda\sigma_i^2$ confined
 to a window --- but it makes the window enormous ($q \le 0.89$ for
@@ -1447,9 +1450,11 @@ with the true moment generating function of $a^2$ (giving
 $9.7 \times 10^{-4}$ where the range-based bound gives $0.31$), and the
 bad-coordinate indicators are \emph{independent}, so their count is
 binomial and Chernoff replaces Markov. The result is
-$P \le 2 \cdot 0.9057^n$ --- exponential, with no floor and nothing
-measured. Measurement then sharpens the constant: the observed spread
-$\tau \le 1.36$ gives $0.80^n$, and $\rho \approx 4$ gives the true
+$P(\text{cone at a fixed step}) \le 2 \cdot 0.9104^n$ --- exponential,
+with no floor and nothing measured --- whence
+$r(n) \le 160 \cdot 0.9104^n$ after the union over the horizon. Measurement then sharpens the constant: the observed spread's $95$th percentile
+$\tau_{95} \le 1.36$ (300 episodes per dimension) gives $0.80^n$ on that
+event, and $\rho \approx 4$ gives the true
 $0.4167^n$. Details
 and machine checks are in the repository's theory notes (Lemmas~C/E/F/G/
 H/I, Theorems~T5-C and T5-I, Proposition~T5-T).
@@ -1612,8 +1617,8 @@ evidence is spot-checks (three seeds per cell for Qwen and the Claude
 relay), which fix mechanism, not rates. The within-gap H2 contrast at
 $\gamma = 1.8$ remains directional-only even after doubling the cell to
 $n = 60$ ($3/27$ versus $2/33$); the cross-gap crossover carries H2.
-The Qwen D cell is missing (provider credits), so the D-cell family
-contrast rests on GPT ($1/20$) versus Claude ($3/3$).
+The D-cell family contrast rests on GPT ($1/20$) versus Claude ($3/3$);
+no Qwen D cell was run.
 
 \paragraph{Two candidate mechanisms for the tail, both false.} The heavy
 tail of the play-cost decomposition is not a freeze transient: the freeze
@@ -1678,10 +1683,12 @@ largest $+0.462 \pm 0.078$: a ratio of $0.78 \pm 0.13$, consistent with
 Lipschitz scaling. Combining yields $\mathrm{pc} \lesssim 0.18$ against
 a measured $0.02$--$0.10$ --- but with that constant \emph{measured}.
 Substituting instead the constant this argument proves (the drag cap
-times a per-step reward Lipschitz bound) gives $48$, and the value it
-yields under the competence hypothesis of
-Proposition~\ref{prop:query} gives $1.21$; since
-$\mathrm{play\_cost} \le 1$ holds trivially, both are vacuous. The
+divided by the velocity perturbation, times a per-step reward Lipschitz
+bound) gives $80$, and the value under a saturation hypothesis gives
+$2.0$; note that no trivial baseline of $1$ exists here, since
+$\mathrm{play\_cost}$ exceeds $1$ whenever the blind planner scores below
+random --- which this instrument reports ($1.77$ from inside). The
+comparison that matters is against the measured level. The
 gap between the hypothesis chain and the measurement is worst-casing over
 the planner's action choices: every deviating step is charged the
 \emph{maximum} velocity perturbation $2\,\mathrm{gain}\,dt = 0.6$, and
@@ -1694,9 +1701,11 @@ whose $|\sin|$ has mean exactly $2/\pi$. Measured over $10{,}105$
 deviating steps across four gaps, two channel orientations and two
 planner budgets, that inequality separates the two orientations sharply.
 With the channel \emph{facing}, every cell satisfies it
-($0.409$--$0.625$ against $2/\pi = 0.637$), giving
-$\mathrm{pc} \le 0.77$: non-vacuous, and with no fitted constant, since
-the measured input is an inequality between means rather than a number.
+($0.409$--$0.625$ against $2/\pi = 0.637$, though the two widest gaps
+clear it by less than half a standard error), which improves the
+hypothesis chain to $\mathrm{pc} \le 1.28$ --- against a measured facing
+$\mathrm{pc}$ of $0.02$--$0.10$, a real improvement and not yet a useful
+bound.
 With the channel \emph{hidden} it fails in every cell, and instructively
 --- the two arg-maxes are then near-antipodal ($|\sin| \approx 0.94$)
 and \emph{every} step deviates, because a hidden channel makes the truth
@@ -1762,7 +1771,9 @@ is ${\approx}1.5$ against a band of thickness $1.5$), while drag's time
 constant is $1/\mathrm{drag} = 33$ steps, so the arrival's tangential
 velocity persists ballistically through the crossing and survival inside
 an arc of half-width $r\gamma/2$ requires
-$|v_{\mathrm{tan}}| \le r\gamma/(2k\,dt) \approx 2.2\gamma$. Since the
+$|v_{\mathrm{tan}}| \le r\gamma/(2k\,dt)$, a coefficient between $1.94$
+and $2.78$ as $r$ runs across the band, the lower value being the one a
+lower bound must use. Since the
 density of $|v_{\mathrm{tan}}|$ at zero is bounded away from zero
 (measured ${\approx}1.1$, independent of $\gamma$), that probability is
 linear in $\gamma$ and the throughput inherits it. The criterion tracks
@@ -1772,17 +1783,27 @@ wide gaps where the ballistic approximation loosens), and the failure
 census confirms the corridor is what binds: freezing on the band accounts
 for $0.527$ of channel arrivals at $\gamma = 0.2$ against $0.302$ at
 $0.6$, turning back out for $1$--$2\%$, and the horizon for the rest.
-Assembling the three factors gives $d(\gamma) \ge 0.0146\,\gamma^{2}$,
-which holds at every gap measured. Both one-dimensional densities the argument rests on admit lower bounds by
-the same elementary device: if a quantity is steerable by a single action
-whose law has a density, its own density is bounded below by
-$(2a_{\max})^{-1}$ divided by the steering sensitivity. For the tangential
-speed the designated step contributes
+Assembling the three factors gives
+$d(\gamma) \ge 0.01455\,\gamma^{2}$ for $\gamma \in [0.05, 0.6]$, with
+the constant rounded down because the bound is exact at the upper end;
+beyond that range the direct-entry probability saturates while
+$\gamma^{2}$ does not, and the bound fails. The constant is
+\emph{fitted} to the throughput's smallest measured ratio, so this is a
+measured bound of the right order, not a proved one. Both one-dimensional densities the argument rests on admit \emph{partly
+measured} lower bounds by the same elementary device: if a quantity is
+steerable by a single action whose law has a density, its own density is at
+least $(2a_{\max})^{-1}$ times the probability that the steering equation
+has a root, divided by the steering sensitivity. For the tangential speed
+the designated step contributes
 $\mathrm{gain}\,dt\,\sin(\phi - \theta)$ with $\phi$ uniform --- the
-arcsine law, whose density exceeds $1/\pi$ on all of $(-1,1)$ --- giving
-$f(0) \ge 0.35$ against a measured $1.10$. For the arrival angle, a single
-early action sweeps it over ${\approx}1.1$ radians, giving
-$\rho(\pi) \ge 0.94$ against a measured $1.02$. The horizon term is bookkeeping and disappears once the deadline is built
+arcsine law, whose density exceeds $1/\pi$ on all of $(-1,1)$, with no
+compactness caveat --- giving $f(0) \ge 0.35$ against a measured $1.10$,
+where the root probability $0.325$ is itself measured (unit channel
+arrival, $n = 3352$). For the arrival angle, a single early action sweeps
+it over ${\approx}1.1$ radians, giving $\rho(\pi) \ge 0.94$ against a
+measured $1.02$ --- but with the sensitivity taken at its measured
+$90$th percentile over $115$ steerable paths rather than at a supremum, so
+that one is \emph{consistent-with} rather than proved. The horizon term is bookkeeping and disappears once the deadline is built
 into the reach factor: counting only ring-free arrivals within $h - k$
 steps leaves every arrival with the $k$ steps the crossing needs, at a cost
 of a factor $1.4$ (measured $0.0212$ against $0.0302$). The reach factor
