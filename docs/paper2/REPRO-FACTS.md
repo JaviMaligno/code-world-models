@@ -9,7 +9,7 @@ with
 PYTHONPATH=src .venv/bin/python scripts/repro_manifest.py
 ```
 
-Snapshot: git `15ca6d8` (`2026-07-29 19:23:33 +0100`), branch
+Snapshot: git `562ec4e` (`2026-07-29 20:12:59 +0100`), branch
 `paper2-major-revision`, working tree dirty (concurrent revision work in the
 same checkout). Manifest generated 2026-07-29. **Where a number below could
 move, the JSON key that holds it is named — quote the key, not this file.**

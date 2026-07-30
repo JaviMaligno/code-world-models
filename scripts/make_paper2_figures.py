@@ -414,6 +414,46 @@ ax.annotate("exactly 0\n(drawn at floor)", (4, 1e-16), ha="center",
 ax.tick_params(axis="x", labelsize=8)
 save(fig, "smooth_localization")
 
+# ---------------------------------------------------------------------------- #
+# per-seed distributions of the three 100-episode experiments (second review,
+# point 7.3): the paper now reports the random comparison distributionally, so
+# the distributions themselves must be visible, not just summarized.
+# ---------------------------------------------------------------------------- #
+_pci = load("play_cost_intervals.json")
+fig, axes = plt.subplots(1, 3, figsize=(9.6, 2.9), sharey=False)
+for ax, row in zip(axes, _pci["rows"]):
+    seeds = row["per_seed"]
+    jb = [x["j_blind"] for x in seeds]
+    jr = [x["j_random"] for x in seeds]
+    jt = [x["j_truth"] for x in seeds]
+    data = [jt, jb, jr]
+    parts = ax.violinplot(data, showmedians=True, widths=0.85)
+    for body, col in zip(parts["bodies"], (C_GREEN, C_RED, C_GREY)):
+        body.set_facecolor(col); body.set_alpha(0.45)
+    for k in ("cmedians", "cmins", "cmaxes", "cbars"):
+        parts[k].set_color(C_GREY); parts[k].set_linewidth(0.8)
+    # overplot the seeds so the tails are honest, not smoothed away
+    import numpy as _np
+    rng = _np.random.default_rng(0)
+    for i, arr in enumerate(data, start=1):
+        ax.scatter(i + rng.uniform(-0.12, 0.12, len(arr)), arr,
+                   s=3, color="k", alpha=0.25, linewidths=0)
+    ax.set_xticks([1, 2, 3])
+    ax.set_xticklabels(["truth", "blind", "random"], fontsize=8)
+    ax.set_title(row["label"], fontsize=9)
+    ax.tick_params(axis="y", labelsize=8)
+    n_blind_above = sum(1 for b, r in zip(jb, jr) if b > r)
+    ax.annotate(f"blind > random:\n{n_blind_above}/100 seeds",
+                (0.97, 0.86), xycoords="axes fraction", fontsize=7.5,
+                va="top", ha="right", color="0.25")
+axes[0].set_ylabel("episode return (100 paired seeds)")
+DUMP["per_seed_distributions"] = {
+    r["label"]: {"j_truth": [x["j_truth"] for x in r["per_seed"]],
+                 "j_blind": [x["j_blind"] for x in r["per_seed"]],
+                 "j_random": [x["j_random"] for x in r["per_seed"]]}
+    for r in _pci["rows"]}
+save(fig, "per_seed_distributions")
+
 if ARGS.dump:
     with open(ARGS.dump, "w") as f:
         json.dump(DUMP, f, indent=1, sort_keys=True)

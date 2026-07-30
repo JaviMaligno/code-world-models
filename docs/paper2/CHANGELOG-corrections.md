@@ -10,6 +10,59 @@ Kept because it is genuinely useful: the pattern across these entries is that **
 error was in a number or a geometric factor computed by hand in prose**, never in a value
 `scripts/audit_paper2_numbers.py` re-derives from `results/`.
 
+## Second review round (2026-07-30): three proofs, one slogan class, one statistics class
+
+The second external review found no missing experiment. What it found was in the layer the
+numeric audit cannot reach: **hand-proved implications**. All three mathematical findings
+were verified before being fixed, and all three were correct.
+
+* **`prop:risk`** offered "X constant on the acceptance event" as sufficient for the
+  factored form. False --- X = 1_G is the two-line counterexample (Cov = P(G)(1−P(G))). The
+  repair strengthens the practical reading: constancy on G makes the *conditional* product
+  exact, and the conditional mean (the accepted-artifact cost) is what the paper reports
+  anyway. Also added: the P(G) > 0 convention.
+* **`prop:twofactor`** concluded P(blind shipped) = (1−r)^{N_tr+N_g} from a one-directional
+  hypothesis. Its own proof said the blind event *contains* the train-miss event, then
+  asserted equality. Restated: the equality is exact for the specific event (train-miss ∧
+  shipped), which is what the empirical test had measured all along; the blind-shipped total
+  gains an explicit excess term and a lower-bound reading, with the iff-strengthening of (i)
+  as the equality condition. The 2D campaigns and the 1D 6-of-111 are the measured content
+  of that excess term.
+* **`prop:epsrate`'s proof** asserted the conditional law of the clamped coordinate is
+  uniform; it is censored-uniform (density below the stop plus an atom at it). The bound
+  survives because the target strip excludes the atom --- now proved by explicit branches.
+  The essential-infimum step invoked the unclamped two-action Jacobian without securing a
+  clamp-free two-step history; the approachability hypothesis is now a clamp-free window
+  with positive probability, and the null contribution of the clamped branches is argued
+  (an atom off the strip; a one-parameter affine image, null in the plane).
+* **"An independent gate is free" retired** at all three sites: only one miss exponent
+  depends on the budgets through their sum; synthesis quality, total risk and compute at a
+  redistributed budget are explicitly not claimed, and the experiment's 40-vs-80 design is
+  stated as an addition, not a redistribution.
+* **Slogans contradicted by the paper's own data**, each replaced by the measured
+  statement: "below random at every knob" (cart favours blind in 86/100 seeds; distributional
+  reporting + a new per-seed figure), "wrote the exact rule whenever" (105 of 111), "single
+  phantom-mode exception" (four GPT pendulum artifacts plus Claude's), "programs, not smooth
+  function classes" (bounded-Lipschitz volume price, smooth compactly-supported errors not
+  excluded), "the form is what is not induced" (form given still fails; what fails is the
+  induction of a *located* rule), "sample coverage is the whole game" (scoped to the 1D
+  clamps), "eight ablations exclude ... arity" (the arity intervention is unanswerable on
+  this instrument, not an exclusion), "what remains as the mechanism" (a description that
+  survives interventions; in-model mechanisms remain indistinguishable).
+* **Draw-level binomial intervals removed** from the held-out audit's 40/647 and 610/610
+  (pseudo-replication: draws share rollout-seed blocks); counts kept, block spans stated,
+  and the 647 − 40 + 3 = 610 arithmetic made explicit (three reverse regressions, in-sample
+  0.9975–0.9991, recorded in the audit JSON all along). "Exact outside the mode" scoped to
+  the evaluation sample, with the pendulum phantoms named as the live example of why
+  eval-exactness is not global exactness.
+* **Identifiability relativized to a hypothesis class** in `sec:arity` and the abstract: no
+  finite contact set determines an arbitrary region; "identified" now names the class.
+
+The audit gap this exposes: `audit_paper2_numbers.py` re-derives every printed number, and
+all 700 pass --- none of these errors was a number. The weak class after two rounds is
+hand-written implication ("so", "therefore", "in particular it holds when"), which no
+current guard covers.
+
 ### Structural defects a log filter cannot see, and the guard that now sees them
 
 Found 2026-07-29, prompted by the observation that judging a paper by its page count is the

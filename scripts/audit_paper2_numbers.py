@@ -1628,16 +1628,33 @@ claim("the one-factor rate 0.631 sits inside the measured 20/40 = 0.500 [0.352, 
       and abs(_se["wilson95_train_miss"][1] - 0.648) < 5e-4
       and _se["one_factor_inside_interval"] is True)
 _rg = _ho["regressions"]
-claim("40 of 647 in-sample-accepted artifacts are rejected by an independent gate "
-      "(6.2%, [0.046, 0.083]), all 40 incomplete-arm, 0 of 434 full-arm",
+# The paper reports the regression and exactness figures as COUNTS, without binomial
+# intervals: the draws share rollout-seed blocks across campaigns and treatments (second
+# review, point 5.1 -- pseudo-replication), so the interval conditions were removed here
+# when they were removed from the prose. The block-level two-factor test keeps its
+# interval, its unit being the distinct block.
+_regs_recs = [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
+              if r["in_sample_gate_passed"] and not r["accepted_heldout"]]
+_rev_recs = [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
+             if not r["in_sample_gate_passed"] and r["accepted_heldout"]]
+claim("40 of 647 in-sample-accepted draws are rejected by an independent gate (6.2% of "
+      "draws, spanning 25 distinct rollout-seed blocks), all 40 incomplete-arm, 0 of 434 "
+      "full-arm",
       _rg["n_in_sample_accepted"] == 647
       and _rg["n_rejected_by_independent_gate"] == 40
       and _rg["n_incomplete_arm"] == 40 and _rg["n_full_arm"] == 0
       and abs(_rg["rate_over_draws"] - 0.062) < 5e-4
-      and abs(_rg["wilson95_over_draws"][0] - 0.046) < 5e-4
-      and abs(_rg["wilson95_over_draws"][1] - 0.083) < 5e-4
+      and len(_regs_recs) == 40
+      and len({r["block_key"] for r in _regs_recs}) == 25
       and _ho["by_arm"]["full"]["n_in_sample_passed"] == 434
       and _ho["by_arm"]["full"]["n_regressed"] == 0)
+claim("3 draws move the other way (below 1.000 in-sample, at 0.9975 to 0.9991, yet "
+      "accepted held-out), which is why 647 - 40 leaves 610 rather than 607",
+      len(_rev_recs) == 3
+      and _hoa["aggregates"]["totals"]["n_reverse_regressions"] == 3
+      and abs(min(r["in_sample_gate_accuracy"] for r in _rev_recs) - 0.9975) < 5e-5
+      and abs(max(r["in_sample_gate_accuracy"] for r in _rev_recs) - 0.9991) < 5e-5
+      and 647 - 40 + 3 == _hoa["aggregates"]["totals"]["n_heldout_accepted"] == 610)
 claim("the prose's 'about one accepted artifact in sixteen' matches 647/40 = 16.2",
       round(_rg["n_in_sample_accepted"] / _rg["n_rejected_by_independent_gate"]) == 16)
 claim("39 of the 40 regressions fail ONLY on mode contacts",
@@ -1678,11 +1695,10 @@ claim("the independent gate is not merely strict: it accepts 20 of 20 of the pos
       len(_hint) == 20 and sum(1 for r in _hint if r["accepted_heldout"]) == 20
       and all(r["gate"]["accuracy"] == 1.0 for r in _hint))
 _ex = _ho["off_sample_exactness_of_accepted"]
-claim("all 610 independently accepted artifacts are exact outside the mode region on "
-      "D_eval, exact 95% upper bound 0.0049 on the exception rate",
+claim("all 610 independently accepted draws are exact outside the mode region ON THE "
+      "100-rollout evaluation sample (reported as a count, no binomial bound attached)",
       _ex["n_accepted"] == 610 and _ex["n_exceptions"] == 0
-      and _ex["n_exact_outside_mode"] == 610
-      and abs(_ex["clopper_pearson_95_upper_on_exception_rate"] - 0.0049) < 5e-5,
+      and _ex["n_exact_outside_mode"] == 610,
       f"{_ex['n_exact_outside_mode']}/{_ex['n_accepted']}")
 
 # --- report ----------------------------------------------------------------
