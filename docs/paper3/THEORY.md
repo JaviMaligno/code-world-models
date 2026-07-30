@@ -2375,6 +2375,30 @@ input is one scalar, P(|Z_{71}| ∈ [7, 17]) = 0.20, the magnitude
 distribution of an isotropic sum — a one-dimensional radial law, and the
 last quantity in the chain.
 
+**The remaining radial law IS the instrument's rarity r (2026-07-29).**
+The last measured input, P(|Z_{h−k}| ∈ [L − r_out, L + r_out]), is not a
+technical residue: it coincides with the instrument's contact rate.
+Measured on 200 000 rollouts each,
+  **r(γ = 0) = 0.03020  and  R = 0.03020** — equal to five decimals,
+and necessarily so: a ring-free rollout reaches the band radius exactly
+when the same rollout would have contacted the band, since the band spans
+the full annulus at γ = 0. So the chain's final factor is r itself, the
+quantity the danger law of all three papers takes as its ARGUMENT and
+measures per instrument (papers 1–2's danger = play_cost·(1−r)^N; this
+paper's γ-curves are r(γ) and r_int(γ)). Leaving it measured is therefore
+consistent with the series' own framing rather than a gap in this proof.
+
+*Why it cannot be lower-bounded by moments.* Z_t is a Pearson walk: a sum
+of fixed-length steps a_s = dt²·w_s·gain ∈ [0.030, 0.885] with independent
+uniform directions, whose moments are exactly E|Z|² = Σa_s² and
+E|Z|⁴ = 2(Σa_s²)² − Σa_s⁴. At t = 71, E|Z|² = 29.48 (rms 5.43) while the
+target needs |Z| ≥ L − r_out = 7 = **1.29 rms** — a tail event. Markov and
+Chebyshev bound the wrong side, and Paley–Zygmund requires a threshold
+below the mean, so no second- or fourth-moment argument reaches it. This
+is not an accident of the method: r ≈ 3% is small *because* the mode sits
+1.29 rms away from the start, so the event's rarity and the failure of
+moment bounds are the same fact.
+
 **Status of T3's lower bound.** Every factor of d ≥ C·γ² is now derived or
 proved:
 | factor | status |
@@ -2386,9 +2410,11 @@ proved:
 | horizon term | **eliminated** (absorbed into R′) |
 So the chain that began as "stochastic domination of post-divergence
 occupation measures" has reduced to three elementary ingredients —
-isotropy, the arcsine density, and a one-action steering derivative —
-plus a single measured radial law. Nothing in it is an occupation
-estimate.
+isotropy, the arcsine density, and a one-action steering derivative — plus
+the instrument's rarity r, which is the danger law's own argument and is
+measured by construction throughout the series. Nothing in it is an
+occupation estimate, and nothing is left that the series does not already
+treat as an input.
 
 **An intuition about that constant, REFUTED (2026-07-26).** The natural
 hope was that a freeze HANDICAPS entry — Lemma S says the freeze zeroes

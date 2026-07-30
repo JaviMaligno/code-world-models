@@ -590,3 +590,55 @@ def test_t3_isotropy_bound_on_reach_is_valid():
     bound = (in_range / n) * ang
     assert bound <= reached_early / n * 1.35, (bound, reached_early / n)
     assert bound > 0.5 * reached_early / n, (bound, reached_early / n)
+
+
+def test_t3_ring_free_reach_equals_the_contact_rate():
+    # The chain's last measured factor is the instrument's rarity r itself:
+    # at gamma = 0 the band spans the full annulus, so a ring-free rollout
+    # reaches the band radius exactly when the same rollout would contact.
+    # Checked per-seed (not just in aggregate), which is the strong form.
+    ring = RingField2D(gap=0.0)
+    free = RingField2D(gap=0.0, r_in=None)
+    cx, cy = ring.center
+    mismatches = fires = 0
+    for i in range(3000):
+        rng = random.Random(50_000 + i)
+        s = ring.initial_state(rng)
+        fired = False
+        for _ in range(ring.h_episode):
+            s, _, c = ring.step(s, rng.uniform(-ring.a_max, ring.a_max))
+            if c:
+                fired = True
+                break
+        rng2 = random.Random(50_000 + i)
+        s2 = free.initial_state(rng2)
+        reached = False
+        for _ in range(free.h_episode):
+            s2, _, _ = free.step(s2, rng2.uniform(-free.a_max, free.a_max))
+            if math.hypot(s2[0] - cx, s2[1] - cy) <= free.r_out:
+                reached = True
+                break
+        fires += fired
+        mismatches += (fired != reached)
+    assert fires > 20, fires
+    assert mismatches == 0, mismatches
+
+
+def test_t3_radial_target_is_a_tail_event():
+    # Why moments cannot lower-bound the radial law: the Pearson walk's exact
+    # second moment puts the target at ~1.3 rms, so Markov/Chebyshev bound the
+    # wrong side and Paley-Zygmund does not apply (its threshold must be below
+    # the mean).
+    env = RingField2D()
+    beta = 1 - env.drag * env.dt
+    t = 71
+    a = [env.dt ** 2 * ((1 - beta ** (t - s)) / (1 - beta)) * env.gain
+         for s in range(t)]
+    s2 = sum(x * x for x in a)
+    s4 = sum(x ** 4 for x in a)
+    rms = math.sqrt(s2)
+    assert abs(rms - 5.43) < 0.05, rms
+    target = 12.0 - env.r_out
+    assert target / rms > 1.2, target / rms          # a tail event
+    # the exact fourth moment of an isotropic sum
+    assert abs((2 * s2 * s2 - s4) - 1721.5) < 5.0
