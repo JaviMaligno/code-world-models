@@ -181,6 +181,35 @@ that size can make.
 | T5-T | the **e = e₁ hypothesis is stated**, together with the fact that Lemma F supplies only e ∈ span(e₁,e₂), the cost of the general case, and the exchangeability that licenses rotating into e = e₁ — instead of chaining the two as if they matched | symbolic |
 | provenance | THEORY.md gained a **Provenance of the numbers** header distinguishing constants (emitted + audited in CI, never transcribed) from the ~10 load-bearing measurements with no committed script or JSON, each named as an *unrecorded run* | — |
 
+## Emitting the unrecorded measurements (aggravator 2) — done, and it changed five things
+
+Four emitters now cover every load-bearing measurement that had no script:
+`t3_unrecorded_measurements.py`, `t2_unrecorded_measurements.py`,
+`t2_drag_cap_and_switch_rate.py`, `t7_margin_variant_betti.py`, each resumable
+per cell, with `tests/test_unrecorded_measurements.py` guarding the structural
+properties (no fudge factors: confidence limits or exact relations only).
+
+**What reproduced exactly** — so the transcription was mostly faithful:
+R = 0.03020; the |Z_t| medians 1.174/2.58/3.91/4.595; the channel-arrival
+counts 594/1184/2332/3352; the failure census at γ = 0.2 in all four terms
+(0.202 entered / 0.527 froze / 0.0135 out / 0.258 horizon); the drag cap's
+worst 1.9956 at 400×200; crossing median 8–9 and p90 13–14; ρ(π) ≈ 1.03; the
+steering derivative's median/p90/max 0.388/0.540/0.572 against the recorded
+0.362/0.532/0.5865; P(root) ≈ 0.009 against 0.0156.
+
+**What emitting changed, which is why it had to be done:**
+
+| what | was | is |
+|---|---|---|
+| **L_v** | `−0.015 ± 0.078` and `+0.462 ± 0.078`, ratio `0.78 ± 0.13`, "consistent with Lipschitz scaling" | **does not reproduce.** Under CRN pairing at K = 100, `E[A_t \| s_t, C_t]` is statistically zero at both available separations (+0.003 ± 0.007 at ‖Δv‖ = 0.001, −0.006 ± 0.007 at 0.459), and the implied ratio swings 5.7/17.5/3.2 across K. A *censored* measurement. **The `pc ≤ 0.18` bound resting on it is withdrawn** from both documents |
+| **p(δ), the switch rate** | `p(0.05) = 0.10`, quoted as a single "p ≈ 0.5", and (per review) the fixed point therefore fails at small δ | **p(0.05) = 0.027**, and the curve closes at **every** measured δ from 0.02 to 0.8, with the multiplier in [1.25, 1.66]. So the fixed point IS available and roughly uniform — my own earlier correction, which said it fails at δ = 0.05, was wrong and is fixed. The dimensional correction (`p·2·gain·dt < δ`, not `< 1`) stands |
+| **the corridor's "non-freeze fraction"** | one column, compared against the criterion | **two different quantities**: `1 − P(froze \| arrival)` = 0.288/0.473/0.614/0.698 (what the criterion is compared against) and `P(entered \| arrival)` = 0.114/0.202/0.280/0.313. Both emitted and named |
+| **ρ(π)'s substitution cost** | "overstates by 8% at γ = 0.6" | derived from the emitted profile per gap rather than by hand; the infimum over the channel, which is what a lower bound needs, is materially below the peak |
+| **the steering derivative's estimand** | median/p90 over "115 steerable paths" | the filter (arrival-step-preserving pairs — the only place θ is differentiable) is now **recorded, not just applied**. The excluded jumps run to 4.55 against a differentiable sup of 0.572, and a root at a jump has no derivative for Lemma D to divide by |
+| **ρ(π)'s bound** | ≥ 0.44 per arrival, 2.3× loose | **≥ 0.26**, 4.0× loose, from the emitted P(root) = 0.0089 and the observed sup 0.572 |
+| **the margin-0.3 variant** | "repairs gap 0 (5/5) but restores the bridge at γ = 0.6 (5/5)" — no artifact | confirmed **5/5 and 0/5**, and the mechanism is sharper: at margin 0.3 it censors **0 edges** on average (against ~2 000 at margin 0.0), so it degenerates to plain Rips and inherits its answer |
+| **the T2 counts** | 106/106, 51–71/106, 101/106, 0/30, 9/9 | **278/278, 104/278, 261/278, 0/18, 18/18** — same conclusions, real n, with Wilson intervals on the censored zeros. The worst replanning-link violation is A_t = +11.65 against a gap of +4.88, not +2.62 against +0.97 |
+
 Still open: T3 #12 and #13 (the funnel-profile
 sample claims, and emitting the unbacked measurements); the actual repair of T5-F's Z₁ factor (now
 flagged in the statement, not yet proved); T7's #9 (the interleaving map defined two ways) and #10 (the margin-0.3

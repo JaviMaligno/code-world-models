@@ -1,0 +1,562 @@
+{
+ "cells": {
+  "corridor|0.1|200000|v2": {
+   "P_corridor_satisfied": 0.30976430976430974,
+   "P_corridor_satisfied_by_radius": {
+    "r_4.0": 0.25084175084175087,
+    "r_in": 0.22053872053872053,
+    "r_out": 0.30976430976430974
+   },
+   "P_entered": 0.11447811447811448,
+   "arrivals": 594,
+   "corridor_threshold": 0.2777777777777778,
+   "corridor_thresholds": {
+    "r_4.0": 0.22222222222222224,
+    "r_in": 0.19444444444444445,
+    "r_out": 0.2777777777777778
+   },
+   "crossing_duration": {
+    "max": 16,
+    "mean": 8.779411764705882,
+    "median": 8.0,
+    "n": 68,
+    "p90": 14
+   },
+   "f0": [
+    {
+     "bandwidth": 0.1,
+     "f0_folded": 1.0437710437710437,
+     "f0_signed": 0.5218855218855218
+    },
+    {
+     "bandwidth": 0.2,
+     "f0_folded": 1.1279461279461278,
+     "f0_signed": 0.5639730639730639
+    },
+    {
+     "bandwidth": 0.3,
+     "f0_folded": 1.11672278338945,
+     "f0_signed": 0.558361391694725
+    },
+    {
+     "bandwidth": 0.5,
+     "f0_folded": 1.127946127946128,
+     "f0_signed": 0.563973063973064
+    }
+   ],
+   "f0_convention_note": "f0_signed is what Lemma D's arcsine bound bounds; f0_folded is what the corridor criterion consumes, and equals twice the signed value. Quote the one matching the display.",
+   "failure_census": {
+    "entered": 68,
+    "froze_on_band": 423,
+    "ran_out_of_horizon": 96,
+    "turned_back_out": 7
+   },
+   "fraction_note": "non_freeze_fraction = 1 - P(froze on the band | arrival), which is what the corridor criterion is compared against. P_entered is the smaller quantity P(reached the interior | arrival): an arrival can avoid freezing and still run out of horizon.",
+   "gap": 0.1,
+   "horizon_residue_note": "k = 9 is the MEDIAN; the deadline argument leaves a residue of order P(crossing > k), which this distribution gives.",
+   "k_cross_used": 9,
+   "n": 200000,
+   "non_freeze_fraction": 0.28787878787878785,
+   "seed_base": 50000,
+   "unit": "channel arrival"
+  },
+  "corridor|0.2|200000|v2": {
+   "P_corridor_satisfied": 0.5929054054054054,
+   "P_corridor_satisfied_by_radius": {
+    "r_4.0": 0.4983108108108108,
+    "r_in": 0.4206081081081081,
+    "r_out": 0.5929054054054054
+   },
+   "P_entered": 0.20185810810810811,
+   "arrivals": 1184,
+   "corridor_threshold": 0.5555555555555556,
+   "corridor_thresholds": {
+    "r_4.0": 0.4444444444444445,
+    "r_in": 0.3888888888888889,
+    "r_out": 0.5555555555555556
+   },
+   "crossing_duration": {
+    "max": 27,
+    "mean": 8.845188284518828,
+    "median": 8,
+    "n": 239,
+    "p90": 13
+   },
+   "f0": [
+    {
+     "bandwidth": 0.1,
+     "f0_folded": 1.1570945945945945,
+     "f0_signed": 0.5785472972972973
+    },
+    {
+     "bandwidth": 0.2,
+     "f0_folded": 1.1233108108108107,
+     "f0_signed": 0.5616554054054054
+    },
+    {
+     "bandwidth": 0.3,
+     "f0_folded": 1.0867117117117118,
+     "f0_signed": 0.5433558558558559
+    },
+    {
+     "bandwidth": 0.5,
+     "f0_folded": 1.0962837837837838,
+     "f0_signed": 0.5481418918918919
+    }
+   ],
+   "f0_convention_note": "f0_signed is what Lemma D's arcsine bound bounds; f0_folded is what the corridor criterion consumes, and equals twice the signed value. Quote the one matching the display.",
+   "failure_census": {
+    "entered": 239,
+    "froze_on_band": 624,
+    "ran_out_of_horizon": 305,
+    "turned_back_out": 16
+   },
+   "fraction_note": "non_freeze_fraction = 1 - P(froze on the band | arrival), which is what the corridor criterion is compared against. P_entered is the smaller quantity P(reached the interior | arrival): an arrival can avoid freezing and still run out of horizon.",
+   "gap": 0.2,
+   "horizon_residue_note": "k = 9 is the MEDIAN; the deadline argument leaves a residue of order P(crossing > k), which this distribution gives.",
+   "k_cross_used": 9,
+   "n": 200000,
+   "non_freeze_fraction": 0.472972972972973,
+   "seed_base": 50000,
+   "unit": "channel arrival"
+  },
+  "corridor|0.4|200000|v2": {
+   "P_corridor_satisfied": 0.8906518010291595,
+   "P_corridor_satisfied_by_radius": {
+    "r_4.0": 0.7967409948542024,
+    "r_in": 0.7229845626072041,
+    "r_out": 0.8906518010291595
+   },
+   "P_entered": 0.2804459691252144,
+   "arrivals": 2332,
+   "corridor_threshold": 1.1111111111111112,
+   "corridor_thresholds": {
+    "r_4.0": 0.888888888888889,
+    "r_in": 0.7777777777777778,
+    "r_out": 1.1111111111111112
+   },
+   "crossing_duration": {
+    "max": 27,
+    "mean": 9.365443425076453,
+    "median": 9.0,
+    "n": 654,
+    "p90": 14
+   },
+   "f0": [
+    {
+     "bandwidth": 0.1,
+     "f0_folded": 1.183533447684391,
+     "f0_signed": 0.5917667238421955
+    },
+    {
+     "bandwidth": 0.2,
+     "f0_folded": 1.1363636363636362,
+     "f0_signed": 0.5681818181818181
+    },
+    {
+     "bandwidth": 0.3,
+     "f0_folded": 1.0706117781589481,
+     "f0_signed": 0.5353058890794741
+    },
+    {
+     "bandwidth": 0.5,
+     "f0_folded": 1.0497427101200687,
+     "f0_signed": 0.5248713550600344
+    }
+   ],
+   "f0_convention_note": "f0_signed is what Lemma D's arcsine bound bounds; f0_folded is what the corridor criterion consumes, and equals twice the signed value. Quote the one matching the display.",
+   "failure_census": {
+    "entered": 654,
+    "froze_on_band": 900,
+    "ran_out_of_horizon": 738,
+    "turned_back_out": 40
+   },
+   "fraction_note": "non_freeze_fraction = 1 - P(froze on the band | arrival), which is what the corridor criterion is compared against. P_entered is the smaller quantity P(reached the interior | arrival): an arrival can avoid freezing and still run out of horizon.",
+   "gap": 0.4,
+   "horizon_residue_note": "k = 9 is the MEDIAN; the deadline argument leaves a residue of order P(crossing > k), which this distribution gives.",
+   "k_cross_used": 9,
+   "n": 200000,
+   "non_freeze_fraction": 0.614065180102916,
+   "seed_base": 50000,
+   "unit": "channel arrival"
+  },
+  "corridor|0.6|200000|v2": {
+   "P_corridor_satisfied": 0.9791169451073986,
+   "P_corridor_satisfied_by_radius": {
+    "r_4.0": 0.9266109785202864,
+    "r_in": 0.8833532219570406,
+    "r_out": 0.9791169451073986
+   },
+   "P_entered": 0.3126491646778043,
+   "arrivals": 3352,
+   "corridor_threshold": 1.6666666666666665,
+   "corridor_thresholds": {
+    "r_4.0": 1.3333333333333333,
+    "r_in": 1.1666666666666667,
+    "r_out": 1.6666666666666665
+   },
+   "crossing_duration": {
+    "max": 34,
+    "mean": 9.723282442748092,
+    "median": 9.0,
+    "n": 1048,
+    "p90": 14
+   },
+   "f0": [
+    {
+     "bandwidth": 0.1,
+     "f0_folded": 1.10381861575179,
+     "f0_signed": 0.551909307875895
+    },
+    {
+     "bandwidth": 0.2,
+     "f0_folded": 1.0844272076372314,
+     "f0_signed": 0.5422136038186157
+    },
+    {
+     "bandwidth": 0.3,
+     "f0_folded": 1.0153142402545743,
+     "f0_signed": 0.5076571201272871
+    },
+    {
+     "bandwidth": 0.5,
+     "f0_folded": 0.9785202863961814,
+     "f0_signed": 0.4892601431980907
+    }
+   ],
+   "f0_convention_note": "f0_signed is what Lemma D's arcsine bound bounds; f0_folded is what the corridor criterion consumes, and equals twice the signed value. Quote the one matching the display.",
+   "failure_census": {
+    "entered": 1048,
+    "froze_on_band": 1013,
+    "ran_out_of_horizon": 1215,
+    "turned_back_out": 76
+   },
+   "fraction_note": "non_freeze_fraction = 1 - P(froze on the band | arrival), which is what the corridor criterion is compared against. P_entered is the smaller quantity P(reached the interior | arrival): an arrival can avoid freezing and still run out of horizon.",
+   "gap": 0.6,
+   "horizon_residue_note": "k = 9 is the MEDIAN; the deadline argument leaves a residue of order P(crossing > k), which this distribution gives.",
+   "k_cross_used": 9,
+   "n": 200000,
+   "non_freeze_fraction": 0.6977923627684964,
+   "seed_base": 50000,
+   "unit": "channel arrival"
+  },
+  "profile|60000|v2": {
+   "arrivals": 1826,
+   "bin_width_rad": 0.10134169850289655,
+   "n": 60000,
+   "note": "pi is the MAXIMUM of rho, so a lower bound needs inf_rho over the channel; rho_pi_over_inf is the factor by which substituting the peak inflates a lower bound, and rho_pi_over_mean the factor by which it overstates the integral itself.",
+   "per_gap": {
+    "0.1": {
+     "bins_spanned": 1,
+     "inf_rho": 1.029451825223645,
+     "mean_rho_over_channel": 2.0865279299014237,
+     "rho_pi_over_inf": 1.0,
+     "rho_pi_over_mean": 0.49338032358487555
+    },
+    "0.2": {
+     "bins_spanned": 1,
+     "inf_rho": 1.029451825223645,
+     "mean_rho_over_channel": 1.0432639649507118,
+     "rho_pi_over_inf": 1.0,
+     "rho_pi_over_mean": 0.9867606471697511
+    },
+    "0.4": {
+     "bins_spanned": 2,
+     "inf_rho": 0.9592005195653386,
+     "mean_rho_over_channel": 1.0076670317634173,
+     "rho_pi_over_inf": 1.0732394366197184,
+     "rho_pi_over_mean": 1.0216190395969433
+    },
+    "0.6": {
+     "bins_spanned": 3,
+     "inf_rho": 0.7295327895285675,
+     "mean_rho_over_channel": 0.9182183278568822,
+     "rho_pi_over_inf": 1.411111111111111,
+     "rho_pi_over_mean": 1.1211405762574806
+    },
+    "0.9": {
+     "bins_spanned": 5,
+     "inf_rho": 0.5268847924372986,
+     "mean_rho_over_channel": 0.8841426311305829,
+     "rho_pi_over_inf": 1.9538461538461542,
+     "rho_pi_over_mean": 1.16435039887993
+    },
+    "1.2": {
+     "bins_spanned": 6,
+     "inf_rho": 0.39989204759343694,
+     "mean_rho_over_channel": 0.7306498722161373,
+     "rho_pi_over_inf": 2.574324324324324,
+     "rho_pi_over_mean": 1.4089536785946604
+    }
+   },
+   "profile": [
+    {
+     "count": 381,
+     "density_per_rad": 1.029451825223645,
+     "offset_hi": 0.10134169850289655,
+     "offset_lo": 0.0
+    },
+    {
+     "count": 355,
+     "density_per_rad": 0.9592005195653386,
+     "offset_hi": 0.2026833970057931,
+     "offset_lo": 0.10134169850289655
+    },
+    {
+     "count": 270,
+     "density_per_rad": 0.7295327895285675,
+     "offset_hi": 0.30402509550868967,
+     "offset_lo": 0.2026833970057931
+    },
+    {
+     "count": 252,
+     "density_per_rad": 0.6808972702266629,
+     "offset_hi": 0.4053667940115862,
+     "offset_lo": 0.30402509550868967
+    },
+    {
+     "count": 195,
+     "density_per_rad": 0.5268847924372986,
+     "offset_hi": 0.5067084925144828,
+     "offset_lo": 0.4053667940115862
+    },
+    {
+     "count": 148,
+     "density_per_rad": 0.39989204759343694,
+     "offset_hi": 0.6080501910173793,
+     "offset_lo": 0.5067084925144828
+    },
+    {
+     "count": 87,
+     "density_per_rad": 0.2350716766258717,
+     "offset_hi": 0.7093918895202759,
+     "offset_lo": 0.6080501910173793
+    },
+    {
+     "count": 56,
+     "density_per_rad": 0.15131050449481398,
+     "offset_hi": 0.8107335880231724,
+     "offset_lo": 0.7093918895202759
+    },
+    {
+     "count": 38,
+     "density_per_rad": 0.10267498519290949,
+     "offset_hi": 0.912075286526069,
+     "offset_lo": 0.8107335880231724
+    },
+    {
+     "count": 18,
+     "density_per_rad": 0.048635519301904497,
+     "offset_hi": 1.0134169850289656,
+     "offset_lo": 0.912075286526069
+    },
+    {
+     "count": 13,
+     "density_per_rad": 0.035125652829153246,
+     "offset_hi": 1.1147586835318621,
+     "offset_lo": 1.0134169850289656
+    },
+    {
+     "count": 5,
+     "density_per_rad": 0.013509866472751247,
+     "offset_hi": 1.2161003820347587,
+     "offset_lo": 1.1147586835318621
+    },
+    {
+     "count": 4,
+     "density_per_rad": 0.010807893178200998,
+     "offset_hi": 1.3174420805376552,
+     "offset_lo": 1.2161003820347587
+    },
+    {
+     "count": 4,
+     "density_per_rad": 0.010807893178200998,
+     "offset_hi": 1.4187837790405518,
+     "offset_lo": 1.3174420805376552
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 1.5201254775434483,
+     "offset_lo": 1.4187837790405518
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 1.6214671760463448,
+     "offset_lo": 1.5201254775434483
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 1.7228088745492414,
+     "offset_lo": 1.6214671760463448
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 1.824150573052138,
+     "offset_lo": 1.7228088745492414
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 1.9254922715550344,
+     "offset_lo": 1.824150573052138
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 2.026833970057931,
+     "offset_lo": 1.9254922715550344
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 2.1281756685608277,
+     "offset_lo": 2.026833970057931
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 2.2295173670637243,
+     "offset_lo": 2.1281756685608277
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 2.330859065566621,
+     "offset_lo": 2.2295173670637243
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 2.4322007640695174,
+     "offset_lo": 2.330859065566621
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 2.533542462572414,
+     "offset_lo": 2.4322007640695174
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 2.6348841610753104,
+     "offset_lo": 2.533542462572414
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 2.736225859578207,
+     "offset_lo": 2.6348841610753104
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 2.8375675580811035,
+     "offset_lo": 2.736225859578207
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 2.938909256584,
+     "offset_lo": 2.8375675580811035
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 3.0402509550868966,
+     "offset_lo": 2.938909256584
+    },
+    {
+     "count": 0,
+     "density_per_rad": 0.0,
+     "offset_hi": 3.141592653589793,
+     "offset_lo": 3.0402509550868966
+    }
+   ],
+   "rho_at_pi": 1.029451825223645,
+   "seed_base": 90000
+  },
+  "reach|200000": {
+   "L_range": [
+    11.500055030684981,
+    12.509830472102712
+   ],
+   "R": 0.030205,
+   "R_prime_leaving_k_minus_1_steps": 0.021185,
+   "R_prime_leaving_k_steps": 0.020075,
+   "Z_table": [
+    {
+     "P_in_annulus": 0.0,
+     "median_abs_Z": 1.1737984443876286,
+     "t": 20
+    },
+    {
+     "P_in_annulus": 0.010635,
+     "median_abs_Z": 2.579562299346751,
+     "t": 40
+    },
+    {
+     "P_in_annulus": 0.14714,
+     "median_abs_Z": 3.909986927060965,
+     "t": 60
+    },
+    {
+     "P_in_annulus": 0.24221,
+     "median_abs_Z": 4.535099102096494,
+     "t": 70
+    },
+    {
+     "P_in_annulus": 0.251375,
+     "median_abs_Z": 4.594660635419368,
+     "t": 71
+    }
+   ],
+   "annulus": [
+    6.500055030684981,
+    17.509830472102713
+   ],
+   "h_episode": 80,
+   "k": 9,
+   "n": 200000,
+   "off_by_one_note": "`hit <= h_episode - k` on a 0-based step index leaves k-1 steps, not k. Both are emitted; quote the one the argument needs.",
+   "r_out": 5.0,
+   "seed_base": 50000
+  },
+  "steering|900|161|v2": {
+   "P_root_exists": 0.008888888888888889,
+   "P_root_exists_given_reaching": 0.21052631578947367,
+   "arrival_step_changed": {
+    "max": 14.409363284461117,
+    "median": 1.0620126834024683,
+    "n": 668,
+    "note": "finite differences ACROSS an arrival-step change: theta jumps there, so these are not derivatives. They bound nothing by themselves, but a root sitting at a jump has no derivative for Lemma D to divide by.",
+    "p90": 2.5994393892384555
+   },
+   "grid": 161,
+   "max": 0.5800428776742116,
+   "median": 0.4077188927044336,
+   "n_configs": 900,
+   "n_derivatives": 2840,
+   "p90": 0.5499085434845361,
+   "roots_found": 8,
+   "seed_base": 70000,
+   "sup_note": "Lemma D needs a SUP; the p90 is not one. The gap between p90 and max is the slack a percentile-based claim hides, and P_root_exists is a grid-scan FLOOR (a finer grid can only find more roots).",
+   "usable_configs": 38
+  }
+ },
+ "superseded_cells_removed": {
+  "keys": [
+   "corridor|0.1|200000",
+   "corridor|0.2|200000",
+   "corridor|0.4|200000",
+   "corridor|0.6|200000",
+   "profile|60000",
+   "steering|900|161"
+  ],
+  "why": "these cells were computed with a superseded estimand -- the corridor cell before P was split by radius and the two arrival fractions were separated, the profile before the per-gap substitution cost was derived, and the steering cell before the derivative series was split from the arrival-step jumps. Keeping them would let a document quote the wrong one, so they are removed rather than left beside the v2 cells."
+ }
+}

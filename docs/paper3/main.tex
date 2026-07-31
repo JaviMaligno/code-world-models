@@ -1718,11 +1718,16 @@ with no further assumptions, at $2\,\mathrm{gain}\,dt^2 = 0.06$ in
 position and $2\,\mathrm{gain}\,dt = 0.6$ in velocity (measured maxima
 $0.059$ and $0.590$: the caps are tight). Everything then rests on how
 smooth the \emph{seed-averaged} value is, which unlike the MPC policy
-itself is smoothed by the averaging. At a hundred CRN-paired seeds the smallest
-perturbation gives $-0.015 \pm 0.078$, statistically zero, and the
-largest $+0.462 \pm 0.078$: a ratio of $0.78 \pm 0.13$, consistent with
-Lipschitz scaling. Combining yields $\mathrm{pc} \lesssim 0.18$ against
-a measured $0.02$--$0.10$ --- but with that constant \emph{measured}.
+itself is smoothed by the averaging. That smoothness is where the chain
+stops. At a hundred CRN-paired seeds the conditional mean
+$\mathbb{E}[A_t \mid s_t, C_t]$ is statistically indistinguishable from
+zero at both the smallest and the largest velocity separation the dirty
+steps supply ($+0.003 \pm 0.007$ at $\lVert\Delta v\rVert = 0.001$,
+$-0.006 \pm 0.007$ at $0.459$), so the implied Lipschitz constant is
+unusable --- it swings over $5.7/17.5/3.2$ across $K = 10/40/100$ at the
+small separation. The measurement is \emph{censored}: its content is that
+the signal sits below the CRN resolution at these separations, not a value
+for the constant. So no numeric play-cost bound follows from this route.
 Substituting instead the constant this argument proves (the drag cap
 divided by the velocity perturbation, times a per-step reward Lipschitz
 bound) gives $80$, and the value under a saturation hypothesis gives
@@ -1822,16 +1827,16 @@ and $2.78$ as $r$ runs across the band. The condition is
 \emph{necessary}, not sufficient --- a rollout can satisfy it and still
 freeze --- so it bounds $T$ from above,
 $T(\gamma) \le P(|v_{\mathrm{tan}}| \le r_{\mathrm{out}}\gamma/(2k\,dt))$,
-which the data support ($0.25/0.49/0.79/0.92$ against
-$T = 0.11/0.20/0.28/0.31$). It cannot bound $T$ from below: a
+which the data support at the loosest radius, the one an upper bound must
+take ($0.310/0.593/0.891/0.979$ against $T = 0.114/0.202/0.280/0.313$). It cannot bound $T$ from below: a
 density-at-zero argument lower-bounds the corridor probability, and a lower
 bound on an upper bound is vacuous. Numerically that vacuous version
 exceeds the measured $T$ by $2$--$4\times$ and exceeds $1$ from
 $\gamma = 0.4$ up. So the corridor explains why $T$ is linear in $\gamma$
 while $c_1 = 0.4695$ remains \emph{fitted}: the kinematic constant is
 $2.4$, a factor $5$ away. The criterion tracks
-the measured non-freezing fraction across the range ($0.25$ versus
-$0.29$, $0.50$ versus $0.47$, $0.93$ versus $0.70$, over-predicting at
+the measured non-freezing fraction across the range ($0.251$ versus
+$0.288$, $0.498$ versus $0.473$, $0.927$ versus $0.698$, over-predicting at
 wide gaps where the ballistic approximation loosens), and the failure
 census confirms the corridor is what binds: freezing on the band accounts
 for $0.527$ of channel arrivals at $\gamma = 0.2$ against $0.302$ at
@@ -1862,12 +1867,16 @@ corridor criterion consumes, has bound $0.77$ against a measured $1.09$.
 For the arrival angle, a single early action sweeps it over
 ${\approx}1.1$ radians. Two factors have to be carried and both were once
 dropped: the probability that the steering equation has a root (measured
-$0.0156$ over $900$ configurations) and the distinction between a
+$0.0089$ over $900$ configurations) and the distinction between a
 sub-density over all rollouts and a density per arrival, which differ by
-the reach $R \approx 0.030$. Carrying both gives a sub-density
-$\ge 0.0133$ per radian, i.e. $\rho(\pi) \ge 0.44$ per arrival against a
-measured $1.02$ --- $2.3$ times loose, with two measured ingredients, so
-\emph{measured} rather than proved. The horizon term shrinks by a factor
+the reach $R \approx 0.030$. Carrying both, with the sensitivity at its
+observed supremum rather than a percentile, gives a sub-density
+$\ge 0.0077$ per radian, i.e. $\rho(\pi) \ge 0.25$ per arrival against a
+measured $1.03$ --- $4$ times loose, with two measured ingredients, so
+\emph{measured} rather than proved. The sensitivity is measured only where
+the arrival step is unchanged, which is the only place the arrival angle is
+differentiable; across a step change it jumps, and those differences run an
+order of magnitude higher. The horizon term shrinks by a factor
 $1.4$ but does not vanish when the deadline is built
 into the reach factor: counting only ring-free arrivals within $h - k$
 steps costs a factor $1.4$ (measured $0.0212$ against $0.0302$), but

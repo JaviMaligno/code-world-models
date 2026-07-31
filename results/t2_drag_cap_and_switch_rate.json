@@ -1,0 +1,102 @@
+{
+ "cells": {
+  "drag_cap|400x200": {
+   "cap": 2.0600000000000005,
+   "dv0": 0.6000000000000001,
+   "dx0": 0.06000000000000001,
+   "n_states": 400,
+   "n_steps": 200,
+   "seed": 7,
+   "tightness": 0.9687399464125153,
+   "worst_at_step": 199,
+   "worst_observed": 1.9956042896097819
+  },
+  "drag_cap|60x150": {
+   "cap": 2.0600000000000005,
+   "dv0": 0.6000000000000001,
+   "dx0": 0.06000000000000001,
+   "n_states": 60,
+   "n_steps": 150,
+   "seed": 7,
+   "tightness": 0.9610934958958638,
+   "worst_at_step": 149,
+   "worst_observed": 1.9798526015454798
+  },
+  "switch_rate|0.6|300": {
+   "closure_note": "closure needs p(delta)*2*gain*dt < delta. The condition is delta-dependent: it holds at coarse perturbations and fails at fine ones, so there is no uniform-in-delta fixed point and the delta -> 0 limit (the natural reading of a Lipschitz constant) diverges.",
+   "gap": 0.6,
+   "planner": {
+    "block": 10,
+    "horizon": 40,
+    "n_samples": 48
+   },
+   "rows": [
+    {
+     "L_v_multiplier": 1.25,
+     "closes": true,
+     "eps": 0.02,
+     "flips": 2,
+     "n_draws": 300,
+     "p": 0.006666666666666667,
+     "p_times_2_gain_dt": 0.004
+    },
+    {
+     "L_v_multiplier": 1.4705882352941175,
+     "closes": true,
+     "eps": 0.05,
+     "flips": 8,
+     "n_draws": 300,
+     "p": 0.02666666666666667,
+     "p_times_2_gain_dt": 0.016
+    },
+    {
+     "L_v_multiplier": 1.3513513513513513,
+     "closes": true,
+     "eps": 0.1,
+     "flips": 13,
+     "n_draws": 300,
+     "p": 0.043333333333333335,
+     "p_times_2_gain_dt": 0.026000000000000002
+    },
+    {
+     "L_v_multiplier": 1.3333333333333333,
+     "closes": true,
+     "eps": 0.2,
+     "flips": 25,
+     "n_draws": 300,
+     "p": 0.08333333333333333,
+     "p_times_2_gain_dt": 0.05
+    },
+    {
+     "L_v_multiplier": 1.3071895424836601,
+     "closes": true,
+     "eps": 0.4,
+     "flips": 47,
+     "n_draws": 300,
+     "p": 0.15666666666666668,
+     "p_times_2_gain_dt": 0.09400000000000001
+    },
+    {
+     "L_v_multiplier": 1.595744680851064,
+     "closes": true,
+     "eps": 0.6,
+     "flips": 112,
+     "n_draws": 300,
+     "p": 0.37333333333333335,
+     "p_times_2_gain_dt": 0.22400000000000003
+    },
+    {
+     "L_v_multiplier": 1.6597510373443984,
+     "closes": true,
+     "eps": 0.8,
+     "flips": 159,
+     "n_draws": 300,
+     "p": 0.53,
+     "p_times_2_gain_dt": 0.31800000000000006
+    }
+   ],
+   "seed": 5000,
+   "unit": "candidate draw"
+  }
+ }
+}

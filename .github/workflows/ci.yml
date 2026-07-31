@@ -35,9 +35,14 @@ jobs:
       # audit checks the documents against it at the printed precision. On
       # paper 2 every peer-review arithmetic error was a hand-computed
       # constant, so this runs on every push rather than on trust.
-      # The emitter READS these two calibrations, so they are checked into the
-      # repo rather than recomputed here (they are million-rollout runs). The
-      # audit below would fail loudly if a document drifted from them.
+      # The emitter READS the calibrations and the emitted MEASUREMENTS, which
+      # are checked into the repo rather than recomputed here (they are
+      # million-rollout runs: scripts/t3_unrecorded_measurements.py,
+      # t2_unrecorded_measurements.py, t2_drag_cap_and_switch_rate.py,
+      # t7_margin_variant_betti.py, t3_quadratic_constant.py,
+      # t3_isotropy_window_bound.py -- each resumable per cell). The audit
+      # below fails loudly if a document drifts from any of them, and
+      # tests/test_unrecorded_measurements.py guards their structure.
       - name: Re-derive paper 3's campaign constants
         run: PYTHONPATH=src python scripts/t_campaign_constants.py
       - name: Audit paper 3's quoted constants against the derived values

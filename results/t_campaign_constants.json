@@ -109,6 +109,22 @@
   "offset_at_margin_boundary": 1.5,
   "step_bound_Delta": 1.0
  },
+ "measured": {
+  "P_root_exists": 0.008888888888888889,
+  "R_prime_leaving_k_minus_1_steps": 0.021185,
+  "R_prime_leaving_k_steps": 0.020075,
+  "R_ring_free": 0.030205,
+  "conditional_spread_A_t": 3.691795946267497,
+  "drag_cap_worst_400x200": 1.9956042896097819,
+  "rho_at_pi": 1.029451825223645,
+  "rho_pi_looseness": 4.058144290060283,
+  "rho_pi_per_arrival_lower_bound": 0.25367551068726363,
+  "rho_sub_pi_lower_bound": 0.007662268800308798,
+  "steering_jump_max": 14.409363284461117,
+  "steering_median": 0.4077188927044336,
+  "steering_p90": 0.5499085434845361,
+  "steering_sup": 0.5800428776742116
+ },
  "plant": {
   "beta": 0.97,
   "delta_pos_two_actions": 0.06000000000000001,

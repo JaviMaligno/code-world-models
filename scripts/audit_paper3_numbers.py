@@ -95,6 +95,22 @@ CHECKS = [
     (["T2", "pc_hypothesis_velocity_only"], ["2.01"]),
     (["T2", "pc_hypothesis_with_dominance"], ["1.28"]),
     (["T8", "clearance_margin_m"], ["0.5"]),
+    # Emitted MEASUREMENTS quoted in the documents. Same discipline as the
+    # constants: the prose must agree with the JSON at the printed precision,
+    # and each entry names which side of its inequality it is on.
+    (["measured", "R_ring_free"], ["0.03020"]),
+    (["measured", "R_prime_leaving_k_steps"], ["0.02007"]),
+    (["measured", "R_prime_leaving_k_minus_1_steps"], ["0.02118"]),
+    (["measured", "rho_at_pi"], ["1.0295", "1.03"]),
+    (["measured", "steering_sup"], ["0.580"], "upper"),
+    (["measured", "steering_p90"], ["0.550"]),
+    (["measured", "steering_jump_max"], ["14.41"]),
+    (["measured", "rho_pi_per_arrival_lower_bound"], ["0.2537"], "lower"),
+    (["measured", "rho_sub_pi_lower_bound"], ["0.00766"], "lower"),
+    (["measured", "rho_pi_looseness"], ["4.06"]),
+    (["measured", "P_root_exists"], ["0.00889"], "lower"),
+    (["measured", "drag_cap_worst_400x200"], ["1.9956"]),
+    (["measured", "conditional_spread_A_t"], ["3.69"]),
 ]
 
 
@@ -124,6 +140,9 @@ MUST_APPEAR = {
     "T3/quadratic_bound_coefficient",
     "T3/reach_lower_bound_partitioned",
     "T3/reach_annulus_mass_below_tangent_cone_floor",
+    "measured/R_ring_free",
+    "measured/R_prime_leaving_k_minus_1_steps",
+    "measured/drag_cap_worst_400x200",
 }
 
 

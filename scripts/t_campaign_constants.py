@@ -31,15 +31,29 @@ OUT = _REPO / "results" / "t_campaign_constants.json"
 
 
 def measured(name, path):
-    """Read a measured input from the JSON its experiment wrote."""
+    """Read a measured input from the JSON its experiment wrote.
+
+    Returns None when the file or any key along the path is absent, rather
+    than raising: a measurement that has not been run yet is a MISSING value,
+    and the audit already reports a checked entry whose value is missing. A
+    crash here would make a partially-finished emitter run unusable, which is
+    the opposite of the resumability the emitters are built for.
+    """
     p = _REPO / "results" / f"{name}.json"
     if not p.exists():
         return None
     d = json.loads(p.read_text())
     for key in path:
-        if d is None:
+        if isinstance(d, dict):
+            if key not in d:
+                return None
+            d = d[key]
+        elif isinstance(d, (list, tuple)):
+            if not isinstance(key, int) or not -len(d) <= key < len(d):
+                return None
+            d = d[key]
+        else:
             return None
-        d = d[key] if isinstance(d, dict) else d[key]
     return d
 
 
@@ -245,6 +259,62 @@ def main():
         "quadratic_bound_binding_gap":
             measured("t3_quadratic_constant", ["binding_gap"]),
     }
+    # --- emitted MEASUREMENTS, mirrored so the audit covers them too --------
+    # The constants emitter closed the hand-constant class; these numbers are
+    # the same class one level up (quoted in the documents, derived by a
+    # script). Mirroring the load-bearing ones here means audit_paper3_numbers
+    # checks them at the printed precision like everything else, instead of
+    # trusting that the prose still matches the JSON.
+    C["measured"] = {
+        "R_ring_free": measured("t3_unrecorded_measurements",
+                                ["cells", "reach|200000", "R"]),
+        "R_prime_leaving_k_steps": measured(
+            "t3_unrecorded_measurements",
+            ["cells", "reach|200000", "R_prime_leaving_k_steps"]),
+        "R_prime_leaving_k_minus_1_steps": measured(
+            "t3_unrecorded_measurements",
+            ["cells", "reach|200000", "R_prime_leaving_k_minus_1_steps"]),
+        "rho_at_pi": measured("t3_unrecorded_measurements",
+                              ["cells", "profile|60000|v2", "rho_at_pi"]),
+        "steering_sup": measured(
+            "t3_unrecorded_measurements",
+            ["cells", "steering|900|161|v2", "max"]),
+        "steering_p90": measured(
+            "t3_unrecorded_measurements",
+            ["cells", "steering|900|161|v2", "p90"]),
+        "P_root_exists": measured(
+            "t3_unrecorded_measurements",
+            ["cells", "steering|900|161|v2", "P_root_exists"]),
+        "drag_cap_worst_400x200": measured(
+            "t2_drag_cap_and_switch_rate",
+            ["cells", "drag_cap|400x200", "worst_observed"]),
+        "steering_median": measured(
+            "t3_unrecorded_measurements",
+            ["cells", "steering|900|161|v2", "median"]),
+        "steering_jump_max": measured(
+            "t3_unrecorded_measurements",
+            ["cells", "steering|900|161|v2", "arrival_step_changed", "max"]),
+        "conditional_spread_A_t": measured(
+            "t2_unrecorded_measurements",
+            ["cells", "conditional_spread|0.6|40", "A_t_spread"]),
+    }
+
+    # Lemma D applied to the arrival angle, DERIVED from the two emitted
+    # ingredients rather than multiplied out by hand: a_max = 1 gives the
+    # factor 1/2, P(root) is the unconditional grid-scan floor, and the
+    # denominator is the observed SUP of the differentiable sensitivity (a
+    # percentile is not a supremum). Dividing by R converts Lemma D's
+    # sub-density into the per-arrival density the decomposition consumes.
+    _pr = C["measured"]["P_root_exists"]
+    _sup = C["measured"]["steering_sup"]
+    _R = C["measured"]["R_ring_free"]
+    if None not in (_pr, _sup, _R) and _sup and _R:
+        C["measured"]["rho_sub_pi_lower_bound"] = 0.5 * _pr / _sup
+        C["measured"]["rho_pi_per_arrival_lower_bound"] = 0.5 * _pr / _sup / _R
+        C["measured"]["rho_pi_looseness"] = (
+            C["measured"]["rho_at_pi"]
+            / (0.5 * _pr / _sup / _R)) if C["measured"]["rho_at_pi"] else None
+
     # Pearson-walk moments at t = h - k
     t_star = h - k_cross
     a = [dt * dt * ((1 - beta ** (t_star - s)) / (1 - beta)) * gain

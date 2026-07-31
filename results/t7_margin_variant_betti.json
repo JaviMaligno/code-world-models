@@ -1,0 +1,319 @@
+{
+ "cells": {
+  "0.0|0.0|10000": {
+   "censored_betti1": 1,
+   "edges_censored": 2310,
+   "gap": 0.0,
+   "infinite_bars": 1,
+   "margin": 0.0,
+   "n_free_segments": 3113,
+   "n_points": 74,
+   "plain_betti1": 1,
+   "seed": 10000,
+   "tau": 0.20965988924630116,
+   "true_betti1": 1
+  },
+  "0.0|0.0|20000": {
+   "censored_betti1": 0,
+   "edges_censored": 1489,
+   "gap": 0.0,
+   "infinite_bars": 0,
+   "margin": 0.0,
+   "n_free_segments": 3119,
+   "n_points": 60,
+   "plain_betti1": 1,
+   "seed": 20000,
+   "tau": 0.1706664207995106,
+   "true_betti1": 1
+  },
+  "0.0|0.0|30000": {
+   "censored_betti1": 1,
+   "edges_censored": 2686,
+   "gap": 0.0,
+   "infinite_bars": 1,
+   "margin": 0.0,
+   "n_free_segments": 3094,
+   "n_points": 79,
+   "plain_betti1": 1,
+   "seed": 30000,
+   "tau": 0.31586384555481606,
+   "true_betti1": 1
+  },
+  "0.0|0.0|40000": {
+   "censored_betti1": 1,
+   "edges_censored": 2108,
+   "gap": 0.0,
+   "infinite_bars": 1,
+   "margin": 0.0,
+   "n_free_segments": 3116,
+   "n_points": 71,
+   "plain_betti1": 1,
+   "seed": 40000,
+   "tau": 0.2100774271422115,
+   "true_betti1": 1
+  },
+  "0.0|0.0|50000": {
+   "censored_betti1": 0,
+   "edges_censored": 2890,
+   "gap": 0.0,
+   "infinite_bars": 0,
+   "margin": 0.0,
+   "n_free_segments": 3091,
+   "n_points": 82,
+   "plain_betti1": 1,
+   "seed": 50000,
+   "tau": 0.2414926270319085,
+   "true_betti1": 1
+  },
+  "0.0|0.6|10000": {
+   "censored_betti1": 0,
+   "edges_censored": 2108,
+   "gap": 0.6,
+   "infinite_bars": 0,
+   "margin": 0.0,
+   "n_free_segments": 3120,
+   "n_points": 71,
+   "plain_betti1": 1,
+   "seed": 10000,
+   "tau": 0.1960159698471407,
+   "true_betti1": 0
+  },
+  "0.0|0.6|20000": {
+   "censored_betti1": 0,
+   "edges_censored": 959,
+   "gap": 0.6,
+   "infinite_bars": 0,
+   "margin": 0.0,
+   "n_free_segments": 3131,
+   "n_points": 49,
+   "plain_betti1": 1,
+   "seed": 20000,
+   "tau": 0.17245438057862789,
+   "true_betti1": 0
+  },
+  "0.0|0.6|30000": {
+   "censored_betti1": 0,
+   "edges_censored": 2056,
+   "gap": 0.6,
+   "infinite_bars": 0,
+   "margin": 0.0,
+   "n_free_segments": 3102,
+   "n_points": 70,
+   "plain_betti1": 1,
+   "seed": 30000,
+   "tau": 0.31641743726960064,
+   "true_betti1": 0
+  },
+  "0.0|0.6|40000": {
+   "censored_betti1": 1,
+   "edges_censored": 2108,
+   "gap": 0.6,
+   "infinite_bars": 1,
+   "margin": 0.0,
+   "n_free_segments": 3116,
+   "n_points": 71,
+   "plain_betti1": 1,
+   "seed": 40000,
+   "tau": 0.2100774271422115,
+   "true_betti1": 0
+  },
+  "0.0|0.6|50000": {
+   "censored_betti1": 0,
+   "edges_censored": 2659,
+   "gap": 0.6,
+   "infinite_bars": 0,
+   "margin": 0.0,
+   "n_free_segments": 3094,
+   "n_points": 79,
+   "plain_betti1": 1,
+   "seed": 50000,
+   "tau": 0.2508086722301149,
+   "true_betti1": 0
+  },
+  "0.3|0.0|10000": {
+   "censored_betti1": 1,
+   "edges_censored": 0,
+   "gap": 0.0,
+   "infinite_bars": 0,
+   "margin": 0.3,
+   "n_free_segments": 3113,
+   "n_points": 74,
+   "plain_betti1": 1,
+   "seed": 10000,
+   "tau": 0.20965988924630116,
+   "true_betti1": 1
+  },
+  "0.3|0.0|20000": {
+   "censored_betti1": 1,
+   "edges_censored": 0,
+   "gap": 0.0,
+   "infinite_bars": 0,
+   "margin": 0.3,
+   "n_free_segments": 3119,
+   "n_points": 60,
+   "plain_betti1": 1,
+   "seed": 20000,
+   "tau": 0.1706664207995106,
+   "true_betti1": 1
+  },
+  "0.3|0.0|30000": {
+   "censored_betti1": 1,
+   "edges_censored": 0,
+   "gap": 0.0,
+   "infinite_bars": 0,
+   "margin": 0.3,
+   "n_free_segments": 3094,
+   "n_points": 79,
+   "plain_betti1": 1,
+   "seed": 30000,
+   "tau": 0.31586384555481606,
+   "true_betti1": 1
+  },
+  "0.3|0.0|40000": {
+   "censored_betti1": 1,
+   "edges_censored": 0,
+   "gap": 0.0,
+   "infinite_bars": 0,
+   "margin": 0.3,
+   "n_free_segments": 3116,
+   "n_points": 71,
+   "plain_betti1": 1,
+   "seed": 40000,
+   "tau": 0.2100774271422115,
+   "true_betti1": 1
+  },
+  "0.3|0.0|50000": {
+   "censored_betti1": 1,
+   "edges_censored": 0,
+   "gap": 0.0,
+   "infinite_bars": 0,
+   "margin": 0.3,
+   "n_free_segments": 3091,
+   "n_points": 82,
+   "plain_betti1": 1,
+   "seed": 50000,
+   "tau": 0.2414926270319085,
+   "true_betti1": 1
+  },
+  "0.3|0.6|10000": {
+   "censored_betti1": 1,
+   "edges_censored": 0,
+   "gap": 0.6,
+   "infinite_bars": 0,
+   "margin": 0.3,
+   "n_free_segments": 3120,
+   "n_points": 71,
+   "plain_betti1": 1,
+   "seed": 10000,
+   "tau": 0.1960159698471407,
+   "true_betti1": 0
+  },
+  "0.3|0.6|20000": {
+   "censored_betti1": 1,
+   "edges_censored": 0,
+   "gap": 0.6,
+   "infinite_bars": 0,
+   "margin": 0.3,
+   "n_free_segments": 3131,
+   "n_points": 49,
+   "plain_betti1": 1,
+   "seed": 20000,
+   "tau": 0.17245438057862789,
+   "true_betti1": 0
+  },
+  "0.3|0.6|30000": {
+   "censored_betti1": 1,
+   "edges_censored": 0,
+   "gap": 0.6,
+   "infinite_bars": 0,
+   "margin": 0.3,
+   "n_free_segments": 3102,
+   "n_points": 70,
+   "plain_betti1": 1,
+   "seed": 30000,
+   "tau": 0.31641743726960064,
+   "true_betti1": 0
+  },
+  "0.3|0.6|40000": {
+   "censored_betti1": 1,
+   "edges_censored": 0,
+   "gap": 0.6,
+   "infinite_bars": 0,
+   "margin": 0.3,
+   "n_free_segments": 3116,
+   "n_points": 71,
+   "plain_betti1": 1,
+   "seed": 40000,
+   "tau": 0.2100774271422115,
+   "true_betti1": 0
+  },
+  "0.3|0.6|50000": {
+   "censored_betti1": 1,
+   "edges_censored": 0,
+   "gap": 0.6,
+   "infinite_bars": 0,
+   "margin": 0.3,
+   "n_free_segments": 3094,
+   "n_points": 79,
+   "plain_betti1": 1,
+   "seed": 50000,
+   "tau": 0.2508086722301149,
+   "true_betti1": 0
+  }
+ },
+ "note": "A larger margin censors FEWER edges, so it can repair gap-0 false negatives (pokes no longer censor the true loop's edges) while restoring the channel bridge at gap > 0. Both effects are visible in mean_edges_censored, so the trade-off is measured rather than argued.",
+ "summary": {
+  "margin=0.0,gap=0.0": {
+   "censored_betti1_correct": "3/5",
+   "censored_betti1_values": [
+    1,
+    0,
+    1,
+    1,
+    0
+   ],
+   "infinite_bars_total": 3,
+   "mean_edges_censored": 2296.6,
+   "n_seeds": 5
+  },
+  "margin=0.0,gap=0.6": {
+   "censored_betti1_correct": "4/5",
+   "censored_betti1_values": [
+    0,
+    0,
+    0,
+    1,
+    0
+   ],
+   "infinite_bars_total": 1,
+   "mean_edges_censored": 1978.0,
+   "n_seeds": 5
+  },
+  "margin=0.3,gap=0.0": {
+   "censored_betti1_correct": "5/5",
+   "censored_betti1_values": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "infinite_bars_total": 0,
+   "mean_edges_censored": 0.0,
+   "n_seeds": 5
+  },
+  "margin=0.3,gap=0.6": {
+   "censored_betti1_correct": "0/5",
+   "censored_betti1_values": [
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "infinite_bars_total": 0,
+   "mean_edges_censored": 0.0,
+   "n_seeds": 5
+  }
+ }
+}

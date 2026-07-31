@@ -11,29 +11,29 @@ reached each state — dates, which reading came first, what was believed and
 then corrected — belongs in `CAMPAIGN-LOG.md`, not here. Paper prose lives in
 `main.tex` and is governed by the same claim contract.
 
-**Provenance of the numbers.** Every derived CONSTANT is emitted by
-`scripts/t_campaign_constants.py` from the instruments' own attributes and
-checked against both documents at the printed precision by
-`scripts/audit_paper3_numbers.py` (both run in CI). Constants are therefore
-never transcribed. MEASUREMENTS are a separate matter, and the following
-load-bearing ones have **no committed script or `results/*.json`** — they are
-*unrecorded runs*, and a reader cannot re-derive them from this repository:
+**Provenance of the numbers.** Two separate obligations, both now mechanised.
+Every derived CONSTANT is emitted by `scripts/t_campaign_constants.py` from the
+instruments' own attributes and checked against both documents at the printed
+precision by `scripts/audit_paper3_numbers.py` (both run in CI), so constants
+are never transcribed. Every load-bearing MEASUREMENT now names a script and a
+`results/*.json`:
 
-  • L_v's K = 100 CRN estimate (−0.015 ± 0.078 and +0.462 ± 0.078);
-  • the [−1.707, +0.602] per-step advantage spread;
-  • the 106/106 and 101/106 counts, the 0/30, and the 9/9 stickiness;
-  • the p(ε) drag-cap curve (the committed test also runs 60×150, not the
-    400×200 quoted with it);
-  • R′ = 0.02118 and the |Z_t| median/probability table;
-  • the corridor table (P(satisfied), non-freeze fraction, f(0) — whose
-    kernel bandwidth is nowhere recorded and which does not reproduce at
-    the obvious choice);
-  • the failure census (0.202/0.527/0.014/0.258 and 0.313/0.302/0.023/0.362);
-  • the steering derivatives (median 0.362, p90 0.532, n = 115);
-  • the margin-0.3 β̂₁ counts (5/5 and 5/5).
+| measurement | script |
+|---|---|
+| R, R′ (both index readings), the \|Z_t\| table, the corridor table, f(0) at recorded bandwidths, the arrival-angle profile, crossing durations, the failure census, the steering derivatives, P(root) | `t3_unrecorded_measurements.py` |
+| the clean-step chain, the replanning link, the straight-policy arrival, dwell stickiness, the conditional spread of A_t, L_v by CRN pairing | `t2_unrecorded_measurements.py` |
+| the drag cap at both sample sizes, p(δ) as a curve | `t2_drag_cap_and_switch_rate.py` |
+| the margin-0.3 censoring variant's β̂₁ counts | `t7_margin_variant_betti.py` |
+| the γ² constant's calibration on disjoint blocks | `t3_quadratic_constant.py` |
+| the valid isotropy reach bound and its partition ladder | `t3_isotropy_window_bound.py` |
 
-Treat each as *measured, unrecorded*: the claim it supports is no stronger
-than a number nobody else can reproduce. Emitting them is tracked in
+Emitting them changed four numbers and withdrew one claim, which is the point
+of doing it rather than trusting the transcription: the corridor's
+"non-freeze fraction" and "P(entered)" turned out to be different quantities;
+ρ(π)'s substitution cost was larger than stated; the steering derivative's
+estimand had a filter (arrival-step-preserving pairs) that was applied but not
+recorded; and the L_v estimate does not reproduce at all, so the play-cost
+bound resting on it is withdrawn. What remains open is listed in
 `REVIEW-FINDINGS.md`.
  These are the "is there a theorem here"
 de-risk items (§7.4 there). Discipline as in papers 1–2: provable vs measured
@@ -589,13 +589,17 @@ they conflict.
   quantity is a function of (s_t, models, C_t) while A_t also depends on
   C_{t+1..h}, so NO bound from the model's own disagreement can be tight
   — measured with the imagination data pinned, A_t still spans
-  [−1.707, +0.602]. Paper 2's play_cost ≤ μ_query is valid here, equals 1,
+  [−1.042, +2.650], a spread of 3.69 at Δ_over = 0 exactly. Paper 2's
+  play_cost ≤ μ_query is valid here, equals 1,
   and its vacuity is not sharpenable. The replacement (bound the
   planner-averaged value) has a proved reduction (Lemma S caps, measured
   tight) and a proved divergence cap (drag lemma, tight to 3%), but is
-  NON-VACUOUS ONLY WITH A MEASURED CONSTANT: pc ≤ 48 with A proved,
-  ≤ 1.21 under the competence hypothesis (both vacuous since pc ≤ 1 is
-  trivial), ≤ 0.18 with L_v measured. REMAINING: the distribution of the
+  VACUOUS AT EVERY AVAILABLE CONSTANT: pc ≤ 48 with A proved, ≤ 1.21 under
+  the competence hypothesis, and there is no third option — the "≤ 0.18 with
+  L_v measured" once reported here is
+  WITHDRAWN: the committed measurement finds E[A_t | s_t, C_t]
+  statistically zero at both available separations, so there is no measured
+  L_v to substitute (see the L_v table below). REMAINING: the distribution of the
   angle between the two argmax actions — a planner property, exactly what
   T2-D says a tight bound must characterise.
 - **T3 — M1/M2 distributional monotonicity of r_int(γ).** **PARTIALLY
@@ -1595,10 +1599,10 @@ episodes, `results/t2_delay_cost.json`.
 
 **The sum is dominated by ONE number: the arrival delay.** Two further
 measurements collapse the statement, one exactly and one to ±60%.
-*(a) Dwell is sticky.* In 9/9 episodes across γ ∈ {0.3, 0.6, 1.2},
-neither planner ever leaves the basin once it arrives — a 0/9 censored
-zero, so its content is the interval (Wilson upper ≈ 0.30), not a
-guarantee. So
+*(a) Dwell is sticky.* In **18/18** episodes across γ ∈ {0.3, 0.6, 1.2},
+neither planner ever leaves the basin once it arrives — a 0/18 censored
+zero, so its content is the interval (Wilson 95% upper **0.176**), not a
+guarantee. `results/t2_unrecorded_measurements.json`. So
 dwell = h − T_arr exactly, and Δdwell is an ARRIVAL-TIME difference, not
 an occupancy pattern.
 *(b) The per-step terms telescope — to within ±60%, which is the claim's
@@ -1648,10 +1652,13 @@ V_B(bc) ≥ V_B(tc),
     ≤ [V_T(tc) − V_B(tc)]⁺ + Δ_over,   Δ_over := V_B(bc) − V_T(bc).
 *Both terms are needed.* Dropping the first — i.e. assuming the truth's own
 candidate never touches the mode — leaves a bound that holds only
-51–71/106 (the truth planner does plan grazing paths, and a freeze can
+**104/278** (the truth planner does plan grazing paths, and a freeze can
 RAISE the truth's score by parking the trajectory nearer the lure than
 the blind continuation flies). With both terms the chain holds
-**106/106**, as it must.
+**278/278**, as it must. Evidence label *measured*, unit dirty step,
+n = 278 over 18 episodes at γ ∈ {0.3, 0.6, 1.2},
+`scripts/t2_unrecorded_measurements.py` →
+`results/t2_unrecorded_measurements.json`.
 
 The point is not the inequality but its SCOPE. Both terms are
 model-disagreement on the disagreement region E: they vanish identically
@@ -1667,8 +1674,10 @@ disagreement, which is the shape that paper's Proposition 3 predicts.
 CANDIDATE-level gap V_T(tc) − V_T(bc), whereas the identity's A_t is a
 CONTINUATION-level term (both branches then follow π_T). The natural
 hope was that the former dominates the latter, which would close a
-play-cost bound. Measured: **A_t ≤ candidate gap in only 101/106** dirty
-steps, worst violation A_t = +2.62 against a candidate gap of +0.97. So
+play-cost bound. Measured: **A_t ≤ candidate gap in only 261/278** dirty
+steps, worst violation A_t = **+11.65** against a candidate gap of
+**+4.88** (excess 6.77, at γ = 0.3, step 2 — and that A_t is the same
+heavy-tail extreme the per-contact table records). So
 it is not a theorem, and the failure is intelligible: MPC replanning
 moves both branches, usually rescuing the bad first action (mean A_t
 0.175 against mean candidate gap 6.26, a factor 36) but occasionally
@@ -1685,8 +1694,9 @@ assumption is that its argmax beats EVERY candidate in its set —
 including the constant "straight at the lure" candidate. If MPC
 therefore arrived no later than the straight-line policy, the arrival
 time would be bounded by a purely geometric quantity and the delay bound
-would follow. Measured: **0/30**. MPC arrives at step 28 against the
-straight policy's 22, consistently across γ ∈ {0.3, 0.6, 1.2} — it is
+would follow. Measured: **0/18 episodes** (Wilson 95% upper 0.176 — a
+censored zero, so its content is that interval). MPC arrives at step 30–31
+against the straight policy's 26, consistently across γ ∈ {0.3, 0.6, 1.2} — it is
 optimising a 40-step return, not arrival, and its executed path is a
 sequence of first actions from successively replanned candidates, which
 is not any single candidate.
@@ -1706,12 +1716,14 @@ the form A_t ≤ g(imagination data) can be tight: any valid g must
 dominate the essential supremum over the future planner randomness. ∎
 
 *Measured, at a single step with the imagination data pinned exactly*
-(γ = 0.6, t = 14; V_B(bc) = V_T(bc) = 11.0982 — so even Δ_over = 0 —
-V_T(tc) = 11.5304, V_B(tc) = 8.3519): varying only the future candidate
-seeds moves A_t over **[−1.707, +0.602]**, a spread of **2.309**. That
-is an order of magnitude above the mean |A_t| = 0.175 over all dirty
-steps. The conditional spread is the irreducible looseness of ANY
-imagination-level bound.
+(`scripts/t2_unrecorded_measurements.py` →
+`results/t2_unrecorded_measurements.json`; the step is selected as the
+dirty step whose Δ_over is smallest, so the spread cannot be attributed to
+the bound's slack term): γ = 0.6, t = 14, **Δ_over = 0 exactly**. Varying
+only the future candidate seeds — 40 of them — moves A_t over
+**[−1.042, +2.650]**, a spread of **3.69**. That is an order of magnitude
+above the mean |A_t| over all dirty steps. The conditional spread is the
+irreducible looseness of ANY imagination-level bound.
 
 *What this does and does not say.* It does not invalidate paper 2's
 play_cost ≤ μ_query(E): that bound is correct here, and by Proposition 4
@@ -1739,22 +1751,33 @@ and everything reduces to the Lipschitz behaviour of the SEED-AVERAGED
 value — which, unlike the MPC policy itself, is smoothed by averaging
 over candidate draws.
 
-*Measuring L_v needs care.* At K = 10 seeds the estimator's standard
-error (≈ 0.38) exceeds the signal, and the ratios it produces are noise
-— an apparent L_v = 12.7 at the smallest perturbation. With K = 100 and
-CRN pairing:
-  smallest perturbation (‖Δv‖ = 0.029): E[A|s,C] = **−0.015 ± 0.078**,
-    i.e. statistically zero — the apparent blow-up was noise;
-  largest  perturbation (‖Δv‖ = 0.590): E[A|s,C] = **+0.462 ± 0.078**,
-    ratio **0.78 ± 0.13**.
-Consistent with Lipschitz scaling, at L_v ≈ 0.8.
+*Measuring L_v needs care, and the committed measurement does NOT deliver a
+positive estimate.* `scripts/t2_unrecorded_measurements.py` measures
+E[A_t | s_t, C_t] under CRN pairing (the same future planner seed on both
+branches) at the smallest and largest velocity separation the dirty steps
+provide, at K ∈ {10, 40, 100}:
+| separation ‖Δv‖ | K = 10 | K = 40 | K = 100 |
+|---|---|---|---|
+| 0.0010 (smallest) | +0.006 ± 0.007 | +0.017 ± 0.007 | +0.003 ± 0.007 |
+| 0.4590 (largest)  | +0.034 ± 0.025 | +0.001 ± 0.013 | −0.006 ± 0.007 |
+Both are **statistically indistinguishable from zero at K = 100**, and the
+implied ratio is unusable: at ‖Δv‖ = 0.001 it reads 3.2 ± 6.7 and swings
+over 5.7 / 17.5 / 3.2 across K, while at ‖Δv‖ = 0.459 it reads
+−0.013 ± 0.015. So this route yields no measured L_v — a *censored*
+measurement, whose content is that |L_v·‖Δv‖| is below the CRN resolution
+at these separations, not that L_v is any particular value. The
+"L_v ≈ 0.8" once reported here is not reproduced by the committed script;
+recovering it would need a separation sweep designed to have signal at
+each ‖Δv‖ (the dirty steps supply whatever separations they happen to
+have, and the smallest is 0.001, far too small), which is recorded in
+`REVIEW-FINDINGS.md` rather than assumed.
 
 **Assembling the bound — and what it costs to use proved constants
 only (2026-07-27, corrected).** The chain is
   pc ≤ D̄ · (L_v·2·gain·dt + L_p·2·gain·dt² + Δr_max) / (J_T − J_rand),
 with L_v itself bounded through the fixed point L_v ≤ A·δ/(δ − p(δ)·2·gain·dt),
-which at δ = 2·gain·dt = 0.6 reduces to A/(1−p) — and which does not close
-at small δ (see below). Feeding
+which at δ = 2·gain·dt = 0.6 reduces to A/(1−p) and which closes at every
+measured δ with a multiplier in [1.25, 1.66] (see below). Feeding
 each available value of A (D̄ ≈ 15 dirty steps, denominator ≈ 40,
 p ≈ 0.5). Three corrections to an earlier version of this table, each of
 which changes the conclusion:
@@ -1854,14 +1877,21 @@ With IDENTICAL actions the plant is affine, so δv_t = β^t δv₀ and
 i.e. 0.06 + 0.6/0.3 = **2.06** at the instrument's values — bounded
 forever, and without drag it would grow without bound. Verified against
 the integrator over 400 random states × 200 steps: worst observed
-1.9956 against the cap 2.0600, tight to 3%. This is the structural
+**1.9956** against the cap 2.0600, tight to 3% and attained at the LAST
+step (so the cap bounds the tail, not just the transient)
+— `scripts/t2_drag_cap_and_switch_rate.py`,
+`results/t2_drag_cap_and_switch_rate.json`, which also records the
+60 × 150 sweep the committed guard runs (worst 1.9799). This is the structural
 reason W̄ can be Lipschitz at all.
 *The other half is NOT anti-concentration.* The natural completion would
 be that the argmax rarely switches under a
-small perturbation. Measured, it switches often: an ε = 0.05 velocity
-perturbation already flips the argmax for **10%** of candidate draws,
-rising to 66% at ε = 0.8, with no clean C·ε scaling. So the smoothing
-does not come from switches being rare.
+small perturbation. Measured, it switches often at coarse perturbations:
+an ε = 0.8 velocity perturbation flips the argmax for **53%** of candidate
+draws, and even ε = 0.2 flips **8.3%** (unit = candidate draw, n = 300 per
+ε, `results/t2_drag_cap_and_switch_rate.json`). So the smoothing does not
+come from switches being rare. p(ε) is close to LINEAR in ε with slope
+≈ 0.5 over ε ∈ [0.02, 0.8], which is what makes the fixed point below
+close uniformly rather than only at one ε.
 *Where it does come from.* At a switch the two candidates are TIED in
 imagined value, so the loss from switching is not the value gap but the
 divergence it creates — two states 0.6 apart in velocity, whose future
@@ -1874,17 +1904,23 @@ Solving for L_v gives
 so the closure condition is **p(δ)·2·gain·dt < δ** — comparing a
 displacement against a displacement. (The condition "< 1" stated in an
 earlier version is dimensionally wrong: it compares a displacement against
-a dimensionless 1, and it is satisfied vacuously.) The distinction is not
-cosmetic, because the condition is δ-DEPENDENT and fails at small δ:
-  δ = 0.6, p ≈ 0.5: p·0.6 = 0.30 < 0.6 ✓ — closes, with
-    L_v ≤ A·0.6/0.3 = 2A, i.e. the familiar A/(1−p) at δ = 2·gain·dt;
-  δ = 0.05, measured p(0.05) = 0.10: p·0.6 = 0.060 > 0.05 ✗ — the
-    denominator is NEGATIVE and the fixed point does not exist.
-So the argument gives L_v at the coarse perturbation only; there is no
-uniform-in-δ fixed point, and taking δ → 0 (the natural reading of a
-Lipschitz constant) diverges. That is the shape of a proof of L_v at a
-FIXED δ; what remains unproved is A, and what remains unavailable is the
-δ → 0 limit.
+a dimensionless 1, and is satisfied vacuously.)
+The condition is δ-dependent, so it has to be checked as a CURVE rather
+than at one δ. *Measured* (`scripts/t2_drag_cap_and_switch_rate.py`,
+`results/t2_drag_cap_and_switch_rate.json`; unit = candidate draw,
+n = 300 per δ, γ = 0.6, same planner):
+| δ | 0.02 | 0.05 | 0.10 | 0.20 | 0.40 | 0.60 | 0.80 |
+|---|---|---|---|---|---|---|---|
+| p(δ) | 0.007 | 0.027 | 0.043 | 0.083 | 0.157 | 0.373 | 0.530 |
+| p·2·gain·dt | 0.004 | 0.016 | 0.026 | 0.050 | 0.094 | 0.224 | 0.318 |
+| δ/(δ − p·2·gain·dt) | 1.25 | 1.47 | 1.35 | 1.33 | 1.31 | 1.60 | 1.66 |
+**It closes at every measured δ**, and the multiplier stays in
+[1.25, 1.66] across a factor 40 in δ — p(δ) is close to linear in δ with
+slope ≈ 0.5, so p(δ)·2·gain·dt ≈ 0.3δ < δ throughout. So the fixed point
+is available and roughly uniform in δ; what remains unproved is A.
+The uniformity is a *measured* property of p, not a proved one: a bound
+would need p(δ) ≤ δ/(2·gain·dt) = 1.667δ for all δ, which the data are
+consistent with but do not establish near 0.
 
 *Why A resists, precisely.* Under identical actions the drag lemma caps
 the separation at 2.06 for all time, so the crude bound is
@@ -2454,10 +2490,21 @@ and they do NOT agree to 10% in the sense of independent estimates: the
 ratio is below the count at EVERY gap (0.894, 0.958, 0.955, 0.949, 0.940,
 0.901) — a one-sided bias, not scatter. Its source is the substitution
 ∫_channel ρ ≈ ρ(π)·γ. Measured folded profile of the first-arrival angle
-(60 000 rollouts, 1 823 arrivals, per 0.1-rad bin): 1.023, 0.982, 0.839,
-0.669, 0.535, 0.398 — π is the MAXIMUM of ρ, so ∫_channel ρ ≤ ρ(π)·γ and
-substituting ρ(π) OVERSTATES the middle factor (by 8% at γ = 0.6, more
-above). A lower bound needs inf_{|θ−π| ≤ γ/2} ρ instead.
+(60 000 ring-free rollouts, 1 826 arrivals, per 0.101-rad bin,
+`results/t3_unrecorded_measurements.json`): **1.029, 0.959, 0.730, 0.681,
+0.527, 0.400, 0.235, 0.151** — π is the MAXIMUM of ρ, so
+∫_channel ρ ≤ ρ(π)·γ and substituting ρ(π) OVERSTATES the middle factor.
+A lower bound needs inf_{|θ−π| ≤ γ/2} ρ instead. The cost is derived per gap
+by the same script rather than by hand (`per_gap` in that JSON):
+| γ | 0.2 | 0.4 | 0.6 | 0.9 | 1.2 |
+|---|---|---|---|---|---|
+| inf ρ over the channel | 1.029 | 0.959 | 0.730 | 0.527 | 0.400 |
+| ρ(π)/inf ρ — inflation of a LOWER bound | 1.00 | 1.07 | **1.41** | 1.95 | 2.57 |
+| ρ(π)/mean ρ — overstatement of the INTEGRAL | 0.99 | 1.02 | **1.12** | 1.16 | 1.41 |
+So at the binding gap 0.6 substituting the peak overstates the integral by
+12% and inflates a lower bound by 1.41×, and both grow with γ. (The
+γ = 0.1 row is omitted: the channel is narrower than one histogram bin
+there, so the binned mean is a binning artifact rather than a measurement.)
 
 **What that leaves, and why it is the right shape.** The lower bound now
 factors into three pieces with different characters:
@@ -2549,11 +2596,11 @@ constant.
 | 0.2 | 1184 | 0.444 | 0.498 | 0.473 | 1.157 |
 | 0.4 | 2332 | 0.889 | 0.797 | 0.614 | 1.184 |
 | 0.6 | 3352 | 1.333 | 0.927 | 0.698 | 1.104 |
-The criterion tracks the non-freeze fraction across the range (0.25 vs
-0.29, 0.50 vs 0.47, 0.80 vs 0.61, 0.93 vs 0.70 — over-predicting at wide
-gaps, where the ballistic approximation degrades as the crossing has room
-to turn), and **f(0) ≈ 1.1 independent of γ**, which is what makes the
-bound linear in γ.
+At r = 4.0 the criterion tracks the non-freeze fraction across the range
+(0.251 vs 0.288, 0.498 vs 0.473, 0.797 vs 0.614, 0.927 vs 0.698 —
+over-predicting at wide gaps, where the ballistic approximation degrades as
+the crossing has room to turn), and **f(0) ≈ 1.0–1.1 folded, independent of
+γ to within 10%**, which is what makes the bound linear in γ.
 
 *A failure mode of the earlier test.* An initial version of this
 criterion used the threshold 6.7γ and appeared refuted: it was
@@ -2611,10 +2658,19 @@ valid at both gaps, loose by ≈ 3×. Evidence: *proved* (Lemma D with the
 arcsine bound), with the range factor P(|R| ≤ 0.3) *measured*, unit
 channel arrival, n = 1184 / 3352.
 
-*(ii) ρ(π), the ring-free arrival-angle density — MEASURED, 2.3× loose.* The arrival
-angle is steerable by a single early action: measured |∂θ/∂a_0| at first
-arrival has median 0.362 and 90th percentile 0.532 (n = 115 steerable
-paths, i.e. those whose arrival step is unchanged by the perturbation).
+*(ii) ρ(π), the ring-free arrival-angle density — MEASURED, 4.06× loose.* The arrival
+angle is steerable by a single early action. Measured |∂θ/∂a_0| at first
+arrival, over 900 configurations of the other actions with a₀ scanned on a
+161-point grid (`scripts/t3_unrecorded_measurements.py` →
+`results/t3_unrecorded_measurements.json`): **median 0.408, p90 0.550,
+observed max 0.580** over n = 2 840 differences on the pairs where the
+ARRIVAL STEP is unchanged —
+which is the only place θ(a₀) is differentiable, so it is the series Lemma
+D's change of variables consumes. Across an arrival-step change θ JUMPS,
+and those finite differences run to **14.41** (median 1.06, p90 2.60,
+n = 668): they are not derivatives and bound nothing, but a root sitting at
+a jump has no derivative for Lemma D to divide by, so the filter is
+recorded rather than applied silently.
 Lemma D with a_max = 1 gives
   **ρ_sub(π) ≥ (1/2)·P(a root exists)/sup|∂θ/∂a_0|**,
 and BOTH factors on the right have to be carried. Two errors were made here
@@ -2628,13 +2684,20 @@ looked right:
       R ≈ 0.030 — while the decomposition's ρ, and the measured 1.0167, are
       per ARRIVAL. Read as stated, "ρ(π) ≥ 0.94" is false by ≈ 30×; read as
       a per-arrival bound it requires dividing by R, which reinstates (a).
-Applied consistently, with a_max = 1 and the sensitivity at its observed
-sup 0.5865: ρ_sub(π) ≥ (1/2)·0.0156/0.5865 = **0.0133 per rad**, i.e.
-per-arrival **ρ(π) ≥ 0.44** against the measured 1.0167 — 2.3× loose, with
-two measured ingredients (a root probability and a sampled sup). Evidence
-label *measured*, not proved: the alternative that cannot be excluded is a
-heavier tail of |∂θ/∂a_0| than 115 paths reveal, and P(root) is itself a
-grid-scan floor (17 roots found, so the scan under-counts). The
+Applied consistently, with a_max = 1, the measured P(root) = **0.0089**
+(8 roots over 900 configurations — the unconditional probability Lemma D
+needs; conditional on the rollout reaching r_out at all it is 0.21) and the
+sensitivity at its observed sup 0.580 (all three emitted, and the product
+below is derived by `scripts/t_campaign_constants.py` rather than
+multiplied out here):
+  ρ_sub(π) ≥ (1/2)·0.00889/0.580 = **0.00766 per rad**,
+i.e. per-arrival **ρ(π) ≥ 0.2537** against the measured 1.0295 — 4.06×
+loose,
+with two measured ingredients (a root probability and a sampled sup).
+Evidence label *measured*, not proved: the alternatives that cannot be
+excluded are a heavier tail of |∂θ/∂a_0| than 3 508 differences reveal, and
+a finer grid finding more roots — P(root) is a grid-scan FLOOR, so it moves
+the bound UP, in the safe direction. The
 sensitivity is what makes this work: one early action sweeps the arrival
 angle over ≈ 1.1 rad, so the angle has a genuine density rather than
 concentrating.
@@ -2644,7 +2707,7 @@ factor now has a derivation:
 | factor | value | status |
 |---|---|---|
 | R = P(ring-free reach) | 0.030 | measured; Θ(1), γ-free — the object Lemma J bounds |
-| ρ(π) | 1.02/rad | ≥ 0.44 per arrival (Lemma D, with P(root) = 0.0156 and a sampled sup): *measured*, 2.3× loose |
+| ρ(π) | 1.03/rad | ≥ 0.2537 per arrival (Lemma D, with the emitted P(root) = 0.00889 and the observed sup 0.580): *measured*, 4.06× loose |
 | f(0) | 1.10–1.16 folded | ≥ 0.35 signed / 0.77 folded (Lemma D + arcsine); the CONVENTION differs between the bound and its use — see below |
 | T ≤ P(\|v_tan\| ≤ r_out·γ/(2k·dt)) | — | derived (ballistic corridor), an UPPER bound: the corridor condition is necessary, not sufficient |
 **The horizon term shrinks by a factor 1.4 but does not vanish.** It
@@ -2652,14 +2715,24 @@ appeared because R counts arrivals at any time while the crossing needs
 k further steps. Building a deadline into the reach factor reduces it:
 define
   **R′ := P(a ring-free rollout reaches r_out within h − k steps)**.
-Measured: R = 0.03020 and R′ = **0.02118** (70.1% of R). But k ≈ 9 is the
-MEDIAN crossing duration, not a bound — the measured p90 is 13–16 steps
-at γ ∈ [0.1, 2.4], and unsuccessful crossings run longer still — so an
-arrival at exactly h − k still fails the horizon for ≳10% of crossings.
-The deadline therefore leaves a residue of order P(crossing time > k) ≈ 0.1
-rather than removing the term. (The implementation checks
-`hit ≤ h_episode − k` on a 0-based index, so it in fact leaves 8 steps,
-not 9; the reported R′ is the 8-step quantity.)
+*Measured* (`scripts/t3_unrecorded_measurements.py` →
+`results/t3_unrecorded_measurements.json`, n = 200 000 ring-free rollouts):
+R = **0.03020**, and the deadline version depends on how the index is read —
+  leaving k = 9 steps (`hit ≤ h − k − 1` on a 0-based index): R′ = **0.02007**;
+  leaving k − 1 = 8 steps (`hit ≤ h − k`):                    R′ = **0.02118**.
+The second is the one previously reported, so the published R′ is the 8-step
+quantity; both are emitted rather than left to inference.
+And k ≈ 9 is the MEDIAN crossing duration, not a bound. Measured durations
+per channel arrival that reaches the interior (same JSON):
+| γ | 0.1 | 0.2 | 0.4 | 0.6 |
+|---|---|---|---|---|
+| median | 8 | 8 | 9 | 9 |
+| mean | 8.78 | 8.85 | 9.37 | 9.72 |
+| p90 | 14 | 13 | 14 | 14 |
+| max | 16 | 27 | 27 | 34 |
+So an arrival at exactly h − k still fails the horizon for ≳10% of
+crossings, and the tail runs to 34 steps. The deadline therefore leaves a
+residue of order P(crossing time > k) ≈ 0.1 rather than removing the term.
 
 **R′ is bounded below by ISOTROPY (no density estimate needed).** For the
 2D heading action the thrust is gain·(cos φ, sin φ) with φ = πa/a_max
@@ -2850,10 +2923,18 @@ censored-filtration cells (γ ∈ {0, 0.6, 1.2, 1.8, 2.4} × seeds
     specificity failure of the 19/20 result, now DIAGNOSED: it is not a
     near-threshold finite bar but a structural C2-type never-fillable
     cycle (the censor missed the closing chord and censored its fills).
-  - The margin-0.3 rejection reason is also corrected by measurement:
-    it repairs the gap-0 false negatives (5/5) but RESTORES THE BRIDGE
-    at γ = 0.6 (5/5 false loops, all finite) — it was rightly rejected,
-    for specificity, not for infinite bars.
+  - The margin-0.3 rejection reason is also corrected by measurement
+    (`scripts/t7_margin_variant_betti.py` →
+    `results/t7_margin_variant_betti.json`, both margins over the same
+    cells): margin 0.3 gets gap 0 right in **5/5** seeds but **0/5** at
+    γ = 0.6, where it reports β̂₁ = 1 in every seed, all bars finite. So it
+    was rightly rejected, for specificity, not for infinite bars.
+    The mechanism is sharper than "censors too few edges": at margin 0.3 it
+    censors **0 edges** on average, against 2 297 (γ = 0) and 1 978
+    (γ = 0.6) at margin 0.0 — the variant degenerates to plain Rips, which
+    is why it inherits plain Rips's answer (β̂₁ = 1) at both gaps. For the
+    record the same run puts margin 0.0 at 3/5 on γ = 0 (the two gap-0
+    false negatives) and 4/5 on γ = 0.6.
 The two-sided conclusion for the estimator problem: infinite bars under
 edge-censoring are (a) per-sample decidable (C1), (b) semantically
 AMBIVALENT — the same mechanism encodes the true enclosure at γ = 0 and
