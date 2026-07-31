@@ -188,6 +188,10 @@ def main():
         "exact_identity_worst_start": exact,
         "superseded_invalid_bound": invalid,
         "annulus_mass_below_claimed_floor": below / max(1, in_ann),
+        # The documents print this as a percentage, so emit that form
+        # too rather than leaving the printed number unbacked.
+        "annulus_mass_below_claimed_floor_percent":
+            100.0 * below / max(1, in_ann),
         "note": (
             "reach_lower_bound is the optimised VALID window bound, rounded "
             "down. superseded_invalid_bound is what the tangent-cone reading "

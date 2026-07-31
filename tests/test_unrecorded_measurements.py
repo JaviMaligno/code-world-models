@@ -225,3 +225,32 @@ def test_t5f_truncation_beats_the_counting_bound_by_orders():
             assert r["n_free_term"] < 1e-6 * (1.0 / r["K"]), r
     # And the certified term is n-FREE: it depends on the weights, not on n.
     assert d["truncation_theorem"]["E_eff"] > 1.0
+
+
+def test_t7_union_h1_measures_the_estimator_s_own_input():
+    # The equality hypothesis must be tested on the cloud the estimator
+    # CONSUMES (deduped and capped), not on the raw positions -- those are
+    # different complexes, and a beta_1 measured on the wrong one is what put
+    # a 114-166 figure into the paper.
+    d = _load("t7_union_h1.json")
+    for key, c in d["cells"].items():
+        assert c["n_free_points"] <= c["cap"], (key, c)
+        assert c["n_free_raw"] > c["n_free_points"], (
+            "the raw cloud must be strictly larger, or the cap did nothing")
+        # As measured, equality holds on every cell: the free-merge count
+        # coincides with the relative rank there.
+        assert c["equality_hypothesis_holds"], (key, c["scales"])
+
+
+def test_t7_exhibit_shows_the_two_ranks_can_differ():
+    # A guard on the reason the estimator is reported as a LOWER bound: the
+    # circle-plus-centre exhibit must keep free-merge 0 against relative rank
+    # >= 1 at every scale. If this ever came out equal, the lower-bound
+    # framing would no longer be justified by anything.
+    d = _load("t7_union_h1.json")
+    ex = d["exhibit"]
+    assert ex["free_merge_count"] == 0
+    assert ex["scales"], "the exhibit must report at least one scale"
+    for r in ex["scales"]:
+        assert r["lower_bound_on_relative_rank"] >= 1, r
+        assert r["betti1_K"] > r["betti1_L"], r

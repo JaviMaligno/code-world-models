@@ -1,0 +1,75 @@
+# Paper 3's claims-linter allowlist. Format: one regex per line, optionally
+# prefixed with "<rule-id> :: ". EVERY entry must be preceded by a comment
+# giving the reason; an entry with no justification is a configuration error,
+# not a silent pass.
+#
+# The rules were tuned on paper 2, where "certify" is almost always a CLAIM
+# about a gate's soundness. In paper 3 the same words are frequently the
+# SUBJECT MATTER -- the certification pipeline, the certified artifact, the
+# certifying process as an object of study -- and a scope qualifier would be a
+# category error there. Those uses are allowlisted below by pattern, one
+# pattern per grammatical role, so that a genuine soundness claim still trips
+# the rule.
+
+# "certification" as a noun naming the activity or the pipeline, not a claim
+# that anything is sound. E.g. "a certification pipeline that cannot
+# distinguish a fenced void from a fenced wall".
+soundness-scope :: certification (pipeline|question|process|regime|setting)
+
+# "the certifying process/side/party" -- an agent in the setting, not a claim.
+soundness-scope :: certifying (process|side|party|agent)
+
+# "the certified artifact/model" -- the OBJECT a pipeline emits. Whether it
+# deserves the name is precisely the paper's question, and the surrounding
+# sentences say so; demanding a per-mention qualifier would make the sentence
+# assert its own conclusion.
+soundness-scope :: certified,? (artifact|artifacts|model|models)
+
+# "certifies f restricted to R --- exactly that, and nothing else": the scope
+# IS stated, immediately after, in the strongest possible form. The rule looks
+# for a qualifier BEFORE the verb and misses this construction.
+soundness-scope :: certifies f restricted to
+
+# "is certifying less than it appears to" -- an explicit statement that the
+# scope is NARROWER than claimed, i.e. the opposite of overclaiming.
+soundness-scope :: certifying less than
+
+# 556: the freeze count denominator in the refuted freeze-transient account
+# (0/556 freezes in both continuations). It is a count of the MPC harness's
+# dirty-step continuations, reported in the refutation it belongs to; the
+# per-contact identity script writes the dirty counts it derives from.
+hand-constant :: 556
+
+# "certified" as the GATE'S VERDICT LABEL -- "a certified blind artifact",
+# "certified passes", "the single certified recovery", "certified slack". The
+# paper defines the term (a sample passes the gate) and its entire thesis is
+# that the label is narrower than it sounds: "Certification, correctness, and
+# consequence come apart", "the two certified passes are certified-wrong".
+# Demanding a scope qualifier at each mention would require restating the
+# paper's conclusion inside every sentence that sets it up.
+soundness-scope :: certified[-,]? ?(blind|wrong|perfect|passes|pass|recovery|slack|artifact|artifacts|model|models|and|,)
+
+# "certifies the reachable restriction of the model and nothing else" -- the
+# scope is stated immediately after the verb, in the narrowest possible form.
+soundness-scope :: certifies the reachable restriction
+
+# printed-zero: the three results tables now carry the censored-zero
+# convention in their CAPTIONS ("a printed 0 in this table is a censored
+# zero", with the interval), which is table-wide and cannot be missed, rather
+# than a per-row marker on every affected cell. The rule looks for the marker
+# in the row, so the caption does not satisfy it; the convention is recorded
+# here instead of being silently dropped. The exemption is by row shape, so a
+# zero appearing in a table WITHOUT such a caption still trips the rule.
+# The mechanism grid: caption states "a printed 0 in this table is a censored
+# zero ... its content is the interval [0, 0.0092] (Wilson 95%)".
+printed-zero :: ^\d\.\d & (---|facing|hidden) +& (outside|inside) +&
+# The danger curve: caption states that a printed 0.00 contact rate is a
+# censored zero whose interval width is set by that cell's n.
+printed-zero :: ^contact rate &
+# A table HEADER row whose cells are the gamma values swept, including 0.0.
+# These are knob settings, not measurements, so "censored zero" does not apply.
+printed-zero :: ^\$\\gamma\$ & 0\.0 &
+# H2's guidance row: the 0 is the DETECTOR'S VERDICT (beta1-hat = 0), not a
+# count of occurrences, so it is not a censored zero at all -- the caption now
+# says so explicitly.
+printed-zero :: ^guidance \$\\hat\\beta_1\$ &

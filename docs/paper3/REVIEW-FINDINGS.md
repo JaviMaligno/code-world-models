@@ -254,24 +254,44 @@ Guarded by `test_t5f_prime_respects_its_own_side_condition` (which fails if
 the rate ever comes out *better* than 0.9104, i.e. if the factor is dropped
 again) and `test_t5f_truncation_beats_the_counting_bound_by_orders`.
 
+## This round: four more closed, and a reviewer figure corrected
+
+| finding | resolution |
+|---|---|
+| **T3 #12** — "the defect is exactly zero in 6 of 11 pairs" | It is a property of the SAMPLE. `scripts/t3_funnel_defect_analysis.py` (no re-simulation) shows **3 of the 6 are ties**, and only **2 of 11 pairs have the sign of a rise resolved at 95%**; the pair (0.2, 0.4) is a DROP, so "the whole range γ ≤ 0.9" is false. Separation: **26.0×** on a consistent convention (upper limit both sides, comparable with the 16.9×), not 46.8× from point estimates. Unimodality is relabelled *consistent-with*. |
+| **T7 #9** — the interleaving map defined two ways | π **is** the path-matching bijection the hypothesis supplies, not a nearest-point map (which need not be simplicial on the path-augmented complexes). π′ := π⁻¹ on Y, so π′π\|_Y = id and contiguity is needed only on the metric part — without which the step fails on path edges, as the proof now says explicitly. |
+| **Prop R4** — one δ where there are two shells | The bound is **δ_in + δ_out = 0.381** (measured 0.214 and 0.167 — they differ). And the distinction the argument turns on is stated: the BOUND is sample-free from 120 rollouts on, the realized bar length is not (0.197 → 0.253, +29%); what decides the estimator is that τ grows faster. |
+| **Claim contract** | The linter is on this branch with a paper-3 baseline. **51 errors → 13**, none hidden: `docs/paper3/claims-allowlist.txt` carries a written justification per entry (the linter rejects an entry without one), the three results tables state the censored-zero convention in their captions, and the ratchet runs in CI so the remainder can shrink but never grow. |
+
+**And the linter caught five hand constants of mine**, including one
+*measurement* I had put in the paper citing the reviewer with no artifact of my
+own — β₁ of the union complex. Emitting it corrected the claim:
+
+| was | is |
+|---|---|
+| "β₁ of the union runs 114–166 across scales, so the equality hypothesis is measured FALSE and the estimator is only a surrogate" | Measured on the cloud the estimator actually consumes (deduped, capped at 90 — not the raw ≈3 100 free positions), **β₁(K) = β₁(L) at every scale in every cell**, so **the hypothesis HOLDS** and the free-merge count coincides with rank H₁(K,L) there. The 114–166 was measured on a *different complex*. What survives is the **direction** correction (`rank ker ≤ rank H₁(K,L)`, which was inverted) and the circle-plus-centre exhibit showing the two *can* differ — free-merge 0 against relative rank 1. So the estimator is reported as a lower bound because it is one in general, not because it fails here. |
+| radial-thickness band [1.661, 1.803], "does not contain the maximum 1.816" | Derived from the file's own radii: **[1.708, 1.826]**, which covers the maximum and NOT the minimum 1.674 — the opposite conclusion. Hand-computing from rounded endpoints (3.5, 3.8, 3.65) inverts it. |
+
+Both corrections came from the same reviewer's hand-computed numbers, which I
+copied without an artifact. `scripts/t7_union_h1.py`,
+`scripts/t3_funnel_defect_analysis.py` and the emitter's derived band close
+that route.
+
 Still open, in the order the "Order of work" section sets:
 
-1. **T3 #12** — the funnel-profile's "exactly zero" claims rest on the sign of
-   small count differences; three of six zeros are ties in a noisy estimate,
-   one "rise" pair is a drop, and the 16.9×/25.5×/46.8× separations mix Wilson
-   bounds with point estimates.
-2. **T7 #9** — the R5 interleaving map is defined two incompatible ways
-   (nearest-point vs the path-matching bijection); the pair-contiguity step
-   needs the stronger one.
-3. **Prop R4** — the bar-length bound uses a single δ where the two shells have
-   different thicknesses (0.213 and 0.167, so the bound is their sum, 0.381),
-   and "set by the shells and not the sample size" sits awkwardly beside a
-   realized length that grows 58% from 40 to 320 rollouts.
-4. **Claim contract** — four headings carry no scope of their own;
-   `audit_paper_claims.py` reports 50 errors on paper 3 with no paper-3
-   baseline; and the drag-cap guard still runs 60×150 while the text quotes
-   400×200 (both sizes are now emitted, so the guard can simply cite the
-   artifact).
+1. **The claims linter's residue under the ratchet**: 12 `soundness-scope`, 1
+   `printed-zero`, 1 `hand-constant`. Each is a judgement call about how much
+   scope a sentence must restate; the ratchet prevents growth while they are
+   worked through.
+2. **The L_v measurement**, which does not reproduce. Recovering a usable
+   estimate needs a separation sweep DESIGNED to have signal at each ‖Δv‖ —
+   the dirty steps supply whatever separations they happen to have, and the
+   smallest is 0.001, far too small for CRN pairing to resolve. Until then the
+   play-cost bound that rested on it stays withdrawn.
+3. **T5-F′'s floor**, which is irremovable within the exponential-moment
+   scheme (that is now a theorem, not a gap). Removing it at all would need a
+   different scheme — one that does not require a finite
+   `E[(1 − cγ²σ₁²/m)^{−1/2}]`.
 
 ## Order of work
 

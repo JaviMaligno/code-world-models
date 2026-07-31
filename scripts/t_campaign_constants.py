@@ -306,10 +306,46 @@ def main():
             "t5f_z1_factor", ["assembled_nominal", "Z1_factor"]),
         "T5F_effective_steps": measured(
             "t5f_z1_factor", ["truncation_theorem", "E_eff"]),
+        "annulus_mass_below_floor_percent": measured(
+            "t3_isotropy_window_bound",
+            ["annulus_mass_below_claimed_floor_percent"]),
+        "prop7_informative_units": measured(
+            "t3_funnel_defect_analysis", ["prop7_informative_units"]),
+        "funnel_separation_ci_consistent": measured(
+            "t3_funnel_defect_analysis", ["separation_ci_consistent"]),
+        "shell_bar_length_bound": None,      # filled below from the shells
         "conditional_spread_A_t": measured(
             "t2_unrecorded_measurements",
             ["cells", "conditional_spread|0.6|40", "A_t_spread"]),
     }
+
+    # Prop R4's bar-length bound is the SUM of the two shells' thicknesses,
+    # which differ; a single delta is the wrong constant. Derived from the
+    # committed shell geometry at its largest sample.
+    _shells = measured("t7_shell_geometry", [-1])
+    if isinstance(_shells, dict):
+        _din = _shells["inner_shell"][1] - _shells["inner_shell"][0]
+        _dout = _shells["outer_shell"][1] - _shells["outer_shell"][0]
+        C["measured"]["shell_delta_in"] = _din
+        C["measured"]["shell_delta_out"] = _dout
+        C["measured"]["shell_bar_length_bound"] = _din + _dout
+    # The radial-thickness band that Lemma B's corollary compares against.
+    _bg_all = measured("t1_bar_geometry", [])
+    if isinstance(_bg_all, list) and _bg_all:
+        # Only rows with a FINITE death carry a ratio; count the dropped ones
+        # rather than letting a silent subset stand in for the whole file.
+        _bg = [r for r in _bg_all if r.get("death_over_rho") is not None]
+        C["measured"]["bar_geometry_rows"] = len(_bg_all)
+        C["measured"]["bar_geometry_rows_used"] = len(_bg)
+        if _bg:
+            _rho = [r["rho"] for r in _bg]
+            _rbar = sum(_rho) / len(_rho)
+            C["measured"]["radial_band_lo"] = math.sqrt(3) * min(_rho) / _rbar
+            C["measured"]["radial_band_hi"] = math.sqrt(3) * max(_rho) / _rbar
+            C["measured"]["death_over_rho_min"] = min(r["death_over_rho"]
+                                                      for r in _bg)
+            C["measured"]["death_over_rho_max"] = max(r["death_over_rho"]
+                                                      for r in _bg)
 
     # Lemma D applied to the arrival angle, DERIVED from the two emitted
     # ingredients rather than multiplied out by hand: a_max = 1 gives the

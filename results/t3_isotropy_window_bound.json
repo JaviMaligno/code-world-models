@@ -5,6 +5,7 @@
   ],
   "P_window": 0.0832493793021151,
   "annulus_mass_below_claimed_floor": 0.4889696286319834,
+  "annulus_mass_below_claimed_floor_percent": 48.89696286319834,
   "exact_identity_worst_start": 0.013804391934324475,
   "min_half_angle_over_window": 0.3067598840610133,
   "n_radial": 400000,

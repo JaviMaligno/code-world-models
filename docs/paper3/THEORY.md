@@ -790,11 +790,16 @@ w = 1 cannot be null-homologous. ∎
 **Corollary (the detector law, proved half).** The bridged bar has
 birth = 2ρ̃₁ sin(Δθ_max/2) and death ≥ √3 ρ̃₂ with ρ̃₁, ρ̃₂ ∈
 [r_min, r_max]; the measured death/ρ̄ spread is **[1.674, 1.816]**
-(15 finite bars, `results/t1_bar_geometry.json`; min at γ = 1.5 seed 20000,
-max at γ = 1.8 seed 10000), straddling √3 = 1.732. The radial-thickness
-band accounts for the lower part of that spread but NOT for its maximum:
-√3·[3.5, 3.8]/3.65 = [1.661, 1.803], which excludes 1.816. So the
-thickness explains the spread's origin, not its full extent. The law
+(15 finite bars of 18 rows, `results/t1_bar_geometry.json`; min at γ = 1.5
+seed 20000, max at γ = 1.8 seed 10000), straddling √3 = 1.732.
+The radial-thickness band, derived from that file's own radii rather than
+from rounded endpoints (`scripts/t_campaign_constants.py`), is
+√3·[ρ_min, ρ_max]/ρ̄ = **[1.708, 1.826]**. It covers the spread's upper end
+— including the maximum 1.816 — but NOT its minimum 1.674. So the thickness
+accounts for the ratios above √3 and leaves the low tail unexplained.
+(Deriving the band matters: computing it by hand from r ∈ [3.5, 3.8] with
+ρ̄ = 3.65 gives [1.661, 1.803] and inverts the conclusion, appearing to
+exclude the maximum instead of the minimum.) The law
 "β̂₁ = 1 iff √3ρ − 2ρ sin(Δθ_max/2) > τ" is therefore proved as a
 GUARANTEE in one direction: whenever √3 r_min − 2 r_max sin(Δθ_max/2) > τ,
 the bar exists and is persistent (Lemma B upper + Lemma D⁻), so the
@@ -2199,7 +2204,10 @@ a factor 16.9.** M1 and M2 are therefore established to within a defect
 violations at this sample size. They are no longer conjectures.
 (iii) **The funnel profile is unimodal and vanishes at both ends** —
 0 at γ = 0 (nothing to enter), rising to 22/50 000 at γ ∈ [0.6, 0.9],
-back to 0 for γ ≥ 3.2. This is the mechanism the name claims: funnelling
+back to 0 for γ ≥ 3.2. Unimodality is the SHAPE of the sample: at
+50 000 rollouts the counts (0, 4, 10, 9, 22, 22, 18, 6, 2, 0, 0, 0) resolve
+only two of the eleven adjacent changes at 95%, so the profile is
+*consistent-with* unimodal rather than measured to be. This is the mechanism the name claims: funnelling
 needs BOTH a wall to freeze against and a channel to thread, so it dies
 when either disappears. By T3-P(c), M1 holds EXACTLY (defect provably
 zero if f = 0) throughout the saturated region γ ≥ 3.2, where the
@@ -2214,12 +2222,25 @@ strictly stronger than T3-P at no cost, and with a qualitative
 consequence: **wherever f is nondecreasing the defect is EXACTLY ZERO**
 and M1 holds outright, with no bound on f needed at all. Only a DROP in
 the funnel mass can break monotonicity.
-*Measured on the grid* (adjacent pairs): the defect is exactly 0 in
-**6 of 11** pairs — every pair on which f rises, i.e. the whole range
-γ ≤ 0.9 where T3-P′ is vacuous and where the old statement was weakest.
-On the remaining pairs the worst defect falls from 4.4·10⁻⁴ to
-**2.4·10⁻⁴**, so the separation against the effect size 0.0112 improves
-from 25.5× to **46.8×**. The two earlier bounds are subsumed: T3-P′
+*Measured on the grid* (adjacent pairs;
+`scripts/t3_funnel_defect_analysis.py` →
+`results/t3_funnel_defect_analysis.json`, which reads the committed funnel
+counts and carries the sample's own uncertainty):
+the SAMPLE defect is exactly 0 in **6 of 11** pairs — but that is a
+property of the sample, and the three readings it invites are different:
+  • **3 of the 6 are TIES** (22 vs 22, 0 vs 0, 0 vs 0). A tie is not a
+    rise: at 22 vs 22 the true sign is about a coin flip.
+  • **Only 2 of the 11 pairs have a resolved rise at 95%** ((0, 0.1) and
+    (0.4, 0.6)). Those two are where "the defect is exactly zero" is a
+    statement about f rather than about this sample.
+  • The claim that the zeros are "every pair on which f rises, i.e. the
+    whole range γ ≤ 0.9" is **false**: (0.2, 0.4) is a DROP, 10 → 9.
+The worst defect is **2.4·10⁻⁴** as a point estimate and **4.3·10⁻⁴** as a
+95% upper limit. Against the effect size 0.0112 that is a separation of
+46.8× or **26.0×** — and 26.0× is the figure to quote beside the 16.9×,
+because 16.9× also uses an upper bound on f, while 46.8× is a point
+estimate. Mixing the two conventions is what made the improvement look
+larger than it is. The two earlier bounds are subsumed: T3-P′
 (f ≤ r) still covers the wall-free end by proof, and the drop form
 covers the small-γ end by making the defect vanish identically.
 *What this changes about the target.* The open problem is no longer "a
@@ -3023,22 +3044,32 @@ with equality iff H₁(K) = im H₁(L). The estimator computes the KERNEL
 rank, i.e. the lower bound — the direction matters and an earlier version
 of this proposition had it inverted, reading rank H₁(K, L) as bounded above
 by the kernel rank.
-The equality hypothesis is not satisfied on our data and is never tested by
-the estimator (neither `free_merge_persistence` nor
-`scripts/t7_relative_estimator.py` computes H₁(K)). On the committed cell
-(γ = 0, seed 10000, one-sided; 74 contact + 360 path points) β₁(K_s) is
-125/166/164/114 at s = 0.20/0.30/0.40/0.50 against β₁(L_s) =
-119/164/162/113, so rank H₁(K, L) ≥ β₁(K) − β₁(L) ≥ 1 at every one of
-those scales while the union-find returns max_rank = 0. A minimal exhibit:
-contact = a 24-point circle of radius 1, free evidence = its centre as a
-one-vertex path — union-find 0, brute-force rank H₁(K, L) = 1 for
-s ∈ [0.26, 0.9].
-**Consequence for what the numbers below mean.** Every reported figure —
-the 20/20 vs 9/20 discrimination, "at γ = 0 it does not fire", Prop R4's
-structural limit — is a statement about the free-merge estimator, a
-computable lower bound for the relative rank, NOT about relative homology.
-In particular the one-sided γ = 0 geometry is the exhibit above, so the
-"gauge ⇒ vacuously zero" reading is a property of the surrogate.
+The equality hypothesis was never tested by the estimator — neither
+`free_merge_persistence` nor `scripts/t7_relative_estimator.py` computes
+H₁(K) — so `scripts/t7_union_h1.py` measures it
+(`results/t7_union_h1.json`), and the answer depends on WHICH complex one
+measures:
+  • **On the cloud the estimator actually consumes** — deduped and capped at
+    the pre-registered budget of 90 points, not the raw ~3 100 free
+    positions — β₁(K_s) = β₁(L_s) at **every** scale in every cell tested
+    (γ = 0 seeds 10000/20000 and γ = 0.6 seed 10000; the common value is 0,
+    rising to 1 or 2 at s = 0.4–0.5). **So the hypothesis HOLDS there**, and
+    on these cells the free-merge count coincides with rank H₁(K, L).
+  • **On the raw cloud** it does not — but that is a different complex, and a
+    β₁ measured there says nothing about the estimator's input. Quoting it
+    as if it did is the mistake this measurement corrects.
+**The estimator is nonetheless only a LOWER bound in general**, and must be
+reported as one. The minimal exhibit: contact = a 24-point circle of radius
+1, free evidence = its centre as a one-vertex path. The free part is a
+single component, so nothing is glued and the free-merge count is **0**,
+while β₁(K) − β₁(L) = 1 − 0 = 1 forces rank H₁(K, L) ≥ **1** at
+s = 0.3/0.5/0.7/0.9. The two quantities CAN differ; on this instrument's
+cells they do not.
+**Consequence for what the numbers below mean.** The 20/20 vs 9/20
+discrimination and the γ = 0 behaviour are statements about relative
+homology on the cells measured, not merely about a surrogate — the
+correction to Prop R2 is the INEQUALITY'S DIRECTION, which was inverted,
+not the identification of the quantity.
 That kernel rank is
   #components of VR(Y; s) − #components of VR(X ∪ Y; s) that contain a
   point of Y,
@@ -3097,16 +3128,30 @@ along the face instead of penetrating. Consequently, writing w =
 r_out − r_in for the band thickness and δ for the shell thickness:
   • free-direct connection scale = w exactly (inside free reaches r_in,
     outside free reaches r_out);
-  • contact-mediated connection scale ≥ w − 2δ;
-so the relative bar has length ≤ 2δ, set by the shells and NOT by the
-sample size, while τ = 3 × median contact spacing GROWS with the sample
-(more contacts spread the deduped-and-capped cloud over more of each
-face). The estimator therefore degrades with more evidence.
+  • contact-mediated connection scale ≥ w − δ_in − δ_out;
+so the relative bar has length ≤ **δ_in + δ_out**. The two shells have
+DIFFERENT thicknesses, so a single δ is not the right constant: measured
+δ_in = 0.214 and δ_out = 0.167, giving the bound **0.381**, not 2δ for
+either one alone.
+The bound is set by the shells; the REALIZED length is not, and the
+distinction matters because the argument turns on it. τ = 3 × median
+contact spacing grows with the sample (more contacts spread the
+deduped-and-capped cloud over more of each face), and so does the bar.
 *Measured* (γ = 0, two-faced evidence via a start distribution reaching
-both faces, 40/120/320 rollouts per arm): shells saturate at
-r ∈ [3.50, 3.71] and [4.83, 5.00] (δ ≈ 0.21, 0.17, unchanged from 120 to
-320); bar length 0.160 / 0.197 / 0.253 against τ = 0.183 / 0.324 /
-0.439. The bar is sub-threshold at every sample size and the gap widens.
+both faces, 40/120/320 rollouts per arm, `results/t7_shell_geometry.json`):
+| rollouts | 40 | 120 | 320 |
+|---|---|---|---|
+| δ_in | 0.141 | 0.213 | 0.214 |
+| δ_out | 0.117 | 0.167 | 0.167 |
+| bound δ_in + δ_out | 0.259 | 0.380 | 0.381 |
+| bar length | 0.160 | 0.197 | 0.253 |
+| τ | 0.183 | 0.324 | 0.439 |
+The shells saturate from 120 rollouts on, so the BOUND is sample-free
+above that — but the realized bar still drifts 0.197 → 0.253 (+29%) while
+the bound holds at 0.381, so "not set by the sample size" is true of the
+bound and false of the length. What decides the estimator is that τ grows
+faster (0.324 → 0.439) than the bar: sub-threshold at every sample size,
+with the gap widening.
 *Consequence.* No threshold calibration recovers γ = 0: the obstruction
 is in the EVIDENCE, not the rule. What would fix it is evidence that
 enters the band at speed on both faces — which freeze semantics
@@ -3125,20 +3170,33 @@ d_H ≤ ε vertex-wise along matched paths. Then the relative persistence
 modules of (VR(X ∪ Y; ·), VR(Y; ·)) and (VR(X′ ∪ Y′; ·), VR(Y′; ·)) are
 2ε-interleaved, so their diagrams satisfy
   d_bottleneck ≤ 2ε.
-*Proof.* Choose π: X ∪ Y → X′ ∪ Y′ sending each point to a nearest point
-of the other set, taking Y into Y′ and X into X′ (possible separately on
-each part by the two Hausdorff hypotheses). For p, q at distance ≤ s,
-‖π(p) − π(q)‖ ≤ s + 2ε, so π induces simplicial maps VR(X ∪ Y; s) →
-VR(X′ ∪ Y′; s + 2ε) that carry VR(Y; s) into VR(Y′; s + 2ε): a map of
-PAIRS. With path input, matched path edges (present at scale 0 on both
-sides) are preserved because π matches paths, so π stays simplicial on
-the augmented complexes. Symmetrically for π′. The composites π′π and
-ππ′ are contiguous to the inclusions (any point and its double image lie
-within 2ε, so images of a simplex together with the simplex span a
-simplex at the shifted scale), hence induce the interleaving identities
-on relative homology, which is functorial for maps of pairs. Algebraic
-stability for interleaved modules (Chazal et al.) gives the bottleneck
-bound. ∎
+*Proof.* **π is the path-matching bijection supplied by the hypothesis, not
+a nearest-point map.** This distinction is the whole content of the path
+clause, and an earlier version of this proof used both definitions in
+different steps. A nearest-point map need not send consecutive path
+vertices to consecutive path vertices, so it is not simplicial on the
+path-augmented complexes: a path edge (p, q) with ‖p − q‖ > s + 2ε would
+map to a non-edge. The hypothesis gives more than Hausdorff closeness — it
+says the paths correspond in pairs with ‖p − π(p)‖ ≤ ε vertex-wise — so
+take π to BE that correspondence, extended to X by any nearest-point
+choice.
+Then: for p, q at distance ≤ s, ‖π(p) − π(q)‖ ≤ s + 2ε, so π induces
+simplicial maps VR(X ∪ Y; s) → VR(X′ ∪ Y′; s + 2ε) carrying VR(Y; s) into
+VR(Y′; s + 2ε) — a map of PAIRS — and matched path edges are preserved
+because π IS the matching, so π stays simplicial on the augmented
+complexes.
+For the reverse take **π′ := π⁻¹ on Y′**, which is available precisely
+because π restricted to Y is a bijection onto Y′; on X′ take any
+nearest-point choice. Then **π′π|_Y = id**, and contiguity of π′π to the
+inclusion is needed only on the metric part X — which is the standard
+argument (any point and its double image lie within 2ε, so a simplex and
+its image span a simplex at the shifted scale). Without π′π|_Y = id the
+contiguity step FAILS on the path part: for a path edge σ = {p, q} the
+simplex {p, q, π′π(p), π′π(q)} needs the pair (p, π′π(q)), which is
+neither short nor a path edge.
+Hence the interleaving identities hold on relative homology, which is
+functorial for maps of pairs, and algebraic stability for interleaved
+modules (Chazal et al.) gives the bottleneck bound. ∎
 **Why the path clause is necessary (a counterexample at ε = 0).** The
 clause is not a technical convenience; without it R5 is FALSE. Take one
 fixed point set Y and two different groupings of it into paths: in P the

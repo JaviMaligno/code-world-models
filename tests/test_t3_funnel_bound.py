@@ -211,6 +211,11 @@ def test_t3_drag_caps_identical_action_divergence():
     env = RingField2D()
     dx0, dv0 = 0.06, 0.6
     cap = dx0 + dv0 / env.drag
+    # The documented figure is the 400 x 200 sweep, emitted by
+    # scripts/t2_drag_cap_and_switch_rate.py. This guard runs the cheap
+    # 60 x 150 version and cross-checks the emitted one, so the text's sample
+    # size names a run that exists rather than one no committed code performs.
+    _cross_check_emitted_drag_cap(cap)
     rng = random.Random(7)
     worst = 0.0
     for _ in range(60):
@@ -393,6 +398,25 @@ def _wilson_upper(k, n, z=1.96):
     centre = p + z * z / (2 * n)
     half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))
     return (centre + half) / denom
+
+
+def _cross_check_emitted_drag_cap(cap):
+    """The emitted sweep must agree with this test's cap and respect it."""
+    import json
+    import pathlib
+    p = (pathlib.Path(__file__).resolve().parents[1] / "results"
+         / "t2_drag_cap_and_switch_rate.json")
+    if not p.exists():
+        return
+    cells = json.loads(p.read_text())["cells"]
+    rows = [v for k, v in cells.items() if k.startswith("drag_cap|")]
+    assert rows, "the drag-cap sweep is emitted but has no cells"
+    for v in rows:
+        assert abs(v["cap"] - cap) < 1e-12, (v["cap"], cap)
+        assert v["worst_observed"] <= v["cap"] + 1e-9, v
+    # The documented size must be among them, or the text quotes a run that
+    # nothing in this repository performs.
+    assert any(v["n_states"] == 400 and v["n_steps"] == 200 for v in rows)
 
 
 def test_t3_quadratic_lower_bound_on_direct_entries():

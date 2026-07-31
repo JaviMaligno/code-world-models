@@ -47,5 +47,13 @@ jobs:
         run: PYTHONPATH=src python scripts/t_campaign_constants.py
       - name: Audit paper 3's quoted constants against the derived values
         run: PYTHONPATH=src python scripts/audit_paper3_numbers.py
+      # The claims ratchet: scope, evidence labels and censored zeros. It fails
+      # only when a rule goes ABOVE results/paper_claims_baseline.json, so the
+      # remaining count can shrink but never grow. Exemptions live in
+      # docs/paper3/claims-allowlist.txt and each carries a written
+      # justification -- an entry without one is a hard error, not a pass.
+      - name: Lint paper 3's claims against the ratchet
+        run: |
+          PYTHONPATH=src python scripts/audit_paper_claims.py             docs/paper3/main.tex             --allowlist docs/paper3/claims-allowlist.txt
       - name: Run test suite
         run: pytest -q

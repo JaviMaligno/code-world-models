@@ -1,0 +1,240 @@
+{
+ "defect_exactly_zero_in_sample": 6,
+ "effect_size_r_int_range": 0.01124,
+ "n_pairs": 11,
+ "note": "defect_exactly_zero_in_sample counts pairs whose SAMPLE defect is 0; of_which_are_ties says how many of those are ties, where the true sign is undetermined (a tie is not a rise). rises_with_the_sign_RESOLVED_at_95 is the only count that supports a claim about f itself. separation_point_estimate mixes conventions with the Wilson-based 16.9x figure; separation_ci_consistent uses an upper limit on both sides and is the one to quote beside it.",
+ "of_which_are_ties": 3,
+ "pairs": [
+  {
+   "defect_point": 0.0,
+   "defect_wilson_style_upper": 0.0,
+   "f_hi_count": 4,
+   "f_hi_wilson": [
+    3.111036046966462e-05,
+    0.0002057034446520603
+   ],
+   "f_lo_count": 0,
+   "f_lo_wilson": [
+    0.0,
+    7.682609729729246e-05
+   ],
+   "gap_hi": 0.1,
+   "gap_lo": 0.0,
+   "kind": "rise",
+   "n": 50000,
+   "sign_resolved_at_95": true
+  },
+  {
+   "defect_point": 0.0,
+   "defect_wilson_style_upper": 2.6660816154827104e-05,
+   "f_hi_count": 10,
+   "f_hi_wilson": [
+    0.00010864203419457872,
+    0.0003681533326637948
+   ],
+   "f_lo_count": 4,
+   "f_lo_wilson": [
+    3.111036046966462e-05,
+    0.0002057034446520603
+   ],
+   "gap_hi": 0.2,
+   "gap_lo": 0.1,
+   "kind": "rise",
+   "n": 50000,
+   "sign_resolved_at_95": false
+  },
+  {
+   "defect_point": 1.9999999999999998e-05,
+   "defect_wilson_style_upper": 0.00019085256030624767,
+   "f_hi_count": 9,
+   "f_hi_wilson": [
+    9.470318751348467e-05,
+    0.00034209525238878077
+   ],
+   "f_lo_count": 10,
+   "f_lo_wilson": [
+    0.00010864203419457872,
+    0.0003681533326637948
+   ],
+   "gap_hi": 0.4,
+   "gap_lo": 0.2,
+   "kind": "drop",
+   "n": 50000,
+   "sign_resolved_at_95": false
+  },
+  {
+   "defect_point": 0.0,
+   "defect_wilson_style_upper": 0.0,
+   "f_hi_count": 22,
+   "f_hi_wilson": [
+    0.0002905985865828194,
+    0.0006661599037488515
+   ],
+   "f_lo_count": 9,
+   "f_lo_wilson": [
+    9.470318751348467e-05,
+    0.00034209525238878077
+   ],
+   "gap_hi": 0.6,
+   "gap_lo": 0.4,
+   "kind": "rise",
+   "n": 50000,
+   "sign_resolved_at_95": true
+  },
+  {
+   "defect_point": 0.0,
+   "defect_wilson_style_upper": 0.00025996617212552866,
+   "f_hi_count": 22,
+   "f_hi_wilson": [
+    0.0002905985865828194,
+    0.0006661599037488515
+   ],
+   "f_lo_count": 22,
+   "f_lo_wilson": [
+    0.0002905985865828194,
+    0.0006661599037488515
+   ],
+   "gap_hi": 0.9,
+   "gap_lo": 0.6,
+   "kind": "tie",
+   "n": 50000,
+   "sign_resolved_at_95": false
+  },
+  {
+   "defect_point": 7.999999999999999e-05,
+   "defect_wilson_style_upper": 0.0003278724831392141,
+   "f_hi_count": 18,
+   "f_hi_wilson": [
+    0.0002277369906560485,
+    0.00056903379185119
+   ],
+   "f_lo_count": 22,
+   "f_lo_wilson": [
+    0.0002905985865828194,
+    0.0006661599037488515
+   ],
+   "gap_hi": 1.2,
+   "gap_lo": 0.9,
+   "kind": "drop",
+   "n": 50000,
+   "sign_resolved_at_95": false
+  },
+  {
+   "defect_point": 0.00024000000000000003,
+   "defect_wilson_style_upper": 0.000432011187674052,
+   "f_hi_count": 6,
+   "f_hi_wilson": [
+    5.499744914591923e-05,
+    0.0002618102098880219
+   ],
+   "f_lo_count": 18,
+   "f_lo_wilson": [
+    0.0002277369906560485,
+    0.00056903379185119
+   ],
+   "gap_hi": 1.8,
+   "gap_lo": 1.2,
+   "kind": "drop",
+   "n": 50000,
+   "sign_resolved_at_95": true
+  },
+  {
+   "defect_point": 7.999999999999999e-05,
+   "defect_wilson_style_upper": 0.00019086879943428628,
+   "f_hi_count": 2,
+   "f_hi_wilson": [
+    1.0969281687106627e-05,
+    0.00014585066952240206
+   ],
+   "f_lo_count": 6,
+   "f_lo_wilson": [
+    5.499744914591923e-05,
+    0.0002618102098880219
+   ],
+   "gap_hi": 2.4,
+   "gap_lo": 1.8,
+   "kind": "drop",
+   "n": 50000,
+   "sign_resolved_at_95": false
+  },
+  {
+   "defect_point": 4e-05,
+   "defect_wilson_style_upper": 9.543606289050477e-05,
+   "f_hi_count": 0,
+   "f_hi_wilson": [
+    0.0,
+    7.682609729729246e-05
+   ],
+   "f_lo_count": 2,
+   "f_lo_wilson": [
+    1.0969281687106627e-05,
+    0.00014585066952240206
+   ],
+   "gap_hi": 3.2,
+   "gap_lo": 2.4,
+   "kind": "drop",
+   "n": 50000,
+   "sign_resolved_at_95": false
+  },
+  {
+   "defect_point": 0.0,
+   "defect_wilson_style_upper": 0.0,
+   "f_hi_count": 0,
+   "f_hi_wilson": [
+    0.0,
+    7.682609729729246e-05
+   ],
+   "f_lo_count": 0,
+   "f_lo_wilson": [
+    0.0,
+    7.682609729729246e-05
+   ],
+   "gap_hi": 4.6,
+   "gap_lo": 3.2,
+   "kind": "tie",
+   "n": 50000,
+   "sign_resolved_at_95": false
+  },
+  {
+   "defect_point": 0.0,
+   "defect_wilson_style_upper": 0.0,
+   "f_hi_count": 0,
+   "f_hi_wilson": [
+    0.0,
+    7.682609729729246e-05
+   ],
+   "f_lo_count": 0,
+   "f_lo_wilson": [
+    0.0,
+    7.682609729729246e-05
+   ],
+   "gap_hi": 6.283185307179586,
+   "gap_lo": 4.6,
+   "kind": "tie",
+   "n": 50000,
+   "sign_resolved_at_95": false
+  }
+ ],
+ "prop7_informative_units": 3582,
+ "prop7_per_pair_units": [
+  0,
+  14,
+  61,
+  172,
+  272,
+  378,
+  459,
+  542,
+  560,
+  562,
+  562
+ ],
+ "prop7_rollout_pairs": 550000,
+ "rises_with_the_sign_RESOLVED_at_95": 2,
+ "separation_ci_consistent": 26.01784472415206,
+ "separation_point_estimate": 46.83333333333333,
+ "source": "results/t3_funnel_bound.json",
+ "worst_defect_point_estimate": 0.00024000000000000003,
+ "worst_defect_upper_limit": 0.000432011187674052,
+ "z": 1.96
+}

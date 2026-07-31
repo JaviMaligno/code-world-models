@@ -149,8 +149,12 @@ def free_merge_persistence(contact: list, free_paths: list) -> dict:
     together, as a function of scale.
 
     By the long exact sequence of the pair (K, L) = (VR(X u Y), VR(Y)),
-    this rank equals rank H1(K, L) whenever H1(K) = 0 and lower-bounds it
-    otherwise (Proposition R2). Unlike edge censoring it has NO infinite
+    rank ker(H0(L) -> H0(K)) <= rank H1(K, L), with equality iff
+    H1(K) = im H1(L) (Proposition R2). So this function computes a LOWER
+    BOUND for the relative rank, not the relative rank itself, and the
+    equality hypothesis is not satisfied on this instrument's data -- the
+    union complex carries H1 classes of its own at every scale used. Report
+    what this returns as the free-merge estimator. Unlike edge censoring it has NO infinite
     bars by construction (Proposition R1): at scale >= diam both complexes
     are full simplices, so the rank returns to 0.
 

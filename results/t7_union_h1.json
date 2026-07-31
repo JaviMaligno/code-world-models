@@ -1,0 +1,153 @@
+{
+ "cells": {
+  "0.0|10000|40": {
+   "betti1_K_max": 1,
+   "betti1_K_min": 0,
+   "cap": 90,
+   "equality_hypothesis_holds": true,
+   "gap": 0.0,
+   "n_contact": 74,
+   "n_free_points": 90,
+   "n_free_raw": 3106,
+   "n_paths": 63,
+   "n_rollouts": 40,
+   "scales": [
+    {
+     "betti1_K": 0,
+     "betti1_L": 0,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.2
+    },
+    {
+     "betti1_K": 0,
+     "betti1_L": 0,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.3
+    },
+    {
+     "betti1_K": 1,
+     "betti1_L": 1,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.4
+    },
+    {
+     "betti1_K": 0,
+     "betti1_L": 0,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.5
+    }
+   ],
+   "seed": 10000
+  },
+  "0.0|20000|40": {
+   "betti1_K_max": 2,
+   "betti1_K_min": 0,
+   "cap": 90,
+   "equality_hypothesis_holds": true,
+   "gap": 0.0,
+   "n_contact": 60,
+   "n_free_points": 90,
+   "n_free_raw": 3110,
+   "n_paths": 49,
+   "n_rollouts": 40,
+   "scales": [
+    {
+     "betti1_K": 0,
+     "betti1_L": 0,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.2
+    },
+    {
+     "betti1_K": 0,
+     "betti1_L": 0,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.3
+    },
+    {
+     "betti1_K": 1,
+     "betti1_L": 1,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.4
+    },
+    {
+     "betti1_K": 2,
+     "betti1_L": 2,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.5
+    }
+   ],
+   "seed": 20000
+  },
+  "0.6|10000|40": {
+   "betti1_K_max": 0,
+   "betti1_K_min": 0,
+   "cap": 90,
+   "equality_hypothesis_holds": true,
+   "gap": 0.6,
+   "n_contact": 71,
+   "n_free_points": 90,
+   "n_free_raw": 3115,
+   "n_paths": 61,
+   "n_rollouts": 40,
+   "scales": [
+    {
+     "betti1_K": 0,
+     "betti1_L": 0,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.2
+    },
+    {
+     "betti1_K": 0,
+     "betti1_L": 0,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.3
+    },
+    {
+     "betti1_K": 0,
+     "betti1_L": 0,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.4
+    },
+    {
+     "betti1_K": 0,
+     "betti1_L": 0,
+     "lower_bound_on_relative_rank": 0,
+     "scale": 0.5
+    }
+   ],
+   "seed": 10000
+  }
+ },
+ "conclusion": "MEASURED on the cloud the estimator actually consumes (deduped and capped at 90, not the raw ~3100 free points): beta_1(K) = beta_1(L) at every scale in every cell tested, so Prop R2's equality hypothesis HOLDS there and the free-merge count coincides with rank H1(K, L) on these cells. The estimator is still only a LOWER bound in general -- the circle-plus-centre exhibit shows the two can differ, with free-merge 0 against relative rank 1 -- so it must be reported as one; but the discrimination figures from these cells are statements about relative homology, not merely about the surrogate. Equality holds in all cells: True. Note the raw cloud is a different complex: a measurement of beta_1 there does not describe the estimator's input.",
+ "exhibit": {
+  "description": "24-point unit circle + its centre as a one-vertex free path",
+  "free_merge_count": 0,
+  "note": "the free evidence is one component, so nothing is glued and the free-merge estimator returns 0, while the relative rank is at least 1 wherever the circle's loop is alive -- the two quantities differ.",
+  "scales": [
+   {
+    "betti1_K": 1,
+    "betti1_L": 0,
+    "lower_bound_on_relative_rank": 1,
+    "scale": 0.3
+   },
+   {
+    "betti1_K": 1,
+    "betti1_L": 0,
+    "lower_bound_on_relative_rank": 1,
+    "scale": 0.5
+   },
+   {
+    "betti1_K": 1,
+    "betti1_L": 0,
+    "lower_bound_on_relative_rank": 1,
+    "scale": 0.7
+   },
+   {
+    "betti1_K": 1,
+    "betti1_L": 0,
+    "lower_bound_on_relative_rank": 1,
+    "scale": 0.9
+   }
+  ]
+ }
+}

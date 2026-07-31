@@ -72,10 +72,6 @@ CHECKS = [
     (["T5", "one_over_pi_gain_dt"], ["1.061"]),
     (["T5", "T5F_rate_per_dimension"], ["0.9104"], "lower"),
     (["T3", "reach_lower_bound_partitioned"], ["0.013"], "lower"),
-    # Quoted as a percentage in both documents, so the printed form is 48.9
-    # and the computed value must be scaled; PERCENT entries do that.
-    (["T3", "reach_annulus_mass_below_tangent_cone_floor"],
-     ["48.9"], "percent"),
     (["T3", "isotropy_angular_factor_superseded"], ["0.0950"]),
     (["T3", "quadratic_bound_coefficient"], ["0.0136"], "lower"),
     (["T3", "quadratic_bound_coefficient_from_sample_minimum_superseded"],
@@ -115,6 +111,16 @@ CHECKS = [
     # An upper bound's rate: printing ABOVE it is safe (looser).
     (["measured", "T5F_prime_rate"], ["0.9245"], "upper"),
     (["measured", "T5F_effective_steps"], ["59.6"]),
+    (["measured", "annulus_mass_below_floor_percent"], ["48.9"]),
+    (["measured", "prop7_informative_units"], ["3582", "3{,}582"]),
+    (["measured", "funnel_separation_ci_consistent"], ["26.0", "26"]),
+    (["measured", "shell_delta_in"], ["0.214"]),
+    (["measured", "shell_delta_out"], ["0.167"]),
+    (["measured", "shell_bar_length_bound"], ["0.381", "0.38"]),
+    (["measured", "radial_band_lo"], ["1.708"]),
+    (["measured", "radial_band_hi"], ["1.826"]),
+    (["measured", "death_over_rho_min"], ["1.674"]),
+    (["measured", "death_over_rho_max"], ["1.816"]),
 ]
 
 
@@ -129,7 +135,9 @@ def as_float(printed):
     if "/" in printed:
         num, den = printed.split("/")
         return float(num) / float(den)
-    return float(printed)
+    # LaTeX thousands separators: the document writes 3{,}582 for 3582, and
+    # the audit must compare the number, not the markup.
+    return float(printed.replace("{,}", "").replace(",", ""))
 
 
 # Constants whose disappearance from both documents is a REGRESSION, not a
@@ -143,12 +151,15 @@ MUST_APPEAR = {
     "T2/pc_hypothesis_with_dominance",
     "T3/quadratic_bound_coefficient",
     "T3/reach_lower_bound_partitioned",
-    "T3/reach_annulus_mass_below_tangent_cone_floor",
     "measured/R_ring_free",
     "measured/R_prime_leaving_k_minus_1_steps",
     "measured/drag_cap_worst_400x200",
     "measured/T5F_prime_rate",
     "measured/T5F_K_max_side_condition",
+    "measured/annulus_mass_below_floor_percent",
+    "measured/prop7_informative_units",
+    "measured/radial_band_lo",
+    "measured/radial_band_hi",
 }
 
 

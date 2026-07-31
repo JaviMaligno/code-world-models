@@ -545,10 +545,16 @@ $\gamma \in [0.6, 0.9]$ and vanishes at both ends (nothing to enter at
 $\gamma = 0$; nothing to freeze against past saturation), giving a
 certified slack of $6.7 \times 10^{-4}$ against an effect size of
 $1.12 \times 10^{-2}$ --- a factor of $17$, with zero empirical
-violations and Proposition~\ref{prop:direct} confirmed across
-$550{,}000$ pathwise comparisons. So M1 and M2 hold as theorems up to a
-defect an order of magnitude below the phenomenon, and exactly for
-$\gamma \ge 3.2$ where the funnel mass measures zero. What remains open
+violations and Proposition~\ref{prop:direct} confirmed on $3{,}582$
+informative units (the direct entries at the smaller gap, which are the
+only seeds that can falsify the inclusion, drawn from $550{,}000$ CRN
+rollout pairs). So M1 and M2 hold as theorems up to a defect an order of
+magnitude below the phenomenon. Sharpening the defect to the drop in the
+funnel mass improves that factor to $26$ on the same convention (an upper
+limit on both sides); the $47$ one gets from point estimates is not
+comparable with the $17$. And the exactness at $\gamma \ge 3.2$ is a
+$0/50{,}000$ measurement of the funnel mass, so its content is the
+interval, not the zero. What remains open
 is an \emph{a priori} bound on the funnel mass; the one pointwise
 estimate that would have given unconditional monotonicity was
 \emph{refuted} by a freeze-rescue effect ($91/91$ CI-separated
@@ -688,7 +694,10 @@ $\mathrm{pc}_{\mathrm{blind}}$ & $\mathrm{pc}_{\mathrm{fill}}$ \\
 1.2 & hidden  & inside  & 0.5975 & 1.0000 & 0.757500 & 0.000 & 1.741 \\
 \bottomrule
 \end{tabular}
-\caption{The full mechanism grid. One wrong-topology artifact:
+\caption{The full mechanism grid. \emph{A printed $0$ in this table is a
+censored zero}: it means no occurrence in the $400$ rollouts behind the cell,
+so its content is the interval $[0, 0.0092]$ (Wilson $95\%$), not a
+demonstrated zero. One wrong-topology artifact:
 unfalsifiable and harmless ($\gamma = 0$, the bitwise theorem), falsifiable
 and costly (facing channel), instantly falsified (inside start). The hidden
 channel is observationally identical to the closed ring although it changes
@@ -933,7 +942,10 @@ $\mathrm{pc}_{\mathrm{blind}}$ (facing) & 0.999 & 0.543 & 0.340 & 0.139 & 0.001 
 contact rate & 1.00 & 0.94 & 0.56 & 0.44 & 0.12 & 0.06 & 0.00 & 0.00 & 0.00 \\
 \bottomrule
 \end{tabular}
-\caption{H1, the danger curve (CPU, 16 paired MPC episodes/point): the blind
+\caption{H1, the danger curve (CPU, 16 paired MPC episodes/point).
+\emph{A printed $0.00$ contact rate is a censored zero} --- no contact in
+the episodes behind the cell, so its content is an interval whose width is
+set by that $n$, not a demonstrated zero. The blind
 model's exploitation collapses over a knee at $\gamma \approx 0.1$ ---
 channel arc-width $\gamma \, r_{\mathrm{in}} \approx 0.35$, comparable to
 the planner's step. The \emph{hidden} channel holds
@@ -1193,9 +1205,9 @@ regime but a genuine assumption in $29$ of $80$ factorial rows (it holds in
 all of them; $4$ rows fall outside both regimes and carry only the cone
 bound $2r_{\max}$). The measured
 death$/\bar\rho \in [1.674, 1.816]$ straddles $\sqrt 3 = 1.732$, and the
-radial-thickness band $\sqrt3\,[r_{\min}, r_{\max}]/\bar\rho =
-[1.661, 1.803]$ accounts for the lower part of that spread but not its
-maximum). The law is therefore \emph{two-sided}: $\hat\beta_1 \ge 1$ is
+radial-thickness band $\sqrt3\,[\rho_{\min}, \rho_{\max}]/\bar\rho =
+[1.708, 1.826]$, derived from the same file's radii, covers the spread's
+upper end but not its minimum). The law is therefore \emph{two-sided}: $\hat\beta_1 \ge 1$ is
 guaranteed when $\sqrt3\,r_{\min} - 2 r_{\max}\sin(\Delta\theta_{\max}/2)
 > \tau$, and no persistent winding bar exists when
 $2 r_{\max}\sin(\theta^*/2) - 2 r_{\min}\sin(\Delta\theta_{\max}/2) <
@@ -1237,13 +1249,19 @@ long exact sequence its rank is bounded \emph{below} by
 $\operatorname{rank}\ker(H_0(\mathrm{VR}(Y))
 \to H_0(\mathrm{VR}(X \cup Y)))$, \emph{the number of certified-free
 components that the contact evidence glues together}, computable by two
-union-finds rather than a matrix reduction. That kernel rank is what we
-compute, and it is what every number below reports: the two ranks coincide
-only when the union contributes no $H_1$ classes of its own, which is not
-the case here (measured $\beta_1$ of the union runs $114$--$166$ across
-scales on the committed cells), so the quantity is the \emph{free-merge}
-estimator --- a sound lower bound for the relative rank --- and not the
-relative rank itself. One instantiation detail is load-bearing: $Y$ must enter as
+union-finds rather than a matrix reduction. The direction of that
+inequality is load-bearing and easy to invert: the kernel rank is what we
+compute, and it bounds the relative rank from below, coinciding with it
+exactly when the union contributes no $H_1$ classes of its own. That the two
+\emph{can} differ is settled by a two-object exhibit --- a circle of contact
+points with its centre as the only free evidence gives a free-merge count of
+$0$ against a relative rank of at least $1$ --- so the quantity must be
+reported as the free-merge estimator, a sound lower bound. On the cells
+measured it does not differ: on the cloud the estimator actually consumes
+(deduped and capped at the pre-registered budget, not the raw ${\approx}3100$
+free positions) $\beta_1$ of the union equals $\beta_1$ of the free part at
+every scale, so the discrimination figures below are statements about
+relative homology and not merely about a surrogate. One instantiation detail is load-bearing: $Y$ must enter as
 trajectory \emph{polylines}, not as a point cloud. A free trajectory certifies
 passage between its own consecutive samples; discard that and the
 estimator reports separation almost everywhere, because a curve-dense
@@ -1252,9 +1270,7 @@ alone. With paths, the free-merge estimator is correct on $20/20$
 open-ring cells where the pre-registered detector scores $9/20$, with no
 censoring and no infinite bars. At $\gamma = 0$ it fires on $0/5$ one-sided
 and $1/5$ two-sided seeds (unit = seed), i.e.\ not reliably, for two
-reasons we keep separate --- and since the estimator is a lower bound
-rather than the relative rank, a non-firing cell is evidence about the
-surrogate, not a proof that the relative group vanishes. With one-sided
+reasons we keep separate. With one-sided
 (inside) evidence the interior is
 reach-null, nothing outside is sampled, and separation is
 \emph{unidentifiable by any estimator} --- Proposition~\ref{prop:quotient}
@@ -1266,12 +1282,15 @@ velocity on contact, so after the first freeze the next proposed landing
 moves only $\mathrm{gain}\cdot dt^2 = 0.03$ from rest and the trajectory
 \emph{creeps along the face} instead of penetrating. Contact evidence
 therefore occupies two thin shells at the band's faces and never its
-interior, which caps the informative bar at the shell thickness while
-the persistence threshold grows with sample size as the shells fill in.
-Measured at $40/120/320$ rollouts per arm: shells saturate at
-$[3.50, 3.71]$ and $[4.83, 5.00]$, bar length $0.160/0.197/0.253$
-against $\tau = 0.183/0.324/0.439$ --- sub-threshold at every size, with
-the gap \emph{widening}. So no recalibration recovers $\gamma = 0$: the
+interior, which caps the informative bar at the two shells' combined
+thickness $\delta_{\mathrm{in}} + \delta_{\mathrm{out}} = 0.38$ (they
+differ: $0.214$ and $0.167$, so a single $\delta$ is the wrong constant)
+while the persistence threshold grows with sample size as the shells fill
+in. Measured at $40/120/320$ rollouts per arm: shells saturate at
+$[3.50, 3.71]$ and $[4.83, 5.00]$ from $120$ on, so the \emph{cap} stops
+moving; the bar length still drifts $0.160/0.197/0.253$ against
+$\tau = 0.183/0.324/0.439$ --- sub-threshold at every size, with the gap
+\emph{widening} because $\tau$ grows faster than the bar. So no recalibration recovers $\gamma = 0$: the
 limit is in the evidence, not the rule, and more data makes it worse.
 The same one-step landing law that makes the continuity modulus explicit
 (Proposition~\ref{prop:continuity}) is what caps the sensor here. Only
@@ -1304,7 +1323,8 @@ guidance $\hat\beta_1$ & 1 & 1 & 1 & 1 & mixed & 0 \\
 \end{tabular}
 \caption{H2: posed artifact topology tracks the \emph{guidance's}
 $\hat\beta_1$, not the true $\beta_1$ (which is $0$ for every
-$\gamma > 0$): closed structures dominate while the summary says ``closed
+$\gamma > 0$; the $\hat\beta_1 = 0$ entry at $\gamma = 2.4$ is the
+detector's verdict, not a censored count): closed structures dominate while the summary says ``closed
 loop'' and vanish where it honestly says ``arc'' --- at $\gamma = 2.4$,
 $1$ closed versus $26$ arc across both sizes. $n$ counts inside-start cells
 (mini at every $\gamma$; large twins at $0.0$, $0.6$, $2.4$). The
@@ -1662,7 +1682,7 @@ Section~\ref{sec:sensor}'s contribution is not a new TDA method but a
 measured failure law for TDA \emph{as a component of a certification
 loop}: the sensor's resolution propagates into the certified artifact.
 
-\section{Limitations and honest assessment}
+\section{Limitations}
 \label{sec:limitations}
 
 \paragraph{One instrument family, mostly round and separating.} The core
@@ -1871,9 +1891,11 @@ not, and the bound fails. The constant is not the sample's own minimum of
 $d/\gamma^{2}$: defining it that way makes the bound true by construction
 at the measured grid and a coin flip off it --- at the binding gap $0.6$
 that version is violated by $3$ of $5$ disjoint seed blocks. It is instead
-the pooled Wilson $95\%$ lower limit at the binding gap, rounded down, so
-that it sits below the sampling interval of the quantity it bounds rather
-than on its point estimate. The constant remains \emph{fitted}, so this is
+the Wilson $95\%$ lower limit at the binding gap, pooled over five
+\emph{disjoint} seed blocks --- no rollout appears in two of them, so they
+are independent samples of $d(\gamma)$ --- so that the constant sits below
+the sampling interval of the quantity it bounds rather than on its point
+estimate. The constant remains \emph{fitted}, so this is
 a measured bound of the right order, not a proved one. Both one-dimensional densities the argument rests on admit \emph{partly
 measured} lower bounds by the same elementary device: if a quantity is
 steerable by a single action whose law has a density, its own density is at
