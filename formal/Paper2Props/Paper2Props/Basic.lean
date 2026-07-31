@@ -22,6 +22,7 @@ Contents:
 import Mathlib
 
 open MeasureTheory
+open scoped ENNReal
 
 noncomputable section
 
@@ -50,8 +51,7 @@ lemma covariance_expansion (X : Ω → ℝ) (hX : Integrable X μ)
       (X ω - c) * (G.indicator (fun _ => (1 : ℝ)) ω - p)
         = (G.indicator X ω - p * X ω) - (c * G.indicator (fun _ => (1 : ℝ)) ω - c * p) := by
     intro ω
-    by_cases hω : ω ∈ G <;>
-      simp [Set.indicator_of_mem, Set.indicator_of_not_mem, hω] <;> ring
+    by_cases hω : ω ∈ G <;> simp [Set.indicator_apply, hω] <;> ring
   have h₁ : Integrable (fun ω => G.indicator X ω - p * X ω) μ := hXG.sub (hX.const_mul p)
   have h₂ : Integrable (fun ω => c * G.indicator (fun _ => (1 : ℝ)) ω - c * p) μ :=
     (h1G.const_mul c).sub (integrable_const (c * p))
@@ -65,10 +65,11 @@ lemma covariance_expansion (X : Ω → ℝ) (hX : Integrable X μ)
           rw [integral_sub h₁ h₂, integral_sub hXG (hX.const_mul p),
               integral_sub (h1G.const_mul c) (integrable_const (c * p)),
               integral_const_mul, integral_const_mul, integral_const]
-          simp [measure_univ]
+          simp [measure_univ, smul_eq_mul]
     _ = ((∫ ω in G, X ω ∂μ) - p * c) - (c * p - c * p) := by
           rw [integral_indicator hG, integral_indicator hG]
           simp [hc, hp, setIntegral_const, smul_eq_mul, mul_comm]
+          exact Or.inl rfl
     _ = (∫ ω in G, X ω ∂μ) - c * p := by ring
     _ = (∫ ω in G, X ω ∂μ) - (∫ ω, X ω ∂μ) * (μ G).toReal := by rw [hc, hp]
 
@@ -85,7 +86,7 @@ theorem risk_factorizes_iff (X : Ω → ℝ) (hX : Integrable X μ)
 theorem factored_of_const (c : ℝ) {G : Set Ω} (hG : MeasurableSet G) :
     danger μ (fun _ => c) G = (∫ _ω, c ∂μ) * (μ G).toReal := by
   rw [danger_eq_setIntegral μ _ hG]
-  simp [setIntegral_const, integral_const, smul_eq_mul, measure_univ, mul_comm]
+  simp [smul_eq_mul, mul_comm, Measure.real]
 
 /- ------------------------------------------------------------------------------------
    The counterexample to the PRE-correction clause, machine-checked.
@@ -108,14 +109,15 @@ instance : IsProbabilityMeasure coin := by
 def Xce : Bool → ℝ := fun ω => if ω then 1 else 0
 
 lemma coin_integral (f : Bool → ℝ) : ∫ ω, f ω ∂coin = (f true + f false) / 2 := by
-  simp [coin, integral_smul_measure, integral_add_measure, integral_dirac,
-    ENNReal.toReal_inv]
+  have h1 : Integrable f (Measure.dirac true) := .of_finite
+  have h2 : Integrable f (Measure.dirac false) := .of_finite
+  rw [coin, integral_smul_measure, integral_add_measure h1 h2, integral_dirac,
+      integral_dirac]
+  simp only [ENNReal.toReal_inv, ENNReal.toReal_ofNat, smul_eq_mul]
   ring
 
 lemma coin_true : (coin {true}).toReal = 1 / 2 := by
-  simp [coin, Measure.smul_apply, Measure.add_apply, Measure.dirac_apply,
-    Set.indicator_of_mem, Set.indicator_of_not_mem, ENNReal.toReal_inv]
-  norm_num
+  simp [coin, Measure.smul_apply, Measure.add_apply, Measure.dirac_apply]
 
 /-- **The pre-correction clause is false**: `X` constant on `G` does not give the factored
 form. This is the reviewer's counterexample as a theorem. -/
@@ -125,7 +127,7 @@ theorem old_clause_is_false :
   constructor
   · intro ω hω; simp [Set.mem_singleton_iff] at hω; simp [Xce, hω]
   · have hind : ({true} : Set Bool).indicator Xce = Xce := by
-      funext ω; cases ω <;> simp [Xce, Set.indicator_of_mem, Set.indicator_of_not_mem]
+      funext ω; cases ω <;> simp [Xce]
     have hD : danger coin Xce {true} = 1 / 2 := by
       rw [danger, hind, coin_integral]; simp [Xce]
     have hE : ∫ ω, Xce ω ∂coin = 1 / 2 := by rw [coin_integral]; simp [Xce]
