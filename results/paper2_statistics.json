@@ -29,7 +29,7 @@
     "draw_level": "computed only as the labelled invalid-if-pooled comparator whenever blocks are shared; pooled_bound(unit='draw') raises otherwise."
   },
   "totals": {
-    "n_draws": 1037,
+    "n_draws": 1040,
     "n_distinct_blocks": 40,
     "n_treatments": 34,
     "files": [
@@ -2009,6 +2009,63 @@
         "valid_for_paper": true,
         "homogeneity_assumed_across_treatments": false,
         "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=full | gpt-5.4-mini"
+      }
+    },
+    {
+      "treatment": "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "family": "qwen",
+      "file": [
+        "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json"
+      ],
+      "n_blocks": 3,
+      "n_draws": 3,
+      "blocks": [
+        1,
+        2,
+        3
+      ],
+      "branch_counts": {
+        "mode_absent": 0,
+        "mode_present": 3,
+        "per_mode_seen": {
+          "patch1_seen": 3,
+          "patch2_seen": 1
+        },
+        "see_none": 0,
+        "see_one": 2,
+        "see_both": 1
+      },
+      "outcome_counts": {
+        "rejected_stalled": 3
+      },
+      "repair_bound_block_level": {
+        "unit": "block",
+        "cluster_key": "by_block",
+        "block_scoring": "all",
+        "k": 0,
+        "n": 3,
+        "n_draws": 3,
+        "n_distinct_blocks": 3,
+        "n_shared_blocks": 0,
+        "max_draws_per_block": 1,
+        "n_treatments_pooled": 1,
+        "treatments_pooled": [
+          "patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete"
+        ],
+        "point": 0.0,
+        "clopper_pearson_95": [
+          0.0,
+          0.7075982261787134
+        ],
+        "wilson_95": [
+          0.0,
+          0.5615060804490177
+        ],
+        "valid_for_paper": true,
+        "homogeneity_assumed_across_treatments": false,
+        "claim": "repair | patch2d | k1=3,k2=7 | shape=disc | prompt=default | it=5 | arm=incomplete | Qwen/Qwen3-Coder-30B-A3B-Instruct"
       }
     },
     {

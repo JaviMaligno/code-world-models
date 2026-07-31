@@ -259,25 +259,36 @@ number of provider invocations in
 | `large_xwall8_off20` | gpt-5.4 | default | 5 | 40 | 50 | 1 / 1 / 2 | 0 |
 | `mini_xwall4` | gpt-5.4-mini | default | 5 | 10 | 27 | 1 / 1 / 6 | 3 |
 | `mini_xwall8` | gpt-5.4-mini | default | 5 | 40 | 62 | 1 / 1 / 6 | 1 |
-| `patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7` | Qwen3-Coder-30B | default | 5 | 3 | 3 | 1 / 1 / 1 | 0 |
+| `patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7` | Qwen3-Coder-30B | default | 5 | 6 | 21 | 1 / 3.5 / 6 | 3 |
 | `patch2d_large_k3_7` | gpt-5.4 | default | 5 | 40 | 140 | 1 / 3.5 / 6 | 20 |
+| `patch2d_large_k3_7_arc120` | gpt-5.4 | default | 5 | 20 | 120 | 6 / 6 / 6 | 20 |
+| `patch2d_large_k3_7_arc240` | gpt-5.4 | default | 5 | 40 | 140 | 1 / 3.5 / 6 | 20 |
+| `patch2d_large_k3_7_arc240_hint-centre` | gpt-5.4 | default | 5 | 20 | 120 | 6 / 6 / 6 | 20 |
+| `patch2d_large_k3_7_hint-centre` | gpt-5.4 | default | 5 | 20 | 120 | 6 / 6 / 6 | 20 |
+| `patch2d_large_k3_7_hint-radius` | gpt-5.4 | default | 5 | 20 | 46 | 1 / 2 / 4 | 0 |
+| `patch2d_large_k3_7_pv-landing_it15` | gpt-5.4 | landing | 15 | 20 | 294 | 7 / 16 / 16 | 16 |
 | `patch2d_large_k3_7_pv-region_it15` | gpt-5.4 | region | 15 | 20 | 320 | 16 / 16 / 16 | 20 |
 | `patch2d_large_k5_9` | gpt-5.4 | default | 5 | 40 | 130 | 1 / 1 / 6 | 18 |
 | `patch2d_mini_k3_7` | gpt-5.4-mini | default | 5 | 40 | 140 | 1 / 3.5 / 6 | 20 |
+| `patch2d_mini_k3_7_pv-landing_it15` | gpt-5.4-mini | landing | 15 | 20 | 320 | 16 / 16 / 16 | 20 |
 | `patch2d_mini_k3_7_pv-region_it15` | gpt-5.4-mini | region | 15 | 20 | 320 | 16 / 16 / 16 | 20 |
 | `patch2d_mini_k5_9` | gpt-5.4-mini | default | 5 | 40 | 130 | 1 / 1 / 6 | 18 |
+| `patch2dclamp_large_k3_7` | gpt-5.4 | default | 5 | 40 | 140 | 1 / 3.5 / 6 | 20 |
+| `patch2dclamp_mini_k3_7` | gpt-5.4-mini | default | 5 | 40 | 140 | 1 / 3.5 / 6 | 20 |
+| `patch2dlanding_large_k3_7` | gpt-5.4 | default | 5 | 40 | 140 | 1 / 3.5 / 6 | 20 |
+| `patch2dlanding_mini_k3_7` | gpt-5.4-mini | default | 5 | 40 | 140 | 1 / 3.5 / 6 | 20 |
+| `patch2dslab_large_k5.5_7` | gpt-5.4 | default | 5 | 40 | 68 | 1 / 1.5 / 6 | 1 |
+| `patch2dslab_mini_k5.5_7` | gpt-5.4-mini | default | 5 | 40 | 136 | 1 / 1.5 / 6 | 19 |
 | `patch2dsq_large_k3_7` | gpt-5.4 | default | 5 | 40 | 140 | 1 / 3.5 / 6 | 20 |
 | `patch2dsq_mini_k3_7` | gpt-5.4-mini | default | 5 | 40 | 140 | 1 / 3.5 / 6 | 20 |
 | `pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4` | Qwen3-Coder-30B | default | 5 | 6 | 16 | 1 / 1 / 6 | 2 |
+| `pendulum_large_thstop1` | gpt-5.4 | default | 5 | 40 | 59 | 1 / 1 / 2 | 0 |
 | `pendulum_large_thstop1.4` | gpt-5.4 | default | 5 | 40 | 50 | 1 / 1 / 2 | 0 |
 | `pendulum_large_thstop1.4_off20` | gpt-5.4 | default | 5 | 40 | 54 | 1 / 1 / 2 | 0 |
-| `pendulum_large_thstop1` | gpt-5.4 | default | 5 | 40 | 59 | 1 / 1 / 2 | 0 |
-| `pendulum_mini_thstop1.4` | gpt-5.4-mini | default | 5 | 40 | 56 | 1 / 1 / 6 | 1 |
 | `pendulum_mini_thstop1` | gpt-5.4-mini | default | 5 | 40 | 58 | 1 / 1 / 2 | 0 |
+| `pendulum_mini_thstop1.4` | gpt-5.4-mini | default | 5 | 40 | 56 | 1 / 1 / 6 | 1 |
 
-**Totals** (`totals` in the JSON): **20 API campaigns, 625 cells, 1959 LLM calls**,
-mean **3.13** calls/cell, range **1–16**. Adding the two agent-relayed Claude
-campaigns (12 cells, 39 relayed calls) gives **1998** calls in all.
+**Totals** (`totals` in the JSON, auto-synced --- do not hand-edit): **33 API campaigns, 1028 cells, 3901 LLM calls**, mean **3.79** calls/cell, range **1--16**. Adding the two agent-relayed Claude campaigns (12 cells, 39 relayed calls) gives **3940** calls in all.
 
 The shape of that distribution is itself a finding: on the 1-D instruments the
 median cell costs **one** call (translation succeeds first try), while on

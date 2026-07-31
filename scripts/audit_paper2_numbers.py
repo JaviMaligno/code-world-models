@@ -1590,8 +1590,8 @@ claim("the re-measurement reproduces the published cells it re-measures",
 # --- the held-out acceptance sample (sec:heldout) ---------------------------
 _ho = load("heldout_gate_paper_numbers")
 _hoa = load("heldout_gate_audit")
-claim("the held-out audit covers 1025 artifacts over 33 campaigns",
-      _hoa["aggregates"]["totals"]["n_artifacts"] == 1025
+claim("the held-out audit covers 1028 artifacts over 33 campaigns",
+      _hoa["aggregates"]["totals"]["n_artifacts"] == 1028
       and _hoa["aggregates"]["totals"]["n_files"] == 33)
 claim("the three blocks are disjoint at rollout-seed level",
       _hoa["split"]["all_disjoint"] is True)
@@ -1682,6 +1682,17 @@ claim("the one off-mode regression among the 40 IS the fourth phantom, not a Qwe
       "artifact (the Qwen regressions now classify mode_only)",
       [(r["file"], r["seed"]) for r in _regs_recs if r["gate"]["n_fail_off_mode"] > 0]
       == [("continuous_synthesis_pendulum_mini_thstop1.4.json", 50000)])
+claim("the Qwen 2D arm is complete: 3/3 full cells at gate 1.000, and the incomplete "
+      "arm refused in 3 of 3 (accuracies 0.993-0.997), mode in every training block, "
+      "none accepted held-out",
+      (lambda q: len(q) == 3
+       and all(not r["in_sample_gate_passed"] for r in q)
+       and all(not r["accepted_heldout"] for r in q)
+       and all(r["mode_in_train"]["any"] is True for r in q)
+       and abs(min(r["in_sample_gate_accuracy"] for r in q) - 0.9934) < 5e-4
+       and abs(max(r["in_sample_gate_accuracy"] for r in q) - 0.9966) < 5e-4)(
+          [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
+           if "patch2d_compat-qwen" in r["file"] and r["arm"] == "incomplete"]))
 claim("hypothesis (i) has no violation in the audited arms: all 60 mode-free-train "
       "incomplete draws are probe-blind",
       (lambda fb: len(fb) == 60 and all(r["probe_blind_all_modes"] is True for r in fb))(

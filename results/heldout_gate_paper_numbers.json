@@ -202,13 +202,13 @@
     "n_exceptions": 0,
     "exceptions": [],
     "clopper_pearson_95_upper_on_exception_rate": 0.004898997090947155,
-    "n_all_artifacts": 1025,
+    "n_all_artifacts": 1028,
     "n_exceptions_over_all_artifacts": 297,
-    "note": "the 297 exceptions in the audit's own d_out_of_sample_exactness are over ALL 1025 artifacts, most of which never passed any gate; acceptance is the condition the paper's claim is about. Both counts are derived here rather than typed: the campaign set grows, and this note named 625 by hand until it went stale"
+    "note": "the 297 exceptions in the audit's own d_out_of_sample_exactness are over ALL 1028 artifacts, most of which never passed any gate; acceptance is the condition the paper's claim is about. Both counts are derived here rather than typed: the campaign set grows, and this note named 625 by hand until it went stale"
   },
   "by_arm": {
     "incomplete": {
-      "n": 591,
+      "n": 594,
       "n_in_sample_passed": 213,
       "n_heldout_accepted": 173,
       "n_regressed": 40
