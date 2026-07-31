@@ -192,3 +192,36 @@ def test_t7_margin_variant_degenerates_to_plain_rips():
     v1 = [v for k, v in cells.items()
           if k.startswith("0.0|") and "skipped" not in v]
     assert v1 and min(v["edges_censored"] for v in v1) > 100
+
+
+def test_t5f_prime_respects_its_own_side_condition():
+    # The whole point of T5-F': the Z_1 factor's Hoeffding form is valid only
+    # while 2*lambda*g2*sigma_1^2 < 1, i.e. K < K_max. T5-F chose K = 10 and
+    # violated it. Any assembled bound must satisfy it strictly.
+    d = _load("t5f_z1_factor.json")
+    for name in ("nominal", "L_min"):
+        a = d.get(f"assembled_{name}")
+        if not a or not a.get("feasible"):
+            continue
+        assert a["K"] < a["side_condition_K_max"], (name, a)
+        # The Z_1 factor blows up at the boundary, so it must be finite and > 1.
+        assert 1.0 < a["Z1_factor"] < float("inf"), (name, a)
+        # The norm tail must stay SUBDOMINANT, or it becomes the real rate.
+        assert a["norm_tail_rate"] < a["dominant_rate"], (name, a)
+        # Carrying Z_1 costs rate: the repaired rate is worse than the
+        # Pi-side-only 0.9104 it replaces. If it ever came out better, the
+        # factor has been dropped again.
+        assert a["dominant_rate"] > 0.9104, (name, a)
+
+
+def test_t5f_truncation_beats_the_counting_bound_by_orders():
+    # The floor exists (it is irremovable within the scheme), but replacing
+    # exchangeability's 1/K by concentration is what makes it negligible.
+    # If that ever regressed, the "floor is 1e-13 not 0.12" claim would go.
+    d = _load("t5f_z1_factor.json")
+    rows = d["truncation_theorem"]["rows"]
+    for r in rows:
+        if r["K"] >= 3.0 and r["nu"] >= 0.20:
+            assert r["n_free_term"] < 1e-6 * (1.0 / r["K"]), r
+    # And the certified term is n-FREE: it depends on the weights, not on n.
+    assert d["truncation_theorem"]["E_eff"] > 1.0

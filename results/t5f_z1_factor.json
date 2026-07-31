@@ -1,0 +1,333 @@
+{
+ "C_lambda": 1.32,
+ "assembled_L_min": {
+  "K": 3.1,
+  "Z1_factor": 4.546765545206515,
+  "alpha": 0.04,
+  "dominant_rate": 0.9284902928975257,
+  "feasible": true,
+  "n_free_floor": 7.403767098729527e-10,
+  "norm_tail_rate": 0.8919797663979161,
+  "nu": 0.2,
+  "side_condition_K_max": 3.2575757575757556,
+  "statement": "P(cone at a fixed step) <= 7.4e-10 + 4.55 * 2 * 0.9285^n + 80 * 0.8920^n, the last term subdominant.",
+  "z": 0.2
+ },
+ "assembled_nominal": {
+  "K": 3.5,
+  "Z1_factor": 5.830951894845322,
+  "alpha": 0.04,
+  "dominant_rate": 0.9245144649372835,
+  "feasible": true,
+  "n_free_floor": 1.1478417400968487e-13,
+  "norm_tail_rate": 0.8919797663979161,
+  "nu": 0.2,
+  "side_condition_K_max": 3.6060606060606046,
+  "statement": "P(cone at a fixed step) <= 1.15e-13 + 5.83 * 2 * 0.9245^n + 80 * 0.8920^n, the last term subdominant.",
+  "z": 0.2
+ },
+ "conclusion": "Carrying Z_1 forces a truncation at sigma_1^2 <= K m with K < 1/(C_lambda * g2), and OUTSIDE that event the exponential moment E[(1 - C_lambda g2 sigma_1^2/m)^{-1/2}] is infinite -- so no choice of parameters makes the untruncated expectation finite and the scheme CANNOT be floor-free. The floor is the truncation event's probability: n-independent, CERTIFIED by Hoeffding over the h steps rather than sampled (Monte Carlo cannot certify a floor this small) and rather than by the counting bound 1/K, and therefore many orders of magnitude below the 0.12 it replaces. The exponential survives, at a rate degraded from 0.9104 to the assembled value: that degradation IS the cost of carrying Z_1, and kappa re-enters the bound through g2 in both the Z_1 factor and the side condition.",
+ "effective_steps": {
+  "h": 80,
+  "sum_w2_over_max_w2": 44.17491552764864
+ },
+ "geometry": {
+  "L_min": {
+   "K_max_side_condition": 3.2575757575757556,
+   "L": 11.510864433221338,
+   "g2": 0.23255813953488383,
+   "kappa2": 0.8113207547169811
+  },
+  "nominal": {
+   "K_max_side_condition": 3.6060606060606046,
+   "L": 12.0,
+   "g2": 0.21008403361344544,
+   "kappa2": 0.8263888888888888
+  }
+ },
+ "optimised_L_min": {
+  "C_lambda": 1.32,
+  "K": 3.1,
+  "K_max": 3.2575757575757556,
+  "Z1_factor": 4.546765545206515,
+  "alpha": 0.04,
+  "bound_at_n": {
+   "10": 4.330182820905478,
+   "20": 2.0619584489278155,
+   "40": 0.4675491404639483,
+   "80": 0.024039308446313117
+  },
+  "g2": 0.23255813953488383,
+  "good_fraction": 0.6374193548387097,
+  "p_z": 0.00097323529504414,
+  "per_dimension_rate": 0.9284902928975257,
+  "q_max": 0.8901194675847278,
+  "z": 0.2
+ },
+ "optimised_nominal": {
+  "C_lambda": 1.32,
+  "K": 3.5,
+  "K_max": 3.6060606060606046,
+  "Z1_factor": 5.830951894845322,
+  "alpha": 0.04,
+  "bound_at_n": {
+   "10": 5.319937857525174,
+   "20": 2.426854081316366,
+   "40": 0.505030811282155,
+   "80": 0.021870881885493375
+  },
+  "g2": 0.21008403361344544,
+  "good_fraction": 0.6742857142857143,
+  "p_z": 0.00097323529504414,
+  "per_dimension_rate": 0.9245144649372835,
+  "q_max": 0.8901194675847278,
+  "z": 0.2
+ },
+ "truncation": {
+  "n": 8,
+  "note": "counting_bound_1_over_K is what exchangeability alone gives and is the floor T5-F would inherit; the Hoeffding column is the same event bounded by concentration over the h steps, which is n-independent and vastly smaller. measured is what the event actually costs.",
+  "per_K": [
+   {
+    "K": 1.5,
+    "counting_bound_1_over_K": 0.6666666666666666,
+    "hoeffding_bound_max": 0.1678047508425536,
+    "hoeffding_bound_mean": 0.09322740858882719,
+    "measured_exceedance": 0.0
+   },
+   {
+    "K": 2.0,
+    "counting_bound_1_over_K": 0.5,
+    "hoeffding_bound_max": 0.0007928974281593566,
+    "hoeffding_bound_mean": 0.00011235599410434007,
+    "measured_exceedance": 0.0
+   },
+   {
+    "K": 2.5,
+    "counting_bound_1_over_K": 0.4,
+    "hoeffding_bound_max": 1.0549655322918996e-07,
+    "hoeffding_bound_mean": 3.688574284331615e-09,
+    "measured_exceedance": 0.0
+   },
+   {
+    "K": 3.0,
+    "counting_bound_1_over_K": 0.3333333333333333,
+    "hoeffding_bound_max": 3.9524650351768305e-13,
+    "hoeffding_bound_mean": 5.508046183630643e-15,
+    "measured_exceedance": 0.0
+   },
+   {
+    "K": 3.5,
+    "counting_bound_1_over_K": 0.2857142857142857,
+    "hoeffding_bound_max": 4.1697143797004175e-20,
+    "hoeffding_bound_mean": 3.7080737102156775e-22,
+    "measured_exceedance": 0.0
+   }
+  ],
+  "ratio_sigma1_over_m": {
+   "max": 1.3070291749627392,
+   "median": 1.0058000228962607,
+   "p90": 1.150195935692289,
+   "p99": 1.2723587928881288
+  },
+  "seed": 4242,
+  "trials": 200
+ },
+ "truncation_theorem": {
+  "E_eff": 59.59144555517374,
+  "h": 80,
+  "rows": [
+   {
+    "I_nu": 0.42707091765072397,
+    "K": 1.5,
+    "min_n_for_nu": 10,
+    "n_free_term": 0.7423330903060672,
+    "nu": 0.1,
+    "per_step_norm_rate": 0.6524172826862764
+   },
+   {
+    "I_nu": 0.2344559349286085,
+    "K": 1.5,
+    "min_n_for_nu": 7,
+    "n_free_term": 0.5115020107589175,
+    "nu": 0.15,
+    "per_step_norm_rate": 0.791001088642876
+   },
+   {
+    "I_nu": 0.1143118300698081,
+    "K": 1.5,
+    "min_n_for_nu": 5,
+    "n_free_term": 0.3036653789061595,
+    "nu": 0.2,
+    "per_step_norm_rate": 0.8919797663979161
+   },
+   {
+    "I_nu": 0.042021880046801297,
+    "K": 1.5,
+    "min_n_for_nu": 4,
+    "n_free_term": 0.1553254519083692,
+    "nu": 0.25,
+    "per_step_norm_rate": 0.9588488006863306
+   },
+   {
+    "I_nu": 0.42707091765072397,
+    "K": 2.0,
+    "min_n_for_nu": 10,
+    "n_free_term": 0.3036653789061595,
+    "nu": 0.1,
+    "per_step_norm_rate": 0.6524172826862764
+   },
+   {
+    "I_nu": 0.2344559349286085,
+    "K": 2.0,
+    "min_n_for_nu": 7,
+    "n_free_term": 0.06845251060482051,
+    "nu": 0.15,
+    "per_step_norm_rate": 0.791001088642876
+   },
+   {
+    "I_nu": 0.1143118300698081,
+    "K": 2.0,
+    "min_n_for_nu": 5,
+    "n_free_term": 0.008503175096978245,
+    "nu": 0.2,
+    "per_step_norm_rate": 0.8919797663979161
+   },
+   {
+    "I_nu": 0.042021880046801297,
+    "K": 2.0,
+    "min_n_for_nu": 4,
+    "n_free_term": 0.0005820636835005492,
+    "nu": 0.25,
+    "per_step_norm_rate": 0.9588488006863306
+   },
+   {
+    "I_nu": 0.42707091765072397,
+    "K": 2.5,
+    "min_n_for_nu": 10,
+    "n_free_term": 0.06845251060482048,
+    "nu": 0.1,
+    "per_step_norm_rate": 0.6524172826862764
+   },
+   {
+    "I_nu": 0.2344559349286085,
+    "K": 2.5,
+    "min_n_for_nu": 7,
+    "n_free_term": 0.0023967686073506915,
+    "nu": 0.15,
+    "per_step_norm_rate": 0.791001088642876
+   },
+   {
+    "I_nu": 0.1143118300698081,
+    "K": 2.5,
+    "min_n_for_nu": 5,
+    "n_free_term": 2.1956217526752207e-05,
+    "nu": 0.2,
+    "per_step_norm_rate": 0.8919797663979161
+   },
+   {
+    "I_nu": 0.042021880046801297,
+    "K": 2.5,
+    "min_n_for_nu": 4,
+    "n_free_term": 5.2623972904282785e-08,
+    "nu": 0.25,
+    "per_step_norm_rate": 0.9588488006863306
+   },
+   {
+    "I_nu": 0.42707091765072397,
+    "K": 3.0,
+    "min_n_for_nu": 10,
+    "n_free_term": 0.008503175096978245,
+    "nu": 0.1,
+    "per_step_norm_rate": 0.6524172826862764
+   },
+   {
+    "I_nu": 0.2344559349286085,
+    "K": 3.0,
+    "min_n_for_nu": 7,
+    "n_free_term": 2.1956217526752248e-05,
+    "nu": 0.15,
+    "per_step_norm_rate": 0.791001088642876
+   },
+   {
+    "I_nu": 0.1143118300698081,
+    "K": 3.0,
+    "min_n_for_nu": 5,
+    "n_free_term": 5.2278664970333575e-09,
+    "nu": 0.2,
+    "per_step_norm_rate": 0.8919797663979161
+   },
+   {
+    "I_nu": 0.042021880046801297,
+    "K": 3.0,
+    "min_n_for_nu": 4,
+    "n_free_term": 1.1478417400968487e-13,
+    "nu": 0.25,
+    "per_step_norm_rate": 0.9588488006863306
+   },
+   {
+    "I_nu": 0.42707091765072397,
+    "K": 3.1,
+    "min_n_for_nu": 10,
+    "n_free_term": 0.005216307525603068,
+    "nu": 0.1,
+    "per_step_norm_rate": 0.6524172826862764
+   },
+   {
+    "I_nu": 0.2344559349286085,
+    "K": 3.1,
+    "min_n_for_nu": 7,
+    "n_free_term": 7.312521754588752e-06,
+    "nu": 0.15,
+    "per_step_norm_rate": 0.791001088642876
+   },
+   {
+    "I_nu": 0.1143118300698081,
+    "K": 3.1,
+    "min_n_for_nu": 5,
+    "n_free_term": 7.403767098729527e-10,
+    "nu": 0.2,
+    "per_step_norm_rate": 0.8919797663979161
+   },
+   {
+    "I_nu": 0.042021880046801297,
+    "K": 3.1,
+    "min_n_for_nu": 4,
+    "n_free_term": 5.4140207975368215e-15,
+    "nu": 0.25,
+    "per_step_norm_rate": 0.9588488006863306
+   },
+   {
+    "I_nu": 0.42707091765072397,
+    "K": 3.5,
+    "min_n_for_nu": 10,
+    "n_free_term": 0.0005820636835005492,
+    "nu": 0.1,
+    "per_step_norm_rate": 0.6524172826862764
+   },
+   {
+    "I_nu": 0.2344559349286085,
+    "K": 3.5,
+    "min_n_for_nu": 7,
+    "n_free_term": 5.2623972904282785e-08,
+    "nu": 0.15,
+    "per_step_norm_rate": 0.791001088642876
+   },
+   {
+    "I_nu": 0.1143118300698081,
+    "K": 3.5,
+    "min_n_for_nu": 5,
+    "n_free_term": 1.1478417400968487e-13,
+    "nu": 0.2,
+    "per_step_norm_rate": 0.8919797663979161
+   },
+   {
+    "I_nu": 0.042021880046801297,
+    "K": 3.5,
+    "min_n_for_nu": 4,
+    "n_free_term": 6.0403992629261376e-21,
+    "nu": 0.25,
+    "per_step_norm_rate": 0.9588488006863306
+   }
+  ]
+ }
+}

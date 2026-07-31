@@ -1484,11 +1484,34 @@ $P(\text{cone at a fixed step}) \le 2 \cdot 0.9104^n$ --- exponential,
 with no floor and nothing measured --- whence
 $r(n) \le 160 \cdot 0.9104^n$ after the union over the horizon, which
 exceeds $1$ until $n \ge 55$: as a bound on the contact rate it is vacuous
-below that, and the floor-free claim is about the per-step probability. One
-step of the derivation remains open, and we flag it rather than carry it
-silently: the displayed product controls the $\prod_{i \ge 2}$ side, while
-the upper-side factor in $Z_1$ is asserted rather than established, which is
-also why no $\kappa$ appears in the rate. Measurement then sharpens the constant: the observed spread's $95$th percentile
+below that, and the claim is about the per-step probability.
+
+That display is incomplete in a way worth carrying rather than hiding: it
+controls the $\prod_{i\ge2}$ side of the scheme, not the upper-side factor
+$\mathbb{E}[e^{\lambda\gamma^2 Z_1^2}]$ --- which is why no $\kappa$
+appears in it, a tell that the cone's geometry has dropped out of a bound
+about the cone. Carrying that factor costs three things. Its Hoeffding form
+is valid only while $2\lambda\gamma^2\sigma_1^2 < 1$, i.e.
+$\sigma_1^2/m < 1/(c\gamma^2) = 3.6$, so the upper cutoff must satisfy
+$K < 3.6$ rather than the $K = 10$ the floor-free optimisation chose.
+Truncating there needs a bound on $P(\sigma_1^2 > Km)$, and exchangeability
+alone gives only $1/K \approx 0.29$ --- worse than the floor being removed.
+Concentration does better: conditionally on the norms, $\sigma_1^2$ is a sum
+of independent terms with conditional mean exactly $m$, so Hoeffding applies,
+and on the event that no step's action vector is anomalously short the
+exponent is \emph{dimension-free}, $2(K-1)^2\nu^2 S^2/\sum_s w_s^4$. The
+assembled bound is
+\[
+  P(\text{cone at a fixed step}) \;\le\;
+  1.15\times10^{-13} \;+\; 11.7\cdot 0.9245^{\,n} \;+\; 80\cdot 0.8920^{\,n},
+\]
+the last term subdominant. The exponential survives; what does not is
+\emph{floor-free}. The floor cannot be removed within this scheme at all:
+outside the truncation the exponential moment is finite, inside it the
+expectation $\mathbb{E}[(1-c\gamma^2\sigma_1^2/m)^{-1/2}]$ diverges, so no
+parameter choice makes the untruncated version converge. What the earlier
+claim was really reporting is that the floor is $10^{-13}$ rather than
+$0.12$. Measurement then sharpens the constant: the observed spread's $95$th percentile
 $\tau_{95} \le 1.36$ (300 episodes per dimension) gives $0.80^n$ on that
 event, and $\rho \approx 4$ gives the true
 $0.4167^n$. Details

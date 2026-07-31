@@ -294,6 +294,18 @@ def main():
         "steering_jump_max": measured(
             "t3_unrecorded_measurements",
             ["cells", "steering|900|161|v2", "arrival_step_changed", "max"]),
+        # T5-F' (the Z_1 repair): the side condition and the assembled bound.
+        "T5F_K_max_side_condition": measured(
+            "t5f_z1_factor",
+            ["geometry", "nominal", "K_max_side_condition"]),
+        "T5F_prime_rate": measured(
+            "t5f_z1_factor", ["assembled_nominal", "dominant_rate"]),
+        "T5F_prime_floor": measured(
+            "t5f_z1_factor", ["assembled_nominal", "n_free_floor"]),
+        "T5F_prime_Z1_factor": measured(
+            "t5f_z1_factor", ["assembled_nominal", "Z1_factor"]),
+        "T5F_effective_steps": measured(
+            "t5f_z1_factor", ["truncation_theorem", "E_eff"]),
         "conditional_spread_A_t": measured(
             "t2_unrecorded_measurements",
             ["cells", "conditional_spread|0.6|40", "A_t_spread"]),

@@ -210,13 +210,68 @@ steering derivative's median/p90/max 0.388/0.540/0.572 against the recorded
 | **the margin-0.3 variant** | "repairs gap 0 (5/5) but restores the bridge at γ = 0.6 (5/5)" — no artifact | confirmed **5/5 and 0/5**, and the mechanism is sharper: at margin 0.3 it censors **0 edges** on average (against ~2 000 at margin 0.0), so it degenerates to plain Rips and inherits its answer |
 | **the T2 counts** | 106/106, 51–71/106, 101/106, 0/30, 9/9 | **278/278, 104/278, 261/278, 0/18, 18/18** — same conclusions, real n, with Wilson intervals on the censored zeros. The worst replanning-link violation is A_t = +11.65 against a gap of +4.88, not +2.62 against +0.97 |
 
-Still open: T3 #12 and #13 (the funnel-profile
-sample claims, and emitting the unbacked measurements); the actual repair of T5-F's Z₁ factor (now
-flagged in the statement, not yet proved); T7's #9 (the interleaving map defined two ways) and #10 (the margin-0.3
-run with no artifact), R4's bar-length bound; T4's #12 already done; and the
-claim-contract items — the four scope-less headings, the missing paper-3
-baseline for `audit_paper_claims.py`, and the drag-cap test's 60x150 against
-a documented 400x200.
+## T5-F's Z₁ factor — repaired (Theorem T5-F′)
+
+The severest T5 finding. The scheme is
+`P(cone|B) ≤ E[e^{λγ²Z₁²}|B]·Π_{i≥2}E[e^{−λZ_i²}|B]`, and T5-F's display
+controlled only the product — which is why no κ appeared in its rate, a tell
+that the cone's geometry had dropped out of a bound about the cone. Three
+things had to be established, all in `scripts/t5f_z1_factor.py` →
+`results/t5f_z1_factor.json`:
+
+1. **The side condition, derived rather than quoted.** The Hoeffding form
+   `E[e^{tZ₁²}|B] ≤ (1−2tσ₁²)^{−1/2}` needs `2tσ₁² < 1`, i.e.
+   `σ₁²/m < K_max = 1/(cγ²)` = **3.606** (nominal L) / **3.258** (L_min).
+   T5-F's `K = 10` violates it — confirmed.
+2. **The truncation event, certified rather than counted or sampled.**
+   Exchangeability alone gives `1/K ≈ 0.29`, a floor *worse* than the 0.12
+   being removed. The repair: conditionally on the norms, `σ₁² = Σ_s A_s a_{s,1}²`
+   is a sum of **independent** terms with conditional mean **exactly m**
+   (within-step exchangeability gives `E[a_{s,1}²|‖a_s‖] = ‖a_s‖²/n`), each in
+   `[0, b_s]`. Hoeffding applies with no further hypothesis, and on
+   `{‖a_s‖² ≥ νn ∀s}` the exponent is **n-free**: `2(K−1)²ν²E_eff` with
+   `E_eff = S²/Σw_s⁴ = 59.6`. Off that event, `h·e^{−nI(ν)}` with I the exact
+   Chernoff rate for `‖a‖²`'s lower tail. Monte Carlo cannot certify a floor
+   this small — 400 draws at n = 8 see the event zero times even at K = 1.5 —
+   which is why it is derived.
+3. **The assembly**, optimising (z, K, α) subject to K < K_max and then
+   choosing ν so the norm tail stays subdominant:
+
+   **P(cone at a fixed step) ≤ 1.15·10⁻¹³ + 11.7·0.9245ⁿ + 80·0.8920ⁿ**
+
+   (nominal L; at L_min, K = 3.1, floor 7.4·10⁻¹⁰, rate 0.9285.)
+
+**Verdict: a repair, not a refutation — with one claim withdrawn.** The
+exponential survives. Carrying Z₁ costs a rate of 0.9245 instead of 0.9104
+and a constant 11.7 instead of 2, and κ returns through γ² in both the Z₁
+factor and K_max. What does not survive is **floor-free**, and that is now a
+theorem rather than a gap: outside the truncation the exponential moment is
+finite, inside it `E[(1 − cγ²σ₁²/m)^{−1/2}]` is **infinite**, so no parameter
+choice makes the untruncated expectation converge. The floor is irremovable
+within this scheme — it is just 10⁻¹³ rather than 0.12.
+
+Guarded by `test_t5f_prime_respects_its_own_side_condition` (which fails if
+the rate ever comes out *better* than 0.9104, i.e. if the factor is dropped
+again) and `test_t5f_truncation_beats_the_counting_bound_by_orders`.
+
+Still open, in the order the "Order of work" section sets:
+
+1. **T3 #12** — the funnel-profile's "exactly zero" claims rest on the sign of
+   small count differences; three of six zeros are ties in a noisy estimate,
+   one "rise" pair is a drop, and the 16.9×/25.5×/46.8× separations mix Wilson
+   bounds with point estimates.
+2. **T7 #9** — the R5 interleaving map is defined two incompatible ways
+   (nearest-point vs the path-matching bijection); the pair-contiguity step
+   needs the stronger one.
+3. **Prop R4** — the bar-length bound uses a single δ where the two shells have
+   different thicknesses (0.213 and 0.167, so the bound is their sum, 0.381),
+   and "set by the shells and not the sample size" sits awkwardly beside a
+   realized length that grows 58% from 40 to 320 rollouts.
+4. **Claim contract** — four headings carry no scope of their own;
+   `audit_paper_claims.py` reports 50 errors on paper 3 with no paper-3
+   baseline; and the drag-cap guard still runs 60×150 while the text quotes
+   400×200 (both sizes are now emitted, so the guard can simply cite the
+   artifact).
 
 ## Order of work
 

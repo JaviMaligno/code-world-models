@@ -1364,30 +1364,82 @@ Optimising over (z, K, α) at the instrument's weights gives
 a clean exponential with no floor and no measured input. (Previous:
 0.9434ⁿ + 0.12.)
 
-**Two scope facts that must travel with this number.**
-  • **It is a single-step bound, and r(n) needs the union over the
-    horizon**: r(n) ≤ h·2·0.9104ⁿ = 160·0.9104ⁿ, which exceeds 1 until
-    n ≥ 55. So as a bound on the CONTACT RATE the theorem is vacuous
-    below n ≈ 55, and the "exponential decay proved outright" reading is
-    about the per-step probability. The isotropic bound T5-I, by contrast,
-    already carries its h/2.
-  • **OPEN: the Z₁ factor.** The displayed product bounds only the
-    Π_{i≥2} E[e^{−λZ_i²}] side; the upper-side factor E[e^{λγ²Z₁²}] from
-    Prop T5-T is not visible in it, which is why no κ appears in the rate.
-    Relatedly K = 10 violates T5-T's own side condition σ₁²/m < 3.606, and
-    at that K the floor reappears one coordinate over. Until this is
-    resolved the theorem should be read as proved for the Π_{i≥2} side with
-    the Z₁ side asserted, not established. Recorded in
-    `REVIEW-FINDINGS.md`.
+**It is a single-step bound, and r(n) needs the union over the horizon**:
+r(n) ≤ h·2·0.9104ⁿ = 160·0.9104ⁿ, which exceeds 1 until n ≥ 55. So as a
+bound on the CONTACT RATE the display above is vacuous below n ≈ 55, and
+the "exponential decay" reading is about the per-step probability. The
+isotropic bound T5-I, by contrast, already carries its h/2.
 
-Summary for the cube interface: exponential per-step decay
-≤ 2·0.9104ⁿ subject to the open Z₁ factor; the sharper 0.80ⁿ rests on the
+**And the display omits the Z₁ factor. Theorem T5-F′ below carries it.**
+
+**Theorem T5-F′ (cube interface, with the Z₁ factor and its side
+condition).** Prop T5-T's scheme is
+  P(cone | B) ≤ E[e^{λγ²Z₁²} | B] · Π_{i≥2} E[e^{−λZ_i²} | B],
+and T5-F's display controls only the product — which is why no κ appears in
+its rate, a tell that the cone's geometry had dropped out of a bound about
+the cone. The upper-side factor obeys the Hoeffding form
+  E[e^{tZ₁²} | B] ≤ (1 − 2tσ₁²)^{−1/2},  valid only while 2tσ₁² < 1,
+so with λ = c/(2m), c = 1.32, the SIDE CONDITION is
+  **σ₁²/m < K_max := 1/(c·γ²)** = **3.606** (nominal L) or **3.258** (at
+L_min) — and T5-F's K = 10 violates it.
+Truncating at σ₁² ≤ K·m with K < K_max, and writing
+  q_max := max(q(cz), q(cK)),  the good fraction 1 − α − 1/K,
+  **P(cone at a fixed step) ≤ F + (1 − cγ²K)^{−1/2}·[q_max^{(1−α−1/K)n}
+                                                     + (e·p(z)/α)^{αn}]**,
+where F bounds the truncation event P(σ₁² > K·m).
+
+*The truncation event, certified rather than counted or sampled.*
+Exchangeability alone gives P(σ₁² > Km) ≤ 1/K ≈ 0.29 — a floor worse than
+the 0.12 T5-F removed. It can be replaced by a concentration bound, because
+**conditionally on the norms B, σ₁² = Σ_s A_s a_{s,1}² is a sum of
+INDEPENDENT terms with conditional mean exactly m**: within-step
+exchangeability gives E[a_{s,1}²|‖a_s‖] = ‖a_s‖²/n, so
+E[σ₁²|B] = (1/n)Σ_s A_s‖a_s‖² = m, and each term lies in
+[0, b_s], b_s := A_s·min(1,‖a_s‖²). Hoeffding then gives
+  P(σ₁² > Km | B) ≤ exp(−2(K−1)²m²/Σ_s b_s²).
+On the event {‖a_s‖² ≥ ν·n for every s} (with νn ≥ 1) this is n-FREE:
+there M_s² = ‖a_s‖², so m = S/n exactly and b_s ≤ w_s²/(νn), giving
+Σ_s b_s² ≤ (Σ_s w_s⁴)/(νn)² and hence an exponent
+  ≥ **2(K−1)²ν²·E_eff**,  E_eff := S²/Σ_s w_s⁴ = **59.6** at the
+instrument's weights. Off that event we pay h·e^{−n·I(ν)}, with I the exact
+Chernoff rate for ‖a‖²'s lower tail (closed-form MGF
+E[e^{−θa²}] = ½√(π/θ)·erf(√θ)). So
+  **F ≤ exp(−2(K−1)²ν²E_eff) + h·e^{−n·I(ν)}** ,
+the first term n-independent and the second exponential in n. Monte Carlo
+cannot certify a floor of this size, which is why it is derived; for
+orientation the event is not observed at all in 400 draws at n = 8, even at
+K = 1.5.
+
+*Assembled at the instrument* (`scripts/t5f_z1_factor.py` →
+`results/t5f_z1_factor.json`, which optimises (z, K, α) subject to
+K < K_max and then picks ν so the norm tail stays subdominant):
+| geometry | K | z | α | ν | Z₁ factor | floor | dominant rate | norm tail |
+|---|---|---|---|---|---|---|---|---|
+| nominal L | 3.5 | 0.2 | 0.04 | 0.20 | 5.83 | **1.15·10⁻¹³** | **0.9245** | 0.8920 |
+| L_min | 3.1 | 0.2 | 0.04 | 0.20 | 4.55 | 7.4·10⁻¹⁰ | 0.9285 | 0.8920 |
+i.e. **P(cone at a fixed step) ≤ 1.15·10⁻¹³ + 11.7·0.9245ⁿ + 80·0.8920ⁿ**,
+the last term subdominant. ∎
+
+*What this changes.* The exponential SURVIVES; carrying Z₁ costs a rate of
+0.9245 instead of 0.9104, a constant 11.7 instead of 2, and — the
+qualitative change — **the bound is not floor-free**. The floor cannot be
+removed within this scheme, and that is a theorem rather than a limitation
+of the argument: outside the truncation the exponential moment is finite,
+inside it E[(1 − cγ²σ₁²/m)^{−1/2}] is **infinite**, so no parameter choice
+makes the untruncated expectation converge. What "floor-free" was really
+reporting is that the floor is 10⁻¹³ rather than 0.12. And κ is back where
+it belongs: it enters through γ² in both the Z₁ factor and K_max.
+
+Summary for the cube interface: exponential per-step decay, at
+≤ 2·0.9104ⁿ for the Π_{i≥2} side alone and
+≤ 1.15·10⁻¹³ + 11.7·0.9245ⁿ once the Z₁ factor is carried (T5-F′); the sharper 0.80ⁿ rests on the
 measured spread τ ≤ 1.36, and the sharp rate on the measured ρ — at whose
 MINIMUM (2.34) the rate is 0.474.
 
 | statement | status |
 |---|---|
-| P(cone at a fixed step), cube interface | ≤ 2·0.9104ⁿ, no floor, no measured input — **modulo the open Z₁ factor** (Thm T5-F) |
+| P(cone at a fixed step), cube interface, Π_{i≥2} side only | ≤ 2·0.9104ⁿ (Thm T5-F) — incomplete: the Z₁ factor is absent |
+| … with the Z₁ factor carried and its side condition met | ≤ 1.15·10⁻¹³ + 11.7·0.9245ⁿ (Thm T5-F′); NOT floor-free, and the floor is irremovable within the scheme |
 | ⇒ r(n) after the union over h = 80 | ≤ 160·0.9104ⁿ, non-vacuous only from n ≈ 55 |
 | … with σ_i comparable (measured τ ≤ 1.36) | ≤ 0.80 per dimension, no floor |
 | … the sharp rate, at min ρ = 2.34 | ≤ 0.474 per dimension; 0.418 at the median is not a bound |

@@ -111,6 +111,10 @@ CHECKS = [
     (["measured", "P_root_exists"], ["0.00889"], "lower"),
     (["measured", "drag_cap_worst_400x200"], ["1.9956"]),
     (["measured", "conditional_spread_A_t"], ["3.69"]),
+    (["measured", "T5F_K_max_side_condition"], ["3.606"]),
+    # An upper bound's rate: printing ABOVE it is safe (looser).
+    (["measured", "T5F_prime_rate"], ["0.9245"], "upper"),
+    (["measured", "T5F_effective_steps"], ["59.6"]),
 ]
 
 
@@ -143,6 +147,8 @@ MUST_APPEAR = {
     "measured/R_ring_free",
     "measured/R_prime_leaving_k_minus_1_steps",
     "measured/drag_cap_worst_400x200",
+    "measured/T5F_prime_rate",
+    "measured/T5F_K_max_side_condition",
 }
 
 
