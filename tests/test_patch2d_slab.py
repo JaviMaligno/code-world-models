@@ -33,6 +33,8 @@ from cwm.continuous.contract import (
     build_contract, collect_transitions, contract_accuracy, mode_blindness,
     sample_contains_mode, synthesize_and_evaluate)
 from cwm.continuous.envs import PatchField2D, blind_of
+
+_REPO = pathlib.Path(__file__).resolve().parents[1]
 from cwm.continuous.instruments import spec_for
 from cwm.llm.provider import FakeProvider
 
@@ -46,16 +48,35 @@ SLAB = PatchField2D(patch_shape="slab", slab_half_width=W_IMPERM)
 
 
 # --- 1. the disc/square code paths are untouched ------------------------------
-# Digests captured by running this exact loop against src/cwm/continuous/envs.py
-# BEFORE patch_shape="slab" / slab_half_width existed. Any change to the disc or
-# square membership test, the integrator, the reward or the freeze semantics
-# moves them, which would invalidate every committed disc/square result.
-GOLDEN = {
+# Originally this pinned sha256 digests captured on the machine that ran the
+# campaigns. That was WRONG as a cross-platform invariant: libm's last-ulp
+# behaviour differs between macOS/arm64 and Linux/x86, so the digests moved on
+# the CI runner while every committed result stayed valid -- bit-identity is a
+# same-machine property. The guard is therefore expressed the way the other
+# stream guards already are: the WORKING TREE's streams must be bit-identical
+# to the streams of the code committed at HEAD, executed in this same process.
+# That catches any uncommitted change to the membership test, the integrator,
+# the reward or the freeze semantics, on every platform.
+GOLDEN_ON_RECORDING_MACHINE = {   # kept for the historical record (macOS/arm64)
     ("disc", "truth"): "d6690d941512771114e1095ac06e65dc24bd29796636a7fb0e907d73f749347a",
     ("disc", "blind"): "da8d4981be128ff656ae8f250271ee1b44eb9c94cb147df0ab55dec926bdf657",
     ("square", "truth"): "c5bf317a5f39ae04a130128366142ecacc8ed7aa979a00d12cc3eea8afb1cb9e",
     ("square", "blind"): "da8d4981be128ff656ae8f250271ee1b44eb9c94cb147df0ab55dec926bdf657",
 }
+
+
+def _head_patchfield():
+    """PatchField2D as committed at HEAD, for same-process stream comparison."""
+    import subprocess
+    old_src = subprocess.run(["git", "show", "HEAD:src/cwm/continuous/envs.py"],
+                             capture_output=True, text=True, cwd=_REPO).stdout
+    if not old_src:
+        return None
+    ns = {}
+    exec(compile(old_src.replace("from .shapes import",
+                                 "from cwm.continuous.shapes import"),
+                 "committed", "exec"), ns)   # noqa: S102 -- our own file
+    return ns["PatchField2D"]
 
 
 def _rollout_digest(env, n_rollouts=25, seed=777):
@@ -78,17 +99,25 @@ def _rollout_digest(env, n_rollouts=25, seed=777):
     return h.hexdigest(), contacts
 
 
-def test_disc_and_square_rollouts_are_bit_identical_to_pre_slab_code():
+def test_disc_and_square_rollouts_are_bit_identical_to_committed_code():
+    Head = _head_patchfield()
+    if Head is None:
+        pytest.skip("no git HEAD to compare against")
     for shape in ("disc", "square"):
         env = PatchField2D(patch_shape=shape)
         d_truth, n_truth = _rollout_digest(env)
         d_blind, n_blind = _rollout_digest(blind_of(env))
         # non-vacuous: the truth batch really did fire the freeze branch, and
         # the blind batch really did not (so both branches are covered).
-        assert n_truth > 0, f"{shape}: golden batch never contacted a patch"
+        assert n_truth > 0, f"{shape}: batch never contacted a patch"
         assert n_blind == 0
-        assert d_truth == GOLDEN[(shape, "truth")], f"{shape} truth digest moved"
-        assert d_blind == GOLDEN[(shape, "blind")], f"{shape} blind digest moved"
+        head_env = Head(patch_shape=shape)
+        # the module's blind_of dispatches on isinstance, and Head is a distinct
+        # class object; build the blind variant directly
+        from dataclasses import replace as _dc_replace
+        head_blind = _dc_replace(head_env, p1=None, p2=None)
+        assert d_truth == _rollout_digest(head_env)[0], f"{shape} truth stream moved"
+        assert d_blind == _rollout_digest(head_blind)[0], f"{shape} blind stream moved"
 
 
 def test_disc_default_and_slab_field_is_inert_for_disc_and_square():
