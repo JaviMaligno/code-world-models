@@ -17,7 +17,7 @@ one technical precision), then minor revision. Same protocol as rounds 1–3.
 | 7 | preprint-draft.md dangerously stale | RIGHT | Prominent OBSOLETE-HISTORICAL warning banner listing exactly which of its claims were later corrected, pointing at main.tex + the CI audit as authoritative | DONE |
 | 8 | REVIEW-RESPONSE row 5 still says 109/111 and 34/36; Qwen row overstated | RIGHT | Row 5 annotated as the round-1 record with the superseding numbers; row 18 already carried the mixed-backend note and now the matched campaign supersedes it | DONE |
 | 9 | REPRO-FACTS does not record the mixed provenance | RIGHT | Split-provenance note added naming both files, the metadata quirks and the provenance JSON | DONE |
-| 10 | Lean build not certifiable by the reviewer (90 s no output) | Expected — the first build compiles Mathlib stragglers; subsequent builds are minutes | `formal/README.md` documents this; `lake build` completed on this machine (8697 jobs) and the CI job is listed as future work | NOTED |
+| 10 | Lean build not certifiable by the reviewer (90 s no output) | Expected — the first build compiles Mathlib stragglers; subsequent builds are minutes | `lake build` completed locally (8697 jobs), and the build is now a **root CI job** (`lean_proofs` in `.github/workflows/ci.yml`, via `leanprover/lean-action` with the Mathlib binary cache) so the green check is public; the template's nested workflow inside `formal/`, which GitHub never ran, was removed | DONE |
 
 ## Count movements this round (all derived, none typed)
 

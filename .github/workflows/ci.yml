@@ -47,6 +47,20 @@ jobs:
       - name: Run test suite
         run: pytest -q
 
+  lean_proofs:
+    name: Lean formalization (prop:risk + the machine-checked counterexample)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Builds formal/Paper2Props against the pinned toolchain; lean-action detects
+      # Mathlib and fetches the binary cache, so this compiles only our file (~minutes).
+      # The fourth review could not certify the local build finished; this job makes the
+      # green check public. The template's nested workflow inside formal/Paper2Props/
+      # never ran (GitHub only reads /.github/workflows) -- that gap is why this exists.
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: formal/Paper2Props
+
   paper_numbers:
     name: Paper 2 numbers match results/
     runs-on: ubuntu-latest
