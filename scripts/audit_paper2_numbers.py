@@ -1590,14 +1590,14 @@ claim("the re-measurement reproduces the published cells it re-measures",
 # --- the held-out acceptance sample (sec:heldout) ---------------------------
 _ho = load("heldout_gate_paper_numbers")
 _hoa = load("heldout_gate_audit")
-claim("the held-out audit covers 1028 artifacts over 33 campaigns",
-      _hoa["aggregates"]["totals"]["n_artifacts"] == 1028
-      and _hoa["aggregates"]["totals"]["n_files"] == 33)
+claim("the held-out audit covers 1034 artifacts over 34 campaigns",
+      _hoa["aggregates"]["totals"]["n_artifacts"] == 1034
+      and _hoa["aggregates"]["totals"]["n_files"] == 34)
 claim("the three blocks are disjoint at rollout-seed level",
       _hoa["split"]["all_disjoint"] is True)
-claim("the reproduced training block returns the stored accuracy in 99/99 spot-checks",
-      _hoa["aggregates"]["train_reproduction_check"]["n_checked"] == 99
-      and _hoa["aggregates"]["train_reproduction_check"]["n_accuracy_matches"] == 99)
+claim("the reproduced training block returns the stored accuracy in 102/102 spot-checks",
+      _hoa["aggregates"]["train_reproduction_check"]["n_checked"] == 102
+      and _hoa["aggregates"]["train_reproduction_check"]["n_accuracy_matches"] == 102)
 claim("N_gate = 40 and N_eval = 100",
       _ho["design"]["N_gate"] == 40 and _ho["design"]["N_eval"] == 100)
 _h2 = _ho["hypothesis_ii"]
@@ -1637,24 +1637,24 @@ _regs_recs = [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
               if r["in_sample_gate_passed"] and not r["accepted_heldout"]]
 _rev_recs = [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
              if not r["in_sample_gate_passed"] and r["accepted_heldout"]]
-claim("40 of 647 in-sample-accepted draws are rejected by an independent gate (6.2% of "
-      "draws, spanning 25 distinct rollout-seed blocks), all 40 incomplete-arm, 0 of 434 "
+claim("40 of 650 in-sample-accepted draws are rejected by an independent gate (6.2% of "
+      "draws, spanning 25 distinct rollout-seed blocks), all 40 incomplete-arm, 0 of 437 "
       "full-arm",
-      _rg["n_in_sample_accepted"] == 647
+      _rg["n_in_sample_accepted"] == 650
       and _rg["n_rejected_by_independent_gate"] == 40
       and _rg["n_incomplete_arm"] == 40 and _rg["n_full_arm"] == 0
       and abs(_rg["rate_over_draws"] - 0.062) < 5e-4
       and len(_regs_recs) == 40
       and len({r["block_key"] for r in _regs_recs}) == 25
-      and _ho["by_arm"]["full"]["n_in_sample_passed"] == 434
+      and _ho["by_arm"]["full"]["n_in_sample_passed"] == 437
       and _ho["by_arm"]["full"]["n_regressed"] == 0)
 claim("3 draws move the other way (below 1.000 in-sample, at 0.9975 to 0.9991, yet "
-      "accepted held-out), which is why 647 - 40 leaves 610 rather than 607",
+      "accepted held-out), which is why 650 - 40 leaves 613 rather than 610",
       len(_rev_recs) == 3
       and _hoa["aggregates"]["totals"]["n_reverse_regressions"] == 3
       and abs(min(r["in_sample_gate_accuracy"] for r in _rev_recs) - 0.9975) < 5e-5
       and abs(max(r["in_sample_gate_accuracy"] for r in _rev_recs) - 0.9991) < 5e-5
-      and 647 - 40 + 3 == _hoa["aggregates"]["totals"]["n_heldout_accepted"] == 610)
+      and 650 - 40 + 3 == _hoa["aggregates"]["totals"]["n_heldout_accepted"] == 613)
 # --- the four phantom-stop artifacts, third review points 2-3: the accounting the
 # prose now states is derived here so it cannot drift to a stale story again (the
 # regression exception was attributed to a Qwen artifact from the 625-era snapshot;
@@ -1682,24 +1682,63 @@ claim("the one off-mode regression among the 40 IS the fourth phantom, not a Qwe
       "artifact (the Qwen regressions now classify mode_only)",
       [(r["file"], r["seed"]) for r in _regs_recs if r["gate"]["n_fail_off_mode"] > 0]
       == [("continuous_synthesis_pendulum_mini_thstop1.4.json", 50000)])
-claim("the Qwen 2D arm is complete: 3/3 full cells at gate 1.000, and the incomplete "
-      "arm refused in 3 of 3 (accuracies 0.993-0.997), mode in every training block, "
-      "none accepted held-out",
-      (lambda q: len(q) == 3
-       and all(not r["in_sample_gate_passed"] for r in q)
-       and all(not r["accepted_heldout"] for r in q)
-       and all(r["mode_in_train"]["any"] is True for r in q)
-       and abs(min(r["in_sample_gate_accuracy"] for r in q) - 0.9934) < 5e-4
-       and abs(max(r["in_sample_gate_accuracy"] for r in q) - 0.9966) < 5e-4)(
-          [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
-           if "patch2d_compat-qwen" in r["file"] and r["arm"] == "incomplete"]))
+# --- draws vs blocks (fourth review, point 2): 111 are DRAWS; the block unit is the
+# audit's own block_key, under which mini and large share their samples.
+_oneD = [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
+         if r["instrument"] in ("cart", "pendulum") and r["arm"] == "incomplete"
+         and r["mode_in_train"]["any"] and "qwen" not in r["file"].lower()]
+_exc1d = {(e["file"], e["seed"])
+          for arm in _re1d["arms"].values() for e in arm.get("exceptions", [])}
+_blk = {}
+for _r in _oneD:
+    _ok = _r["in_sample_gate_passed"] and (_r["file"], _r["seed"]) not in _exc1d
+    _blk.setdefault(_r["block_key"], []).append(_ok)
+claim("105 of 111 mode-containing DRAWS repaired exactly, spanning 70 distinct blocks of "
+      "which 64 are exact on every draw (six failures in six distinct blocks)",
+      len(_oneD) == 111
+      and sum(sum(v) for v in _blk.values()) == 105
+      and len(_blk) == 70
+      and sum(1 for v in _blk.values() if all(v)) == 64
+      and sum(1 for v in _blk.values() if not all(v)) == 6)
+# The MATCHED campaign (fourth review, point 1) is the contrast the paper cites: both
+# arms on one pinned vLLM backend (provenance in results/qwen_vllm_provenance.json). The
+# first-pass mixed-provenance file is retained as an exploratory unmatched spot-check.
+_qm = [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
+       if "matched-vllm" in r["file"]]
+_qx = [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
+       if "patch2d_compat-qwen" in r["file"] and "matched-vllm" not in r["file"]]
+claim("the MATCHED Qwen 2D campaign: full arm 3/3 at gate 1.000 zero iterations; "
+      "incomplete arm refused 3/3 (0.993-0.997), mode in every training block, none "
+      "accepted held-out -- both arms on one pinned backend",
+      len(_qm) == 6
+      and all(r["in_sample_gate_passed"] and r["in_sample_refine_iterations"] == 0
+              for r in _qm if r["arm"] == "full")
+      and (lambda q: len(q) == 3
+           and all(not r["in_sample_gate_passed"] for r in q)
+           and all(not r["accepted_heldout"] for r in q)
+           and all(r["mode_in_train"]["any"] is True for r in q)
+           and abs(min(r["in_sample_gate_accuracy"] for r in q) - 0.9934) < 5e-4
+           and abs(max(r["in_sample_gate_accuracy"] for r in q) - 0.9966) < 5e-4)(
+          [r for r in _qm if r["arm"] == "incomplete"]))
+claim("the first-pass (mixed-provenance) incomplete cells reproduce the matched arm's "
+      "gate accuracies to three decimals, seed by seed",
+      sorted(round(r["in_sample_gate_accuracy"], 3)
+             for r in _qx if r["arm"] == "incomplete")
+      == sorted(round(r["in_sample_gate_accuracy"], 3)
+                for r in _qm if r["arm"] == "incomplete"))
+claim("the matched campaign's provenance is versioned: vLLM 0.26.0, the Hub revision sha "
+      "recorded, generation_config identical for both arms",
+      (lambda pv: pv["server"]["version"] == "0.26.0"
+       and len(pv["model"]["hub_revision_sha"]) == 40
+       and pv["generation"]["generation_config"]["temperature"] == 0.7)(
+          load("qwen_vllm_provenance")))
 claim("hypothesis (i) has no violation in the audited arms: all 60 mode-free-train "
       "incomplete draws are probe-blind",
       (lambda fb: len(fb) == 60 and all(r["probe_blind_all_modes"] is True for r in fb))(
           [r for r in (_hoa.get("records") or _hoa.get("artifacts"))
            if r["arm"] == "incomplete" and r["mode_in_train"]
            and r["mode_in_train"].get("any") is False]))
-claim("the prose's 'about one accepted artifact in sixteen' matches 647/40 = 16.2",
+claim("the prose's 'about one accepted artifact in sixteen' matches 650/40 = 16.3",
       round(_rg["n_in_sample_accepted"] / _rg["n_rejected_by_independent_gate"]) == 16)
 claim("39 of the 40 regressions fail ONLY on mode contacts",
       _rg["failure_is_on_the_mode"]["n_fail_only_on_mode_contacts"] == 39
@@ -1739,10 +1778,10 @@ claim("the independent gate is not merely strict: it accepts 20 of 20 of the pos
       len(_hint) == 20 and sum(1 for r in _hint if r["accepted_heldout"]) == 20
       and all(r["gate"]["accuracy"] == 1.0 for r in _hint))
 _ex = _ho["off_sample_exactness_of_accepted"]
-claim("all 610 independently accepted draws are exact outside the mode region ON THE "
+claim("all 613 independently accepted draws are exact outside the mode region ON THE "
       "100-rollout evaluation sample (reported as a count, no binomial bound attached)",
-      _ex["n_accepted"] == 610 and _ex["n_exceptions"] == 0
-      and _ex["n_exact_outside_mode"] == 610,
+      _ex["n_accepted"] == 613 and _ex["n_exceptions"] == 0
+      and _ex["n_exact_outside_mode"] == 613,
       f"{_ex['n_exact_outside_mode']}/{_ex['n_accepted']}")
 
 # --- report ----------------------------------------------------------------

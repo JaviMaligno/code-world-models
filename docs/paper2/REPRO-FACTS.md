@@ -9,7 +9,7 @@ with
 PYTHONPATH=src .venv/bin/python scripts/repro_manifest.py
 ```
 
-Snapshot: git `d2d88f3` (`2026-07-31 15:12:03 +0100`), branch
+Snapshot: git `2222db4` (`2026-07-31 18:00:04 +0100`), branch
 `paper2-major-revision`, working tree dirty (concurrent revision work in the
 same checkout). Manifest generated 2026-07-31. **Where a number below could
 move, the JSON key that holds it is named — quote the key, not this file.**
@@ -84,10 +84,23 @@ table. What is still absent is a DOI over the tag — a Zenodo or figshare depos
 which no venue this is bound for requires and which needs an account rather than a
 commit. Recorded as absent, not as blocking.
 
+### Split-provenance note: the Qwen 2D files
+
+`continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json` is a
+**mixed-provenance** file: its three `full` cells were served by the HF Inference
+Providers router (2026-07-24) and its three `incomplete` cells by a self-hosted vLLM
+(2026-07-31), because the resume guard deliberately treats `compat_base_url` as
+provenance rather than treatment; its top-level `params` (router URL, `n_seeds: 10`)
+describe the ORIGINAL launch, not every cell. It is retained as an exploratory
+unmatched spot-check. The contrast the paper cites is
+`..._k3_7_matched-vllm.json` — both arms on one pinned backend, with the serving
+provenance (vLLM version, Hub revision sha, generation config) versioned in
+`results/qwen_vllm_provenance.json`.
+
 ## 3. MANIFEST — every table and figure → its backing JSON
 
-Derived from `scripts/audit_paper2_numbers.py`, which already re-derives **708**
-paper values from `results/` (`audit_coverage.audit_checks_executed = 708`,
+Derived from `scripts/audit_paper2_numbers.py`, which already re-derives **712**
+paper values from `results/` (`audit_coverage.audit_checks_executed = 712`,
 `audit_failures = []`, exit 0 at this snapshot). That count is a moving target —
 it was **621** at git `9e4988c` and rises as concurrent revision work adds
 assertions — so quote the key, not the integer. The derivation is done twice and
@@ -167,7 +180,7 @@ the tables and figures above.
   `continuous_eps_sweep_patch2d.json` (PatchField2D ε rows, §6 prose),
   `continuous_patch2d_square.json` (square-patch CPU calibration behind
   Ablation 2), `continuous_claude_relay_patch2d_k3_7.json` (the 2D Claude relay
-  ledger). Every number those back is prose-only and outside those 708 checks.
+  ledger). Every number those back is prose-only and outside those 712 checks.
 * **G3 — figures are never checked, only their tables.** No assertion compares
   a plotted series to the JSON; the guarantee is indirect (same JSON, no
   transformation but `play_cost·(1-r)^N`, itself checked in `tab:danger`).
@@ -255,20 +268,20 @@ Exact call counts, derived per cell as `1 + refine_iterations`
 
 | campaign | cells | LLM calls |
 |---|---|---|
-| LLM synthesis, PatchField2D | 686 | 3405 |
+| LLM synthesis, PatchField2D | 692 | 3426 |
 | LLM synthesis, pendulum | 206 | 293 |
 | LLM synthesis, 1D cart | 136 | 203 |
-| **total API arms** | **1028** | **3901** |
+| **total API arms** | **1034** | **3922** |
 | Claude agent-relay (subscription, not API) | — | 20 relay rounds |
 
 The two guided-prompt files dominate: `continuous_synthesis_patch2d_{mini,large}_k3_7_pv-region_it15.json`
 are 320 calls each (20 cells × 16 = 1 + 15 refine iterations, the budget-3×
-treatment), i.e. 640 of the 3901.
+treatment), i.e. 640 of the 3922.
 
 **So cost must be stated as a range, not a point.** The design spec's own pre-run
 estimate (2026-07-07, `docs/specs/2026-07-06-…md`, "Runbook — LLM arms") was
 "~2–7 LLM calls per seed (1 synthesis + refinement iterations), 1–2k prompt
-tokens each"; the measured 3901 calls at 1–2k prompt tokens plus completions of
+tokens each"; the measured 3922 calls at 1–2k prompt tokens plus completions of
 comparable size brackets the API arms at roughly 10⁶–10⁷ total tokens — single
 to low-double-digit US dollars at 2026 GPT-5.x-class prices. The only *measured*
 dollar figures in-repo are paper 1's `cost_usd_total` fields, totalling

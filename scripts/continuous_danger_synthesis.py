@@ -341,6 +341,13 @@ def build_parser() -> argparse.ArgumentParser:
                     "switches provider to OpenAICompatProvider with HF_TOKEN "
                     "and ignores the positional size")
     ap.add_argument("--compat-base-url", default="https://router.huggingface.co/v1")
+    # A FILENAME tag, deliberately not a treatment: it never enters _RESULT_KEYS. Use it
+    # when the same treatment is re-run under a different SERVING PATH so the runs land in
+    # separate, self-describing files instead of resuming into a mixed-provenance one --
+    # the fourth review's point 1 (the Qwen 2D arm mixed HF-router and vLLM cells in one
+    # file whose top-level params could only name one endpoint).
+    ap.add_argument("--out-tag", default=None,
+                    help="suffix appended to the output filename; provenance, not treatment")
     return ap
 
 
@@ -417,6 +424,8 @@ if __name__ == "__main__":
         SUFFIX += f"_pv-{args.prompt_variant}"
     if args.max_iters != 5:
         SUFFIX += f"_it{args.max_iters}"
+    if args.out_tag:
+        SUFFIX += f"_{args.out_tag}"
 
     # Truth-planner + random baselines, shared across all seeds/arms (paired).
     print(f"baselines: {args.play_episodes} truth-MPC + random episodes...", flush=True)

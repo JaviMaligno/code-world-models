@@ -1,5 +1,5 @@
 # Pinned environment for docs/paper2 (review points #18/#19).
-# Produced by `python -m pip freeze` on 2026-07-31 (UTC) inside the repo's
+# Produced by `python -m pip freeze` on 2026-08-01 (UTC) inside the repo's
 # .venv, on the machine described in results/repro_manifest.json.
 # THIS IS NOT A LOCKFILE: it has no hashes and no resolver metadata,
 # and pyproject.toml declares only lower bounds. A release tag of the

@@ -6,7 +6,7 @@
     "N_gate": 40,
     "N_eval": 100,
     "blocks_disjoint": true,
-    "train_reproduced_exactly": "99/99",
+    "train_reproduced_exactly": "102/102",
     "why_full_arm_is_excluded": "prop:twofactor's hypotheses (i) and (ii) concern a mode-blind artifact synthesized from a mode-free training sample. A full-arm artifact carries the mode clause in its specification, so it is correct by construction; it is not a test of either hypothesis and is excluded from every rate below."
   },
   "hypothesis_ii": {
@@ -71,12 +71,12 @@
   },
   "regressions": {
     "claim": "artifacts the sample-consistency gate accepted that an independent acceptance sample of the same size rejects",
-    "n_in_sample_accepted": 647,
+    "n_in_sample_accepted": 650,
     "n_rejected_by_independent_gate": 40,
-    "rate_over_draws": 0.061823802163833076,
+    "rate_over_draws": 0.06153846153846154,
     "wilson95_over_draws": [
-      0.04572766608113012,
-      0.08309242932676296
+      0.04551509802333131,
+      0.08271393623202988
     ],
     "n_incomplete_arm": 40,
     "n_full_arm": 0,
@@ -188,6 +188,10 @@
       "patch2dlanding_mini_k3_7": {
         "n_passed": 20,
         "n_regressed": 0
+      },
+      "patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm": {
+        "n_passed": 3,
+        "n_regressed": 0
       }
     },
     "failure_is_on_the_mode": {
@@ -197,26 +201,26 @@
   },
   "off_sample_exactness_of_accepted": {
     "claim": "of the artifacts an independent gate accepts, how many are exact OUTSIDE the mode region on a further independent sample",
-    "n_accepted": 610,
-    "n_exact_outside_mode": 610,
+    "n_accepted": 613,
+    "n_exact_outside_mode": 613,
     "n_exceptions": 0,
     "exceptions": [],
-    "clopper_pearson_95_upper_on_exception_rate": 0.004898997090947155,
-    "n_all_artifacts": 1028,
+    "clopper_pearson_95_upper_on_exception_rate": 0.004875080111719943,
+    "n_all_artifacts": 1034,
     "n_exceptions_over_all_artifacts": 297,
-    "note": "the 297 exceptions in the audit's own d_out_of_sample_exactness are over ALL 1028 artifacts, most of which never passed any gate; acceptance is the condition the paper's claim is about. Both counts are derived here rather than typed: the campaign set grows, and this note named 625 by hand until it went stale"
+    "note": "the 297 exceptions in the audit's own d_out_of_sample_exactness are over ALL 1034 artifacts, most of which never passed any gate; acceptance is the condition the paper's claim is about. Both counts are derived here rather than typed: the campaign set grows, and this note named 625 by hand until it went stale"
   },
   "by_arm": {
     "incomplete": {
-      "n": 594,
+      "n": 597,
       "n_in_sample_passed": 213,
       "n_heldout_accepted": 173,
       "n_regressed": 40
     },
     "full": {
-      "n": 434,
-      "n_in_sample_passed": 434,
-      "n_heldout_accepted": 434,
+      "n": 437,
+      "n_in_sample_passed": 437,
+      "n_heldout_accepted": 437,
       "n_regressed": 0
     }
   }

@@ -40,7 +40,7 @@
       "continuous_synthesis_large_xwall8_off20.json",
       "continuous_synthesis_mini_xwall4.json",
       "continuous_synthesis_mini_xwall8.json",
-      "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json",
+      "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
       "continuous_synthesis_patch2d_large_k3_7.json",
       "continuous_synthesis_patch2d_large_k3_7_arc120.json",
       "continuous_synthesis_patch2d_large_k3_7_arc240.json",
@@ -96,6 +96,12 @@
         "control_translated": 5
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -149,6 +155,12 @@
         "repaired": 3
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -199,6 +211,12 @@
         "control_translated": 3
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -287,6 +305,12 @@
         "control_translated": 40
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -354,6 +378,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -405,6 +435,12 @@
         "rejected_stalled": 2
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -432,6 +468,12 @@
         "claim": "repair | cart | x_wall=8 | prompt=default | it=5 | arm=incomplete | Qwen/Qwen3-Coder-30B-A3B-Instruct"
       },
       "blind_exploited_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -521,6 +563,12 @@
         "repaired": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -548,6 +596,12 @@
         "claim": "repair | cart | x_wall=8 | prompt=default | it=5 | arm=incomplete | gpt-5.4"
       },
       "blind_exploited_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -616,6 +670,12 @@
         "repaired": 10
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -643,6 +703,12 @@
         "claim": "repair | cart | x_wall=8 | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
       },
       "blind_exploited_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -715,6 +781,12 @@
         "repaired": 2
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -742,6 +814,12 @@
         "claim": "repair | cart | x_wall=8 | prompt=relay | it=5 | arm=incomplete | claude-sonnet (agent-relayed)"
       },
       "blind_exploited_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -816,6 +894,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -890,6 +974,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -964,6 +1054,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1038,6 +1134,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1113,6 +1215,12 @@
         "control_translated": 19
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1187,6 +1295,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1261,6 +1375,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1335,6 +1455,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1409,6 +1535,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1483,6 +1615,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1557,6 +1695,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1631,6 +1775,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1705,6 +1855,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1779,6 +1935,12 @@
         "repaired": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1812,7 +1974,7 @@
       "size": "mini",
       "family": "qwen",
       "file": [
-        "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json"
+        "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json"
       ],
       "n_blocks": 3,
       "n_draws": 3,
@@ -1836,6 +1998,12 @@
         "control_translated": 3
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1910,6 +2078,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -1984,6 +2158,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2017,7 +2197,7 @@
       "size": "mini",
       "family": "qwen",
       "file": [
-        "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json"
+        "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json"
       ],
       "n_blocks": 3,
       "n_draws": 3,
@@ -2041,6 +2221,12 @@
         "rejected_stalled": 3
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2115,6 +2301,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2189,6 +2381,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2265,6 +2463,12 @@
         "rejected_stalled": 16
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2339,6 +2543,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2413,6 +2623,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2487,6 +2703,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2542,6 +2764,12 @@
         "control_translated": 1
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2599,6 +2827,12 @@
         "rejected_stalled": 3
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2673,6 +2907,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2747,6 +2987,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2821,6 +3067,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2895,6 +3147,12 @@
         "rejected_stalled": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -2969,6 +3227,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3043,6 +3307,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3118,6 +3388,12 @@
         "rejected_stalled": 18
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3145,6 +3421,12 @@
         "claim": "repair | patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete | gpt-5.4"
       },
       "blind_exploited_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3220,6 +3502,12 @@
         "rejected_stalled": 18
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3247,6 +3535,12 @@
         "claim": "repair | patch2d | k1=5,k2=9 | shape=disc | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
       },
       "blind_exploited_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3321,6 +3615,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3395,6 +3695,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3470,6 +3776,12 @@
         "repaired": 19
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3545,6 +3857,12 @@
         "rejected_stalled": 19
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3612,6 +3930,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3679,6 +4003,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3746,6 +4076,12 @@
         "repaired": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3813,6 +4149,12 @@
         "repaired": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3863,6 +4205,12 @@
         "control_translated": 3
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -3951,6 +4299,12 @@
         "control_translated": 40
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4018,6 +4372,12 @@
         "control_translated": 20
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4069,6 +4429,12 @@
         "rejected_stalled": 2
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4096,6 +4462,12 @@
         "claim": "repair | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete | Qwen/Qwen3-Coder-30B-A3B-Instruct"
       },
       "blind_exploited_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4185,6 +4557,12 @@
         "repaired": 25
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4212,6 +4590,12 @@
         "claim": "repair | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete | gpt-5.4"
       },
       "blind_exploited_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4280,6 +4664,12 @@
         "repaired": 11
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4307,6 +4697,12 @@
         "claim": "repair | pendulum | th_stop=1.4 | prompt=default | it=5 | arm=incomplete | gpt-5.4-mini"
       },
       "blind_exploited_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4380,6 +4776,12 @@
         "repaired": 1
       },
       "repair_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4407,6 +4809,12 @@
         "claim": "repair | pendulum | th_stop=1.4 | prompt=relay | it=5 | arm=incomplete | claude-sonnet (agent-relayed)"
       },
       "blind_exploited_bound_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4464,6 +4872,12 @@
         "20": 21
       },
       "HONEST_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4503,6 +4917,12 @@
         "claim": "per-block probability that a fresh mode-containing gate sample is repaired by any of the attempts run on it"
       },
       "INVALID_draw_level_comparator": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "draw",
         "cluster_key": "by_block",
         "block_scoring": null,
@@ -4546,6 +4966,12 @@
         {
           "campaign": "disc k=(3,7)",
           "bound": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -4583,6 +5009,12 @@
         {
           "campaign": "disc k=(5,9)",
           "bound": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -4613,6 +5045,12 @@
         {
           "campaign": "square k=(3,7)",
           "bound": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -4643,6 +5081,12 @@
         {
           "campaign": "guided 3x budget k=(3,7)",
           "bound": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -4756,6 +5200,12 @@
       "n_draws": 191,
       "n_distinct_blocks": 20,
       "HONEST_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4791,6 +5241,12 @@
         "claim": "per-block probability of repairing the seen patch while staying blind to the unseen one"
       },
       "INVALID_draw_level_comparator": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "draw",
         "cluster_key": "by_block",
         "block_scoring": null,
@@ -4842,6 +5298,12 @@
       ],
       "adds_new_blocks": 0,
       "HONEST_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4873,6 +5335,12 @@
       "n_draws": 419,
       "n_distinct_blocks": 20,
       "HONEST_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4912,6 +5380,12 @@
         "homogeneity_assumed_across_treatments": true
       },
       "INVALID_draw_level_comparator": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "draw",
         "cluster_key": "by_block",
         "block_scoring": null,
@@ -4960,6 +5434,12 @@
       "n_distinct_blocks": 36,
       "n_distinct_instrument_blocks": 56,
       "clustered_aggregate_block_level_all_scoring": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -4990,6 +5470,12 @@
         "claim": "per-block probability that EVERY attempt on a fresh mode-containing sample repairs (conservative; quote this)"
       },
       "block_level_any_scoring": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "any",
@@ -5020,6 +5506,12 @@
         "claim": "per-block probability that SOME attempt repairs (optimistic)"
       },
       "clustered_by_instrument_block_comparator": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_instrument_block",
         "block_scoring": "all",
@@ -5050,6 +5542,12 @@
         "claim": "looser clustering: a fresh instrument on the same seed counted as a fresh cluster (common random numbers, different dynamics)"
       },
       "INVALID_draw_level_comparator": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "draw",
         "cluster_key": "by_block",
         "block_scoring": null,
@@ -5117,6 +5615,12 @@
           "n_repaired_draws": 33,
           "n_distinct_blocks": 22,
           "block_level_all_scoring": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -5145,6 +5649,12 @@
             "claim": "cart repair, conservative block scoring"
           },
           "block_level_any_scoring": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "any",
@@ -5173,6 +5683,12 @@
             "claim": "cart repair, optimistic block scoring"
           },
           "INVALID_draw_level_comparator": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "draw",
             "cluster_key": "by_block",
             "block_scoring": null,
@@ -5234,6 +5750,12 @@
           "n_repaired_draws": 72,
           "n_distinct_blocks": 34,
           "block_level_all_scoring": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -5262,6 +5784,12 @@
             "claim": "pendulum repair, conservative block scoring"
           },
           "block_level_any_scoring": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "any",
@@ -5290,6 +5818,12 @@
             "claim": "pendulum repair, optimistic block scoring"
           },
           "INVALID_draw_level_comparator": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "draw",
             "cluster_key": "by_block",
             "block_scoring": null,
@@ -5353,6 +5887,12 @@
           "n_repaired_draws": 3,
           "n_distinct_blocks": 5,
           "block_level_all_scoring": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -5384,6 +5924,12 @@
           "n_repaired_draws": 30,
           "n_distinct_blocks": 20,
           "block_level_all_scoring": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -5415,6 +5961,12 @@
           "n_repaired_draws": 40,
           "n_distinct_blocks": 20,
           "block_level_all_scoring": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -5446,6 +5998,12 @@
           "n_repaired_draws": 32,
           "n_distinct_blocks": 25,
           "block_level_all_scoring": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -5479,6 +6037,12 @@
           "n_repaired_draws": 63,
           "n_distinct_blocks": 36,
           "block_level_all_scoring": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -5512,6 +6076,12 @@
           "n_repaired_draws": 42,
           "n_distinct_blocks": 20,
           "block_level_all_scoring": {
+            "superseded_for_inference": {
+              "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+                "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+                "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+              }
+            },
             "unit": "block",
             "cluster_key": "by_block",
             "block_scoring": "all",
@@ -5717,6 +6287,12 @@
       "n_blind_exploited_draws": 30,
       "n_distinct_blocks": 20,
       "HONEST_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -5744,6 +6320,12 @@
         "claim": "cart: per-block probability that a mode-absent sample yields a certified, mode-blind, exploited artifact"
       },
       "INVALID_draw_level_comparator": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "draw",
         "cluster_key": "by_block",
         "block_scoring": null,
@@ -5777,6 +6359,12 @@
       "n_blind_exploited_draws": 24,
       "n_distinct_blocks": 15,
       "HONEST_block_level": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "block",
         "cluster_key": "by_block",
         "block_scoring": "all",
@@ -5804,6 +6392,12 @@
         "claim": "pendulum: per-block probability that a mode-absent sample yields a certified, mode-blind, exploited artifact"
       },
       "INVALID_draw_level_comparator": {
+        "superseded_for_inference": {
+          "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+            "replacement": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+            "why": "replicate draws of one treatment on the same rollout-seed blocks (backend-matched re-run); one file per treatment may enter inference"
+          }
+        },
         "unit": "draw",
         "cluster_key": "by_block",
         "block_scoring": null,

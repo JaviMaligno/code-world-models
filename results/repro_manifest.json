@@ -1,13 +1,13 @@
 {
  "what_this_is": "Reproducibility facts for docs/paper2/main.tex (review points #18/#19). Generated, not hand-typed: see docs/paper2/REPRO-FACTS.md for the prose version and the generator's source.",
- "generated_at_utc": "2026-07-31T16:42:20Z",
+ "generated_at_utc": "2026-08-01T20:01:16Z",
  "generator": "scripts/repro_manifest.py (source archived in docs/paper2/REPRO-FACTS.md)",
  "git": {
-  "head": "d2d88f3104cade525c4ea9aa343af8031442fd84",
-  "head_short": "d2d88f3",
-  "head_date": "2026-07-31 15:12:03 +0100",
+  "head": "2222db454dd0f46a71bc465a5f171712dbaa182e",
+  "head_short": "2222db4",
+  "head_date": "2026-07-31 18:00:04 +0100",
   "branch": "paper2-major-revision",
-  "describe": "paper2-v1.4-third-review-1-gd2d88f3-dirty",
+  "describe": "paper2-v1.5-qwen-arm-complete-dirty",
   "note": "A working tree with concurrent edits: the manifest is a snapshot of results/ at generated_at_utc."
  },
  "platform": {
@@ -195,12 +195,13 @@
     "cited code artifacts: paths exist, quoted code is verbatim",
     "100 paired episodes on the headline rows (review points 8, 9)",
     "ablations 6 and 7: lifting prop:entryclass's premise",
-    "the four phantom-stop artifacts, third review points 2-3: the accounting the"
+    "the four phantom-stop artifacts, third review points 2-3: the accounting the",
+    "draws vs blocks (fourth review, point 2): 111 are DRAWS; the block unit is the"
    ],
    "coverage": "cell_parsed",
    "mechanically_audited": true,
    "audit_agree_call_sites": 2,
-   "audit_claim_call_sites": 81
+   "audit_claim_call_sites": 84
   },
   {
    "kind": "table",
@@ -228,13 +229,13 @@
     "cited code artifacts: paths exist, quoted code is verbatim",
     "100 paired episodes on the headline rows (review points 8, 9)",
     "the positive controls (the 2D negatives' upper bound on difficulty)",
-    "the four phantom-stop artifacts, third review points 2-3: the accounting the",
+    "draws vs blocks (fourth review, point 2): 111 are DRAWS; the block unit is the",
     "the disc/slab contrast: what an independent gate is worth"
    ],
    "coverage": "cell_parsed",
    "mechanically_audited": true,
    "audit_agree_call_sites": 0,
-   "audit_claim_call_sites": 75
+   "audit_claim_call_sites": 74
   },
   {
    "kind": "table",
@@ -492,9 +493,14 @@
  ],
  "audit_coverage": {
   "audit_script": "scripts/audit_paper2_numbers.py",
-  "audit_checks_executed": 708,
-  "audit_failures": [],
-  "audit_exit_code": 0,
+  "audit_checks_executed": 712,
+  "audit_failures": [
+   "claim the reproduced training block returns the stored accuracy in 99/99 spot-checks: FALSE ()",
+   "claim 40 of 647 in-sample-accepted draws are rejected by an independent gate (6.2% of draws, spanning 25 distinct rollout-seed blocks), all 40 incomplete-arm, 0 of 434 full-arm: FALSE ()",
+   "claim 3 draws move the other way (below 1.000 in-sample, at 0.9975 to 0.9991, yet accepted held-out), which is why 647 - 40 leaves 610 rather than 607: FALSE ()",
+   "claim all 610 independently accepted draws are exact outside the mode region ON THE 100-rollout evaluation sample (reported as a count, no binomial bound attached): FALSE (613/613)"
+  ],
+  "audit_exit_code": 1,
   "sections": [
    {
     "audit_section": "LaTeX table extraction",
@@ -900,6 +906,7 @@
      "continuous_synthesis_mini_xwall4",
      "continuous_synthesis_mini_xwall8",
      "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7",
+     "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
      "continuous_synthesis_patch2d_large_k3_7",
      "continuous_synthesis_patch2d_large_k3_7_arc120",
      "continuous_synthesis_patch2d_large_k3_7_arc240",
@@ -1037,7 +1044,17 @@
     ],
     "results_globs": [],
     "agree_call_sites": 0,
-    "claim_call_sites": 8
+    "claim_call_sites": 4
+   },
+   {
+    "audit_section": "draws vs blocks (fourth review, point 2): 111 are DRAWS; the block unit is the",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "qwen_vllm_provenance"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 7
    },
    {
     "audit_section": "the disc/slab contrast: what an independent gate is worth",
@@ -1086,6 +1103,7 @@
    "continuous_synthesis_mini_xwall4",
    "continuous_synthesis_mini_xwall8",
    "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7",
+   "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
    "continuous_synthesis_patch2d_large_k3_7",
    "continuous_synthesis_patch2d_large_k3_7_arc120",
    "continuous_synthesis_patch2d_large_k3_7_arc240",
@@ -1135,6 +1153,7 @@
    "play_cost_intervals",
    "play_cost_proved_bounds",
    "prose_constants",
+   "qwen_vllm_provenance",
    "region_fit_baseline",
    "repair_exactness_1d",
    "sample_stream_census",
@@ -1167,6 +1186,7 @@
    "continuous_synthesis_mini_xwall4",
    "continuous_synthesis_mini_xwall8",
    "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7",
+   "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
    "continuous_synthesis_patch2d_large_k3_7",
    "continuous_synthesis_patch2d_large_k3_7_arc120",
    "continuous_synthesis_patch2d_large_k3_7_arc240",
@@ -1216,6 +1236,7 @@
    "play_cost_intervals",
    "play_cost_proved_bounds",
    "prose_constants",
+   "qwen_vllm_provenance",
    "region_fit_baseline",
    "repair_exactness_1d",
    "sample_stream_census",
@@ -1410,10 +1431,10 @@
   "subtotals": {
    "cpu_sweeps_s": 17206.2,
    "cpu_sweeps_h": 4.78,
-   "llm_synthesis_s": 38796.0,
-   "llm_synthesis_h": 10.78,
-   "paper2_named_campaigns_h": 15.56,
-   "unclassified_s": 3158.8,
+   "llm_synthesis_s": 39064.2,
+   "llm_synthesis_h": 10.85,
+   "paper2_named_campaigns_h": 15.63,
+   "unclassified_s": 3161.9,
    "unclassified_files": [
     "cem_crossing_bound",
     "heldout_gate_audit",
@@ -1447,6 +1468,7 @@
    "continuous_synthesis_mini_xwall4": 163.7,
    "continuous_synthesis_mini_xwall8": 2740.3,
    "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7": 47.5,
+   "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm": 268.2,
    "continuous_synthesis_patch2d_large_k3_7": 812.5,
    "continuous_synthesis_patch2d_large_k3_7_arc120": 573.5,
    "continuous_synthesis_patch2d_large_k3_7_arc240": 1318.6,
@@ -1474,7 +1496,7 @@
    "continuous_synthesis_pendulum_large_thstop1": 1990.6,
    "continuous_synthesis_pendulum_mini_thstop1.4": 1081.2,
    "continuous_synthesis_pendulum_mini_thstop1": 1903.7,
-   "heldout_gate_audit": 2.8,
+   "heldout_gate_audit": 5.9,
    "patch2d_slab_calibration": 1300.5,
    "play_cost_intervals": 1691.5
   },
@@ -1486,8 +1508,8 @@
      "patch2d_slab_calibration",
      "play_cost_intervals"
     ],
-    "elapsed_s": 3158.8,
-    "elapsed_min": 52.6
+    "elapsed_s": 3161.9,
+    "elapsed_min": 52.7
    },
    "1D mechanism sweeps (CPU)": {
     "files": [
@@ -1548,6 +1570,7 @@
    "LLM synthesis, PatchField2D": {
     "files": [
      "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7",
+     "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
      "continuous_synthesis_patch2d_large_k3_7",
      "continuous_synthesis_patch2d_large_k3_7_arc120",
      "continuous_synthesis_patch2d_large_k3_7_arc240",
@@ -1570,8 +1593,8 @@
      "continuous_synthesis_patch2dsq_large_k3_7",
      "continuous_synthesis_patch2dsq_mini_k3_7"
     ],
-    "elapsed_s": 25373.5,
-    "elapsed_min": 422.9
+    "elapsed_s": 25641.7,
+    "elapsed_min": 427.4
    },
    "LLM synthesis, pendulum": {
     "files": [
@@ -1586,10 +1609,10 @@
     "elapsed_min": 111.7
    }
   },
-  "total_recorded_elapsed_s": 59161.0,
-  "total_recorded_elapsed_h": 16.43,
-  "n_files_with_elapsed_s": 52,
-  "n_results_json_total": 123,
+  "total_recorded_elapsed_s": 59432.3,
+  "total_recorded_elapsed_h": 16.51,
+  "n_files_with_elapsed_s": 53,
+  "n_results_json_total": 125,
   "scripts_named_in_tex_verbatim": [],
   "note": "elapsed_s is wall-clock for ONE run of the script that wrote the file; it excludes every superseded run (the 5-seed cells later overwritten at 20 seeds, the square-ablation resume passes, failed LLM calls) and excludes every script that does not record it. The total is therefore a LOWER BOUND on the compute the paper cost."
  },
@@ -1664,6 +1687,18 @@
     "llm_calls": 21,
     "refine_iterations_total": 15,
     "elapsed_s": 47.5,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+    "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+    "size": "mini",
+    "instrument": "patch2d",
+    "n_cells": 6,
+    "llm_calls": 21,
+    "refine_iterations_total": 15,
+    "elapsed_s": 268.2,
     "campaign": "LLM synthesis, PatchField2D",
     "usage_recorded": false
    },
@@ -1999,9 +2034,9 @@
     "files": 5
    },
    "LLM synthesis, PatchField2D": {
-    "llm_calls": 3405,
-    "cells": 686,
-    "files": 22
+    "llm_calls": 3426,
+    "cells": 692,
+    "files": 23
    },
    "LLM synthesis, pendulum": {
     "llm_calls": 293,
@@ -2009,7 +2044,7 @@
     "files": 6
    }
   },
-  "total_llm_calls_paper2_api_arms": 3901,
+  "total_llm_calls_paper2_api_arms": 3922,
   "claude_relay_calls": 20,
   "token_usage_recorded_in_paper2_artifacts": false,
   "why_not": "cwm.llm providers DO capture prompt/completion tokens (src/cwm/llm/provider.py Usage; azure_openai.py raises if Azure omits it) and contract.refine_continuous keeps them in RefineResult.usages, but contract.synthesize_and_evaluate does not copy them into the emitted cell, so no paper-2 artifact carries tokens. Paper 1's runners did record dollars (cost_usd_total).",
@@ -2065,7 +2100,7 @@
    ],
    "AZURE_OPENAI_API_KEY": [
     "scripts/beacon_claimB_probe.py:40",
-    "scripts/continuous_danger_synthesis.py:362",
+    "scripts/continuous_danger_synthesis.py:369",
     "scripts/danger_synthesis_sweep.py:35",
     "scripts/declarative_recall_probe.py:85",
     "scripts/exhaustive_verify_tictactoe.py:121",
@@ -2081,7 +2116,7 @@
    ],
    "AZURE_OPENAI_API_VERSION": [
     "scripts/beacon_claimB_probe.py:41",
-    "scripts/continuous_danger_synthesis.py:363",
+    "scripts/continuous_danger_synthesis.py:370",
     "scripts/danger_synthesis_sweep.py:36",
     "scripts/declarative_recall_probe.py:86",
     "scripts/exhaustive_verify_tictactoe.py:122",
@@ -2097,7 +2132,7 @@
    ],
    "AZURE_OPENAI_ENDPOINT": [
     "scripts/beacon_claimB_probe.py:40",
-    "scripts/continuous_danger_synthesis.py:361",
+    "scripts/continuous_danger_synthesis.py:368",
     "scripts/danger_synthesis_sweep.py:35",
     "scripts/declarative_recall_probe.py:85",
     "scripts/exhaustive_verify_tictactoe.py:121",
@@ -2112,7 +2147,7 @@
     "src/cwm/run_gap.py:109"
    ],
    "HF_TOKEN": [
-    "scripts/continuous_danger_synthesis.py:354",
+    "scripts/continuous_danger_synthesis.py:361",
     "scripts/crossfamily_probe.py:82"
    ]
   },

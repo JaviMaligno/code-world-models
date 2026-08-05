@@ -132,6 +132,7 @@ _PARAMS_NOT_ENV = frozenset({
     "arm", "size", "seed_offset", "n_seeds", "n_rollouts", "play_episodes",
     "max_iters", "eps", "prompt_variant", "mode_hint", "instrument",
     "compat_model", "compat_base_url", "k1", "k2", "th_stop", "x_wall",
+    "out_tag",   # a FILENAME tag for split-provenance re-runs; never touches the env
 })
 
 

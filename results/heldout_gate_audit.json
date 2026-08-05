@@ -124403,6 +124403,741 @@
       "eval_failure_class": "mode_only",
       "heldout_blind_gate": true,
       "heldout_blind_eval": true
+    },
+    {
+      "file": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+      "campaign": "patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
+      "env_key": "patch2d_k3_7",
+      "instrument": "patch2d",
+      "patch_shape": "disc",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "tag": "compat-qwen3-coder-30b-a3b-instruct",
+      "prompt_variant": "default",
+      "seed_offset": 0,
+      "arm": "full",
+      "seed": 10000,
+      "eps": 1e-09,
+      "n_train_rollouts": 40,
+      "block_key": "patch2d_k3_7@10000",
+      "in_sample_gate_accuracy": 1.0,
+      "in_sample_gate_passed": true,
+      "in_sample_refine_iterations": 0,
+      "probe_blind_all_modes": false,
+      "probe_blindness": {
+        "patch1": 0.0,
+        "patch2": 0.0
+      },
+      "mode_in_train": {
+        "any": true,
+        "n_contact_transitions": 21,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 9,
+        "per": {
+          "patch1": true,
+          "patch2": false
+        }
+      },
+      "mode_in_gate": {
+        "any": true,
+        "n_contact_transitions": 15,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 6,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "mode_in_eval": {
+        "any": true,
+        "n_contact_transitions": 33,
+        "n_transitions": 8000,
+        "n_rollouts": 100,
+        "n_rollouts_with_contact": 11,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "gate": {
+        "n": 3200,
+        "n_correct": 3200,
+        "accuracy": 1.0,
+        "n_fail": 0,
+        "n_mode_contact": 15,
+        "n_fail_mode_contact": 0,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 0.0,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": []
+      },
+      "eval": {
+        "n": 8000,
+        "n_correct": 8000,
+        "accuracy": 1.0,
+        "n_fail": 0,
+        "n_mode_contact": 33,
+        "n_fail_mode_contact": 0,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 0.0,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": []
+      },
+      "accepted_heldout": true,
+      "gate_failure_class": "no_failures",
+      "eval_failure_class": "no_failures",
+      "heldout_blind_gate": false,
+      "heldout_blind_eval": false,
+      "train_reproduction": {
+        "recomputed_train_accuracy": 1.0,
+        "stored_gate_accuracy": 1.0,
+        "matches": true,
+        "mode_in_train_recomputed": true,
+        "mode_in_train_stored": true,
+        "mode_flag_matches": true
+      }
+    },
+    {
+      "file": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+      "campaign": "patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
+      "env_key": "patch2d_k3_7",
+      "instrument": "patch2d",
+      "patch_shape": "disc",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "tag": "compat-qwen3-coder-30b-a3b-instruct",
+      "prompt_variant": "default",
+      "seed_offset": 0,
+      "arm": "full",
+      "seed": 20000,
+      "eps": 1e-09,
+      "n_train_rollouts": 40,
+      "block_key": "patch2d_k3_7@20000",
+      "in_sample_gate_accuracy": 1.0,
+      "in_sample_gate_passed": true,
+      "in_sample_refine_iterations": 0,
+      "probe_blind_all_modes": false,
+      "probe_blindness": {
+        "patch1": 0.0,
+        "patch2": 0.0
+      },
+      "mode_in_train": {
+        "any": true,
+        "n_contact_transitions": 12,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 2,
+        "per": {
+          "patch1": true,
+          "patch2": false
+        }
+      },
+      "mode_in_gate": {
+        "any": true,
+        "n_contact_transitions": 7,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 5,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "mode_in_eval": {
+        "any": true,
+        "n_contact_transitions": 47,
+        "n_transitions": 8000,
+        "n_rollouts": 100,
+        "n_rollouts_with_contact": 15,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "gate": {
+        "n": 3200,
+        "n_correct": 3200,
+        "accuracy": 1.0,
+        "n_fail": 0,
+        "n_mode_contact": 7,
+        "n_fail_mode_contact": 0,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 0.0,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": []
+      },
+      "eval": {
+        "n": 8000,
+        "n_correct": 8000,
+        "accuracy": 1.0,
+        "n_fail": 0,
+        "n_mode_contact": 47,
+        "n_fail_mode_contact": 0,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 0.0,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": []
+      },
+      "accepted_heldout": true,
+      "gate_failure_class": "no_failures",
+      "eval_failure_class": "no_failures",
+      "heldout_blind_gate": false,
+      "heldout_blind_eval": false,
+      "train_reproduction": {
+        "recomputed_train_accuracy": 1.0,
+        "stored_gate_accuracy": 1.0,
+        "matches": true,
+        "mode_in_train_recomputed": true,
+        "mode_in_train_stored": true,
+        "mode_flag_matches": true
+      }
+    },
+    {
+      "file": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+      "campaign": "patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
+      "env_key": "patch2d_k3_7",
+      "instrument": "patch2d",
+      "patch_shape": "disc",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "tag": "compat-qwen3-coder-30b-a3b-instruct",
+      "prompt_variant": "default",
+      "seed_offset": 0,
+      "arm": "full",
+      "seed": 30000,
+      "eps": 1e-09,
+      "n_train_rollouts": 40,
+      "block_key": "patch2d_k3_7@30000",
+      "in_sample_gate_accuracy": 1.0,
+      "in_sample_gate_passed": true,
+      "in_sample_refine_iterations": 0,
+      "probe_blind_all_modes": false,
+      "probe_blindness": {
+        "patch1": 0.0,
+        "patch2": 0.0
+      },
+      "mode_in_train": {
+        "any": true,
+        "n_contact_transitions": 11,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 6,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "mode_in_gate": {
+        "any": true,
+        "n_contact_transitions": 4,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 3,
+        "per": {
+          "patch1": true,
+          "patch2": false
+        }
+      },
+      "mode_in_eval": {
+        "any": true,
+        "n_contact_transitions": 52,
+        "n_transitions": 8000,
+        "n_rollouts": 100,
+        "n_rollouts_with_contact": 14,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "gate": {
+        "n": 3200,
+        "n_correct": 3200,
+        "accuracy": 1.0,
+        "n_fail": 0,
+        "n_mode_contact": 4,
+        "n_fail_mode_contact": 0,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 0.0,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": []
+      },
+      "eval": {
+        "n": 8000,
+        "n_correct": 8000,
+        "accuracy": 1.0,
+        "n_fail": 0,
+        "n_mode_contact": 52,
+        "n_fail_mode_contact": 0,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 0.0,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": []
+      },
+      "accepted_heldout": true,
+      "gate_failure_class": "no_failures",
+      "eval_failure_class": "no_failures",
+      "heldout_blind_gate": false,
+      "heldout_blind_eval": false,
+      "train_reproduction": {
+        "recomputed_train_accuracy": 1.0,
+        "stored_gate_accuracy": 1.0,
+        "matches": true,
+        "mode_in_train_recomputed": true,
+        "mode_in_train_stored": true,
+        "mode_flag_matches": true
+      }
+    },
+    {
+      "file": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+      "campaign": "patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
+      "env_key": "patch2d_k3_7",
+      "instrument": "patch2d",
+      "patch_shape": "disc",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "tag": "compat-qwen3-coder-30b-a3b-instruct",
+      "prompt_variant": "default",
+      "seed_offset": 0,
+      "arm": "incomplete",
+      "seed": 10000,
+      "eps": 1e-09,
+      "n_train_rollouts": 40,
+      "block_key": "patch2d_k3_7@10000",
+      "in_sample_gate_accuracy": 0.9934375,
+      "in_sample_gate_passed": false,
+      "in_sample_refine_iterations": 5,
+      "probe_blind_all_modes": null,
+      "probe_blindness": null,
+      "mode_in_train": {
+        "any": true,
+        "n_contact_transitions": 21,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 9,
+        "per": {
+          "patch1": true,
+          "patch2": false
+        }
+      },
+      "mode_in_gate": {
+        "any": true,
+        "n_contact_transitions": 15,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 6,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "mode_in_eval": {
+        "any": true,
+        "n_contact_transitions": 33,
+        "n_transitions": 8000,
+        "n_rollouts": 100,
+        "n_rollouts_with_contact": 11,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "gate": {
+        "n": 3200,
+        "n_correct": 3185,
+        "accuracy": 0.9953125,
+        "n_fail": 15,
+        "n_mode_contact": 15,
+        "n_fail_mode_contact": 15,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 2.198275172253318,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": [
+          42,
+          679,
+          1100,
+          1102,
+          1665,
+          1667,
+          1880,
+          1888,
+          1889,
+          1890,
+          1891,
+          1894,
+          2300,
+          2303,
+          2304
+        ]
+      },
+      "eval": {
+        "n": 8000,
+        "n_correct": 7967,
+        "accuracy": 0.995875,
+        "n_fail": 33,
+        "n_mode_contact": 33,
+        "n_fail_mode_contact": 33,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 2.1825114825341956,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": [
+          591,
+          592,
+          593,
+          594,
+          595,
+          605,
+          607,
+          608,
+          609,
+          635,
+          1481,
+          1483,
+          1484,
+          1490,
+          2511,
+          2512,
+          2526,
+          2556,
+          3836,
+          4034,
+          4280,
+          4281,
+          4301,
+          4428,
+          5240,
+          5547,
+          5556,
+          5557,
+          7059,
+          7170,
+          7175,
+          7180,
+          7181
+        ]
+      },
+      "accepted_heldout": false,
+      "gate_failure_class": "mode_only",
+      "eval_failure_class": "mode_only",
+      "heldout_blind_gate": true,
+      "heldout_blind_eval": true
+    },
+    {
+      "file": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+      "campaign": "patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
+      "env_key": "patch2d_k3_7",
+      "instrument": "patch2d",
+      "patch_shape": "disc",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "tag": "compat-qwen3-coder-30b-a3b-instruct",
+      "prompt_variant": "default",
+      "seed_offset": 0,
+      "arm": "incomplete",
+      "seed": 20000,
+      "eps": 1e-09,
+      "n_train_rollouts": 40,
+      "block_key": "patch2d_k3_7@20000",
+      "in_sample_gate_accuracy": 0.99625,
+      "in_sample_gate_passed": false,
+      "in_sample_refine_iterations": 5,
+      "probe_blind_all_modes": null,
+      "probe_blindness": null,
+      "mode_in_train": {
+        "any": true,
+        "n_contact_transitions": 12,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 2,
+        "per": {
+          "patch1": true,
+          "patch2": false
+        }
+      },
+      "mode_in_gate": {
+        "any": true,
+        "n_contact_transitions": 7,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 5,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "mode_in_eval": {
+        "any": true,
+        "n_contact_transitions": 47,
+        "n_transitions": 8000,
+        "n_rollouts": 100,
+        "n_rollouts_with_contact": 15,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "gate": {
+        "n": 3200,
+        "n_correct": 3193,
+        "accuracy": 0.9978125,
+        "n_fail": 7,
+        "n_mode_contact": 7,
+        "n_fail_mode_contact": 7,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 1.7106467603180444,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": [
+          461,
+          1497,
+          1506,
+          1507,
+          2615,
+          2746,
+          2833
+        ]
+      },
+      "eval": {
+        "n": 8000,
+        "n_correct": 7953,
+        "accuracy": 0.994125,
+        "n_fail": 47,
+        "n_mode_contact": 47,
+        "n_fail_mode_contact": 47,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 1.9855760396545554,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": [
+          64,
+          65,
+          66,
+          67,
+          69,
+          114,
+          856,
+          861,
+          862,
+          863,
+          867,
+          1247,
+          1249,
+          1258,
+          1260,
+          1315,
+          1317,
+          1456,
+          1551,
+          1553,
+          1555,
+          1624,
+          1627,
+          1628,
+          1629,
+          1631,
+          1632,
+          1634,
+          1651,
+          1653,
+          1654,
+          1656,
+          1669,
+          1946,
+          1948,
+          1949,
+          1954,
+          2612,
+          3384,
+          3777,
+          3779,
+          3781,
+          3784,
+          3785,
+          6147,
+          6511,
+          7495
+        ]
+      },
+      "accepted_heldout": false,
+      "gate_failure_class": "mode_only",
+      "eval_failure_class": "mode_only",
+      "heldout_blind_gate": true,
+      "heldout_blind_eval": true
+    },
+    {
+      "file": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+      "campaign": "patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
+      "env_key": "patch2d_k3_7",
+      "instrument": "patch2d",
+      "patch_shape": "disc",
+      "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "size": "mini",
+      "tag": "compat-qwen3-coder-30b-a3b-instruct",
+      "prompt_variant": "default",
+      "seed_offset": 0,
+      "arm": "incomplete",
+      "seed": 30000,
+      "eps": 1e-09,
+      "n_train_rollouts": 40,
+      "block_key": "patch2d_k3_7@30000",
+      "in_sample_gate_accuracy": 0.9965625,
+      "in_sample_gate_passed": false,
+      "in_sample_refine_iterations": 5,
+      "probe_blind_all_modes": null,
+      "probe_blindness": null,
+      "mode_in_train": {
+        "any": true,
+        "n_contact_transitions": 11,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 6,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "mode_in_gate": {
+        "any": true,
+        "n_contact_transitions": 4,
+        "n_transitions": 3200,
+        "n_rollouts": 40,
+        "n_rollouts_with_contact": 3,
+        "per": {
+          "patch1": true,
+          "patch2": false
+        }
+      },
+      "mode_in_eval": {
+        "any": true,
+        "n_contact_transitions": 52,
+        "n_transitions": 8000,
+        "n_rollouts": 100,
+        "n_rollouts_with_contact": 14,
+        "per": {
+          "patch1": true,
+          "patch2": true
+        }
+      },
+      "gate": {
+        "n": 3200,
+        "n_correct": 3196,
+        "accuracy": 0.99875,
+        "n_fail": 4,
+        "n_mode_contact": 4,
+        "n_fail_mode_contact": 4,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 1.089336229703974,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": [
+          635,
+          669,
+          670,
+          1229
+        ]
+      },
+      "eval": {
+        "n": 8000,
+        "n_correct": 7948,
+        "accuracy": 0.9935,
+        "n_fail": 52,
+        "n_mode_contact": 52,
+        "n_fail_mode_contact": 52,
+        "n_fail_off_mode": 0,
+        "max_err_off_mode_fail": null,
+        "max_err_all": 2.3260652998755367,
+        "max_err_off_mode_all": 0.0,
+        "exact_outside_mode": true,
+        "infra_error": null,
+        "fail_source_indices": [
+          34,
+          37,
+          38,
+          39,
+          40,
+          44,
+          52,
+          53,
+          57,
+          59,
+          60,
+          63,
+          362,
+          384,
+          387,
+          388,
+          389,
+          390,
+          392,
+          393,
+          508,
+          509,
+          510,
+          514,
+          515,
+          516,
+          920,
+          1172,
+          1175,
+          1180,
+          1229,
+          2911,
+          2912,
+          2913,
+          2944,
+          2955,
+          4534,
+          4541,
+          4670,
+          5485,
+          5486,
+          5488,
+          5490,
+          5491,
+          5497,
+          6111,
+          6119,
+          6120,
+          6122,
+          7109
+        ]
+      },
+      "accepted_heldout": false,
+      "gate_failure_class": "mode_only",
+      "eval_failure_class": "mode_only",
+      "heldout_blind_gate": true,
+      "heldout_blind_eval": true
     }
   ],
   "split": {
@@ -124586,11 +125321,11 @@
   },
   "aggregates": {
     "totals": {
-      "n_artifacts": 1028,
-      "n_files": 33,
+      "n_artifacts": 1034,
+      "n_files": 34,
       "n_distinct_blocks": 265,
-      "n_in_sample_passed": 647,
-      "n_heldout_accepted": 610,
+      "n_in_sample_passed": 650,
+      "n_heldout_accepted": 613,
       "n_regressions": 40,
       "n_reverse_regressions": 3,
       "n_eval_exceptions": 297,
@@ -125472,6 +126207,23 @@
           "n_disagree": 0,
           "off_diagonal": []
         },
+        "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json": {
+          "n": 0,
+          "table": {
+            "gate_mode_absent": {
+              "accepted": 0,
+              "rejected": 0
+            },
+            "gate_mode_present": {
+              "accepted": 0,
+              "rejected": 0
+            }
+          },
+          "coincides_exactly": false,
+          "n_agree": 0,
+          "n_disagree": 0,
+          "off_diagonal": []
+        },
         "continuous_synthesis_patch2d_large_k3_7.json": {
           "n": 0,
           "table": {
@@ -126056,6 +126808,30 @@
         "model": "gpt-5.4-mini"
       },
       "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+        "n_incomplete_artifacts": 3,
+        "n_independent_blocks": 3,
+        "k_accepted_and_probe_blind": 0,
+        "measured_accepted_and_probe_blind": 0.0,
+        "wilson95": [
+          0.0,
+          0.5615060804490177
+        ],
+        "k_train_miss_and_gate_miss_and_accepted": 0,
+        "measured_train_miss_and_gate_miss_and_accepted": 0.0,
+        "r_used": 0.15,
+        "r_is_measured": true,
+        "r_kind": "firing_union",
+        "r_source": "results/continuous_patch2d.json",
+        "r_source_path": "rows[k1==3.0,k2==7.0].r_either",
+        "r_union_independence_surrogate": null,
+        "N_train": 40,
+        "N_gate": 40,
+        "predicted_two_factor": 2.2569090454253618e-06,
+        "predicted_single_factor_train_only": 0.001502301249891433,
+        "env_key": "patch2d_k3_7",
+        "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct"
+      },
+      "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json": {
         "n_incomplete_artifacts": 3,
         "n_independent_blocks": 3,
         "k_accepted_and_probe_blind": 0,
@@ -126730,7 +127506,7 @@
     },
     "c_regressions": {
       "definition": "artifacts whose ORIGINAL in-sample gate reached 1.000 but whose independent D_gate accuracy is < 1.0",
-      "n_in_sample_passed": 647,
+      "n_in_sample_passed": 650,
       "n_regressions": 40,
       "reverse_definition": "artifacts the in-sample gate REFUSED that the independent gate accepts",
       "n_reverse_regressions": 3,
@@ -126819,6 +127595,13 @@
           "n_reverse_regressions": 0
         },
         "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+          "n_artifacts": 6,
+          "n_in_sample_passed": 3,
+          "n_heldout_accepted": 3,
+          "n_regressions": 0,
+          "n_reverse_regressions": 0
+        },
+        "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json": {
           "n_artifacts": 6,
           "n_in_sample_passed": 3,
           "n_heldout_accepted": 3,
@@ -127034,6 +127817,7 @@
           "mode_only": 6
         },
         "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {},
+        "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json": {},
         "continuous_synthesis_patch2d_large_k3_7.json": {},
         "continuous_synthesis_patch2d_large_k3_7_arc120.json": {},
         "continuous_synthesis_patch2d_large_k3_7_arc240.json": {},
@@ -127685,9 +128469,9 @@
     },
     "d_out_of_sample_exactness": {
       "definition": "for each artifact, is EVERY failing transition of D_eval a mode contact?  'exceptions' are the artifacts with at least one OFF-mode failure, i.e. not exact outside the mode region.",
-      "n_scored": 1028,
+      "n_scored": 1034,
       "n_infra_error": 0,
-      "n_exact_outside_mode": 731,
+      "n_exact_outside_mode": 737,
       "n_exceptions": 297,
       "exceptions": [
         {
@@ -131578,11 +132362,11 @@
         "continuous_synthesis_patch2dlanding_mini_k3_7.json": 14
       },
       "restricted_to_in_sample_accepted": {
-        "n_scored": 647,
+        "n_scored": 650,
         "n_exceptions": 1
       },
       "restricted_to_heldout_accepted": {
-        "n_scored": 610,
+        "n_scored": 613,
         "n_exceptions": 0
       }
     },
@@ -131648,6 +132432,18 @@
         "note": "rollout-level mode-firing rate measured on the held-out D_gate+D_eval blocks of this campaign, deduplicated to distinct (env, seed) blocks; an internal consistency check on the committed r, not a replacement for it"
       },
       "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json": {
+        "n_blocks": 3,
+        "rollouts": 420,
+        "rollouts_with_mode": 54,
+        "measured_r": 0.12857142857142856,
+        "wilson95": [
+          0.09989354618303033,
+          0.16398239237514806
+        ],
+        "env_key": "patch2d_k3_7",
+        "note": "rollout-level mode-firing rate measured on the held-out D_gate+D_eval blocks of this campaign, deduplicated to distinct (env, seed) blocks; an internal consistency check on the committed r, not a replacement for it"
+      },
+      "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json": {
         "n_blocks": 3,
         "rollouts": 420,
         "rollouts_with_mode": 54,
@@ -132128,6 +132924,34 @@
       {
         "file": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json",
         "campaign": "patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7",
+        "env_key": "patch2d_k3_7",
+        "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+        "n_artifacts": 6,
+        "n_full": 3,
+        "n_incomplete": 3,
+        "n_blocks": 3,
+        "in_sample_accepted": 3,
+        "heldout_accepted": 3,
+        "heldout_accepted_full": 3,
+        "heldout_accepted_incomplete": 0,
+        "regressions": 0,
+        "train_mode_absent": 0,
+        "gate_mode_absent": 0,
+        "contingency_coincides": false,
+        "contingency_n_disagree": 0,
+        "two_factor_measured": 0.0,
+        "two_factor_predicted": 2.2569090454253618e-06,
+        "two_factor_wilson95": [
+          0.0,
+          0.5615060804490177
+        ],
+        "r_used": 0.15,
+        "r_is_measured": true,
+        "eval_exceptions": 0
+      },
+      {
+        "file": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+        "campaign": "patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
         "env_key": "patch2d_k3_7",
         "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
         "n_artifacts": 6,
@@ -132911,13 +133735,13 @@
       }
     ],
     "train_reproduction_check": {
-      "n_checked": 99,
-      "n_accuracy_matches": 99,
-      "n_mode_flag_matches": 99,
+      "n_checked": 102,
+      "n_accuracy_matches": 102,
+      "n_mode_flag_matches": 102,
       "mismatches": [],
       "note": "re-scoring an artifact on its REPRODUCED training sample must return the accuracy the original run stored; this is the check that env_from_params + the seed convention reconstruct the original sample exactly"
     }
   },
-  "elapsed_s": 2.8,
+  "elapsed_s": 5.9,
   "complete": true
 }

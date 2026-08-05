@@ -10,6 +10,42 @@ Kept because it is genuinely useful: the pattern across these entries is that **
 error was in a number or a geometric factor computed by hand in prose**, never in a value
 `scripts/audit_paper2_numbers.py` re-derives from `results/`.
 
+## Fourth review round (2026-08-01): the matched backend, and draws called blocks
+
+* **The Qwen 2D contrast was confounded with the serving backend** — full cells from the HF
+  router, incomplete cells from vLLM, one file whose top-level metadata could only describe
+  one of them. Fixed by running the matched campaign: both arms, three seeds, one pinned
+  vLLM configuration with versioned provenance (vLLM 0.26.0, Hub revision sha, the
+  checkpoint's generation_config applied to both arms). The contrast reproduced exactly —
+  the mixed pass's incomplete accuracies match the matched arm's to three decimals, seed by
+  seed, which is now itself an audit claim. The mixed file is demoted to an exploratory
+  unmatched spot-check, and `--out-tag` (filename-only) prevents the next mixed-provenance
+  resume. Lesson recorded: a resume guard that correctly treats the URL as provenance still
+  needs somewhere for that provenance to LIVE per cell; ours lives in a sidecar JSON and
+  the docs, not in the campaign file.
+* **The one-draw-per-block invariant fired on the matched campaign itself** --- fourth
+  catch for that layer: the matched re-run is a REPLICATE of one treatment on the same
+  blocks, and the treatment key (correctly) does not see serving provenance. Resolution:
+  `SUPERSEDED_FOR_INFERENCE` in `paper2_statistics.py` --- the mixed file stays versioned
+  but only one file per treatment enters inference, and the exclusion is recorded in the
+  report's own output, never silent.
+* **105/111 were draws, called "blocks" in three places.** Under the audit's own block key
+  they span 70 distinct blocks, 64 exact on every draw, the six failures in six distinct
+  blocks (the reviewer guessed 36; the recount is derived in the audit, not argued). The
+  same unit discipline that fixed the pooled Wilson intervals in round 1 now covers the
+  repair headline.
+* **The essential-infimum event ignored the position component** of the sup-norm
+  disagreement: a clamped transition carries max(ω′, position excess) ≤ ω′·max(1,dt), so
+  the target window is now ε/max(1,dt) and the proof displays both components. And ε\*=0
+  is stated conditionally on the approachability hypothesis — the data are consistent with
+  it; they do not prove it.
+* The usual echo sweep: "unsatisfiable at finite Lipschitz constant" → the fixed-amplitude
+  budget; two supplement headers back to did-not-suffice; "vanishes" → 105/111 with the
+  five known invented-mode artifacts; "no sampling check caught" → the independent gate
+  caught one of four by the luck of its draw; "everything" → dominant; "a second family" →
+  two spot-checks at tiny n. preprint-draft.md got an OBSOLETE banner; REVIEW-RESPONSE row
+  5 annotated as the round-1 record; REPRO-FACTS records the split provenance.
+
 ## Third review round (2026-07-30): the essential infimum, and an accounting error of our own
 
 * **`prop:epsrate`, essential infimum, second repair.** The round-2 "clamp-free window"

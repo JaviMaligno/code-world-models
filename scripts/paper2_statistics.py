@@ -235,12 +235,28 @@ def classify(cell: dict, mode_present: bool, max_iters: int) -> str:
 
 SYNTHESIS_GLOB = "continuous_synthesis_*.json"
 
+# Files SUPERSEDED FOR INFERENCE by a re-run of the same treatment on the same blocks.
+# The mixed-provenance Qwen 2D first pass (HF-router full cells + vLLM incomplete cells)
+# was replaced, at the fourth review's request, by the backend-matched campaign
+# (`_matched-vllm`, both arms on one pinned vLLM configuration). Both files stay
+# versioned; only one may enter inference, because they are REPLICATE draws of one
+# treatment on the same rollout-seed blocks and this module's unit is one draw per
+# block per treatment. Exclusion here is explicit and recorded in the report, never
+# silent.
+SUPERSEDED_FOR_INFERENCE = {
+    "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json":
+        "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7"
+        "_matched-vllm.json",
+}
+
 
 def load_draws(results_dir: pathlib.Path = R) -> list:
     """Flatten every synthesis campaign (plus the two agent-relayed Claude
     campaigns) into one draw table."""
     draws = []
     for path in sorted(results_dir.glob(SYNTHESIS_GLOB)):
+        if path.name in SUPERSEDED_FOR_INFERENCE:
+            continue          # replicate of the same treatment on the same blocks
         d = json.loads(path.read_text())
         params = d["params"]
         instrument = params.get("instrument", "cart")
@@ -455,6 +471,12 @@ def pooled_bound(draws, predicate, unit="block", scoring="all",
     _, w_lo, w_hi = wilson_ci(k, n)
     valid = unit == "block" or not shared
     out = {
+        "superseded_for_inference": {
+            old: {"replacement": new,
+                  "why": "replicate draws of one treatment on the same rollout-seed "
+                         "blocks (backend-matched re-run); one file per treatment may "
+                         "enter inference"}
+            for old, new in SUPERSEDED_FOR_INFERENCE.items()},
         "unit": unit,
         "cluster_key": cluster_key.__name__,
         "block_scoring": scoring,

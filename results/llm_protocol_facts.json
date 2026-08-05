@@ -205,6 +205,31 @@
    "n_cells_at_iteration_cap": 3
   },
   {
+   "tag": "patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
+   "path": "results/continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+   "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+   "instrument": "patch2d",
+   "patch_shape": "disc",
+   "prompt_variant": "default",
+   "max_iters": 5,
+   "n_rollouts": 40,
+   "eps": 1e-09,
+   "arms": [
+    "full",
+    "incomplete"
+   ],
+   "n_cells": 6,
+   "llm_calls_total": 21,
+   "llm_calls_min": 1,
+   "llm_calls_median": 3.5,
+   "llm_calls_max": 6,
+   "refine_iterations_hist": {
+    "0": 3,
+    "5": 3
+   },
+   "n_cells_at_iteration_cap": 3
+  },
+  {
    "tag": "patch2d_large_k3_7",
    "path": "results/continuous_synthesis_patch2d_large_k3_7.json",
    "model": "gpt-5.4",
@@ -907,15 +932,15 @@
   }
  ],
  "totals": {
-  "n_campaigns": 33,
-  "n_cells_all_campaigns": 1028,
-  "llm_calls_all_campaigns": 3901,
+  "n_campaigns": 34,
+  "n_cells_all_campaigns": 1034,
+  "llm_calls_all_campaigns": 3922,
   "n_relay_campaigns": 2,
   "n_relay_cells": 12,
   "relay_calls": 39,
-  "llm_calls_including_relay": 3940,
+  "llm_calls_including_relay": 3961,
   "calls_per_cell_min": 1,
   "calls_per_cell_max": 16,
-  "mean_calls_per_cell": 3.7947
+  "mean_calls_per_cell": 3.793
  }
 }
