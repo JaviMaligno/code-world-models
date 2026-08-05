@@ -1,0 +1,373 @@
+{
+  "script": "continuous_danger_synthesis.py",
+  "model": "gpt-5.4",
+  "size": "large",
+  "tag": "large",
+  "params": {
+    "size": "large",
+    "n_seeds": 20,
+    "arm": "incomplete",
+    "x_wall": 8.0,
+    "instrument": "patch2d",
+    "th_stop": 1.4,
+    "k1": 3.0,
+    "k2": 7.0,
+    "start_arc": 240.0,
+    "mode_hint": "centre",
+    "mode_effect": "freeze",
+    "patch_shape": "disc",
+    "prompt_variant": "default",
+    "seed_offset": 0,
+    "n_rollouts": 15,
+    "eps": 1e-09,
+    "play_episodes": 6,
+    "max_iters": 5,
+    "compat_model": null,
+    "compat_base_url": "https://router.huggingface.co/v1"
+  },
+  "j_truth": 45.82475574186744,
+  "j_random": 0.02739099825155102,
+  "cells": [
+    {
+      "arm": "incomplete",
+      "seed": 10000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.955,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Sticky circular patches inferred from the observed transitions.\n    # The membership test is on the landing point (x2, y2); if it lands\n    # inside or on either patch, the next state is exactly [x, y, 0.0, 0.0].\n    patches = (\n        (2.237537132969027, 0.6471466902757297, 0.0300000000000000),\n        (2.5507221246856764, 0.9627769598976368, 0.0920000000000000),\n        (2.0756204065944632, 0.44543450722116484, 0.0940000000000000),\n        (6.834696707062822, -1.0331861019224864, 0.1190000000000000),\n        (3.234774174842342, 1.0184928794822745, 0.0850000000000000),\n        (3.6862728028912177, 0.7623995483416249, 0.1370000000000000),\n        (2.2703511837838124, 0.7674472168605350, 0.0690000000000000),\n    )\n\n    for cx, cy, r in patches:\n        dx = x2 - cx\n        dy = y2 - cy\n        if dx * dx + dy * dy <= r * r:\n            return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 20000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.98,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches: two circles with common radius.\n    c1x = 2.3010416641745796\n    c1y = 0.7805919588012571\n    c2x = 3.633733054198448\n    c2y = -0.7521037654732313\n    r = 0.18982131982100124\n    r2 = r * r\n\n    dx = x2 - c1x\n    dy = y2 - c1y\n    if dx * dx + dy * dy <= r2:\n        return [x, y, 0.0, 0.0]\n\n    dx = x2 - c2x\n    dy = y2 - c2y\n    if dx * dx + dy * dy <= r2:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 30000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9608333333333333,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches (common radius).\n    # Patch 1 is centred at the observed sticky state near x\u22482.22, y\u2248-0.65.\n    # Patch 2 is centred at the observed sticky state near x\u22486.05, y\u22480.36.\n    # Radius chosen to include all sticky landings shown and exclude nearby\n    # non-sticky ones.\n    r = 0.22\n    patches = (\n        (2.216137812242935, -0.6478520254266882),\n        (6.050257937639195, 0.3599021281282001),\n    )\n\n    rr = r * r\n    for cx, cy in patches:\n        dx = x2 - cx\n        dy = y2 - cy\n        if dx * dx + dy * dy <= rr:\n            return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 40000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.7933333333333333,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches (common radius).\n    radius = 0.55\n    patches = (\n        (2.62, -0.78),\n        (6.80, -0.98),\n    )\n\n    r2 = radius * radius\n    for cx, cy in patches:\n        dx = x2 - cx\n        dy = y2 - cy\n        if dx * dx + dy * dy <= r2:\n            return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 50000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9766666666666667,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches:\n    # centers at (2.35, 0.70) and (2.35, -1.25), common radius 0.12\n    # If landing lies inside either patch, stick at previous position.\n    cx = 2.35\n    r2 = 0.12 * 0.12\n\n    dx = x2 - cx\n    dy1 = y2 - 0.70\n    dy2 = y2 - (-1.25)\n\n    if dx * dx + dy1 * dy1 <= r2 or dx * dx + dy2 * dy2 <= r2:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 60000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9825,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches:\n    # centres\n    c1x = 2.121088819726649\n    c1y = -0.48448341748348894\n    c2x = 6.2641982241567025\n    c2y = -0.6862782643241923\n    # common radius\n    r = 0.036\n\n    if (\n        math.hypot(x2 - c1x, y2 - c1y) <= r\n        or math.hypot(x2 - c2x, y2 - c2y) <= r\n    ):\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 70000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.8875,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches:\n    # common radius 0.5, centres at (2.0, 0.5) and (3.0, 1.5)\n    r2 = 0.25\n\n    dx = x2 - 2.0\n    dy = y2 - 0.5\n    if dx * dx + dy * dy <= r2:\n        return [x, y, 0.0, 0.0]\n\n    dx = x2 - 3.0\n    dy = y2 - 1.5\n    if dx * dx + dy * dy <= r2:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 80000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9783333333333334,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky patches: two circles with common radius.\n    # If the landing point lies inside either circle, stick at previous position.\n    r = 0.22\n    r2 = r * r\n    patches = (\n        (2.20, 0.28),\n        (2.98, 1.01),\n    )\n\n    for cx, cy in patches:\n        dx = x2 - cx\n        dy = y2 - cy\n        if dx * dx + dy * dy <= r2:\n            return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 90000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9791666666666666,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches.\n    # The observed stick/release behavior is matched by three equal-radius\n    # circular patches centered at the recurrent sticky states.\n    r = 0.03\n    r2 = r * r\n\n    c1x = 2.6294055870355657\n    c1y = -0.9568749948335776\n    c2x = 2.32882450893453\n    c2y = -0.7621526926659785\n    c3x = 2.0123556904837723\n    c3y = 0.2611884178159561\n\n    dx = x2 - c1x\n    dy = y2 - c1y\n    if dx * dx + dy * dy <= r2:\n        return [x, y, 0.0, 0.0]\n\n    dx = x2 - c2x\n    dy = y2 - c2y\n    if dx * dx + dy * dy <= r2:\n        return [x, y, 0.0, 0.0]\n\n    dx = x2 - c3x\n    dy = y2 - c3y\n    if dx * dx + dy * dy <= r2:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 100000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9625,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    patches = (\n        (1.9318926899619542, 0.03423929481243361, 0.08428180208889385),\n        (2.002991308128883, 0.12058119539977151, 0.0),\n        (2.797908493790559, -0.9814225959571977, 0.1065259694163541),\n        (3.0606896044644074, 1.0037184855586452, 0.07069760830673732),\n        (2.1514332324758456, 0.5591474379439476, 0.12216169658383213),\n        (3.907657113441335, -0.46055061577012707, 0.08253785520159548),\n    )\n\n    for cx, cy, r in patches:\n        dx = x2 - cx\n        dy = y2 - cy\n        if dx * dx + dy * dy <= r * r:\n            return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 110000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9841666666666666,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches: two circles with common radius.\n    c1x = 2.081420068656499\n    c1y = 0.43461339048243697\n    c2x = 6.223559599061207\n    c2y = 0.7428116120429108\n    r = 0.03\n    r2 = r * r\n\n    dx1 = x2 - c1x\n    dy1 = y2 - c1y\n    if dx1 * dx1 + dy1 * dy1 < r2:\n        return [x, y, 0.0, 0.0]\n\n    dx2 = x2 - c2x\n    dy2 = y2 - c2y\n    if dx2 * dx2 + dy2 * dy2 < r2:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 120000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9725,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Sticky circular patches inferred from the observed transitions.\n    # A landing exactly at either listed centre is sticky, while some\n    # nearby listed landings are explicitly non-sticky, so the common\n    # radius must be smaller than those offsets.\n    cx1, cy1 = 2.3436812401697997, -0.8139121717349389\n    cx2, cy2 = 3.2431279945181934, -1.0202997465523522\n    r = 0.02260523173354685\n\n    if (\n        math.hypot(x2 - cx1, y2 - cy1) <= r\n        or math.hypot(x2 - cx2, y2 - cy2) <= r\n    ):\n        return [x, y, 0.0, 0.0]\n\n    # Additional sticky patch inferred from the remaining observed transitions.\n    # Centre approximately at (2.605093907782414, 0.9195655106209513) with a\n    # radius small enough to exclude the listed non-sticky predecessor landing.\n    cx3, cy3 = 2.605093907782414, 0.9195655106209513\n    r3 = 0.017622512731152232\n\n    if math.hypot(x2 - cx3, y2 - cy3) <= r3:\n        return [x, y, 0.0, 0.0]\n\n    # Additional sticky patch inferred from the remaining observed transitions.\n    cx4, cy4 = 2.175886369354429, -0.572757032355144\n    r4 = 0.021799653395628582\n\n    if math.hypot(x2 - cx4, y2 - cy4) <= r4:\n        return [x, y, 0.0, 0.0]\n\n    # Additional sticky patch inferred from the remaining observed transitions.\n    cx5, cy5 = 2.195129020745057, -0.6123108040382667\n    r5 = 0.024739531349142537\n\n    if math.hypot(x2 - cx5, y2 - cy5) <= r5:\n        return [x, y, 0.0, 0.0]\n\n    # Additional sticky patch inferred from the remaining observed transitions.\n    cx6, cy6 = 2.2614658864765413, -0.68580371372831\n    r6 = 0.0268108434721316\n\n    if math.hypot(x2 - cx6, y2 - cy6) <= r6:\n        return [x, y, 0.0, 0.0]\n\n    # Additional sticky patch inferred from the remaining observed transitions.\n    cx7, cy7 = 2.2366196890392684, -0.6914089215592774\n    r7 = 0.03828291964667707\n\n    if math.hypot(x2 - cx7, y2 - cy7) <= r7:\n        return [x, y, 0.0, 0.0]\n\n    # Additional sticky patch inferred from the remaining observed transitions.\n    cx8, cy8 = 2.3091604976167015, -0.7375277551382249\n    r8 = 0.04921371990434648\n\n    if math.hypot(x2 - cx8, y2 - cy8) <= r8:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 130000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.99,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches (common radius).\n    # Patch 1: around (~3.0, -1.0)\n    # Patch 2: around (~6.84, 0.95)\n    r = 0.1\n    r2 = r * r\n\n    dx1 = x2 - 3.0\n    dy1 = y2 - (-1.0)\n    if dx1 * dx1 + dy1 * dy1 <= r2:\n        return [x, y, 0.0, 0.0]\n\n    dx2 = x2 - 6.84\n    dy2 = y2 - 0.95\n    if dx2 * dx2 + dy2 * dy2 <= r2:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 140000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9633333333333334,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    r = 0.03\n    if (\n        (x2 - 3.0596559836411394) * (x2 - 3.0596559836411394)\n        + (y2 - 1.0236304710737443) * (y2 - 1.0236304710737443)\n        <= r * r\n        or (x2 - 6.013968423059814) * (x2 - 6.013968423059814)\n        + (y2 - 0.38226472009849327) * (y2 - 0.38226472009849327)\n        <= r * r\n        or (x2 - 1.9985736576360942) * (x2 - 1.9985736576360942)\n        + (y2 - (-0.13147245146459033)) * (y2 - (-0.13147245146459033))\n        <= r * r\n        or (x2 - 1.9987926806885339) * (x2 - 1.9987926806885339)\n        + (y2 - 0.0957885083840701) * (y2 - 0.0957885083840701)\n        <= r * r\n    ):\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 150000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9858333333333333,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches (common radius), applied to the landing\n    # point (x2, y2). If inside either patch, the mover sticks at the previous\n    # position with zero velocity.\n    r = 0.12\n    r2 = r * r\n    patches = (\n        (3.7421182561666666, -0.67206422583647),\n        (2.8676840073075076, 0.7635882366118394),\n        (6.341791585086968, 0.2965003939941588),\n        (3.8505961507476444, 0.6346325464134784),\n    )\n\n    for cx, cy in patches:\n        dx = x2 - cx\n        dy = y2 - cy\n        if dx * dx + dy * dy <= r2:\n            return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 160000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.8083333333333333,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Two sticky circular patches inferred from the observed transitions.\n    # Their centers are exactly the \"entry\" landing points shown by the data.\n    # The common radius must be large enough to include all sticking landings\n    # and small enough to exclude the non-sticking entries listed.\n    cx1 = 3.485133854047511\n    cy1 = -0.8769527362801397\n    cx2 = 2.5878580425879223\n    cy2 = 0.9530347613478198\n    r = 0.8230369848445857\n\n    dx1 = x2 - cx1\n    dy1 = y2 - cy1\n    dx2 = x2 - cx2\n    dy2 = y2 - cy2\n    r2 = r * r\n\n    if dx1 * dx1 + dy1 * dy1 <= r2 or dx2 * dx2 + dy2 * dy2 <= r2:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    reward = real + phantom\n    return reward",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 170000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9841666666666666,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky patches (common radius).\n    # The observed failures show the previous implementation made the patches\n    # too large around these centers. The transitions are matched by keeping\n    # the same centers but using the smaller common radius below.\n    r = 0.1\n    r2 = r * r\n\n    c1x = 2.3215704744629466\n    c1y = -0.740358672384717\n    dx = x2 - c1x\n    dy = y2 - c1y\n    if dx * dx + dy * dy <= r2:\n        return [x, y, 0.0, 0.0]\n\n    c2x = 3.021793116121714\n    c2y = -1.011131949231548\n    dx = x2 - c2x\n    dy = y2 - c2y\n    if dx * dx + dy * dy <= r2:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 180000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9566666666666667,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches (common radius).\n    # The upper patch must include the failed landing near (3.4926235965, 0.8075423588)\n    # while excluding the observed non-sticky state near (3.3399471542, 0.9701470293).\n    # The lower patch must exclude the whole observed trajectory around y\u2248-1.17..-1.32.\n    r = 0.23193123743194504\n\n    c1x = 3.2736528585129457\n    c1y = 0.8843809710819288\n\n    c2x = 2.8898388463131493\n    c2y = -1.1664902212066445\n\n    if (\n        math.hypot(x2 - c1x, y2 - c1y) <= r\n        or math.hypot(x2 - c2x, y2 - c2y) <= r\n    ):\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 190000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.89,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky circular patches:\n    # centres (2.5, 1.0) and (3.0, -1.0), common radius 0.45\n    r2 = 0.45 * 0.45\n\n    dx1 = x2 - 2.5\n    dy1 = y2 - 1.0\n    dx2 = x2 - 3.0\n    dy2 = y2 + 1.0\n\n    if dx1 * dx1 + dy1 * dy1 <= r2 or dx2 * dx2 + dy2 * dy2 <= r2:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 200000,
+      "n_rollouts": 15,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.8825,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Inferred sticky patches: two circular regions with common radius.\n    # These match the observed transitions: one upper patch and one lower patch.\n    c1x, c1y = 2.75, 1.25\n    c2x, c2y = 2.75, -1.25\n    r2 = 0.5 * 0.5\n\n    dx1 = x2 - c1x\n    dy1 = y2 - c1y\n    dx2 = x2 - c2x\n    dy2 = y2 - c2y\n\n    if dx1 * dx1 + dy1 * dy1 <= r2 or dx2 * dx2 + dy2 * dy2 <= r2:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    }
+  ],
+  "elapsed_s": 693.4
+}

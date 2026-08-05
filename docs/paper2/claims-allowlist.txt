@@ -1,0 +1,42 @@
+# Allowlist for scripts/audit_paper_claims.py.
+#
+# FORMAT
+#   One entry per line. An entry is a Python regex (a plain literal is a valid
+#   regex). Optionally scope it to one rule:
+#
+#       <rule-id> :: <regex>
+#
+#   with rule-id one of: process-prose, modal-scope, soundness-scope,
+#   pooled-inference, printed-zero, hand-constant, or * for all of them.
+#
+#   EVERY entry MUST be preceded by a "#" comment line saying why the exception
+#   is legitimate. An entry with no justification comment above it is a
+#   configuration error and the audit exits 2 -- the point of this file is that
+#   exceptions are recorded with a reason, not hidden in the linter's source.
+#
+#   For hand-constant the regex is matched against the numeric literal itself
+#   (anchor it: ^...$) and against the whole surrounding sentence.
+#
+# WHAT DOES NOT BELONG HERE
+#   A number that a script could write to results/. If the constant is derived,
+#   make the deriving script emit it; allowlisting it just moves the weak class
+#   somewhere the numeric audit cannot see it.
+
+# arXiv identifiers are bibliographic, not measurements: 2510.04542 is the
+# DeepMind CWM paper's ID, quoted in prose beside the game it introduces.
+hand-constant :: ^2510\.04542$
+
+# "the factor is 0.950 * 2^-(d+m) at the certified $\rho$" names the radius the
+# certificate licenses -- a number produced by Proposition prop:partition -- not a
+# soundness claim about a model. (The linter strips maths before matching, so the
+# pattern is written against the stripped text.)
+soundness-scope :: at the certified
+
+# "this is not a proof that the gate certifies nothing on these regions" is the
+# negation of a claim, and the sentence goes on to state exactly what is and is not
+# established. The rule is looking for unscoped ASSERTIONS of soundness.
+soundness-scope :: not a proof that the gate certifies nothing
+
+# "Certifying the planner's own visitation" names a hypothetical procedure -- the
+# object one would have to certify -- and the scope is the phrase itself.
+soundness-scope :: Certifying the planner's own visitation

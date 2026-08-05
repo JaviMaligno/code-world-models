@@ -587,3 +587,219 @@ that the pinning's *initiation* is measured after an attempt that got only part 
 the way.
 
 Cross-references: no broken refs, no duplicate labels.
+
+---
+
+# 2026-07-29 — the external review's weakenings, and what was earned back
+
+Written after the 26-point external review. The rule Javier set is that a precision which
+costs strength gets recorded, so the strong version can be attempted rather than silently
+abandoned. This round the attempt succeeded more often than not.
+
+## Earned back (the strong version now holds)
+
+1. **"Verification" → an independent gate, at no cost in danger.** The review's fatal
+   objection was that the acceptance sample was the training sample. Rather than rename the
+   gate and reduce the claims, all 625 versioned artifacts were re-scored on independent
+   acceptance and evaluation blocks — free, because every artifact is committed with its
+   source. The result is *stronger* than the original claim: 36 of 463 accepted artifacts
+   fail an independent gate, and Proposition `prop:twofactor` shows the two exponents add,
+   so an independent gate costs nothing at fixed total budget. Both of its hypotheses are
+   measured (30/30 and 60/60 exact) rather than assumed.
+2. **ε-flatness: generalized, not scoped down.** The review asked for the proposition to be
+   restricted to the system its proof covered. Instead it now covers the whole semi-implicit
+   family with additive `gain·a` and a clamp on the integrated coordinate, so the cart *and*
+   the pendulum are theorems and the measured exponents became confirmations.
+3. **The Lipschitz claim → a localization budget.** "Smooth learners cannot localize" was
+   false as stated (our own compactly supported bump falsifies it). The replacement is
+   quantitative rather than merely hedged: `vol(E_ε) ≥ ((η-ε)/L)^(d+m)`, i.e. localization
+   is purchased, not forbidden.
+4. **A new obstruction, found by running the ablation.** Proposition `prop:entryclass`: the
+   freeze semantics guarantee that every state a rollout visits lies outside the mode
+   region, so a predicate agreeing with membership on the reachable set is exactly equal to
+   the truth on *every* sample — unfalsifiable at any N and any tolerance, and provably
+   harmless because the same argument gives `q_hit(E) = 0`. A synthesized artifact in that
+   class was found in the slab campaign and verified on three disjoint blocks. This is
+   stronger than anything the review asked for, and it is also an honest limit on the
+   independent gate of item 1.
+
+## Weakened, with the route to the strong version recorded
+
+5. **"Below random at every knob."** At 100 paired episodes the blind planner beats the
+   random policy in 86 of 100 cart seeds; the positive mean is carried by a heavy-tailed
+   baseline. *Route to the strong version:* the sharp-phantom-plateau variant already gives
+   6/6 and 7/7 knobs below random with a surviving random baseline — promote that variant to
+   the default instrument and re-run the four mechanism tables. Cost: four CPU sweeps and
+   every number in those tables changes. Not done, because `play_cost ≈ 1` and the raw
+   regret carry the content and the comparison against random was rhetorical.
+6. **`q_hit = 0` on the two zero-crossing CEM rows.** Refuted at `x_wall = 8` by 200×
+   resampling (18 crossings in 1.28M). *Route:* at `x_wall = 10` the zero survives, so an
+   exhaustive-geometry argument that CEM's candidate set cannot reach the wall at that knob
+   would convert the censored zero into a theorem. Cost: a reachability argument over the
+   CEM proposal distribution. Not attempted.
+7. **The template prior as a mechanism.** Now stated as consistent-with. *Route:* the two
+   ablations run on 2026-07-29 (trigger arity, and the landing variable) exclude two of the
+   candidate causes; what remains is the evidence structure, and Proposition
+   `prop:entryclass` is the beginning of a proof that the structure — not the synthesizer —
+   is the obstruction. The next experiment is an instrument whose mode does *not* freeze
+   (so the interior is witnessed), which would test the proposition's premise directly.
+8. **The cart's 109/111 lower bound.** 0.851 was invalid at block level (20/22 blocks all-
+   repair); the honest figure is 0.708, or 0.772 for the weaker estimand. *Route:* fresh
+   seed blocks via `--seed-offset` on the cart's `x_wall = 4` cell, where both exceptions
+   live. Cost: one small Azure run.
+
+## 2026-07-29, second pass — what the two ablations settled and what they left
+
+**Settled.** Four candidate causes of the 2D collapse are measured negatives: boundary
+curvature, prompting and budget, the predicate's trigger arity, and identification of the
+variable the trigger reads. The obstruction is in the evidence, and part of it is now a
+theorem (`prop:entryclass`).
+
+**The one experiment that would settle the mechanism.** Every instrument in this paper
+freezes the mover at its *previous* position, which is exactly what keeps the region's
+interior unvisited. An instrument whose mode instead *clamps to the boundary* — as the
+cart's wall does, and the cart is repaired 33/33 — would let a rollout occupy the boundary
+itself, so `prop:entryclass`'s premise fails and the interior becomes witnessable. If
+repair returns there, the mechanism is the censoring and not the synthesizer; if it does
+not, the template prior survives as a mechanism rather than a description. Cost: one CPU
+calibration to match rarity and preserve the exploitation geometry, then one 20-seed × 2-size
+Azure campaign. This is the single highest-value experiment left in the paper.
+
+**A weakening that is now load-bearing and should be watched.** The repair criterion changed
+from the mode probe to the probe *plus* a behavioural exactness check, and that moved the 1D
+headline from 109/111 to 105/111 and the block-level aggregate from 34/36 to 30/36
+[0.672, 0.936]. The probe is still what the pipeline computes online; the exactness check is
+an offline audit. Any future campaign must run both, or it will report repairs it does not
+have — 19 of 20 on the slab, in the case that exposed this.
+
+## 2026-07-29, third pass — the experiment I called decisive, and it went against me
+
+The previous entry named one experiment as the highest-value one left: an instrument whose
+mode does not freeze the mover at its previous position, so `prop:entryclass`'s premise
+fails and the region's interior becomes witnessable. It was run in two forms and **the
+hypothesis it was built to confirm is refuted**.
+
+* `landing` (the mover stops where it entered, strictly inside) and `clamp` (projected onto
+  the boundary) both break the premise — measured on the gate sample: 4614 and 233
+  transitions that separate the membership rule from an entry rule, against freeze's zero.
+* Both preserve the trap (play_cost 1.058 / 1.059 against freeze's 1.059) and rarity is
+  *identical* (0.1527) because the firing predicate is untouched.
+* Repair does not return: **0 of 40** in each, no artifact passing the gate at all, and the
+  dominant class is again the half-plane at `x2 > 2.0` — the same template at the same
+  constant as the freeze campaigns.
+* The two confounds are complementary and both are covered: `landing` supplies **11x** more
+  mode evidence (contact share 7.25% against 0.66%) and still fails; `clamp` holds the
+  contact share at freeze's level (0.75%) and pays in rule complexity instead, and fails
+  with the same classes.
+
+**What this costs and what it buys.** It costs the reading I preferred: the censoring is not
+why region induction fails. It buys the one thing the paper had been careful never to claim —
+the region-template prior now survives as a *mechanism* after seven ablations, rather than as
+a description of the artifacts. `prop:entryclass` keeps its two jobs: it explains the slab's
+nineteen accepted-but-wrong artifacts, and it bounds what an independent acceptance gate can
+ever catch.
+
+**What would now be the strongest next move**, in order:
+1. **A positive control on 2D induction.** Every 2D campaign so far is a negative, and a
+   negative is only as good as the guarantee that the target is learnable *by this pipeline*
+   at all. Give the incomplete arm the disc's centre but not its radius (a template with one
+   unknown constant). If that is repaired, the frontier is "constants yes, forms no", which
+   is a sharp and falsifiable statement about the prior. If it is not, the failure is
+   upstream of region induction and the whole 2D story needs re-scoping. One Azure campaign.
+2. **Evidence dose.** Hold everything fixed and raise only the number of *distinct contact
+   bearings* the sample shows (achievable by seeding rollouts around the patch). The prior
+   should yield to enough two-sided evidence, or it is not a prior but a hard limit.
+3. Neither is a substitute for the other: (1) bounds the pipeline, (2) bounds the prior.
+
+## 2026-07-29, fourth pass — the positive control, and the frontier located
+
+The previous entry's item 1 (a positive control on 2D induction) was run, as a graded scale
+rather than a single point, so it locates the frontier instead of merely bounding it.
+
+* **Form + centres given, radius withheld (one unknown scalar): 20/20 EXACT.** Every
+  artifact at IoU 1.000, exact on all 9020 state-action grid points, all 20 accepted by an
+  independent gate and an independent 100-rollout evaluation at 1e-9. Four need no
+  refinement iteration. One comments "radius inferred from the provided transitions".
+* **Form alone, centres and radius withheld (three unknowns): 0/20**, best agreement 0.132,
+  16 of 20 writing a point — memorisation.
+* **A control from outside the pipeline**: a plain algebraic least-squares circle fit on the
+  same contact landings recovers both constants to within a tenth of the radius on **12 of
+  20** samples, the centre alone on 13, with no prior and no LLM.
+
+**The frontier, stated as sharply as this instrument allows:** what is not induced is the
+region's FORM, and once the form and its location are given the remaining constant follows
+to float precision. It is not the evidence (12 of 20 samples yield to three lines of linear
+algebra that the synthesizer given the form does not perform), not an inability to fit
+constants, and not representational (told the rule, every arm writes it at gate 1.000 in
+zero iterations). On the 8 samples where the trivial fit also fails, the negative is not
+attributable to the synthesizer, and the paper does not attribute it.
+
+**A number I got wrong and the check caught:** I wrote "nine of the twenty need no
+refinement iteration" from memory of the log; it is four. It is now asserted from the JSON by
+the numeric audit. Same class of error as every one the peer reviews found —
+[[hand-computed-constants-are-the-weak-class]] — and the same fix.
+
+**What is left, in priority order.**
+1. **Evidence dose.** Hold everything fixed and raise only the number of distinct contact
+   bearings the sample shows (seed rollouts around the patch rather than only from the
+   start box). The prior should yield to enough coverage or it is a hard limit rather than a
+   prior. This is the last mechanism question the instrument can answer.
+2. **An archived release** — a git tag with a DOI. The tag is trivial; the DOI needs a
+   Zenodo/figshare deposit under the author's account, so it is the author's call.
+
+## 2026-07-29, fifth pass — the evidence dose, and a prior that does not yield
+
+The fourth pass left one open item — "the prior should yield to enough coverage or it is a
+hard limit rather than a prior" — and named both outcomes before the run. It was run.
+
+**The intervention.** `PatchField2D.start_arc_deg` begins episodes on a ring just outside the
+near patch at a bearing drawn from an arc centred on the default arrival direction. The arc
+width is the dose. The rollout count is lowered to hold the *number* of contacts at the
+baseline's median, so coverage and quantity move independently — a single knob that moved
+both would have answered neither. Verified: the contract text is byte-identical across arms
+(the dose is evidence, not instruction), `start_arc_deg=None` reproduces the committed box
+start bit for bit, and the trap survives (play-cost 0.8701, blind
+contact rate 0.92).
+
+**The dose is real and it saturates.** Coverage — the arc the landings actually span,
+$360°$ less the largest gap — goes 111° →
+129° → 185° at contact counts
+14 / 16 / 15. It
+saturates near 185° because the freeze semantics forbid
+occupying the region's interior, so the far side is reachable only by going around: the
+instrument cannot deliver full coverage, and `prop:entryclass` is why.
+
+**What the evidence supports at each dose.** The trivial least-squares circle fit recovers
+both constants on 12/20 samples at
+111°, 16/20 at
+129°, and **20/20** at
+185°. At the top dose the evidence determines the region on
+*every* sample.
+
+**What the synthesizer does at that dose.** Given the form and asked only for location and
+size: **0/20** (best agreement
+0.191). Given no clause at all:
+**0/20** (best 0.220).
+The machinery control at 129°:
+0/20, so the null is the coverage and not
+the ring. The translation arm on the same wider sample: 20/20 at gate 1.000 in zero
+iterations, so the null is the induction and not the instrument.
+
+**Two statements this earns, in opposite directions.**
+
+1. *Stronger.* The attribution now has no residue. The earlier control had to set aside the
+   8 samples on which the trivial fit also fails; at the top dose
+   there are none to set aside. On **every** sample in that arm the region is recoverable
+   from the evidence and the synthesizer does not recover it. "Not the evidence" stops being
+   a statement about most samples and becomes one about all of them.
+2. *Bounded, not stronger.* Within the range this instrument can reach the failure does not
+   respond to the dose **at all** — not partially, not with a trend. So "prior" should be
+   read as a fixed disposition rather than a weight more evidence outweighs. What lies beyond
+   185° is not knowable here, and the paper says so instead of
+   generalising past the instrument.
+
+**What is still open.** Nothing this instrument can answer about the mechanism. Beyond it:
+an instrument whose mode does *not* freeze the mover would permit full coverage and could
+separate "a disposition" from "a weight no reachable dose outweighs" — a different paper's
+experiment, and named as such rather than promised. The remaining non-experimental item is a
+DOI deposit for the archived tag, which needs an account and is the author's call.

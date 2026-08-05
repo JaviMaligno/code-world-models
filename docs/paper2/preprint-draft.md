@@ -1,3 +1,15 @@
+> [!WARNING]
+> **OBSOLETE HISTORICAL DRAFT — DO NOT CITE, DO NOT PUBLISH.**
+> This is the first draft of 2026-07-07, kept only as a historical record of where the
+> manuscript started. Almost every number and several claims in it were later corrected or
+> refuted by four external review rounds: the two-mode factorization is wrong (superseded by
+> the Fréchet bracket, `prop:jointmiss`), 82/82 and 0/76 are stale (now 105/111 draws over
+> 70 blocks, and 0/156), "one phantom" is now five known invented-mode artifacts, "perfect
+> repair when the clamp is revealed" and "strict gate soundness" were retracted, and "sample
+> coverage is the whole game" is scoped to the 1D clamps. The authoritative source is
+> `main.tex`, whose every printed number is re-derived from `results/` in CI
+> (`scripts/audit_paper2_numbers.py`).
+
 # An Omitted Mode Is a Rare Rule: The Sampling-Verification Danger Law in Continuous Code World Models
 
 **Author:** Javier Aguilar Martín — AGILabs (javieraguilar.ai)

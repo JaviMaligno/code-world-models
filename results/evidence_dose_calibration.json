@@ -1,0 +1,262 @@
+{
+  "script": "calibrate_evidence_dose.py",
+  "default_sample": {
+    "n_rollouts": 40,
+    "median_contacts": 14.5,
+    "min_contacts": 5,
+    "median_arc_deg": 110.65309387677075,
+    "min_arc_deg": 16.63015847467699,
+    "blocks_with_a_contact": 20,
+    "n_blocks": 20
+  },
+  "default_play": {
+    "j_truth": 18.379765305454477,
+    "j_blind": 0.0008134168024159405,
+    "j_random": 1.0328732370463987,
+    "play_cost": 1.059495373359909,
+    "blind_contact_rate": 1.0
+  },
+  "target_median_contacts": 14.5,
+  "arms": {
+    "arc120": {
+      "start_arc_deg": 120.0,
+      "matched": {
+        "n_rollouts": 15,
+        "median_contacts": 16.0,
+        "min_contacts": 3,
+        "median_arc_deg": 128.8920222829409,
+        "min_arc_deg": 67.78525093990925,
+        "blocks_with_a_contact": 20,
+        "n_blocks": 20
+      },
+      "sweep": [
+        {
+          "n_rollouts": 10,
+          "median_contacts": 11.0,
+          "min_contacts": 2,
+          "median_arc_deg": 97.22168124663662,
+          "min_arc_deg": 0.950338992872048,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 15,
+          "median_contacts": 16.0,
+          "min_contacts": 3,
+          "median_arc_deg": 128.8920222829409,
+          "min_arc_deg": 67.78525093990925,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 20,
+          "median_contacts": 20.0,
+          "min_contacts": 7,
+          "median_arc_deg": 146.2940077928414,
+          "min_arc_deg": 67.78525093990925,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 25,
+          "median_contacts": 24.5,
+          "min_contacts": 7,
+          "median_arc_deg": 150.69240758156445,
+          "min_arc_deg": 67.78525093990925,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 30,
+          "median_contacts": 28.0,
+          "min_contacts": 17,
+          "median_arc_deg": 152.9102479865677,
+          "min_arc_deg": 97.06541304466924,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 40,
+          "median_contacts": 42.5,
+          "min_contacts": 29,
+          "median_arc_deg": 170.91205642698654,
+          "min_arc_deg": 111.59814942269662,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        }
+      ],
+      "play_j_truth": 38.46787254891892,
+      "play_j_blind": 3.401715739057615,
+      "play_j_random": 0.06808396564713111,
+      "play_play_cost": 0.9131861946015317,
+      "play_blind_contact_rate": 1.0,
+      "admissible": {
+        "coverage_raised": true,
+        "contacts_matched": true,
+        "every_block_fires": true,
+        "trap_preserved": true,
+        "all": true
+      }
+    },
+    "arc240": {
+      "start_arc_deg": 240.0,
+      "matched": {
+        "n_rollouts": 15,
+        "median_contacts": 15.0,
+        "min_contacts": 7,
+        "median_arc_deg": 184.96774524683562,
+        "min_arc_deg": 80.31606794300626,
+        "blocks_with_a_contact": 20,
+        "n_blocks": 20
+      },
+      "sweep": [
+        {
+          "n_rollouts": 10,
+          "median_contacts": 10.0,
+          "min_contacts": 1,
+          "median_arc_deg": 170.18808985328744,
+          "min_arc_deg": 0.0,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 15,
+          "median_contacts": 15.0,
+          "min_contacts": 7,
+          "median_arc_deg": 184.96774524683562,
+          "min_arc_deg": 80.31606794300626,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 20,
+          "median_contacts": 20.5,
+          "min_contacts": 10,
+          "median_arc_deg": 212.97483454174764,
+          "min_arc_deg": 119.86268675258916,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 25,
+          "median_contacts": 25.5,
+          "min_contacts": 14,
+          "median_arc_deg": 234.86024325873973,
+          "min_arc_deg": 140.76583765470835,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 30,
+          "median_contacts": 30.0,
+          "min_contacts": 16,
+          "median_arc_deg": 246.5335429800165,
+          "min_arc_deg": 178.72124996338846,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 40,
+          "median_contacts": 39.0,
+          "min_contacts": 24,
+          "median_arc_deg": 263.1054639930902,
+          "min_arc_deg": 184.85291134036856,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        }
+      ],
+      "play_j_truth": 46.29317482168971,
+      "play_j_blind": 6.0328194229528975,
+      "play_j_random": 0.02305584130201863,
+      "play_play_cost": 0.8701156661343747,
+      "play_blind_contact_rate": 0.9166666666666666,
+      "admissible": {
+        "coverage_raised": true,
+        "contacts_matched": true,
+        "every_block_fires": true,
+        "trap_preserved": true,
+        "all": true
+      }
+    },
+    "arc360": {
+      "start_arc_deg": 360.0,
+      "matched": {
+        "n_rollouts": 10,
+        "median_contacts": 11.0,
+        "min_contacts": 3,
+        "median_arc_deg": 182.768408764211,
+        "min_arc_deg": 66.19203292422702,
+        "blocks_with_a_contact": 20,
+        "n_blocks": 20
+      },
+      "sweep": [
+        {
+          "n_rollouts": 10,
+          "median_contacts": 11.0,
+          "min_contacts": 3,
+          "median_arc_deg": 182.768408764211,
+          "min_arc_deg": 66.19203292422702,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 15,
+          "median_contacts": 18.5,
+          "min_contacts": 8,
+          "median_arc_deg": 233.00925235256776,
+          "min_arc_deg": 87.10444555181999,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 20,
+          "median_contacts": 23.0,
+          "min_contacts": 12,
+          "median_arc_deg": 257.0585873550388,
+          "min_arc_deg": 122.62943082192166,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 25,
+          "median_contacts": 27.5,
+          "min_contacts": 15,
+          "median_arc_deg": 261.78233871683847,
+          "min_arc_deg": 211.05457764813767,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 30,
+          "median_contacts": 33.5,
+          "min_contacts": 22,
+          "median_arc_deg": 285.5705332566017,
+          "min_arc_deg": 211.05457764813767,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        },
+        {
+          "n_rollouts": 40,
+          "median_contacts": 42.5,
+          "min_contacts": 25,
+          "median_arc_deg": 291.1574295196638,
+          "min_arc_deg": 211.05457764813767,
+          "blocks_with_a_contact": 20,
+          "n_blocks": 20
+        }
+      ],
+      "play_j_truth": 48.48032470408197,
+      "play_j_blind": 9.291572956121128,
+      "play_j_random": 0.004573986187789129,
+      "play_play_cost": 0.8084196978406945,
+      "play_blind_contact_rate": 0.9166666666666666,
+      "admissible": {
+        "coverage_raised": true,
+        "contacts_matched": false,
+        "every_block_fires": true,
+        "trap_preserved": true,
+        "all": false
+      }
+    }
+  }
+}

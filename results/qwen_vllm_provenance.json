@@ -1,0 +1,35 @@
+{
+ "what_this_is": "Serving provenance for the MATCHED Qwen 2D campaign (fourth review, point 1): both arms, same server, same effective configuration. The mixed-provenance first pass (continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json) is retained as an exploratory unmatched spot-check and is no longer the contrast the paper cites.",
+ "campaign_file": "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+ "server": {
+  "backend": "vLLM",
+  "version": "0.26.0",
+  "deployment": "Modal H100 (scripts/modal_qwen3coder_vllm.py)",
+  "endpoint": "https://jaguilar--qwen3coder-vllm-serve.modal.run/v1",
+  "dtype": "bf16 (no quantization flag; vllm serve default for this checkpoint)",
+  "max_model_len": 16384
+ },
+ "model": {
+  "id": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+  "hub_revision_sha": "b2cff646eb4bb1d68355c01b18ae02e7cf42d120",
+  "downloaded": "2026-08-01 into a fresh Modal volume, so the served revision is the Hub's main at this sha"
+ },
+ "generation": {
+  "client_pins": {
+   "max_tokens": 8192
+  },
+  "server_defaults_applied": "vLLM --generation-config auto reads the checkpoint's generation_config.json",
+  "generation_config": {
+   "do_sample": true,
+   "temperature": 0.7,
+   "top_p": 0.8,
+   "top_k": 20,
+   "repetition_penalty": 1.05
+  }
+ },
+ "caveats": [
+  "n = 3 seeds per arm: an exploratory diagnostic, not a cross-family replication",
+  "sampling is the checkpoint's own generation_config, identical for BOTH arms; the client pins only max_tokens",
+  "the first-pass mixed file's top-level params name the HF router and n_seeds=10 from its original launch; it is superseded for the full-vs-incomplete contrast"
+ ]
+}

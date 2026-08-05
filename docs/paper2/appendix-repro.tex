@@ -1,0 +1,120 @@
+% Body of the reproducibility appendix (review points #18, #19).
+% No \section line: main.tex supplies the heading and the label.
+% Every figure here is read from results/repro_manifest.json by
+% scripts/audit_paper2_numbers.py; the JSON key is named beside each claim.
+
+Everything in this section is generated rather than transcribed: the facts below are read
+from \texttt{results/\allowbreak repro\_\allowbreak manifest.json}, and the numeric audit
+checks the paper against that file like any other result.
+
+\paragraph{Interpreter, platform, and one honest gap.} CPython $3.12.8$ on macOS $15.7.7$
+(build \texttt{24G720}, Darwin $24.6.0$), Intel Core i9-9880H at $2.30$\,GHz, $16$ logical
+cores, $16$\,GiB. \texttt{pyproject.toml} declares \texttt{requires-python >= 3.11}. No
+result depends on the hardware except wall-clock: every CPU result is pure-Python or
+\texttt{numpy} float64 with explicitly seeded \texttt{random.Random} streams,
+single-threaded, no GPU, and no reduction whose order a BLAS could change, so bit-identical
+replay is expected on any IEEE-754 host at the same CPython minor version. That expectation
+is an argument from the code and \emph{not} a measurement: every number in this paper was
+produced on one machine, and no second platform has ever run the sweeps. The quantities most
+exposed to a different \texttt{libm} are the ones printed to twelve digits
+($J_{\mathrm{truth}} = 17.757356407381$ and $17.772246981024$) and the $10^{-15}$
+linear-fit residuals of Table~\ref{tab:smooth}; those are the first to re-check elsewhere.
+
+\paragraph{Dependencies, and what is still missing.} \texttt{pyproject.toml} declares lower
+bounds only. A pinned environment is committed at
+\texttt{docs/\allowbreak paper2/\allowbreak requirements-frozen.\allowbreak txt} ($\texttt{pip freeze}$ inside the repository's
+virtual environment), which is \emph{not} a lockfile: it carries no hashes and no resolver
+metadata. What reproducibility still needs and does not have is an archived release --- a
+git tag with a DOI --- so that ``the code is on GitHub'' becomes a citable artifact rather
+than a mutable branch. We state this as an outstanding gap rather than implying otherwise.
+
+\paragraph{Licence.} Code: Apache-2.0 (\texttt{LICENSE}, declared in
+\texttt{pyproject.toml}). Paper text, figures and the result artifacts under
+\texttt{results/}, including every synthesized program the paper quotes: CC-BY-4.0
+(\texttt{docs/\allowbreak paper2/\allowbreak LICENSE-artifacts}).
+
+\paragraph{Credentials.} The scripts read exactly six environment variables, listed with
+their call sites in \texttt{docs/\allowbreak paper2/\allowbreak env.\allowbreak example}: \texttt{AZURE\_\allowbreak OPENAI\_\allowbreak ENDPOINT},
+\texttt{AZURE\_\allowbreak OPENAI\_\allowbreak API\_\allowbreak KEY}, \texttt{AZURE\_\allowbreak OPENAI\_\allowbreak API\_\allowbreak VERSION},
+\texttt{AZURE\_\allowbreak DEPLOYMENT\_\allowbreak MINI}, \texttt{AZURE\_\allowbreak DEPLOYMENT\_\allowbreak LARGE} and \texttt{HF\_TOKEN}.
+No secret appears in the repository. Every CPU result in this paper runs without any of them.
+
+\paragraph{What backs each table and figure.} The manifest maps every table and figure to
+the versioned JSON it is derived from and the script that produced it, and it distinguishes
+three tiers of checking rather than collapsing them: \emph{cell-parsed}, where
+\texttt{scripts/\allowbreak audit\_\allowbreak paper2\_\allowbreak numbers.py} parses the
+\texttt{tabular} out of \texttt{main.tex} and compares every cell against the JSON at
+printed precision; \emph{claims-only}, where the audit does not parse the object but asserts
+values quoted from it; and \emph{unaudited}. Of the fifteen tables and figures, nine are
+cell-parsed, five are claims-only, and one --- Table~\ref{tab:pendulum-synthesis}, whose
+counts are read from the per-seed synthesis JSONs by hand --- is unaudited, which we record
+as a gap rather than leave implicit. The manifest is itself cross-checked two ways: a static
+parse of the audit's sections collects the file arguments it names, and a dynamic pass execs
+the audit with file reads instrumented and records what it actually opens. The two agreeing
+is a stored assertion, and it failed on the generator's first run (the static parse missed
+the files reached through a wrapper and a glob), which is what the cross-check is for.
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabular}{lll}
+\toprule
+object & backing \texttt{results/}\,JSON & checking \\
+\midrule
+\texttt{tab:epsstar} & \texttt{eps\_\allowbreak invariance\_\allowbreak threshold} & claims \\
+\texttt{tab:danger} & \texttt{continuous\_\allowbreak reach} & cells \\
+\texttt{fig:threshold} & \texttt{continuous\_\allowbreak reach} & claims \\
+\texttt{fig:reach} & \texttt{continuous\_\allowbreak reach} & claims \\
+\texttt{tab:pendulum} & \texttt{continuous\_\allowbreak pendulum} & cells \\
+\texttt{tab:patch2d} & \texttt{continuous\_\allowbreak patch2d} & cells \\
+\texttt{tab:cem} & \texttt{continuous\_cem}, \texttt{cem\_\allowbreak crossing\_\allowbreak bound} & cells \\
+\texttt{tab:axes} & \texttt{continuous\_\allowbreak axes} & cells \\
+\texttt{fig:axes} & \texttt{continuous\_\allowbreak axes} & claims \\
+\texttt{tab:eps-sweep} & \texttt{continuous\_\allowbreak eps\_\allowbreak sweep} & cells \\
+\texttt{tab:mitigation} & \texttt{continuous\_\allowbreak mitigation} & cells \\
+\texttt{tab:\allowbreak patch2d-mitigation} & \texttt{continuous\_\allowbreak mitigation\_\allowbreak patch2d} & cells \\
+\texttt{tab:\allowbreak pendulum-synthesis} & \emph{none} (per-seed JSONs) & \emph{unaudited} \\
+\texttt{tab:smooth} & \texttt{continuous\_\allowbreak smooth\_\allowbreak probe} & cells \\
+\texttt{fig:smooth} & \texttt{continuous\_\allowbreak smooth\_\allowbreak probe} & claims \\
+\bottomrule
+\end{tabular}
+\caption{The manifest: what backs each table and figure, and how it is checked. ``cells''
+means every printed cell is compared against the JSON at printed precision on every run of
+the numeric audit; ``claims'' means the audit asserts quoted values without parsing the
+object. Each JSON is written by the script of the same stem under \texttt{scripts/} (\texttt{continuous\_reach.json} by \texttt{continuous\_reach.py}, and so on); the figures are rendered from their table's JSON by \texttt{make\_paper2\_figures.py}, which runs no experiment, so every figure inherits its table's provenance. Machine-readable form, including the audit call sites per object, in
+\texttt{results/\allowbreak repro\_\allowbreak manifest.\allowbreak json} under \texttt{manifest[]}.}
+\label{tab:manifest}
+\end{table}
+
+\paragraph{Runtime, as a lower bound.} Thirty-seven of the result files record their own
+\texttt{elapsed\_s}: CPU sweeps total $4.78$\,h and the LLM synthesis arms $6.01$\,h, so the
+named campaigns are $10.79$\,h. That is a \emph{lower} bound on what the paper cost, because
+each figure is one run of the script that wrote the file and therefore excludes the 5-seed
+cells later superseded at 20 seeds, the ablation resume passes, every sweep superseded by a
+later sample-size raise, and every failed or retried LLM call. Seven scripts named in the
+commands below carry a \texttt{\~{}N min} annotation in this paper but write no
+\texttt{elapsed\_s}, so those seven runtimes are \emph{unverified estimates} and are marked
+as such in the manifest.
+
+\paragraph{LLM cost, as a range and why not a point.} The call count is exact:
+\textbf{1959} API calls over \textbf{625} cells across twenty campaigns, derived per cell as
+one synthesis call plus its refinement iterations, of which the two guided
+$3\times$-budget cells account for $640$; plus $20$ relay rounds on the
+subscription-transport Claude arms. The \emph{token} count is not recorded --- the providers
+capture usage and the refinement loop keeps it, but the emitted cell never copies it, so no
+paper-2 artifact carries a token count. Combining the measured call count with the design
+spec's pre-run estimate of $1$--$2$k prompt tokens per call brackets the API arms at roughly
+$10^6$ to $10^7$ tokens, i.e.\ single to low-double-digit US dollars at 2026 prices for this
+model class. We state that range rather than a figure, and note what would make it exact: an
+Azure billing export for the window, or a re-derivation of first-call prompt tokens offline,
+which is possible at zero API spend because \texttt{collect\_\allowbreak transitions},
+\texttt{build\_contract} and \texttt{build\_\allowbreak synthesis\_\allowbreak messages} are pure functions of the
+instrument, knob, seed and $N$ (completion tokens for superseded refinement iterations are
+gone). The only \emph{measured} dollar figures in the repository belong to the companion
+paper's campaigns and total \$3.73, useful as an order-of-magnitude anchor and nothing more.
+
+\paragraph{Reproducing the paper.} Two commands regenerate everything derived:
+\texttt{make\_\allowbreak paper2\_\allowbreak figures.\allowbreak py} rebuilds the figures from the JSONs, and
+\texttt{audit\_\allowbreak paper2\_\allowbreak numbers.\allowbreak py} re-derives every table cell and counted prose claim from
+\texttt{results/} and exits non-zero on any disagreement. The experiment commands themselves
+are listed below; the CPU ones need no credentials.

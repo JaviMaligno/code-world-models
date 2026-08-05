@@ -82,6 +82,14 @@ RESULT_FILES = {
     # the fixed-topology square ablation
     "square_large": "results/continuous_synthesis_patch2dsq_large_k3_7.json",
     "square_mini": "results/continuous_synthesis_patch2dsq_mini_k3_7.json",
+    # the trigger-arity ablation: a one-coordinate predicate in the SAME 4D plant,
+    # rarity-matched to the disc by moving the mode (the calibrated impermeable knob)
+    "slab_large": "results/continuous_synthesis_patch2dslab_large_k5.5_7.json",
+    "slab_mini": "results/continuous_synthesis_patch2dslab_mini_k5.5_7.json",
+    # the variable-identification confound removed: region guidance + one sentence
+    # naming the landing state as the trigger's argument
+    "landing_large": "results/continuous_synthesis_patch2d_large_k3_7_pv-landing_it15.json",
+    "landing_mini": "results/continuous_synthesis_patch2d_mini_k3_7_pv-landing_it15.json",
 }
 
 
@@ -175,6 +183,59 @@ def _step_has_conditional(code):
     return " if " in src or "\n    if" in src or src.strip().startswith("if")
 
 
+def _truth_mask(env, vx, vy):
+    """The TRUTH's deviation grid at one velocity slice, built with exactly the same
+    probe as _mask so the two are comparable cell for cell."""
+    m = [[False] * GRID_N for _ in range(GRID_N)]
+    for i in range(GRID_N):
+        for j in range(GRID_N):
+            x, y = _grid_xy(i, j)
+            got = env.step((x, y, vx, vy), 0.3)[0]
+            exp = integrator_step(x, y, vx, vy, 0.3)
+            if max(abs(g - e) for g, e in zip(got, exp)) > EPS_DEV:
+                m[i][j] = True
+    return m
+
+
+_TRUTH_MASK_CACHE = {}
+
+
+def truth_mask(env):
+    key = (env.patch_shape, env.p1, env.p2, env.R,
+           getattr(env, "slab_half_width", None))
+    if key not in _TRUTH_MASK_CACHE:
+        _TRUTH_MASK_CACHE[key] = _truth_mask(env, 0.0, 0.0)
+    return _TRUTH_MASK_CACHE[key]
+
+
+def mask_agreement(m, t):
+    """Intersection-over-union of an artifact's freeze set with the truth's, plus the
+    two one-sided errors.
+
+    This is the correctness test that does NOT go through the shape class, and the
+    trigger-arity ablation needs it: a CORRECT slab is unbounded in y, so the shape
+    classifier calls it `halfplane` -- the same label the disc campaign's dimensional
+    reduction earns. IoU separates them: a recovered mode has IoU near 1 whatever its
+    shape, a half-plane substituted for a disc does not.
+    """
+    inter = union = only_art = only_truth = 0
+    for i in range(GRID_N):
+        for j in range(GRID_N):
+            a, b = m[i][j], t[i][j]
+            if a and b:
+                inter += 1
+            if a or b:
+                union += 1
+            if a and not b:
+                only_art += 1
+            if b and not a:
+                only_truth += 1
+    return {"iou_truth": round(inter / union, 4) if union else None,
+            "missed_frac": round(only_truth / max(1, inter + only_truth), 4),
+            "excess_cells": only_art,
+            "truth_cells": inter + only_truth}
+
+
 def audit_code(code, env):
     """Behavioral class + metrics of one artifact against the PatchField2D
     integrator. Returns a dict; env supplies the patch geometry for per-patch
@@ -196,6 +257,7 @@ def audit_code(code, env):
     n1 = sum(r.count(True) for r in m1)
     out = {"n_dev_v0": n0, "n_dev_v1": n1,
            "textual_patch": _step_has_conditional(code)}
+    out.update(mask_agreement(m0, truth_mask(env)))
     # per-patch behavioral coverage (v0 mask over the TRUE patch regions)
     for name, c in (("p1", env.p1), ("p2", env.p2)):
         tot = hit = 0
@@ -264,10 +326,21 @@ def audit_code(code, env):
 
 
 def env_for(tag, params):
-    shape = "square" if "square" in tag or "patch2dsq" in tag else "disc"
+    # Read the shape from the run's own params where it recorded one, so a new shape
+    # cannot be silently audited as a disc; fall back to the tag for the older files
+    # whose params predate the flag.
+    shape = params.get("patch_shape") or (
+        "square" if ("square" in tag or "patch2dsq" in tag) else
+        "slab" if "slab" in tag else "disc")
     k1 = params.get("k1", 3.0) or 3.0
     k2 = params.get("k2", 7.0) or 7.0
-    return PatchField2D(p1=(k1, 0.0), p2=(k2, 0.0), patch_shape=shape)
+    kw = {}
+    if shape == "slab":
+        # the campaign's own half-width, never a default: an audit that assumed the
+        # wrong W would measure a different instrument than the one that was run
+        kw["slab_half_width"] = params.get("slab_half_width",
+                                           PatchField2D().slab_half_width)
+    return PatchField2D(p1=(k1, 0.0), p2=(k2, 0.0), patch_shape=shape, **kw)
 
 
 def main():
@@ -283,7 +356,8 @@ def main():
         for c in raw["cells"]:
             if c.get("arm") != "incomplete":
                 continue
-            bkey = (tag.split("_")[0], env.p1, env.p2, c["seed"])
+            bkey = (env.patch_shape, env.p1, env.p2, getattr(env, "slab_half_width", None),
+                    c["seed"])
             if bkey not in blind_cache:
                 tr = collect_transitions(env, c.get("n_rollouts", 40),
                                          seed=c["seed"])

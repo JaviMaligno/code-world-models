@@ -171,9 +171,76 @@ def _patch2d_constants_block(env) -> list:
     ]
 
 
+def patch2d_hint_lines(env: PatchField2D, level: str) -> list:
+    """A PARTIAL mode clause: the positive control for the 2D negative results.
+
+    Every 2D repair result in this paper is a negative, and a negative is only as strong
+    as the guarantee that its target is learnable by this pipeline at all. These graded
+    hints withhold progressively more of the rule, so the frontier is located rather than
+    merely bounded:
+
+      radius   the form, the centre and the effect are given; only the RADIUS is withheld,
+               a single unknown scalar. If the pipeline cannot fit one scalar from the
+               contacts a sample contains, the failure is upstream of region induction and
+               the whole 2D story needs re-scoping rather than more ablations.
+      centre   the form and the effect are given; the CENTRE and the RADIUS are withheld,
+               three unknown scalars, no form to induce.
+
+    Neither states the number of patches beyond what the level says, and neither names a
+    withheld constant anywhere in the text -- asserted in tests/test_mode_hint.py, since a
+    leak would turn the control into a translation exercise.
+    """
+    if level == "radius":
+        head = [f"  There is a sticky circular patch centred at (x, y) = "
+                f"({env.p1[0]}, {env.p1[1]}), and a second one",
+                f"  centred at (x, y) = ({env.p2[0]}, {env.p2[1]}). Both have the SAME "
+                f"radius R,",
+                "  whose value is NOT given: infer it from the observed transitions.",
+                "  After computing x2 and y2 as above, if (x2 - cx) ** 2 + (y2 - cy) ** 2",
+                "  <= R ** 2 for either patch, the mode fires."]
+    elif level == "centre":
+        head = ["  There are two sticky circular patches. Their centres and their common",
+                "  radius are NOT given: infer all of them from the observed transitions.",
+                "  After computing x2 and y2 as above, if the landing (x2, y2) lies inside",
+                "  either patch, the mode fires."]
+    else:
+        raise ValueError(f"unknown hint level {level!r}")
+    return ["", "Additional dynamics rule (INCOMPLETE -- constants withheld):"] + head \
+        + _patch2d_post_state_lines(env, env.p1)
+
+
+def _patch2d_post_state_lines(env: PatchField2D, c: tuple) -> list:
+    """The sentence describing WHERE the mover ends up when the mode fires.
+
+    Kept in one place because it varies with `mode_effect` and is repeated across three
+    patch shapes: a variant whose contract still said "the PREVIOUS position" would make
+    the full arm a control for a rule the truth does not implement, so the whole
+    comparison would be void."""
+    if env.mode_effect == "freeze":
+        return ["  the mover sticks: the next state is exactly [x, y, 0.0, 0.0]",
+                "  (the PREVIOUS position, with zero velocity)."]
+    if env.mode_effect == "landing":
+        return ["  the mover sticks where it entered: the next state is exactly",
+                "  [x2, y2, 0.0, 0.0] (the LANDING position, with zero velocity)."]
+    if env.mode_effect == "clamp":
+        return [f"  the mover is pushed back to the patch's edge: the next state is",
+                f"  exactly [{c[0]} + R * dx / d, {c[1]} + R * dy / d, 0.0, 0.0]",
+                f"  where dx = x2 - {c[0]}, dy = y2 - {c[1]} and "
+                f"d = math.hypot(dx, dy)",
+                "  (the point of the boundary circle nearest the landing, with zero",
+                "  velocity; if d == 0 use the direction of travel instead, and if that",
+                "  is also zero use dx, dy = 1.0, 0.0)."]
+    raise ValueError(f"no contract text for mode_effect {env.mode_effect!r}")
+
+
 def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
-                        omit: tuple = ()) -> str:
+                        omit: tuple = (), hint: str | None = None) -> str:
     lines = _patch2d_constants_block(env)
+    if hint:
+        if include_mode:
+            raise ValueError("a hint is a PARTIAL clause: it replaces the full one, so "
+                             "include_mode must be False")
+        return "\n".join(lines + patch2d_hint_lines(env, hint))
     if include_mode:
         patches = []
         if env.p1 is not None and "p1" not in omit:
@@ -192,10 +259,31 @@ def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
                     f"  with half-side R = {env.R}. After computing x2 and y2 "
                     f"as above,",
                     f"  if max(abs(x2 - {c[0]}), abs(y2 - {c[1]})) <= {env.R},",
-                    "  the mover sticks: the next state is exactly "
-                    "[x, y, 0.0, 0.0]",
-                    "  (the PREVIOUS position, with zero velocity).",
+                ] + _patch2d_post_state_lines(env, c)
+            elif env.patch_shape == "slab":
+                # The rarity-matched predicate-ARITY ablation (2026-07-27):
+                # membership depends on the landing x alone. Written in the same
+                # shape as the square clause (one abs comparison instead of a
+                # max of two) so the only textual difference between the arms is
+                # how many landing coordinates the trigger names.
+                lines += [
+                    "",
+                    "Additional dynamics rule:",
+                    f"  There is a sticky vertical slab centered at x = {c[0]}",
+                    f"  with half-width W = {env.slab_half_width}. After "
+                    f"computing x2 and y2 as above,",
+                    f"  if abs(x2 - {c[0]}) <= {env.slab_half_width}, the mover "
+                    f"sticks (whatever y2 is):",
                 ]
+                # The committed slab campaign was run with this exact wording, so the
+                # freeze branch must reproduce it byte for byte; only a NEW mode_effect
+                # takes the shared post-state sentence. (Checked by
+                # tests/test_mode_effect.py against `git show HEAD`.)
+                if env.mode_effect == "freeze":
+                    lines += ["  the next state is exactly [x, y, 0.0, 0.0]",
+                              "  (the PREVIOUS position, with zero velocity)."]
+                else:
+                    lines += _patch2d_post_state_lines(env, c)
             else:
                 lines += [
                     "",
@@ -203,10 +291,21 @@ def _patch2d_rules_text(env: PatchField2D, include_mode: bool,
                     f"  There is a sticky patch centered at (x, y) = ({c[0]}, {c[1]})",
                     f"  with radius R = {env.R}. After computing x2 and y2 as above,",
                     f"  if (x2 - {c[0]}) ** 2 + (y2 - {c[1]}) ** 2 <= {env.R ** 2},",
-                    "  the mover sticks: the next state is exactly [x, y, 0.0, 0.0]",
-                    "  (the PREVIOUS position, with zero velocity).",
-                ]
+                ] + _patch2d_post_state_lines(env, c)
     return "\n".join(lines)
+
+
+def _slab_probes_for(env: PatchField2D, c: tuple) -> list:
+    """Probes for one patch_shape="slab" patch: states whose next position lands
+    exactly on the slab's center line x = c[0], at three DIFFERENT y (including
+    y far from c[1]), reached by inverting the shared integrator. They fire the
+    slab in truth for any positive half-width (the landing x is the center), and
+    the spread in y is deliberate: a model that copied the disc/square template
+    and consulted y2 is wrong on them."""
+    ys = (c[1], c[1] + 2.0, c[1] - 3.0)
+    return [(invert_integrator((c[0], y), 0.0, 0.0, 0.0, env.dt, env.gain,
+                               env.drag, env.a_max), 0.0)
+            for y in ys]
 
 
 def _patch2d_probes(env: PatchField2D):
@@ -215,12 +314,16 @@ def _patch2d_probes(env: PatchField2D):
     probes = {}
     if env.p1 is not None:
         c = env.p1
-        probes["patch1"] = [((c[0] - env.R - 0.1, c[1], v, 0.0), 0.0)
-                            for v in (1.0, 2.0, 3.0)]
+        probes["patch1"] = (
+            _slab_probes_for(env, c) if env.patch_shape == "slab"
+            else [((c[0] - env.R - 0.1, c[1], v, 0.0), 0.0)
+                  for v in (1.0, 2.0, 3.0)])
     if env.p2 is not None:
         c = env.p2
-        probes["patch2"] = [((c[0] - env.R - 0.1, c[1], v, 0.0), 0.0)
-                            for v in (1.0, 2.0, 3.0)]
+        probes["patch2"] = (
+            _slab_probes_for(env, c) if env.patch_shape == "slab"
+            else [((c[0] - env.R - 0.1, c[1], v, 0.0), 0.0)
+                  for v in (1.0, 2.0, 3.0)])
     return probes
 
 

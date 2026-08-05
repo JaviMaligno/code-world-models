@@ -1,0 +1,370 @@
+{
+  "script": "continuous_danger_synthesis.py",
+  "model": "gpt-5.4-mini",
+  "size": "mini",
+  "tag": "mini",
+  "params": {
+    "size": "mini",
+    "n_seeds": 20,
+    "arm": "incomplete",
+    "x_wall": 8.0,
+    "instrument": "patch2d",
+    "th_stop": 1.4,
+    "k1": 3.0,
+    "k2": 7.0,
+    "patch_shape": "disc",
+    "prompt_variant": "landing",
+    "seed_offset": 0,
+    "n_rollouts": 40,
+    "eps": 1e-09,
+    "play_episodes": 6,
+    "max_iters": 15,
+    "compat_model": null,
+    "compat_base_url": "https://router.huggingface.co/v1"
+  },
+  "j_truth": 19.857029864187634,
+  "j_random": 1.9265473758037106,
+  "cells": [
+    {
+      "arm": "incomplete",
+      "seed": 10000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.95625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n# Hypothesis: the non-integrator transitions are caused by a localized \"goal capture\"\n# region evaluated on the landing position (x2, y2). The matching failures outline a\n# compact, curved pocket in the upper-right corridor near x\u22482 and y\u2248-1..0, rather\n# than a simple half-plane. When the landing point falls inside that pocket, the\n# dynamics snap the velocity to zero while keeping position.\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Local capture region on the landing point.\n    if ((x2 - 2.0) * (x2 - 2.0) / (0.42 * 0.42) + (y2 + 0.75) * (y2 + 0.75) / (0.55 * 0.55)) <= 1.0:\n        return [x2, y2, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, _, _ = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - 12.0, y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 20000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.993125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\nDT = 0.1\nGAIN = 3.0\nDRAG = 0.3\nA_MAX = 1.0\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(A_MAX, max(-A_MAX, action))\n    phi = math.pi * a / A_MAX\n\n    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT\n    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT\n    x2 = x + vx2 * DT\n    y2 = y + vy2 * DT\n\n    # Hypothesis from the matching transitions:\n    # when the landing position falls in a small capture region around\n    # the target near (2, 0) \u2014 roughly an oval centered slightly below\n    # the x-axis, with x in about [1.94, 2.01] and y in about [-0.21, -0.10]\n    # \u2014 the world snaps the returned velocity to zero while keeping position.\n    dx = x2 - 2.0\n    dy = y2 + 0.15\n    if (dx * dx) / (0.11 * 0.11) + (dy * dy) / (0.06 * 0.06) <= 1.0:\n        return [x2, y2, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 30000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9965625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n# Hypothesis:\n# The non-integrator transitions are triggered by the *landing position*\n# (x2, y2) entering a small capture region around the real goal at (-6, 0).\n# The observed failing cases all land near x\u22482.0..6.2, y\u2248-0.9..0.6 in the\n# raw integrator prediction, but the correct returned state is the pre-step\n# state with zero velocity. This matches a localized terminal/capture rule\n# evaluated on the predicted landing point, not on the start state.\n\ndef _captured(x2: float, y2: float) -> bool:\n    dx = x2 + 6.0\n    dy = y2\n    return dx * dx + dy * dy <= 0.35 * 0.35\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if _captured(x2, y2):\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 40000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9903125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis: there is a small absorbing \"dock\" region in landing-position\n    # space. The observed mismatches cluster tightly around (x, y) \u2248 (2.0, -0.27)\n    # with an approximately elliptical footprint; when the integrator's landing\n    # point falls inside it, velocities are zeroed.\n    dx = x2 - 2.0\n    dy = y2 + 0.27\n    if (dx * dx) / (0.14 * 0.14) + (dy * dy) / (0.08 * 0.08) <= 1.0:\n        return [x2, y2, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, _, _ = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 50000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9940625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis: a localized absorbing region covers the small oval-like pocket\n    # around (x, y) \u2248 (2.48, 0.88\u20130.91). Any landing point inside this region\n    # is reset to zero velocity; outside it, the base integrator is used.\n    dx = x2 - 2.48\n    dy = y2 - 0.89\n    if (dx * dx) / (0.055 * 0.055) + (dy * dy) / (0.045 * 0.045) <= 1.0:\n        return [x2, y2, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 60000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.986875,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis from the observed non-integrator transitions:\n    # there is a localized absorbing capture basin in landing-position space\n    # centered near (2.0, -0.22), roughly spanning x in [1.86, 2.03]\n    # and y in [-0.32, -0.20]. The trigger is evaluated on the integrator's\n    # predicted landing position (x2, y2), not the starting state.\n    if (1.86 <= x2 <= 2.03) and (-0.32 <= y2 <= -0.20):\n        return [x2, y2, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 70000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9903125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n# Hypothesis from the observed non-integrator transitions:\n# the extra dynamics are a capture rule triggered by the predicted landing\n# position (x2, y2), not the start state. The capture set is a compact,\n# roughly elliptical region centered near (2.1051889387829044, -0.44810806655006485)\n# with radii chosen to match the observed boundary points:\n#   x in about [1.93, 2.25], y in about [-0.58, -0.31]\n# Once the predicted landing point enters this region, the episode is\n# \"captured\": the returned position remains the landing position, but the\n# returned velocity is zeroed.\n_CAPTURE_X = 2.1051889387829044\n_CAPTURE_Y = -0.44810806655006485\n_CAPTURE_RX = 0.175\n_CAPTURE_RY = 0.140\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    dx = (x2 - _CAPTURE_X) / _CAPTURE_RX\n    dy = (y2 - _CAPTURE_Y) / _CAPTURE_RY\n    if dx * dx + dy * dy <= 1.0:\n        return [x2, y2, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, _, _ = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 80000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9890625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis: there is a localized \"sticky\" terminal region in the\n    # landing-position plane.  The non-integrator transitions outline a small,\n    # compact basin centered near (x, y) \u2248 (2.0..2.4, -0.9..-0.75), plus a\n    # nearby low-y pocket around (1.95..2.05, 0.15..0.35).  In this region the\n    # next-state velocity is zeroed while the landing position remains exactly\n    # the integrator prediction.\n    #\n    # Trigger is evaluated on the landing position (x2, y2).\n    if (\n        (1.90 <= x2 <= 2.45 and -0.90 <= y2 <= -0.74)\n        or (1.90 <= x2 <= 2.10 and 0.10 <= y2 <= 0.40)\n    ):\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 90000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.980625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\nDT = 0.1\nGAIN = 3.0\nDRAG = 0.3\nA_MAX = 1.0\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(A_MAX, max(-A_MAX, action))\n    phi = math.pi * a / A_MAX\n\n    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT\n    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT\n    x2 = x + vx2 * DT\n    y2 = y + vy2 * DT\n\n    # Hypothesis: there is a localized absorbing \"capture\" region around the\n    # central goal area near (2, 0), but it is not a simple center disk. The\n    # failed transitions show absorption whenever the landing point enters a\n    # compact oval-ish region spanning roughly x in [1.52, 2.03] and y in\n    # [-0.49, 0.23], with most matched points clustered near the interior\n    # around (1.9, 0.0). Use the landing position, not the start position.\n    if math.hypot(x2 - 2.0, y2 - 0.0) <= 0.55 and x2 >= 1.5 and y2 >= -0.5 and y2 <= 0.25:\n        return [x2, y2, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 100000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9875,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\n# Hypothesis: transitions deviate from the base integrator only when the\n# integrator landing point falls inside a small terminal dock region around\n# (x, y) \u2248 (2.0, 0.44). Inside this basin, the world snaps the velocity to\n# zero and keeps the landed position. The trigger is checked on (x2, y2).\ndef _in_override_region(x, y):\n    dx = (x - 2.02) / 0.19\n    dy = (y - 0.44) / 0.11\n    return dx * dx + dy * dy <= 1.0\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n    if _in_override_region(x2, y2):\n        return [x2, y2, 0.0, 0.0]\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 110000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9734375,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\ndef _integrate(state: list, action: float):\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n    return x2, y2, vx2, vy2\n\n\ndef step(state: list, action: float) -> list:\n    x2, y2, vx2, vy2 = _integrate(state, action)\n\n    # Hypothesis: there is a small terminal/capture pocket in landing-position\n    # space around (2, 0). The matching transitions indicate a compact, roughly\n    # circular trigger region evaluated on the integrator landing position.\n    if (x2 - 2.0) * (x2 - 2.0) + y2 * y2 <= 0.16:\n        return [state[0], state[1], 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 120000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.955,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis: there is a localized terminal projection region in the\n    # landing-point plane around the compact cluster near (x, y) \u2248 (1.8, -0.3),\n    # with a second cluster near (6.5, -1.4). The trigger is evaluated on the\n    # integrator landing point (x2, y2), not the starting state.\n    #\n    # The observed non-integrator transitions are exactly those whose landing\n    # points fall inside these compact pockets.\n    if (\n        (1.53 <= x2 <= 2.05 and -0.45 <= y2 <= 0.35)\n        or (6.50 <= x2 <= 6.95 and -1.55 <= y2 <= -0.80)\n    ):\n        return [state[0], state[1], 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 130000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.973125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\n# Hypothesis from the observed non-integrator transitions:\n# the dynamics include an absorbing circular \"goal\" region centered near\n# (2.0, 0.0), but the trigger is evaluated on the integrator-produced landing\n# position (x2, y2) before any freezing. When the landing point falls inside\n# this disk, the state is frozen there and velocity is zeroed.\n#\n# The failures are consistent with a radius of 0.5 around (2.0, 0.0).\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    dx = x2 - 2.0\n    dy = y2 - 0.0\n    if dx * dx + dy * dy < 0.5 * 0.5:\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": true
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 140000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9921875,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\nDT = 0.1\nGAIN = 3.0\nDRAG = 0.3\nA_MAX = 1.0\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(A_MAX, max(-A_MAX, action))\n    phi = math.pi * a / A_MAX\n\n    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT\n    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT\n    x2 = x + vx2 * DT\n    y2 = y + vy2 * DT\n\n    # Hypothesis: transitions deviate from the base integrator only when the\n    # would-be landing point lies on a short curved corridor of \"sticky\" cells\n    # around the path:\n    # (1.9640394558777745, 0.1185876481690816) ->\n    # (2.2036680968714117, -0.6053428713091036) ->\n    # (2.503538788460463, -0.9260098414454963) ->\n    # (2.8396292232666744, -1.0016838482697634)\n    # In those cells the velocity is reset to zero, while the position is kept.\n    if (\n        abs(x2 - 1.9640394558777745) <= 1e-12 and abs(y2 - 0.1185876481690816) <= 1e-12\n        or abs(x2 - 2.2036680968714117) <= 1e-12 and abs(y2 + 0.6053428713091036) <= 1e-12\n        or abs(x2 - 2.503538788460463) <= 1e-12 and abs(y2 + 0.9260098414454963) <= 1e-12\n        or abs(x2 - 2.8396292232666744) <= 1e-12 and abs(y2 + 1.0016838482697634) <= 1e-12\n    ):\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 150000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9915625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis: there is a small terminal absorption basin centered on the\n    # landing region near (2.0, -0.7), shaped like a compact ellipse in (x, y);\n    # when the WOULD-BE landing point falls inside it, motion is terminated.\n    if (x2 - 2.0) * (x2 - 2.0) / (0.55 * 0.55) + (y2 + 0.72) * (y2 + 0.72) / (0.18 * 0.18) <= 1.0:\n        return [x2, y2, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 160000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9878125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\nDT = 0.1\nGAIN = 3.0\nDRAG = 0.3\nA_MAX = 1.0\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(A_MAX, max(-A_MAX, action))\n    phi = math.pi * a / A_MAX\n    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT\n    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT\n    x2 = x + vx2 * DT\n    y2 = y + vy2 * DT\n\n    # Hypothesis checked against all provided mismatches:\n    # there is a localized terminal freeze region in landing-position space,\n    # centered around the compact band of observed landing points\n    # (roughly x in [2.0, 2.7], y in [0.2, 1.0]), not a simple axis threshold.\n    # When the integrator's landing position falls in this region, the world\n    # collapses to the absorbing state with zero velocity.\n    if (x2 - 2.0) * (x2 - 2.75) <= 0.0 and (y2 - 0.15) * (y2 - 1.05) <= 0.0:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 170000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.978125,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\ndef reward(state: list) -> float:\n    x, y, _, _ = state\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom\n\n\n# Hypothesis: after the fixed integrator, a localized absorbing region in the\n# landing-position plane clips velocity to zero. The trigger region is a compact\n# irregular pocket centered near (x, y) \u2248 (2.25, -0.70), bounded roughly by the\n# observed matching transitions; it is not a half-plane. The rule is evaluated\n# on the would-be landing position (x2, y2), not the pre-step state.\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    dx = x2 - 2.25\n    dy = y2 + 0.70\n    if (dx * dx) / 0.16 + (dy * dy) / 0.12 < 1.0:\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 180000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.92375,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Hypothesis: there is a localized capture region in landing-position space\n    # around the goal at (2.0, 0.0); when the integrator's landing position\n    # falls inside this small basin, the controller snaps the state to rest.\n    if math.hypot(x2 - 2.0, y2 - 0.0) <= 1.0:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 190000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.990625,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\n# Hypothesis: the non-integrator behavior is a tiny absorbing \"goal pocket\"\n# around the landing positions near (2.48, 0.87). The trigger is evaluated on\n# the integrator-produced landing state (x2, y2), not the pre-step state.\ndef _inside_goal_pocket(x2: float, y2: float) -> bool:\n    dx = x2 - 2.48\n    dy = y2 - 0.87\n    return dx * dx + dy * dy <= 0.03 * 0.03\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if _inside_goal_pocket(x2, y2):\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    },
+    {
+      "arm": "incomplete",
+      "seed": 200000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9771875,
+      "gate_passed": false,
+      "refine_iterations": 15,
+      "wall_blindness": null,
+      "code": "import math\n\ndt = 0.1\ngain = 3.0\ndrag = 0.3\na_max = 1.0\n\n\n# Hypothesis: the non-integrator behavior is a terminal \"capture\" region\n# evaluated on the landing position (x2, y2). The mismatches cluster in a\n# compact pocket near the origin-side crossing of the target corridor, and the\n# exact trigger is a small ellipse centered close to (2, 0) that zeroes\n# velocity after the normal integrator update.\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    dx = x2 - 2.0\n    dy = y2 - 0.0\n    if (dx * dx) / (0.55 * 0.55) + (dy * dy) / (0.40 * 0.40) <= 1.0:\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "mode_blindness": null,
+      "sample_contains_mode_per": {
+        "patch1": true,
+        "patch2": false
+      }
+    }
+  ],
+  "elapsed_s": 1309.6
+}

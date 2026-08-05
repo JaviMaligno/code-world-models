@@ -79,6 +79,7 @@ import json
 import math
 import pathlib
 import random
+import statistics
 import sys
 
 _REPO = pathlib.Path(__file__).resolve().parents[1]
@@ -212,11 +213,40 @@ def vol_U_grown(n_cells, s):
     return n_cells * cell_grown_area(s) * (2 * (A + s))
 
 
-Z_CONSERVATIVE = 4.0
-"""Wilson at z = 4 is a per-cell level of ~3.2e-5; with a few thousand cells the
-family-wise level stays below delta = 0.05. Conservative on purpose, and the same
-machinery the rest of the paper uses (an exact Clopper-Pearson tail overflows in
-plain floats at n in the tens of thousands)."""
+def apriori_cell_family() -> int:
+    """The number of lattice cells wholly inside the region box -- computed WITHOUT
+    looking at any sample, which is what makes it the honest Bonferroni denominator.
+
+    Which cells actually RECEIVE a bound is data-dependent (a cell is scored only if
+    some W_t sample lands in its erosion), so correcting by the number of scored
+    cells would be a data-dependent correction. The a-priori family is every cell the
+    filter `in_region` admits; the lattice range is obtained by mapping the region
+    box's corners through M^{-1} with a one-cell margin."""
+    lo_i = lo_j = hi_i = hi_j = 0
+    for sx in (-GX, GX):
+        for sv in (-GV, GV):
+            z = m_inv((sx, sv))
+            zi, zj = z[0] / (LAM * 2 * A) - 0.5, z[1] / (LAM * 2 * A) - 0.5
+            lo_i, hi_i = min(lo_i, zi), max(hi_i, zi)
+            lo_j, hi_j = min(lo_j, zj), max(hi_j, zj)
+    n = 0
+    for i in range(math.floor(lo_i) - 2, math.ceil(hi_i) + 3):
+        for j in range(math.floor(lo_j) - 2, math.ceil(hi_j) + 3):
+            if in_region(i, j):
+                n += 1
+    return n
+
+
+N_CELLS_APRIORI = apriori_cell_family()
+Z_SIMULTANEOUS = statistics.NormalDist().inv_cdf(1.0 - args.delta / N_CELLS_APRIORI)
+"""The per-cell Wilson z that makes the per-cell lower bounds hold SIMULTANEOUSLY over
+the a-priori cell family at family-wise level delta: one-sided level delta/N_apriori.
+
+This is derived rather than chosen. A fixed z = 4 (a per-cell level of 3.17e-5) is what
+an earlier version of this script used, and it is only simultaneous up to 1578 cells --
+below the family size here -- so the level sets it produced were asserted at a
+family-wise level the sample does not support. The value is written to the results JSON
+so the paper quotes a derived constant rather than a retyped one."""
 
 
 def certify(c_density, n_cells):
@@ -278,7 +308,7 @@ for t_step in args.steps:
     for cij, h in hits.items():
         if not in_region(*cij):
             continue
-        lo = wilson_ci(h, args.mc, z=Z_CONSERVATIVE)[1]
+        lo = wilson_ci(h, args.mc, z=Z_SIMULTANEOUS)[1]
         dens3[cij] = DENS_P * lo / (2 * A)          # <-- the action factor
     per_alpha = []
     for a in ALPHAS:
@@ -319,6 +349,9 @@ print("gate has density, which is exactly the point of the companion negative re
 out = _REPO / "results" / "gate_density_step_t.json"
 out.write_text(json.dumps(
     {"script": "gate_density_step_t.py", "params": vars(args),
+     "n_cells_apriori": N_CELLS_APRIORI,
+     "wilson_z_simultaneous": Z_SIMULTANEOUS,
+     "wilson_per_cell_level": args.delta / N_CELLS_APRIORI,
      "M": M, "det_M": DET, "parallelogram_area": AREA_P,
      "parallelogram_density_2d": DENS_P, "cell_area": CELL_AREA,
      "L_plant": L_PLANT, "dim": DIM, "region_box": [GX, GV],
