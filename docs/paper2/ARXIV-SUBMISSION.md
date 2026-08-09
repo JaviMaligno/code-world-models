@@ -8,17 +8,19 @@ Status: **ready to submit** (new submission, not a replacement).
 ## 1. What is ready
 
 - `main.tex` — the paper (article class; amsthm, booktabs, natbib/plainnat,
-  hyperref, geometry, amssymb, graphicx, xcolor — all standard TeXLive).
-- `references.bib` — 21 entries, all citation keys resolved (checked: no
-  undefined citations, no uncited entries).
+  hyperref, geometry, amssymb, graphicx, xcolor — all standard TeXLive), plus its
+  four `\input` files: `related-work.tex`, `appendix-protocol.tex`,
+  `appendix-repro.tex`, `appendix-prespec.tex` (all in the tarball; arXiv fails
+  without them).
+- `references.bib` — all citation keys resolved (0 undefined, checked in CI).
 - `main.bbl` — pre-generated bibliography so arXiv does not need to run bibtex.
-- `figures/*.pdf` — 4 vector figures (`danger_threshold`, `reach_mechanism`,
-  `axis_separation`, `smooth_localization`), regenerated from the result JSONs by
-  `scripts/make_paper2_figures.py`.
+- `figures/*.pdf` — **5** vector figures (`danger_threshold`, `reach_mechanism`,
+  `axis_separation`, `smooth_localization`, `per_seed_distributions`),
+  regenerated from the result JSONs by `scripts/make_paper2_figures.py`.
 - `abstract-arxiv.txt` — **the abstract for the submission form**: plain ASCII,
-  1890 characters, under arXiv's hard 1920-character limit. Paste this, not the
-  LaTeX abstract (which carries `\citep`, math mode and em dashes the metadata
-  field will not take).
+  1901 characters, under arXiv's hard 1920-character limit, condensed from the
+  post-review abstract (105/111 draws, targeted interventions, located rule,
+  1034 artifacts). Paste this, not the LaTeX abstract.
 
 ## 2. The submission bundle (upload this)
 
@@ -34,9 +36,11 @@ python ../../scripts/make_paper2_figures.py     # refresh figures if data change
 pdflatex -interaction=nonstopmode main.tex && bibtex main && \
   pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex
 tar --exclude='._*' -czf arxiv-submission.tar.gz \
-  main.tex references.bib main.bbl \
+  main.tex main.bbl references.bib \
+  related-work.tex appendix-protocol.tex appendix-repro.tex appendix-prespec.tex \
   figures/danger_threshold.pdf figures/reach_mechanism.pdf \
-  figures/axis_separation.pdf figures/smooth_localization.pdf
+  figures/axis_separation.pdf figures/smooth_localization.pdf \
+  figures/per_seed_distributions.pdf
 rm -f main.aux main.log main.out main.blg main.toc
 ```
 
@@ -55,7 +59,17 @@ for consistency with paper 1's bundle and so the source is self-contained.
 6. After announcement: add the arXiv ID to the README, and update paper 3's
    `references.bib` entry for this paper from "in preparation" to the real ID.
 
-## 4. Verification done before submission (2026-07-24)
+## 3b. Verification of the CURRENT bundle (2026-08-09, post-review v1.6)
+
+- Rebuilt after the four review rounds: 12 files, compiles from a fresh extract
+  of the tarball with pdflatex alone (no bibtex): **87 pages, 0 undefined
+  references/citations, 0 overfull boxes** (one benign font-shape warning).
+- 712 audited values agree; claims linter and structural guard clean; suite 697.
+- Everything below this line describes the 2026-07-24 pre-review bundle and is
+  kept as the historical record; where it conflicts (357 values, 4 figures,
+  82/82, 0/76, the Qwen credits note), the current state supersedes it.
+
+## 4. Verification done before submission (2026-07-24, HISTORICAL)
 
 - **Compiles clean**: 0 errors, 0 overfull hboxes, 0 undefined references or
   citations, 0 bibtex warnings.
