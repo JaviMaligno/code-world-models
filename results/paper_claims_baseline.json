@@ -2,12 +2,12 @@
   "_comment": "Per-rule violation counts recorded by scripts/audit_paper_claims.py --baseline. The audit fails only when a rule goes ABOVE its baseline, so the paper can be ratcheted down instead of blocked on day one. Lower these numbers; never raise them.",
   "files": {
     "docs/paper3/main.tex": {
-      "hand-constant": 1,
+      "hand-constant": 0,
       "modal-scope": 0,
       "pooled-inference": 0,
-      "printed-zero": 1,
+      "printed-zero": 0,
       "process-prose": 0,
-      "soundness-scope": 12
+      "soundness-scope": 0
     }
   },
   "rules": [
@@ -20,11 +20,11 @@
   ],
   "strict": false,
   "totals": {
-    "hand-constant": 1,
+    "hand-constant": 0,
     "modal-scope": 0,
     "pooled-inference": 0,
-    "printed-zero": 1,
+    "printed-zero": 0,
     "process-prose": 0,
-    "soundness-scope": 12
+    "soundness-scope": 0
   }
 }
