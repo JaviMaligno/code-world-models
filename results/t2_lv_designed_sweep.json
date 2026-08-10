@@ -1,0 +1,1052 @@
+{
+ "cells": {
+  "0.6|0.002|12|24|30": {
+   "K": 24,
+   "abs_mean_diff_median": 0.001871712372339148,
+   "abs_ratio_max": 3.6195163048804435,
+   "abs_ratio_median": 0.935856186169574,
+   "abs_ratio_p90": 1.9914653641461832,
+   "delta": 0.002,
+   "gap": 0.6,
+   "horizon_steps": 30,
+   "n_states": 12,
+   "note": "abs_ratio_max is the Lipschitz estimator (a sup); abs_ratio_median describes a typical state and is NOT a bound. states_with_resolved_signal says how many cells the sample can actually see -- a delta where that is 0 carries no information about L_v.",
+   "per_state": [
+    {
+     "mean_diff": 0.003927572176970114,
+     "ratio": 1.9637860884850569,
+     "ratio_stderr": 1.9945242718612857,
+     "resolved": false,
+     "state_index": 0,
+     "stderr": 0.0039890485437225716
+    },
+    {
+     "mean_diff": 0.002457800431155732,
+     "ratio": 1.228900215577866,
+     "ratio_stderr": 2.8638226482890934,
+     "resolved": false,
+     "state_index": 1,
+     "stderr": 0.005727645296578187
+    },
+    {
+     "mean_diff": -0.004234338296226288,
+     "ratio": -2.117169148113144,
+     "ratio_stderr": 1.1799370940866885,
+     "resolved": false,
+     "state_index": 2,
+     "stderr": 0.002359874188173377
+    },
+    {
+     "mean_diff": -0.0009222870063978483,
+     "ratio": -0.46114350319892417,
+     "ratio_stderr": 0.8670266002366456,
+     "resolved": false,
+     "state_index": 3,
+     "stderr": 0.0017340532004732911
+    },
+    {
+     "mean_diff": -0.007239032609760887,
+     "ratio": -3.6195163048804435,
+     "ratio_stderr": 2.598141715592436,
+     "resolved": false,
+     "state_index": 4,
+     "stderr": 0.005196283431184872
+    },
+    {
+     "mean_diff": -0.00043452144382379504,
+     "ratio": -0.21726072191189752,
+     "ratio_stderr": 0.5319314072856409,
+     "resolved": false,
+     "state_index": 5,
+     "stderr": 0.0010638628145712818
+    },
+    {
+     "mean_diff": -8.098567177479883e-05,
+     "ratio": -0.040492835887399416,
+     "ratio_stderr": 0.7853351871164004,
+     "resolved": false,
+     "state_index": 6,
+     "stderr": 0.0015706703742328007
+    },
+    {
+     "mean_diff": -0.0012787410014271454,
+     "ratio": -0.6393705007135727,
+     "ratio_stderr": 1.6206758234766387,
+     "resolved": false,
+     "state_index": 7,
+     "stderr": 0.0032413516469532774
+    },
+    {
+     "mean_diff": -0.001427156336822814,
+     "ratio": -0.713578168411407,
+     "ratio_stderr": 1.079006095322796,
+     "resolved": false,
+     "state_index": 8,
+     "stderr": 0.002158012190645592
+    },
+    {
+     "mean_diff": 0.002316268407855482,
+     "ratio": 1.158134203927741,
+     "ratio_stderr": 0.8761092862833905,
+     "resolved": false,
+     "state_index": 9,
+     "stderr": 0.001752218572566781
+    },
+    {
+     "mean_diff": 0.0008114726836372377,
+     "ratio": 0.40573634181861884,
+     "ratio_stderr": 1.3488986755766643,
+     "resolved": false,
+     "state_index": 10,
+     "stderr": 0.0026977973511533287
+    },
+    {
+     "mean_diff": 0.0039829307282923665,
+     "ratio": 1.9914653641461832,
+     "ratio_stderr": 3.8365504973512157,
+     "resolved": false,
+     "state_index": 11,
+     "stderr": 0.007673100994702431
+    }
+   ],
+   "planner": {
+    "block": 10,
+    "horizon": 40,
+    "n_samples": 48
+   },
+   "snr_max": 1.7943067971364228,
+   "snr_median": 0.5254724157990651,
+   "states_with_resolved_signal": 0,
+   "stderr_median": 0.002528835769663353
+  },
+  "0.6|0.005|12|24|30": {
+   "K": 24,
+   "abs_mean_diff_median": 0.004199804448425345,
+   "abs_ratio_max": 1.5257914343414982,
+   "abs_ratio_median": 0.839960889685069,
+   "abs_ratio_p90": 1.2397908762879752,
+   "delta": 0.005,
+   "gap": 0.6,
+   "horizon_steps": 30,
+   "n_states": 12,
+   "note": "abs_ratio_max is the Lipschitz estimator (a sup); abs_ratio_median describes a typical state and is NOT a bound. states_with_resolved_signal says how many cells the sample can actually see -- a delta where that is 0 carries no information about L_v.",
+   "per_state": [
+    {
+     "mean_diff": 0.00421471961228607,
+     "ratio": 0.8429439224572141,
+     "ratio_stderr": 0.9352025545283598,
+     "resolved": false,
+     "state_index": 0,
+     "stderr": 0.004676012772641799
+    },
+    {
+     "mean_diff": 0.0030066498617896307,
+     "ratio": 0.6013299723579261,
+     "ratio_stderr": 1.0301523954691039,
+     "resolved": false,
+     "state_index": 1,
+     "stderr": 0.00515076197734552
+    },
+    {
+     "mean_diff": -0.0004927896469794449,
+     "ratio": -0.09855792939588899,
+     "ratio_stderr": 0.6323844897258529,
+     "resolved": false,
+     "state_index": 2,
+     "stderr": 0.0031619224486292646
+    },
+    {
+     "mean_diff": 0.006198954381439877,
+     "ratio": 1.2397908762879752,
+     "ratio_stderr": 1.0214868674869464,
+     "resolved": false,
+     "state_index": 3,
+     "stderr": 0.005107434337434732
+    },
+    {
+     "mean_diff": -0.00634344905526311,
+     "ratio": -1.268689811052622,
+     "ratio_stderr": 1.381279849049936,
+     "resolved": false,
+     "state_index": 4,
+     "stderr": 0.0069063992452496805
+    },
+    {
+     "mean_diff": -0.0011724975709081302,
+     "ratio": -0.23449951418162604,
+     "ratio_stderr": 0.8387443365681545,
+     "resolved": false,
+     "state_index": 5,
+     "stderr": 0.004193721682840773
+    },
+    {
+     "mean_diff": -0.002489162893877239,
+     "ratio": -0.49783257877544784,
+     "ratio_stderr": 1.1939868453407392,
+     "resolved": false,
+     "state_index": 6,
+     "stderr": 0.005969934226703696
+    },
+    {
+     "mean_diff": -0.0076289571717074916,
+     "ratio": -1.5257914343414982,
+     "ratio_stderr": 1.281395171930804,
+     "resolved": false,
+     "state_index": 7,
+     "stderr": 0.00640697585965402
+    },
+    {
+     "mean_diff": 0.0043555062644914004,
+     "ratio": 0.8711012528982801,
+     "ratio_stderr": 0.84502441566085,
+     "resolved": false,
+     "state_index": 8,
+     "stderr": 0.00422512207830425
+    },
+    {
+     "mean_diff": 0.006188876837352808,
+     "ratio": 1.2377753674705616,
+     "ratio_stderr": 0.8551152839846267,
+     "resolved": false,
+     "state_index": 9,
+     "stderr": 0.004275576419923133
+    },
+    {
+     "mean_diff": 0.001212024072060558,
+     "ratio": 0.2424048144121116,
+     "ratio_stderr": 0.9350902900504169,
+     "resolved": false,
+     "state_index": 10,
+     "stderr": 0.0046754514502520845
+    },
+    {
+     "mean_diff": 0.004184889284564619,
+     "ratio": 0.8369778569129238,
+     "ratio_stderr": 1.5437899351367783,
+     "resolved": false,
+     "state_index": 11,
+     "stderr": 0.007718949675683892
+    }
+   ],
+   "planner": {
+    "block": 10,
+    "horizon": 40,
+    "n_samples": 48
+   },
+   "snr_max": 1.4474953151378995,
+   "snr_median": 0.7425390890188901,
+   "states_with_resolved_signal": 0,
+   "stderr_median": 0.004891723555038266
+  },
+  "0.6|0.01|12|24|30": {
+   "K": 24,
+   "abs_mean_diff_median": 0.004040341255638458,
+   "abs_ratio_max": 1.400202877717301,
+   "abs_ratio_median": 0.40403412556384577,
+   "abs_ratio_p90": 0.989010400063887,
+   "delta": 0.01,
+   "gap": 0.6,
+   "horizon_steps": 30,
+   "n_states": 12,
+   "note": "abs_ratio_max is the Lipschitz estimator (a sup); abs_ratio_median describes a typical state and is NOT a bound. states_with_resolved_signal says how many cells the sample can actually see -- a delta where that is 0 carries no information about L_v.",
+   "per_state": [
+    {
+     "mean_diff": 0.00989010400063887,
+     "ratio": 0.989010400063887,
+     "ratio_stderr": 0.784759918216959,
+     "resolved": false,
+     "state_index": 0,
+     "stderr": 0.00784759918216959
+    },
+    {
+     "mean_diff": -0.0012191588532058557,
+     "ratio": -0.12191588532058557,
+     "ratio_stderr": 0.6768523943777781,
+     "resolved": false,
+     "state_index": 1,
+     "stderr": 0.006768523943777781
+    },
+    {
+     "mean_diff": 0.0007356481876084805,
+     "ratio": 0.07356481876084804,
+     "ratio_stderr": 0.5690501876972685,
+     "resolved": false,
+     "state_index": 2,
+     "stderr": 0.005690501876972685
+    },
+    {
+     "mean_diff": 0.0029205538803774487,
+     "ratio": 0.29205538803774483,
+     "ratio_stderr": 0.5596420374916525,
+     "resolved": false,
+     "state_index": 3,
+     "stderr": 0.005596420374916525
+    },
+    {
+     "mean_diff": -0.00660083902547844,
+     "ratio": -0.660083902547844,
+     "ratio_stderr": 0.8475768609817991,
+     "resolved": false,
+     "state_index": 4,
+     "stderr": 0.008475768609817991
+    },
+    {
+     "mean_diff": -0.005160128630899467,
+     "ratio": -0.5160128630899466,
+     "ratio_stderr": 0.6895006910481347,
+     "resolved": false,
+     "state_index": 5,
+     "stderr": 0.006895006910481347
+    },
+    {
+     "mean_diff": -0.01035787233889011,
+     "ratio": -1.0357872338890108,
+     "ratio_stderr": 0.6283039351621061,
+     "resolved": false,
+     "state_index": 6,
+     "stderr": 0.006283039351621062
+    },
+    {
+     "mean_diff": -0.014002028777173011,
+     "ratio": -1.400202877717301,
+     "ratio_stderr": 0.8944626568144953,
+     "resolved": false,
+     "state_index": 7,
+     "stderr": 0.008944626568144954
+    },
+    {
+     "mean_diff": -0.0014067773981714105,
+     "ratio": -0.14067773981714105,
+     "ratio_stderr": 0.6326258119516988,
+     "resolved": false,
+     "state_index": 8,
+     "stderr": 0.006326258119516988
+    },
+    {
+     "mean_diff": 0.008638720656616231,
+     "ratio": 0.8638720656616231,
+     "ratio_stderr": 0.3942983669347192,
+     "resolved": true,
+     "state_index": 9,
+     "stderr": 0.003942983669347192
+    },
+    {
+     "mean_diff": 0.0011443763184352622,
+     "ratio": 0.11443763184352622,
+     "ratio_stderr": 0.6079652116115237,
+     "resolved": false,
+     "state_index": 10,
+     "stderr": 0.006079652116115237
+    },
+    {
+     "mean_diff": -0.001264649181143292,
+     "ratio": -0.1264649181143292,
+     "ratio_stderr": 0.327966558629658,
+     "resolved": false,
+     "state_index": 11,
+     "stderr": 0.00327966558629658
+    }
+   ],
+   "planner": {
+    "block": 10,
+    "horizon": 40,
+    "n_samples": 48
+   },
+   "snr_max": 2.1909095702763777,
+   "snr_median": 0.6351236752599039,
+   "states_with_resolved_signal": 1,
+   "stderr_median": 0.006304648735569025
+  },
+  "0.6|0.02|12|24|30": {
+   "K": 24,
+   "abs_mean_diff_median": 0.005688703962667185,
+   "abs_ratio_max": 1.2010468934186447,
+   "abs_ratio_median": 0.28443519813335927,
+   "abs_ratio_p90": 0.6788130480956129,
+   "delta": 0.02,
+   "gap": 0.6,
+   "horizon_steps": 30,
+   "n_states": 12,
+   "note": "abs_ratio_max is the Lipschitz estimator (a sup); abs_ratio_median describes a typical state and is NOT a bound. states_with_resolved_signal says how many cells the sample can actually see -- a delta where that is 0 carries no information about L_v.",
+   "per_state": [
+    {
+     "mean_diff": 0.0017266400698754403,
+     "ratio": 0.08633200349377201,
+     "ratio_stderr": 0.43058982035436877,
+     "resolved": false,
+     "state_index": 0,
+     "stderr": 0.008611796407087376
+    },
+    {
+     "mean_diff": 0.0050586207495448106,
+     "ratio": 0.2529310374772405,
+     "ratio_stderr": 0.5362419825789505,
+     "resolved": false,
+     "state_index": 1,
+     "stderr": 0.01072483965157901
+    },
+    {
+     "mean_diff": 0.00631878717578956,
+     "ratio": 0.315939358789478,
+     "ratio_stderr": 0.28968735030910225,
+     "resolved": false,
+     "state_index": 2,
+     "stderr": 0.0057937470061820455
+    },
+    {
+     "mean_diff": 0.0033687662405461616,
+     "ratio": 0.16843831202730808,
+     "ratio_stderr": 0.35986677345322726,
+     "resolved": false,
+     "state_index": 3,
+     "stderr": 0.007197335469064545
+    },
+    {
+     "mean_diff": -0.004608964740343484,
+     "ratio": -0.23044823701717418,
+     "ratio_stderr": 0.6387686465379598,
+     "resolved": false,
+     "state_index": 4,
+     "stderr": 0.012775372930759197
+    },
+    {
+     "mean_diff": -0.002756376065956504,
+     "ratio": -0.1378188032978252,
+     "ratio_stderr": 0.34029392853611967,
+     "resolved": false,
+     "state_index": 5,
+     "stderr": 0.006805878570722393
+    },
+    {
+     "mean_diff": -0.024020937868372894,
+     "ratio": -1.2010468934186447,
+     "ratio_stderr": 0.578499440815007,
+     "resolved": true,
+     "state_index": 6,
+     "stderr": 0.011569988816300142
+    },
+    {
+     "mean_diff": -0.01357626096191226,
+     "ratio": -0.6788130480956129,
+     "ratio_stderr": 0.48216712469067113,
+     "resolved": false,
+     "state_index": 7,
+     "stderr": 0.009643342493813423
+    },
+    {
+     "mean_diff": 0.013322178323287748,
+     "ratio": 0.6661089161643874,
+     "ratio_stderr": 0.40267683252757197,
+     "resolved": false,
+     "state_index": 8,
+     "stderr": 0.00805353665055144
+    },
+    {
+     "mean_diff": 0.015752739651425724,
+     "ratio": 0.7876369825712862,
+     "ratio_stderr": 0.4529795883375506,
+     "resolved": false,
+     "state_index": 9,
+     "stderr": 0.009059591766751012
+    },
+    {
+     "mean_diff": -0.00844444990759241,
+     "ratio": -0.42222249537962053,
+     "ratio_stderr": 0.3430725484593272,
+     "resolved": false,
+     "state_index": 10,
+     "stderr": 0.006861450969186544
+    },
+    {
+     "mean_diff": 6.604281411541162e-05,
+     "ratio": 0.0033021407057705807,
+     "ratio_stderr": 0.6428312048084968,
+     "resolved": false,
+     "state_index": 11,
+     "stderr": 0.012856624096169935
+    }
+   ],
+   "planner": {
+    "block": 10,
+    "horizon": 40,
+    "n_samples": 48
+   },
+   "snr_max": 2.076141839872091,
+   "snr_median": 0.7811475945597733,
+   "states_with_resolved_signal": 1,
+   "stderr_median": 0.008835694086919194
+  },
+  "0.6|0.05|12|24|30": {
+   "K": 24,
+   "abs_mean_diff_median": 0.015238075031979454,
+   "abs_ratio_max": 0.5248772491200379,
+   "abs_ratio_median": 0.30476150063958907,
+   "abs_ratio_p90": 0.4411623426930126,
+   "delta": 0.05,
+   "gap": 0.6,
+   "horizon_steps": 30,
+   "n_states": 12,
+   "note": "abs_ratio_max is the Lipschitz estimator (a sup); abs_ratio_median describes a typical state and is NOT a bound. states_with_resolved_signal says how many cells the sample can actually see -- a delta where that is 0 carries no information about L_v.",
+   "per_state": [
+    {
+     "mean_diff": 0.016264316272733836,
+     "ratio": 0.32528632545467673,
+     "ratio_stderr": 0.2705004999616227,
+     "resolved": false,
+     "state_index": 0,
+     "stderr": 0.013525024998081133
+    },
+    {
+     "mean_diff": 0.015856361364330624,
+     "ratio": 0.31712722728661247,
+     "ratio_stderr": 0.22664328702202813,
+     "resolved": false,
+     "state_index": 1,
+     "stderr": 0.011332164351101407
+    },
+    {
+     "mean_diff": -0.02477680772199505,
+     "ratio": -0.49553615443990096,
+     "ratio_stderr": 0.25530493066988236,
+     "resolved": false,
+     "state_index": 2,
+     "stderr": 0.012765246533494118
+    },
+    {
+     "mean_diff": -0.02205811713465063,
+     "ratio": -0.4411623426930126,
+     "ratio_stderr": 0.23086633273600582,
+     "resolved": false,
+     "state_index": 3,
+     "stderr": 0.011543316636800291
+    },
+    {
+     "mean_diff": 0.010430844568293907,
+     "ratio": 0.20861689136587813,
+     "ratio_stderr": 0.36769178818351245,
+     "resolved": false,
+     "state_index": 4,
+     "stderr": 0.018384589409175624
+    },
+    {
+     "mean_diff": -0.013738737633531914,
+     "ratio": -0.2747747526706383,
+     "ratio_stderr": 0.18405877229583006,
+     "resolved": false,
+     "state_index": 5,
+     "stderr": 0.009202938614791503
+    },
+    {
+     "mean_diff": -0.026243862456001892,
+     "ratio": -0.5248772491200379,
+     "ratio_stderr": 0.2939304926037114,
+     "resolved": false,
+     "state_index": 6,
+     "stderr": 0.014696524630185571
+    },
+    {
+     "mean_diff": -0.01399660059155942,
+     "ratio": -0.2799320118311884,
+     "ratio_stderr": 0.17522840554560665,
+     "resolved": false,
+     "state_index": 7,
+     "stderr": 0.008761420277280333
+    },
+    {
+     "mean_diff": -0.01824858715675622,
+     "ratio": -0.36497174313512437,
+     "ratio_stderr": 0.28871199544049064,
+     "resolved": false,
+     "state_index": 8,
+     "stderr": 0.014435599772024533
+    },
+    {
+     "mean_diff": 0.014619788699628286,
+     "ratio": 0.2923957739925657,
+     "ratio_stderr": 0.2752700725668909,
+     "resolved": false,
+     "state_index": 9,
+     "stderr": 0.013763503628344545
+    },
+    {
+     "mean_diff": -0.006814706562986513,
+     "ratio": -0.13629413125973025,
+     "ratio_stderr": 0.3076935018957116,
+     "resolved": false,
+     "state_index": 10,
+     "stderr": 0.01538467509478558
+    },
+    {
+     "mean_diff": -0.007817232872028809,
+     "ratio": -0.15634465744057616,
+     "ratio_stderr": 0.2907517709173794,
+     "resolved": false,
+     "state_index": 11,
+     "stderr": 0.014537588545868972
+    }
+   ],
+   "planner": {
+    "block": 10,
+    "horizon": 40,
+    "n_samples": 48
+   },
+   "snr_max": 1.9409580267004145,
+   "snr_median": 1.3316864104410937,
+   "states_with_resolved_signal": 0,
+   "stderr_median": 0.013644264313212839
+  },
+  "0.6|0.1|12|24|30": {
+   "K": 24,
+   "abs_mean_diff_median": 0.009610356735490749,
+   "abs_ratio_max": 0.379941221741061,
+   "abs_ratio_median": 0.09610356735490747,
+   "abs_ratio_p90": 0.21110410584971687,
+   "delta": 0.1,
+   "gap": 0.6,
+   "horizon_steps": 30,
+   "n_states": 12,
+   "note": "abs_ratio_max is the Lipschitz estimator (a sup); abs_ratio_median describes a typical state and is NOT a bound. states_with_resolved_signal says how many cells the sample can actually see -- a delta where that is 0 carries no information about L_v.",
+   "per_state": [
+    {
+     "mean_diff": 0.008182156714826139,
+     "ratio": 0.08182156714826139,
+     "ratio_stderr": 0.15009305683921023,
+     "resolved": false,
+     "state_index": 0,
+     "stderr": 0.015009305683921025
+    },
+    {
+     "mean_diff": 0.011808285653597187,
+     "ratio": 0.11808285653597186,
+     "ratio_stderr": 0.1470257974892,
+     "resolved": false,
+     "state_index": 1,
+     "stderr": 0.014702579748920001
+    },
+    {
+     "mean_diff": -0.006025730471770796,
+     "ratio": -0.06025730471770796,
+     "ratio_stderr": 0.1584936243923698,
+     "resolved": false,
+     "state_index": 2,
+     "stderr": 0.015849362439236982
+    },
+    {
+     "mean_diff": -0.0379941221741061,
+     "ratio": -0.379941221741061,
+     "ratio_stderr": 0.11960856695379707,
+     "resolved": true,
+     "state_index": 3,
+     "stderr": 0.011960856695379708
+    },
+    {
+     "mean_diff": -0.002253771079059922,
+     "ratio": -0.02253771079059922,
+     "ratio_stderr": 0.16773612133494573,
+     "resolved": false,
+     "state_index": 4,
+     "stderr": 0.016773612133494573
+    },
+    {
+     "mean_diff": -0.03261549867054706,
+     "ratio": -0.3261549867054706,
+     "ratio_stderr": 0.15152213786647778,
+     "resolved": true,
+     "state_index": 5,
+     "stderr": 0.015152213786647778
+    },
+    {
+     "mean_diff": -0.015537264322205294,
+     "ratio": -0.15537264322205294,
+     "ratio_stderr": 0.16638480647120862,
+     "resolved": false,
+     "state_index": 6,
+     "stderr": 0.016638480647120864
+    },
+    {
+     "mean_diff": -0.02111041058497169,
+     "ratio": -0.21110410584971687,
+     "ratio_stderr": 0.12262227414265837,
+     "resolved": false,
+     "state_index": 7,
+     "stderr": 0.012262227414265837
+    },
+    {
+     "mean_diff": -0.011038556756155357,
+     "ratio": -0.11038556756155356,
+     "ratio_stderr": 0.1471725761610932,
+     "resolved": false,
+     "state_index": 8,
+     "stderr": 0.01471725761610932
+    },
+    {
+     "mean_diff": 0.005549977595690869,
+     "ratio": 0.05549977595690869,
+     "ratio_stderr": 0.13609226871032018,
+     "resolved": false,
+     "state_index": 9,
+     "stderr": 0.01360922687103202
+    },
+    {
+     "mean_diff": -0.0036434173009857553,
+     "ratio": -0.03643417300985755,
+     "ratio_stderr": 0.1508605654427284,
+     "resolved": false,
+     "state_index": 10,
+     "stderr": 0.01508605654427284
+    },
+    {
+     "mean_diff": -0.005058931864606819,
+     "ratio": -0.05058931864606819,
+     "ratio_stderr": 0.18663761715943292,
+     "resolved": false,
+     "state_index": 11,
+     "stderr": 0.01866376171594329
+    }
+   ],
+   "planner": {
+    "block": 10,
+    "horizon": 40,
+    "n_samples": 48
+   },
+   "snr_max": 3.1765385324600235,
+   "snr_median": 0.6475903051859466,
+   "states_with_resolved_signal": 2,
+   "stderr_median": 0.015047681114096934
+  },
+  "0.6|0.2|12|24|30": {
+   "K": 24,
+   "abs_mean_diff_median": 0.009893383544454645,
+   "abs_ratio_max": 0.16460435944995871,
+   "abs_ratio_median": 0.049466917722273226,
+   "abs_ratio_p90": 0.12692130976477958,
+   "delta": 0.2,
+   "gap": 0.6,
+   "horizon_steps": 30,
+   "n_states": 12,
+   "note": "abs_ratio_max is the Lipschitz estimator (a sup); abs_ratio_median describes a typical state and is NOT a bound. states_with_resolved_signal says how many cells the sample can actually see -- a delta where that is 0 carries no information about L_v.",
+   "per_state": [
+    {
+     "mean_diff": -0.00452931764898586,
+     "ratio": -0.0226465882449293,
+     "ratio_stderr": 0.08421846443791005,
+     "resolved": false,
+     "state_index": 0,
+     "stderr": 0.016843692887582012
+    },
+    {
+     "mean_diff": -0.00604674380640254,
+     "ratio": -0.030233719032012697,
+     "ratio_stderr": 0.06454694450889381,
+     "resolved": false,
+     "state_index": 1,
+     "stderr": 0.012909388901778764
+    },
+    {
+     "mean_diff": 0.01374002328250675,
+     "ratio": 0.06870011641253375,
+     "ratio_stderr": 0.07633896039947624,
+     "resolved": false,
+     "state_index": 2,
+     "stderr": 0.015267792079895249
+    },
+    {
+     "mean_diff": -0.025384261952955917,
+     "ratio": -0.12692130976477958,
+     "ratio_stderr": 0.09111217611670455,
+     "resolved": false,
+     "state_index": 3,
+     "stderr": 0.01822243522334091
+    },
+    {
+     "mean_diff": -0.0015030889730499968,
+     "ratio": -0.007515444865249983,
+     "ratio_stderr": 0.07289260843069124,
+     "resolved": false,
+     "state_index": 4,
+     "stderr": 0.01457852168613825
+    },
+    {
+     "mean_diff": -0.02713276401379557,
+     "ratio": -0.13566382006897784,
+     "ratio_stderr": 0.060631473952852524,
+     "resolved": true,
+     "state_index": 5,
+     "stderr": 0.012126294790570506
+    },
+    {
+     "mean_diff": -0.0006415014265677144,
+     "ratio": -0.003207507132838572,
+     "ratio_stderr": 0.07162124683216822,
+     "resolved": false,
+     "state_index": 6,
+     "stderr": 0.014324249366433646
+    },
+    {
+     "mean_diff": 0.014656258465274963,
+     "ratio": 0.07328129232637481,
+     "ratio_stderr": 0.046429049636721176,
+     "resolved": false,
+     "state_index": 7,
+     "stderr": 0.009285809927344235
+    },
+    {
+     "mean_diff": -0.020726472937246943,
+     "ratio": -0.10363236468623471,
+     "ratio_stderr": 0.07436120999397795,
+     "resolved": false,
+     "state_index": 8,
+     "stderr": 0.014872241998795591
+    },
+    {
+     "mean_diff": 0.032920871889991744,
+     "ratio": 0.16460435944995871,
+     "ratio_stderr": 0.07504392815282164,
+     "resolved": true,
+     "state_index": 9,
+     "stderr": 0.01500878563056433
+    },
+    {
+     "mean_diff": -0.004943119254832744,
+     "ratio": -0.024715596274163715,
+     "ratio_stderr": 0.0833955742437897,
+     "resolved": false,
+     "state_index": 10,
+     "stderr": 0.01667911484875794
+    },
+    {
+     "mean_diff": 0.0001257944478344856,
+     "ratio": 0.000628972239172428,
+     "ratio_stderr": 0.06727653184909994,
+     "resolved": false,
+     "state_index": 11,
+     "stderr": 0.01345530636981999
+    }
+   ],
+   "planner": {
+    "block": 10,
+    "horizon": 40,
+    "n_samples": 48
+   },
+   "snr_max": 2.2375147959370247,
+   "snr_median": 0.6841670517503782,
+   "states_with_resolved_signal": 2,
+   "stderr_median": 0.01472538184246692
+  },
+  "0.6|0.4|12|24|30": {
+   "K": 24,
+   "abs_mean_diff_median": 0.024983037397279473,
+   "abs_ratio_max": 0.16015176607319473,
+   "abs_ratio_median": 0.06245759349319868,
+   "abs_ratio_p90": 0.08147666186178533,
+   "delta": 0.4,
+   "gap": 0.6,
+   "horizon_steps": 30,
+   "n_states": 12,
+   "note": "abs_ratio_max is the Lipschitz estimator (a sup); abs_ratio_median describes a typical state and is NOT a bound. states_with_resolved_signal says how many cells the sample can actually see -- a delta where that is 0 carries no information about L_v.",
+   "per_state": [
+    {
+     "mean_diff": -0.022825466138066613,
+     "ratio": -0.05706366534516653,
+     "ratio_stderr": 0.04076250148229314,
+     "resolved": false,
+     "state_index": 0,
+     "stderr": 0.016305000592917257
+    },
+    {
+     "mean_diff": 0.0070458824668993,
+     "ratio": 0.01761470616724825,
+     "ratio_stderr": 0.057774477279504605,
+     "resolved": false,
+     "state_index": 1,
+     "stderr": 0.023109790911801844
+    },
+    {
+     "mean_diff": 0.032590664744714136,
+     "ratio": 0.08147666186178533,
+     "ratio_stderr": 0.038807649146122225,
+     "resolved": true,
+     "state_index": 2,
+     "stderr": 0.015523059658448891
+    },
+    {
+     "mean_diff": -0.0640607064292779,
+     "ratio": -0.16015176607319473,
+     "ratio_stderr": 0.04188689778376043,
+     "resolved": true,
+     "state_index": 3,
+     "stderr": 0.016754759113504172
+    },
+    {
+     "mean_diff": 0.027140608656492333,
+     "ratio": 0.06785152164123083,
+     "ratio_stderr": 0.05115751968150867,
+     "resolved": false,
+     "state_index": 4,
+     "stderr": 0.020463007872603467
+    },
+    {
+     "mean_diff": -0.019963229934395404,
+     "ratio": -0.049908074835988504,
+     "ratio_stderr": 0.035410273009605156,
+     "resolved": false,
+     "state_index": 5,
+     "stderr": 0.014164109203842062
+    },
+    {
+     "mean_diff": -0.008300477450266039,
+     "ratio": -0.020751193625665094,
+     "ratio_stderr": 0.0379344145538754,
+     "resolved": false,
+     "state_index": 6,
+     "stderr": 0.01517376582155016
+    },
+    {
+     "mean_diff": 0.012854164981773941,
+     "ratio": 0.03213541245443485,
+     "ratio_stderr": 0.03330963734051783,
+     "resolved": false,
+     "state_index": 7,
+     "stderr": 0.013323854936207134
+    },
+    {
+     "mean_diff": 0.005374381249210784,
+     "ratio": 0.013435953123026959,
+     "ratio_stderr": 0.03427377524989063,
+     "resolved": false,
+     "state_index": 8,
+     "stderr": 0.013709510099956253
+    },
+    {
+     "mean_diff": 0.0429803823607986,
+     "ratio": 0.10745095590199649,
+     "ratio_stderr": 0.040812437209478046,
+     "resolved": true,
+     "state_index": 9,
+     "stderr": 0.01632497488379122
+    },
+    {
+     "mean_diff": -0.029351885092035346,
+     "ratio": -0.07337971273008836,
+     "ratio_stderr": 0.0472059915010432,
+     "resolved": false,
+     "state_index": 10,
+     "stderr": 0.01888239660041728
+    },
+    {
+     "mean_diff": -0.032568267153674814,
+     "ratio": -0.08142066788418703,
+     "ratio_stderr": 0.04217619947433193,
+     "resolved": false,
+     "state_index": 11,
+     "stderr": 0.016870479789732773
+    }
+   ],
+   "planner": {
+    "block": 10,
+    "horizon": 40,
+    "n_samples": 48
+   },
+   "snr_max": 3.8234334492846034,
+   "snr_median": 1.4046647432738955,
+   "states_with_resolved_signal": 3,
+   "stderr_median": 0.01631498773835424
+  }
+ },
+ "ladder": [
+  {
+   "abs_mean_diff_median": 0.024983037397279473,
+   "delta": 0.4,
+   "max": 0.16015176607319473,
+   "median": 0.06245759349319868,
+   "n_states": 12,
+   "p90": 0.08147666186178533,
+   "resolved": 3,
+   "snr_median": 1.4046647432738955,
+   "stderr_median": 0.01631498773835424
+  },
+  {
+   "abs_mean_diff_median": 0.009893383544454645,
+   "delta": 0.2,
+   "max": 0.16460435944995871,
+   "median": 0.049466917722273226,
+   "n_states": 12,
+   "p90": 0.12692130976477958,
+   "resolved": 2,
+   "snr_median": 0.6841670517503782,
+   "stderr_median": 0.01472538184246692
+  },
+  {
+   "abs_mean_diff_median": 0.009610356735490749,
+   "delta": 0.1,
+   "max": 0.379941221741061,
+   "median": 0.09610356735490747,
+   "n_states": 12,
+   "p90": 0.21110410584971687,
+   "resolved": 2,
+   "snr_median": 0.6475903051859466,
+   "stderr_median": 0.015047681114096934
+  },
+  {
+   "abs_mean_diff_median": 0.015238075031979454,
+   "delta": 0.05,
+   "max": 0.5248772491200379,
+   "median": 0.30476150063958907,
+   "n_states": 12,
+   "p90": 0.4411623426930126,
+   "resolved": 0,
+   "snr_median": 1.3316864104410937,
+   "stderr_median": 0.013644264313212839
+  },
+  {
+   "abs_mean_diff_median": 0.005688703962667185,
+   "delta": 0.02,
+   "max": 1.2010468934186447,
+   "median": 0.28443519813335927,
+   "n_states": 12,
+   "p90": 0.6788130480956129,
+   "resolved": 1,
+   "snr_median": 0.7811475945597733,
+   "stderr_median": 0.008835694086919194
+  },
+  {
+   "abs_mean_diff_median": 0.004040341255638458,
+   "delta": 0.01,
+   "max": 1.400202877717301,
+   "median": 0.40403412556384577,
+   "n_states": 12,
+   "p90": 0.989010400063887,
+   "resolved": 1,
+   "snr_median": 0.6351236752599039,
+   "stderr_median": 0.006304648735569025
+  },
+  {
+   "abs_mean_diff_median": 0.004199804448425345,
+   "delta": 0.005,
+   "max": 1.5257914343414982,
+   "median": 0.839960889685069,
+   "n_states": 12,
+   "p90": 1.2397908762879752,
+   "resolved": 0,
+   "snr_median": 0.7425390890188901,
+   "stderr_median": 0.004891723555038266
+  },
+  {
+   "abs_mean_diff_median": 0.001871712372339148,
+   "delta": 0.002,
+   "max": 3.6195163048804435,
+   "median": 0.935856186169574,
+   "n_states": 12,
+   "p90": 1.9914653641461832,
+   "resolved": 0,
+   "snr_median": 0.5254724157990651,
+   "stderr_median": 0.002528835769663353
+  }
+ ],
+ "planner": {
+  "block": 10,
+  "horizon": 40,
+  "n_samples": 48
+ },
+ "verdict": "CENSORED, and the sweep says WHY. The median signal-to-noise ratio is 0.53-1.40 across three decades of delta -- the mean difference never clears one standard error at any separation. Crucially the apparent growth of |mean|/delta (0.062 at the largest delta to 0.936 at the smallest) is NOT evidence of divergence: |mean| sits at the noise floor throughout, and CRN makes that floor shrink with delta, so the ratio inherits a 1/delta trend for a purely statistical reason. Since the SNR is FLAT rather than improving as delta shrinks, refining the separation cannot rescue this route; only K can, and SNR grows as sqrt(K), so resolving at SNR 3 needs about 5x the replicates used here."
+}

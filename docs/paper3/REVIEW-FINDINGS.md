@@ -277,21 +277,56 @@ copied without an artifact. `scripts/t7_union_h1.py`,
 `scripts/t3_funnel_defect_analysis.py` and the emitter's derived band close
 that route.
 
+## The last round: the linter to zero, and L_v answered by a designed experiment
+
+**Claims linter: 51 → 0.** Nothing hidden under the baseline. The exemptions in
+`docs/paper3/claims-allowlist.txt` are classified by grammatical role, each with
+a written justification (the linter rejects an entry without one): "certified-
+free" as a defined term of art, "certified" as the gate's verdict label (whose
+narrowness IS the paper's thesis), and the cases where the scope is stated
+immediately after the verb. Two were genuine claims and were fixed in the text
+rather than allowlisted — the gate that "will certify it" now says it is sound
+only relative to the sampled inputs it can reach, and the linking table's `0.00`
+becomes `<0.01`. Baseline rewritten at zero, so the ratchet is tight.
+
+**L_v: answered, and the answer is a costed censoring.** The old estimate used
+whatever separations the dirty steps supplied (smallest 0.001, far below CRN
+resolution). `scripts/t2_lv_designed_sweep.py` imposes them instead: a geometric
+grid over three decades, a fixed direction per state (a Lipschitz constant is a
+sup over directions), CRN across branches, and states from π_T's own trajectory
+— a first version used random actions and measured states where both branches
+score ≈ 0.
+
+**And the sweep's own first verdict was wrong, which is the finding worth
+keeping.** It reported DIVERGENT because |mean|/δ grows 15× as δ falls 200×.
+The SNR row refutes that: 0.6–1.5 at *every* δ, so the mean never clears one
+standard error anywhere. |mean| sits at the noise floor throughout, and CRN
+makes that floor shrink with δ, so the ratio inherits a 1/δ trend for a purely
+statistical reason. Reporting it as divergence would have been this campaign's
+signature error — a measured number standing where a logical check belongs —
+committed by my own script. The verdict logic now tests the SNR, not the ratio,
+and `test_lv_sweep_verdict_rests_on_snr_not_on_the_ratio` guards it.
+
+The censoring is now informative: the SNR is **flat** rather than improving as
+δ shrinks, so refining the separation cannot rescue the route — only replicates
+can, at SNR ∝ √K, i.e. **5×** the K used here to resolve at SNR 3 (the factor
+derived by the script from the observed SNR 0.53–1.40, not estimated). That is a
+costed route, not a hope.
+
 Still open, in the order the "Order of work" section sets:
 
-1. **The claims linter's residue under the ratchet**: 12 `soundness-scope`, 1
-   `printed-zero`, 1 `hand-constant`. Each is a judgement call about how much
-   scope a sentence must restate; the ratchet prevents growth while they are
-   worked through.
-2. **The L_v measurement**, which does not reproduce. Recovering a usable
-   estimate needs a separation sweep DESIGNED to have signal at each ‖Δv‖ —
-   the dirty steps supply whatever separations they happen to have, and the
-   smallest is 0.001, far too small for CRN pairing to resolve. Until then the
-   play-cost bound that rested on it stays withdrawn.
-3. **T5-F′'s floor**, which is irremovable within the exponential-moment
-   scheme (that is now a theorem, not a gap). Removing it at all would need a
-   different scheme — one that does not require a finite
-   `E[(1 − cγ²σ₁²/m)^{−1/2}]`.
+1. **L_v at 4× the replicates.** The only route left to a numeric play-cost
+   bound, and its cost is now known rather than guessed: **K = 120** against
+   the 24 used, at 12 states × 8 separations. Everything else about the sweep is
+   settled — the design, the states, the direction handling and the SNR test
+   are in place, so this is compute, not thought.
+2. **T5-F′'s floor**, irremovable within the exponential-moment scheme — that
+   is a theorem now, not a gap. Removing it at all would need a scheme that
+   does not require a finite `E[(1 − cγ²σ₁²/m)^{−1/2}]`.
+
+Both are *known* residues with named next steps, which is the state this
+campaign was trying to reach: nothing in the papers rests on an unexamined
+number, and what remains open says what it would take to close.
 
 ## Order of work
 

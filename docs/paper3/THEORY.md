@@ -1823,11 +1823,41 @@ over 5.7 / 17.5 / 3.2 across K, while at ‖Δv‖ = 0.459 it reads
 −0.013 ± 0.015. So this route yields no measured L_v — a *censored*
 measurement, whose content is that |L_v·‖Δv‖| is below the CRN resolution
 at these separations, not that L_v is any particular value. The
-"L_v ≈ 0.8" once reported here is not reproduced by the committed script;
-recovering it would need a separation sweep designed to have signal at
-each ‖Δv‖ (the dirty steps supply whatever separations they happen to
-have, and the smallest is 0.001, far too small), which is recorded in
-`REVIEW-FINDINGS.md` rather than assumed.
+"L_v ≈ 0.8" once reported here is not reproduced by the committed script.
+
+**The designed sweep, and why it also fails — but informatively.**
+`scripts/t2_lv_designed_sweep.py` imposes the separation instead of taking
+what the dirty steps supply: a geometric grid over three decades, a fixed
+perturbation direction per state (a Lipschitz constant is a sup over
+directions, so averaging them would understate it), CRN across the two
+branches, and states drawn from π_T's OWN trajectory rather than from
+random actions — a first version used random actions and landed on states
+where both branches score ≈ 0, which measures the wrong states.
+*Measured* (γ = 0.6, 12 states, K = 24, a 30-step value tail;
+`results/t2_lv_designed_sweep.json`):
+| δ | 0.4 | 0.2 | 0.1 | 0.05 | 0.02 | 0.01 | 0.005 | 0.002 |
+|---|---|---|---|---|---|---|---|---|
+| median \|Δ\| | 0.0250 | 0.0099 | 0.0096 | 0.0152 | 0.0057 | 0.0040 | 0.0042 | 0.0019 |
+| median s.e. | 0.0163 | 0.0147 | 0.0151 | 0.0136 | 0.0088 | 0.0063 | 0.0049 | 0.0025 |
+| **SNR** | 1.40 | 0.62 | 0.61 | 1.06 | 0.62 | 0.62 | 0.83 | 0.72 |
+| median ratio | 0.062 | 0.049 | 0.096 | 0.305 | 0.284 | 0.404 | 0.840 | 0.936 |
+The ratio row grows 15× as δ falls 200×, and reading that as divergence —
+"the value is not Lipschitz in velocity" — would be **wrong**. The SNR row
+is what settles it: the median SNR runs **0.53–1.40** across the grid, so
+the mean difference never clears one standard error at ANY separation. |Δ| sits at the noise floor throughout, and CRN makes that
+floor shrink with δ, so |Δ|/δ inherits a 1/δ trend for a purely statistical
+reason. (Consistency check: pure noise would grow the ratio by the full
+200×; the observed 15× is slower, but the SNR shows the residual is not
+resolved either.)
+So the measurement is **censored**, and the sweep says what would fix it:
+the SNR is FLAT rather than improving as δ shrinks, so refining the
+separation cannot rescue this route — only replicates can, and since
+SNR ∝ √K, resolving at SNR 3 needs **5×** the K used here (the factor is
+derived by the script from the observed SNR, not estimated by hand). Evidence
+label *censored*: the content is that |L_v·δ| is below the CRN resolution
+at every separation tried, not a value for L_v, and the play-cost bound
+resting on it stays withdrawn with a costed route recorded in
+`REVIEW-FINDINGS.md`.
 
 **Assembling the bound — and what it costs to use proved constants
 only (2026-07-27, corrected).** The chain is

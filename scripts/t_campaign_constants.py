@@ -314,6 +314,10 @@ def main():
         "funnel_separation_ci_consistent": measured(
             "t3_funnel_defect_analysis", ["separation_ci_consistent"]),
         "shell_bar_length_bound": None,      # filled below from the shells
+        # The L_v sweep: the SNR range is the load-bearing quantity (it is what
+        # makes the verdict CENSORED rather than DIVERGENT), so it is audited
+        # like any other published number.
+        "lv_snr_min": None, "lv_snr_max": None,
         "conditional_spread_A_t": measured(
             "t2_unrecorded_measurements",
             ["cells", "conditional_spread|0.6|40", "A_t_spread"]),
@@ -346,6 +350,16 @@ def main():
                                                       for r in _bg)
             C["measured"]["death_over_rho_max"] = max(r["death_over_rho"]
                                                       for r in _bg)
+
+    _lv = measured("t2_lv_designed_sweep", ["ladder"])
+    if isinstance(_lv, list) and _lv:
+        _snr = [r["snr_median"] for r in _lv if r.get("snr_median") is not None]
+        if _snr:
+            C["measured"]["lv_snr_min"] = min(_snr)
+            C["measured"]["lv_snr_max"] = max(_snr)
+            # The replicate factor to reach SNR 3, derived rather than guessed.
+            C["measured"]["lv_replicate_factor_for_snr3"] = (
+                math.ceil((3.0 / max(_snr)) ** 2))
 
     # Lemma D applied to the arrival angle, DERIVED from the two emitted
     # ingredients rather than multiplied out by hand: a_max = 1 gives the

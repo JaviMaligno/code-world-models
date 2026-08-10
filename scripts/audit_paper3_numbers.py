@@ -107,6 +107,9 @@ CHECKS = [
     (["measured", "P_root_exists"], ["0.00889"], "lower"),
     (["measured", "drag_cap_worst_400x200"], ["1.9956"]),
     (["measured", "conditional_spread_A_t"], ["3.69"]),
+    (["measured", "lv_snr_min"], ["0.53"]),
+    (["measured", "lv_snr_max"], ["1.40"]),
+    (["measured", "lv_replicate_factor_for_snr3"], ["5"]),
     (["measured", "T5F_K_max_side_condition"], ["3.606"]),
     # An upper bound's rate: printing ABOVE it is safe (looser).
     (["measured", "T5F_prime_rate"], ["0.9245"], "upper"),

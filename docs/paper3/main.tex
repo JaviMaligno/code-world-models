@@ -1762,15 +1762,21 @@ position and $2\,\mathrm{gain}\,dt = 0.6$ in velocity (measured maxima
 $0.059$ and $0.590$: the caps are tight). Everything then rests on how
 smooth the \emph{seed-averaged} value is, which unlike the MPC policy
 itself is smoothed by the averaging. That smoothness is where the chain
-stops. At a hundred CRN-paired seeds the conditional mean
-$\mathbb{E}[A_t \mid s_t, C_t]$ is statistically indistinguishable from
-zero at both the smallest and the largest velocity separation the dirty
-steps supply ($+0.003 \pm 0.007$ at $\lVert\Delta v\rVert = 0.001$,
-$-0.006 \pm 0.007$ at $0.459$), so the implied Lipschitz constant is
-unusable --- it swings over $5.7/17.5/3.2$ across $K = 10/40/100$ at the
-small separation. The measurement is \emph{censored}: its content is that
-the signal sits below the CRN resolution at these separations, not a value
-for the constant. So no numeric play-cost bound follows from this route.
+stops, and a designed experiment says why. Perturbing the velocity by an
+\emph{imposed} $\delta$ on a geometric grid over three decades, in a fixed
+direction per state, with common random numbers across branches and states
+taken from the truth planner's own trajectory, the ratio
+$|\mathbb{E}[V_T(s+\delta e) - V_T(s)]| / \delta$ rises from $0.06$ to
+$0.94$ as $\delta$ falls from $0.4$ to $0.002$. Read alone that says the
+value is not Lipschitz in velocity. It is not evidence of anything: the
+signal-to-noise ratio is $0.6$--$1.5$ at \emph{every} separation, so the
+numerator sits at the noise floor throughout, and common random numbers
+make that floor shrink with $\delta$ --- the ratio inherits a $1/\delta$
+trend for a purely statistical reason. The measurement is \emph{censored},
+and informatively so: because the signal-to-noise ratio is flat rather than
+improving as $\delta$ shrinks, refining the separation cannot rescue this
+route, and only replicates can, at a cost that scales as the square of the
+resolution wanted. No numeric play-cost bound follows from it.
 Substituting instead the constant this argument proves (the drag cap
 divided by the velocity perturbation, times a per-step reward Lipschitz
 bound) gives $80$, and the value under a saturation hypothesis gives

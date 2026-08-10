@@ -254,3 +254,40 @@ def test_t7_exhibit_shows_the_two_ranks_can_differ():
     for r in ex["scales"]:
         assert r["lower_bound_on_relative_rank"] >= 1, r
         assert r["betti1_K"] > r["betti1_L"], r
+
+
+def test_lv_sweep_verdict_rests_on_snr_not_on_the_ratio():
+    # The trap this guard exists for: |mean|/delta grows as delta shrinks
+    # whenever the mean sits at the noise floor, because CRN makes the floor
+    # shrink too. A verdict of DIVERGENT is only admissible if the signal is
+    # actually resolved, so assert the verdict agrees with the SNR evidence.
+    d = _load("t2_lv_designed_sweep.json")
+    ladder = d.get("ladder")
+    if not ladder:
+        pytest.skip("sweep not emitted")
+    snrs = [r["snr_median"] for r in ladder if r.get("snr_median") is not None]
+    assert snrs, "the sweep must emit an SNR beside every ratio"
+    verdict = d["verdict"]
+    if max(snrs) < 2.0:
+        assert verdict.startswith("CENSORED"), (verdict, snrs)
+        # ... and the ratio must NOT be quoted as a finding in that case.
+        assert "NOT evidence of" in verdict or "not evidence" in verdict
+    else:
+        assert verdict.startswith(("PLATEAU", "DIVERGENT")), verdict
+
+
+def test_lv_sweep_uses_planner_states_and_a_real_grid():
+    # Two design faults a first version had: states advanced with RANDOM
+    # actions (where both branches score ~0, so the ratio is trivially small)
+    # and a delta grid too narrow to show a trend.
+    d = _load("t2_lv_designed_sweep.json")
+    ladder = d.get("ladder")
+    if not ladder:
+        pytest.skip("sweep not emitted")
+    deltas = sorted(r["delta"] for r in ladder)
+    assert deltas[-1] / deltas[0] >= 100, (
+        "the grid must span at least two decades to show a trend", deltas)
+    # Every cell must carry the pieces that let a reader redo the SNR check.
+    for r in ladder:
+        for key in ("abs_mean_diff_median", "stderr_median", "snr_median"):
+            assert r.get(key) is not None, (r["delta"], key)
