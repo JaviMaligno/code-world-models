@@ -74,6 +74,20 @@ Never let a *search* stand in for evidence ("we looked and found none" is not
 "none exists"). Never state a censored zero as a zero: a printed `0` means no
 occurrence in the sample, and its content is the interval.
 
+### Contribution-preservation test
+
+Do not treat manuscript length, density, or the number of contributions as evidence that
+the paper lacks focus. First map the dependency chain: a contribution stays when it proves a
+premise used later, measures a claimed mechanism, supplies a control, closes an alternative
+explanation, or establishes the scope of another result. Recommend deletion or relocation only
+for a demonstrated contradiction, genuine duplication, lack of evidential function, or an
+explicit venue constraint. If navigation is the problem, strengthen hierarchy, signposting and
+cross-references without removing scientific content.
+
+When several contributions form one dependency chain, review them as an integrated argument.
+The default repair for a vulnerable link is a stronger proof, experiment, independent unit,
+baseline, or explicit bridge lemma. Compression is not a scientific correction by itself.
+
 ## 3. The narrative contract
 
 **The paper states what is true, not how the authors got there.** No "we got this

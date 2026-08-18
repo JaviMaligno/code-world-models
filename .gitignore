@@ -22,3 +22,4 @@ docs/paper2/*.aux
 docs/paper2/*.log
 docs/paper2/*.out
 docs/paper2/*.blg
+docs/paper2/*.fdb_latexmk
