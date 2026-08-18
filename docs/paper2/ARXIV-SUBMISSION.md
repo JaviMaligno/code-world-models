@@ -3,7 +3,22 @@
 Paper 2 of the trilogy. Companion paper 1 is **arXiv:2607.14169** (currently v2),
 cited as `aguilar2026verified`; paper 3 is unpublished and is NOT referenced.
 
-Status: **ready to submit** (new submission, not a replacement).
+Status: **submitted 2026-08-18** as arXiv submission `submit/7965524`, awaiting
+moderation and announcement. The public arXiv ID is assigned at announcement; until
+then §3 step 6 (README + paper 3's `references.bib`) stays open.
+
+What was submitted, for the record: primary **cs.LG**, cross-lists **cs.AI** and
+**eess.SY**, licence **CC BY 4.0** (matching paper 1), author `Javier Aguilar Mart\'in`
+(arXiv stores the accent in TeX encoding), comments `92 pages, 5 figures` plus the
+public repository URL. arXiv compiled the bundle with pdflatex on TeX Live 2025 to
+**92 pages** — the same page count as the local build — with 0 undefined references,
+0 undefined citations and 0 overfull boxes. `main.bbl` was kept: arXiv's scan suggests
+deleting it in favour of `references.bib`, and this bundle is verified to compile
+without bibtex, so the suggestion is declined on purpose.
+
+One upload note for next time: macOS `tar` writes AppleDouble `._*` members for
+extended attributes even with `--exclude='._*'`. arXiv strips them automatically and
+reports each removal; the 12 real files are unaffected.
 
 ## 1. What is ready
 
