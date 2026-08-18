@@ -803,3 +803,110 @@ an instrument whose mode does *not* freeze the mover would permit full coverage 
 separate "a disposition" from "a weight no reachable dose outweighs" — a different paper's
 experiment, and named as such rather than promised. The remaining non-experimental item is a
 DOI deposit for the archived tag, which needs an account and is the author's call.
+
+## 2026-08-17 — H1 (REVIEW5-HARDENING): class-relative disc identifiability — EARNED
+
+The earlier text used recovery by one least-squares estimator as if it established
+finite-sample uniqueness. The contribution has been strengthened by separating and measuring
+the two claims rather than deleting either one.
+
+For the explicit class
+`H_circle = {disc(c,R) union fixed_far_disc}`, a transition reduces exactly to a labelled
+free-landing point. The consistent version space is therefore
+`max_inside ||z-c|| <= R < min_outside ||z-c||`. A multilevel outer certificate with
+Lipschitz grid slack and a direction-uniform far-field bound checks the universal property:
+every consistent circle is within centre/radius tolerance 0.1 in **6/20**, **9/20** and
+**18/20** blocks at the baseline, intermediate and widest evidence doses. The pre-existing
+estimator-level counts remain **12/20**, **16/20** and **20/20**. Both are now reported.
+
+The same evidence excludes half-planes in **20/20** at all three doses and axis-aligned
+boxes in **19/20**, **19/20**, **20/20**. It does not identify an arbitrary region: the
+convex hull of inside contacts is consistent in **20/20** throughout, a proved consequence
+of convex truth. Under clamp semantics, three non-collinear boundary points determine the
+circle uniquely and every block supplies such a triple (**20/20**).
+
+Evidence: `results/disc_identifiability_certificate.json`; generator:
+`scripts/disc_identifiability_certificate.py`; oracle and regression tests:
+`tests/test_disc_identifiability_certificate.py`.
+
+## 2026-08-17 — H2 (REVIEW5-HARDENING): the localization budget at domain boundaries — EARNED, no blocker
+
+**Was:** the abstract quoted `vol(E_eps) >= ((eta-eps)/L)^(d+m)` without the corollary's
+premise that the guaranteed ball is not clipped by the domain boundary, and the exemption
+clause said "a hybrid mode boundary, having no finite local constant, pays no such budget"
+— an over-claim, since a continuous hybrid boundary (kink, saturation) is Lipschitz.
+
+**Now (earned, not hedged):**
+
+1. `cor:locbudget` states the always-valid clipped form first —
+   `vol(E_eps) >= vol(B_inf(z0, (eta-eps)/2L) ∩ (S x A))` — with no position condition;
+   the unclipped display is the interior case.
+2. New `cor:kappabudget`: any domain with interior-volume constant `kappa` gives
+   `vol(E_eps) >= kappa ((eta-eps)/L)^(d+m)` and `L >= (eta-eps)(kappa/V)^(1/(d+m))`.
+   Box instantiation with the per-point refinement `2^-k` (`k` = clipped coordinates):
+   interior `kappa = 1`, face `1/2`, corner `2^-(d+m)` sharp; unbounded coordinates
+   contribute factor 1, so the instruments' domains (states unbounded, scalar action in
+   `[-a_max, a_max]`) have `k <= 1`, `kappa >= 1/2`. Boundary clipping costs at most a
+   factor 2 in `L`, never the budget.
+3. Constants generated, not asserted: `scripts/locbudget_boundary_constants.py` (exact
+   product formula) + `tests/test_locbudget_boundary.py` (Monte Carlo oracle, sharpness,
+   and the load-bearing extent condition `r <= min side`).
+4. Hybrid claims scoped everywhere (abstract, contributions, rem:fourstatements,
+   contrapositive paragraph, limitations, conclusion, certificate-scope prose) to the
+   **discontinuous reset modes** actually studied.
+
+**Permanent by design (not a blocker):** the universal exemption "every hybrid boundary
+escapes the budget" is *false* — continuous hybrid boundaries pay it — so the reset-mode
+scoping is the content, not a weakening to be earned back. The only optional extension
+left is instantiating `kappa` for non-box domains (e.g. a Lipschitz domain, or the cart's
+sheared step-1 box `U` if a claim ever needs the budget *within `U`* rather than within
+`S x A`); `cor:kappabudget` already applies verbatim once such a `kappa` is computed —
+cost: one geometry computation in the existing script; no current claim needs it.
+
+## 2026-08-18 — H3/H4/H5/H6/H7 (REVIEW5-HARDENING): manuscript integration, and what remains
+
+**H3 — EARNED and integrated.** The body now defines the instrument–stream block as the
+primary unit and states 50/56 CP [0.781, 0.960] beside the strictest raw-stream 30/36 and
+the knob-cell census 64/70; the stale probe-criterion "pendulum 34/34, lower bound 0.897"
+is corrected to 30/34 CP [0.725, 0.967] (changelog #31). The per-campaign accepted play
+cost promised by `sec:estimand` now exists: `accepted_play_cost` per campaign/arm in
+`results/paper2_statistics.json`, block-clustered bootstrap CI, quoted in prose for the
+headline cell (0.508 [0.344, 0.671], n=61).
+
+**H4 — partially earned; the remaining route is a measurement campaign.** The adaptive
+chain rule `P(miss) = prod_i (1 - r_i(history))` with sharp interval brackets is now
+`rem:adaptive` in the manuscript, making the i.i.d. exponent, the two-budget sum, the
+stratified product and the Fréchet bracket corollaries of one display
+(`results/danger_law_h4.json`). Every danger curve carries a family-wise 95% rarity band;
+**both-factor bands exist only for the 5 curves with committed paired episode triples**
+(cart x_wall=8, pendulum th_stop=1.4, PatchField2D k=(3,7) x 3 events). *Route to the
+full criterion:* re-run paired (J_truth, J_blind, J_random) episode triples for the other
+35 rows (CPU-only, `scripts/play_cost_intervals.py` pattern, checkpoint per cell) and let
+`danger_law_h4.py` consume them; the JSON deliberately records
+`all_estimated_factors_band: null` until then.
+
+**H5 — EARNED, and the claim came back stronger.** The mode-capable learned baseline
+(hard-threshold / two-circle event functions on the pinned off-mode plant) is measured
+and integrated in `sec:smooth`; "capability that learned models lack" is replaced by the
+conditional-on-class statement (changelog #32). The 2D arm gives the sharpest contrast in
+the section: estimator-with-form 12/20 near-patch blocks vs synthesizer-with-form 0/20.
+*Optional extension:* an end-to-end hybrid learner (MoE / event functions at scale) on
+the same samples; the current baseline deliberately bounds representation, not learning
+stacks.
+
+**H6 — matrix earned; "identified mechanism" still not claimable.** The exclusion matrix
+(`results/h6_exclusion_matrix_v1.json`) is now cited from the ablation ledger and
+summarized in `sup:ablations`, with the mechanism-upgrade sentence rolled back to the
+earned form: the template prior survives as a *stable disposition* (unmoved by dose,
+witnessing, budget, rule difficulty) that remains unlocalized inside the model. *Route to
+"identified":* the four factorial follow-ups specified in the JSON (prompt/budget
+three-way; post-state x calibrated dose; coverage x start law; arity x identifiability on
+a bounded 1-coordinate region). Each is an LLM campaign at the usual 20-block scale.
+
+**H7 — one axis earned; the external benchmark remains the decisive follow-up.** The
+bounded-observation-noise gate is integrated (`sup:noisygate` + a Limitations paragraph):
+pre-specified, hash-pinned, masking boundary measured at eta=1. Open, in increasing cost:
+process noise; an unknown noise law; planning under noise; and the externally authored
+contact/saturation benchmark with its own critical event — freeze the adapter and the
+analysis before inspecting any outcome, then run the unchanged synthesis/gate/planner
+chain and report failures as well as confirmations.

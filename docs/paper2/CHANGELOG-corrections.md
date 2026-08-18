@@ -10,6 +10,24 @@ Kept because it is genuinely useful: the pattern across these entries is that **
 error was in a number or a geometric factor computed by hand in prose**, never in a value
 `scripts/audit_paper2_numbers.py` re-derives from `results/`.
 
+## Fifth review round, H2 (2026-08-17): the budget's boundary premise, and the hybrid exemption's scope
+
+* **The abstract quoted the unclipped volume formula without its premise** — `vol(E_eps) >=
+  ((eta-eps)/L)^(d+m)` holds only when the guaranteed ball avoids the domain boundary, a
+  condition the corollary carried and the abstract dropped. Fixed by strengthening rather than
+  hedging: the corollary now leads with the always-valid clipped form (ball intersected with the
+  domain, no position condition), and a new corollary prices the boundary uniformly via an
+  interior-volume constant `kappa` — box instantiation `2^-k` per clipped coordinate, `2^-(d+m)`
+  sharp at a corner, factor 1 for unbounded coordinates, `kappa >= 1/2` on the instruments'
+  domains. The case constants are computed by `scripts/locbudget_boundary_constants.py` and
+  oracle-tested against Monte Carlo volumes in `tests/test_locbudget_boundary.py`, per the rule
+  that every hand-computed geometric factor gets a mechanical check.
+* **"A hybrid mode boundary, having no finite local constant, pays no such budget" over-claimed**
+  — a hybrid boundary that is continuous but nonsmooth (a kink, an actuation saturation) has a
+  finite Lipschitz constant and pays the budget in full. Every such clause is now scoped to the
+  discontinuous reset modes actually studied (the velocity-zeroing wall and stop, the freezing
+  patch). Caught by the H2 item of `REVIEW5-HARDENING.md`.
+
 ## Fourth review round (2026-08-01): the matched backend, and draws called blocks
 
 * **The Qwen 2D contrast was confounded with the serving backend** — full cells from the HF
@@ -30,7 +48,7 @@ error was in a number or a geometric factor computed by hand in prose**, never i
   but only one file per treatment enters inference, and the exclusion is recorded in the
   report's own output, never silent.
 * **105/111 were draws, called "blocks" in three places.** Under the audit's own block key
-  they span 70 distinct blocks, 64 exact on every draw, the six failures in six distinct
+  they span 70 knob-level block cells, 64 exact on every draw; at the primary level they give 50 of 56 instrument--stream blocks exact; the six failures in six
   blocks (the reviewer guessed 36; the recount is derived in the audit, not argued). The
   same unit discipline that fixed the pooled Wilson intervals in round 1 now covers the
   repair headline.
@@ -230,6 +248,19 @@ error rather than a default.
 
 ## Theory and certificates
 
+### 2026-08-17 — estimator recovery is not universal identifiability
+
+The evidence-dose text previously promoted success of one least-squares circle fit
+(12/20 baseline; 20/20 widest dose) to the statement that the finite sample determined the
+region. The fit result is valid but existential. The paper now also evaluates the universal
+version-space claim relative to an explicit circle class: 6/20 baseline and 18/20 widest-dose
+blocks constrain every consistent circle to the same 0.1 tolerance. It additionally excludes
+half-planes in 20/20, while proving that the hull of observed contacts remains consistent in
+20/20; uniqueness is therefore explicitly class-relative. The clamp variant earns an exact
+positive result: three non-collinear boundary contacts uniquely determine the circle in every
+block (20/20). No contribution was removed; the estimator result and the stronger universal
+criterion are now stated side by side.
+
 | # | Wrong claim | Correct claim | Caught by |
 |---|---|---|---|
 | 1 | The joint gate-miss factor is $(1-r_1)^N(1-r_2)^N$ | The two per-mode contact events are dependent within a rollout; the joint factor is $(1-r_\cup)^N$, with a sharp distribution-free bracket and a sign rule for the product's error | Measuring $P(\text{both})$ at 50k rollouts: the dependence changes sign across the knob grid |
@@ -267,6 +298,9 @@ error rather than a default.
 | 28 | The two CEM rows with `crossing = 0.0000` instantiate the bound's zero-reach branch | An observed zero is censored; the rows carry an upper bound on the crossing probability, and the play-cost claim is an inequality | External review point #7 |
 | 29 | Certification "stayed sound" | It was *sample-consistent*: no accepted artifact contradicted a transition of the sample it was scored on. Soundness is reserved for a stated logical property | External review point #6 |
 | 30 | The acceptance gate verifies the artifact | It scores the artifact on the sample it was refined against. An independent acceptance sample is a different test, and it is now run over all 625 versioned artifacts | External review point #1 |
+| 31 | The pendulum is 34/34 blocks all-repair (exact lower bound 0.897) | That was the probe-criterion figure left in place after the exactness correction; under the corrected (grid-exact) criterion it is 30/34, exact 95% CI [0.725, 0.967] — the four exceptions are the phantom-stop blocks. 34/34 + 20/22 also contradicted the paper's own 50/56 | Pre-submission review 2026-08-18; the audit now checks the per-instrument figures |
+| 32 | Code creates "the exact-repair capability that learned models lack" | Float-exactness is a property of any class containing the mode: the measured event-function baseline attains it on the 1D clamp (threshold 8.0 recovered from 4 contacts, gate pass at 1e-9). What code supplies is the universal class — and 2D shows universality does not deliver located-rule induction | H5 baseline (`results/mode_capable_baseline_h5.json`), integrated 2026-08-18 |
+| 33 | Abstract: the disc is identifiable "within the finitely parameterized families the artifacts and controls inhabit" | Contradicted the body (the hull remains consistent in 20/20; the template library is not identified). Now "relative to a stated hypothesis class and tolerance", matching `sec:arity` and Prop. discident | Pre-submission review 2026-08-18 (H1 acceptance criterion) |
 
 ## Instrument design
 

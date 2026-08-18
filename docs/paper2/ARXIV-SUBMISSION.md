@@ -18,9 +18,10 @@ Status: **ready to submit** (new submission, not a replacement).
   `axis_separation`, `smooth_localization`, `per_seed_distributions`),
   regenerated from the result JSONs by `scripts/make_paper2_figures.py`.
 - `abstract-arxiv.txt` — **the abstract for the submission form**: plain ASCII,
-  1901 characters, under arXiv's hard 1920-character limit, condensed from the
-  post-review abstract (105/111 draws, targeted interventions, located rule,
-  1034 artifacts). Paste this, not the LaTeX abstract.
+  1915 characters, under arXiv's hard 1920-character limit, condensed from the
+  post-hardening abstract (105/111 draws, 50/56 blocks, 0/156, targeted
+  interventions, located rule, 1034 artifacts). Paste this, not the LaTeX
+  abstract.
 
 ## 2. The submission bundle (upload this)
 
