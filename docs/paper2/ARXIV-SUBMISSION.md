@@ -74,6 +74,13 @@ for consistency with paper 1's bundle and so the source is self-contained.
 5. Comments field: page count and that code/data are public.
 6. After announcement: add the arXiv ID to the README, and update paper 3's
    `references.bib` entry for this paper from "in preparation" to the real ID.
+7. After announcement, in the **`personal-website` repo**: the companion blog post
+   is written and waiting on branch `blog/infer-the-rule-in-one-dimension` (EN+ES,
+   hero image done, LinkedIn body hand-written, X thread drafted). It carries
+   `ARXIV_PENDING` placeholders and a placeholder `pubDate`; its own
+   `docs/marketing/publish-checklist-infer-the-rule-in-one-dimension.md` lists the
+   exact steps. Merging that branch to `main` publishes the blog, dev.to and
+   LinkedIn in one go, so do it only once the ID is real.
 
 ## 3b. Verification of the CURRENT bundle (2026-08-09, post-review v1.6)
 
