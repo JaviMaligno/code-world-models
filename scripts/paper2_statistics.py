@@ -61,6 +61,7 @@ import json
 import math
 import pathlib
 import random
+import re
 import sys
 from collections import defaultdict
 
@@ -71,6 +72,19 @@ from cwm.law import wilson_ci  # noqa: E402
 
 R = _REPO / "results"
 ALPHA = 0.05
+# The JSON is versioned so prose can cite a stable schema. Bump on any change to
+# the report's keys or to a definition a quoted number depends on.
+VERSION = 2
+VERSION_HISTORY = {
+    1: "review point #5: unit hierarchy, block-level bounds, labelled comparators",
+    2: "fifth review H3: canonical campaign table (exact/phantom/refused/blind per "
+       "campaign), the four-level unit ladder made explicit (raw random-stream "
+       "block < instrument-block < treatment cell < draw), instrument-block "
+       "promoted to the primary unit for the 1D repair claims, the knob-cell "
+       "census derived rather than hand-summed, the agent-relayed phantom "
+       "detected from the versioned transcript, and the Qwen same-model "
+       "same-blocks replicate pair compared cell by cell",
+}
 EXPLOITED_PLAY_COST = 0.9   # "below random"; the observed values are >= 0.994
 
 
@@ -613,13 +627,59 @@ def cluster_bootstrap(draws, predicate, n_boot=10000, seed=0,
 # artifacts are the half-plane at the near face, which scores blindness 0 while freezing
 # 4.6x the true region -- results/arity_evidence_ablations.json).
 # Counting either as a repair would let the paper claim a recovery that did not happen.
+_NEG_SIDE_CLAMP = {
+    # The true 1D modes clamp on the POSITIVE side (x' >= x_wall, th' >= th_stop),
+    # so a clamp branch comparing the landing coordinate against a negative
+    # constant is an invented second mode -- the phantom class.
+    "cart": re.compile(r"\bx2?\s*<=?\s*-"),
+    "pendulum": re.compile(r"\bth2?\s*<=?\s*-"),
+}
+
+
+def _relay_invented_modes(results_dir: pathlib.Path = R) -> set:
+    """Accepted agent-relayed 1D artifacts carrying a clamp on the side of the
+    state space opposite the true one-sided mode.  This is the paper's Claude
+    phantom (pendulum seed 20000: `elif th2 < -th_max`), re-derived mechanically
+    from the versioned final transcript rather than hand-listed, per the rule
+    that outcome lists are derived from artifacts or raise."""
+    out = set()
+    p = results_dir / "continuous_claude_relay.json"
+    if not p.exists():
+        return out
+    for cell in json.loads(p.read_text()):
+        if cell["arm"] != "incomplete" or not cell["gate_passed"]:
+            continue
+        if (cell.get("wall_blindness") or 0.0) != 0.0:
+            continue
+        inst = cell["instrument"]
+        if inst not in _NEG_SIDE_CLAMP:
+            raise ValueError(f"no negative-side clamp pattern for {inst!r}")
+        prefix = _REPO / cell["transcript_prefix"]
+        replies = sorted(prefix.parent.glob(prefix.name + "_reply*.txt"),
+                         key=lambda q: int(re.search(r"reply(\d+)", q.name).group(1)))
+        if not replies:
+            raise FileNotFoundError(
+                f"accepted relay cell {inst}/{cell['seed']} has no versioned "
+                f"transcript under {prefix} -- the phantom check cannot run")
+        code = replies[-1].read_text().split("def reward")[0]
+        if _NEG_SIDE_CLAMP[inst].search(code):
+            out.add((p.name, inst, cell["seed"]))
+    return out
+
+
 def _probe_false_positives() -> set:
+    """Keys are (file, instrument, seed) TRIPLES: the relay file holds cart and
+    pendulum cells under the same seeds, so a (file, seed) pair would convict
+    both instruments for one artifact's phantom."""
     out = set()
     f = R / "repair_exactness_1d.json"
     if f.exists():
-        for arm in json.loads(f.read_text())["arms"].values():
+        for arm_name, arm in json.loads(f.read_text())["arms"].items():
+            inst = arm_name.split("_")[0]
+            if inst not in ("cart", "pendulum"):
+                raise ValueError(f"unrecognised 1D exactness arm {arm_name!r}")
             for e in arm["exceptions"]:
-                out.add((pathlib.Path(e["file"]).name, e["seed"]))
+                out.add((pathlib.Path(e["file"]).name, inst, e["seed"]))
     f = R / "arity_evidence_ablations.json"
     if f.exists():
         rep = json.loads(f.read_text())
@@ -627,7 +687,11 @@ def _probe_false_positives() -> set:
             files = {sz: v["file"] for sz, v in camp["per_size"].items()}
             for a in camp["artifacts"]:
                 if a["repaired_gate_and_probe"] and not a["repaired_behavioural"]:
-                    out.add((files.get(a["size"], ""), a["seed"]))
+                    fname = files.get(a["size"], "")
+                    if "patch2d" not in fname:
+                        raise ValueError(f"non-patch2d arity ablation file {fname!r}")
+                    out.add((fname, "patch2d", a["seed"]))
+    out |= _relay_invented_modes()
     return out
 
 
@@ -642,7 +706,8 @@ def is_repair(d) -> bool:
     over-covers the true region. See _probe_false_positives above."""
     if not (d["gate_passed"] and (d["blindness"] or 0.0) == 0.0):
         return False
-    return (pathlib.Path(d["file"]).name, d["seed"]) not in _PROBE_FALSE_POSITIVES
+    return ((pathlib.Path(d["file"]).name, d["instrument"], d["seed"])
+            not in _PROBE_FALSE_POSITIVES)
 
 
 def is_blind_exploited(d) -> bool:
@@ -657,6 +722,228 @@ def is_partial_repair(d) -> bool:
         return False
     vals = list(d["per_mode_blindness"].values())
     return any(v == 0.0 for v in vals) and any(v > 0.0 for v in vals)
+
+
+# --------------------------------------------------------------------------- #
+# the canonical campaign table (fifth review, H3)                             #
+# --------------------------------------------------------------------------- #
+def campaign_key(d: dict) -> str:
+    """A campaign is a treatment with the arm stripped: the full and incomplete
+    arms of one configuration are two arms of ONE campaign."""
+    parts = treatment_key(d).split(" | ")
+    if not parts[-1].startswith("arm="):
+        raise ValueError(f"treatment key without arm suffix: {parts!r}")
+    return " | ".join(parts[:-1])
+
+
+# The closed outcome vocabulary of the canonical table. Derived from classify()
+# plus the behavioural audits; canonical_outcome raises on anything outside it.
+CANONICAL_OUTCOMES = ("exact_repair", "phantom_repair", "refused",
+                      "blind_accepted", "partial_accepted",
+                      "control_translated", "control_mode_wrong")
+
+
+def canonical_outcome(d: dict) -> str:
+    """One label per draw for the campaign table.  `phantom_repair` is a draw the
+    gate and probe accept while a behavioural or transcript audit shows an
+    invented or over-covering mode (_PROBE_FALSE_POSITIVES); `exact_repair` is a
+    probe repair that survives those audits."""
+    o = d["outcome"]
+    if o in ("rejected", "rejected_stalled"):
+        return "refused"
+    if d["arm"] == "full":
+        if o in ("control_translated", "control_mode_wrong"):
+            return o
+        raise ValueError(f"unexpected full-arm outcome {o!r}")
+    if o == "repaired":
+        return "exact_repair" if is_repair(d) else "phantom_repair"
+    if o in ("blind_and_exploited", "blind_not_exploited"):
+        return "blind_accepted"
+    if o == "partial_repair":
+        return "partial_accepted"
+    raise ValueError(f"unexpected incomplete-arm outcome {o!r}")
+
+
+def accepted_play_cost(sel, campaign_key_str, arm,
+                       n_boot=20_000) -> dict | None:
+    """Prop. `prop:risk` needs the conditional factor E[X | accepted], so the
+    campaign row carries the mean play cost over accepted draws with a
+    block-clustered percentile bootstrap 95% interval: the resampling unit is
+    the instrument--stream block, never the draw, because draws sharing a block
+    share their gate sample.  Deterministic seed from the (campaign, arm) key."""
+    acc = [d for d in sel if d["gate_passed"] and d["play_cost"] is not None]
+    if not acc:
+        return None
+    blocks = defaultdict(list)
+    for d in acc:
+        blocks[by_instrument_block(d)].append(d["play_cost"])
+    keys = sorted(blocks)
+    mean = math.fsum(pc for pcs in blocks.values() for pc in pcs) / len(acc)
+    if len(keys) == 1:
+        return {"n_accepted": len(acc), "n_blocks": 1, "mean": mean,
+                "cluster_bootstrap_95": None,
+                "note": "one block; no cluster interval is identifiable"}
+    rng = random.Random(f"accepted_play_cost|{campaign_key_str}|{arm}")
+    stats = []
+    for _ in range(n_boot):
+        picked = [keys[rng.randrange(len(keys))] for _ in keys]
+        vals = [pc for k in picked for pc in blocks[k]]
+        stats.append(math.fsum(vals) / len(vals))
+    stats.sort()
+    lo = stats[int(0.025 * n_boot)]
+    hi = stats[min(n_boot - 1, int(0.975 * n_boot))]
+    return {"n_accepted": len(acc), "n_blocks": len(keys), "mean": mean,
+            "cluster_bootstrap_95": [lo, hi],
+            "unit": "instrument-stream block", "n_boot": n_boot}
+
+
+def campaign_table(draws) -> list:
+    """The canonical per-campaign rows: models, distinct raw blocks, draws per
+    block, and the closed outcome decomposition, with the block-level exact
+    bound for the mode-present branch.  Draw counts are the artifact census;
+    the block columns are the inference unit."""
+    camps = defaultdict(list)
+    for d in draws:
+        camps[campaign_key(d)].append(d)
+    rows = []
+    for ck, ds in sorted(camps.items()):
+        row = {"campaign": ck,
+               "instrument": ds[0]["instrument"],
+               "files": sorted({d["file"] for d in ds}),
+               "models": sorted({d["model"] for d in ds}),
+               "families": sorted({d["family"] for d in ds})}
+        for arm in ("incomplete", "full"):
+            sel = [d for d in ds if d["arm"] == arm]
+            if not sel:
+                continue
+            per_block = defaultdict(int)
+            for d in sel:
+                per_block[d["block"]] += 1
+            oc = defaultdict(int)
+            for d in sel:
+                o = canonical_outcome(d)
+                if o not in CANONICAL_OUTCOMES:
+                    raise ValueError(o)
+                oc[o] += 1
+            accepted = [d for d in sel
+                        if d["gate_passed"] and d["blindness"] is not None]
+            entry = {
+                "n_draws": len(sel),
+                "n_blocks": len(per_block),
+                "draws_per_block": {"min": min(per_block.values()),
+                                    "max": max(per_block.values())},
+                "n_mode_present": sum(1 for d in sel if d["mode_present"]),
+                "n_mode_absent": sum(1 for d in sel if not d["mode_present"]),
+                "outcomes": dict(sorted(oc.items())),
+                "mean_blindness_accepted":
+                    (math.fsum(d["blindness"] for d in accepted) / len(accepted)
+                     if accepted else None),
+                "accepted_play_cost": accepted_play_cost(sel, ck, arm),
+            }
+            if arm == "incomplete":
+                present = [d for d in sel if d["mode_present"]]
+                if present:
+                    entry["exact_repair_blocks"] = pooled_bound(
+                        present, is_repair, unit="block", scoring="all",
+                        cluster_key=by_instrument_block,
+                        label=f"exact repair | {ck}")
+                absent = [d for d in sel if not d["mode_present"]]
+                if absent:
+                    entry["blind_exploited_blocks"] = pooled_bound(
+                        absent, is_blind_exploited, unit="block", scoring="all",
+                        cluster_key=by_instrument_block,
+                        label=f"blind-and-exploited | {ck}")
+            row[arm] = entry
+        rows.append(row)
+    return rows
+
+
+def campaign_table_totals(rows) -> dict:
+    oc = defaultdict(int)
+    n = 0
+    for r in rows:
+        for arm in ("incomplete", "full"):
+            if arm in r:
+                n += r[arm]["n_draws"]
+                for k, v in r[arm]["outcomes"].items():
+                    oc[k] += v
+    return {"n_campaigns": len(rows), "n_draws": n,
+            "outcomes": dict(sorted(oc.items()))}
+
+
+# The one same-model, same-blocks replicate pair in the versioned data: the Qwen
+# 2D first pass (mixed serving: HF-router full cells, vLLM incomplete cells) and
+# the backend-matched re-run (both arms on one pinned vLLM configuration,
+# results/qwen_vllm_provenance.json). Two separate executions of one checkpoint
+# on byte-identical gate samples.
+REPLICATE_PAIR = (
+    "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json",
+    "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7"
+    "_matched-vllm.json",
+)
+
+
+def replicate_same_model_same_blocks(results_dir: pathlib.Path = R):
+    """H3's affordable repeat: the same checkpoint run twice on identical gate
+    samples, so any disagreement is synthesizer-side variability and cannot be
+    evidence variability.  Reports cell-by-cell agreement; it does NOT identify
+    the mechanism behind agreement (decoding at temperature 0.7 could still be
+    effectively deterministic on these prompts)."""
+    pa, pb = (results_dir / n for n in REPLICATE_PAIR)
+    if not (pa.exists() and pb.exists()):
+        return None
+    a, b = (json.loads(p.read_text()) for p in (pa, pb))
+    cells_a = {(c["arm"], c["seed"]): c for c in a["cells"]}
+    cells_b = {(c["arm"], c["seed"]): c for c in b["cells"]}
+    if set(cells_a) != set(cells_b):
+        raise ValueError("replicate files do not share their cell grid")
+    rows = []
+    for key in sorted(cells_a):
+        ca, cb = cells_a[key], cells_b[key]
+        per = ca.get("sample_contains_mode_per")
+        present = (any(per.values()) if per is not None
+                   else bool(ca["sample_contains_wall"]))
+        oa = classify(ca, present, a["params"]["max_iters"])
+        ob = classify(cb, present, b["params"]["max_iters"])
+        rows.append({
+            "arm": key[0], "seed": key[1], "block": block_of(key[1]),
+            "gate_accuracy": [ca["gate_accuracy"], cb["gate_accuracy"]],
+            "abs_gate_accuracy_diff":
+                abs(ca["gate_accuracy"] - cb["gate_accuracy"]),
+            "gate_passed_agree": ca["gate_passed"] == cb["gate_passed"],
+            "outcome": [oa, ob],
+            "outcome_agree": oa == ob,
+            "code_identical": ca["code"] == cb["code"],
+        })
+    inc = [r for r in rows if r["arm"] == "incomplete"]
+    return {
+        "what_this_is": (
+            "one checkpoint (Qwen3-Coder-30B) executed twice on byte-identical "
+            "gate samples: the mixed-serving first pass against the pinned-vLLM "
+            "matched re-run. Fixed evidence, fresh synthesis -- the comparison "
+            "that separates synthesizer variability from evidence variability."),
+        "files": list(REPLICATE_PAIR),
+        "model": a["model"],
+        "backends": {
+            "first_pass": "HF-router full cells, vLLM incomplete cells",
+            "matched": "vLLM 0.26.0, both arms, pinned generation_config "
+                       "(results/qwen_vllm_provenance.json)"},
+        "n_cells": len(rows),
+        "n_outcome_agree": sum(r["outcome_agree"] for r in rows),
+        "n_gate_decision_agree": sum(r["gate_passed_agree"] for r in rows),
+        "n_code_identical": sum(r["code_identical"] for r in rows),
+        "max_abs_gate_accuracy_diff_incomplete":
+            max(r["abs_gate_accuracy_diff"] for r in inc),
+        "cells": rows,
+        "caveat": (
+            "agreement this exact (identical incomplete-cell gate accuracies, "
+            "3/6 byte-identical artifacts) under nominally stochastic decoding "
+            "(temperature 0.7) is consistent with near-zero output entropy on "
+            "these prompts; the section measures the realized variability and "
+            "does not identify its mechanism. One family, n = 6 cells; the "
+            "GPT-5.x arms have no such repeat (route recorded in "
+            "docs/paper2/STRONGER-STATEMENTS.md)."),
+    }
 
 
 def heterogeneity_across_treatments(groups: dict, predicate,
@@ -784,8 +1071,32 @@ def _select(draws, **kw):
 def build_report(draws) -> dict:
     rep = {
         "script": "paper2_statistics.py",
-        "review_point": "#5 -- statistics by experimental unit",
+        "version": VERSION,
+        "version_history": VERSION_HISTORY,
+        "review_point": "#5 -- statistics by experimental unit; fifth review H3",
         "alpha": ALPHA,
+        "unit_ladder": {
+            "why": ("four nested levels, coarsest to finest; every count in the "
+                    "paper names its level"),
+            "1_raw_random_stream_block": (
+                "seed // 10000: the shared random stream (initial states + "
+                "actions), identical byte for byte across instruments, knobs, "
+                "shapes and prompts. The strictest clustering: cart block 7 and "
+                "pendulum block 7 are ONE cluster."),
+            "2_instrument_block": (
+                "(instrument, raw block): the same stream pushed through one "
+                "instrument's dynamics -- one gate SAMPLE. Two instruments on a "
+                "shared stream give dependent (common random numbers) but not "
+                "identical samples. PRIMARY unit for the 1D repair claims."),
+            "3_treatment_cell": (
+                "(instrument, knob, shape, prompt, budget, arm) x block: one "
+                "treatment applied to one sample. Changing the knob or prompt "
+                "adds a treatment, never a sample."),
+            "4_draw": (
+                "one synthesize+refine attempt = (treatment cell, model). The "
+                "artifact census unit; never an inference unit while blocks "
+                "repeat."),
+        },
         "unit_hierarchy": {
             "primary_unit": {
                 "name": "gate-sample block",
@@ -837,6 +1148,9 @@ def build_report(draws) -> dict:
         },
         "treatment_table": treatment_table(draws),
     }
+    rep["campaign_table"] = campaign_table(draws)
+    rep["campaign_table_totals"] = campaign_table_totals(rep["campaign_table"])
+    rep["replicate_same_model_same_blocks"] = replicate_same_model_same_blocks()
     rep["headline"] = _headline(draws)
     rep["censored_zeros"] = _censored_zeros(draws)
     rep["paper_replacements"] = _replacements(rep)
@@ -884,8 +1198,17 @@ def _headline(draws) -> dict:
     out = {}
 
     # --- 1. the 2D negative result -----------------------------------------
-    p2d = _select(draws, instrument="patch2d", arm="incomplete", family="gpt-5.x",
-                  mode_present=True)
+    p2d_all = _select(draws, instrument="patch2d", arm="incomplete",
+                      family="gpt-5.x", mode_present=True)
+    # The paper's 0/156 census is the FOUR NAMED CAMPAIGNS (disc at both knobs,
+    # the square ablation, the guided 3x-budget treatment). Every constraint is
+    # stated, because later campaigns (hints, arcs, clamp/landing effects, the
+    # slab, raised rollouts) share instrument/arm/family and silently inflated
+    # an unconstrained selection to 416 draws while its label still said 156.
+    p2d = _select(p2d_all, mode_effect="freeze", mode_hint=None, start_arc=None,
+                  n_rollouts=40,
+                  patch_shape=lambda s: s in ("disc", "square"),
+                  prompt_variant=lambda p: p in ("default", "region"))
     out["patch2d_repair_negative"] = {
         "paper_text": "0/156 mode-containing seeds on PatchField2D",
         "what_is_pooled": ("two model sizes (mini, large) x the two disc knobs "
@@ -924,10 +1247,26 @@ def _headline(draws) -> dict:
                  ["INVALID_draw_level_comparator"]["clopper_pearson_95"][1])
     out["patch2d_repair_negative"]["honest_over_naive_upper_bound_ratio"] = inflation
 
+    # the same zero over EVERY GPT-5.x patch2d treatment (hints, arcs, post-state
+    # effects, the slab, raised rollouts included): a broader pool, correctly
+    # labelled as such -- the census above is the four-campaign figure
+    out["patch2d_repair_negative_all_treatments"] = {
+        "paper_text": ("no artifact recovered a located region rule in any "
+                       "patch2d treatment we ran"),
+        "n_draws": len(p2d_all),
+        "n_distinct_blocks": len({d["block"] for d in p2d_all}),
+        "HONEST_block_level": pooled_bound(
+            p2d_all, is_repair, unit="block", scoring="all",
+            label="per-block repair probability pooling every patch2d "
+                  "treatment (0 successes, so pooling is the benign direction)"),
+        "note": ("exact-repair means the full region rule; the slab campaign's "
+                 "probe-passing half-planes are phantom_repair (over-covering), "
+                 "per the behavioural audit"),
+    }
+
     # partial repair (the see-one-miss-the-other branch on the DISC cells,
     # which is the 66 the paper quotes)
-    see1 = _select(draws, instrument="patch2d", arm="incomplete",
-                   family="gpt-5.x", n_modes_seen=1, patch_shape="disc",
+    see1 = _select(p2d, n_modes_seen=1, patch_shape="disc",
                    prompt_variant="default")
     out["patch2d_partial_repair_negative"] = {
         "paper_text": "0/66 partial repair",
@@ -1000,19 +1339,21 @@ def _headline(draws) -> dict:
         "n_distinct_blocks": len({d["block"] for d in one}),
         "n_distinct_instrument_blocks": len({(d["instrument"], d["block"])
                                              for d in one}),
+        "PRIMARY_instrument_block_all_scoring": pooled_bound(
+            one, is_repair, unit="block", scoring="all",
+            cluster_key=by_instrument_block,
+            label="PRIMARY: per-gate-sample probability that every attempt on "
+                  "a fresh mode-containing sample repairs exactly. The cluster "
+                  "is the instrument-block -- one stream through one "
+                  "instrument's dynamics is one sample; instruments sharing a "
+                  "stream are dependent through common random numbers only"),
         "clustered_aggregate_block_level_all_scoring": pooled_bound(
             one, is_repair, unit="block", scoring="all",
-            label="per-block probability that EVERY attempt on a fresh "
-                  "mode-containing sample repairs (conservative; quote this)"),
+            label="strictest comparator: raw random-stream blocks, under which "
+                  "cart and pendulum runs of one seed are ONE cluster"),
         "block_level_any_scoring": pooled_bound(
             one, is_repair, unit="block", scoring="any",
             label="per-block probability that SOME attempt repairs (optimistic)"),
-        "clustered_by_instrument_block_comparator": pooled_bound(
-            one, is_repair, unit="block", scoring="all",
-            cluster_key=by_instrument_block,
-            label="looser clustering: a fresh instrument on the same seed "
-                  "counted as a fresh cluster (common random numbers, "
-                  "different dynamics)"),
         "INVALID_draw_level_comparator": pooled_bound(
             one, is_repair, unit="draw", comparator=True,
             label="what pooling 111 correlated draws would have said"),
@@ -1057,6 +1398,19 @@ def _headline(draws) -> dict:
             "block_level_all_scoring": pooled_bound(sel, is_repair,
                                                     unit="block", scoring="all"),
         }
+    pk = out["onedim_repair"]["per_knob"]
+    out["onedim_repair"]["knob_cell_census"] = {
+        "what_this_is": ("the per-(instrument, knob) block cells SUMMED -- a "
+                         "block sampled at two knobs contributes two cells, so "
+                         "these are knob-level cells, NOT distinct blocks; the "
+                         "distinct-block counts are the two clusterings above"),
+        "n_cells": sum(v["block_level_all_scoring"]["n"] for v in pk.values()),
+        "n_cells_all_repair":
+            sum(v["block_level_all_scoring"]["k"] for v in pk.values()),
+        "per_knob_cells": {name: {"k": v["block_level_all_scoring"]["k"],
+                                  "n": v["block_level_all_scoring"]["n"]}
+                           for name, v in sorted(pk.items())},
+    }
     out["onedim_repair"]["heterogeneity_across_knobs"] = \
         heterogeneity_across_treatments(dict(knobs), is_repair)
     out["onedim_repair"]["heterogeneity_across_knobs"]["why_this_matters"] = (
@@ -1133,8 +1487,14 @@ def _censored_zeros(draws) -> list:
             "note": note,
         })
 
+    # The census selection: the four named campaigns, with every constraint that
+    # keeps later patch2d treatments (hints, arcs, clamp/landing, slab, raised
+    # rollouts) out of a count whose label says 156. Mirrors _headline.
     p2d = _select(draws, instrument="patch2d", arm="incomplete",
-                  family="gpt-5.x", mode_present=True)
+                  family="gpt-5.x", mode_present=True, mode_effect="freeze",
+                  mode_hint=None, start_arc=None, n_rollouts=40,
+                  patch_shape=lambda s: s in ("disc", "square"),
+                  prompt_variant=lambda p: p in ("default", "region"))
     add("censored_zeros.patch2d_pooled_0_of_156",
         "0/156 mode-containing seeds recover the 2D region", p2d,
         note="pools 4 treatments over 20 blocks")
@@ -1149,8 +1509,7 @@ def _censored_zeros(draws) -> list:
         _select(p2d, prompt_variant="region"))
     add("censored_zeros.patch2d_partial_repair_0_of_66",
         "0/66 partial repair",
-        _select(draws, instrument="patch2d", arm="incomplete",
-                family="gpt-5.x", n_modes_seen=1, patch_shape="disc",
+        _select(p2d, n_modes_seen=1, patch_shape="disc",
                 prompt_variant="default"),
         predicate=is_partial_repair,
         note="the disc cells' see-one-miss-the-other branch; the gate refused "
@@ -1322,6 +1681,22 @@ def main() -> int:
               f"any-scoring {pi['block_level_any_scoring']['k']}/"
               f"{pi['block_level_any_scoring']['n']} lower "
               f"{pi['block_level_any_scoring']['clopper_pearson_95'][0]:.4f}")
+    prim = one["PRIMARY_instrument_block_all_scoring"]
+    print(f"  PRIMARY (instrument-block): {prim['k']}/{prim['n']} -> exact 95% "
+          f"[{prim['clopper_pearson_95'][0]:.4f}, "
+          f"{prim['clopper_pearson_95'][1]:.4f}]")
+    cc = one["knob_cell_census"]
+    print(f"  knob-cell census: {cc['n_cells_all_repair']}/{cc['n_cells']} "
+          f"knob-level block cells all-repair (cells, not distinct blocks)")
+    print(f"\nCAMPAIGN TABLE: {rep['campaign_table_totals']['n_campaigns']} "
+          f"campaigns, {rep['campaign_table_totals']['n_draws']} draws; "
+          f"outcomes {rep['campaign_table_totals']['outcomes']}")
+    rp = rep["replicate_same_model_same_blocks"]
+    if rp:
+        print(f"REPLICATE (same model, same blocks): {rp['n_outcome_agree']}/"
+              f"{rp['n_cells']} outcomes agree, max incomplete gate-accuracy "
+              f"diff {rp['max_abs_gate_accuracy_diff_incomplete']:.1e}, "
+              f"{rp['n_code_identical']}/{rp['n_cells']} artifacts byte-identical")
     print("\nCENSORED ZEROS")
     for z in rep["censored_zeros"]:
         print(f"  {z['key']:<52} {z['cite_as']}")

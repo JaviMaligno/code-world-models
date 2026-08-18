@@ -1539,9 +1539,22 @@ claim("all 33 cart repairs are exact, its mode being a half-line with no far sid
 _p2s = load("paper2_statistics")
 claim("with the corrected criterion the 1D aggregate is 30 of 36 blocks all-repair, "
       "exact 95% CI [0.672, 0.936]",
-      "30/36" in _p2s["headline"]["onedim_repair"]
-      ["clustered_aggregate_block_level_all_scoring"]["claim"]
-      or True)   # the interval itself is asserted below
+      _p2s["headline"]["onedim_repair"]
+      ["clustered_aggregate_block_level_all_scoring"]["k"] == 30
+      and _p2s["headline"]["onedim_repair"]
+      ["clustered_aggregate_block_level_all_scoring"]["n"] == 36
+      and all(abs(a - b) < 5e-4 for a, b in zip(
+          _p2s["headline"]["onedim_repair"]
+          ["clustered_aggregate_block_level_all_scoring"]["clopper_pearson_95"],
+          [0.6718840679570819, 0.9362798663916143])))
+_primary_1d = _p2s["headline"]["onedim_repair"]["PRIMARY_instrument_block_all_scoring"]
+claim("the primary 1D unit is the instrument-stream block: 50/56 all-attempt exact, "
+      "exact 95% CI [0.781, 0.960]",
+      _primary_1d["k"] == 50 and _primary_1d["n"] == 56
+      and _primary_1d["cluster_key"] == "by_instrument_block"
+      and all(abs(a - b) < 5e-4 for a, b in zip(
+          _primary_1d["clopper_pearson_95"],
+          [0.7812435281547205, 0.9596520538091777])))
 _agg = _p2s["headline"]["onedim_repair"]
 claim("the 1D repair aggregate counts 111 draws over 36 blocks",
       _agg["n_draws"] == 111 and _agg["n_distinct_blocks"] == 36,
@@ -1693,13 +1706,16 @@ _blk = {}
 for _r in _oneD:
     _ok = _r["in_sample_gate_passed"] and (_r["file"], _r["seed"]) not in _exc1d
     _blk.setdefault(_r["block_key"], []).append(_ok)
-claim("105 of 111 mode-containing DRAWS repaired exactly, spanning 70 distinct blocks of "
-      "which 64 are exact on every draw (six failures in six distinct blocks)",
+claim("105 of 111 mode-containing DRAWS repaired exactly; the treatment-resolved census "
+      "is 70 knob-level block cells, 64 exact on every draw",
       len(_oneD) == 111
       and sum(sum(v) for v in _blk.values()) == 105
       and len(_blk) == 70
       and sum(1 for v in _blk.values() if all(v)) == 64
-      and sum(1 for v in _blk.values() if not all(v)) == 6)
+      and sum(1 for v in _blk.values() if not all(v)) == 6
+      and _p2s["headline"]["onedim_repair"]["knob_cell_census"]["n_cells"] == 70
+      and _p2s["headline"]["onedim_repair"]["knob_cell_census"]
+      ["n_cells_all_repair"] == 64)
 # The MATCHED campaign (fourth review, point 1) is the contrast the paper cites: both
 # arms on one pinned vLLM backend (provenance in results/qwen_vllm_provenance.json). The
 # first-pass mixed-provenance file is retained as an exploratory unmatched spot-check.
@@ -1783,6 +1799,171 @@ claim("all 613 independently accepted draws are exact outside the mode region ON
       _ex["n_accepted"] == 613 and _ex["n_exceptions"] == 0
       and _ex["n_exact_outside_mode"] == 613,
       f"{_ex['n_exact_outside_mode']}/{_ex['n_accepted']}")
+
+# --- per-instrument block figures under the corrected (grid-exact) criterion --
+_pi = _p2s["headline"]["onedim_repair"]["per_instrument"]
+_pend_b = _pi["pendulum"]["block_level_all_scoring"]
+_cart_b = _pi["cart"]["block_level_all_scoring"]
+claim("pendulum is 30/34 blocks all-repair under the corrected criterion, "
+      "exact 95% CI [0.725, 0.967]",
+      _pend_b["k"] == 30 and _pend_b["n"] == 34
+      and all(abs(a - b) < 5e-4 for a, b in
+              zip(_pend_b["clopper_pearson_95"], [0.72549651, 0.96699832])))
+claim("cart is 20/22 blocks all-repair, exact lower bound 0.708",
+      _cart_b["k"] == 20 and _cart_b["n"] == 22
+      and abs(_cart_b["clopper_pearson_95"][0] - 0.7084) < 5e-4)
+claim("cart any-scoring ('some attempt repairs') exact lower bound 0.772",
+      abs(_pi["cart"]["block_level_any_scoring"]["clopper_pearson_95"][0]
+          - 0.772) < 5e-3)
+claim("pendulum spans 34 distinct blocks (76 GPT draws); cart 22 (35 draws)",
+      _pi["pendulum"]["n_distinct_blocks"] == 34
+      and _pi["pendulum"]["n_draws"] == 76
+      and _pi["cart"]["n_distinct_blocks"] == 22
+      and _pi["cart"]["n_draws"] == 35)
+_kc = _p2s["headline"]["onedim_repair"]["knob_cell_census"]
+claim("the knob-level block-cell census is 64/70",
+      _kc["n_cells"] == 70 and _kc["n_cells_all_repair"] == 64)
+
+# --- accepted-artifact play cost, per campaign (Prop. prop:risk's factor) ----
+_c8 = next(r for r in _p2s["campaign_table"]
+           if r["campaign"] == "cart | x_wall=8 | prompt=default | it=5")
+_apc = _c8["incomplete"]["accepted_play_cost"]
+claim("cart headline incomplete arm: accepted mean play cost 0.508 over 61 draws, "
+      "block-clustered bootstrap 95% [0.344, 0.671]",
+      _apc["n_accepted"] == 61 and abs(_apc["mean"] - 0.508) < 5e-4
+      and abs(_apc["cluster_bootstrap_95"][0] - 0.344) < 5e-3
+      and abs(_apc["cluster_bootstrap_95"][1] - 0.671) < 5e-3)
+
+# --- H5: the mode-capable learned baseline (sec:smooth) ----------------------
+_h5 = load("mode_capable_baseline_h5")
+_h5wf, _h5wc = _h5["cart"]["arms"][0], _h5["cart"]["arms"][1]
+claim("H5 wall-containing arm: threshold recovered exactly at 8.0 from 4 contacts, "
+      "float-exact on all 3200 held-out transitions, gate pass at 1e-9, play_cost 0",
+      _h5wc["arm"] == "wall-containing" and _h5wc["n_contacts"] == 4
+      and _h5wc["learned_threshold"] == 8.0
+      and _h5wc["mode_rule_recovered_exactly"] is True
+      and _h5wc["heldout"]["n_transitions"] == 3200
+      and _h5wc["heldout"]["max_error"] == 0.0
+      and _h5wc["gate_40_eps1e-9"]["passed"] is True
+      and _h5wc["planner"]["play_cost"] == 0.0)
+claim("H5 wall-free arm passes the gate mode-blind (off-mode max error 0)",
+      _h5wf["arm"] == "wall-free" and _h5wf["n_contacts"] == 0
+      and _h5wf["gate_40_eps1e-9"]["passed"] is True
+      and _h5wf["heldout"]["off_mode_max_error"] == 0.0)
+_sens = {r["n_contacts"]: r["threshold_recovered_exactly"]
+         for r in _h5["cart"]["contact_count_sensitivity"]}
+claim("H5 contact sensitivity: 3 contacts suffice, 0 contacts never do",
+      _sens.get(3) is True and _sens.get(0) is False)
+_h5d = _h5["patch2d"]["arms"]["default"]
+_h5a = _h5["patch2d"]["arms"]["arc240"]
+claim("H5 patch2d: near patch 12/20 blocks at tolerance 0.1, both patches 0/20 "
+      "(1/20 at the widest coverage)",
+      _h5d["near_mode_recovered_blocks"] == 12
+      and _h5d["both_modes_recovered_blocks"] == 0
+      and _h5d["n_seed_blocks"] == 20
+      and _h5["patch2d"]["parameter_tolerance"] == 0.1
+      and _h5a["both_modes_recovered_blocks"] == 1)
+
+# --- H7: the bounded-observation-noise gate (sup:noisygate) ------------------
+_h7 = load("h7_noisy_observation_gate_v1")
+claim("H7 panel: 200 disjoint 20-rollout blocks, mode in 189, 1816 contacts",
+      _h7["n_blocks"] == 200 and _h7["rollouts_per_block"] == 20
+      and _h7["latent_panel"]["blocks_with_mode"] == 189
+      and _h7["latent_panel"]["total_contact_transitions"] == 1816)
+_h7lv = {r["eta"]: r for r in _h7["levels"]}
+for _eta in (0.0, 0.01, 0.03, 0.1):
+    claim(f"H7 eta={_eta}: truth 200/200, blind 11/200 CP [0.0278, 0.0963], "
+          "analytic 0.0550",
+          _h7lv[_eta]["truth"]["passes"] == 200
+          and _h7lv[_eta]["blind"]["passes"] == 11
+          and abs(_h7lv[_eta]["blind"]["clopper_pearson_95"][0] - 0.0278) < 5e-4
+          and abs(_h7lv[_eta]["blind"]["clopper_pearson_95"][1] - 0.0963) < 5e-4
+          and abs(_h7lv[_eta]["blind"]["analytic_conditional_pass_probability"]
+                  - 0.0550) < 5e-5)
+claim("H7 eta=0.3: analytic 0.0556; eta=1: blind 32/200 CP [0.1121, 0.2183], "
+      "analytic 0.1582; eta=3: blind 106/200 CP [0.4583, 0.6008], analytic 0.5029; "
+      "truth 200/200 at every level",
+      abs(_h7lv[0.3]["blind"]["analytic_conditional_pass_probability"] - 0.0556) < 5e-5
+      and _h7lv[1.0]["blind"]["passes"] == 32
+      and abs(_h7lv[1.0]["blind"]["clopper_pearson_95"][0] - 0.1121) < 5e-5
+      and abs(_h7lv[1.0]["blind"]["clopper_pearson_95"][1] - 0.2183) < 5e-5
+      and abs(_h7lv[1.0]["blind"]["analytic_conditional_pass_probability"]
+              - 0.1582) < 5e-5
+      and _h7lv[3.0]["blind"]["passes"] == 106
+      and abs(_h7lv[3.0]["blind"]["clopper_pearson_95"][0] - 0.4583) < 5e-5
+      and abs(_h7lv[3.0]["blind"]["clopper_pearson_95"][1] - 0.6008) < 5e-5
+      and abs(_h7lv[3.0]["blind"]["analytic_conditional_pass_probability"]
+              - 0.5029) < 5e-5
+      and all(r["truth"]["passes"] == 200 for r in _h7["levels"]))
+claim("H7 pre-specified decisions: primary increase exactly 0 at eta=0.1, first "
+      "boundary level eta=1, and the result pins the prespec by SHA-256",
+      _h7["prespecified_decisions"]["primary_analytic_increase"] == 0.0
+      and _h7["prespecified_decisions"]["primary_criterion_met"] is True
+      and _h7["prespecified_decisions"]["first_boundary_eta"] == 1.0
+      and len(_h7.get("prespec_sha256", "")) == 64)
+
+# --- H4: the danger-law uncertainty certificate ------------------------------
+_h4 = load("danger_law_h4")
+claim("H4 covers 40 curve rows with family-wise 95% rarity intervals; both-factor "
+      "bands exist for exactly the 5 curves with committed paired episode triples",
+      _h4["uncertainty"]["total_curve_count"] == 40
+      and _h4["uncertainty"]["rarity_family_size"] == 40
+      and _h4["uncertainty"]["rarity_family_coverage"] == 0.95
+      and _h4["uncertainty"]["fully_propagated_curve_count"] == 5)
+
+# --- derived prose ratios, recomputed from their inputs ----------------------
+_pb = load("gate_partition_certificate")
+_b_exact = _pb["exact_best"]["uniform_bound"]      # 1.534
+_b_meas = _pb["measured_best"]["uniform_bound"]    # 0.933
+claim("'worth a factor of 1.6' = 1.534/0.933 at printed precision",
+      abs(_b_exact - 1.534) < 5e-4 and abs(_b_meas - 0.933) < 5e-4
+      and abs(_b_exact / _b_meas - 1.6) < 0.05)
+claim("'4.5x the plant's own constant' = 5.77/1.27; the packing route's 1.4x = 1.80/1.27",
+      abs(5.77 / _pb["L_plant"] - 4.5) < 0.05 and abs(1.80 / _pb["L_plant"] - 1.4) < 0.02)
+claim("the invalid all-steps-independent 0.785 sits a factor of 1.2 below 0.933",
+      abs(_b_meas / 0.785 - 1.2) < 0.02)
+_pn = _p2s["headline"]["patch2d_repair_negative"]
+claim("'7.2x tighter than the evidence supports' = block CP upper 0.168 over pooled 0.023",
+      abs(_pn["HONEST_block_level"]["clopper_pearson_95"][1] - 0.1684) < 5e-4
+      and abs(_pn["INVALID_draw_level_comparator"]["clopper_pearson_95"][1]
+              - 0.0234) < 5e-4
+      and abs(_pn["honest_over_naive_upper_bound_ratio"] - 7.2) < 0.05)
+claim("'about one accepted draw in sixteen' = 40/650",
+      abs(650 / 40 - 16.25) < 1e-9
+      and _ho["regressions"]["n_in_sample_accepted"] == 650
+      and _ho["regressions"]["n_rejected_by_independent_gate"] == 40)
+claim("'eleven times more mode evidence' = 7.25% / 0.66%",
+      abs(7.25 / 0.66 - 11.0) < 0.05)
+claim("'98.4% of the bound' = 1.0299/1.0463 and 'the proof is 1.0017x weaker' = "
+      "1.0463/1.0445",
+      abs(1.0299 / 1.0463 - 0.984) < 5e-4 and abs(1.0463 / 1.0445 - 1.0017) < 5e-5)
+claim("'a ratio of 1.46' = 8.31/5.70",
+      abs(8.31 / 5.70 - 1.46) < 5e-3)
+_spread_cart_default = (max(r["play_cost"] for r in reach.values())
+                        - min(r["play_cost"] for r in reach.values()))
+_rs = load("continuous_reach_sharp")["rows"]
+_spread_cart_sharp = (max(r["play_cost"] for r in _rs)
+                      - min(r["play_cost"] for r in _rs))
+_pd = load("continuous_pendulum")["rows"]
+_spread_pend_default = (max(r["play_cost"] for r in _pd)
+                        - min(r["play_cost"] for r in _pd))
+_pp = load("continuous_pendulum_sharpphantom")["rows"]
+_spread_pend_phantom = (max(r["play_cost"] for r in _pp)
+                        - min(r["play_cost"] for r in _pp))
+claim("'a 400x tightening' = cart default spread 5.5e-2 over sharp spread 1.4e-4",
+      abs(_spread_cart_default - 5.5e-2) < 5e-3
+      and abs(_spread_cart_sharp - 1.4e-4) < 2e-5
+      and 300 < _spread_cart_default / _spread_cart_sharp < 500)
+claim("'850x tighter than the default' = pendulum default spread 6.1e-2 over "
+      "phantom-variant spread 7.1e-5",
+      abs(_spread_pend_default - 6.1e-2) < 5e-3
+      and abs(_spread_pend_phantom - 7.1e-5) < 1e-5
+      and 700 < _spread_pend_default / _spread_pend_phantom < 1000)
+claim("the two cart rarity estimates of one event differ by about 10% relative "
+      "(0.01140 firing vs 0.01025 reveal)",
+      abs((0.01140 - 0.01025) / 0.01140 - 0.10) < 0.02)
+claim("'comfortably true here, where it is 48' = (5/6)*40/ln 2",
+      abs((5.0 / 6.0) * 40 / math.log(2) - 48) < 0.15)
 
 # --- report ----------------------------------------------------------------
 print(f"checked {CHECKS[0]} values from docs/paper2/main.tex against results/")

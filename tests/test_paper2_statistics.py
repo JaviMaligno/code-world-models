@@ -589,3 +589,132 @@ def test_committed_json_is_current(report):
     assert on_disk == json.loads(json.dumps(report)), (
         "results/paper2_statistics.json is stale; re-run "
         "PYTHONPATH=src python scripts/paper2_statistics.py")
+
+
+# --------------------------------------------------------------------------- #
+# 5. the fifth review's H3 layer: canonical campaign table, unit ladder,      #
+#    derived censuses, the relay phantom, and the replicate pair              #
+# --------------------------------------------------------------------------- #
+def test_report_is_versioned(report):
+    assert report["version"] == P.VERSION == 2
+    assert report["version"] in report["version_history"]
+    ladder = report["unit_ladder"]
+    for level in ("1_raw_random_stream_block", "2_instrument_block",
+                  "3_treatment_cell", "4_draw"):
+        assert level in ladder
+
+
+def test_campaign_table_partitions_every_draw(report):
+    """Each campaign row's outcome decomposition must partition its draws, the
+    grand total must equal the report's draw total, and every outcome label
+    must come from the closed vocabulary."""
+    rows = report["campaign_table"]
+    total = 0
+    for r in rows:
+        for arm in ("incomplete", "full"):
+            if arm not in r:
+                continue
+            e = r[arm]
+            assert sum(e["outcomes"].values()) == e["n_draws"]
+            assert set(e["outcomes"]) <= set(P.CANONICAL_OUTCOMES)
+            assert e["n_mode_present"] + e["n_mode_absent"] == e["n_draws"]
+            assert e["n_blocks"] <= e["n_draws"]
+            dpb = e["draws_per_block"]
+            assert dpb["min"] * e["n_blocks"] <= e["n_draws"] \
+                <= dpb["max"] * e["n_blocks"]
+            total += e["n_draws"]
+    tot = report["campaign_table_totals"]
+    assert total == tot["n_draws"] == report["totals"]["n_draws"]
+    assert tot["n_campaigns"] == len(rows)
+
+
+def test_campaign_table_phantom_column_matches_the_audits(real_draws, report):
+    """phantom_repair across the table == probe-passing draws the behavioural /
+    transcript audits convict: 4 GPT pendulum invented stops + 19 slab
+    over-covering half-planes + 1 relay invented stop = 24."""
+    n_phantom = sum(r[arm]["outcomes"].get("phantom_repair", 0)
+                    for r in report["campaign_table"]
+                    for arm in ("incomplete", "full") if arm in r)
+    by_hand = sum(1 for d in real_draws
+                  if d["outcome"] == "repaired" and d["arm"] == "incomplete"
+                  and not P.is_repair(d))
+    assert n_phantom == by_hand == 24
+
+
+def test_relay_phantom_is_derived_from_the_transcript():
+    """The Claude pendulum phantom (seed 20000) is detected from the versioned
+    final reply, keyed by instrument so the cart cell of the same seed -- a
+    genuine exact repair -- is not convicted with it."""
+    fp = P._PROBE_FALSE_POSITIVES
+    assert ("continuous_claude_relay.json", "pendulum", 20000) in fp
+    assert ("continuous_claude_relay.json", "cart", 20000) not in fp
+    assert ("continuous_claude_relay.json", "cart", 30000) not in fp
+
+
+def test_onedim_primary_unit_is_the_instrument_block(report):
+    """The 1D repair claim's primary unit: 50/56 instrument-blocks all-exact,
+    with the raw-block 30/36 kept as the strictest comparator and the 105/111
+    draw census unchanged. All three must come out of the code, not prose."""
+    one = report["headline"]["onedim_repair"]
+    assert (one["n_repaired_draws"], one["n_draws"]) == (105, 111)
+    prim = one["PRIMARY_instrument_block_all_scoring"]
+    assert (prim["k"], prim["n"]) == (50, 56)
+    assert prim["cluster_key"] == "by_instrument_block"
+    assert prim["n"] == one["n_distinct_instrument_blocks"]
+    strict = one["clustered_aggregate_block_level_all_scoring"]
+    assert (strict["k"], strict["n"]) == (30, 36)
+    # the six failing draws fall in six distinct clusters at BOTH clusterings
+    assert prim["n"] - prim["k"] == strict["n"] - strict["k"] == 6
+
+
+def test_knob_cell_census_is_the_sum_of_the_per_knob_cells(report):
+    """64/70 is a sum of knob-level block cells, not a distinct-block count;
+    the census key must equal the per-knob table it is summed from."""
+    one = report["headline"]["onedim_repair"]
+    cc = one["knob_cell_census"]
+    assert cc["n_cells"] == sum(
+        v["block_level_all_scoring"]["n"] for v in one["per_knob"].values())
+    assert cc["n_cells_all_repair"] == sum(
+        v["block_level_all_scoring"]["k"] for v in one["per_knob"].values())
+    assert (cc["n_cells_all_repair"], cc["n_cells"]) == (64, 70)
+    # and it exceeds every distinct-block count, which is why it must never be
+    # called one
+    assert cc["n_cells"] > one["n_distinct_instrument_blocks"] \
+        > one["n_distinct_blocks"]
+
+
+def test_patch2d_census_keys_count_what_their_labels_say(report):
+    """The regression this layer fixed: the '0/156' keys had silently grown to
+    416 draws as later patch2d treatments were added."""
+    p2 = report["headline"]["patch2d_repair_negative"]
+    assert (p2["n_draws"], p2["n_distinct_blocks"]) == (156, 20)
+    assert p2["HONEST_block_level"]["clopper_pearson_95"][1] == \
+        pytest.approx(0.168, abs=5e-4)
+    assert p2["honest_over_naive_upper_bound_ratio"] == pytest.approx(7.2, abs=0.05)
+    broad = report["headline"]["patch2d_repair_negative_all_treatments"]
+    assert broad["n_draws"] > 156 and broad["n_distinct_blocks"] == 20
+    assert broad["HONEST_block_level"]["k"] == 0
+    zeros = {z["key"]: z for z in report["censored_zeros"]}
+    for key, n in (("censored_zeros.patch2d_pooled_0_of_156", 156),
+                   ("censored_zeros.patch2d_disc_0_of_76", 76),
+                   ("censored_zeros.patch2d_square_0_of_40", 40),
+                   ("censored_zeros.patch2d_guided_0_of_40", 40),
+                   ("censored_zeros.patch2d_partial_repair_0_of_66", 66),
+                   ("censored_zeros.patch2d_all_families_0_of_159", 159)):
+        assert zeros[key]["n_draws"] == n, (key, zeros[key]["n_draws"])
+
+
+def test_replicate_pair_agreement(report):
+    """The one same-model same-blocks repeat in the data: outcome classes agree
+    cell for cell and the incomplete-cell gate accuracies are identical."""
+    rp = report["replicate_same_model_same_blocks"]
+    assert rp is not None
+    assert rp["n_cells"] == 6
+    assert rp["n_outcome_agree"] == rp["n_gate_decision_agree"] == 6
+    assert rp["max_abs_gate_accuracy_diff_incomplete"] == 0.0
+    assert rp["n_code_identical"] == 3
+    assert "does not identify its mechanism" in rp["caveat"]
+    # the pair is exactly the superseded file and its replacement, so the
+    # replicate analysis and the inference exclusion cannot drift apart
+    assert set(rp["files"]) == set(P.SUPERSEDED_FOR_INFERENCE) | \
+        set(P.SUPERSEDED_FOR_INFERENCE.values())
