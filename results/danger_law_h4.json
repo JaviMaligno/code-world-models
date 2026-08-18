@@ -1,0 +1,2094 @@
+{
+  "common_law": {
+    "adaptive_bound": "if lower_i <= r_i(history) <= upper_i along miss histories, product(1-upper_i) <= P(miss) <= product(1-lower_i)",
+    "adaptive_chain_rule": "P(no E_1,...,no E_N) = product_i (1-r_i), where r_i=P(E_i | previous misses)",
+    "distribution_shift_role": "the gate hazard is measured under its rollout law; planner reach and conditional shipped cost determine consequence, not the miss exponent",
+    "failure_limit": "marginal hazards P(E_i) alone do not identify miss probability under dependence/adaptation",
+    "iid_corollary": "r_i=r gives (1-r)^N",
+    "independent_train_gate_corollary": "same r and independent blocks give (1-r)^(N_train+N_gate)",
+    "risk_identity": "E[X 1_G] = P(G) E[X|G]",
+    "stratified_corollary": "known stratum hazards give product_i (1-r_i)",
+    "tuple": [
+      "critical-event miss probability",
+      "conditional shipped play cost",
+      "planner-versus-gate distribution shift",
+      "factorization hypotheses"
+    ],
+    "two_mode_corollary": "Frechet union bounds followed by the same iid exponent"
+  },
+  "curves": [
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.0005055827084101055,
+          "rarity_only_familywise95": [
+            0.00039092663237457674,
+            0.0006500586347923445
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 2.4792799641546676e-07,
+          "rarity_only_familywise95": [
+            1.4822848272777158e-07,
+            4.0987007332343117e-07
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 5.96200434304903e-14,
+          "rarity_only_familywise95": [
+            2.131103159363789e-14,
+            1.6294219614623307e-13
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "cart",
+      "key": "cart_xwall2",
+      "knob": {
+        "x_wall": 2.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 3.1562335612835346,
+      "play_cost": 1.031000446657712,
+      "play_cost_ci": null,
+      "rarity": 0.31683333333333336,
+      "rarity_ci_familywise95": [
+        0.30819342719258314,
+        0.3255623286142849
+      ],
+      "rarity_hits": 9505,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_reach.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.008464447568656318,
+          "rarity_only_familywise95": [
+            0.006948929340951293,
+            0.010254574219974612
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 6.949303428050998e-05,
+          "rarity_only_familywise95": [
+            4.683600327160519e-05,
+            0.00010199509853438501
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 4.6841046125077974e-09,
+          "rarity_only_familywise95": [
+            2.127667166312823e-09,
+            1.0090266576134136e-08
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "cart",
+      "key": "cart_xwall3",
+      "knob": {
+        "x_wall": 3.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 4.684572142410993,
+      "play_cost": 1.030993586397852,
+      "play_cost_ci": null,
+      "rarity": 0.21346666666666667,
+      "rarity_ci_familywise95": [
+        0.20588557783056283,
+        0.22118717140375493
+      ],
+      "rarity_hits": 6404,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_reach.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.05648121788495695,
+          "rarity_only_familywise95": [
+            0.04859838303598081,
+            0.06530229437307368
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.0030942290482370307,
+          "rarity_only_familywise95": [
+            0.0022908043170594846,
+            0.004136197180091639
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 9.286440305280573e-06,
+          "rarity_only_familywise95": [
+            5.090029968031965e-06,
+            1.6593837083660026e-05
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "cart",
+      "key": "cart_xwall4",
+      "knob": {
+        "x_wall": 4.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 7.398273736128237,
+      "play_cost": 1.0309928334444372,
+      "play_cost_ci": null,
+      "rarity": 0.13516666666666666,
+      "rarity_ci_familywise95": [
+        0.1288686571809588,
+        0.1416422974813797
+      ],
+      "rarity_hits": 4055,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_reach.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.19581369053323405,
+          "rarity_only_familywise95": [
+            0.17496649679546747,
+            0.21803942796236656
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.03719045513310788,
+          "rarity_only_familywise95": [
+            0.029693075367604876,
+            0.046112158905608575
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.0013415546666167347,
+          "rarity_only_familywise95": [
+            0.0008551764822398503,
+            0.0020624161428232576
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "cart",
+      "key": "cart_xwall5",
+      "knob": {
+        "x_wall": 5.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 12.547051442910917,
+      "play_cost": 1.0309903781228869,
+      "play_cost_ci": null,
+      "rarity": 0.0797,
+      "rarity_ci_familywise95": [
+        0.07473950244441802,
+        0.08486531895064287
+      ],
+      "rarity_hits": 2391,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_reach.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.42006210368206887,
+          "rarity_only_familywise95": [
+            0.386717268579968,
+            0.454016233253795
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.1711511678400341,
+          "rarity_only_familywise95": [
+            0.1450574344579056,
+            0.19993812883541662
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.028412705810472366,
+          "rarity_only_familywise95": [
+            0.020409522544545065,
+            0.03877431262600728
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "cart",
+      "key": "cart_xwall6",
+      "knob": {
+        "x_wall": 6.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 22.779043280182233,
+      "play_cost": 1.0309726376785557,
+      "play_cost_ci": null,
+      "rarity": 0.0439,
+      "rarity_ci_familywise95": [
+        0.04017686851454404,
+        0.04784572572418644
+      ],
+      "rarity_hits": 1317,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_reach.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": [
+            0.7604062315431005,
+            0.9057524197825177
+          ],
+          "coverage_note": "rarity is family-wise 95%; play-cost is pointwise 95%; the corner band is conservative factor propagation, not a calibrated joint 95% band",
+          "point": 0.8183114804760929,
+          "rarity_only_familywise95": [
+            0.7839333104551529,
+            0.8499943491412334
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": [
+            0.5787958265686871,
+            0.7475257312742443
+          ],
+          "coverage_note": "rarity is family-wise 95%; play-cost is pointwise 95%; the corner band is conservative factor propagation, not a calibrated joint 95% band",
+          "point": 0.6501864183554047,
+          "rarity_only_familywise95": [
+            0.5967038532533373,
+            0.7015080871363737
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": [
+            0.33533959721775825,
+            0.5091660446011699
+          ],
+          "coverage_note": "rarity is family-wise 95%; play-cost is pointwise 95%; the corner band is conservative factor propagation, not a calibrated joint 95% band",
+          "point": 0.41046524633590536,
+          "rarity_only_familywise95": [
+            0.34571505291341675,
+            0.47782181005876345
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "cart",
+      "key": "cart_xwall8",
+      "knob": {
+        "x_wall": 8.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 87.46355685131195,
+      "play_cost": 1.0299102844577417,
+      "play_cost_ci": {
+        "bootstrap_replicates": 5000,
+        "ci95_pointwise": [
+          0.9990010473943195,
+          1.0974705105380662
+        ],
+        "method": "paired episode-triple percentile bootstrap; ratio of means recomputed",
+        "n_episode_seed_units": 20,
+        "point": 1.0299102844577417,
+        "source": "results/play_cost_intervals.json units, episodes 0..19"
+      },
+      "rarity": 0.011433333333333334,
+      "rarity_ci_familywise95": [
+        0.00955393208363527,
+        0.01355247798894459
+      ],
+      "rarity_hits": 343,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_reach.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.9300835895832955,
+          "rarity_only_familywise95": [
+            0.910471119323362,
+            0.9454050147675478
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.8858507559201692,
+          "rarity_only_familywise95": [
+            0.8488851673336395,
+            0.9152766854879226
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.8035959084157744,
+          "rarity_only_familywise95": [
+            0.7379288451599799,
+            0.8578698334951658
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "cart",
+      "key": "cart_xwall10",
+      "knob": {
+        "x_wall": 10.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 410.958904109589,
+      "play_cost": 0.9765250837468438,
+      "play_cost_ci": null,
+      "rarity": 0.0024333333333333334,
+      "rarity_ci_familywise95": [
+        0.0016180402918235786,
+        0.0034957883693593466
+      ],
+      "rarity_hits": 73,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_reach.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.0011352155353237753,
+          "rarity_only_familywise95": [
+            0.0008928808144148987,
+            0.0014350967090641673
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 1.2857310071643777e-06,
+          "rarity_only_familywise95": [
+            7.953905898473849e-07,
+            2.054734926447948e-06
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 1.6492773752175628e-12,
+          "rarity_only_familywise95": [
+            6.311816484362062e-13,
+            4.212162063568261e-12
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "pendulum",
+      "key": "pend_thstop0.8",
+      "knob": {
+        "th_stop": 0.8
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 3.4766485108355543,
+      "play_cost": 1.0023203177487703,
+      "play_cost_ci": null,
+      "rarity": 0.28763333333333335,
+      "rarity_ci_familywise95": [
+        0.27923492966848773,
+        0.29613503628207405
+      ],
+      "rarity_hits": 8629,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_pendulum.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.0661764018091737,
+          "rarity_only_familywise95": [
+            0.0572363026909012,
+            0.0761178510899434
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.0043717605663742345,
+          "rarity_only_familywise95": [
+            0.0032703423056914646,
+            0.005783931050243014
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 1.9079316207583438e-05,
+          "rarity_only_familywise95": [
+            1.0676686581203174e-05,
+            3.33961407891874e-05
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "pendulum",
+      "key": "pend_thstop1",
+      "knob": {
+        "th_stop": 1.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 7.871949619522435,
+      "play_cost": 1.0017282716928937,
+      "play_cost_ci": null,
+      "rarity": 0.12703333333333333,
+      "rarity_ci_familywise95": [
+        0.12090293640712296,
+        0.13334532907040558
+      ],
+      "rarity_hits": 3811,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_pendulum.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.35208471935388136,
+          "rarity_only_familywise95": [
+            0.32205983071554906,
+            0.3829918798581948
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.12393435090338169,
+          "rarity_only_familywise95": [
+            0.10369801983107504,
+            0.14664811169177763
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.015356093076795719,
+          "rarity_only_familywise95": [
+            0.010750737788814978,
+            0.021500585816965834
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "pendulum",
+      "key": "pend_thstop1.2",
+      "knob": {
+        "th_stop": 1.2
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 19.659239842726084,
+      "play_cost": 1.000236404991079,
+      "play_cost_ci": null,
+      "rarity": 0.050866666666666664,
+      "rarity_ci_familywise95": [
+        0.04686515820754342,
+        0.055087280341622455
+      ],
+      "rarity_hits": 1526,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_pendulum.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": [
+            0.6340226246439946,
+            0.7068969957447622
+          ],
+          "coverage_note": "rarity is family-wise 95%; play-cost is pointwise 95%; the corner band is conservative factor propagation, not a calibrated joint 95% band",
+          "point": 0.6710836370338562,
+          "rarity_only_familywise95": [
+            0.6348349545204751,
+            0.7059080786702151
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": [
+            0.4036965045159019,
+            0.5004880242895196
+          ],
+          "coverage_note": "rarity is family-wise 95%; play-cost is pointwise 95%; the corner band is conservative factor propagation, not a calibrated joint 95% band",
+          "point": 0.4516923145416167,
+          "rarity_only_familywise95": [
+            0.4042137332691079,
+            0.4997878640740913
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": [
+            0.1636648646682898,
+            0.25088159290024287
+          ],
+          "coverage_note": "rarity is family-wise 95%; play-cost is pointwise 95%; the corner band is conservative factor propagation, not a calibrated joint 95% band",
+          "point": 0.20463259156011707,
+          "rarity_only_familywise95": [
+            0.16387455727882536,
+            0.2505306208457539
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "pendulum",
+      "key": "pend_thstop1.4",
+      "knob": {
+        "th_stop": 1.4
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 51.02040816326531,
+      "play_cost": 0.9970354451383857,
+      "play_cost_ci": {
+        "bootstrap_replicates": 5000,
+        "ci95_pointwise": [
+          0.9957596463276416,
+          0.9984322068491787
+        ],
+        "method": "paired episode-triple percentile bootstrap; ratio of means recomputed",
+        "n_episode_seed_units": 20,
+        "point": 0.9970354451383857,
+        "source": "results/play_cost_intervals.json units, episodes 0..19"
+      },
+      "rarity": 0.0196,
+      "rarity_ci_familywise95": [
+        0.017116877432489068,
+        0.02231824277053481
+      ],
+      "rarity_hits": 588,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_pendulum.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.8602668163980012,
+          "rarity_only_familywise95": [
+            0.8313902784517774,
+            0.8857618835858928
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.7475119516868602,
+          "rarity_only_familywise95": [
+            0.6981708028387594,
+            0.7924753717706737
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.5644013977713629,
+          "rarity_only_familywise95": [
+            0.49235138590884825,
+            0.6343418253085653
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "pendulum",
+      "key": "pend_thstop1.6",
+      "knob": {
+        "th_stop": 1.6
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 142.85714285714286,
+      "play_cost": 0.9900296493260217,
+      "play_cost_ci": null,
+      "rarity": 0.007,
+      "rarity_ci_familywise95": [
+        0.005548884324442371,
+        0.008693766629699121
+      ],
+      "rarity_hits": 210,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_pendulum.json"
+    },
+    {
+      "budgets": [
+        20,
+        40,
+        80
+      ],
+      "danger": {
+        "20": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.9292310043535459,
+          "rarity_only_familywise95": [
+            0.917546921727568,
+            0.9363159698473908
+          ]
+        },
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.9169194130385852,
+          "rarity_only_familywise95": [
+            0.8940058261748055,
+            0.9309549073463395
+          ]
+        },
+        "80": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.8927834263641286,
+          "rarity_only_familywise95": [
+            0.8487200893624646,
+            0.9203246940641642
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "pendulum",
+      "key": "pend_thstop2",
+      "knob": {
+        "th_stop": 2.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 1500.0,
+      "play_cost": 0.941707904940566,
+      "play_cost_ci": null,
+      "rarity": 0.0006666666666666666,
+      "rarity_ci_familywise95": [
+        0.0002870664223179803,
+        0.0012987272899280325
+      ],
+      "rarity_hits": 20,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 30000,
+      "source": "results/continuous_pendulum.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k2_6",
+      "critical_event": "mode_1",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 1.3200496995861385e-05,
+          "rarity_only_familywise95": [
+            4.699490462246959e-07,
+            0.00021056559924884853
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k2_6_mode_1",
+      "knob": {
+        "k1": 2.0,
+        "k2": 6.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 4.081632653061225,
+      "play_cost": 1.006264652812017,
+      "play_cost_ci": null,
+      "rarity": 0.245,
+      "rarity_ci_familywise95": [
+        0.1908726524173091,
+        0.30540210333185114
+      ],
+      "rarity_hits": 147,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k2_6",
+      "critical_event": "mode_2",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.6731626343781637,
+          "rarity_only_familywise95": [
+            0.28673184222479636,
+            0.9404840339243178
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k2_6_mode_2",
+      "knob": {
+        "k1": 2.0,
+        "k2": 6.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 100.0,
+      "play_cost": 1.006264652812017,
+      "play_cost_ci": null,
+      "rarity": 0.01,
+      "rarity_ci_familywise95": [
+        0.001688715462425946,
+        0.03089888624728402
+      ],
+      "rarity_hits": 6,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k2_6",
+      "critical_event": "union",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 9.257971558031647e-06,
+          "rarity_only_familywise95": [
+            3.117480801874485e-07,
+            0.00015574313623765553
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k2_6_union",
+      "knob": {
+        "k1": 2.0,
+        "k2": 6.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 3.9735099337748347,
+      "play_cost": 1.006264652812017,
+      "play_cost_ci": null,
+      "rarity": 0.25166666666666665,
+      "rarity_ci_familywise95": [
+        0.19695031244429023,
+        0.3124927390055846
+      ],
+      "rarity_hits": 151,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k2_7",
+      "critical_event": "mode_1",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 1.320034387649551e-05,
+          "rarity_only_familywise95": [
+            4.6994359504357937e-07,
+            0.00021056315678997424
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k2_7_mode_1",
+      "knob": {
+        "k1": 2.0,
+        "k2": 7.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 4.081632653061225,
+      "play_cost": 1.0062529806298566,
+      "play_cost_ci": null,
+      "rarity": 0.245,
+      "rarity_ci_familywise95": [
+        0.1908726524173091,
+        0.30540210333185114
+      ],
+      "rarity_hits": 147,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k2_7",
+      "critical_event": "mode_2",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.7200054662710097,
+          "rarity_only_familywise95": [
+            0.32017656301591085,
+            0.962481800408972
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k2_7_mode_2",
+      "knob": {
+        "k1": 2.0,
+        "k2": 7.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 120.0,
+      "play_cost": 1.0062529806298566,
+      "play_cost_ci": null,
+      "rarity": 0.008333333333333333,
+      "rarity_ci_familywise95": [
+        0.0011112229721822642,
+        0.028222008770484953
+      ],
+      "rarity_hits": 5,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k2_7",
+      "critical_event": "union",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 8.467939068793633e-06,
+          "rarity_only_familywise95": [
+            2.8120309684475735e-07,
+            0.00014435898968558183
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k2_7_union",
+      "knob": {
+        "k1": 2.0,
+        "k2": 7.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 3.9473684210526314,
+      "play_cost": 1.0062529806298566,
+      "play_cost_ci": null,
+      "rarity": 0.25333333333333335,
+      "rarity_ci_familywise95": [
+        0.19847252032889778,
+        0.31426262127366644
+      ],
+      "rarity_hits": 152,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k2_8",
+      "critical_event": "mode_1",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 1.3200058774287789e-05,
+          "rarity_only_familywise95": [
+            4.6993344515978057e-07,
+            0.00021055860902808056
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k2_8_mode_1",
+      "knob": {
+        "k1": 2.0,
+        "k2": 8.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 4.081632653061225,
+      "play_cost": 1.0062312474879789,
+      "play_cost_ci": null,
+      "rarity": 0.245,
+      "rarity_ci_familywise95": [
+        0.1908726524173091,
+        0.30540210333185114
+      ],
+      "rarity_hits": 147,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k2_8",
+      "critical_event": "mode_2",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.7700132068781641,
+          "rarity_only_familywise95": [
+            0.3587873841529416,
+            0.9811812596180058
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k2_8_mode_2",
+      "knob": {
+        "k1": 2.0,
+        "k2": 8.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 150.0,
+      "play_cost": 1.0062312474879789,
+      "play_cost_ci": null,
+      "rarity": 0.006666666666666667,
+      "rarity_ci_familywise95": [
+        0.000630050928806806,
+        0.025451440010584622
+      ],
+      "rarity_hits": 4,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k2_8",
+      "critical_event": "union",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 9.257664217871217e-06,
+          "rarity_only_familywise95": [
+            3.1173773097602805e-07,
+            0.00015573796597760696
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k2_8_union",
+      "knob": {
+        "k1": 2.0,
+        "k2": 8.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 3.9735099337748347,
+      "play_cost": 1.0062312474879789,
+      "play_cost_ci": null,
+      "rarity": 0.25166666666666665,
+      "rarity_ci_familywise95": [
+        0.19695031244429023,
+        0.3124927390055846
+      ],
+      "rarity_hits": 151,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k3_6",
+      "critical_event": "mode_1",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.0022323326018247346,
+          "rarity_only_familywise95": [
+            0.00019176912937733288,
+            0.015245148280557305
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k3_6_mode_1",
+      "knob": {
+        "k1": 3.0,
+        "k2": 6.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 7.0588235294117645,
+      "play_cost": 1.005818815606589,
+      "play_cost_ci": null,
+      "rarity": 0.14166666666666666,
+      "rarity_ci_familywise95": [
+        0.09943451661637528,
+        0.1927529371446542
+      ],
+      "rarity_hits": 85,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k3_6",
+      "critical_event": "mode_2",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.7196948076234988,
+          "rarity_only_familywise95": [
+            0.3200384173730085,
+            0.9620665212084994
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k3_6_mode_2",
+      "knob": {
+        "k1": 3.0,
+        "k2": 6.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 120.0,
+      "play_cost": 1.005818815606589,
+      "play_cost_ci": null,
+      "rarity": 0.008333333333333333,
+      "rarity_ci_familywise95": [
+        0.0011112229721822642,
+        0.028222008770484953
+      ],
+      "rarity_hits": 5,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k3_6",
+      "critical_event": "union",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.0015110428638500995,
+          "rarity_only_familywise95": [
+            0.00012053320616236537,
+            0.011088440702170143
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k3_6_union",
+      "knob": {
+        "k1": 3.0,
+        "k2": 6.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 6.666666666666667,
+      "play_cost": 1.005818815606589,
+      "play_cost_ci": null,
+      "rarity": 0.15,
+      "rarity_ci_familywise95": [
+        0.10657362734908918,
+        0.2020702201836555
+      ],
+      "rarity_hits": 90,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k3_7",
+      "critical_event": "mode_1",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": [
+            0.00019080592874018483,
+            0.015395015114332443
+          ],
+          "coverage_note": "rarity is family-wise 95%; play-cost is pointwise 95%; the corner band is conservative factor propagation, not a calibrated joint 95% band",
+          "point": 0.0022324049232285187,
+          "rarity_only_familywise95": [
+            0.00019177534216687316,
+            0.01524564218120797
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k3_7_mode_1",
+      "knob": {
+        "k1": 3.0,
+        "k2": 7.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 7.0588235294117645,
+      "play_cost": 1.0058514013550737,
+      "play_cost_ci": {
+        "bootstrap_replicates": 5000,
+        "ci95_pointwise": [
+          1.0007668798378162,
+          1.0157064781253369
+        ],
+        "method": "paired episode-triple percentile bootstrap; ratio of means recomputed",
+        "n_episode_seed_units": 20,
+        "point": 1.0058514013550737,
+        "source": "results/play_cost_intervals.json units, episodes 0..19"
+      },
+      "rarity": 0.14166666666666666,
+      "rarity_ci_familywise95": [
+        0.09943451661637528,
+        0.1927529371446542
+      ],
+      "rarity_hits": 85,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k3_7",
+      "critical_event": "mode_2",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": [
+            0.3184309573583208,
+            0.9715240785087758
+          ],
+          "coverage_note": "rarity is family-wise 95%; play-cost is pointwise 95%; the corner band is conservative factor propagation, not a calibrated joint 95% band",
+          "point": 0.7197181237452724,
+          "rarity_only_familywise95": [
+            0.3200487857328086,
+            0.962097689503623
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k3_7_mode_2",
+      "knob": {
+        "k1": 3.0,
+        "k2": 7.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 120.0,
+      "play_cost": 1.0058514013550737,
+      "play_cost_ci": {
+        "bootstrap_replicates": 5000,
+        "ci95_pointwise": [
+          1.0007668798378162,
+          1.0157064781253369
+        ],
+        "method": "paired episode-triple percentile bootstrap; ratio of means recomputed",
+        "n_episode_seed_units": 20,
+        "point": 1.0058514013550737,
+        "source": "results/play_cost_intervals.json units, episodes 0..19"
+      },
+      "rarity": 0.008333333333333333,
+      "rarity_ci_familywise95": [
+        0.0011112229721822642,
+        0.028222008770484953
+      ],
+      "rarity_hits": 5,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k3_7",
+      "critical_event": "union",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": [
+            0.00011992780287691452,
+            0.01119744518470817
+          ],
+          "coverage_note": "rarity is family-wise 95%; play-cost is pointwise 95%; the corner band is conservative factor propagation, not a calibrated joint 95% band",
+          "point": 0.0015110918174607766,
+          "rarity_only_familywise95": [
+            0.00012053711110496449,
+            0.011088799936988782
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k3_7_union",
+      "knob": {
+        "k1": 3.0,
+        "k2": 7.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 6.666666666666667,
+      "play_cost": 1.0058514013550737,
+      "play_cost_ci": {
+        "bootstrap_replicates": 5000,
+        "ci95_pointwise": [
+          1.0007668798378162,
+          1.0157064781253369
+        ],
+        "method": "paired episode-triple percentile bootstrap; ratio of means recomputed",
+        "n_episode_seed_units": 20,
+        "point": 1.0058514013550737,
+        "source": "results/play_cost_intervals.json units, episodes 0..19"
+      },
+      "rarity": 0.15,
+      "rarity_ci_familywise95": [
+        0.10657362734908918,
+        0.2020702201836555
+      ],
+      "rarity_hits": 90,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k3_8",
+      "critical_event": "mode_1",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.002232962482155881,
+          "rarity_only_familywise95": [
+            0.00019182323941569233,
+            0.015249449888229691
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k3_8_mode_1",
+      "knob": {
+        "k1": 3.0,
+        "k2": 8.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 7.0588235294117645,
+      "play_cost": 1.0061026198605472,
+      "play_cost_ci": null,
+      "rarity": 0.14166666666666666,
+      "rarity_ci_familywise95": [
+        0.09943451661637528,
+        0.1927529371446542
+      ],
+      "rarity_hits": 85,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k3_8",
+      "critical_event": "mode_2",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.7699147752580577,
+          "rarity_only_familywise95": [
+            0.35874151997401527,
+            0.9810558341575859
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k3_8_mode_2",
+      "knob": {
+        "k1": 3.0,
+        "k2": 8.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 150.0,
+      "play_cost": 1.0061026198605472,
+      "play_cost_ci": null,
+      "rarity": 0.006666666666666667,
+      "rarity_ci_familywise95": [
+        0.000630050928806806,
+        0.025451440010584622
+      ],
+      "rarity_hits": 4,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k3_8",
+      "critical_event": "union",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.001634663140379681,
+          "rarity_only_familywise95": [
+            0.00013233159591189052,
+            0.01182531791180442
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k3_8_union",
+      "knob": {
+        "k1": 3.0,
+        "k2": 8.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 6.741573033707865,
+      "play_cost": 1.0061026198605472,
+      "play_cost_ci": null,
+      "rarity": 0.14833333333333334,
+      "rarity_ci_familywise95": [
+        0.10514171440648346,
+        0.20021080655811274
+      ],
+      "rarity_hits": 89,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k4_6",
+      "critical_event": "mode_1",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.02487069127286892,
+          "rarity_only_familywise95": [
+            0.00354710243805519,
+            0.10358588100803666
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k4_6_mode_1",
+      "knob": {
+        "k1": 4.0,
+        "k2": 6.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 11.320754716981131,
+      "play_cost": 1.0051822674003936,
+      "play_cost_ci": null,
+      "rarity": 0.08833333333333333,
+      "rarity_ci_familywise95": [
+        0.05522934890241958,
+        0.1316581693444413
+      ],
+      "rarity_hits": 53,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k4_6",
+      "critical_event": "mode_2",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.7192393374814686,
+          "rarity_only_familywise95": [
+            0.31983587604316716,
+            0.9614576623277411
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k4_6_mode_2",
+      "knob": {
+        "k1": 4.0,
+        "k2": 6.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 120.0,
+      "play_cost": 1.0051822674003936,
+      "play_cost_ci": null,
+      "rarity": 0.008333333333333333,
+      "rarity_ci_familywise95": [
+        0.0011112229721822642,
+        0.028222008770484953
+      ],
+      "rarity_hits": 5,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k4_6",
+      "critical_event": "union",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.021481019741881664,
+          "rarity_only_familywise95": [
+            0.002961217034830466,
+            0.09250112372010792
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k4_6_union",
+      "knob": {
+        "k1": 4.0,
+        "k2": 6.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 10.90909090909091,
+      "play_cost": 1.0051822674003936,
+      "play_cost_ci": null,
+      "rarity": 0.09166666666666666,
+      "rarity_ci_familywise95": [
+        0.057898804822354974,
+        0.13556839796151832
+      ],
+      "rarity_hits": 55,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k4_7",
+      "critical_event": "mode_1",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.02487947401798774,
+          "rarity_only_familywise95": [
+            0.003548355048860494,
+            0.10362246094788716
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k4_7_mode_1",
+      "knob": {
+        "k1": 4.0,
+        "k2": 7.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 11.320754716981131,
+      "play_cost": 1.0055372337966098,
+      "play_cost_ci": null,
+      "rarity": 0.08833333333333333,
+      "rarity_ci_familywise95": [
+        0.05522934890241958,
+        0.1316581693444413
+      ],
+      "rarity_hits": 53,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k4_7",
+      "critical_event": "mode_2",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.6726760116002097,
+          "rarity_only_familywise95": [
+            0.28652456654063696,
+            0.939804167084067
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k4_7_mode_2",
+      "knob": {
+        "k1": 4.0,
+        "k2": 7.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 100.0,
+      "play_cost": 1.0055372337966098,
+      "play_cost_ci": null,
+      "rarity": 0.01,
+      "rarity_ci_familywise95": [
+        0.001688715462425946,
+        0.03089888624728402
+      ],
+      "rarity_hits": 6,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k4_7",
+      "critical_event": "union",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.018549889411093638,
+          "rarity_only_familywise95": [
+            0.0024726476856417414,
+            0.08255234437124744
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k4_7_union",
+      "knob": {
+        "k1": 4.0,
+        "k2": 7.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 10.526315789473685,
+      "play_cost": 1.0055372337966098,
+      "play_cost_ci": null,
+      "rarity": 0.095,
+      "rarity_ci_familywise95": [
+        0.060583289186889336,
+        0.13946388387219127
+      ],
+      "rarity_hits": 57,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k4_8",
+      "critical_event": "mode_1",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.028793700060165326,
+          "rarity_only_familywise95": [
+            0.0042505214931014106,
+            0.11594038111425367
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k4_8_mode_1",
+      "knob": {
+        "k1": 4.0,
+        "k2": 8.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 11.76470588235294,
+      "play_cost": 1.0056658752835779,
+      "play_cost_ci": null,
+      "rarity": 0.085,
+      "rarity_ci_familywise95": [
+        0.0525756875280355,
+        0.12773245729053234
+      ],
+      "rarity_hits": 51,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k4_8",
+      "critical_event": "mode_2",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.7195853740409892,
+          "rarity_only_familywise95": [
+            0.319989753758678,
+            0.9619202336642332
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k4_8_mode_2",
+      "knob": {
+        "k1": 4.0,
+        "k2": 8.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 120.0,
+      "play_cost": 1.0056658752835779,
+      "play_cost_ci": null,
+      "rarity": 0.008333333333333333,
+      "rarity_ci_familywise95": [
+        0.0011112229721822642,
+        0.028222008770484953
+      ],
+      "rarity_hits": 5,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    },
+    {
+      "budgets": [
+        40
+      ],
+      "cost_key": "patch2d_k4_8",
+      "critical_event": "union",
+      "danger": {
+        "40": {
+          "all_estimated_factors_band": null,
+          "coverage_note": "not estimable from aggregate JSON: per-episode paired returns are absent; the rarity-only interval must not be presented as full danger uncertainty",
+          "point": 0.01996915492204757,
+          "rarity_only_familywise95": [
+            0.0027068022376444544,
+            0.0874222482631415
+          ]
+        }
+      },
+      "distribution_shift_note": "planner reach and gate rarity are measured under different rollout laws; their ratio diagnoses shift but is not an extra multiplier in E[X|G]P(G)",
+      "family": "patch2d",
+      "key": "patch2d_k4_8_union",
+      "knob": {
+        "k1": 4.0,
+        "k2": 8.0
+      },
+      "planner_reach": 1.0,
+      "planner_reach_ci_familywise95": [
+        0.6915028921812385,
+        1.0
+      ],
+      "planner_reach_hits": 20,
+      "planner_reach_n": 20,
+      "planner_to_gate_reach_ratio": 10.714285714285714,
+      "play_cost": 1.0056658752835779,
+      "play_cost_ci": null,
+      "rarity": 0.09333333333333334,
+      "rarity_ci_familywise95": [
+        0.05923921367894475,
+        0.13751793999564826
+      ],
+      "rarity_hits": 56,
+      "rarity_interval_method": "two-sided Clopper-Pearson at confidence 0.99875; Bonferroni over 40 estimands",
+      "rarity_n": 600,
+      "source": "results/continuous_patch2d.json"
+    }
+  ],
+  "evidence_label": "proved for identities/bounds; measured for curve inputs",
+  "schema_version": "danger-law-h4/v1",
+  "script": "scripts/danger_law_h4.py",
+  "uncertainty": {
+    "explicit_gap": "Full factor uncertainty is available only where committed paired episode triples reproduce the published cell. Other rows require versioned per-episode triples; aggregate means cannot recover a valid play-cost interval.",
+    "fully_propagated_curve_count": 5,
+    "play_cost_available_cells": [
+      "cart_xwall8",
+      "patch2d_k3_7",
+      "pend_thstop1.4"
+    ],
+    "rarity_family_coverage": 0.95,
+    "rarity_family_size": 40,
+    "total_curve_count": 40
+  }
+}

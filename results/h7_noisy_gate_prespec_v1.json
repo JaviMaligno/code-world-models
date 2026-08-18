@@ -1,0 +1,55 @@
+{
+  "schema_version": "h7-noisy-gate-prespec-v1",
+  "status": "frozen-before-result-generation",
+  "instrument": {
+    "class": "CartWall",
+    "x_wall": 4.0,
+    "candidate_models": [
+      "truth",
+      "blind_of_truth"
+    ]
+  },
+  "experimental_unit": {
+    "name": "disjoint_seed_block",
+    "n_blocks": 200,
+    "rollouts_per_block": 20,
+    "rollout_seed_base": 100000,
+    "rollout_seed_formula": "rollout_seed_base + block_index * rollouts_per_block + rollout_index"
+  },
+  "observation_model": {
+    "distribution": "iid_uniform_bounded",
+    "outputs": "every next-state coordinate and reward",
+    "eta_levels": [
+      0.0,
+      0.01,
+      0.03,
+      0.1,
+      0.3,
+      1.0,
+      3.0
+    ],
+    "noise_seed_base": 9100000,
+    "noise_seed_formula": "noise_seed_base + eta_index * 1000000 + block_index",
+    "coupling": "latent states and actions are identical across eta levels; observation-noise streams are independent by eta and block"
+  },
+  "gate": {
+    "norm": "L_infinity",
+    "support_slack": 1e-12,
+    "acceptance": "all observed outputs in the block must lie within eta + support_slack of the candidate conditional mean",
+    "critical_event": "the mode-blind candidate is accepted"
+  },
+  "analysis": {
+    "alpha": 0.05,
+    "primary_eta": 0.1,
+    "primary_robustness_margin": 0.01,
+    "primary_criterion": "analytic conditional blind-pass probability at primary_eta minus its eta=0 value is at most primary_robustness_margin",
+    "boundary_increase": 0.05,
+    "boundary_definition": "first prespecified eta whose analytic conditional blind-pass probability exceeds its eta=0 value by at least boundary_increase",
+    "interval": "two-sided exact Clopper-Pearson 95 percent interval over seed-block pass indicators",
+    "overlap_law": "q(delta,eta)=1[delta=0] at eta=0; otherwise max(0,1-|delta|/(2 eta)); multiply q over outputs and transitions within a fixed block"
+  },
+  "scope": {
+    "included": "bounded observation noise with known iid law on one designed deterministic instrument and analytic truth/blind proxies",
+    "excluded": "process noise, unknown or heavy-tailed noise, new LLM synthesis, a new planner run, and an externally specified benchmark"
+  }
+}

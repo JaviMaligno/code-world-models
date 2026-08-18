@@ -1,0 +1,3392 @@
+{
+  "script": "disc_identifiability_certificate.py",
+  "class": "H_circle = {disc(c, R) \u222a D2*}: near patch free in the disc class, far patch's rule given; labels are the sample's landing labels",
+  "criterion": {
+    "tau_centre": 0.1,
+    "tau_radius": 0.1
+  },
+  "grid": {
+    "levels": [
+      1.0,
+      0.2,
+      0.02
+    ],
+    "n_dirs": 4096
+  },
+  "truth": {
+    "centre": [
+      3.0,
+      0.0
+    ],
+    "R": 1.0
+  },
+  "arms": {
+    "default": {
+      "start_arc_deg": null,
+      "n_rollouts": 40,
+      "rows": [
+        {
+          "seed": 10000,
+          "n_inside_p1": 21,
+          "n_inside_p2": 0,
+          "n_outside": 3179,
+          "circle": {
+            "cloud_radius": 13.079158397634766,
+            "psi_min_certified": 1.743575946532575,
+            "far_exclusion_radius_D0": 62.13477445227618,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 30,
+            "centre_dev_max": 0.2111192926596532,
+            "R_bracket": [
+              0.9449348606316553,
+              1.1714686394914942
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 13.079158397634766,
+              "psi_min_certified": 1.743575946532575,
+              "far_exclusion_radius_D0": 25.678705086379146,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -1.7623264208336304
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 20000,
+          "n_inside_p1": 12,
+          "n_inside_p2": 0,
+          "n_outside": 3188,
+          "circle": {
+            "cloud_radius": 14.296652838774863,
+            "psi_min_certified": 3.8535524340783716,
+            "far_exclusion_radius_D0": 40.816894341772986,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 1101,
+            "centre_dev_max": 0.8778550518912982,
+            "R_bracket": [
+              0.15457605189688,
+              1.7227549410136362
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 14.296652838774863,
+              "psi_min_certified": 3.8535524340783716,
+              "far_exclusion_radius_D0": 29.174221198482194,
+              "certified": true,
+              "feasible": true,
+              "n_feasible_nodes": 1650,
+              "centre_dev_max": 0.9702083117326242,
+              "R_bracket": [
+                0.1182592269489502,
+                1.3024740263292949
+              ],
+              "identified_at_tol": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": false,
+            "consistent": true
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.873445166422944
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": true,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 30000,
+          "n_inside_p1": 10,
+          "n_inside_p2": 1,
+          "n_outside": 3189,
+          "attribution_gap": 3.821436832688621,
+          "circle": {
+            "cloud_radius": 15.202780026013983,
+            "psi_min_certified": 6.658130322513033,
+            "far_exclusion_radius_D0": 32.559343304587244,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 46,
+            "centre_dev_max": 0.19302757482371427,
+            "R_bracket": [
+              0.8482502968610057,
+              1.0827479804595186
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 15.202780026013983,
+              "psi_min_certified": 6.658130322513033,
+              "far_exclusion_radius_D0": 31.002414842263736,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -6.680922427350287
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 40000,
+          "n_inside_p1": 16,
+          "n_inside_p2": 0,
+          "n_outside": 3184,
+          "circle": {
+            "cloud_radius": 12.958448192953012,
+            "psi_min_certified": 5.818519405350965,
+            "far_exclusion_radius_D0": 27.38835448621203,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 146,
+            "centre_dev_max": 0.2671243494372015,
+            "R_bracket": [
+              0.8234922925725657,
+              1.218791395185359
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 12.958448192953012,
+              "psi_min_certified": 5.818519405350965,
+              "far_exclusion_radius_D0": 26.237880728457917,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -5.836081601159756
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 50000,
+          "n_inside_p1": 9,
+          "n_inside_p2": 2,
+          "n_outside": 3189,
+          "attribution_gap": 3.8387443158591474,
+          "circle": {
+            "cloud_radius": 16.609297219243064,
+            "psi_min_certified": 6.063457163708415,
+            "far_exclusion_radius_D0": 39.35776782511388,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 133,
+            "centre_dev_max": 0.355902286436432,
+            "R_bracket": [
+              0.6987791605529163,
+              1.2534301973399045
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 16.609297219243064,
+              "psi_min_certified": 6.063457163708415,
+              "far_exclusion_radius_D0": 32.39548846560277,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -6.088489042021384
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 60000,
+          "n_inside_p1": 21,
+          "n_inside_p2": 0,
+          "n_outside": 3179,
+          "circle": {
+            "cloud_radius": 10.98446895949555,
+            "psi_min_certified": 3.7491328180628574,
+            "far_exclusion_radius_D0": 27.075997877970146,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 55,
+            "centre_dev_max": 0.2111192926596532,
+            "R_bracket": [
+              0.9307086155827796,
+              1.1819722116433635
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 10.98446895949555,
+              "psi_min_certified": 3.7491328180628574,
+              "far_exclusion_radius_D0": 19.62342988729745,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.7623729961369223
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 70000,
+          "n_inside_p1": 20,
+          "n_inside_p2": 0,
+          "n_outside": 3180,
+          "circle": {
+            "cloud_radius": 13.363249678754306,
+            "psi_min_certified": 3.9652726354162087,
+            "far_exclusion_radius_D0": 35.880798709526445,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 17,
+            "centre_dev_max": 0.11612252689558673,
+            "R_bracket": [
+              0.9560703741931634,
+              1.0743252997298292
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 13.363249678754306,
+              "psi_min_certified": 3.9652726354162087,
+              "far_exclusion_radius_D0": 26.538404654230796,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.9842701908869076
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 80000,
+          "n_inside_p1": 7,
+          "n_inside_p2": 0,
+          "n_outside": 3193,
+          "circle": {
+            "cloud_radius": 11.948182217079877,
+            "psi_min_certified": 5.759042018543381,
+            "far_exclusion_radius_D0": 24.342522962717595,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 21,
+            "centre_dev_max": 0.0773876898270986,
+            "R_bracket": [
+              0.9449557477951182,
+              1.0376798126980644
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 11.948182217079877,
+              "psi_min_certified": 5.759042018543381,
+              "far_exclusion_radius_D0": 23.595606319472434,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -5.777003163687023
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 90000,
+          "n_inside_p1": 11,
+          "n_inside_p2": 0,
+          "n_outside": 3189,
+          "circle": {
+            "cloud_radius": 11.23644945674848,
+            "psi_min_certified": 2.1687960978691017,
+            "far_exclusion_radius_D0": 40.34425643733894,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 1725,
+            "centre_dev_max": 3.421252349105858,
+            "R_bracket": [
+              0.5266966206985162,
+              4.381099779544143
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 11.23644945674848,
+              "psi_min_certified": 2.1687960978691017,
+              "far_exclusion_radius_D0": 23.289493432358725,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -2.185080164766458
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 100000,
+          "n_inside_p1": 9,
+          "n_inside_p2": 0,
+          "n_outside": 3191,
+          "circle": {
+            "cloud_radius": 16.141181074308996,
+            "psi_min_certified": 4.40548428735522,
+            "far_exclusion_radius_D0": 45.71088436679783,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 108,
+            "centre_dev_max": 0.25745263783565947,
+            "R_bracket": [
+              0.7792733556695405,
+              1.1232153276591508
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 16.141181074308996,
+              "psi_min_certified": 4.40548428735522,
+              "far_exclusion_radius_D0": 27.414320900198884,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.4296569319420955
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 110000,
+          "n_inside_p1": 14,
+          "n_inside_p2": 1,
+          "n_outside": 3185,
+          "attribution_gap": 3.1524126333587628,
+          "circle": {
+            "cloud_radius": 13.866441045115085,
+            "psi_min_certified": 6.674027699482412,
+            "far_exclusion_radius_D0": 28.271399783341778,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 10,
+            "centre_dev_max": 0.058863496173726784,
+            "R_bracket": [
+              0.9682545886682082,
+              1.022188247504202
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 13.866441045115085,
+              "psi_min_certified": 6.674027699482412,
+              "far_exclusion_radius_D0": 24.883167051352412,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -6.694383628069383
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 120000,
+          "n_inside_p1": 25,
+          "n_inside_p2": 1,
+          "n_outside": 3174,
+          "attribution_gap": 3.3286893558432,
+          "circle": {
+            "cloud_radius": 15.750978180145573,
+            "psi_min_certified": 4.893901611046974,
+            "far_exclusion_radius_D0": 41.098168760295614,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 7,
+            "centre_dev_max": 0.04242640787119287,
+            "R_bracket": [
+              0.9755837483442759,
+              1.0180988103791002
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 15.750978180145573,
+              "psi_min_certified": 4.893901611046974,
+              "far_exclusion_radius_D0": 26.042814745876406,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.917672683192924
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 130000,
+          "n_inside_p1": 15,
+          "n_inside_p2": 6,
+          "n_outside": 3179,
+          "attribution_gap": 3.0644954488317317,
+          "circle": {
+            "cloud_radius": 16.44003830638331,
+            "psi_min_certified": 4.58122043815202,
+            "far_exclusion_radius_D0": 45.938166934349375,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 15,
+            "centre_dev_max": 0.10358485572372261,
+            "R_bracket": [
+              0.9282388131106566,
+              1.0249911861912657
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 16.44003830638331,
+              "psi_min_certified": 4.58122043815202,
+              "far_exclusion_radius_D0": 32.1367677384793,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.605708499737026
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 140000,
+          "n_inside_p1": 21,
+          "n_inside_p2": 0,
+          "n_outside": 3179,
+          "circle": {
+            "cloud_radius": 18.658117902312068,
+            "psi_min_certified": 7.1741212451327065,
+            "far_exclusion_radius_D0": 42.92069667408598,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 22,
+            "centre_dev_max": 0.09660424913608424,
+            "R_bracket": [
+              0.9407643427651071,
+              1.0654401605976958
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 18.658117902312068,
+              "psi_min_certified": 7.1741212451327065,
+              "far_exclusion_radius_D0": 38.082704576505805,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -7.199130574173681
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 150000,
+          "n_inside_p1": 5,
+          "n_inside_p2": 0,
+          "n_outside": 3195,
+          "circle": {
+            "cloud_radius": 9.201213530075536,
+            "psi_min_certified": 6.977804698583992,
+            "far_exclusion_radius_D0": 15.267758387889174,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 190,
+            "centre_dev_max": 0.4613557321236888,
+            "R_bracket": [
+              0.6047562825544955,
+              1.1135039604096615
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 9.201213530075536,
+              "psi_min_certified": 6.977804698583992,
+              "far_exclusion_radius_D0": 18.928397315768574,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -6.991380473473097
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 160000,
+          "n_inside_p1": 7,
+          "n_inside_p2": 0,
+          "n_outside": 3193,
+          "circle": {
+            "cloud_radius": 14.626534804742358,
+            "psi_min_certified": 4.906392658040087,
+            "far_exclusion_radius_D0": 36.428246908212536,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 40,
+            "centre_dev_max": 0.14830621527371843,
+            "R_bracket": [
+              0.904687977282761,
+              1.1207107926494377
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 14.626534804742358,
+              "psi_min_certified": 4.906392658040087,
+              "far_exclusion_radius_D0": 28.77205786962699,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.927510402409525
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 170000,
+          "n_inside_p1": 24,
+          "n_inside_p2": 0,
+          "n_outside": 3176,
+          "circle": {
+            "cloud_radius": 13.294146701412382,
+            "psi_min_certified": 4.9977292593881755,
+            "far_exclusion_radius_D0": 30.975610356799514,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 6,
+            "centre_dev_max": 0.04242640787119287,
+            "R_bracket": [
+              0.9834965636451579,
+              1.0278286931354348
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 13.294146701412382,
+              "psi_min_certified": 4.9977292593881755,
+              "far_exclusion_radius_D0": 26.503489171297808,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -5.0159675161357296
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 180000,
+          "n_inside_p1": 11,
+          "n_inside_p2": 0,
+          "n_outside": 3189,
+          "circle": {
+            "cloud_radius": 16.092140084003447,
+            "psi_min_certified": 6.58950166715723,
+            "far_exclusion_radius_D0": 35.741347684470355,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 35,
+            "centre_dev_max": 0.142204621372388,
+            "R_bracket": [
+              0.8997394343721172,
+              1.084873724834058
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 16.092140084003447,
+              "psi_min_certified": 6.58950166715723,
+              "far_exclusion_radius_D0": 33.15892537923358,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -6.612509150295717
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 190000,
+          "n_inside_p1": 27,
+          "n_inside_p2": 0,
+          "n_outside": 3173,
+          "circle": {
+            "cloud_radius": 11.940191960498378,
+            "psi_min_certified": 3.1047054728483046,
+            "far_exclusion_radius_D0": 34.90020947268382,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 7,
+            "centre_dev_max": 0.04242640787119287,
+            "R_bracket": [
+              0.9822216562564098,
+              1.017922939663873
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 11.940191960498378,
+              "psi_min_certified": 3.1047054728483046,
+              "far_exclusion_radius_D0": 23.665070449407928,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.122924591467974
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 200000,
+          "n_inside_p1": 18,
+          "n_inside_p2": 0,
+          "n_outside": 3182,
+          "circle": {
+            "cloud_radius": 10.69775771041739,
+            "psi_min_certified": 2.312662576730272,
+            "far_exclusion_radius_D0": 35.44023877581282,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 67,
+            "centre_dev_max": 0.349403228908535,
+            "R_bracket": [
+              0.7050066207360771,
+              1.182800813841809
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 10.69775771041739,
+              "psi_min_certified": 2.312662576730272,
+              "far_exclusion_radius_D0": 22.288469832458965,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -2.32894089712959
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        }
+      ],
+      "n_identified_at_tol": 6,
+      "n_halfplane_excluded": 20,
+      "n_slab_x_excluded": 20,
+      "n_box_excluded": 19,
+      "n_square_excluded": 19,
+      "n_hull_consistent": 20,
+      "n_with_inside": 20
+    },
+    "arc120": {
+      "start_arc_deg": 120.0,
+      "n_rollouts": 15,
+      "rows": [
+        {
+          "seed": 10000,
+          "n_inside_p1": 19,
+          "n_inside_p2": 0,
+          "n_outside": 1181,
+          "circle": {
+            "cloud_radius": 12.044350336681259,
+            "psi_min_certified": 3.061441358590814,
+            "far_exclusion_radius_D0": 35.73684645875106,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 6,
+            "centre_dev_max": 0.058863496173726784,
+            "R_bracket": [
+              0.98515540511062,
+              1.0280833857925145
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 12.044350336681259,
+              "psi_min_certified": 3.061441358590814,
+              "far_exclusion_radius_D0": 23.84538388439705,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.0778925435741544
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 20000,
+          "n_inside_p1": 7,
+          "n_inside_p2": 0,
+          "n_outside": 1193,
+          "circle": {
+            "cloud_radius": 13.657602239314073,
+            "psi_min_certified": 1.9091396375075478,
+            "far_exclusion_radius_D0": 62.509476471740236,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 11,
+            "centre_dev_max": 0.058863496173726756,
+            "R_bracket": [
+              0.9745252454349468,
+              1.0154205021242917
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 13.657602239314073,
+              "psi_min_certified": 1.9091396375075478,
+              "far_exclusion_radius_D0": 28.210652611484832,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -1.929654248298111
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 30000,
+          "n_inside_p1": 16,
+          "n_inside_p2": 0,
+          "n_outside": 1184,
+          "circle": {
+            "cloud_radius": 14.431641392623842,
+            "psi_min_certified": 7.3502401356090274,
+            "far_exclusion_radius_D0": 28.599360367973805,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 22,
+            "centre_dev_max": 0.14063324303046623,
+            "R_bracket": [
+              0.9487050856109895,
+              1.0906601758334236
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 14.431641392623842,
+              "psi_min_certified": 7.3502401356090274,
+              "far_exclusion_radius_D0": 29.862352095052856,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -7.36955752651554
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 40000,
+          "n_inside_p1": 37,
+          "n_inside_p2": 0,
+          "n_outside": 1163,
+          "circle": {
+            "cloud_radius": 7.409189031143859,
+            "psi_min_certified": 3.6111288341937566,
+            "far_exclusion_radius_D0": 15.0101477091356,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 22,
+            "centre_dev_max": 0.13579738722969545,
+            "R_bracket": [
+              0.9127973165178835,
+              1.1053580930876175
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 7.409189031143859,
+              "psi_min_certified": 3.6111288341937566,
+              "far_exclusion_radius_D0": 14.539642044504264,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.6215177137459396
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 50000,
+          "n_inside_p1": 15,
+          "n_inside_p2": 0,
+          "n_outside": 1185,
+          "circle": {
+            "cloud_radius": 9.805209435314882,
+            "psi_min_certified": 4.059314796666355,
+            "far_exclusion_radius_D0": 21.64737207682068,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 37,
+            "centre_dev_max": 0.15414213662373108,
+            "R_bracket": [
+              0.9016896947227493,
+              1.1186524769999102
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 9.805209435314882,
+              "psi_min_certified": 4.059314796666355,
+              "far_exclusion_radius_D0": 20.48365862855743,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.072115179426696
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 60000,
+          "n_inside_p1": 12,
+          "n_inside_p2": 2,
+          "n_outside": 1186,
+          "attribution_gap": 3.5933166194223487,
+          "circle": {
+            "cloud_radius": 10.385925473026937,
+            "psi_min_certified": 3.929939469992921,
+            "far_exclusion_radius_D0": 24.109730731974615,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 34,
+            "centre_dev_max": 0.15974433440934144,
+            "R_bracket": [
+              0.8640057454665908,
+              1.072296901513975
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 10.385925473026937,
+              "psi_min_certified": 3.929939469992921,
+              "far_exclusion_radius_D0": 20.255108665618195,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.9454652426317662
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 70000,
+          "n_inside_p1": 26,
+          "n_inside_p2": 0,
+          "n_outside": 1174,
+          "circle": {
+            "cloud_radius": 11.044617596462096,
+            "psi_min_certified": 3.2902224972741876,
+            "far_exclusion_radius_D0": 29.581901618004483,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 9,
+            "centre_dev_max": 0.0773876898270986,
+            "R_bracket": [
+              0.9762648238986912,
+              1.028503896095623
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 11.044617596462096,
+              "psi_min_certified": 3.2902224972741876,
+              "far_exclusion_radius_D0": 22.52463307916947,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.306158194247504
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 80000,
+          "n_inside_p1": 16,
+          "n_inside_p2": 0,
+          "n_outside": 1184,
+          "circle": {
+            "cloud_radius": 15.10081862702238,
+            "psi_min_certified": 2.6347832982022954,
+            "far_exclusion_radius_D0": 58.374723422497105,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 47,
+            "centre_dev_max": 0.18502221153008172,
+            "R_bracket": [
+              0.8481284360383401,
+              1.1075216562180497
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 15.10081862702238,
+              "psi_min_certified": 2.6347832982022954,
+              "far_exclusion_radius_D0": 23.813424122881173,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -2.657946977270695
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 90000,
+          "n_inside_p1": 19,
+          "n_inside_p2": 0,
+          "n_outside": 1181,
+          "circle": {
+            "cloud_radius": 12.043684407684067,
+            "psi_min_certified": 3.3131235824625884,
+            "far_exclusion_radius_D0": 33.93395359047121,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 7,
+            "centre_dev_max": 0.04242640787119287,
+            "R_bracket": [
+              0.9800312264239681,
+              1.0145748612010603
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 12.043684407684067,
+              "psi_min_certified": 3.3131235824625884,
+              "far_exclusion_radius_D0": 24.523374768498336,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.3299001702372992
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 100000,
+          "n_inside_p1": 11,
+          "n_inside_p2": 0,
+          "n_outside": 1189,
+          "circle": {
+            "cloud_radius": 15.065935409682295,
+            "psi_min_certified": 3.0204335958335915,
+            "far_exclusion_radius_D0": 52.640409829815226,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 8,
+            "centre_dev_max": 0.058863496173726784,
+            "R_bracket": [
+              0.9832222547495921,
+              1.0328499636779689
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 15.065935409682295,
+              "psi_min_certified": 3.0204335958335915,
+              "far_exclusion_radius_D0": 30.749383691017396,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.0403801148875984
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 110000,
+          "n_inside_p1": 12,
+          "n_inside_p2": 0,
+          "n_outside": 1188,
+          "circle": {
+            "cloud_radius": 10.002572586216651,
+            "psi_min_certified": 5.817106501215525,
+            "far_exclusion_radius_D0": 18.602334196359635,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 16,
+            "centre_dev_max": 0.09660424913608424,
+            "R_bracket": [
+              0.9707886279564939,
+              1.0520365838019683
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 10.002572586216651,
+              "psi_min_certified": 5.817106501215525,
+              "far_exclusion_radius_D0": 20.982440275617048,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -5.832447810080133
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 120000,
+          "n_inside_p1": 24,
+          "n_inside_p2": 0,
+          "n_outside": 1176,
+          "circle": {
+            "cloud_radius": 13.539381149488051,
+            "psi_min_certified": 3.4337358312741775,
+            "far_exclusion_radius_D0": 40.23258804116216,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 19,
+            "centre_dev_max": 0.10358485572372261,
+            "R_bracket": [
+              0.9477355170451295,
+              1.0776914949446352
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 13.539381149488051,
+              "psi_min_certified": 3.4337358312741775,
+              "far_exclusion_radius_D0": 27.561911138315644,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.4535834284776477
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 130000,
+          "n_inside_p1": 3,
+          "n_inside_p2": 1,
+          "n_outside": 1196,
+          "attribution_gap": 4.098908365367581,
+          "circle": {
+            "cloud_radius": 13.525856882882131,
+            "psi_min_certified": 3.8446073912723264,
+            "far_exclusion_radius_D0": 37.318768069538464,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 131,
+            "centre_dev_max": 0.5345266098740385,
+            "R_bracket": [
+              0.601272635510647,
+              1.1069943971294813
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 13.525856882882131,
+              "psi_min_certified": 3.8446073912723264,
+              "far_exclusion_radius_D0": 25.780315953684262,
+              "certified": true,
+              "feasible": true,
+              "n_feasible_nodes": 52,
+              "centre_dev_max": 0.39209946449085586,
+              "R_bracket": [
+                0.5317728430616006,
+                0.7900410558401024
+              ],
+              "identified_at_tol": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": false,
+            "consistent": true
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.864179197892173
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": true,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 140000,
+          "n_inside_p1": 41,
+          "n_inside_p2": 0,
+          "n_outside": 1159,
+          "circle": {
+            "cloud_radius": 11.429969031254057,
+            "psi_min_certified": 3.0050344758121077,
+            "far_exclusion_radius_D0": 33.16752197898194,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 58,
+            "centre_dev_max": 0.2377489343737101,
+            "R_bracket": [
+              0.821272853689701,
+              1.206264219105666
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 11.429969031254057,
+              "psi_min_certified": 3.0050344758121077,
+              "far_exclusion_radius_D0": 23.681954830608586,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.021915823937174
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 150000,
+          "n_inside_p1": 30,
+          "n_inside_p2": 2,
+          "n_outside": 1168,
+          "attribution_gap": 2.5837102626495767,
+          "circle": {
+            "cloud_radius": 7.702034046276583,
+            "psi_min_certified": 3.382391293659457,
+            "far_exclusion_radius_D0": 16.471174470864042,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 9,
+            "centre_dev_max": 0.058863496173726756,
+            "R_bracket": [
+              0.9775530679608608,
+              1.0419405445821097
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 7.702034046276583,
+              "psi_min_certified": 3.382391293659457,
+              "far_exclusion_radius_D0": 12.321835234968578,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.392202699040003
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 160000,
+          "n_inside_p1": 8,
+          "n_inside_p2": 2,
+          "n_outside": 1190,
+          "attribution_gap": 4.020907413182551,
+          "circle": {
+            "cloud_radius": 10.148953817879066,
+            "psi_min_certified": 1.675809059215276,
+            "far_exclusion_radius_D0": 40.8807555798513,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 77,
+            "centre_dev_max": 0.29485551357609474,
+            "R_bracket": [
+              0.7373200760372465,
+              1.074795705986799
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 10.148953817879066,
+              "psi_min_certified": 1.675809059215276,
+              "far_exclusion_radius_D0": 20.79396289056573,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -1.6899117299757755
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 170000,
+          "n_inside_p1": 18,
+          "n_inside_p2": 0,
+          "n_outside": 1182,
+          "circle": {
+            "cloud_radius": 10.893486042310913,
+            "psi_min_certified": 3.183403580967463,
+            "far_exclusion_radius_D0": 29.53203361188399,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 31,
+            "centre_dev_max": 0.20387879623383387,
+            "R_bracket": [
+              0.8852394188572111,
+              1.1452263284579625
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 10.893486042310913,
+              "psi_min_certified": 3.183403580967463,
+              "far_exclusion_radius_D0": 20.917890531323227,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.196685644516853
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 180000,
+          "n_inside_p1": 12,
+          "n_inside_p2": 0,
+          "n_outside": 1188,
+          "circle": {
+            "cloud_radius": 14.039621223965812,
+            "psi_min_certified": 5.651644222255942,
+            "far_exclusion_radius_D0": 31.47799458584663,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 21,
+            "centre_dev_max": 0.09414213662373103,
+            "R_bracket": [
+              0.9320336791961167,
+              1.0581887392867233
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 14.039621223965812,
+              "psi_min_certified": 5.651644222255942,
+              "far_exclusion_radius_D0": 28.84242346637193,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -5.6684459278797465
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 190000,
+          "n_inside_p1": 25,
+          "n_inside_p2": 0,
+          "n_outside": 1175,
+          "circle": {
+            "cloud_radius": 12.471578431075846,
+            "psi_min_certified": 2.441215168311363,
+            "far_exclusion_radius_D0": 44.32871879737681,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 6,
+            "centre_dev_max": 0.04242640787119287,
+            "R_bracket": [
+              0.9853125926858716,
+              1.018498283243222
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 12.471578431075846,
+              "psi_min_certified": 2.441215168311363,
+              "far_exclusion_radius_D0": 23.627524336413057,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -2.460333781524149
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 200000,
+          "n_inside_p1": 16,
+          "n_inside_p2": 1,
+          "n_outside": 1183,
+          "attribution_gap": 3.364068671606876,
+          "circle": {
+            "cloud_radius": 10.430948876501816,
+            "psi_min_certified": 2.2429331897575566,
+            "far_exclusion_radius_D0": 34.68595008675976,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 24,
+            "centre_dev_max": 0.11414213662373099,
+            "R_bracket": [
+              0.943773050296125,
+              1.08502167753658
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 10.430948876501816,
+              "psi_min_certified": 2.2429331897575566,
+              "far_exclusion_radius_D0": 21.495544839251174,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -2.25694862991876
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        }
+      ],
+      "n_identified_at_tol": 9,
+      "n_halfplane_excluded": 20,
+      "n_slab_x_excluded": 20,
+      "n_box_excluded": 19,
+      "n_square_excluded": 19,
+      "n_hull_consistent": 20,
+      "n_with_inside": 20
+    },
+    "arc240": {
+      "start_arc_deg": 240.0,
+      "n_rollouts": 15,
+      "rows": [
+        {
+          "seed": 10000,
+          "n_inside_p1": 12,
+          "n_inside_p2": 2,
+          "n_outside": 1186,
+          "attribution_gap": 3.4856793770911687,
+          "circle": {
+            "cloud_radius": 11.91616572917047,
+            "psi_min_certified": 3.8968058056930426,
+            "far_exclusion_radius_D0": 30.135575774907036,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 16,
+            "centre_dev_max": 0.09660424913608417,
+            "R_bracket": [
+              0.9390088917225918,
+              1.0345218268292404
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 11.91616572917047,
+              "psi_min_certified": 3.8968058056930426,
+              "far_exclusion_radius_D0": 23.50787807477655,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.9135567705040657
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 20000,
+          "n_inside_p1": 9,
+          "n_inside_p2": 0,
+          "n_outside": 1191,
+          "circle": {
+            "cloud_radius": 13.23878725602434,
+            "psi_min_certified": 3.230319885412416,
+            "far_exclusion_radius_D0": 40.36698109245244,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 11,
+            "centre_dev_max": 0.058863496173726784,
+            "R_bracket": [
+              0.9691631972945519,
+              1.021841176381108
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 13.23878725602434,
+              "psi_min_certified": 3.230319885412416,
+              "far_exclusion_radius_D0": 27.44684576368242,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.250613756358201
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 30000,
+          "n_inside_p1": 20,
+          "n_inside_p2": 4,
+          "n_outside": 1176,
+          "attribution_gap": 2.6438409896846573,
+          "circle": {
+            "cloud_radius": 14.461640490910055,
+            "psi_min_certified": 5.702166428994663,
+            "far_exclusion_radius_D0": 32.80020078133656,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 9,
+            "centre_dev_max": 0.058863496173726784,
+            "R_bracket": [
+              0.970958669811801,
+              1.0293559707287117
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 14.461640490910055,
+              "psi_min_certified": 5.702166428994663,
+              "far_exclusion_radius_D0": 28.499896328509692,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -5.721537750139996
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 40000,
+          "n_inside_p1": 35,
+          "n_inside_p2": 4,
+          "n_outside": 1161,
+          "attribution_gap": 3.005916616572989,
+          "circle": {
+            "cloud_radius": 7.761842948435742,
+            "psi_min_certified": 4.2544834594746375,
+            "far_exclusion_radius_D0": 14.84216263119473,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 9,
+            "centre_dev_max": 0.07414213662373095,
+            "R_bracket": [
+              0.9857307765948684,
+              1.0433533257442777
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 7.761842948435742,
+              "psi_min_certified": 4.2544834594746375,
+              "far_exclusion_radius_D0": 16.01292692541731,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.266183295907013
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 50000,
+          "n_inside_p1": 15,
+          "n_inside_p2": 0,
+          "n_outside": 1185,
+          "circle": {
+            "cloud_radius": 9.276760425584284,
+            "psi_min_certified": 5.460625028263781,
+            "far_exclusion_radius_D0": 17.156653619884896,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 11,
+            "centre_dev_max": 0.07071067911865478,
+            "R_bracket": [
+              0.9633595218323635,
+              1.0320384888462606
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 9.276760425584284,
+              "psi_min_certified": 5.460625028263781,
+              "far_exclusion_radius_D0": 19.36588886632786,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -5.474350137610568
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 60000,
+          "n_inside_p1": 12,
+          "n_inside_p2": 10,
+          "n_outside": 1178,
+          "attribution_gap": 2.934592691439514,
+          "circle": {
+            "cloud_radius": 9.734349811615417,
+            "psi_min_certified": 5.25548402151053,
+            "far_exclusion_radius_D0": 18.749462964567396,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 52,
+            "centre_dev_max": 0.20387879623383373,
+            "R_bracket": [
+              0.8345569591883931,
+              1.0839785609791641
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 9.734349811615417,
+              "psi_min_certified": 5.25548402151053,
+              "far_exclusion_radius_D0": 19.35608425119084,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -5.2679732633684715
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 70000,
+          "n_inside_p1": 16,
+          "n_inside_p2": 6,
+          "n_outside": 1178,
+          "attribution_gap": 2.2924857742970675,
+          "circle": {
+            "cloud_radius": 11.078337655022292,
+            "psi_min_certified": 3.9703225784280436,
+            "far_exclusion_radius_D0": 26.534205884157053,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 4,
+            "centre_dev_max": 0.03414213662373097,
+            "R_bracket": [
+              0.9848306616005422,
+              1.0154200051474527
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 11.078337655022292,
+              "psi_min_certified": 3.9703225784280436,
+              "far_exclusion_radius_D0": 20.466949248331094,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.987144458442734
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 80000,
+          "n_inside_p1": 12,
+          "n_inside_p2": 0,
+          "n_outside": 1188,
+          "circle": {
+            "cloud_radius": 15.497135823437548,
+            "psi_min_certified": 4.85740382999555,
+            "far_exclusion_radius_D0": 40.218285962017994,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 7,
+            "centre_dev_max": 0.058863496173726784,
+            "R_bracket": [
+              0.9686636660357469,
+              1.0144917152021216
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 15.497135823437548,
+              "psi_min_certified": 4.85740382999555,
+              "far_exclusion_radius_D0": 24.815261887718744,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.880225850660696
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 90000,
+          "n_inside_p1": 19,
+          "n_inside_p2": 0,
+          "n_outside": 1181,
+          "circle": {
+            "cloud_radius": 11.949754077491928,
+            "psi_min_certified": 4.361841132846847,
+            "far_exclusion_radius_D0": 28.31860133297825,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 12,
+            "centre_dev_max": 0.0773876898270986,
+            "R_bracket": [
+              0.9850784815300504,
+              1.051623288181186
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 11.949754077491928,
+              "psi_min_certified": 4.361841132846847,
+              "far_exclusion_radius_D0": 24.21325579528053,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.378438307707006
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 100000,
+          "n_inside_p1": 15,
+          "n_inside_p2": 0,
+          "n_outside": 1185,
+          "circle": {
+            "cloud_radius": 15.156222297866297,
+            "psi_min_certified": 4.567960561196493,
+            "far_exclusion_radius_D0": 40.29994576755524,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 4,
+            "centre_dev_max": 0.04242640787119287,
+            "R_bracket": [
+              0.9788137699508985,
+              1.0159583366888942
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 15.156222297866297,
+              "psi_min_certified": 4.567960561196493,
+              "far_exclusion_radius_D0": 31.166851272563107,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.589875715810849
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 110000,
+          "n_inside_p1": 10,
+          "n_inside_p2": 2,
+          "n_outside": 1188,
+          "attribution_gap": 3.481478072167039,
+          "circle": {
+            "cloud_radius": 9.89892020269915,
+            "psi_min_certified": 5.865085046343197,
+            "far_exclusion_radius_D0": 18.25247521555442,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 13,
+            "centre_dev_max": 0.0773876898270986,
+            "R_bracket": [
+              0.9732605056526299,
+              1.0407726629258227
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 9.89892020269915,
+              "psi_min_certified": 5.865085046343197,
+              "far_exclusion_radius_D0": 20.66986775327212,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -5.879299526732566
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 120000,
+          "n_inside_p1": 18,
+          "n_inside_p2": 0,
+          "n_outside": 1182,
+          "circle": {
+            "cloud_radius": 12.7922600700651,
+            "psi_min_certified": 4.727994779235335,
+            "far_exclusion_radius_D0": 30.097896533420922,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 11,
+            "centre_dev_max": 0.0773876898270986,
+            "R_bracket": [
+              0.9651786003129885,
+              1.0229849345073558
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 12.7922600700651,
+              "psi_min_certified": 4.727994779235335,
+              "far_exclusion_radius_D0": 23.81690749445773,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.747311930674726
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 130000,
+          "n_inside_p1": 8,
+          "n_inside_p2": 1,
+          "n_outside": 1191,
+          "attribution_gap": 4.088775350112851,
+          "circle": {
+            "cloud_radius": 10.83457321334676,
+            "psi_min_certified": 3.8006225747912072,
+            "far_exclusion_radius_D0": 26.277829470095696,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 29,
+            "centre_dev_max": 0.19302757482371427,
+            "R_bracket": [
+              0.961627009556406,
+              1.081484442252619
+            ],
+            "identified_at_tol": false
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 10.83457321334676,
+              "psi_min_certified": 3.8006225747912072,
+              "far_exclusion_radius_D0": 21.00566644216174,
+              "certified": true,
+              "feasible": true,
+              "n_feasible_nodes": 26,
+              "centre_dev_max": 0.49041648697857254,
+              "R_bracket": [
+                0.9109483984946635,
+                0.952478131401686
+              ],
+              "identified_at_tol": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": false,
+            "consistent": true
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.8146096360778
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 140000,
+          "n_inside_p1": 31,
+          "n_inside_p2": 5,
+          "n_outside": 1164,
+          "attribution_gap": 2.8869756413670697,
+          "circle": {
+            "cloud_radius": 11.83418436116617,
+            "psi_min_certified": 4.105868926437438,
+            "far_exclusion_radius_D0": 28.888786201023986,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 7,
+            "centre_dev_max": 0.04242640787119287,
+            "R_bracket": [
+              0.9757760764942501,
+              1.0328204133280945
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 11.83418436116617,
+              "psi_min_certified": 4.105868926437438,
+              "far_exclusion_radius_D0": 24.570425277846947,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.122747578463933
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 150000,
+          "n_inside_p1": 7,
+          "n_inside_p2": 4,
+          "n_outside": 1189,
+          "attribution_gap": 2.295626247978297,
+          "circle": {
+            "cloud_radius": 6.194560467314393,
+            "psi_min_certified": 4.141196228775656,
+            "far_exclusion_radius_D0": 10.827591270899273,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 14,
+            "centre_dev_max": 0.0773876898270986,
+            "R_bracket": [
+              0.9680907008388918,
+              1.0208823057760097
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 6.194560467314393,
+              "psi_min_certified": 4.141196228775656,
+              "far_exclusion_radius_D0": 11.878219238388558,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.1488384405098895
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 160000,
+          "n_inside_p1": 13,
+          "n_inside_p2": 0,
+          "n_outside": 1187,
+          "circle": {
+            "cloud_radius": 10.26377720018242,
+            "psi_min_certified": 3.752418706315469,
+            "far_exclusion_radius_D0": 24.300739844794073,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 20,
+            "centre_dev_max": 0.08625316213301079,
+            "R_bracket": [
+              0.9398072777767024,
+              1.0245250904098293
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 10.26377720018242,
+              "psi_min_certified": 3.752418706315469,
+              "far_exclusion_radius_D0": 21.34373575351321,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.7671718627927335
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 170000,
+          "n_inside_p1": 12,
+          "n_inside_p2": 0,
+          "n_outside": 1188,
+          "circle": {
+            "cloud_radius": 11.093957689197719,
+            "psi_min_certified": 5.223797876116134,
+            "far_exclusion_radius_D0": 22.874265822139442,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 17,
+            "centre_dev_max": 0.09660424913608424,
+            "R_bracket": [
+              0.965145824672198,
+              1.0432212758868635
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 11.093957689197719,
+              "psi_min_certified": 5.223797876116134,
+              "far_exclusion_radius_D0": 21.809598348133065,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -5.237988531527241
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 180000,
+          "n_inside_p1": 16,
+          "n_inside_p2": 0,
+          "n_outside": 1184,
+          "circle": {
+            "cloud_radius": 14.35021869858943,
+            "psi_min_certified": 3.863982557105191,
+            "far_exclusion_radius_D0": 40.99743742356511,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 11,
+            "centre_dev_max": 0.07738768982709855,
+            "R_bracket": [
+              0.957285931424526,
+              1.0242000712976247
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 14.35021869858943,
+              "psi_min_certified": 3.863982557105191,
+              "far_exclusion_radius_D0": 29.47964129812556,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.8850621968846677
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 190000,
+          "n_inside_p1": 28,
+          "n_inside_p2": 2,
+          "n_outside": 1170,
+          "attribution_gap": 2.1103729558200213,
+          "circle": {
+            "cloud_radius": 13.238495254041549,
+            "psi_min_certified": 3.70927776478644,
+            "far_exclusion_radius_D0": 36.862737991410526,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 4,
+            "centre_dev_max": 0.03414213662373097,
+            "R_bracket": [
+              0.9821057546564784,
+              1.0146920198826381
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 13.238495254041549,
+              "psi_min_certified": 3.70927776478644,
+              "far_exclusion_radius_D0": 24.381822296157225,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -3.729452324987367
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        },
+        {
+          "seed": 200000,
+          "n_inside_p1": 16,
+          "n_inside_p2": 0,
+          "n_outside": 1184,
+          "circle": {
+            "cloud_radius": 10.88224227733214,
+            "psi_min_certified": 4.632329181587234,
+            "far_exclusion_radius_D0": 23.664494179168933,
+            "certified": true,
+            "feasible": true,
+            "n_feasible_nodes": 6,
+            "centre_dev_max": 0.04242640787119287,
+            "R_bracket": [
+              0.9810344321554045,
+              1.0195310251471585
+            ],
+            "identified_at_tol": true
+          },
+          "square": {
+            "scan": {
+              "cloud_radius": 10.88224227733214,
+              "psi_min_certified": 4.632329181587234,
+              "far_exclusion_radius_D0": 21.89352582059188,
+              "certified": true,
+              "feasible": false
+            },
+            "far": {
+              "any_consistent": false,
+              "checks": {
+                "hp_x_le": false,
+                "hp_x_ge": false,
+                "hp_y_le": false,
+                "hp_y_ge": false,
+                "wedge_pp": false,
+                "wedge_pm": false,
+                "wedge_mp": false,
+                "wedge_mm": false
+              }
+            },
+            "excluded": true,
+            "consistent": false
+          },
+          "halfplane": {
+            "consistent": false,
+            "margin": -4.6479713322895035
+          },
+          "slab_x_consistent": false,
+          "slab_y_consistent": false,
+          "box_consistent": false,
+          "hull_of_contacts_consistent": true
+        }
+      ],
+      "n_identified_at_tol": 18,
+      "n_halfplane_excluded": 20,
+      "n_slab_x_excluded": 20,
+      "n_box_excluded": 20,
+      "n_square_excluded": 19,
+      "n_hull_consistent": 20,
+      "n_with_inside": 20
+    }
+  },
+  "clamp": {
+    "n_rollouts": 40,
+    "rows": [
+      {
+        "seed": 10000,
+        "n_boundary_points_p1": 24,
+        "noncollinear_triple_area": 0.3503167370349586,
+        "circumcircle_centre_err": 1.804406208825513e-15,
+        "circumcircle_R_err": 1.7763568394002505e-15,
+        "exactly_identified": true
+      },
+      {
+        "seed": 20000,
+        "n_boundary_points_p1": 17,
+        "noncollinear_triple_area": 0.00048769243786617015,
+        "circumcircle_centre_err": 2.929850933034104e-14,
+        "circumcircle_R_err": 2.7755575615628914e-14,
+        "exactly_identified": true
+      },
+      {
+        "seed": 30000,
+        "n_boundary_points_p1": 16,
+        "noncollinear_triple_area": 0.28336577924936757,
+        "circumcircle_centre_err": 2.7773679218900303e-15,
+        "circumcircle_R_err": 2.55351295663786e-15,
+        "exactly_identified": true
+      },
+      {
+        "seed": 40000,
+        "n_boundary_points_p1": 25,
+        "noncollinear_triple_area": 0.14580904623330213,
+        "circumcircle_centre_err": 6.217248937900877e-15,
+        "circumcircle_R_err": 5.995204332975845e-15,
+        "exactly_identified": true
+      },
+      {
+        "seed": 50000,
+        "n_boundary_points_p1": 15,
+        "noncollinear_triple_area": 0.12253889280163215,
+        "circumcircle_centre_err": 5.405539670775514e-15,
+        "circumcircle_R_err": 4.884981308350689e-15,
+        "exactly_identified": true
+      },
+      {
+        "seed": 60000,
+        "n_boundary_points_p1": 29,
+        "noncollinear_triple_area": 0.6028062042415093,
+        "circumcircle_centre_err": 9.61531994275838e-16,
+        "circumcircle_R_err": 6.661338147750939e-16,
+        "exactly_identified": true
+      },
+      {
+        "seed": 70000,
+        "n_boundary_points_p1": 27,
+        "noncollinear_triple_area": 0.6330406547463722,
+        "circumcircle_centre_err": 9.053280322386315e-16,
+        "circumcircle_R_err": 5.551115123125783e-16,
+        "exactly_identified": true
+      },
+      {
+        "seed": 80000,
+        "n_boundary_points_p1": 10,
+        "noncollinear_triple_area": 0.8383042083258684,
+        "circumcircle_centre_err": 1.7959959950208065e-15,
+        "circumcircle_R_err": 8.881784197001252e-16,
+        "exactly_identified": true
+      },
+      {
+        "seed": 90000,
+        "n_boundary_points_p1": 12,
+        "noncollinear_triple_area": 0.021743706294233087,
+        "circumcircle_centre_err": 5.049006185726244e-15,
+        "circumcircle_R_err": 4.6629367034256575e-15,
+        "exactly_identified": true
+      },
+      {
+        "seed": 100000,
+        "n_boundary_points_p1": 17,
+        "noncollinear_triple_area": 0.3520608995610104,
+        "circumcircle_centre_err": 5.446656457808162e-16,
+        "circumcircle_R_err": 4.440892098500626e-16,
+        "exactly_identified": true
+      },
+      {
+        "seed": 110000,
+        "n_boundary_points_p1": 29,
+        "noncollinear_triple_area": 1.111884796309856,
+        "circumcircle_centre_err": 3.994021784666129e-16,
+        "circumcircle_R_err": 1.1102230246251565e-16,
+        "exactly_identified": true
+      },
+      {
+        "seed": 120000,
+        "n_boundary_points_p1": 29,
+        "noncollinear_triple_area": 0.9423984093613889,
+        "circumcircle_centre_err": 1.3322676295501878e-15,
+        "circumcircle_R_err": 8.881784197001252e-16,
+        "exactly_identified": true
+      },
+      {
+        "seed": 130000,
+        "n_boundary_points_p1": 20,
+        "noncollinear_triple_area": 0.5875159722251062,
+        "circumcircle_centre_err": 1.7763568394002505e-15,
+        "circumcircle_R_err": 1.3322676295501878e-15,
+        "exactly_identified": true
+      },
+      {
+        "seed": 140000,
+        "n_boundary_points_p1": 28,
+        "noncollinear_triple_area": 0.20201530983657648,
+        "circumcircle_centre_err": 4.440892098500626e-16,
+        "circumcircle_R_err": 5.551115123125783e-16,
+        "exactly_identified": true
+      },
+      {
+        "seed": 150000,
+        "n_boundary_points_p1": 6,
+        "noncollinear_triple_area": 0.06573504596693633,
+        "circumcircle_centre_err": 4.520470003244774e-15,
+        "circumcircle_R_err": 3.9968028886505635e-15,
+        "exactly_identified": true
+      },
+      {
+        "seed": 160000,
+        "n_boundary_points_p1": 8,
+        "noncollinear_triple_area": 0.15888931162975045,
+        "circumcircle_centre_err": 5.7758019431492875e-15,
+        "circumcircle_R_err": 5.551115123125783e-15,
+        "exactly_identified": true
+      },
+      {
+        "seed": 170000,
+        "n_boundary_points_p1": 33,
+        "noncollinear_triple_area": 0.9899532939430778,
+        "circumcircle_centre_err": 0.0,
+        "circumcircle_R_err": 0.0,
+        "exactly_identified": true
+      },
+      {
+        "seed": 180000,
+        "n_boundary_points_p1": 14,
+        "noncollinear_triple_area": 0.38289485305010673,
+        "circumcircle_centre_err": 1.3322676295501878e-15,
+        "circumcircle_R_err": 1.1102230246251565e-15,
+        "exactly_identified": true
+      },
+      {
+        "seed": 190000,
+        "n_boundary_points_p1": 40,
+        "noncollinear_triple_area": 1.0524940150538253,
+        "circumcircle_centre_err": 4.440892098500626e-16,
+        "circumcircle_R_err": 6.661338147750939e-16,
+        "exactly_identified": true
+      },
+      {
+        "seed": 200000,
+        "n_boundary_points_p1": 28,
+        "noncollinear_triple_area": 0.16691622915121207,
+        "circumcircle_centre_err": 3.9968028886505635e-15,
+        "circumcircle_R_err": 3.3306690738754696e-15,
+        "exactly_identified": true
+      }
+    ],
+    "n_exactly_identified": 20,
+    "n_with_contact": 20
+  }
+}
