@@ -53,12 +53,33 @@ def artifacts():
     return prespec, committed, regenerated
 
 
+def _deep_close(a, b, path="", rel=1e-9, abs_tol=1e-12):
+    """Structure, strings, ints and None must match exactly; floats to 1e-9
+    relative.  Exact float equality is a same-machine property (libm last-ulp
+    differences across platforms), not an invariant of the computation."""
+    if isinstance(a, bool) or isinstance(b, bool):
+        assert a == b, f"{path}: {a!r} != {b!r}"
+    elif isinstance(a, float) or isinstance(b, float):
+        assert isinstance(a, (int, float)) and isinstance(b, (int, float)), path
+        assert a == pytest.approx(b, rel=rel, abs=abs_tol), f"{path}: {a} != {b}"
+    elif isinstance(a, dict):
+        assert isinstance(b, dict) and sorted(a) == sorted(b), path
+        for k in a:
+            _deep_close(a[k], b[k], f"{path}/{k}", rel, abs_tol)
+    elif isinstance(a, list):
+        assert isinstance(b, list) and len(a) == len(b), path
+        for i, (x, y) in enumerate(zip(a, b)):
+            _deep_close(x, y, f"{path}[{i}]", rel, abs_tol)
+    else:
+        assert a == b, f"{path}: {a!r} != {b!r}"
+
+
 def test_prespec_hash_schema_and_stored_result_are_fresh(artifacts):
     prespec, committed, regenerated = artifacts
     expected_hash = hashlib.sha256(H7.canonical_bytes(prespec)).hexdigest()
     assert committed["prespec_sha256"] == expected_hash
     assert committed["schema_version"] == "h7-noisy-observation-gate-result-v1"
-    assert committed == regenerated
+    _deep_close(committed, regenerated)
 
 
 def test_truth_always_passes_bounded_support_gate(artifacts):

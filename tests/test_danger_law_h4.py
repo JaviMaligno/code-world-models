@@ -102,7 +102,28 @@ def test_build_is_complete_about_its_incompleteness_and_reproduces_points():
             assert (rec["all_estimated_factors_band"] is not None) == (curve["play_cost_ci"] is not None)
 
 
+def _deep_close(a, b, path="", rel=1e-9, abs_tol=1e-12):
+    """Structure, strings, ints and None must match exactly; floats to 1e-9
+    relative.  Exact float equality is a same-machine property (libm last-ulp
+    differences across platforms), not an invariant of the computation."""
+    if isinstance(a, bool) or isinstance(b, bool):
+        assert a == b, f"{path}: {a!r} != {b!r}"
+    elif isinstance(a, float) or isinstance(b, float):
+        assert isinstance(a, (int, float)) and isinstance(b, (int, float)), path
+        assert a == pytest.approx(b, rel=rel, abs=abs_tol), f"{path}: {a} != {b}"
+    elif isinstance(a, dict):
+        assert isinstance(b, dict) and sorted(a) == sorted(b), path
+        for k in a:
+            _deep_close(a[k], b[k], f"{path}/{k}", rel, abs_tol)
+    elif isinstance(a, list):
+        assert isinstance(b, list) and len(a) == len(b), path
+        for i, (x, y) in enumerate(zip(a, b)):
+            _deep_close(x, y, f"{path}[{i}]", rel, abs_tol)
+    else:
+        assert a == b, f"{path}: {a!r} != {b!r}"
+
+
 def test_versioned_result_is_fresh():
     expected = H4.build()
     committed = json.loads((ROOT / "results" / "danger_law_h4.json").read_text())
-    assert committed == expected
+    _deep_close(committed, expected)
