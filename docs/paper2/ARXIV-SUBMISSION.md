@@ -3,9 +3,25 @@
 Paper 2 of the trilogy. Companion paper 1 is **arXiv:2607.14169** (currently v2),
 cited as `aguilar2026verified`; paper 3 is unpublished and is NOT referenced.
 
-Status: **submitted 2026-08-18** as arXiv submission `submit/7965524`, awaiting
-moderation and announcement. The public arXiv ID is assigned at announcement; until
-then §3 step 6 (README + paper 3's `references.bib`) stays open.
+Status: **announced as arXiv:2608.17956** (<https://arxiv.org/abs/2608.17956>),
+submitted 2026-08-18 as `submit/7965524`. The README now carries the ID; what stays
+open in §3 step 6 is paper 3's `references.bib` entry (still "in preparation", and in
+its own repository), and §3 step 7's blog branch in `personal-website`.
+
+The entry paper 3 should use (mirroring how this paper cites paper 1 as
+`aguilar2026verified` in `references.bib`):
+
+```bibtex
+@misc{aguilar2026omitted,
+  title         = {An Omitted Mode Is a Rare Rule: The Sampling-Verification Danger Law in Continuous Code World Models},
+  author        = {Aguilar Mart\'in, Javier},
+  year          = {2026},
+  eprint        = {2608.17956},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG},
+  note          = {Companion paper (paper 2). arXiv:2608.17956, \url{https://arxiv.org/abs/2608.17956}; repository: \url{https://github.com/JaviMaligno/code-world-models}},
+}
+```
 
 What was submitted, for the record: primary **cs.LG**, cross-lists **cs.AI** and
 **eess.SY**, licence **CC BY 4.0** (matching paper 1), author `Javier Aguilar Mart\'in`
@@ -72,8 +88,9 @@ for consistency with paper 1's bundle and so the source is self-contained.
 4. Upload the tarball from §2 and let arXiv compile; check its PDF against
    `main.pdf` (page count, tables, the 4 figures, cross-references, bibliography).
 5. Comments field: page count and that code/data are public.
-6. After announcement: add the arXiv ID to the README, and update paper 3's
-   `references.bib` entry for this paper from "in preparation" to the real ID.
+6. After announcement: add the arXiv ID to the README (**done** — arXiv:2608.17956),
+   and update paper 3's `references.bib` entry for this paper from "in preparation"
+   to the real ID (**still open**, that repository is not this one).
 7. After announcement, in the **`personal-website` repo**: the companion blog post
    is written and waiting on branch `blog/infer-the-rule-in-one-dimension` (EN+ES,
    hero image done, LinkedIn body hand-written, X thread drafted). It carries
