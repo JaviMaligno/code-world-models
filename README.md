@@ -15,7 +15,7 @@ code + MCTS vs a direct LLM policy. See `docs/specs/` and `docs/plans/`.
 - **Markdown draft:** [`docs/paper/preprint-draft.md`](docs/paper/preprint-draft.md)
 - **arXiv bundle & revision runbook:** [`docs/paper/ARXIV-SUBMISSION.md`](docs/paper/ARXIV-SUBMISSION.md)
 
-### Paper 2 — continuous / hybrid state spaces (submission-ready)
+### Paper 2 — continuous / hybrid state spaces (published)
 
 **An Omitted Mode Is a Rare Rule: The Sampling-Verification Danger Law in Continuous Code World Models** — Javier Aguilar Martín (AGILabs).
 
@@ -25,8 +25,8 @@ localized verified-but-wrong geometry, and repair-from-data turns out to be
 geometry-dependent: exact on 1D clamps, absent on 2D regions via a template
 prior over low-complexity region forms.
 
-- **arXiv:** not yet posted — bundle ready, see the guide below
-- **PDF:** [`docs/paper2/main.pdf`](docs/paper2/main.pdf) (29 pp)
+- **arXiv:** [arXiv:2608.17956](https://arxiv.org/abs/2608.17956)
+- **PDF:** [`docs/paper2/main.pdf`](docs/paper2/main.pdf) (92 pp)
 - **LaTeX source:** [`docs/paper2/main.tex`](docs/paper2/main.tex) · bibliography [`docs/paper2/references.bib`](docs/paper2/references.bib)
 - **arXiv bundle, guide & form-ready abstract:** [`docs/paper2/ARXIV-SUBMISSION.md`](docs/paper2/ARXIV-SUBMISSION.md) · [`docs/paper2/abstract-arxiv.txt`](docs/paper2/abstract-arxiv.txt)
 
