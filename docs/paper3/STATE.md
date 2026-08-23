@@ -74,7 +74,19 @@ maths is done in a separate session.
   `./.venv/Scripts/python.exe -m pytest -q` runs the suite: **895 pass, 1
   skipped, ~5.5 min**. If it ever takes hours instead, that is the environment,
   not the code — it happened once on a freshly cloned tree.
-- `.env` exists but still holds the template values. **Anything that calls Azure
-  will not run until the keys are filled in.** CPU-only work is unaffected.
+- `.env` is filled in and **working** (2026-08-24): `gpt-5.4` and `gpt-5.4-mini`
+  both answer a live round-trip. Two things to know about it:
+  - It points at **`ai-gonvarri-foundry`** (`rg-pharo-gonvarri`, swedencentral),
+    which is a **client resource** — usage bills to it. The deployments were
+    created there on 2026-08-24 at the default capacity (10) rather than
+    something larger, deliberately, since it is not our infrastructure. If the
+    campaigns crawl, that capacity is the first thing to raise.
+  - The deployment names match the models exactly (`gpt-5.4` -> gpt-5.4
+    2026-03-05, `gpt-5.4-mini` -> gpt-5.4-mini 2026-03-17). That is load-bearing
+    and not cosmetic: the deployment name is what gets written as `"model"` in
+    every results JSON, so a deployment called `gpt-5.4` serving anything else
+    would silently mislabel the campaign's provenance.
+  - `nano` was never deployed. No campaign has used it, and it is only read when
+    a run passes `size=nano`, so it costs nothing to leave out.
 - This machine drops work when saturated: keep worker pools small (the rarity
   sweep defaults to 4) and never run two suites at once.
