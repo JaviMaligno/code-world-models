@@ -1,0 +1,517 @@
+{
+  "script": "ring2d_rarity_sweep.py",
+  "params": {
+    "rollouts": 30000,
+    "jobs": 4,
+    "seed": 0
+  },
+  "stream_fields": [
+    "gap",
+    "channel",
+    "start",
+    "ring_norm",
+    "multi"
+  ],
+  "rows": [
+    {
+      "config": {
+        "gap": 0.0,
+        "channel": "facing",
+        "start": "outside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap0",
+      "r": 0.03123333333333333,
+      "r_ci": [
+        0.029324160065304163,
+        0.03326254549842603
+      ],
+      "mode_firings": 937,
+      "r_interior": 0.0,
+      "r_interior_ci": [
+        1.3552527156068805e-20,
+        0.00012803693777666122
+      ],
+      "interior_entries": 0,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_compat-qwen3-coder-30b-a3b-instruct_gap0.json",
+        "continuous_synthesis_ring2d_large_gap0.json",
+        "continuous_synthesis_ring2d_large_gap0_pv-region.json",
+        "continuous_synthesis_ring2d_large_gap0_pv-tda.json",
+        "continuous_synthesis_ring2d_mini_gap0.json",
+        "continuous_synthesis_ring2d_mini_gap0_pv-tda.json"
+      ],
+      "n_artifacts": 143
+    },
+    {
+      "config": {
+        "gap": 0.0,
+        "channel": "facing",
+        "start": "inside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap0-in",
+      "r": 0.7577333333333334,
+      "r_ci": [
+        0.7528521093792349,
+        0.7625485585139058
+      ],
+      "mode_firings": 22732,
+      "r_interior": 1.0,
+      "r_interior_ci": [
+        0.9998719630622233,
+        1.0
+      ],
+      "interior_entries": 30000,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_large_gap0-in_pv-tda.json",
+        "continuous_synthesis_ring2d_mini_gap0-in_pv-tda.json",
+        "continuous_synthesis_ring2d_mini_gap0-in_pv-tda_N160.json",
+        "continuous_synthesis_ring2d_mini_gap0-in_pv-tda_N320.json",
+        "continuous_synthesis_ring2d_mini_gap0-in_pv-tda_N80.json"
+      ],
+      "n_artifacts": 100
+    },
+    {
+      "config": {
+        "gap": 0.0,
+        "channel": "facing",
+        "start": "middle",
+        "ring_norm": "euclid",
+        "multi": true
+      },
+      "knob": "gap0-m2-mid",
+      "r": 0.8953333333333333,
+      "r_ci": [
+        0.8918184552891663,
+        0.8987469768386983
+      ],
+      "mode_firings": 26860,
+      "r_interior": 0.0,
+      "r_interior_ci": [
+        1.3552527156068805e-20,
+        0.00012803693777666122
+      ],
+      "interior_entries": 0,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_gap0-m2-mid_pv-tda.json"
+      ],
+      "n_artifacts": 20
+    },
+    {
+      "config": {
+        "gap": 0.05,
+        "channel": "facing",
+        "start": "outside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap0.05",
+      "r": 0.031033333333333333,
+      "r_ci": [
+        0.02913029150156666,
+        0.03305646527693866
+      ],
+      "mode_firings": 931,
+      "r_interior": 0.0001,
+      "r_interior_ci": [
+        3.4008978370289735e-05,
+        0.00029400235201881614
+      ],
+      "interior_entries": 3,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_gap0.05.json"
+      ],
+      "n_artifacts": 20
+    },
+    {
+      "config": {
+        "gap": 0.1,
+        "channel": "facing",
+        "start": "outside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap0.1",
+      "r": 0.0304,
+      "r_ci": [
+        0.02851651830348051,
+        0.03240373398847933
+      ],
+      "mode_firings": 912,
+      "r_interior": 0.0004,
+      "r_interior_ci": [
+        0.00022883729260383362,
+        0.0006990972156226062
+      ],
+      "interior_entries": 12,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_large_gap0.1.json",
+        "continuous_synthesis_ring2d_mini_gap0.1.json"
+      ],
+      "n_artifacts": 40
+    },
+    {
+      "config": {
+        "gap": 0.2,
+        "channel": "facing",
+        "start": "outside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap0.2",
+      "r": 0.028466666666666668,
+      "r_ci": [
+        0.026644309638264918,
+        0.03040977106318766
+      ],
+      "mode_firings": 854,
+      "r_interior": 0.0016333333333333334,
+      "r_interior_ci": [
+        0.001235778332882406,
+        0.002158507017564185
+      ],
+      "interior_entries": 49,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_gap0.2.json"
+      ],
+      "n_artifacts": 20
+    },
+    {
+      "config": {
+        "gap": 0.2,
+        "channel": "facing",
+        "start": "inside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap0.2-in",
+      "r": 0.7483666666666666,
+      "r_ci": [
+        0.7434244532359816,
+        0.7532452798824599
+      ],
+      "mode_firings": 22451,
+      "r_interior": 1.0,
+      "r_interior_ci": [
+        0.9998719630622233,
+        1.0
+      ],
+      "interior_entries": 30000,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_gap0.2-in_pv-tda.json"
+      ],
+      "n_artifacts": 20
+    },
+    {
+      "config": {
+        "gap": 0.4,
+        "channel": "facing",
+        "start": "outside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap0.4",
+      "r": 0.023733333333333332,
+      "r_ci": [
+        0.022070844944323046,
+        0.02551778117347381
+      ],
+      "mode_firings": 712,
+      "r_interior": 0.0039,
+      "r_interior_ci": [
+        0.0032554009886950224,
+        0.004671637260966979
+      ],
+      "interior_entries": 117,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_gap0.4.json"
+      ],
+      "n_artifacts": 20
+    },
+    {
+      "config": {
+        "gap": 0.6,
+        "channel": "facing",
+        "start": "outside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap0.6",
+      "r": 0.018966666666666666,
+      "r_ci": [
+        0.017483534087196367,
+        0.020572979316073967
+      ],
+      "mode_firings": 569,
+      "r_interior": 0.006166666666666667,
+      "r_interior_ci": [
+        0.005341813342407045,
+        0.007117977806470368
+      ],
+      "interior_entries": 185,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_large_gap0.6.json",
+        "continuous_synthesis_ring2d_mini_gap0.6.json"
+      ],
+      "n_artifacts": 40
+    },
+    {
+      "config": {
+        "gap": 0.6,
+        "channel": "hidden",
+        "start": "outside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap0.6-hid",
+      "r": 0.03123333333333333,
+      "r_ci": [
+        0.029324160065304163,
+        0.03326254549842603
+      ],
+      "mode_firings": 937,
+      "r_interior": 0.0,
+      "r_interior_ci": [
+        1.3552527156068805e-20,
+        0.00012803693777666122
+      ],
+      "interior_entries": 0,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_gap0.6-hid.json"
+      ],
+      "n_artifacts": 10
+    },
+    {
+      "config": {
+        "gap": 0.6,
+        "channel": "facing",
+        "start": "inside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap0.6-in",
+      "r": 0.7058333333333333,
+      "r_ci": [
+        0.7006508815264185,
+        0.7109630766008634
+      ],
+      "mode_firings": 21175,
+      "r_interior": 1.0,
+      "r_interior_ci": [
+        0.9998719630622233,
+        1.0
+      ],
+      "interior_entries": 30000,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_large_gap0.6-in_pv-tda.json",
+        "continuous_synthesis_ring2d_mini_gap0.6-in_pv-tda.json"
+      ],
+      "n_artifacts": 40
+    },
+    {
+      "config": {
+        "gap": 1.2,
+        "channel": "facing",
+        "start": "outside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap1.2",
+      "r": 0.009266666666666666,
+      "r_ci": [
+        0.008243483554758306,
+        0.010415513765104892
+      ],
+      "mode_firings": 278,
+      "r_interior": 0.0099,
+      "r_interior_ci": [
+        0.008840719504548128,
+        0.011084782301860554
+      ],
+      "interior_entries": 297,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_gap1.2.json"
+      ],
+      "n_artifacts": 20
+    },
+    {
+      "config": {
+        "gap": 1.2,
+        "channel": "hidden",
+        "start": "outside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap1.2-hid",
+      "r": 0.03123333333333333,
+      "r_ci": [
+        0.029324160065304163,
+        0.03326254549842603
+      ],
+      "mode_firings": 937,
+      "r_interior": 0.0,
+      "r_interior_ci": [
+        1.3552527156068805e-20,
+        0.00012803693777666122
+      ],
+      "interior_entries": 0,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_gap1.2-hid.json"
+      ],
+      "n_artifacts": 10
+    },
+    {
+      "config": {
+        "gap": 1.2,
+        "channel": "facing",
+        "start": "inside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap1.2-in",
+      "r": 0.6330333333333333,
+      "r_ci": [
+        0.6275625359684102,
+        0.6384700643370121
+      ],
+      "mode_firings": 18991,
+      "r_interior": 1.0,
+      "r_interior_ci": [
+        0.9998719630622233,
+        1.0
+      ],
+      "interior_entries": 30000,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_gap1.2-in_pv-tda.json"
+      ],
+      "n_artifacts": 20
+    },
+    {
+      "config": {
+        "gap": 1.8,
+        "channel": "facing",
+        "start": "inside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap1.8-in",
+      "r": 0.5609,
+      "r_ci": [
+        0.5552766499891478,
+        0.5665077551118308
+      ],
+      "mode_firings": 16827,
+      "r_interior": 1.0,
+      "r_interior_ci": [
+        0.9998719630622233,
+        1.0
+      ],
+      "interior_entries": 30000,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_gap1.8-in_pv-tda.json"
+      ],
+      "n_artifacts": 60
+    },
+    {
+      "config": {
+        "gap": 2.4,
+        "channel": "facing",
+        "start": "inside",
+        "ring_norm": "euclid",
+        "multi": false
+      },
+      "knob": "gap2.4-in",
+      "r": 0.4861666666666667,
+      "r_ci": [
+        0.48051293288978947,
+        0.49182394279882224
+      ],
+      "mode_firings": 14585,
+      "r_interior": 1.0,
+      "r_interior_ci": [
+        0.9998719630622233,
+        1.0
+      ],
+      "interior_entries": 30000,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_large_gap2.4-in_pv-tda.json",
+        "continuous_synthesis_ring2d_mini_gap2.4-in_pv-tda.json"
+      ],
+      "n_artifacts": 40
+    },
+    {
+      "config": {
+        "gap": 0.0,
+        "channel": "facing",
+        "start": "outside",
+        "ring_norm": "cheby",
+        "multi": false
+      },
+      "knob": "sqgap0",
+      "r": 0.04733333333333333,
+      "r_ci": [
+        0.04498777010686986,
+        0.04979481266746394
+      ],
+      "mode_firings": 1420,
+      "r_interior": 0.0,
+      "r_interior_ci": [
+        1.3552527156068805e-20,
+        0.00012803693777666122
+      ],
+      "interior_entries": 0,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_sqgap0.json"
+      ],
+      "n_artifacts": 20
+    },
+    {
+      "config": {
+        "gap": 0.0,
+        "channel": "facing",
+        "start": "inside",
+        "ring_norm": "cheby",
+        "multi": false
+      },
+      "knob": "sqgap0-in",
+      "r": 0.6971666666666667,
+      "r_ci": [
+        0.6919421456679811,
+        0.702340698432889
+      ],
+      "mode_firings": 20915,
+      "r_interior": 1.0,
+      "r_interior_ci": [
+        0.9998719630622233,
+        1.0
+      ],
+      "interior_entries": 30000,
+      "rollouts": 30000,
+      "files": [
+        "continuous_synthesis_ring2d_mini_sqgap0-in_pv-tda.json"
+      ],
+      "n_artifacts": 20
+    }
+  ],
+  "elapsed_s": 68.5
+}

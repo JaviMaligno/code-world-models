@@ -216,6 +216,23 @@ def env_key(params: dict) -> str:
         if n_roll != 40:
             key += f"_n{n_roll}"
         return key
+    if instrument != "cart":
+        # The fall-through used to hand any unknown instrument a CART key. A
+        # synthesis file serialises the whole argparse namespace, so a ring2d
+        # campaign carries the default x_wall=8.0 it never used and every one
+        # of paper 3's 18 configurations came back as "cart_xwall8" -- colliding
+        # with each other AND with cart's own campaigns, on the very key the
+        # audit deduplicates samples and looks rarities up by. That is the
+        # slab-vs-square bug (test_env_key_separates_the_slab_from_the_square)
+        # a second time, and it stayed invisible only because env_from_params
+        # raises on ring2d first, so nothing reached this key in practice.
+        # Adding ring2d here means keying on all five of its stream-defining
+        # fields (gap, channel, start, ring_norm, multi) -- see
+        # scripts/ring2d_rarity_sweep.py, which measures per that tuple.
+        raise ValueError(
+            f"no env_key branch for instrument {instrument!r}; add one keyed "
+            f"on every field its rollout stream depends on (a silent cart key "
+            f"is how the slab collided with the square)")
     return f"cart_xwall{params['x_wall']:g}"
 
 

@@ -51,3 +51,29 @@ genuine fourth paper so far.
 Rule (Javier, 2026-07-23/24): a paper 4 exists only if bucket 2 matures into
 a thesis ("the defenses that work" and/or "non-separating modes"); anything
 incremental folds into paper 3 v2. No half-baked preprints.
+
+## Off-programme, ready to pick up (2026-08-24)
+
+**ring2d rarity is measured; the held-out audit still needs two branches and
+one decision.** `results/ring2d_rarity_sweep.json` has r and r_int with Wilson
+intervals at all 18 configurations the campaigns used, 30k rollouts each
+(EXPERIMENTS.md "ring2d rarity sweep" has the table and the readings). It was
+run because `heldout_gate_audit.py` will not touch paper 3's 663 artifacts
+without a calibrated rarity.
+
+What it did NOT do, on purpose:
+
+- `heldout.env_key` and `heldout.env_from_params` have no ring2d branch. The
+  first used to fall through to `cart_xwall8` for every configuration -- it
+  raises now instead of colliding silently.
+- **Which quantity is the rarity, r or r_int?** That is a paper question, not a
+  data one. Two facts to weigh: this paper treats them as two curves, and the
+  inside-start cells measure r = 0.49-0.76, where (1-r)^N is degenerate rather
+  than small -- so the answer may not be the same for the outside cells and the
+  inside ones.
+
+Two measured results worth folding in wherever the ring's phenomenology is
+written up, independently of the audit: a HIDDEN channel gives the closed
+ring's rarity to five decimals with the same interval (reach, not topology),
+and interior entry at small gaps is nonzero -- the 600-rollout calibration read
+it as zero, which is a theorem only at gap = 0.

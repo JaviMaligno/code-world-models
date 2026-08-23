@@ -1,5 +1,66 @@
 # Experiments Log
 
+## ring2d rarity sweep: r and r_int at every configuration the campaigns used (2026-08-24, CPU)
+
+`scripts/ring2d_rarity_sweep.py` -> `results/ring2d_rarity_sweep.json`. 18
+distinct configurations discovered from `results/` (not typed), 663 artifacts,
+30,000 rollouts each, 68s on 4 workers. 30k matches what paper 2's own
+`R_SOURCES` entries were measured with; the loop is the one from
+`continuous_ring2d.py` including its seed offset, and reproduces that file's
+three gap rows to five decimals (0.041667 / 0.028333 / 0.015 at 600 rollouts).
+
+**Why it was run.** `heldout_gate_audit.py` refuses a campaign whose env_key has
+no calibrated rarity, so paper 3's 663 artifacts are outside the held-out audit.
+This measures the input. It deliberately does NOT write `heldout.R_SOURCES` --
+see "what is still open" below.
+
+| knob | r | r_int | knob | r | r_int |
+|---|---|---|---|---|---|
+| gap0 | 0.03123 | **0** | gap0-in | 0.75773 | 1.0 |
+| gap0.05 | 0.03103 | 0.00010 | gap0.2-in | 0.74837 | 1.0 |
+| gap0.1 | 0.03040 | 0.00040 | gap0.6-in | 0.70583 | 1.0 |
+| gap0.2 | 0.02847 | 0.00163 | gap1.2-in | 0.63303 | 1.0 |
+| gap0.4 | 0.02373 | 0.00390 | gap1.8-in | 0.56090 | 1.0 |
+| gap0.6 | 0.01897 | 0.00617 | gap2.4-in | 0.48617 | 1.0 |
+| gap1.2 | 0.00927 | 0.00990 | sqgap0-in | 0.69717 | 1.0 |
+| sqgap0 | 0.04733 | **0** | gap0-m2-mid | 0.89533 | **0** |
+| gap0.6-hid | 0.03123 | **0** | gap1.2-hid | 0.03123 | **0** |
+
+Wilson intervals in the JSON. Three readings, none of them assumed beforehand:
+
+1. **A hidden channel is indistinguishable from a closed ring, to five
+   decimals.** `gap0.6-hid` and `gap1.2-hid` both give r = 0.03123 with the SAME
+   interval as `gap0`, and 0 interior entries at 30k. The channel is there, on
+   the far side, and the rollout stream never finds it. Measured support for
+   danger being topology relative to REACH rather than topology as such -- the
+   open-ring arm's thesis, now visible in the rarity column itself.
+2. **The inside-start cells are not a rarity regime at all.** r runs 0.49-0.76
+   against the 0.011-0.15 of paper 2's instruments, and r_int is 1.0 by
+   construction (the start IS the interior). (1-r)^N at r = 0.76, N = 40 is
+   ~1e-25: the two-factor prediction is not small there, it is degenerate. Any
+   use of these numbers in a (1-r)^N argument has to say which quantity it means
+   and why, which is exactly why this script does not choose.
+3. **600 rollouts would have given the wrong qualitative answer for small
+   gaps.** At 600, gap0.05 and gap0.1 both showed 0 interior entries -- reading
+   as "interior unreachable". At 30k they show 3 and 12. Zero is a theorem only
+   at gap = 0 (Lemma 2); everywhere else it was a sample-size artifact.
+
+**What is still open before ring2d can be audited** (all three, not just the
+rarity):
+
+- `env_key` had NO ring2d branch: every configuration above fell through to
+  `cart_xwall8`, colliding with each other and with cart's campaigns on the key
+  the audit deduplicates and looks rarities up by -- the slab-vs-square bug
+  again, hidden only because `env_from_params` raises on ring2d first. That
+  fall-through now raises instead (2026-08-24); a real branch has to key on all
+  five stream fields (gap, channel, start, ring_norm, multi).
+- `env_from_params` needs its ring2d branch, mirroring the synthesis script's
+  construction exactly (`env_of` in the sweep script is that mirror).
+- **The modelling choice, which is the actual decision: r or r_int?** Paper 3
+  treats them as two different curves, r is the firing rarity the danger law
+  takes as its argument, r_int is what Lemma 2 makes 0 at gap = 0. Reading 2
+  says the answer may also differ between the outside cells and the inside ones.
+
 ## PAPER 2 — The last gap closed: a universal Jacobian, and the certificate's own irrelevance measured (2026-07-25, closing)
 
 Two gaps were left: the nonlinear analogue of the density argument, and the fact
