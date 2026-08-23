@@ -4,9 +4,11 @@ Paper 2 of the trilogy. Companion paper 1 is **arXiv:2607.14169** (currently v2)
 cited as `aguilar2026verified`; paper 3 is unpublished and is NOT referenced.
 
 Status: **announced as arXiv:2608.17956** (<https://arxiv.org/abs/2608.17956>),
-submitted 2026-08-18 as `submit/7965524`. The README now carries the ID; what stays
-open in §3 step 6 is paper 3's `references.bib` entry (still "in preparation", and in
-its own repository), and §3 step 7's blog branch in `personal-website`.
+submitted 2026-08-18 as `submit/7965524`. The README carries the ID, and paper 3's
+`references.bib` now cites the real preprint instead of "in preparation" — it lives
+in *this* repository after all, on branch `claude/paper-tres-topology-4w813y`
+(`docs/paper3/`), not in one of its own. What stays open is §3 step 7: the blog post
+is scheduled, not yet out.
 
 The entry paper 3 should use (mirroring how this paper cites paper 1 as
 `aguilar2026verified` in `references.bib`):
@@ -90,14 +92,18 @@ for consistency with paper 1's bundle and so the source is self-contained.
 5. Comments field: page count and that code/data are public.
 6. After announcement: add the arXiv ID to the README (**done** — arXiv:2608.17956),
    and update paper 3's `references.bib` entry for this paper from "in preparation"
-   to the real ID (**still open**, that repository is not this one).
+   to the real ID (**done** — `docs/paper3/references.bib` on branch
+   `claude/paper-tres-topology-4w813y`, i.e. this repository, not a separate one as
+   this guide previously said). Paper 3's `main.bbl` is stale until the next LaTeX
+   run, so the citation still renders the old note in the committed `main.pdf`.
 7. After announcement, in the **`personal-website` repo**: the companion blog post
    is written and waiting on branch `blog/infer-the-rule-in-one-dimension` (EN+ES,
-   hero image done, LinkedIn body hand-written, X thread drafted). It carries
-   `ARXIV_PENDING` placeholders and a placeholder `pubDate`; its own
-   `docs/marketing/publish-checklist-infer-the-rule-in-one-dimension.md` lists the
-   exact steps. Merging that branch to `main` publishes the blog, dev.to and
-   LinkedIn in one go, so do it only once the ID is real.
+   hero image done, LinkedIn body hand-written, X thread drafted). **Scheduled for
+   2026-08-30** via `scheduled-publish-infer-the-rule-in-one-dimension.yml`, with the
+   real arXiv ID and a matching `pubDate` already committed to the branch. That date
+   is the first free slot in both the article calendar and the legacy LinkedIn one.
+   The merge publishes blog, Dev.to and LinkedIn in one go and is done by the cron —
+   nothing to do by hand except the X thread afterwards.
 
 ## 3b. Verification of the CURRENT bundle (2026-08-09, post-review v1.6)
 
