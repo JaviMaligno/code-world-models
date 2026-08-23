@@ -620,10 +620,16 @@ def test_committed_audit_json_is_self_consistent():
         # DERIVED, not typed: the count was hardcoded to 625 and went stale the moment the
         # revision's campaigns landed. What the test is for is COMPLETENESS -- every cell
         # of every committed campaign was re-scored -- so it counts them.
+        # Counted over the audit's OWN scope: results/ is shared with paper 3, and a
+        # ring2d campaign is not an artifact this audit failed to cover, it is one it
+        # does not claim (audit.AUDITED_INSTRUMENTS says why).
         import glob
         expected = 0
         for f in glob.glob(str(_REPO / "results" / "continuous_synthesis_*.json")):
             d = json.loads(pathlib.Path(f).read_text())
+            instrument = d.get("params", {}).get("instrument", "cart")
+            if instrument not in audit.AUDITED_INSTRUMENTS:
+                continue
             expected += len(d.get("cells", []))
         assert agg["totals"]["n_artifacts"] == expected, (
             f"the audit covers {agg['totals']['n_artifacts']} artifacts but the committed "

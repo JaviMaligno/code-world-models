@@ -59,6 +59,15 @@ from cwm.continuous.heldout import (  # noqa: E402
 OUT_DEFAULT = _REPO / "results" / "heldout_gate_audit.json"
 SYNTH_GLOB = "continuous_synthesis_*.json"
 
+# The instruments this audit covers. results/ is shared with paper 3, whose
+# ring2d campaigns are outside its scope: every campaign needs a calibrated
+# rarity entry in heldout.R_SOURCES, and _two_factor raises SystemExit rather
+# than predict without one -- so auditing ring2d is not a matter of re-running
+# this script, it needs ring2d's rarity measured first (paper 3's work, and its
+# own decision). Completeness is therefore judged against THIS scope; see
+# tests/test_heldout_gate.py::test_committed_audit_json_is_self_consistent.
+AUDITED_INSTRUMENTS = ("cart", "pendulum", "patch2d")
+
 
 def _atomic_write_json(path: pathlib.Path, obj) -> None:
     """Temp file in the same directory + os.replace (a single POSIX rename), so
@@ -740,6 +749,26 @@ def main(argv=None) -> int:
     files = sorted(args.results_dir.glob(args.glob))
     if not files:
         raise SystemExit(f"no files match {args.glob} in {args.results_dir}")
+    # Out-of-scope instruments are skipped by name, loudly. Without this a
+    # re-run would reach _two_factor on a ring2d campaign and die on a missing
+    # R_SOURCES entry -- a real gap in paper 3's calibration, but reported as
+    # if this audit were broken.
+    skipped = []
+    in_scope = []
+    for path in files:
+        params = json.loads(path.read_text()).get("params", {})
+        if params.get("instrument", "cart") in AUDITED_INSTRUMENTS:
+            in_scope.append(path)
+        else:
+            skipped.append(path.name)
+    if skipped:
+        print(f"skipping {len(skipped)} campaign(s) outside "
+              f"AUDITED_INSTRUMENTS={AUDITED_INSTRUMENTS}: "
+              f"{', '.join(skipped)}", flush=True)
+    files = in_scope
+    if not files:
+        raise SystemExit(f"every file matching {args.glob} is out of scope "
+                         f"(AUDITED_INSTRUMENTS={AUDITED_INSTRUMENTS})")
 
     params_now = {"n_gate": args.n_gate, "n_eval": args.n_eval,
                   "gate_seed_offset": GATE_SEED_OFFSET,
