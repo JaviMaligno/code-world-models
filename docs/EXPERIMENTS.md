@@ -3327,7 +3327,7 @@ Prop 10's (COV), ranked by lesson-efficiency: geometry > exploration >
 passivity. Metadata fix: n_seed_fences aliasing bug corrected (passive row
 said 50, is 0).
 
-## Second wave: multi-chamber and the non-separating tube (2026-07-24)## Second wave: multi-chamber and the non-separating tube (2026-07-24)
+## Second wave: multi-chamber and the non-separating tube (2026-07-24)
 
 **1b — multi-chamber (nested rings).** RingField2D gains r_in2/r_out2
 ([7.5, 9.0]); three mutually reach-null chambers verified (0 escapes / 240
@@ -3349,7 +3349,7 @@ PATH-relative; separation contributes only the exact-gauge side. The ring
 conflated the two; the tube separates them. T8 (linking-number query
 bound) is the math this instrument opens.
 
-## Square ring (bucket-1a)## Square ring (bucket-1a): phenomenology norm-invariant; the template prior reaches the separator (2026-07-24)
+## Square ring (bucket-1a): phenomenology norm-invariant; the template prior reaches the separator (2026-07-24)
 
 RingField2D gains norm='cheby' (square annulus, zero curvature, corners;
 Chebyshev is 1-Lipschitz wrt Euclidean steps so Lemma 2 survives verbatim —
@@ -3372,7 +3372,7 @@ Files: continuous_synthesis_ring2d_mini_sqgap0{,-in_pv-tda}.json,
 continuous_ring2d_cheby_calibration.json; corner-ratio analysis inline
 (EXPERIMENTS log).
 
-## Trajectory-censored filtration (bucket-2b prototype)## Trajectory-censored filtration (bucket-2b prototype): strong signal, and a real research problem found (2026-07-24)
+## Trajectory-censored filtration (bucket-2b prototype): strong signal, and a real research problem found (2026-07-24)
 
 `tda.rips_persistence` gains an opt-in `edge_filter` (golden-safe);
 `scripts/ring2d_censored_filtration.py` (selftested: C-arc+traffic 1->0,
@@ -3399,7 +3399,7 @@ relative to certified-free space) — a genuine research problem, not a
 patch. Decision-gate reading: signal strong, estimator design open ->
 paper-4-grade ingredient; v1 numbers stand as the prototype record.
 
-## Dose curve: evidence cannot buy repair## Dose curve: evidence cannot buy repair — the parameter is GUESSED, not estimated (2026-07-24)
+## Dose curve: evidence cannot buy repair — the parameter is GUESSED, not estimated (2026-07-24)
 
 V2-PROGRAM bucket-1c. D-cell (closed ring, inside+tda, mini, 20 seeds) at
 N in {40, 80, 160, 320} rollouts (files `..._N{80,160,320}.json`; the
@@ -3414,7 +3414,7 @@ cannot buy repair: the synthesis-side twin of the sensor factorial's
 dose-independence. Aggregator patched to exclude `_N` dose files from the
 registered open-sweep summary (analyzed apart).
 
-## The dual defense: freedom patching collapses the invented-mode exploitation (2026-07-24)## The dual defense: freedom patching collapses the invented-mode exploitation (2026-07-24)
+## The dual defense: freedom patching collapses the invented-mode exploitation (2026-07-24)
 
 V2-PROGRAM bucket-2a prototype, decision gate PASSED.
 `mitigation.run_patched_episode` + `_PatchedModel`: record a FREEDOM point
@@ -3438,7 +3438,7 @@ omitted -> persistent nerve fence (0.999->0.058); invented -> freedom patch
 (1.769->0.029). Implementation note: freedom points now dedup at eps/2 (the
 prototype's linear scan paid ~6x for skipping this; semantics preserved).
 
-## The constructive turn: nerve fence + persistence beats the covering law (2026-07-23)## The constructive turn: nerve fence + persistence beats the covering law (2026-07-23)
+## The constructive turn: nerve fence + persistence beats the covering law (2026-07-23)
 
 `mitigation.py` gains `fence_mode="nerve"` (violations within link_r linked
 into segments, tangentially EXTENDED ext=3 beyond both endpoints — two
