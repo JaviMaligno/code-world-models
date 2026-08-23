@@ -1,0 +1,4726 @@
+{
+  "schema_version": 1,
+  "script": "scripts/mode_capable_baseline_h5.py",
+  "claim_contract": {
+    "label": "measured",
+    "experimental_unit": "training seed block",
+    "scope": "favourable learned-event baseline with pinned known off-mode plant",
+    "expressibility": "both fitted classes contain the instrument truth",
+    "finite_evidence_induction": "parameters are estimated only from each block's transitions",
+    "float_exactness": "reported separately on disjoint realised transitions and gates"
+  },
+  "n_seed_blocks_per_patch_arm": 20,
+  "play_evaluation": "one paired episode per training seed block; summaries are across blocks",
+  "cart": {
+    "truth_threshold": 8.0,
+    "hypothesis_class_contains_truth": true,
+    "shared_components": [
+      "off-mode integrator",
+      "reward",
+      "mode effect"
+    ],
+    "learned_component": "hard threshold event function",
+    "arms": [
+      {
+        "arm": "wall-free",
+        "train_seed_block": [
+          10000,
+          10039
+        ],
+        "n_rollouts": 40,
+        "n_contacts": 0,
+        "learned_threshold": null,
+        "mode_rule_recovered_exactly": false,
+        "heldout": {
+          "n_transitions": 3200,
+          "n_off_mode": 3197,
+          "exact_transition_fraction": 0.9990625,
+          "off_mode_exact_fraction": 1.0,
+          "off_mode_max_error": 0.0,
+          "max_error": 1.7145012756932234
+        },
+        "gate_40_eps1e-9": {
+          "passed": true,
+          "n_bad": 0,
+          "max_error": 0.0
+        },
+        "planner": {
+          "j_truth": 17.572407719066625,
+          "j_blind": 17.572407719066625,
+          "j_random": 3.069537792245104e-05,
+          "play_cost": 0.0,
+          "blind_contact_rate": 0.0,
+          "truth_contact_rate": 0.0,
+          "n_episodes": 1
+        }
+      },
+      {
+        "arm": "wall-containing",
+        "train_seed_block": [
+          20000,
+          20039
+        ],
+        "n_rollouts": 40,
+        "n_contacts": 4,
+        "learned_threshold": 8.0,
+        "mode_rule_recovered_exactly": true,
+        "heldout": {
+          "n_transitions": 3200,
+          "n_off_mode": 3200,
+          "exact_transition_fraction": 1.0,
+          "off_mode_exact_fraction": 1.0,
+          "off_mode_max_error": 0.0,
+          "max_error": 0.0
+        },
+        "gate_40_eps1e-9": {
+          "passed": true,
+          "n_bad": 0,
+          "max_error": 0.0
+        },
+        "planner": {
+          "j_truth": 17.83464267524258,
+          "j_blind": 17.83464267524258,
+          "j_random": 0.8439476206964144,
+          "play_cost": 0.0,
+          "blind_contact_rate": 0.0,
+          "truth_contact_rate": 0.0,
+          "n_episodes": 1
+        }
+      }
+    ],
+    "contact_count_sensitivity": [
+      {
+        "n_rollouts": 1,
+        "n_contacts": 0,
+        "threshold_recovered_exactly": false
+      },
+      {
+        "n_rollouts": 5,
+        "n_contacts": 0,
+        "threshold_recovered_exactly": false
+      },
+      {
+        "n_rollouts": 10,
+        "n_contacts": 3,
+        "threshold_recovered_exactly": true
+      },
+      {
+        "n_rollouts": 20,
+        "n_contacts": 3,
+        "threshold_recovered_exactly": true
+      },
+      {
+        "n_rollouts": 40,
+        "n_contacts": 4,
+        "threshold_recovered_exactly": true
+      }
+    ]
+  },
+  "patch2d": {
+    "truth_regions": [
+      [
+        3.0,
+        0.0,
+        1.0
+      ],
+      [
+        7.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "hypothesis_class_contains_truth": true,
+    "shared_components": [
+      "off-mode integrator",
+      "reward",
+      "freeze effect"
+    ],
+    "learned_component": "up to two separated circular event functions",
+    "parameter_tolerance": 0.1,
+    "arms": {
+      "default": {
+        "start_arc_deg": null,
+        "n_rollouts": 40,
+        "n_seed_blocks": 20,
+        "near_mode_recovered_blocks": 12,
+        "both_modes_recovered_blocks": 0,
+        "median_contacts": 15.5,
+        "median_near_landing_arc_deg": 124.75987738548633,
+        "median_iou": 0.44084877758262164,
+        "gate_pass_blocks": 8,
+        "float_exact_on_all_heldout_blocks": 9,
+        "off_mode_exact_on_all_heldout_blocks": 20,
+        "median_play_cost": 0.0,
+        "play_cost_range": [
+          0.0,
+          0.0
+        ],
+        "play_cost_abs_le_0.05_blocks": 20,
+        "rows": [
+          {
+            "train_seed_block": [
+              10000,
+              10039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 21,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                21
+              ],
+              "landing_arc_deg": [
+                110.04890050771195
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.008935209109998,
+                0.004007365670810668,
+                0.9756077161719358
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.4688995215311005,
+              "balanced_accuracy": 0.7344497607655502,
+              "confusion": {
+                "tp": 294,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 333
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.009792698374757658,
+                  "radius_error": 0.024392283828064243,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 399,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 2,
+              "max_error": 0.7981891482712881
+            },
+            "planner": {
+              "j_truth": 17.858420628594416,
+              "j_blind": 17.858420628594416,
+              "j_random": 0.0018808648622685535,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              20000,
+              20039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 12,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                12
+              ],
+              "landing_arc_deg": [
+                156.77847782333626
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.1269880245076753,
+                -0.09542485356138614,
+                0.13555479262577783
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.009554140127388535,
+              "balanced_accuracy": 0.5046424010043218,
+              "confusion": {
+                "tp": 6,
+                "tn": 3513,
+                "fp": 1,
+                "fn": 621
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.8782117125330448,
+                  "radius_error": 0.8644452073742221,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 400,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": true,
+              "n_bad": 0,
+              "max_error": 0.0
+            },
+            "planner": {
+              "j_truth": 18.279343112115765,
+              "j_blind": 18.279343112115765,
+              "j_random": 0.002693479748098429,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              30000,
+              30039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 11,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                10,
+                1
+              ],
+              "landing_arc_deg": [
+                106.68567933537364
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 1,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                2.910961216836749,
+                -0.04570376066096789,
+                0.8752869975476758
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.3827751196172249,
+              "balanced_accuracy": 0.6913875598086124,
+              "confusion": {
+                "tp": 240,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 387
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.1000836582352358,
+                  "radius_error": 0.1247130024523242,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 396,
+              "exact_transition_fraction": 0.9925,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.497802292732683
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 1,
+              "max_error": 0.2995773716612788
+            },
+            "planner": {
+              "j_truth": 18.55230253961075,
+              "j_blind": 18.55230253961075,
+              "j_random": 0.004079737117872229,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              40000,
+              40039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 16,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                16
+              ],
+              "landing_arc_deg": [
+                84.71789522921007
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.934627488290822,
+                -0.0439546835927437,
+                0.894323584938225
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.40350877192982454,
+              "balanced_accuracy": 0.7017543859649122,
+              "confusion": {
+                "tp": 253,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 374
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.07877550061348289,
+                  "radius_error": 0.10567641506177505,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 400,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 4,
+              "max_error": 1.4596561971231625
+            },
+            "planner": {
+              "j_truth": 17.92825034046799,
+              "j_blind": 17.92825034046799,
+              "j_random": 0.026543424382137686,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              50000,
+              50039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 11,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                9,
+                2
+              ],
+              "landing_arc_deg": [
+                85.15048877185818
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 2,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                2.795750946208803,
+                0.08073707147317008,
+                0.7768647762577368
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.2982456140350877,
+              "balanced_accuracy": 0.6491228070175439,
+              "confusion": {
+                "tp": 187,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 440
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.2196272994977244,
+                  "radius_error": 0.22313522374226324,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 398,
+              "exact_transition_fraction": 0.995,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.4587245440241117
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 14,
+              "max_error": 0.9939276294161928
+            },
+            "planner": {
+              "j_truth": 18.546721918282202,
+              "j_blind": 18.546721918282202,
+              "j_random": 0.009307147370580677,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              60000,
+              60039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 21,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                21
+              ],
+              "landing_arc_deg": [
+                143.43847603030076
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.960109742260115,
+                -0.011676771348268132,
+                0.9276500287715062
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.43381180223285487,
+              "balanced_accuracy": 0.7169059011164274,
+              "confusion": {
+                "tp": 272,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 355
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.041564163069574805,
+                  "radius_error": 0.07234997122849385,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 397,
+              "exact_transition_fraction": 0.9925,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.7915619860560332
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 2,
+              "max_error": 1.758382873078244
+            },
+            "planner": {
+              "j_truth": 18.19585916422329,
+              "j_blind": 18.19585916422329,
+              "j_random": 0.008994616934941822,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              70000,
+              70039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 20,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                20
+              ],
+              "landing_arc_deg": [
+                141.66777294342717
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.997882660003264,
+                0.0123439596649648,
+                0.9636580544266273
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46730462519936206,
+              "balanced_accuracy": 0.733652312599681,
+              "confusion": {
+                "tp": 293,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 334
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.012524235260967236,
+                  "radius_error": 0.03634194557337267,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 395,
+              "exact_transition_fraction": 0.99,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.7803271950955284
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 6,
+              "max_error": 1.7409018067043895
+            },
+            "planner": {
+              "j_truth": 18.322065338451246,
+              "j_blind": 18.322065338451246,
+              "j_random": 0.0032031887185422075,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              80000,
+              80039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 7,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                7
+              ],
+              "landing_arc_deg": [
+                165.2837992173769
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.976807039531292,
+                -0.0006282152410333557,
+                0.9557385309996074
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.45773524720893144,
+              "balanced_accuracy": 0.7288676236044658,
+              "confusion": {
+                "tp": 287,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 340
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.023201466972847185,
+                  "radius_error": 0.04426146900039263,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 397,
+              "exact_transition_fraction": 0.9975,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.29232743608345485
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 1,
+              "max_error": 0.7375815903401512
+            },
+            "planner": {
+              "j_truth": 17.921630399130116,
+              "j_blind": 17.921630399130116,
+              "j_random": 0.021283471001560587,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              90000,
+              90039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 11,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                11
+              ],
+              "landing_arc_deg": [
+                73.44636113943908
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.6118222366584707,
+                -0.034287098650102855,
+                0.6099009880750891
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.1850079744816587,
+              "balanced_accuracy": 0.5925039872408293,
+              "confusion": {
+                "tp": 116,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 511
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.3896890825859434,
+                  "radius_error": 0.3900990119249109,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 399,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": true,
+              "n_bad": 0,
+              "max_error": 0.0
+            },
+            "planner": {
+              "j_truth": 18.12479868529451,
+              "j_blind": 18.12479868529451,
+              "j_random": 3.982054884564119,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              100000,
+              100039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 9,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                9
+              ],
+              "landing_arc_deg": [
+                128.64361215562806
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.8387754402401963,
+                -0.017092175045699196,
+                0.824367563944365
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.3413078149920255,
+              "balanced_accuracy": 0.6706539074960127,
+              "confusion": {
+                "tp": 214,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 413
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.16212803927000202,
+                  "radius_error": 0.17563243605563506,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 400,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 5,
+              "max_error": 1.0223495270605647
+            },
+            "planner": {
+              "j_truth": 18.34914526240449,
+              "j_blind": 18.34914526240449,
+              "j_random": 0.03817824959983451,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              110000,
+              110039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 15,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                14,
+                1
+              ],
+              "landing_arc_deg": [
+                190.80283416779722
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 1,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                2.9714775125883772,
+                0.0040704760042039045,
+                0.9561823378434776
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.45773524720893144,
+              "balanced_accuracy": 0.7288676236044658,
+              "confusion": {
+                "tp": 287,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 340
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.028811474503172854,
+                  "radius_error": 0.043817662156522386,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 400,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 6,
+              "max_error": 1.8795034910305533
+            },
+            "planner": {
+              "j_truth": 17.735322693287774,
+              "j_blind": 17.735322693287774,
+              "j_random": 0.0034918248940077183,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              120000,
+              120039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 26,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                25,
+                1
+              ],
+              "landing_arc_deg": [
+                189.12490438214343
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 1,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                2.9977151400307633,
+                0.012596852121458783,
+                0.9706724908579013
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46730462519936206,
+              "balanced_accuracy": 0.733652312599681,
+              "confusion": {
+                "tp": 293,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 334
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.012802393075082517,
+                  "radius_error": 0.029327509142098696,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 400,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 3,
+              "max_error": 0.39836082281866975
+            },
+            "planner": {
+              "j_truth": 18.28269717710867,
+              "j_blind": 18.28269717710867,
+              "j_random": 0.014382494697643416,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              130000,
+              130039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 21,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                15,
+                6
+              ],
+              "landing_arc_deg": [
+                142.51514990265366,
+                151.0048490367226
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.9578917483349096,
+                -0.02764271524041265,
+                0.9301145892860253
+              ],
+              [
+                6.492580461630049,
+                -0.8717088162672105,
+                0.17217212038993165
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.435126582278481,
+              "balanced_accuracy": 0.7185868056595672,
+              "confusion": {
+                "tp": 275,
+                "tn": 3509,
+                "fp": 5,
+                "fn": 352
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.05037087019451944,
+                  "radius_error": 0.0698854107139747,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "centre_error": 1.0086381156180622,
+                  "radius_error": 0.8278278796100683,
+                  "recovered_at_0.1": false
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 396,
+              "exact_transition_fraction": 0.99,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.1338310378767547
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 4,
+              "max_error": 0.5751909496485091
+            },
+            "planner": {
+              "j_truth": 17.95920314317681,
+              "j_blind": 17.95920314317681,
+              "j_random": 0.0018387630383243623,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              140000,
+              140039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 21,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                21
+              ],
+              "landing_arc_deg": [
+                101.87950310979419
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.043428768598944,
+                0.026667984191863992,
+                1.019156043849542
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.47368421052631576,
+              "balanced_accuracy": 0.7413156669290031,
+              "confusion": {
+                "tp": 306,
+                "tn": 3495,
+                "fp": 19,
+                "fn": 321
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.05096311727983423,
+                  "radius_error": 0.01915604384954195,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 400,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": true,
+              "n_bad": 0,
+              "max_error": 0.0
+            },
+            "planner": {
+              "j_truth": 18.329530743590333,
+              "j_blind": 18.329530743590333,
+              "j_random": 0.0025630328230764276,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              150000,
+              150039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 5,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                5
+              ],
+              "landing_arc_deg": [
+                90.07583151758385
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.674785502986594,
+                -0.17589031180784712,
+                0.6156905701431141
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.18660287081339713,
+              "balanced_accuracy": 0.5933014354066986,
+              "confusion": {
+                "tp": 117,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 510
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.36973216096999767,
+                  "radius_error": 0.3843094298568859,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 397,
+              "exact_transition_fraction": 0.995,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.3250131967763366
+            },
+            "gate_10_eps1e-9": {
+              "passed": true,
+              "n_bad": 0,
+              "max_error": 0.0
+            },
+            "planner": {
+              "j_truth": 18.20911011921944,
+              "j_blind": 18.20911011921944,
+              "j_random": 0.31221177975505965,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              160000,
+              160039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 7,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                7
+              ],
+              "landing_arc_deg": [
+                92.712075852101
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.0181650709068006,
+                -0.013782315047504946,
+                0.9949827180441596
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.4802527646129542,
+              "balanced_accuracy": 0.741570514478881,
+              "confusion": {
+                "tp": 304,
+                "tn": 3508,
+                "fp": 6,
+                "fn": 323
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.022801798374640896,
+                  "radius_error": 0.005017281955840391,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 399,
+              "exact_transition_fraction": 0.9975,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.5343283351946997
+            },
+            "gate_10_eps1e-9": {
+              "passed": true,
+              "n_bad": 0,
+              "max_error": 0.0
+            },
+            "planner": {
+              "j_truth": 17.848492654424312,
+              "j_blind": 17.848492654424312,
+              "j_random": 0.000642806197840356,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              170000,
+              170039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 24,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                24
+              ],
+              "landing_arc_deg": [
+                179.7327505989476
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.9835227849730823,
+                -0.014308489953869984,
+                0.9577853043071403
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.45933014354066987,
+              "balanced_accuracy": 0.7296650717703349,
+              "confusion": {
+                "tp": 288,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 339
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.021822728972410395,
+                  "radius_error": 0.04221469569285974,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 394,
+              "exact_transition_fraction": 0.99,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.6122487408723273
+            },
+            "gate_10_eps1e-9": {
+              "passed": true,
+              "n_bad": 0,
+              "max_error": 0.0
+            },
+            "planner": {
+              "j_truth": 18.332650698421286,
+              "j_blind": 18.332650698421286,
+              "j_random": 0.35445503086108004,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              180000,
+              180039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 11,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                11
+              ],
+              "landing_arc_deg": [
+                120.87614261534459
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.9663676568006716,
+                0.019251246774706198,
+                0.9438913667373855
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.44657097288676234,
+              "balanced_accuracy": 0.7232854864433812,
+              "confusion": {
+                "tp": 280,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 347
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.038752354914998996,
+                  "radius_error": 0.056108633262614505,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 400,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 3,
+              "max_error": 1.8517305993373159
+            },
+            "planner": {
+              "j_truth": 17.906393221492632,
+              "j_blind": 17.906393221492632,
+              "j_random": 0.0005947682190430291,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              190000,
+              190039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 27,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                27
+              ],
+              "landing_arc_deg": [
+                178.79310269734464
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.0226287114631094,
+                0.01921586325794161,
+                0.973157799137927
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46899841017488075,
+              "balanced_accuracy": 0.7349626329496323,
+              "confusion": {
+                "tp": 295,
+                "tn": 3512,
+                "fp": 2,
+                "fn": 332
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.02968683181527745,
+                  "radius_error": 0.026842200862073007,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 392,
+              "exact_transition_fraction": 0.985,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.8357032917302081
+            },
+            "gate_10_eps1e-9": {
+              "passed": true,
+              "n_bad": 0,
+              "max_error": 0.0
+            },
+            "planner": {
+              "j_truth": 17.94684674668931,
+              "j_blind": 17.94684674668931,
+              "j_random": 0.0015669475849594842,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              200000,
+              200039
+            ],
+            "n_rollouts": 40,
+            "evidence": {
+              "n_contacts": 18,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                18
+              ],
+              "landing_arc_deg": [
+                88.91213441511786
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.787268075020412,
+                -0.08528938691795422,
+                0.7713235121179884
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.29505582137161085,
+              "balanced_accuracy": 0.6475279106858054,
+              "confusion": {
+                "tp": 185,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 442
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.2291923895472131,
+                  "radius_error": 0.22867648788201156,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 398,
+              "exact_transition_fraction": 0.9975,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.034734042792682
+            },
+            "gate_10_eps1e-9": {
+              "passed": true,
+              "n_bad": 0,
+              "max_error": 0.0
+            },
+            "planner": {
+              "j_truth": 18.420267559766575,
+              "j_blind": 18.420267559766575,
+              "j_random": 0.20933307596205453,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          }
+        ]
+      },
+      "arc120": {
+        "start_arc_deg": 120.0,
+        "n_rollouts": 15,
+        "n_seed_blocks": 20,
+        "near_mode_recovered_blocks": 16,
+        "both_modes_recovered_blocks": 0,
+        "median_contacts": 16.5,
+        "median_near_landing_arc_deg": 117.99608877966318,
+        "median_iou": 0.46172248803827753,
+        "gate_pass_blocks": 0,
+        "float_exact_on_all_heldout_blocks": 1,
+        "off_mode_exact_on_all_heldout_blocks": 20,
+        "median_play_cost": 0.0,
+        "play_cost_range": [
+          0.0,
+          0.0
+        ],
+        "play_cost_abs_le_0.05_blocks": 20,
+        "rows": [
+          {
+            "train_seed_block": [
+              10000,
+              10014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 19,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                19
+              ],
+              "landing_arc_deg": [
+                190.7274265011889
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.008547435459931,
+                -0.012916354677132822,
+                0.9902699860019696
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.48089171974522293,
+              "balanced_accuracy": 0.7406870581016104,
+              "confusion": {
+                "tp": 302,
+                "tn": 3513,
+                "fp": 1,
+                "fn": 325
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.015488410863841857,
+                  "radius_error": 0.009730013998030418,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 387,
+              "exact_transition_fraction": 0.9875,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.2652669672175825
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 6,
+              "max_error": 0.668827241209808
+            },
+            "planner": {
+              "j_truth": 16.85739960284018,
+              "j_blind": 16.85739960284018,
+              "j_random": 0.00048721107228812165,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              20000,
+              20014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 7,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                5,
+                2
+              ],
+              "landing_arc_deg": [
+                61.70416784704669
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 2,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                2.939048715501057,
+                0.0006199622309086279,
+                0.9248853612976037
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.430622009569378,
+              "balanced_accuracy": 0.715311004784689,
+              "confusion": {
+                "tp": 270,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 357
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.060954437371194076,
+                  "radius_error": 0.07511463870239632,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 398,
+              "exact_transition_fraction": 0.995,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.7097990013010154
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 7,
+              "max_error": 1.0888438594439556
+            },
+            "planner": {
+              "j_truth": 16.869484124500207,
+              "j_blind": 16.869484124500207,
+              "j_random": 0.00010859928460698155,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              30000,
+              30014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 16,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                16
+              ],
+              "landing_arc_deg": [
+                119.95947384178228
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.0572075394982945,
+                0.02747656149783409,
+                1.0128507732357088
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.47058823529411764,
+              "balanced_accuracy": 0.7397207705972646,
+              "confusion": {
+                "tp": 304,
+                "tn": 3495,
+                "fp": 19,
+                "fn": 323
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.06346387954729196,
+                  "radius_error": 0.012850773235708823,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 396,
+              "exact_transition_fraction": 0.995,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.2293859180927125
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 4,
+              "max_error": 0.8718106599220655
+            },
+            "planner": {
+              "j_truth": 16.40540104089788,
+              "j_blind": 16.40540104089788,
+              "j_random": 0.0013660330805654053,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              40000,
+              40014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 37,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                37
+              ],
+              "landing_arc_deg": [
+                108.29744505635844
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.966612768883539,
+                -0.007909560052889685,
+                0.9433030634353082
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.44657097288676234,
+              "balanced_accuracy": 0.7232854864433812,
+              "confusion": {
+                "tp": 280,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 347
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.03431134421520445,
+                  "radius_error": 0.05669693656469177,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 394,
+              "exact_transition_fraction": 0.9925,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.0866961782356488
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 5,
+              "max_error": 1.034857572921946
+            },
+            "planner": {
+              "j_truth": 16.7818270430686,
+              "j_blind": 16.7818270430686,
+              "j_random": 0.17285333092111405,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              50000,
+              50014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 15,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                15
+              ],
+              "landing_arc_deg": [
+                95.67385454689249
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.9838283370282364,
+                -0.004485540525852484,
+                0.9613176575065543
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46411483253588515,
+              "balanced_accuracy": 0.7320574162679425,
+              "confusion": {
+                "tp": 291,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 336
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.016782215499789543,
+                  "radius_error": 0.03868234249344571,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 388,
+              "exact_transition_fraction": 0.975,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.921749389300589
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 6,
+              "max_error": 1.6497529177595762
+            },
+            "planner": {
+              "j_truth": 16.61688861499774,
+              "j_blind": 16.61688861499774,
+              "j_random": 0.00045244166110951787,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              60000,
+              60014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 14,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                12,
+                2
+              ],
+              "landing_arc_deg": [
+                98.64092910896332
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 2,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                2.973376897030211,
+                -0.014152915789642031,
+                0.948881418114523
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.4513556618819777,
+              "balanced_accuracy": 0.7256778309409888,
+              "confusion": {
+                "tp": 283,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 344
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.0301511962795622,
+                  "radius_error": 0.05111858188547702,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 399,
+              "exact_transition_fraction": 0.9975,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.9599592886810552
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 3,
+              "max_error": 0.9476875702261626
+            },
+            "planner": {
+              "j_truth": 16.975595584988902,
+              "j_blind": 16.975595584988902,
+              "j_random": 0.0006965435804796921,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              70000,
+              70014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 26,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                26
+              ],
+              "landing_arc_deg": [
+                156.36762248222914
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.0356337957384922,
+                0.016463938369428735,
+                0.9924208765603608
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.4748427672955975,
+              "balanced_accuracy": 0.7395487541744619,
+              "confusion": {
+                "tp": 302,
+                "tn": 3505,
+                "fp": 9,
+                "fn": 325
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.039253390495152585,
+                  "radius_error": 0.007579123439639179,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 393,
+              "exact_transition_fraction": 0.985,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.5091556231921398
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 5,
+              "max_error": 1.2195982991893017
+            },
+            "planner": {
+              "j_truth": 16.87059435394727,
+              "j_blind": 16.87059435394727,
+              "j_random": 0.006995349099203907,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              80000,
+              80014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 16,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                16
+              ],
+              "landing_arc_deg": [
+                94.72153544729021
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.9066644797837107,
+                0.011287893909658354,
+                0.8916559865138366
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.39074960127591707,
+              "balanced_accuracy": 0.6953748006379585,
+              "confusion": {
+                "tp": 245,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 382
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.09401561510175348,
+                  "radius_error": 0.1083440134861634,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 387,
+              "exact_transition_fraction": 0.9725,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.4781630816809932
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 8,
+              "max_error": 1.0042184004464003
+            },
+            "planner": {
+              "j_truth": 16.71964976508897,
+              "j_blind": 16.71964976508897,
+              "j_random": 0.00243829503768702,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              90000,
+              90014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 19,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                19
+              ],
+              "landing_arc_deg": [
+                177.9473162895178
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.9914689553664644,
+                -0.018632568266948653,
+                0.9668199566183308
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46730462519936206,
+              "balanced_accuracy": 0.733652312599681,
+              "confusion": {
+                "tp": 293,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 334
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.0204927138945011,
+                  "radius_error": 0.033180043381669244,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 398,
+              "exact_transition_fraction": 0.995,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.2368074362648933
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 5,
+              "max_error": 0.76559267950619
+            },
+            "planner": {
+              "j_truth": 16.822462515948693,
+              "j_blind": 16.822462515948693,
+              "j_random": 8.726012034013214,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              100000,
+              100014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 11,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                11
+              ],
+              "landing_arc_deg": [
+                228.1886196389509
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.0001432625749906,
+                0.0014363126207924406,
+                0.9767484126170908
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46730462519936206,
+              "balanced_accuracy": 0.733652312599681,
+              "confusion": {
+                "tp": 293,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 334
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.001443439680083861,
+                  "radius_error": 0.023251587382909222,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 382,
+              "exact_transition_fraction": 0.96,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.7106886184529297
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 17,
+              "max_error": 0.8346965143227472
+            },
+            "planner": {
+              "j_truth": 16.968993161904088,
+              "j_blind": 16.968993161904088,
+              "j_random": 0.000283723877266212,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              110000,
+              110014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 12,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                12
+              ],
+              "landing_arc_deg": [
+                135.98259407180728
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.998263240745269,
+                0.005151624490642101,
+                0.9787397817848688
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46730462519936206,
+              "balanced_accuracy": 0.733652312599681,
+              "confusion": {
+                "tp": 293,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 334
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.005436503251307467,
+                  "radius_error": 0.021260218215131244,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 396,
+              "exact_transition_fraction": 0.9925,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.1234617516091565
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 3,
+              "max_error": 1.1967116458321476
+            },
+            "planner": {
+              "j_truth": 16.394096213343,
+              "j_blind": 16.394096213343,
+              "j_random": 0.000644613193027494,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              120000,
+              120014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 24,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                24
+              ],
+              "landing_arc_deg": [
+                145.74699630658117
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.987003590277673,
+                -0.02797497904290157,
+                0.9568510794781094
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.45933014354066987,
+              "balanced_accuracy": 0.7296650717703349,
+              "confusion": {
+                "tp": 288,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 339
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.030846492800987554,
+                  "radius_error": 0.043148920521890566,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 396,
+              "exact_transition_fraction": 0.9925,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.8887723321526353
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 7,
+              "max_error": 0.8558351797262262
+            },
+            "planner": {
+              "j_truth": 16.901827598316757,
+              "j_blind": 16.901827598316757,
+              "j_random": 0.03359837611152667,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              130000,
+              130014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 4,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                3,
+                1
+              ],
+              "landing_arc_deg": [
+                91.66598485460227
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 1,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                2.7192566121363533,
+                0.0009090045652827017,
+                0.7554785901793669
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.2805071315372425,
+              "balanced_accuracy": 0.6405791733952774,
+              "confusion": {
+                "tp": 177,
+                "tn": 3510,
+                "fp": 4,
+                "fn": 450
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.2807448594693368,
+                  "radius_error": 0.24452140982063308,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 392,
+              "exact_transition_fraction": 0.985,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.142515770879763
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 25,
+              "max_error": 1.434604679986906
+            },
+            "planner": {
+              "j_truth": 17.025524913768063,
+              "j_blind": 17.025524913768063,
+              "j_random": 0.0007404779222587957,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              140000,
+              140014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 41,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                41
+              ],
+              "landing_arc_deg": [
+                93.4796407650505
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.8729519708317133,
+                0.043029024288707016,
+                0.853689694708893
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.36363636363636365,
+              "balanced_accuracy": 0.6818181818181819,
+              "confusion": {
+                "tp": 228,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 399
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.13413686535320546,
+                  "radius_error": 0.146310305291107,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 400,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 14,
+              "max_error": 1.296534764761707
+            },
+            "planner": {
+              "j_truth": 16.897123029383483,
+              "j_blind": 16.897123029383483,
+              "j_random": 0.00014303721398403288,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              150000,
+              150014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 32,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                30,
+                2
+              ],
+              "landing_arc_deg": [
+                174.284597154311
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 2,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                2.997082311930883,
+                0.0027341484955729347,
+                0.9812946797905772
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.4704944178628389,
+              "balanced_accuracy": 0.7352472089314195,
+              "confusion": {
+                "tp": 295,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 332
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.003998558698395032,
+                  "radius_error": 0.018705320209422838,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 395,
+              "exact_transition_fraction": 0.99,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.2690166312855993
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 7,
+              "max_error": 0.5736085835448184
+            },
+            "planner": {
+              "j_truth": 16.83768759846027,
+              "j_blind": 16.83768759846027,
+              "j_random": 0.029176136286702643,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              160000,
+              160014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 10,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                8,
+                2
+              ],
+              "landing_arc_deg": [
+                88.51327559600276
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 2,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                2.7942548095690647,
+                -0.005286261020787339,
+                0.7764509357935945
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.2982456140350877,
+              "balanced_accuracy": 0.6491228070175439,
+              "confusion": {
+                "tp": 187,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 440
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.20581308981948093,
+                  "radius_error": 0.22354906420640552,
+                  "recovered_at_0.1": false
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": false
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 398,
+              "exact_transition_fraction": 0.995,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.173483340109111
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 6,
+              "max_error": 1.2397129463233822
+            },
+            "planner": {
+              "j_truth": 16.39465673142947,
+              "j_blind": 16.39465673142947,
+              "j_random": 0.00011350553963125234,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              170000,
+              170014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 18,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                18
+              ],
+              "landing_arc_deg": [
+                114.7258738408138
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.9809428602190997,
+                -0.0012601230024126538,
+                0.9661901441004428
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46411483253588515,
+              "balanced_accuracy": 0.7320574162679425,
+              "confusion": {
+                "tp": 291,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 336
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.019098756153477163,
+                  "radius_error": 0.033809855899557206,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 394,
+              "exact_transition_fraction": 0.9875,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.646616096742979
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 3,
+              "max_error": 0.5342326730915168
+            },
+            "planner": {
+              "j_truth": 16.66403249916481,
+              "j_blind": 16.66403249916481,
+              "j_random": 0.6155594390336012,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              180000,
+              180014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 12,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                12
+              ],
+              "landing_arc_deg": [
+                116.03270371754407
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.946871917199421,
+                -0.022026988012320014,
+                0.9346330629982471
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.43221690590111644,
+              "balanced_accuracy": 0.7161084529505582,
+              "confusion": {
+                "tp": 271,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 356
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.05751331483195919,
+                  "radius_error": 0.06536693700175289,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 397,
+              "exact_transition_fraction": 0.995,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.4152767016411508
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 5,
+              "max_error": 0.7753229285180349
+            },
+            "planner": {
+              "j_truth": 16.64351162111172,
+              "j_blind": 16.64351162111172,
+              "j_random": 8.002777264058024e-05,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              190000,
+              190014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 25,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                25
+              ],
+              "landing_arc_deg": [
+                209.12276824425257
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.995022335716722,
+                -0.0005438734500319947,
+                0.9764818876353614
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46730462519936206,
+              "balanced_accuracy": 0.733652312599681,
+              "confusion": {
+                "tp": 293,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 334
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.0050072886921637225,
+                  "radius_error": 0.023518112364638633,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 381,
+              "exact_transition_fraction": 0.97,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.2308653810588746
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 2,
+              "max_error": 0.2985965609505411
+            },
+            "planner": {
+              "j_truth": 16.643023747313663,
+              "j_blind": 16.643023747313663,
+              "j_random": 0.0004792660457627481,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              200000,
+              200014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 17,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                16,
+                1
+              ],
+              "landing_arc_deg": [
+                132.9511832023227
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 1,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                2.9803545130432822,
+                0.0012715436400956566,
+                0.9543925289436406
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.45773524720893144,
+              "balanced_accuracy": 0.7288676236044658,
+              "confusion": {
+                "tp": 287,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 340
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.0196865939409344,
+                  "radius_error": 0.04560747105635943,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 394,
+              "exact_transition_fraction": 0.9875,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.6228577228292386
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 9,
+              "max_error": 0.8239131927878542
+            },
+            "planner": {
+              "j_truth": 16.49390136834719,
+              "j_blind": 16.49390136834719,
+              "j_random": 0.005983147292480588,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          }
+        ]
+      },
+      "arc240": {
+        "start_arc_deg": 240.0,
+        "n_rollouts": 15,
+        "n_seed_blocks": 20,
+        "near_mode_recovered_blocks": 20,
+        "both_modes_recovered_blocks": 1,
+        "median_contacts": 15.5,
+        "median_near_landing_arc_deg": 187.34383425763704,
+        "median_iou": 0.4703213866570371,
+        "gate_pass_blocks": 1,
+        "float_exact_on_all_heldout_blocks": 4,
+        "off_mode_exact_on_all_heldout_blocks": 19,
+        "median_play_cost": 0.0,
+        "play_cost_range": [
+          -0.0025273517339281515,
+          0.9989350693538561
+        ],
+        "play_cost_abs_le_0.05_blocks": 18,
+        "rows": [
+          {
+            "train_seed_block": [
+              10000,
+              10014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 14,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                12,
+                2
+              ],
+              "landing_arc_deg": [
+                116.05395572472464
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 2,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                3.0050829390881977,
+                -0.038400872782615635,
+                0.9993519275442406
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.48031496062992124,
+              "balanced_accuracy": 0.7420833866629631,
+              "confusion": {
+                "tp": 305,
+                "tn": 3506,
+                "fp": 8,
+                "fn": 322
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.03873581418069018,
+                  "radius_error": 0.0006480724557593742,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 396,
+              "exact_transition_fraction": 0.9875,
+              "off_mode_exact_fraction": 0.98989898989899,
+              "off_mode_max_error": 0.35806817405474195,
+              "max_error": 1.7387506077712789
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 5,
+              "max_error": 0.915636047968963
+            },
+            "planner": {
+              "j_truth": 16.60559585534894,
+              "j_blind": 16.60559585534894,
+              "j_random": 6.861770317250976e-05,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              20000,
+              20014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 9,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                9
+              ],
+              "landing_arc_deg": [
+                203.94536035403513
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.9745867180821954,
+                0.005922673140994601,
+                0.9534060139345507
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.45773524720893144,
+              "balanced_accuracy": 0.7288676236044658,
+              "confusion": {
+                "tp": 287,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 340
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.0260943088616823,
+                  "radius_error": 0.04659398606544929,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 392,
+              "exact_transition_fraction": 0.98,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.0344000756338732
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 1,
+              "max_error": 0.4669477466154514
+            },
+            "planner": {
+              "j_truth": 16.611059292494005,
+              "j_blind": 16.611059292494005,
+              "j_random": 0.0053761969138222815,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              30000,
+              30014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 24,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                20,
+                4
+              ],
+              "landing_arc_deg": [
+                184.0544362505381,
+                97.85965017681661
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.9799809687481025,
+                0.013648695733575262,
+                0.9683967591797672
+              ],
+              [
+                6.526280097504249,
+                0.011090938604766105,
+                0.5489503867572757
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.6168521462639109,
+              "balanced_accuracy": 0.8091253123754696,
+              "confusion": {
+                "tp": 388,
+                "tn": 3512,
+                "fp": 2,
+                "fn": 239
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.024229083917725103,
+                  "radius_error": 0.0316032408202328,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "centre_error": 0.4738497176739884,
+                  "radius_error": 0.4510496132427243,
+                  "recovered_at_0.1": false
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 398,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 8,
+              "max_error": 1.370208130427649
+            },
+            "planner": {
+              "j_truth": 54.41126462514036,
+              "j_blind": 0.07304185294028347,
+              "j_random": 0.015113724814265003,
+              "play_cost": 0.9989350693538561,
+              "blind_contact_rate": 1.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              40000,
+              40014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 39,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                35,
+                4
+              ],
+              "landing_arc_deg": [
+                190.633232264736,
+                74.06988026564181
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.0066435304531103,
+                0.006625935188492943,
+                0.9847655231588198
+              ],
+              [
+                6.695709542831137,
+                -1.0875086042788809,
+                0.1743146290872542
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46855345911949686,
+              "balanced_accuracy": 0.736358961510985,
+              "confusion": {
+                "tp": 298,
+                "tn": 3505,
+                "fp": 9,
+                "fn": 329
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.009382937386741569,
+                  "radius_error": 0.015234476841180178,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "centre_error": 1.1292774887974324,
+                  "radius_error": 0.8256853709127459,
+                  "recovered_at_0.1": false
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 394,
+              "exact_transition_fraction": 0.99,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.696287338492757
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 9,
+              "max_error": 1.2523961888312605
+            },
+            "planner": {
+              "j_truth": 16.511149836935036,
+              "j_blind": 16.511149836935036,
+              "j_random": 0.0004792733658552382,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              50000,
+              50014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 15,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                15
+              ],
+              "landing_arc_deg": [
+                158.98333223235431
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.987154812847938,
+                -0.006728743003302356,
+                0.9632117830465002
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46730462519936206,
+              "balanced_accuracy": 0.733652312599681,
+              "confusion": {
+                "tp": 293,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 334
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.014500855677372458,
+                  "radius_error": 0.036788216953499764,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 380,
+              "exact_transition_fraction": 0.96,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.7046100197577838
+            },
+            "gate_10_eps1e-9": {
+              "passed": true,
+              "n_bad": 0,
+              "max_error": 0.0
+            },
+            "planner": {
+              "j_truth": 53.74168006423546,
+              "j_blind": 53.74168006423546,
+              "j_random": 0.0005058551741107908,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              60000,
+              60014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 22,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                12,
+                10
+              ],
+              "landing_arc_deg": [
+                79.7051132724994,
+                144.366153874175
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.0271347500741745,
+                -0.0021917183286354744,
+                0.9792177427999179
+              ],
+              [
+                6.313358332252152,
+                -0.6532595063990032,
+                0.0640141575002768
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.4793650793650794,
+              "balanced_accuracy": 0.7404024821198233,
+              "confusion": {
+                "tp": 302,
+                "tn": 3511,
+                "fp": 3,
+                "fn": 325
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.027223120519514143,
+                  "radius_error": 0.020782257200082088,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "centre_error": 0.947747203946398,
+                  "radius_error": 0.9359858424997232,
+                  "recovered_at_0.1": false
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 400,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 9,
+              "max_error": 0.9503566869010018
+            },
+            "planner": {
+              "j_truth": 16.761435690692952,
+              "j_blind": 16.761435690692952,
+              "j_random": 0.0004538613615886846,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              70000,
+              70014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 22,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                16,
+                6
+              ],
+              "landing_arc_deg": [
+                232.71897317821922,
+                79.97208488888785
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.99925546849777,
+                -0.005632124639041068,
+                0.9825232425115697
+              ],
+              [
+                6.5942794929903386,
+                -0.15688416202074174,
+                0.5751243434746329
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.6379585326953748,
+              "balanced_accuracy": 0.8189792663476874,
+              "confusion": {
+                "tp": 400,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 227
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.005681122697804205,
+                  "radius_error": 0.01747675748843025,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "centre_error": 0.43499628745671737,
+                  "radius_error": 0.4248756565253671,
+                  "recovered_at_0.1": false
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 395,
+              "exact_transition_fraction": 0.99,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.5847362703939984
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 4,
+              "max_error": 1.2302659725673144
+            },
+            "planner": {
+              "j_truth": 52.84007086036611,
+              "j_blind": 51.78370962305002,
+              "j_random": 0.02232694551876711,
+              "play_cost": 0.020000120395508615,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              80000,
+              80014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 12,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                12
+              ],
+              "landing_arc_deg": [
+                195.90767996010018
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.019378544535721,
+                0.009837927031979131,
+                0.9736933920462643
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.47368421052631576,
+              "balanced_accuracy": 0.7368421052631579,
+              "confusion": {
+                "tp": 297,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 330
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.021732758605604374,
+                  "radius_error": 0.02630660795373574,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 394,
+              "exact_transition_fraction": 0.995,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.39949552830135926
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 4,
+              "max_error": 1.174060910971179
+            },
+            "planner": {
+              "j_truth": 52.50222770424947,
+              "j_blind": 52.63489193743847,
+              "j_random": 0.010826761491519588,
+              "play_cost": -0.0025273517339281515,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              90000,
+              90014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 19,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                19
+              ],
+              "landing_arc_deg": [
+                167.54539365855675
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.0062819791452973,
+                0.007180522611310562,
+                0.9889705665614577
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.4784688995215311,
+              "balanced_accuracy": 0.7392344497607656,
+              "confusion": {
+                "tp": 300,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 327
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.009540606215198909,
+                  "radius_error": 0.011029433438542346,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 397,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 4,
+              "max_error": 0.420712706367966
+            },
+            "planner": {
+              "j_truth": 16.571330412457215,
+              "j_blind": 16.571330412457215,
+              "j_random": 9.192751434690884,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              100000,
+              100014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 15,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                15
+              ],
+              "landing_arc_deg": [
+                250.452789434926
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.968024336690077,
+                -0.014282006213155458,
+                0.9519939824872538
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.4529505582137161,
+              "balanced_accuracy": 0.726475279106858,
+              "confusion": {
+                "tp": 284,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 343
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.03502026192909145,
+                  "radius_error": 0.048006017512746246,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 388,
+              "exact_transition_fraction": 0.98,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.0464342531117836
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 10,
+              "max_error": 1.1850674021667458
+            },
+            "planner": {
+              "j_truth": 16.679885339878297,
+              "j_blind": 16.679885339878297,
+              "j_random": 0.0001598846560357093,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              110000,
+              110014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 12,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                10,
+                2
+              ],
+              "landing_arc_deg": [
+                152.25747442662686
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 2,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                3.0242362831140275,
+                0.0042785841044986304,
+                0.9967463669623005
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.4786729857819905,
+              "balanced_accuracy": 0.7407730663130118,
+              "confusion": {
+                "tp": 303,
+                "tn": 3508,
+                "fp": 6,
+                "fn": 324
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.024611048354805244,
+                  "radius_error": 0.0032536330376995437,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 390,
+              "exact_transition_fraction": 0.9975,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.6550534969345602
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 3,
+              "max_error": 1.8361866658457378
+            },
+            "planner": {
+              "j_truth": 54.029081574914755,
+              "j_blind": 54.11494505723979,
+              "j_random": 0.0027967949428642737,
+              "play_cost": -0.0015892908919189974,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              120000,
+              120014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 18,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                18
+              ],
+              "landing_arc_deg": [
+                191.83775992358915
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.97125587284335,
+                0.012792657843550964,
+                0.9633317239872314
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46411483253588515,
+              "balanced_accuracy": 0.7320574162679425,
+              "confusion": {
+                "tp": 291,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 336
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.031462309843681875,
+                  "radius_error": 0.036668276012768564,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 394,
+              "exact_transition_fraction": 0.99,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.8803895354276827
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 1,
+              "max_error": 0.7168528153925549
+            },
+            "planner": {
+              "j_truth": 16.778528485313572,
+              "j_blind": 16.778528485313572,
+              "j_random": 0.0030043859622509005,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              130000,
+              130014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 9,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                8,
+                1
+              ],
+              "landing_arc_deg": [
+                158.395954027524
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 1,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                3.058225922944778,
+                0.019572539020336815,
+                0.9945326974568025
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.4672897196261682,
+              "balanced_accuracy": 0.7371001298973621,
+              "confusion": {
+                "tp": 300,
+                "tn": 3499,
+                "fp": 15,
+                "fn": 327
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.06142753768851432,
+                  "radius_error": 0.005467302543197494,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 397,
+              "exact_transition_fraction": 0.9925,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.6335965545937081
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 10,
+              "max_error": 1.2196280951650647
+            },
+            "planner": {
+              "j_truth": 16.652224450110804,
+              "j_blind": 16.652224450110804,
+              "j_random": 5.611458727624609e-05,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              140000,
+              140014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 36,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                31,
+                5
+              ],
+              "landing_arc_deg": [
+                178.78818070626122,
+                77.55046605653781
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.989690385421829,
+                0.012521816632012725,
+                0.9696552020588558
+              ],
+              [
+                6.408731267929161,
+                0.35118004653524737,
+                0.3401010828732717
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.5263157894736842,
+              "balanced_accuracy": 0.763157894736842,
+              "confusion": {
+                "tp": 330,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 297
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.016219865736687985,
+                  "radius_error": 0.030344797941144197,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "centre_error": 0.6876962546132966,
+                  "radius_error": 0.6598989171267283,
+                  "recovered_at_0.1": false
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 397,
+              "exact_transition_fraction": 0.9925,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.6989166436043018
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 13,
+              "max_error": 1.5173415470789613
+            },
+            "planner": {
+              "j_truth": 16.920190595207654,
+              "j_blind": 16.920190595207654,
+              "j_random": 0.0001356000475598461,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              150000,
+              150014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 11,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                7,
+                4
+              ],
+              "landing_arc_deg": [
+                209.7678666476691,
+                113.67792944862724
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.0082111678836116,
+                0.0019938261409649825,
+                0.9646031130731773
+              ],
+              [
+                6.927963120461984,
+                0.020758653791014946,
+                0.9258433178980583
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.8963317384370016,
+              "balanced_accuracy": 0.9481658692185009,
+              "confusion": {
+                "tp": 562,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 65
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.008449770452104051,
+                  "radius_error": 0.035396886926822746,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "centre_error": 0.0749682180713261,
+                  "radius_error": 0.0741566821019417,
+                  "recovered_at_0.1": true
+                }
+              ],
+              "both_modes_recovered_at_0.1": true,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 397,
+              "exact_transition_fraction": 0.9975,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.6674920378938525
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 6,
+              "max_error": 0.662277495857155
+            },
+            "planner": {
+              "j_truth": 16.63102311780986,
+              "j_blind": 16.63102311780986,
+              "j_random": 0.012810638155721149,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              160000,
+              160014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 13,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                13
+              ],
+              "landing_arc_deg": [
+                202.12710107573085
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.965571327807049,
+                -0.010818237132824557,
+                0.9394706811621394
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.44178628389154706,
+              "balanced_accuracy": 0.7208931419457736,
+              "confusion": {
+                "tp": 277,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 350
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.03608833223677309,
+                  "radius_error": 0.06052931883786061,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 399,
+              "exact_transition_fraction": 0.9975,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.3874019609188606
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 6,
+              "max_error": 1.049196129381235
+            },
+            "planner": {
+              "j_truth": 53.77925104269126,
+              "j_blind": 45.66628190574581,
+              "j_random": 0.00857607599777948,
+              "play_cost": 0.15088092425789268,
+              "blind_contact_rate": 1.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              170000,
+              170014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 12,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                12
+              ],
+              "landing_arc_deg": [
+                168.92183467781524
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.024834500790177,
+                -0.007571421773719053,
+                0.973694503148711
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.47208931419457734,
+              "balanced_accuracy": 0.7360446570972887,
+              "confusion": {
+                "tp": 296,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 331
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.025963028659477604,
+                  "radius_error": 0.026305496851289023,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 396,
+              "exact_transition_fraction": 0.99,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 1.0965582721176443
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 6,
+              "max_error": 1.1570080053510923
+            },
+            "planner": {
+              "j_truth": 16.14721413152503,
+              "j_blind": 16.14721413152503,
+              "j_random": 0.155928671279975,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              180000,
+              180014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 16,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                16
+              ],
+              "landing_arc_deg": [
+                170.29727418771134
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                2.9817808091513496,
+                0.025212036335269392,
+                0.9505448363960299
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.4513556618819777,
+              "balanced_accuracy": 0.7256778309409888,
+              "confusion": {
+                "tp": 283,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 344
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.031106039467448946,
+                  "radius_error": 0.049455163603970065,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 398,
+              "exact_transition_fraction": 1.0,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.0
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 7,
+              "max_error": 1.1294217090572705
+            },
+            "planner": {
+              "j_truth": 16.242049243237652,
+              "j_blind": 16.242049243237652,
+              "j_random": 0.001295361969581148,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              190000,
+              190014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 30,
+              "n_clusters": 2,
+              "cluster_sizes": [
+                28,
+                2
+              ],
+              "landing_arc_deg": [
+                286.4321814685378
+              ],
+              "rejected_clusters": [
+                {
+                  "n": 2,
+                  "reason": "three contact landings are required"
+                }
+              ]
+            },
+            "learned_regions": [
+              [
+                2.993290376067313,
+                0.002298020141227874,
+                0.9716497246995452
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46730462519936206,
+              "balanced_accuracy": 0.733652312599681,
+              "confusion": {
+                "tp": 293,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 334
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.007092245757697425,
+                  "radius_error": 0.028350275300454753,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 386,
+              "exact_transition_fraction": 0.975,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.905957199185714
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 10,
+              "max_error": 1.0733012371279669
+            },
+            "planner": {
+              "j_truth": 16.246969888117803,
+              "j_blind": 16.246969888117803,
+              "j_random": 0.00037556198306513543,
+              "play_cost": 0.0,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          },
+          {
+            "train_seed_block": [
+              200000,
+              200014
+            ],
+            "n_rollouts": 15,
+            "evidence": {
+              "n_contacts": 16,
+              "n_clusters": 1,
+              "cluster_sizes": [
+                16
+              ],
+              "landing_arc_deg": [
+                222.5280305736255
+              ],
+              "rejected_clusters": []
+            },
+            "learned_regions": [
+              [
+                3.006832264315307,
+                0.006422729820594986,
+                0.9703057200360655
+              ]
+            ],
+            "rule": {
+              "grid_n": 4141,
+              "intersection_over_union": 0.46730462519936206,
+              "balanced_accuracy": 0.733652312599681,
+              "confusion": {
+                "tp": 293,
+                "tn": 3514,
+                "fp": 0,
+                "fn": 334
+              },
+              "parameter_recovery": [
+                {
+                  "mode": 1,
+                  "centre_error": 0.009377168763682326,
+                  "radius_error": 0.029694279963934478,
+                  "recovered_at_0.1": true
+                },
+                {
+                  "mode": 2,
+                  "recovered_at_0.1": false,
+                  "reason": "no fitted cluster"
+                }
+              ],
+              "both_modes_recovered_at_0.1": false,
+              "near_mode_recovered_at_0.1": true
+            },
+            "heldout": {
+              "n_transitions": 400,
+              "n_off_mode": 397,
+              "exact_transition_fraction": 0.995,
+              "off_mode_exact_fraction": 1.0,
+              "off_mode_max_error": 0.0,
+              "max_error": 0.3577392831872989
+            },
+            "gate_10_eps1e-9": {
+              "passed": false,
+              "n_bad": 9,
+              "max_error": 1.6140198421106262
+            },
+            "planner": {
+              "j_truth": 53.27543384513152,
+              "j_blind": 53.14511459018081,
+              "j_random": 0.0008097960193377733,
+              "play_cost": 0.0024461787816761667,
+              "blind_contact_rate": 0.0,
+              "truth_contact_rate": 0.0,
+              "n_episodes": 1
+            }
+          }
+        ]
+      }
+    }
+  }
+}

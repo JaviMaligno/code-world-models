@@ -1,0 +1,2040 @@
+{
+  "script": "certificate_simultaneity.py",
+  "params": {
+    "delta": 0.05,
+    "eps_gate": 0.01,
+    "n_gate": 40,
+    "skip_step_t": false
+  },
+  "reads": [
+    "results/gate_partition_certificate.json",
+    "results/gate_partition_validation.json",
+    "results/gate_density_step_t.json"
+  ],
+  "paper_arithmetic": {
+    "L_plant": 1.27,
+    "part_a": {
+      "K": 8,
+      "split": [
+        2,
+        1,
+        4
+      ],
+      "rho": 0.6000000000000001,
+      "union_failure_K8_M40": 0.038318818328224556,
+      "union_failure_K9_M40": 0.08093597662240273,
+      "uniform_bound": 1.5340000000000003,
+      "paper_says": {
+        "K": 8,
+        "fail_K8": 0.038,
+        "fail_K9": 0.081,
+        "rho": 0.6,
+        "bound": 1.534
+      }
+    },
+    "part_b": {
+      "K": 36,
+      "split": [
+        3,
+        2,
+        6
+      ],
+      "worst_p_C_point": 0.8001,
+      "worst_p_C_ub_published": 0.813954478969523,
+      "hoeffding_radius_published": 0.013854478969522965,
+      "K_times_ub_pow_N": 0.009556683283846498,
+      "delta_over_2": 0.025,
+      "rho": 0.36333333333333334,
+      "uniform_bound": 0.9328666666666667,
+      "L_max_excluding_4.2": 5.7660550458715605,
+      "paper_says": {
+        "worst_p_C": 0.8,
+        "worst_p_C_ub": 0.814,
+        "K_ub_pow_N": 0.01,
+        "rho": 0.363,
+        "bound": 0.933,
+        "L_max": 5.77
+      }
+    }
+  },
+  "part_a_exact_oracle": {
+    "note": "inclusion-exclusion, exact rationals; union bound is what the paper uses",
+    "M": 40,
+    "rows": [
+      {
+        "K": 4,
+        "union_bound": 4.022634064654999e-05,
+        "exact": 4.0226335189581776e-05,
+        "admissible_union": true,
+        "admissible_exact": true
+      },
+      {
+        "K": 6,
+        "union_bound": 0.004082267020779795,
+        "exact": 0.004080910473067108,
+        "admissible_union": true,
+        "admissible_exact": true
+      },
+      {
+        "K": 8,
+        "union_bound": 0.038318818328224556,
+        "exact": 0.038037617047583426,
+        "admissible_union": true,
+        "admissible_exact": true
+      },
+      {
+        "K": 9,
+        "union_bound": 0.08093597662240273,
+        "exact": 0.07939288014727229,
+        "admissible_union": false,
+        "admissible_exact": false
+      },
+      {
+        "K": 10,
+        "union_bound": 0.1478088294143461,
+        "exact": 0.14190342461422667,
+        "admissible_union": false,
+        "admissible_exact": false
+      },
+      {
+        "K": 12,
+        "union_bound": 0.3695207327820167,
+        "exact": 0.3267838198555476,
+        "admissible_union": false,
+        "admissible_exact": false
+      },
+      {
+        "K": 16,
+        "union_bound": 1.2105174063173754,
+        "exact": 0.7571269342086095,
+        "admissible_union": false,
+        "admissible_exact": false
+      },
+      {
+        "K": 24,
+        "union_bound": 4.373962083452213,
+        "exact": 0.998189898281465,
+        "admissible_union": false,
+        "admissible_exact": false
+      }
+    ],
+    "brute_force_mc_200k": {
+      "8": 0.03805,
+      "9": 0.078815
+    },
+    "largest_K_admissible_union": 8,
+    "largest_K_admissible_exact": 8,
+    "measured_400_gate_failure": 0.03749999999999998
+  },
+  "family": {
+    "generator": "coarsest_for(rho) over rho = 2.00 down to 0.09 step 0.01",
+    "data_independent": true,
+    "n_candidates_a_priori": 26,
+    "n_candidates_evaluated": 13,
+    "K_values_evaluated": [
+      1,
+      2,
+      4,
+      6,
+      8,
+      16,
+      24,
+      30,
+      36,
+      48,
+      56,
+      84,
+      96
+    ],
+    "n_certified_of_evaluated": 9,
+    "cell_tests_evaluated": 411,
+    "cell_tests_a_priori_family": 9674,
+    "early_stop_rule": "stop after 18 candidates tried or 4 consecutive failures (gate_partition_certificate.py:246)",
+    "shared_sample": "every candidate is scored on the SAME 20000 rollouts (seeds 4242..24241)",
+    "note_dead_param": "--max-cells-b (default 400) is recorded in the certificate's params but never used; the family is capped by rho > 0.08 and reaches K = 2093"
+  },
+  "simultaneity_variants": [
+    {
+      "label": "published (delta/3 over the K cells of one partition)",
+      "rationale": "gate_partition_certificate.py:252 -- sqrt(log(3K/delta)/(2M))",
+      "per_test_level_at_K36": 0.000462962962962963,
+      "rows": [
+        {
+          "K": 1,
+          "split": [
+            1,
+            1,
+            1
+          ],
+          "rho": 2.0,
+          "worst_p_C": 0.0,
+          "per_test_level": 0.016666666666666666,
+          "worst_p_C_ub": 0.01011724340201186,
+          "union_failure": 1.5939986065468684e-80,
+          "certified": true,
+          "uniform_bound": 5.09
+        },
+        {
+          "K": 2,
+          "split": [
+            1,
+            1,
+            2
+          ],
+          "rho": 1.06,
+          "worst_p_C": 0.06455,
+          "per_test_level": 0.008333333333333333,
+          "worst_p_C_ub": 0.07549016880900615,
+          "union_failure": 2.6100321494356895e-45,
+          "certified": true,
+          "uniform_bound": 2.7024
+        },
+        {
+          "K": 4,
+          "split": [
+            2,
+            1,
+            2
+          ],
+          "rho": 1.0,
+          "worst_p_C": 0.37725,
+          "per_test_level": 0.004166666666666667,
+          "worst_p_C_ub": 0.38895538222714443,
+          "union_failure": 1.5777980338533951e-16,
+          "certified": true,
+          "uniform_bound": 2.55
+        },
+        {
+          "K": 6,
+          "split": [
+            2,
+            1,
+            3
+          ],
+          "rho": 0.6666666666666666,
+          "worst_p_C": 0.41835,
+          "per_test_level": 0.002777777777777778,
+          "worst_p_C_ub": 0.4304806471709573,
+          "union_failure": 1.3686630040569082e-14,
+          "certified": true,
+          "uniform_bound": 1.7033333333333334
+        },
+        {
+          "K": 8,
+          "split": [
+            2,
+            1,
+            4
+          ],
+          "rho": 0.6000000000000001,
+          "worst_p_C": 0.4554,
+          "per_test_level": 0.0020833333333333333,
+          "worst_p_C_ub": 0.46782355233407696,
+          "union_failure": 5.085963992594015e-13,
+          "certified": true,
+          "uniform_bound": 1.5340000000000003
+        },
+        {
+          "K": 16,
+          "split": [
+            2,
+            2,
+            4
+          ],
+          "rho": 0.53,
+          "worst_p_C": 0.6374,
+          "per_test_level": 0.0010416666666666667,
+          "worst_p_C_ub": 0.6505024170331869,
+          "union_failure": 5.42096453396444e-07,
+          "certified": true,
+          "uniform_bound": 1.3562
+        },
+        {
+          "K": 24,
+          "split": [
+            3,
+            2,
+            4
+          ],
+          "rho": 0.5,
+          "worst_p_C": 0.7507,
+          "per_test_level": 0.0006944444444444445,
+          "worst_p_C_ub": 0.7641836923657525,
+          "union_failure": 0.000510648272482616,
+          "certified": true,
+          "uniform_bound": 1.28
+        },
+        {
+          "K": 30,
+          "split": [
+            3,
+            2,
+            5
+          ],
+          "rho": 0.4,
+          "worst_p_C": 0.7791,
+          "per_test_level": 0.0005555555555555556,
+          "worst_p_C_ub": 0.792788993702866,
+          "union_failure": 0.002776040149078541,
+          "certified": true,
+          "uniform_bound": 1.026
+        },
+        {
+          "K": 36,
+          "split": [
+            3,
+            2,
+            6
+          ],
+          "rho": 0.36333333333333334,
+          "worst_p_C": 0.8001,
+          "per_test_level": 0.000462962962962963,
+          "worst_p_C_ub": 0.813954478969523,
+          "union_failure": 0.009556683283846498,
+          "certified": true,
+          "uniform_bound": 0.9328666666666667
+        },
+        {
+          "K": 48,
+          "split": [
+            4,
+            2,
+            6
+          ],
+          "rho": 0.3333333333333333,
+          "worst_p_C": 0.8452,
+          "per_test_level": 0.00034722222222222224,
+          "worst_p_C_ub": 0.8593116490648063,
+          "union_failure": 0.11149854684521701,
+          "certified": false,
+          "uniform_bound": 0.8566666666666667
+        },
+        {
+          "K": 56,
+          "split": [
+            4,
+            2,
+            7
+          ],
+          "rho": 0.30000000000000004,
+          "worst_p_C": 0.8597,
+          "per_test_level": 0.00029761904761904765,
+          "worst_p_C_ub": 0.8739475403604949,
+          "union_failure": 0.2556245753985745,
+          "certified": false,
+          "uniform_bound": 0.7720000000000001
+        },
+        {
+          "K": 84,
+          "split": [
+            4,
+            3,
+            7
+          ],
+          "rho": 0.2857142857142857,
+          "worst_p_C": 0.90085,
+          "per_test_level": 0.0001984126984126984,
+          "worst_p_C_ub": 0.9154489394829431,
+          "union_failure": 2.452699383616631,
+          "certified": false,
+          "uniform_bound": 0.7357142857142857
+        },
+        {
+          "K": 96,
+          "split": [
+            4,
+            3,
+            8
+          ],
+          "rho": 0.27,
+          "worst_p_C": 0.91175,
+          "per_test_level": 0.00017361111111111112,
+          "worst_p_C_ub": 0.9264628283767006,
+          "union_failure": 4.52263147812731,
+          "certified": false,
+          "uniform_bound": 0.6958000000000001
+        }
+      ],
+      "selected": {
+        "K": 36,
+        "split": [
+          3,
+          2,
+          6
+        ],
+        "rho": 0.36333333333333334,
+        "worst_p_C": 0.8001,
+        "per_test_level": 0.000462962962962963,
+        "worst_p_C_ub": 0.813954478969523,
+        "union_failure": 0.009556683283846498,
+        "certified": true,
+        "uniform_bound": 0.9328666666666667,
+        "L_max_excluding_4_2": 5.7660550458715605
+      }
+    },
+    {
+      "label": "Bonferroni over the 13 partitions actually evaluated (411 cell tests)",
+      "rationale": "delta/3 spread over every (partition, cell) test the run touched",
+      "per_test_level_at_K36": 4.0551500405515004e-05,
+      "rows": [
+        {
+          "K": 1,
+          "split": [
+            1,
+            1,
+            1
+          ],
+          "rho": 2.0,
+          "worst_p_C": 0.0,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.015900422774818235,
+          "union_failure": 1.138536283571365e-72,
+          "certified": true,
+          "uniform_bound": 5.09
+        },
+        {
+          "K": 2,
+          "split": [
+            1,
+            1,
+            2
+          ],
+          "rho": 1.06,
+          "worst_p_C": 0.06455,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.08045042277481823,
+          "union_failure": 3.3278460238006544e-44,
+          "certified": true,
+          "uniform_bound": 2.7024
+        },
+        {
+          "K": 4,
+          "split": [
+            2,
+            1,
+            2
+          ],
+          "rho": 1.0,
+          "worst_p_C": 0.37725,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.3931504227748182,
+          "union_failure": 2.4233150092172417e-16,
+          "certified": true,
+          "uniform_bound": 2.55
+        },
+        {
+          "K": 6,
+          "split": [
+            2,
+            1,
+            3
+          ],
+          "rho": 0.6666666666666666,
+          "worst_p_C": 0.41835,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.43425042277481823,
+          "union_failure": 1.9398191744357515e-14,
+          "certified": true,
+          "uniform_bound": 1.7033333333333334
+        },
+        {
+          "K": 8,
+          "split": [
+            2,
+            1,
+            4
+          ],
+          "rho": 0.6000000000000001,
+          "worst_p_C": 0.4554,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.47130042277481826,
+          "union_failure": 6.839166244165465e-13,
+          "certified": true,
+          "uniform_bound": 1.5340000000000003
+        },
+        {
+          "K": 16,
+          "split": [
+            2,
+            2,
+            4
+          ],
+          "rho": 0.53,
+          "worst_p_C": 0.6374,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.6533004227748183,
+          "union_failure": 6.436318873955358e-07,
+          "certified": true,
+          "uniform_bound": 1.3562
+        },
+        {
+          "K": 24,
+          "split": [
+            3,
+            2,
+            4
+          ],
+          "rho": 0.5,
+          "worst_p_C": 0.7507,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.7666004227748182,
+          "union_failure": 0.0005793932333882371,
+          "certified": true,
+          "uniform_bound": 1.28
+        },
+        {
+          "K": 30,
+          "split": [
+            3,
+            2,
+            5
+          ],
+          "rho": 0.4,
+          "worst_p_C": 0.7791,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.7950004227748182,
+          "union_failure": 0.00310324196197684,
+          "certified": true,
+          "uniform_bound": 1.026
+        },
+        {
+          "K": 36,
+          "split": [
+            3,
+            2,
+            6
+          ],
+          "rho": 0.36333333333333334,
+          "worst_p_C": 0.8001,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.8160004227748183,
+          "union_failure": 0.010566176265863326,
+          "certified": true,
+          "uniform_bound": 0.9328666666666667
+        },
+        {
+          "K": 48,
+          "split": [
+            4,
+            2,
+            6
+          ],
+          "rho": 0.3333333333333333,
+          "worst_p_C": 0.8452,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.8611004227748182,
+          "union_failure": 0.12116950553855255,
+          "certified": false,
+          "uniform_bound": 0.8566666666666667
+        },
+        {
+          "K": 56,
+          "split": [
+            4,
+            2,
+            7
+          ],
+          "rho": 0.30000000000000004,
+          "worst_p_C": 0.8597,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.8756004227748182,
+          "union_failure": 0.2756935023654379,
+          "certified": false,
+          "uniform_bound": 0.7720000000000001
+        },
+        {
+          "K": 84,
+          "split": [
+            4,
+            3,
+            7
+          ],
+          "rho": 0.2857142857142857,
+          "worst_p_C": 0.90085,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.9167504227748182,
+          "union_failure": 2.5961156944806745,
+          "certified": false,
+          "uniform_bound": 0.7357142857142857
+        },
+        {
+          "K": 96,
+          "split": [
+            4,
+            3,
+            8
+          ],
+          "rho": 0.27,
+          "worst_p_C": 0.91175,
+          "per_test_level": 4.0551500405515004e-05,
+          "worst_p_C_ub": 0.9276504227748181,
+          "union_failure": 4.7604181975946265,
+          "certified": false,
+          "uniform_bound": 0.6958000000000001
+        }
+      ],
+      "selected": {
+        "K": 36,
+        "split": [
+          3,
+          2,
+          6
+        ],
+        "rho": 0.36333333333333334,
+        "worst_p_C": 0.8001,
+        "per_test_level": 4.0551500405515004e-05,
+        "worst_p_C_ub": 0.8160004227748183,
+        "union_failure": 0.010566176265863326,
+        "certified": true,
+        "uniform_bound": 0.9328666666666667,
+        "L_max_excluding_4_2": 5.7660550458715605
+      }
+    },
+    {
+      "label": "Bonferroni over the full a-priori family (9674 cell tests)",
+      "rationale": "delta/3 spread over every cell of every candidate the generator can emit",
+      "per_test_level_at_K36": 1.7228309558266144e-06,
+      "rows": [
+        {
+          "K": 1,
+          "split": [
+            1,
+            1,
+            1
+          ],
+          "rho": 2.0,
+          "worst_p_C": 0.0,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.018215063625750136,
+          "union_failure": 2.613531286296992e-70,
+          "certified": true,
+          "uniform_bound": 5.09
+        },
+        {
+          "K": 2,
+          "split": [
+            1,
+            1,
+            2
+          ],
+          "rho": 1.06,
+          "worst_p_C": 0.06455,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.08276506362575013,
+          "union_failure": 1.0349327394503504e-43,
+          "certified": true,
+          "uniform_bound": 2.7024
+        },
+        {
+          "K": 4,
+          "split": [
+            2,
+            1,
+            2
+          ],
+          "rho": 1.0,
+          "worst_p_C": 0.37725,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.3954650636257501,
+          "union_failure": 3.064678389718016e-16,
+          "certified": true,
+          "uniform_bound": 2.55
+        },
+        {
+          "K": 6,
+          "split": [
+            2,
+            1,
+            3
+          ],
+          "rho": 0.6666666666666666,
+          "worst_p_C": 0.41835,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.43656506362575015,
+          "union_failure": 2.3994426499589245e-14,
+          "certified": true,
+          "uniform_bound": 1.7033333333333334
+        },
+        {
+          "K": 8,
+          "split": [
+            2,
+            1,
+            4
+          ],
+          "rho": 0.6000000000000001,
+          "worst_p_C": 0.4554,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.4736150636257502,
+          "union_failure": 8.31974977752641e-13,
+          "certified": true,
+          "uniform_bound": 1.5340000000000003
+        },
+        {
+          "K": 16,
+          "split": [
+            2,
+            2,
+            4
+          ],
+          "rho": 0.53,
+          "worst_p_C": 0.6374,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.6556150636257501,
+          "union_failure": 7.414415548468788e-07,
+          "certified": true,
+          "uniform_bound": 1.3562
+        },
+        {
+          "K": 24,
+          "split": [
+            3,
+            2,
+            4
+          ],
+          "rho": 0.5,
+          "worst_p_C": 0.7507,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.7689150636257501,
+          "union_failure": 0.0006536511166800728,
+          "certified": true,
+          "uniform_bound": 1.28
+        },
+        {
+          "K": 30,
+          "split": [
+            3,
+            2,
+            5
+          ],
+          "rho": 0.4,
+          "worst_p_C": 0.7791,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.7973150636257501,
+          "union_failure": 0.0034859409453682987,
+          "certified": true,
+          "uniform_bound": 1.026
+        },
+        {
+          "K": 36,
+          "split": [
+            3,
+            2,
+            6
+          ],
+          "rho": 0.36333333333333334,
+          "worst_p_C": 0.8001,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.8183150636257501,
+          "union_failure": 0.011833802918442559,
+          "certified": true,
+          "uniform_bound": 0.9328666666666667
+        },
+        {
+          "K": 48,
+          "split": [
+            4,
+            2,
+            6
+          ],
+          "rho": 0.3333333333333333,
+          "worst_p_C": 0.8452,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.86341506362575,
+          "union_failure": 0.13490439253346423,
+          "certified": false,
+          "uniform_bound": 0.8566666666666667
+        },
+        {
+          "K": 56,
+          "split": [
+            4,
+            2,
+            7
+          ],
+          "rho": 0.30000000000000004,
+          "worst_p_C": 0.8597,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.8779150636257501,
+          "union_failure": 0.30639950734018595,
+          "certified": false,
+          "uniform_bound": 0.7720000000000001
+        },
+        {
+          "K": 84,
+          "split": [
+            4,
+            3,
+            7
+          ],
+          "rho": 0.2857142857142857,
+          "worst_p_C": 0.90085,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.9190650636257501,
+          "union_failure": 2.871637329037618,
+          "certified": false,
+          "uniform_bound": 0.7357142857142857
+        },
+        {
+          "K": 96,
+          "split": [
+            4,
+            3,
+            8
+          ],
+          "rho": 0.27,
+          "worst_p_C": 0.91175,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.92996506362575,
+          "union_failure": 5.2594045141170485,
+          "certified": false,
+          "uniform_bound": 0.6958000000000001
+        }
+      ],
+      "selected": {
+        "K": 36,
+        "split": [
+          3,
+          2,
+          6
+        ],
+        "rho": 0.36333333333333334,
+        "worst_p_C": 0.8001,
+        "per_test_level": 1.7228309558266144e-06,
+        "worst_p_C_ub": 0.8183150636257501,
+        "union_failure": 0.011833802918442559,
+        "certified": true,
+        "uniform_bound": 0.9328666666666667,
+        "L_max_excluding_4_2": 5.7660550458715605
+      }
+    },
+    {
+      "label": "Bonferroni over the family x 1000 (stress test)",
+      "rationale": "shows the log-dependence: a 1000x larger family costs almost nothing",
+      "per_test_level_at_K36": 1.7228309558266144e-09,
+      "rows": [
+        {
+          "K": 1,
+          "split": [
+            1,
+            1,
+            1
+          ],
+          "rho": 2.0,
+          "worst_p_C": 0.0,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.022460686206451464,
+          "union_failure": 1.1400419127022965e-66,
+          "certified": true,
+          "uniform_bound": 5.09
+        },
+        {
+          "K": 2,
+          "split": [
+            1,
+            1,
+            2
+          ],
+          "rho": 1.06,
+          "worst_p_C": 0.06455,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.08701068620645146,
+          "union_failure": 7.654798168950766e-43,
+          "certified": true,
+          "uniform_bound": 2.7024
+        },
+        {
+          "K": 4,
+          "split": [
+            2,
+            1,
+            2
+          ],
+          "rho": 1.0,
+          "worst_p_C": 0.37725,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.39971068620645145,
+          "union_failure": 4.697754961577086e-16,
+          "certified": true,
+          "uniform_bound": 2.55
+        },
+        {
+          "K": 6,
+          "split": [
+            2,
+            1,
+            3
+          ],
+          "rho": 0.6666666666666666,
+          "worst_p_C": 0.41835,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.4408106862064515,
+          "union_failure": 3.5337499782038766e-14,
+          "certified": true,
+          "uniform_bound": 1.7033333333333334
+        },
+        {
+          "K": 8,
+          "split": [
+            2,
+            1,
+            4
+          ],
+          "rho": 0.6000000000000001,
+          "worst_p_C": 0.4554,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.4778606862064515,
+          "union_failure": 1.1888911199632448e-12,
+          "certified": true,
+          "uniform_bound": 1.5340000000000003
+        },
+        {
+          "K": 16,
+          "split": [
+            2,
+            2,
+            4
+          ],
+          "rho": 0.53,
+          "worst_p_C": 0.6374,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.6598606862064514,
+          "union_failure": 9.598649997099096e-07,
+          "certified": true,
+          "uniform_bound": 1.3562
+        },
+        {
+          "K": 24,
+          "split": [
+            3,
+            2,
+            4
+          ],
+          "rho": 0.5,
+          "worst_p_C": 0.7507,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.7731606862064515,
+          "union_failure": 0.0008147075772591478,
+          "certified": true,
+          "uniform_bound": 1.28
+        },
+        {
+          "K": 30,
+          "split": [
+            3,
+            2,
+            5
+          ],
+          "rho": 0.4,
+          "worst_p_C": 0.7791,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.8015606862064515,
+          "union_failure": 0.004310995708679861,
+          "certified": true,
+          "uniform_bound": 1.026
+        },
+        {
+          "K": 36,
+          "split": [
+            3,
+            2,
+            6
+          ],
+          "rho": 0.36333333333333334,
+          "worst_p_C": 0.8001,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.8225606862064515,
+          "union_failure": 0.014555276293450265,
+          "certified": true,
+          "uniform_bound": 0.9328666666666667
+        },
+        {
+          "K": 48,
+          "split": [
+            4,
+            2,
+            6
+          ],
+          "rho": 0.3333333333333333,
+          "worst_p_C": 0.8452,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.8676606862064514,
+          "union_failure": 0.16414892246438398,
+          "certified": false,
+          "uniform_bound": 0.8566666666666667
+        },
+        {
+          "K": 56,
+          "split": [
+            4,
+            2,
+            7
+          ],
+          "rho": 0.30000000000000004,
+          "worst_p_C": 0.8597,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.8821606862064515,
+          "union_failure": 0.37161736762478054,
+          "certified": false,
+          "uniform_bound": 0.7720000000000001
+        },
+        {
+          "K": 84,
+          "split": [
+            4,
+            3,
+            7
+          ],
+          "rho": 0.2857142857142857,
+          "worst_p_C": 0.90085,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.9233106862064515,
+          "union_failure": 3.45297764769532,
+          "certified": false,
+          "uniform_bound": 0.7357142857142857
+        },
+        {
+          "K": 96,
+          "split": [
+            4,
+            3,
+            8
+          ],
+          "rho": 0.27,
+          "worst_p_C": 0.91175,
+          "per_test_level": 1.7228309558266144e-09,
+          "worst_p_C_ub": 0.9342106862064514,
+          "union_failure": 6.310510065083784,
+          "certified": false,
+          "uniform_bound": 0.6958000000000001
+        }
+      ],
+      "selected": {
+        "K": 36,
+        "split": [
+          3,
+          2,
+          6
+        ],
+        "rho": 0.36333333333333334,
+        "worst_p_C": 0.8001,
+        "per_test_level": 1.7228309558266144e-09,
+        "worst_p_C_ub": 0.8225606862064515,
+        "union_failure": 0.014555276293450265,
+        "certified": true,
+        "uniform_bound": 0.9328666666666667,
+        "L_max_excluding_4_2": 5.7660550458715605
+      }
+    },
+    {
+      "label": "published level, exact-binomial (Clopper-Pearson) instead of Hoeffding",
+      "rationale": "how much of the slack is Hoeffding's",
+      "per_test_level_at_K36": 0.000462962962962963,
+      "rows": [
+        {
+          "K": 1,
+          "split": [
+            1,
+            1,
+            1
+          ],
+          "rho": 2.0,
+          "worst_p_C": 0.0,
+          "per_test_level": 0.016666666666666666,
+          "worst_p_C_ub": 0.0002046962749692097,
+          "union_failure": 2.782259157086174e-148,
+          "certified": true,
+          "uniform_bound": 5.09
+        },
+        {
+          "K": 2,
+          "split": [
+            1,
+            1,
+            2
+          ],
+          "rho": 1.06,
+          "worst_p_C": 0.06455,
+          "per_test_level": 0.008333333333333333,
+          "worst_p_C_ub": 0.06882610441282058,
+          "union_failure": 6.473774318532585e-47,
+          "certified": true,
+          "uniform_bound": 2.7024
+        },
+        {
+          "K": 4,
+          "split": [
+            2,
+            1,
+            2
+          ],
+          "rho": 1.0,
+          "worst_p_C": 0.37725,
+          "per_test_level": 0.004166666666666667,
+          "worst_p_C_ub": 0.386346952769582,
+          "union_failure": 1.2054789713594307e-16,
+          "certified": true,
+          "uniform_bound": 2.55
+        },
+        {
+          "K": 6,
+          "split": [
+            2,
+            1,
+            3
+          ],
+          "rho": 0.6666666666666666,
+          "worst_p_C": 0.41835,
+          "per_test_level": 0.002777777777777778,
+          "worst_p_C_ub": 0.42806847908083734,
+          "union_failure": 1.0931537173236977e-14,
+          "certified": true,
+          "uniform_bound": 1.7033333333333334
+        },
+        {
+          "K": 8,
+          "split": [
+            2,
+            1,
+            4
+          ],
+          "rho": 0.6000000000000001,
+          "worst_p_C": 0.4554,
+          "per_test_level": 0.0020833333333333333,
+          "worst_p_C_ub": 0.4655266707184873,
+          "union_failure": 4.177078945618892e-13,
+          "certified": true,
+          "uniform_bound": 1.5340000000000003
+        },
+        {
+          "K": 16,
+          "split": [
+            2,
+            2,
+            4
+          ],
+          "rho": 0.53,
+          "worst_p_C": 0.6374,
+          "per_test_level": 0.0010416666666666667,
+          "worst_p_C_ub": 0.6478415614846531,
+          "union_failure": 4.601211861253998e-07,
+          "certified": true,
+          "uniform_bound": 1.3562
+        },
+        {
+          "K": 24,
+          "split": [
+            3,
+            2,
+            4
+          ],
+          "rho": 0.5,
+          "worst_p_C": 0.7507,
+          "per_test_level": 0.0006944444444444445,
+          "worst_p_C_ub": 0.7604134122487238,
+          "union_failure": 0.00041898837875451296,
+          "certified": true,
+          "uniform_bound": 1.28
+        },
+        {
+          "K": 30,
+          "split": [
+            3,
+            2,
+            5
+          ],
+          "rho": 0.4,
+          "worst_p_C": 0.7791,
+          "per_test_level": 0.0005555555555555556,
+          "worst_p_C_ub": 0.7885852816428933,
+          "union_failure": 0.0022442329576699664,
+          "certified": true,
+          "uniform_bound": 1.026
+        },
+        {
+          "K": 36,
+          "split": [
+            3,
+            2,
+            6
+          ],
+          "rho": 0.36333333333333334,
+          "worst_p_C": 0.8001,
+          "per_test_level": 0.000462962962962963,
+          "worst_p_C_ub": 0.8093751405469112,
+          "union_failure": 0.007626002578965894,
+          "certified": true,
+          "uniform_bound": 0.9328666666666667
+        },
+        {
+          "K": 48,
+          "split": [
+            4,
+            2,
+            6
+          ],
+          "rho": 0.3333333333333333,
+          "worst_p_C": 0.8452,
+          "per_test_level": 0.00034722222222222224,
+          "worst_p_C_ub": 0.8537606842330394,
+          "union_failure": 0.08603740485533035,
+          "certified": false,
+          "uniform_bound": 0.8566666666666667
+        },
+        {
+          "K": 56,
+          "split": [
+            4,
+            2,
+            7
+          ],
+          "rho": 0.30000000000000004,
+          "worst_p_C": 0.8597,
+          "per_test_level": 0.00029761904761904765,
+          "worst_p_C_ub": 0.8680089279253302,
+          "union_failure": 0.19460576999664714,
+          "certified": false,
+          "uniform_bound": 0.7720000000000001
+        },
+        {
+          "K": 84,
+          "split": [
+            4,
+            3,
+            7
+          ],
+          "rho": 0.2857142857142857,
+          "worst_p_C": 0.90085,
+          "per_test_level": 0.0001984126984126984,
+          "worst_p_C_ub": 0.90818532737451,
+          "union_failure": 1.783440122220328,
+          "certified": false,
+          "uniform_bound": 0.7357142857142857
+        },
+        {
+          "K": 96,
+          "split": [
+            4,
+            3,
+            8
+          ],
+          "rho": 0.27,
+          "worst_p_C": 0.91175,
+          "per_test_level": 0.00017361111111111112,
+          "worst_p_C_ub": 0.9187667657371053,
+          "union_failure": 3.2395323515898826,
+          "certified": false,
+          "uniform_bound": 0.6958000000000001
+        }
+      ],
+      "selected": {
+        "K": 36,
+        "split": [
+          3,
+          2,
+          6
+        ],
+        "rho": 0.36333333333333334,
+        "worst_p_C": 0.8001,
+        "per_test_level": 0.000462962962962963,
+        "worst_p_C_ub": 0.8093751405469112,
+        "union_failure": 0.007626002578965894,
+        "certified": true,
+        "uniform_bound": 0.9328666666666667,
+        "L_max_excluding_4_2": 5.7660550458715605
+      }
+    },
+    {
+      "label": "family-corrected level AND Clopper-Pearson",
+      "rationale": "the tightest honest simultaneous version",
+      "per_test_level_at_K36": 1.7228309558266144e-06,
+      "rows": [
+        {
+          "K": 1,
+          "split": [
+            1,
+            1,
+            1
+          ],
+          "rho": 2.0,
+          "worst_p_C": 0.0,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.0006633569671971068,
+          "union_failure": 7.411255653831608e-128,
+          "certified": true,
+          "uniform_bound": 5.09
+        },
+        {
+          "K": 2,
+          "split": [
+            1,
+            1,
+            2
+          ],
+          "rho": 1.06,
+          "worst_p_C": 0.06455,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.07296370688486928,
+          "union_failure": 6.688143697283786e-46,
+          "certified": true,
+          "uniform_bound": 2.7024
+        },
+        {
+          "K": 4,
+          "split": [
+            2,
+            1,
+            2
+          ],
+          "rho": 1.0,
+          "worst_p_C": 0.37725,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.39327171792730287,
+          "union_failure": 2.45340137258071e-16,
+          "certified": true,
+          "uniform_bound": 2.55
+        },
+        {
+          "K": 6,
+          "split": [
+            2,
+            1,
+            3
+          ],
+          "rho": 0.6666666666666666,
+          "worst_p_C": 0.41835,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.4346232649694546,
+          "union_failure": 2.007567005703278e-14,
+          "certified": true,
+          "uniform_bound": 1.7033333333333334
+        },
+        {
+          "K": 8,
+          "split": [
+            2,
+            1,
+            4
+          ],
+          "rho": 0.6000000000000001,
+          "worst_p_C": 0.4554,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.4718007887096428,
+          "union_failure": 7.135698460851031e-13,
+          "certified": true,
+          "uniform_bound": 1.5340000000000003
+        },
+        {
+          "K": 16,
+          "split": [
+            2,
+            2,
+            4
+          ],
+          "rho": 0.53,
+          "worst_p_C": 0.6374,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.6531006138206408,
+          "union_failure": 6.3580459178509e-07,
+          "certified": true,
+          "uniform_bound": 1.3562
+        },
+        {
+          "K": 24,
+          "split": [
+            3,
+            2,
+            4
+          ],
+          "rho": 0.5,
+          "worst_p_C": 0.7507,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.7647376897027542,
+          "union_failure": 0.000525667381940014,
+          "certified": true,
+          "uniform_bound": 1.28
+        },
+        {
+          "K": 30,
+          "split": [
+            3,
+            2,
+            5
+          ],
+          "rho": 0.4,
+          "worst_p_C": 0.7791,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.7925342826592443,
+          "union_failure": 0.002740586775270632,
+          "certified": true,
+          "uniform_bound": 1.026
+        },
+        {
+          "K": 36,
+          "split": [
+            3,
+            2,
+            6
+          ],
+          "rho": 0.36333333333333334,
+          "worst_p_C": 0.8001,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.8130290555973732,
+          "union_failure": 0.009131563825362253,
+          "certified": true,
+          "uniform_bound": 0.9328666666666667
+        },
+        {
+          "K": 48,
+          "split": [
+            4,
+            2,
+            6
+          ],
+          "rho": 0.3333333333333333,
+          "worst_p_C": 0.8452,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.8568422421044957,
+          "union_failure": 0.09937473778984184,
+          "certified": false,
+          "uniform_bound": 0.8566666666666667
+        },
+        {
+          "K": 56,
+          "split": [
+            4,
+            2,
+            7
+          ],
+          "rho": 0.30000000000000004,
+          "worst_p_C": 0.8597,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.8708586264023694,
+          "union_failure": 0.22186783897390366,
+          "certified": false,
+          "uniform_bound": 0.7720000000000001
+        },
+        {
+          "K": 84,
+          "split": [
+            4,
+            3,
+            7
+          ],
+          "rho": 0.2857142857142857,
+          "worst_p_C": 0.90085,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.9103893941799253,
+          "union_failure": 1.9650195348305421,
+          "certified": false,
+          "uniform_bound": 0.7357142857142857
+        },
+        {
+          "K": 96,
+          "split": [
+            4,
+            3,
+            8
+          ],
+          "rho": 0.27,
+          "worst_p_C": 0.91175,
+          "per_test_level": 1.7228309558266144e-06,
+          "worst_p_C_ub": 0.9207825743852935,
+          "union_failure": 3.536347250022292,
+          "certified": false,
+          "uniform_bound": 0.6958000000000001
+        }
+      ],
+      "selected": {
+        "K": 36,
+        "split": [
+          3,
+          2,
+          6
+        ],
+        "rho": 0.36333333333333334,
+        "worst_p_C": 0.8001,
+        "per_test_level": 1.7228309558266144e-06,
+        "worst_p_C_ub": 0.8130290555973732,
+        "union_failure": 0.009131563825362253,
+        "certified": true,
+        "uniform_bound": 0.9328666666666667,
+        "L_max_excluding_4_2": 5.7660550458715605
+      }
+    }
+  ],
+  "headline_robustness": {
+    "published": {
+      "K": 36,
+      "rho": 0.36333333333333334,
+      "uniform_bound": 0.9328666666666667
+    },
+    "selected_K_per_variant": {
+      "published (delta/3 over the K cells of one partition)": 36,
+      "Bonferroni over the 13 partitions actually evaluated (411 cell tests)": 36,
+      "Bonferroni over the full a-priori family (9674 cell tests)": 36,
+      "Bonferroni over the family x 1000 (stress test)": 36,
+      "published level, exact-binomial (Clopper-Pearson) instead of Hoeffding": 36,
+      "family-corrected level AND Clopper-Pearson": 36
+    },
+    "selected_bound_per_variant": {
+      "published (delta/3 over the K cells of one partition)": 0.9328666666666667,
+      "Bonferroni over the 13 partitions actually evaluated (411 cell tests)": 0.9328666666666667,
+      "Bonferroni over the full a-priori family (9674 cell tests)": 0.9328666666666667,
+      "Bonferroni over the family x 1000 (stress test)": 0.9328666666666667,
+      "published level, exact-binomial (Clopper-Pearson) instead of Hoeffding": 0.9328666666666667,
+      "family-corrected level AND Clopper-Pearson": 0.9328666666666667
+    },
+    "unchanged_under_every_correction": true
+  },
+  "hoeffding_audit": {
+    "per_cell_level_used": 0.000462962962962963,
+    "family_wise_hoeffding_budget": 0.016666666666666666,
+    "t_closed_form": 0.013854478969523005,
+    "t_by_independent_bisection": 0.013854478969523007,
+    "closed_form_matches_bisection": true,
+    "published_t": 0.013854478969522965,
+    "matches_published_t": true,
+    "oracle_exact_binomial_tail": 3.157747493016266e-07,
+    "oracle_hoeffding_level": 0.000462962962962963,
+    "hoeffding_is_conservative": true,
+    "applied_at": "delta/(3*K) per cell, i.e. delta/3 DIVIDED BY the number of cells -- the correct choice; NOT a single bound on the selected maximum",
+    "why_that_is_enough": "with p_C <= phat_C + t for every C simultaneously, max_C p_C <= max_C phat_C + t, which is exactly the quantity the union bound K*ub^N consumes"
+  },
+  "delta_budget": {
+    "hoeffding_half": 0.016666666666666666,
+    "gate_miss_half": 0.025,
+    "total_spent": 0.04166666666666667,
+    "delta": 0.05,
+    "within_budget": true,
+    "actual_confidence_of_part_b": 0.9583333333333334,
+    "part_a_uses_full_delta": true,
+    "part_a_failure": 0.038318818328224556,
+    "note": "part (a) spends the whole delta on the coverage event (it has no estimation error); part (b) spends delta/3 + delta/2 = 5delta/6, so the published 0.933 actually holds at 1 - 0.0417, not 1 - 0.05"
+  },
+  "seed_hygiene": {
+    "mc_seed_range": [
+      4242,
+      24241
+    ],
+    "validation_seed_rule": "1_000_000*trial + r (gate_partition_validation.py:61)",
+    "n_validation_seeds": 16000,
+    "overlap_size": 0,
+    "validation_is_out_of_sample": true,
+    "note": "the 400-gate validation therefore tests the SELECTED partition on fresh rollouts: it is not circular in the sampling sense, only in the sense that the partition it tests was chosen with the MC sample (which is precisely what makes it the right test of the selection)."
+  },
+  "part_a_sample_index": {
+    "validation_breaks_after_step": 0,
+    "evidence": "gate_partition_validation.py:72-73 breaks out of the step loop after the FIRST iteration, so the sample is (x_0, v_0, a_0)",
+    "v_at_step_0_is_identically_zero": true,
+    "certificate_assumes": "the step-1 law, uniform on the sheared box (main.tex:337; main.tex:429 says step 0 is supported on a lower-dimensional set, v = 0 exactly)",
+    "step_1_v_range": [
+      -0.29390095303522407,
+      0.2987988916985663
+    ],
+    "V": 0.30000000000000004,
+    "step_1_v_is_spread_over_pm_V": true,
+    "y_is_the_same_variable_at_both_steps": true,
+    "benign_because": "the certified split has n_v = 1, so the v coordinate is a single cell and cannot distinguish v = 0 from v ~ U(-V,V); and y_1 = x_0 = y_0 identically while a_0, a_1 are i.i.d. uniform, so at n_v = 1 the two samples have the SAME joint law and 385/400 is the right validation number.",
+    "would_break_if": "any certified part-(a) split had n_v >= 2: with v == 0 the index is int(V/dv) which lands in a single v-cell, so the other v-cells could never be hit and the test would report 0/400 coverage for a certificate that is in fact sound.",
+    "demonstration": {
+      "trials": 200,
+      "note": "n_v = 1 rows agree; any n_v >= 2 row shows the step-0 sample reporting 0.0 coverage while the correct step-1 sample does not.",
+      "rows": {
+        "2x1x4": {
+          "K": 8,
+          "rho": 0.6000000000000001,
+          "cover_rate_as_validated_step0": 0.965,
+          "cover_rate_step1_correct": 0.95,
+          "exact_union_failure": 0.038318818328224556
+        },
+        "2x2x2": {
+          "K": 8,
+          "rho": 1.0,
+          "cover_rate_as_validated_step0": 0.0,
+          "cover_rate_step1_correct": 0.955,
+          "exact_union_failure": 0.038318818328224556
+        },
+        "1x2x4": {
+          "K": 8,
+          "rho": 1.03,
+          "cover_rate_as_validated_step0": 0.0,
+          "cover_rate_step1_correct": 0.96,
+          "exact_union_failure": 0.038318818328224556
+        }
+      }
+    }
+  },
+  "step_t_wilson": {
+    "claim_in_paper": "Wilson lower bound per cell at level delta/K over a cell family fixed in advance (main.tex:375)",
+    "code_reality": "a FIXED z = 4.0 (gate_density_step_t.py:215-219), not delta/n_cells",
+    "cell_family_is_data_independent": true,
+    "n_cells_a_priori_in_region": 9806,
+    "z_published": 4.0,
+    "one_sided_level_of_z4": 3.167124183311996e-05,
+    "family_wise_level_published_vs_apriori_family": 0.3105681974155743,
+    "z_required_for_delta_over_apriori_family": 4.412935509861768,
+    "per_step_family_wise_level_published": {
+      "2": 0.012795181700580463,
+      "5": 0.036326914382588595,
+      "10": 0.07224210262134663,
+      "20": 0.1526870568774713,
+      "40": 0.23313201113359602,
+      "80": 0.27224599479749917
+    },
+    "docstring_claim": "'with a few thousand cells the family-wise level stays below delta = 0.05' -- true only up to 1578 cells",
+    "recomputed": {
+      "2": {
+        "n_cells_seen": 404,
+        "levels": {
+          "0.5": {
+            "n_cells_published_z4": 45,
+            "vol_published_z4": 0.20250000000000007,
+            "n_cells_corrected": 42,
+            "vol_corrected": 0.18900000000000006
+          },
+          "0.2": {
+            "n_cells_published_z4": 253,
+            "vol_published_z4": 1.1385000000000003,
+            "n_cells_corrected": 249,
+            "vol_corrected": 1.1205000000000003
+          },
+          "0.1": {
+            "n_cells_published_z4": 320,
+            "vol_published_z4": 1.4400000000000004,
+            "n_cells_corrected": 318,
+            "vol_corrected": 1.4310000000000005
+          },
+          "0.05": {
+            "n_cells_published_z4": 365,
+            "vol_published_z4": 1.6425000000000005,
+            "n_cells_corrected": 364,
+            "vol_corrected": 1.6380000000000006
+          },
+          "0.02": {
+            "n_cells_published_z4": 386,
+            "vol_published_z4": 1.7370000000000005,
+            "n_cells_corrected": 386,
+            "vol_corrected": 1.7370000000000005
+          },
+          "0.01": {
+            "n_cells_published_z4": 394,
+            "vol_published_z4": 1.7730000000000006,
+            "n_cells_corrected": 394,
+            "vol_corrected": 1.7730000000000006
+          }
+        },
+        "reproduces_published": true
+      },
+      "5": {
+        "n_cells_seen": 1147,
+        "levels": {
+          "0.5": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.2": {
+            "n_cells_published_z4": 241,
+            "vol_published_z4": 1.0845000000000002,
+            "n_cells_corrected": 238,
+            "vol_corrected": 1.0710000000000004
+          },
+          "0.1": {
+            "n_cells_published_z4": 416,
+            "vol_published_z4": 1.8720000000000006,
+            "n_cells_corrected": 414,
+            "vol_corrected": 1.8630000000000007
+          },
+          "0.05": {
+            "n_cells_published_z4": 558,
+            "vol_published_z4": 2.5110000000000006,
+            "n_cells_corrected": 547,
+            "vol_corrected": 2.461500000000001
+          },
+          "0.02": {
+            "n_cells_published_z4": 688,
+            "vol_published_z4": 3.096000000000001,
+            "n_cells_corrected": 677,
+            "vol_corrected": 3.046500000000001
+          },
+          "0.01": {
+            "n_cells_published_z4": 774,
+            "vol_published_z4": 3.483000000000001,
+            "n_cells_corrected": 771,
+            "vol_corrected": 3.469500000000001
+          }
+        },
+        "reproduces_published": true
+      },
+      "10": {
+        "n_cells_seen": 2281,
+        "levels": {
+          "0.5": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.2": {
+            "n_cells_published_z4": 54,
+            "vol_published_z4": 0.24300000000000008,
+            "n_cells_corrected": 45,
+            "vol_corrected": 0.20250000000000007
+          },
+          "0.1": {
+            "n_cells_published_z4": 426,
+            "vol_published_z4": 1.9170000000000007,
+            "n_cells_corrected": 417,
+            "vol_corrected": 1.8765000000000005
+          },
+          "0.05": {
+            "n_cells_published_z4": 677,
+            "vol_published_z4": 3.046500000000001,
+            "n_cells_corrected": 668,
+            "vol_corrected": 3.006000000000001
+          },
+          "0.02": {
+            "n_cells_published_z4": 965,
+            "vol_published_z4": 4.342500000000001,
+            "n_cells_corrected": 949,
+            "vol_corrected": 4.270500000000001
+          },
+          "0.01": {
+            "n_cells_published_z4": 1155,
+            "vol_published_z4": 5.197500000000002,
+            "n_cells_corrected": 1148,
+            "vol_corrected": 5.166000000000001
+          }
+        },
+        "reproduces_published": true
+      },
+      "20": {
+        "n_cells_seen": 4821,
+        "levels": {
+          "0.5": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.2": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.1": {
+            "n_cells_published_z4": 131,
+            "vol_published_z4": 0.5895000000000001,
+            "n_cells_corrected": 122,
+            "vol_corrected": 0.5490000000000002
+          },
+          "0.05": {
+            "n_cells_published_z4": 686,
+            "vol_published_z4": 3.087000000000001,
+            "n_cells_corrected": 671,
+            "vol_corrected": 3.0195000000000007
+          },
+          "0.02": {
+            "n_cells_published_z4": 1369,
+            "vol_published_z4": 6.160500000000002,
+            "n_cells_corrected": 1329,
+            "vol_corrected": 5.980500000000002
+          },
+          "0.01": {
+            "n_cells_published_z4": 1817,
+            "vol_published_z4": 8.176500000000003,
+            "n_cells_corrected": 1789,
+            "vol_corrected": 8.050500000000003
+          }
+        },
+        "reproduces_published": true
+      },
+      "40": {
+        "n_cells_seen": 7361,
+        "levels": {
+          "0.5": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.2": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.1": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.05": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.02": {
+            "n_cells_published_z4": 1361,
+            "vol_published_z4": 6.124500000000002,
+            "n_cells_corrected": 1283,
+            "vol_corrected": 5.773500000000002
+          },
+          "0.01": {
+            "n_cells_published_z4": 2628,
+            "vol_published_z4": 11.826000000000004,
+            "n_cells_corrected": 2538,
+            "vol_corrected": 11.421000000000003
+          }
+        },
+        "reproduces_published": true
+      },
+      "80": {
+        "n_cells_seen": 8596,
+        "levels": {
+          "0.5": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.2": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.1": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.05": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.02": {
+            "n_cells_published_z4": 0,
+            "vol_published_z4": 0.0,
+            "n_cells_corrected": 0,
+            "vol_corrected": 0.0
+          },
+          "0.01": {
+            "n_cells_published_z4": 1379,
+            "vol_published_z4": 6.205500000000002,
+            "n_cells_corrected": 1172,
+            "vol_corrected": 5.274000000000002
+          }
+        },
+        "reproduces_published": true
+      }
+    },
+    "paper_quoted_volumes": {
+      "step20_alpha0.05": {
+        "published": 3.087000000000001,
+        "corrected": 3.0195000000000007
+      },
+      "step40_alpha0.02": {
+        "published": 6.124500000000002,
+        "corrected": 5.773500000000002
+      },
+      "step80_alpha0.01": {
+        "published": 6.205500000000002,
+        "corrected": 5.274000000000002
+      }
+    },
+    "all_reproduce_published": true
+  },
+  "verdict": {
+    "class": "(ii) rigorous modulo a Monte-Carlo confidence level, correctly accounted -- and the accounting survives a family-wise correction",
+    "part_a": "fully rigorous, no sampling anywhere; the union bound it uses is loose by 0.7% against the exact inclusion-exclusion probability, and K = 8 is the largest admissible K under BOTH",
+    "part_b_selection_is_data_dependent": true,
+    "part_b_family_is_fixed_in_advance": true,
+    "part_b_survives_family_correction": true,
+    "K_after_correction": 36,
+    "rho_after_correction": 0.36333333333333334,
+    "bound_after_correction": 0.9328666666666667,
+    "worst_p_C_ub_after_correction": 0.8183150636257501,
+    "union_failure_after_correction": 0.011833802918442559,
+    "numbers_that_must_change_in_the_paper": [
+      "the p_C upper bound 0.814 -> 0.8183 and 36*ub^40 = 0.010 -> 0.0118 if the family-wise correction is stated (rho, the bound 0.933 and L <= 5.77 are UNCHANGED)",
+      "the step-t claim 'Wilson lower bound per cell at level delta/K' is not what the code does (fixed z = 4)"
+    ]
+  },
+  "out_of_sample_p_C": {
+    "partition": [
+      3,
+      2,
+      6
+    ],
+    "K": 36,
+    "n_rollouts": 20000,
+    "published_worst_p_C": 0.8001,
+    "reproduced_worst_p_C_same_seeds": 0.8001,
+    "reproduces_published": true,
+    "fresh_seed_base": 10000000,
+    "fresh_worst_p_C": 0.7996,
+    "fresh_argmax_cell": [
+      2,
+      0,
+      3
+    ],
+    "published_argmax_cell": [
+      2,
+      0,
+      3
+    ],
+    "abs_difference": 0.000500000000000056,
+    "hoeffding_radius": 0.013854478969523005,
+    "fresh_estimate_inside_published_upper_bound": true,
+    "certificate_still_holds_on_fresh_sample": true,
+    "union_failure_on_fresh_sample": 0.009324653263975148,
+    "note": "if worst_p_C were an artifact of the shared sample, a disjoint 20,000-rollout stream would move it by more than the Hoeffding radius it is bounded by."
+  },
+  "self_checks": [
+    {
+      "name": "brute-force MC of the K=8 coupon experiment matches the exact inclusion-exclusion value within 4 sigma",
+      "ok": true,
+      "detail": "exact 0.038038, MC 0.038050, sd 0.000428"
+    },
+    {
+      "name": "brute-force MC of the K=9 coupon experiment matches the exact inclusion-exclusion value within 4 sigma",
+      "ok": true,
+      "detail": "exact 0.079393, MC 0.078815, sd 0.000605"
+    },
+    {
+      "name": "the exact probability, not just the union bound, caps part (a) at K = 8",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the union bound is an UPPER bound on the exact probability at every K",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the 400-gate measured failure sits between the exact probability's sampling noise and the published bound",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Hoeffding's closed-form radius equals an independent bisection solve",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the re-derived radius reproduces the certificate's published radius",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the exact binomial tail at the operating point is below the Hoeffding level it is charged (i.e. Hoeffding is conservative, as it must be)",
+      "ok": true,
+      "detail": "3.158e-07 <= 4.630e-04"
+    },
+    {
+      "name": "the delta budget is spent within delta",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "K = 36 / rho = 0.363 / bound 0.933 is selected under every correction, including Bonferroni over the whole candidate family and Clopper-Pearson",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the family-wise correction really did change the p_C bound (so the check above is not vacuous)",
+      "ok": true,
+      "detail": "0.8140 -> 0.8183"
+    },
+    {
+      "name": "at least one evaluated candidate was NOT certified (so the selection rule was actually binding)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the 400-gate validation draws rollouts disjoint from the 20k MC sample",
+      "ok": true,
+      "detail": "overlap 0"
+    },
+    {
+      "name": "step 0 really has v == 0 identically (the defect's precondition)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "step 1 really spreads v over +-V (so the two samples differ)",
+      "ok": true,
+      "detail": "[-0.29390095303522407, 0.2987988916985663]"
+    },
+    {
+      "name": "y is literally the same variable at step 0 and step 1 (why n_v = 1 is safe)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "at the certified split (n_v = 1) the as-validated and corrected samples both cover, and both bracket the exact failure probability",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "at n_v >= 2 the as-validated (step-0) sample covers NEVER while the correct step-1 sample covers -- the defect is real and demonstrated",
+      "ok": true,
+      "detail": "{'2x2x2': (0.0, 0.955), '1x2x4': (0.0, 0.96)}"
+    },
+    {
+      "name": "the published step-t Wilson level is NOT delta/n_cells: at z = 4 the family-wise level over the a-priori family exceeds delta",
+      "ok": true,
+      "detail": "0.311 > 0.05"
+    },
+    {
+      "name": "the reimplementation reproduces every published level-set cell count at z = 4 (so the corrected numbers are trustworthy)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "correcting the level shrinks every quoted volume (non-vacuous)",
+      "ok": true,
+      "detail": "{'step20_alpha0.05': (3.087, 3.0195), 'step40_alpha0.02': (6.1245, 5.7735), 'step80_alpha0.01': (6.2055, 5.274)}"
+    },
+    {
+      "name": "re-running the estimator on the published seeds reproduces 0.8001 exactly (the reimplementation is faithful)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "a disjoint 20k-rollout stream leaves worst p_C inside the published upper bound, and the certificate still holds",
+      "ok": true,
+      "detail": "fresh 0.7996, moved 0.00050 of radius 0.01385"
+    },
+    {
+      "name": "the fresh sample is genuinely a different sample (it moved p_C at all)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "paper's 8*(7/8)^40 = 0.038 and 9*(8/9)^40 = 0.081",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "paper's 36*0.814^40 = 0.010 <= delta/2",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "paper's rho = 0.363, bound = 0.933, L_max = 5.77",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "self_checks_all_pass": true
+}

@@ -26,6 +26,14 @@ ap.add_argument("--walls", type=float, nargs="+",
 ap.add_argument("--rollouts", type=int, default=3000, help="rarity sample")
 ap.add_argument("--episodes", type=int, default=20, help="MPC episodes/arm")
 ap.add_argument("--seed", type=int, default=0)
+ap.add_argument("--width", type=float, default=None,
+                help="reward-plateau sigmoid width; None = the instrument's own "
+                     "default (0.5), which reproduces the committed sweep "
+                     "byte-for-byte. A narrower width sharpens the plateau edges "
+                     "and removes the far plateau's tail leak, which is what lets "
+                     "a pinned planner score above random at the widest knobs.")
+ap.add_argument("--out-suffix", default="",
+                help="written to results/continuous_reach{suffix}.json")
 args = ap.parse_args()
 
 t0 = time.time()
@@ -34,7 +42,8 @@ print(f"{'x_wall':>6} {'rarity':>8} {'(CI)':>17} {'J_truth':>8} {'J_blind':>8} "
       f"{'J_rand':>7} {'cost':>6} {'blind_hit':>9} {'truth_hit':>9} "
       f"{'d@20':>7} {'d@40':>7} {'d@80':>7}", flush=True)
 for x_w in args.walls:
-    truth = CartWall(x_wall=x_w)
+    truth = (CartWall(x_wall=x_w) if args.width is None
+             else CartWall(x_wall=x_w, width=args.width))
     r, lo, hi = harness.rarity(truth, args.rollouts, seed=args.seed + 50_000)
     pc = harness.play_cost(truth, blind_of(truth), args.episodes,
                            seed=args.seed)
@@ -50,7 +59,7 @@ for x_w in args.walls:
 out = {"script": "continuous_reach.py",
        "params": vars(args), "elapsed_s": round(time.time() - t0, 1),
        "rows": rows}
-path = pathlib.Path("results/continuous_reach.json")
+path = pathlib.Path(f"results/continuous_reach{args.out_suffix}.json")
 path.parent.mkdir(exist_ok=True)
 path.write_text(json.dumps(out, indent=2))
 print(f"wrote {path}  [{out['elapsed_s']}s]", flush=True)

@@ -1,0 +1,107 @@
+{
+  "script": "gate_coverage_dependent.py",
+  "params": {
+    "region": 1.0,
+    "rhos": [
+      2.0,
+      1.0,
+      0.8,
+      0.667,
+      0.5,
+      0.4,
+      0.3
+    ],
+    "mc_rollouts": 8000,
+    "n_gate": 40,
+    "delta": 0.05,
+    "eps_gate": 0.01,
+    "seed": 4242
+  },
+  "L_plant": 1.27,
+  "rows": [
+    {
+      "rho": 2.0,
+      "cell_width": 2.0,
+      "n_cells": 1,
+      "q_a": 1.0,
+      "worst_phi": 0.0,
+      "worst_phi_ub": 0.01599676639633402,
+      "n_needed_rigorous": 1,
+      "n_needed_estimated": 1,
+      "uniform_bound": 5.09,
+      "certified_at_deployed_N": true
+    },
+    {
+      "rho": 1.0,
+      "cell_width": 1.0,
+      "n_cells": 8,
+      "q_a": 0.5,
+      "worst_phi": 0.416,
+      "worst_phi_ub": 0.43564336100299206,
+      "n_needed_rigorous": 7,
+      "n_needed_estimated": 7,
+      "uniform_bound": 2.55,
+      "certified_at_deployed_N": true
+    },
+    {
+      "rho": 0.8,
+      "cell_width": 0.6666666666666666,
+      "n_cells": 27,
+      "q_a": 0.3333333333333333,
+      "worst_phi": 0.824625,
+      "worst_phi_ub": 0.8461165411095657,
+      "n_needed_rigorous": 42,
+      "n_needed_estimated": 37,
+      "uniform_bound": 1.7033333333333334,
+      "certified_at_deployed_N": false
+    },
+    {
+      "rho": 0.667,
+      "cell_width": 0.6666666666666666,
+      "n_cells": 27,
+      "q_a": 0.3333333333333333,
+      "worst_phi": 0.824625,
+      "worst_phi_ub": 0.8461165411095657,
+      "n_needed_rigorous": 42,
+      "n_needed_estimated": 37,
+      "uniform_bound": 1.7033333333333334,
+      "certified_at_deployed_N": false
+    },
+    {
+      "rho": 0.5,
+      "cell_width": 0.5,
+      "n_cells": 64,
+      "q_a": 0.25,
+      "worst_phi": 0.937625,
+      "worst_phi_ub": 0.9603368191224054,
+      "n_needed_rigorous": 194,
+      "n_needed_estimated": 122,
+      "uniform_bound": 1.28,
+      "certified_at_deployed_N": false
+    },
+    {
+      "rho": 0.4,
+      "cell_width": 0.4,
+      "n_cells": 125,
+      "q_a": 0.2,
+      "worst_phi": 0.9725,
+      "worst_phi_ub": 0.9961149559330581,
+      "n_needed_rigorous": 2189,
+      "n_needed_estimated": 306,
+      "uniform_bound": 1.026,
+      "certified_at_deployed_N": false
+    },
+    {
+      "rho": 0.3,
+      "cell_width": 0.2857142857142857,
+      "n_cells": 343,
+      "q_a": 0.14285714285714285,
+      "worst_phi": 0.992625,
+      "worst_phi_ub": 1.0,
+      "n_needed_rigorous": null,
+      "n_needed_estimated": 1287,
+      "uniform_bound": 0.7357142857142857,
+      "certified_at_deployed_N": false
+    }
+  ]
+}

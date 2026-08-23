@@ -1,0 +1,56 @@
+```python
+import math
+
+DT = 0.1
+GAIN = 3.0
+DRAG = 0.3
+A_MAX = 1.0
+
+TRAP_AX = -6.0
+TRAP_AY = 0.0
+TRAP_BX = 12.0
+TRAP_BY = 0.0
+TRAP_RADIUS = 1.0
+
+
+def _dist_to_trap_segment(x: float, y: float) -> float:
+    abx = TRAP_BX - TRAP_AX
+    aby = TRAP_BY - TRAP_AY
+    apx = x - TRAP_AX
+    apy = y - TRAP_AY
+    ab_len_sq = abx * abx + aby * aby
+    t = (apx * abx + apy * aby) / ab_len_sq
+    t = min(1.0, max(0.0, t))
+    cx = TRAP_AX + t * abx
+    cy = TRAP_AY + t * aby
+    return math.hypot(x - cx, y - cy)
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    a = min(A_MAX, max(-A_MAX, action))
+    phi = math.pi * a / A_MAX
+
+    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT
+    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT
+    x2 = x + vx2 * DT
+    y2 = y + vy2 * DT
+
+    if _dist_to_trap_segment(x, y) <= TRAP_RADIUS:
+        x2, y2, vx2, vy2 = x, y, 0.0, 0.0
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+
+    d1 = math.hypot(x - (-6.0), y - 0.0)
+    d2 = math.hypot(x - 12.0, y - 0.0)
+
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+
+    return real + phantom
+```

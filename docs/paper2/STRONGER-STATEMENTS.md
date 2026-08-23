@@ -1,0 +1,912 @@
+# Statements the reviews weakened, and how to earn them back
+
+Written 2026-07-25 at Javier's request. **STATUS 2026-07-25 (same day): items 1, 2,
+4 and 5 are DONE and item 3 was superseded by a better result — see the per-item
+"EARNED" notes below. This file is kept as the record of what was weak, what it
+cost to fix, and what remains.**
+
+---
+
+## 1. Already recovered, and now stronger than the original — the joint danger factor
+
+**Was:** "the danger law composes per mode: the joint factor is
+$(1-r_1)^N(1-r_2)^N$." That silently assumed the two per-mode contact events are
+independent within a rollout. They are not (measured $P(\text{both}) \in [0,
+0.005]$ against $r_1r_2 \in [0.0007, 0.0025]$, dependence changing sign across
+the knob grid), and the product misestimates the joint factor by $-17\%$ to
+$+12\%$.
+
+**Now:** the joint factor is *measured* at the union event, **and** the paper
+proves a two-sided bracket that needs no independence assumption —
+$(1-\min(1,r_1{+}r_2))^N \le (1-r_\cup)^N \le (1-\max(r_1,r_2))^N$ — plus an exact
+sign rule for the product's error (over-estimates under negative dependence,
+under-estimates under positive). Verified against all nine knobs in CI.
+
+**Net:** stronger than what was there before. An assumption became a theorem. Also
+note the corrected numbers are *larger* (more danger) at 3 of 9 knobs: e.g.
+$k=(4,6)$ goes 0.0178 → 0.0215.
+
+**Superseded 2026-07-25, by a better result than the one planned.** The plan was
+an instrument with provably independent modes so the product form could be
+*derived*. That plan was wrong on its own terms: moving modes apart makes the
+events *disjoint*, which is the opposite of independent, and pushes the joint
+factor to the bracket's lower end. What replaced it is a remark that says what is
+actually true — both bracket ends are attained (the lower one in our data, at six
+of nine knobs where no rollout out of 600 contacts both patches), and exact
+factorization is a property of the **gate**, not the instrument: a *stratified*
+gate spending independent budgets $N_1, N_2$ on the two mode regions has joint
+miss probability exactly $(1-r_1')^{N_1}(1-r_2')^{N_2}$. That is a design
+consequence for multi-mode pipelines, and it cost no compute.
+
+---
+
+## 2. Weakened, recoverable with Azure money — the pooled Wilson bounds
+
+**EARNED 2026-07-25.** `--seed-offset` added (tested: blocks disjoint, resume
+does not re-spend) and the large arm re-run on block $S_{20}$ for both headline
+cells, 10 min each. Cart: 20/20 on **20 independent samples**, Wilson **0.8389** —
+the 0.84 restored and legitimate; the $(1-r)^N$ check is now poolable too (20/40
+independent samples lacked the mode against a predicted 0.63). Pendulum: 15/15
+disjoint, Wilson **0.796** (was 0.701 per size). Bonus: repair goes 82/82 → 106/106
+over 65 distinct samples, and the cells now carry two orthogonal replications
+(same samples/different model, and different samples/same model).
+
+
+**Was:** mode-absent ⇒ blind-and-exploited with Wilson lower bound **0.84**
+(pooled 20/20 across the two GPT-5.x sizes); pendulum 0.824 (18/18).
+
+**Now:** 0.72 per size (10/10) and 0.70 (9/9), because
+`rollout_seed = 10⁴(i+1)` is model-independent, so the two sizes are synthesized
+from *the same samples*: pooling doubles the synthesis draws, not the independent
+gate samples.
+
+**Route to the strong version:** run the second size on a *disjoint* seed block
+(e.g. seed indices 20–39, i.e. `rollout_seed ∈ {210000, …, 400000}`). Then the
+pooled 20 mode-absent seeds are 20 independent samples and the 0.84 bound is
+legitimate. Add a `--seed-offset` flag to `continuous_danger_synthesis.py` (the
+run is already per-seed checkpointed, so nothing is re-spent).
+
+- Cost: 20 seeds × 2 arms on the cart headline cell + the same on the pendulum
+  headline knob ≈ the cost of two existing cells of Azure traffic.
+- Payoff: 0.72 → ~0.84 on the headline conditional, and it makes every "both
+  sizes" count in the paper an honest $n$ instead of an $n/2$ with a caveat.
+- Bonus: with disjoint seeds the two sizes also become an independent replication
+  of the $(1-r)^N$ gate-miss rate, which currently cannot be pooled at all.
+
+---
+
+## 3. Weakened rhetorically, recoverable by re-calibration — "below random at every knob"
+
+**EARNED (partly) 2026-07-25** via a non-destructive variant rather than a
+re-calibration: `scripts/continuous_sharp_plateau.py` (cart width 0.5→0.2,
+pendulum 0.25→0.1) into sibling JSONs, leaving the default instruments and every
+paid-for synthesis artifact untouched. Cart: below random at **7/7** knobs (was
+6/7), by 2–13 orders of magnitude. Pendulum: **5/6** (was 3/6). What strengthened
+more than expected: `play_cost` becomes knob-invariant to ~$1.5\times10^{-4}$ on
+both instruments, a **400× tightening**, i.e. the invariance the default shows
+approximately is exact without the tail — and the pre-registered risk did not
+materialise ($J_\mathrm{truth}$ moves 17.77→17.76 and 20.08→20.05). Honest
+residue: the pendulum's widest stop still has $J_\mathrm{blind} = 3.1e{-3}$ over
+$J_\mathrm{rand} = 3.6e{-4}$ — there the random baseline has itself collapsed, so
+below-random stops being the informative comparison and play_cost = 1.0000 is.
+Side effect: fixed a real crash (`OverflowError` in the reward when a narrow
+plateau meets a free-spinning pendulum), bit-identically for every reachable
+default value.
+
+
+**Was:** "the mode-blind planner is exploited **below random** at every knob."
+
+**Now:** "exploited at every knob ($\mathrm{play\_cost} \approx 1$; below random
+at most)." The strong version is false as measured: $J_\mathrm{blind} >
+J_\mathrm{rand}$ at cart $x_\mathrm{wall}=10$ and at the three farthest pendulum
+stops — not because the exploitation weakens (contact rate stays 1.00) but because
+the *far plateau's sigmoid tail* leaks reward to a planner pinned near it
+($J_\mathrm{blind} = 0.94$ at $x_\mathrm{wall}=10$), and gravity does the same on
+the pendulum.
+
+**Route to the strong version:** the leak is a reward-shape artifact, not a
+mechanism fact. Narrow the plateau width (`width` 0.5 → ~0.15) or move the far
+plateau beyond the widest knob, so a pinned planner earns ~0 at every knob. Then
+$J_\mathrm{blind} \approx 0 < J_\mathrm{rand}$ everywhere and "below random at
+every knob" is true as stated.
+
+- Cost: CPU only — recalibrate, then re-run `continuous_reach.py`,
+  `continuous_pendulum.py`, `continuous_axes.py`, `continuous_mitigation.py`
+  (~1 h total) plus the figure regeneration.
+- Payoff: purely rhetorical. `play_cost ≈ 1` already carries the scientific
+  content, and it is knob-invariant either way. **Do this only if a reviewer
+  pushes on it**; it costs a re-run of four tables for a sharper sentence.
+- Caveat: changing the reward shape changes every number in the mechanism tables,
+  so it is a "redo the sweeps" change, not a patch.
+
+---
+
+## 4. Weakened, cheap to recover — the two censored zeros
+
+**EARNED 2026-07-25.** Pendulum rarity sample 3000 → **30,000**: the censored
+zero resolves to 0.0007 [0.0004, 0.0010], so every row is a point estimate and
+every d@40 a number. Axes 2000 → **20,000**: the sub-eps arm resolves to 0.0001
+with predicted pass 0.9940 **inside** the measured [0.9814, 0.9994]. Two bonuses
+nobody asked for: wall@8's prediction moves 0.6046 → 0.6622 against a measured
+0.667, so the standing "the prediction sits below the Wilson lower bound" caveat
+is *gone* (it was the rarity estimate's noise, as suspected); and with the cart
+also raised to 30,000, the two independent estimates of the same event agree to
+the third decimal (0.1352 vs 0.1351, against 0.1430 vs 0.1385 before).
+
+
+**Was:** pendulum $\theta_\mathrm{stop}=2.0$ rarity `0.0000` with
+$d@40 = 0.942$; axes sub-$\varepsilon$ arm rarity `0.0000` with predicted pass
+`1.0000`.
+
+**Now:** reported as raw counts ($0/3000$, $0/2000$) with the prediction as an
+upper bound, because a point estimate of 0 from a finite sample overstates
+precision — and in the axes case the 1.0000 prediction sat *outside* the measured
+pass-rate CI $[0.9814, 0.9994]$.
+
+**Route to the strong version:** more rollouts. $3000 \to 30\,000$ for the
+pendulum knob and $2000 \to 20\,000$ for the axes arm either finds contacts (a
+real rarity, so a real prediction) or tightens the upper bound tenfold
+($0.0013 \to 0.00013$), at which point the bound is tight enough that the
+distinction stops mattering.
+
+- Cost: CPU only, minutes (`--rollouts 30000` on the two scripts).
+- Payoff: turns two "$\leq$" entries back into point estimates or near-exact
+  bounds. Cheapest item on this list.
+
+---
+
+## 5. Reframed rather than weakened — "no artifact covers even its seen patch"
+
+**Was:** "no artifact covers even its *seen* patch", backed by a check that was
+**vacuous** (it read `per["p1"]` while the key is `"patch1"`, so its condition
+never fired).
+
+**Now:** on the 66 see-one-miss-the-other seeds, 28 freeze sets *do* contain the
+seen patch, by freezing $15\times$–$81\times$ the patch's area (median $61\times$);
+exactly one is patch-*selective*, and it achieves that with a half-plane at
+$31\times$ the area. So no artifact encodes a region; the conclusion (no partial
+repair) is intact and now threshold-free.
+
+**Route to something stronger:** the interesting open question this exposed is
+whether a *selective* artifact can ever be produced deliberately — i.e. does an
+instrument with two patches on opposite sides of the start produce artifacts that
+fence one and not the other? That is a new experiment (a cheap CPU-plus-Azure
+cell), and a positive result would give the partial-repair branch its first
+population instead of an emptiness claim.
+
+---
+
+## 6. Precision, not weakening — but with a real theorem behind it
+
+**EARNED 2026-07-25 (the measure version exists now).** Added as a
+proposition: with an $L$-Lipschitz pair differing by $\eta$ and a gate whose
+step-$k$ visitation density is $\geq c$ on the guaranteed ball, one rollout reveals
+the disagreement with probability $\geq c((\eta-\varepsilon)/L)^{d+m}$, so the miss
+probability is $\leq (1-q)^N$ — and hiding an $\eta$-sized error from $N$ rollouts
+forces $L \geq (\eta-\varepsilon)(cN/\ln(1/\delta))^{1/(d+m)}$, i.e. the required
+Lipschitz constant grows like $N^{1/(d+m)}$ (hiding gets easier with dimension).
+The density hypothesis is not verified per instrument and is stated as such; the
+measured stand-in is the smooth bump arm's reveal-rarity (0.18 against the hard
+wall's 0.14 — the smooth error is if anything *more* detectable, matching the
+proposition's direction).
+
+
+- "smooth pairs cannot realize the localized geometry" → "**exactly** localized".
+  Proposition 5 bounds the disagreement ball's radius by $(\eta-\varepsilon)/2L$;
+  what is impossible is *exact* localization, not a merely tiny region.
+  **Stronger version available:** convert the metric statement into a *measure*
+  one. If the gate's visitation measure has density $\geq c$ on a neighbourhood of
+  the error, the reveal probability is $\geq c \cdot \mathrm{vol}(B)$, giving a
+  computable $(\eta, \varepsilon, L) \mapsto$ detection-rate bound — i.e. "a smooth
+  model that is wrong enough to matter is *detectable at a rate*", which is
+  strictly more than "cannot be exactly localized". This is the same gap as the
+  open covering-number analogue in §11 and is a theory task, no compute.
+- "no learner can infer it" → "no learner can infer it **from the sample**". Not
+  recoverable and should not be: a prior *can* supply the mode (Claude's symmetry
+  prior did, and got one right and one phantom). The caveat is the content.
+
+---
+
+## Priority if we pick this up
+
+1. **§4 (censored zeros)** — minutes of CPU, removes two "$\leq$" entries.
+2. **§2 (disjoint seeds)** — one Azure session, restores the headline 0.84 bound
+   and makes every pooled count honest.
+3. **§1 tail (independent-mode instrument)** — CPU + design, converts the bracket
+   into a factorization theorem for a designed case.
+4. **§6 (measure version of the Lipschitz bound)** — pure theory, highest
+   intellectual payoff, no compute; also closes a stated limitation.
+5. **§3 (reward re-calibration)** — only under reviewer pressure; four tables move
+   for one sharper sentence.
+
+---
+
+## What remains open after 2026-07-25
+
+- ~~The pendulum's widest sharp-variant knob~~ **CLOSED 2026-07-25**: narrowing
+  only the phantom plateau (per-plateau widths, `--width-right 0.08`) gives 6/6
+  below random with the random baseline intact and play_cost invariant to 7.1e-5.
+- ~~Verifying the visitation-density constant $c$~~ **CLOSED 2026-07-25**: exact
+  for the cart's gate at step 1 ($c = 5/6$, Monte-Carlo confirmed), general form a
+  volume ratio. Both covering-number analogues are now proved: mitigation-side
+  (Prop 7 + Cor 2) and gate-side (Prop 9). The within-rollout dependence is also
+  settled — no mixing argument needed, and worth only 2% — leaving one named gap:
+  the density is derived only at step 1 of one instrument, so certifying the whole
+  region the planner visits needs the density there.
+- The Qwen 2D induction arm (credits; see the separate note) — the only *missing
+  data* rather than missing strength.
+- Not recoverable, by design: "no learner can infer it **from the sample**". A
+  prior can supply the mode; that caveat is the theorem's content.
+
+---
+
+## Addendum 2026-07-25 (later): two more statements upgraded from measured to proved
+
+**Knob-invariance of play\_cost is now an identity, not a regularity.** Javier
+asked whether the invariance is a theorem or a measurement. It was a measurement;
+it is now Proposition 8: whenever $J_\mathrm{truth}$ and $J_\mathrm{rand}$ are
+knob-free, play\_cost$(k) = J_\mathrm{truth}/(J_\mathrm{truth}-J_\mathrm{rand}) -
+J_\mathrm{blind}(k)/(J_\mathrm{truth}-J_\mathrm{rand})$ — affine in the exploited
+planner's own return, so the whole knob-dependence *is* its residual reward over
+the truth-minus-random margin. The hypotheses are measured sharply ($J_\mathrm{truth}$
+knob-identical to twelve digits; $J_\mathrm{rand}$ varying by 3.9e-9 sharp / 1.2e-4
+default), and the identity predicts every measured play\_cost to 2.4e-10 (sharp),
+with the predicted spread 1.3615e-4 matching the measured 1.3615e-4. What the
+sharp-plateau variant buys is therefore not the invariance but the vanishing of
+$J_\mathrm{blind}$ that makes the identity's residual term negligible. Audited.
+
+**The bracket is sharp, and that is the independence-free result.** The joint
+gate-miss bracket's ends are exactly the Fréchet–Hoeffding bounds for
+$P(R_1 \cup R_2)$ given the marginals, pushed through $x \mapsto x^N$: the interval
+is the *exact* range of joint miss probabilities consistent with $r_1, r_2$, so no
+bound in the marginals alone can be tighter. That — not a bespoke instrument — is
+the correct theoretical statement without independence, and it was already in the
+paper; the earlier "superseded" note referred only to the discarded instrument
+plan and undersold it.
+
+
+---
+
+# Round 2: five adversarial peer reviews, 2026-07-25 (later the same day)
+
+Five reviewers were run over the revised paper (core probability, claim-vs-theorem,
+geometry/measure, covering-number mitigation, statistics/inference). They found
+errors the first round had not, including three that flipped bolded conclusions.
+What follows is the ledger: what was wrong, what it is now, and which of them is a
+weakening that could be earned back.
+
+## Fixed by making the paper WEAKER and TRUER (no path back — the earlier claim was
+simply false)
+
+1. **The wall corollary was vacuous.** "No smooth pair less than twelve times as
+   sensitive as the plant can hide the wall from this gate ($L \geq 15.2$ for
+   $\eta = 4.2$)" instantiated a density $c = 5/6$ that is supported on the
+   one-step reachable set $|x_1| < 0.53$ — at the wall ($x \in [2,10]$) the
+   step-1 density is exactly zero and the proposition says nothing. The ball does
+   not bridge the gap either. Deleted; what remains at the wall is the measurement
+   (reveal-rarity 0.14) and Prop lipschitz's density-free obstruction.
+
+2. **The step-t certificate did not exclude the hard mode.** Two independent
+   errors: the density was computed in 2-D $(x,v)$ and consumed as 3-D $(x,v,a)$
+   (a factor $2a_{max}$ the step-1 corollary got right), and a per-cell AVERAGE was
+   used where the hypothesis wants an INFIMUM. Corrected via a Minkowski erosion
+   with $P$-shaped cells (a genuine pointwise infimum, oracle-tested), the step-20
+   bound is 8.84, not 3.67. The bolded "still excluding the hard mode's 4.2" is
+   retracted. The honest replacement is a better statement: at fixed $N$, extent is
+   paid for with resolution, and NO step-$t$ region beats the step-1 corollary — so
+   the step-1 restriction was never what limited the certificate.
+
+3. **The $\varphi$ factorization was not exact.** "Conditioning on the entire state
+   trajectory leaves the action indicators independent Bernoulli" is false when the
+   plant is invertible in the action, which this one is. Replaced by a direct
+   measurement of the per-rollout miss probability, which needs no factorization at
+   all and is genuinely exact.
+
+4. **The grid was not a grid.** `int(2R/rho)` with index clamping made the top cell
+   0.8 wide at $\rho = 0.6$, so "all cells hit" certified a coarser net than
+   claimed — and the falsification test shared the bug, so it validated it. Both
+   fixed to `ceil`; the deployed gate certifies net radius 1.0 (bound 2.55) and
+   misses 0.667 by two rollouts.
+
+5. **The fence bound was in the wrong direction.** Coverage-adding fences are
+   bounded by a PACKING number, not a covering number: 12 on the unit circle at
+   $\varepsilon = 0.5$, against a covering number of 7, with the 12-point sequence
+   exhibited. Cor 2's ORDER survives ($N_{pack} \leq N_{cov}(\cdot,\varepsilon/2)$).
+
+6. **The 1D "exactly 1.00" was not the covering bound.** The fence lands at the
+   refuted prediction, which overshoots the wall by up to 0.58 against
+   $\varepsilon = 0.25$, so the covering hypothesis fails in 4 of 5 cart episodes
+   while the conclusion holds. It is a SEPARATION fact, and it has a signature we
+   measured: bit-identical outcomes over a $20\times$ $\varepsilon$ range on the
+   pendulum, breaking only at $\varepsilon = 0.01$ on the cart.
+
+7. **$J_{max}$ was incoherent.** Read as a supremum over policies of the expected
+   return it is 17.697, BELOW the measured $J_{truth} = 17.772$ — the normalization
+   would exceed 1 by construction. The coupling needs pointwise extremes: with
+   $J_{max} = 18.009$ the bound is 1.0447 against a measured 1.0310, so the
+   corollary is at 98.7% of its bound and NOT attained.
+
+8. **"Confirmed at all nine knobs" was an identity.** $r_1$, $r_2$, $r_\cup$ and
+   $P(both)$ come from the same rollouts, so inclusion-exclusion holds exactly
+   in-sample and the bracket cannot fail. Zero empirical content.
+
+9. **"Distinct gate samples" over-counted by up to $10\times$.** The rollout stream
+   depends on the seed index alone, not on the instrument, knob, patch shape or
+   prompt variant — so the PatchField2D campaign's 203 cells rest on 20 blocks, and
+   the guided ablation reuses the disc cells' samples byte for byte.
+
+## Earned back the same day (weakened, then recovered by measurement)
+
+10. **"The dependence changes sign across the grid."** At 600 rollouts $P(both)$ was
+    0–3 counts and the claim was noise. Re-measured at 50,000 rollouts per knob:
+    negative at $(2,6)$ and $(3,7)$, POSITIVE at $(4,6)$, all three with Wilson
+    intervals excluding $r_1r_2$. The claim is now earned, and it is the reason a
+    fixed correction factor cannot replace the bracket.
+
+11. **$\varepsilon^\star$ "predicts where each sweep arm dips."** It was computed on
+    a different rollout stream than the sweep, and failed on 2 of 4 arms. Computed
+    on the sweep's own stream it is an IDENTITY on all four — weaker in kind (an
+    identity, not a prediction) but true, and now stated as such.
+
+## Still open — a real weakening with a known path back
+
+12. **The 2D fencing budget and the "boundary-mapping transient".** The arc
+    percentages were the violation count divided by the budget (saturation assumed
+    and restated), the budget ignored the second patch, and per-episode maxima
+    reach 28 with 24 duplicate fences at one point. The census script now measures
+    the probed arc directly and reports median/max/lock-in. **To earn a real
+    claim here:** instrument which patch each violation belongs to, report the
+    per-patch packing budget, and separate the lock-in failures from the transient
+    — a mitigation that pins the agent 7 episodes in 20 is not a slower transient,
+    it is a different failure mode.
+
+13. **The interiority hypothesis holds on only 34% of $U$.** Prop detectrate's
+    $q = c(2\rho)^{d+m}$ needs the ball unclipped; on the cart's $U$ that is
+    $33.9\%$ of the volume, and elsewhere $q$ is smaller by up to $2^{d+m}$. Stated
+    rather than fixed. **To earn it back:** a boundary-aware version of the ball
+    volume, or a certified region taken as an interior sub-level set.
+
+
+---
+
+# Round 3 (same day): a statement earned back in full, by changing the argument
+
+**The certificate's headline bound: 1.57 (wrong) → 2.93 → 2.97 (right but weak) →
+1.534 (right and strong).**
+
+The three peer-review corrections to the certificate all landed on the same object: a
+geometric factor in the PACKING instantiation. The cardinality had to be a packing
+number rather than a covering number; the ball mass had to be intersected with $U$;
+and the corner factor $2^{-(d+m)}$ turned out not to be shear-invariant. Each fix made
+the bound worse, and the honest report was $\rho = 1.165$, bound $2.97$.
+
+But those losses are artifacts of the ARGUMENT, not facts about the gate. A packing
+bound pays for the covering number twice — once in $K$, once in the ball mass — and
+both payments are geometry that has to be estimated, which is exactly where we kept
+going wrong. **A partition argument pays neither.** Partition $U$ into $K$ cells of
+diameter $\leq \rho$; the failure probability is $\sum_i (1-q_i)^M$, with no density
+constant, no covering number and no ball--boundary intersection anywhere in it.
+
+And on this instrument it is *exact*, not merely cleaner: the step-1 law is uniform on
+a SHEARED box, so in $y = x - dt\,v$ it is uniform on a box and equal sub-boxes have
+probability exactly $1/K$. The shear costs one thing only, the net radius measured in
+the original metric ($\rho = \max(\Delta_y + dt\,\Delta_v, \Delta_v, \Delta_a)$).
+At $M = N = 40$ the largest admissible partition is $K = 8$ ($8(7/8)^{40} = 0.038 \leq
+\delta$, while $9(8/9)^{40} = 0.081$ exceeds it), the optimal split is $(2,1,4)$, and
+
+$$\rho = 0.600, \qquad \sup_U \|f - \hat f\|_\infty \leq \varepsilon + 2L\rho =
+\mathbf{1.534}.$$
+
+Two things this also earns back. The excluded Lipschitz class widens from
+$L \leq 1.80$ to $L \leq (4.2-\varepsilon)/2\rho = \mathbf{3.49}$ — now $2.7\times$
+the plant's own constant rather than $1.4\times$, so the statement "a smooth pair
+cannot carry the wall's error past this gate" covers a genuinely broad class. And the
+number $1.534$ is the one the paper had claimed before any of this, via the broken
+grid argument; it is now derived by a different and valid route, with no Monte Carlo
+at all.
+
+What pins $\rho$ is worth naming: the optimum takes $n_v = 1$, i.e. the whole
+reachable velocity range in one cell. At forty samples the certificate cannot resolve
+velocity — a fact about the gate, not about the proof.
+
+**And it composes with the dependence treatment**, which is what finally answers the
+mixing question. Using $p_C = P(\text{one rollout misses } C)$ — measured, with
+$p_C^N$ exact by rollout i.i.d.-ness — a rollout's eighty steps are worth about six
+*effective* independent samples, $K$ grows from 8 to 36, and the certificate reaches
+
+$$\rho = 0.363, \qquad \sup_U \|f - \hat f\|_\infty \leq \mathbf{0.933},$$
+
+with the excluded class widening to $L \leq \mathbf{5.77}$ — $4.5\times$ the plant's
+own constant. The four readings now sit in the right order for the right reasons:
+$2.969$ (packing) $>$ $1.534$ (exact partition) $>$ $0.933$ (dependence handled) $>$
+$0.785$ (the retired promise that assumed independence). Handling the dependence is
+worth $1.6\times$, not the $2\%$ we once claimed nor the $4\times$ the optimistic
+reading suggested.
+
+**Tightness is measured, not asserted:** 400 independent gates cover the $K = 8$
+partition $385$ times, a failure rate of $0.0375$ against the bound's $0.0383$ —
+tight to $2\%$, which is what an exact per-cell probability should give.
+
+`scripts/gate_partition_certificate.py` and `scripts/gate_partition_validation.py`,
+with the audit checking the exactness (K = 8 admissible, K = 9 not) rather than only
+the resulting number, and CI re-deriving part (a) on every push in a verify-only mode.
+
+
+---
+
+# Round 4: "is everything provable proved?" — one more converted, and the honest list
+
+Asked directly whether anything still measured could be proved, the inventory turned
+up one real case, and chasing it corrected TWO of my own readings.
+
+**$\varepsilon^\star$: there is no population threshold, and the rate is provable.**
+The threshold form was weakened twice today — first from "a constant of the
+instrument" to "a sample minimum", then scoped to the sample after peer review showed
+it moves with $n$. Chasing what it converges to, I first believed a diagnostic showing
+a hard floor at $0.0405$; that diagnostic took the minimum over a **sorted** prefix,
+which is the global minimum by construction. Measured properly the running minimum
+falls monotonically and does not settle ($0.420 \to 0.123 \to 0.041$).
+
+So the essential infimum is $0$ and no positive threshold exists. What replaces it is
+strictly stronger, because it holds at every $\varepsilon$ rather than below a cutoff:
+
+$$r_{\mathrm{fire}} - \mathrm{reveal\text{-}rarity}(\varepsilon) = P(0 < D \leq
+\varepsilon) \leq C\varepsilon^2, \qquad C = \frac{TM}{2\,\mathrm{gain}\,a_{\max}}.$$
+
+Two constraints multiply: a faintly-revealed contact needs a nearly-zero post-action
+velocity AND a position already inside a strip of width $\varepsilon\,dt$. The
+constant ($222$) is loose; the exponent is the content, and it is measured at $2.57$
+(wall@4) and **$2.10$** (stop@1.0) — the pendulum sitting essentially on the
+theoretical $2$ is the evidence that this mechanism and no other produces the
+flatness. It also explains the instability that forced the scoping: a minimum of $n$
+draws from an $\varepsilon^p$ tail falls like $n^{-1/p}$, so $\varepsilon^\star$ was
+never going to converge. `scripts/eps_flatness_rate.py`.
+
+## DONE (2026-07-26): items 1 and 2 below are now derived
+
+**$J_{\max}$ and $J_{\min}$ are no longer measured.** Three facts multiply: the reward
+is a decreasing term plus an increasing one, so over any interval it is bounded by the
+decreasing term at the left end plus the increasing one at the right; the clamp gives
+$x_t \leq x_\mathrm{wall} < x_\mathrm{right}$, so the large plateau is unreachable and
+its contribution is capped uniformly ($3.4\times10^{-4}$ at $x_\mathrm{wall} = 8$); and
+$x_t$ is affine in the actions with all positive coefficients, so the leftmost
+reachable position is the push-left trajectory — an identity, not an assumption.
+
+Result: $J_{\max} \leq 18.0359$ and $J_{\min} \geq 1.33\times10^{-6}$, so the ceiling
+is $\mathbf{1.0463}$ with nothing measured in it, and the measurement sits at
+$98.5\%$ of it. Deriving costs $1.0017\times$ against the measured-sup version. The
+ceiling is **attained** (slack $1.0000$) at $x_\mathrm{wall} \leq 6$, so $J_{\max}$ is
+known and not merely bounded there; slack appears only as the wall nears the right
+plateau ($1.0015$ at $8$, $1.0799$ at $10$). A policy oracle — bang-bang, constant,
+single-switch and $4000$ random block policies at each knob — finds none exceeding it.
+`scripts/play_cost_proved_bounds.py`.
+
+**Item 3, revisited after Javier pushed on it: the probabilistic version DOES exist,
+and it is conditional.** The obstruction we recorded (nothing forces the argmax's
+first action positive) was real but about the wrong quantity. What the *plan* targets
+is a different question. Envelope-bounding the imagined return of any candidate that
+never approaches the phantom plateau gives $U(s)$; the full-right candidate achieves
+$L(s)$; wherever $L(s) > U(s)$, any candidate scoring $\geq L(s)$ must reach the
+phantom, so if the sampled set holds one then **the argmax's plan chases reward the
+truth makes unreachable**. The gap closes at every state checked ($+0.33$ to
+$+26.25$).
+
+What does not close is the probability from REST: $2\times10^{-4}$ from an exactly
+computable sub-event, $5\times10^{-3}$ estimated. Once the cart carries rightward
+velocity it is $1.000$ by both routes. So the honest theorem is **self-reinforcing,
+not self-starting**: initiation stays measured. Worth having anyway, because it turns
+"the planner is lured" from an observation into a property of the plan --- and it is
+the shape of the answer, not the strength, that is informative.
+`scripts/phantom_targeting_probability.py`.
+
+**The rest of item 3 stopped where it stops.** Two of pinning's three
+ingredients are structural: the wall is reachable in $14$–$30$ steps against $T = 80$
+(earliest possible, by the same monotonicity), and the blind model offers $8.31$ for
+going right against $5.70$ for going left over the planning horizon. The third is not:
+nothing forces the argmax over $200$ random block candidates to execute a positive
+*first* action, since a trajectory may go left before turning. Pinning stays measured,
+explained rather than proved.
+
+## Superseded — the original list
+
+1. **$J_{\max}$ is a measured supremum.** The play-cost corollary's $1.0447$ rests on
+   $J_{\max} = 18.009$, the best CONSTANT policy's realized return from the most
+   favourable start. Nothing proves no policy beats it. A reachability argument
+   (bound $\sum_t r(x_t)$ using the drag-limited displacement per step) would turn it
+   into a proved upper bound and make "the measurement sits at $98.7\%$ of the bound"
+   fully rigorous.
+2. **$J_{\mathrm{blind}} \approx J_{\min}$**, the observation that actually drives
+   play\_cost to the top of its range, is measured at $1.9\times10^{-5}$. Since the
+   blind planner pins at the wall and the reward is a sum of sigmoids, an explicit
+   bound $J_{\mathrm{blind}} \leq T\,r(x_\mathrm{wall})$ looks straightforward.
+3. **contact $= 1.00$ at every knob** (the blind planner always pins). This is a
+   property of a random-shooting argmax and probably admits only a probabilistic
+   version, $P(\text{pin}) \geq 1 - \delta$; worth one attempt, not more.
+4. **The 2D lock-in rate (7/20)** and the LLM repair counts are empirical by nature.
+   No proof is available or appropriate.
+
+
+---
+
+# Round 5: auditing the proofs, the statements and the narrative
+
+Asked to audit what had accumulated, rather than add to it. Nine findings, three of
+them substantive.
+
+**Structural, and it is the failure mode that hid errors all day.** Four environments
+had commentary --- and in one case a whole nested proposition with its proof ---
+typeset *inside* the statement, which `amsthm`'s plain style renders in italics as
+part of the claim. `cor:playcost` was **8216 characters** containing
+`prop:normalizers`, its proof and four paragraphs of discussion; `cor:cartdensity`
+held its three scope conditions; `prop:coverage` held three paragraphs about what is
+easy to get wrong. All now end at their statement, with the discussion as prose. And
+`prop:coverage`'s proof had drifted *after* that commentary; it is back where it
+belongs. Proof coverage went from 8/19 environments to **13/16** propositions and
+corollaries with an immediate proof; the three without are a pointer to the companion
+paper and two pure instantiations.
+
+**Substantive 1: `prop:epsinv` was a population statement with a sample-defined
+threshold.** It read `P_rho(D > eps)` --- a population probability --- while defining
+`eps* = min{D(w) : D(w) > 0}` over realized values. Since `prop:epsrate` (proved
+earlier the same day) shows the population essential infimum is **0**, the displayed
+identity was empty in population. Restated with `ess inf`, with the two readings
+--- empirical (what Table `epsstar` reports) and population (where the content is the
+quadratic rate) --- separated explicitly.
+
+**Substantive 2: `prop:normalizers`' proof did not cover the clamp.** The argument is
+affine monotonicity ("x_t is affine in the actions with positive coefficients"), but
+the clamp lowers *both* coordinates, so the affine envelope does not immediately
+apply to a clamped trajectory --- which is exactly what the exploited planner
+produces. While that step was missing the statement was simply **unproved** for clamped
+trajectories, and the corollary resting on it rested on an incomplete proof. (An
+earlier version of this entry said the conclusion "survives" because 40,000
+clamp-forcing trajectories showed zero violations. That is the wrong epistemics: a
+finite search cannot establish a claim quantified over uncountably many policies, only
+fail to refute it. What the search was for is catching a sign error in the argument.) Added: after the last clamp at time tau the state is (x_wall, 0), the
+leftmost continuation is x_wall - L(t-tau), and this exceeds x_min(t) because
+x_wall >= -x0_range and L is increasing.
+
+**Substantive 3: `prop:fencecover` had an unused hypothesis and an unclaimed
+conclusion.** The packing bound needs no hypothesis at all; `B ⊆ F ⊕ B_eps` is needed
+only for termination, which the statement never claimed while the proof proved it.
+Split into (i) and (ii) so hypotheses and conclusions match.
+
+**Minor.** `prop:detectrate`'s "at worst 2^-(d+m)" needs a box-like S x A (no uniform
+factor exists in general) --- the same class as the sheared-box slip. `rem:bracket`
+used an undefined `r_i'` and an equality condition stronger than needed
+(`P_{rho_i}(R_j) = 0` should be `P_{rho_i}(R_j \ R_i) = 0`). `rem:densitygeneral`
+conflated "ball contained in U" with the interiority hypothesis, which is about
+`∂(S x A)` and not `∂U`. `prop:knobinv`'s hypothesis is an idealization and now says
+so. The three transferred propositions now cite the companion paper by number, and
+`prop:playcost`'s "proof sketch" --- which was the complete argument --- is a proof.
+
+**Narrative.** The contributions list still said "Theory transfer, and one new
+piece". There are **ten** new propositions. Rewritten to say what the paper proves,
+and to state on which side of the proved/measured line each claim sits --- including
+that the pinning's *initiation* is measured after an attempt that got only part of
+the way.
+
+Cross-references: no broken refs, no duplicate labels.
+
+---
+
+# 2026-07-29 — the external review's weakenings, and what was earned back
+
+Written after the 26-point external review. The rule Javier set is that a precision which
+costs strength gets recorded, so the strong version can be attempted rather than silently
+abandoned. This round the attempt succeeded more often than not.
+
+## Earned back (the strong version now holds)
+
+1. **"Verification" → an independent gate, at no cost in danger.** The review's fatal
+   objection was that the acceptance sample was the training sample. Rather than rename the
+   gate and reduce the claims, all 625 versioned artifacts were re-scored on independent
+   acceptance and evaluation blocks — free, because every artifact is committed with its
+   source. The result is *stronger* than the original claim: 36 of 463 accepted artifacts
+   fail an independent gate, and Proposition `prop:twofactor` shows the two exponents add,
+   so an independent gate costs nothing at fixed total budget. Both of its hypotheses are
+   measured (30/30 and 60/60 exact) rather than assumed.
+2. **ε-flatness: generalized, not scoped down.** The review asked for the proposition to be
+   restricted to the system its proof covered. Instead it now covers the whole semi-implicit
+   family with additive `gain·a` and a clamp on the integrated coordinate, so the cart *and*
+   the pendulum are theorems and the measured exponents became confirmations.
+3. **The Lipschitz claim → a localization budget.** "Smooth learners cannot localize" was
+   false as stated (our own compactly supported bump falsifies it). The replacement is
+   quantitative rather than merely hedged: `vol(E_ε) ≥ ((η-ε)/L)^(d+m)`, i.e. localization
+   is purchased, not forbidden.
+4. **A new obstruction, found by running the ablation.** Proposition `prop:entryclass`: the
+   freeze semantics guarantee that every state a rollout visits lies outside the mode
+   region, so a predicate agreeing with membership on the reachable set is exactly equal to
+   the truth on *every* sample — unfalsifiable at any N and any tolerance, and provably
+   harmless because the same argument gives `q_hit(E) = 0`. A synthesized artifact in that
+   class was found in the slab campaign and verified on three disjoint blocks. This is
+   stronger than anything the review asked for, and it is also an honest limit on the
+   independent gate of item 1.
+
+## Weakened, with the route to the strong version recorded
+
+5. **"Below random at every knob."** At 100 paired episodes the blind planner beats the
+   random policy in 86 of 100 cart seeds; the positive mean is carried by a heavy-tailed
+   baseline. *Route to the strong version:* the sharp-phantom-plateau variant already gives
+   6/6 and 7/7 knobs below random with a surviving random baseline — promote that variant to
+   the default instrument and re-run the four mechanism tables. Cost: four CPU sweeps and
+   every number in those tables changes. Not done, because `play_cost ≈ 1` and the raw
+   regret carry the content and the comparison against random was rhetorical.
+6. **`q_hit = 0` on the two zero-crossing CEM rows.** Refuted at `x_wall = 8` by 200×
+   resampling (18 crossings in 1.28M). *Route:* at `x_wall = 10` the zero survives, so an
+   exhaustive-geometry argument that CEM's candidate set cannot reach the wall at that knob
+   would convert the censored zero into a theorem. Cost: a reachability argument over the
+   CEM proposal distribution. Not attempted.
+7. **The template prior as a mechanism.** Now stated as consistent-with. *Route:* the two
+   ablations run on 2026-07-29 (trigger arity, and the landing variable) exclude two of the
+   candidate causes; what remains is the evidence structure, and Proposition
+   `prop:entryclass` is the beginning of a proof that the structure — not the synthesizer —
+   is the obstruction. The next experiment is an instrument whose mode does *not* freeze
+   (so the interior is witnessed), which would test the proposition's premise directly.
+8. **The cart's 109/111 lower bound.** 0.851 was invalid at block level (20/22 blocks all-
+   repair); the honest figure is 0.708, or 0.772 for the weaker estimand. *Route:* fresh
+   seed blocks via `--seed-offset` on the cart's `x_wall = 4` cell, where both exceptions
+   live. Cost: one small Azure run.
+
+## 2026-07-29, second pass — what the two ablations settled and what they left
+
+**Settled.** Four candidate causes of the 2D collapse are measured negatives: boundary
+curvature, prompting and budget, the predicate's trigger arity, and identification of the
+variable the trigger reads. The obstruction is in the evidence, and part of it is now a
+theorem (`prop:entryclass`).
+
+**The one experiment that would settle the mechanism.** Every instrument in this paper
+freezes the mover at its *previous* position, which is exactly what keeps the region's
+interior unvisited. An instrument whose mode instead *clamps to the boundary* — as the
+cart's wall does, and the cart is repaired 33/33 — would let a rollout occupy the boundary
+itself, so `prop:entryclass`'s premise fails and the interior becomes witnessable. If
+repair returns there, the mechanism is the censoring and not the synthesizer; if it does
+not, the template prior survives as a mechanism rather than a description. Cost: one CPU
+calibration to match rarity and preserve the exploitation geometry, then one 20-seed × 2-size
+Azure campaign. This is the single highest-value experiment left in the paper.
+
+**A weakening that is now load-bearing and should be watched.** The repair criterion changed
+from the mode probe to the probe *plus* a behavioural exactness check, and that moved the 1D
+headline from 109/111 to 105/111 and the block-level aggregate from 34/36 to 30/36
+[0.672, 0.936]. The probe is still what the pipeline computes online; the exactness check is
+an offline audit. Any future campaign must run both, or it will report repairs it does not
+have — 19 of 20 on the slab, in the case that exposed this.
+
+## 2026-07-29, third pass — the experiment I called decisive, and it went against me
+
+The previous entry named one experiment as the highest-value one left: an instrument whose
+mode does not freeze the mover at its previous position, so `prop:entryclass`'s premise
+fails and the region's interior becomes witnessable. It was run in two forms and **the
+hypothesis it was built to confirm is refuted**.
+
+* `landing` (the mover stops where it entered, strictly inside) and `clamp` (projected onto
+  the boundary) both break the premise — measured on the gate sample: 4614 and 233
+  transitions that separate the membership rule from an entry rule, against freeze's zero.
+* Both preserve the trap (play_cost 1.058 / 1.059 against freeze's 1.059) and rarity is
+  *identical* (0.1527) because the firing predicate is untouched.
+* Repair does not return: **0 of 40** in each, no artifact passing the gate at all, and the
+  dominant class is again the half-plane at `x2 > 2.0` — the same template at the same
+  constant as the freeze campaigns.
+* The two confounds are complementary and both are covered: `landing` supplies **11x** more
+  mode evidence (contact share 7.25% against 0.66%) and still fails; `clamp` holds the
+  contact share at freeze's level (0.75%) and pays in rule complexity instead, and fails
+  with the same classes.
+
+**What this costs and what it buys.** It costs the reading I preferred: the censoring is not
+why region induction fails. It buys the one thing the paper had been careful never to claim —
+the region-template prior now survives as a *mechanism* after seven ablations, rather than as
+a description of the artifacts. `prop:entryclass` keeps its two jobs: it explains the slab's
+nineteen accepted-but-wrong artifacts, and it bounds what an independent acceptance gate can
+ever catch.
+
+**What would now be the strongest next move**, in order:
+1. **A positive control on 2D induction.** Every 2D campaign so far is a negative, and a
+   negative is only as good as the guarantee that the target is learnable *by this pipeline*
+   at all. Give the incomplete arm the disc's centre but not its radius (a template with one
+   unknown constant). If that is repaired, the frontier is "constants yes, forms no", which
+   is a sharp and falsifiable statement about the prior. If it is not, the failure is
+   upstream of region induction and the whole 2D story needs re-scoping. One Azure campaign.
+2. **Evidence dose.** Hold everything fixed and raise only the number of *distinct contact
+   bearings* the sample shows (achievable by seeding rollouts around the patch). The prior
+   should yield to enough two-sided evidence, or it is not a prior but a hard limit.
+3. Neither is a substitute for the other: (1) bounds the pipeline, (2) bounds the prior.
+
+## 2026-07-29, fourth pass — the positive control, and the frontier located
+
+The previous entry's item 1 (a positive control on 2D induction) was run, as a graded scale
+rather than a single point, so it locates the frontier instead of merely bounding it.
+
+* **Form + centres given, radius withheld (one unknown scalar): 20/20 EXACT.** Every
+  artifact at IoU 1.000, exact on all 9020 state-action grid points, all 20 accepted by an
+  independent gate and an independent 100-rollout evaluation at 1e-9. Four need no
+  refinement iteration. One comments "radius inferred from the provided transitions".
+* **Form alone, centres and radius withheld (three unknowns): 0/20**, best agreement 0.132,
+  16 of 20 writing a point — memorisation.
+* **A control from outside the pipeline**: a plain algebraic least-squares circle fit on the
+  same contact landings recovers both constants to within a tenth of the radius on **12 of
+  20** samples, the centre alone on 13, with no prior and no LLM.
+
+**The frontier, stated as sharply as this instrument allows:** what is not induced is the
+region's FORM, and once the form and its location are given the remaining constant follows
+to float precision. It is not the evidence (12 of 20 samples yield to three lines of linear
+algebra that the synthesizer given the form does not perform), not an inability to fit
+constants, and not representational (told the rule, every arm writes it at gate 1.000 in
+zero iterations). On the 8 samples where the trivial fit also fails, the negative is not
+attributable to the synthesizer, and the paper does not attribute it.
+
+**A number I got wrong and the check caught:** I wrote "nine of the twenty need no
+refinement iteration" from memory of the log; it is four. It is now asserted from the JSON by
+the numeric audit. Same class of error as every one the peer reviews found —
+[[hand-computed-constants-are-the-weak-class]] — and the same fix.
+
+**What is left, in priority order.**
+1. **Evidence dose.** Hold everything fixed and raise only the number of distinct contact
+   bearings the sample shows (seed rollouts around the patch rather than only from the
+   start box). The prior should yield to enough coverage or it is a hard limit rather than a
+   prior. This is the last mechanism question the instrument can answer.
+2. **An archived release** — a git tag with a DOI. The tag is trivial; the DOI needs a
+   Zenodo/figshare deposit under the author's account, so it is the author's call.
+
+## 2026-07-29, fifth pass — the evidence dose, and a prior that does not yield
+
+The fourth pass left one open item — "the prior should yield to enough coverage or it is a
+hard limit rather than a prior" — and named both outcomes before the run. It was run.
+
+**The intervention.** `PatchField2D.start_arc_deg` begins episodes on a ring just outside the
+near patch at a bearing drawn from an arc centred on the default arrival direction. The arc
+width is the dose. The rollout count is lowered to hold the *number* of contacts at the
+baseline's median, so coverage and quantity move independently — a single knob that moved
+both would have answered neither. Verified: the contract text is byte-identical across arms
+(the dose is evidence, not instruction), `start_arc_deg=None` reproduces the committed box
+start bit for bit, and the trap survives (play-cost 0.8701, blind
+contact rate 0.92).
+
+**The dose is real and it saturates.** Coverage — the arc the landings actually span,
+$360°$ less the largest gap — goes 111° →
+129° → 185° at contact counts
+14 / 16 / 15. It
+saturates near 185° because the freeze semantics forbid
+occupying the region's interior, so the far side is reachable only by going around: the
+instrument cannot deliver full coverage, and `prop:entryclass` is why.
+
+**What the evidence supports at each dose.** The trivial least-squares circle fit recovers
+both constants on 12/20 samples at
+111°, 16/20 at
+129°, and **20/20** at
+185°. At the top dose the evidence determines the region on
+*every* sample.
+
+**What the synthesizer does at that dose.** Given the form and asked only for location and
+size: **0/20** (best agreement
+0.191). Given no clause at all:
+**0/20** (best 0.220).
+The machinery control at 129°:
+0/20, so the null is the coverage and not
+the ring. The translation arm on the same wider sample: 20/20 at gate 1.000 in zero
+iterations, so the null is the induction and not the instrument.
+
+**Two statements this earns, in opposite directions.**
+
+1. *Stronger.* The attribution now has no residue. The earlier control had to set aside the
+   8 samples on which the trivial fit also fails; at the top dose
+   there are none to set aside. On **every** sample in that arm the region is recoverable
+   from the evidence and the synthesizer does not recover it. "Not the evidence" stops being
+   a statement about most samples and becomes one about all of them.
+2. *Bounded, not stronger.* Within the range this instrument can reach the failure does not
+   respond to the dose **at all** — not partially, not with a trend. So "prior" should be
+   read as a fixed disposition rather than a weight more evidence outweighs. What lies beyond
+   185° is not knowable here, and the paper says so instead of
+   generalising past the instrument.
+
+**What is still open.** Nothing this instrument can answer about the mechanism. Beyond it:
+an instrument whose mode does *not* freeze the mover would permit full coverage and could
+separate "a disposition" from "a weight no reachable dose outweighs" — a different paper's
+experiment, and named as such rather than promised. The remaining non-experimental item is a
+DOI deposit for the archived tag, which needs an account and is the author's call.
+
+## 2026-08-17 — H1 (REVIEW5-HARDENING): class-relative disc identifiability — EARNED
+
+The earlier text used recovery by one least-squares estimator as if it established
+finite-sample uniqueness. The contribution has been strengthened by separating and measuring
+the two claims rather than deleting either one.
+
+For the explicit class
+`H_circle = {disc(c,R) union fixed_far_disc}`, a transition reduces exactly to a labelled
+free-landing point. The consistent version space is therefore
+`max_inside ||z-c|| <= R < min_outside ||z-c||`. A multilevel outer certificate with
+Lipschitz grid slack and a direction-uniform far-field bound checks the universal property:
+every consistent circle is within centre/radius tolerance 0.1 in **6/20**, **9/20** and
+**18/20** blocks at the baseline, intermediate and widest evidence doses. The pre-existing
+estimator-level counts remain **12/20**, **16/20** and **20/20**. Both are now reported.
+
+The same evidence excludes half-planes in **20/20** at all three doses and axis-aligned
+boxes in **19/20**, **19/20**, **20/20**. It does not identify an arbitrary region: the
+convex hull of inside contacts is consistent in **20/20** throughout, a proved consequence
+of convex truth. Under clamp semantics, three non-collinear boundary points determine the
+circle uniquely and every block supplies such a triple (**20/20**).
+
+Evidence: `results/disc_identifiability_certificate.json`; generator:
+`scripts/disc_identifiability_certificate.py`; oracle and regression tests:
+`tests/test_disc_identifiability_certificate.py`.
+
+## 2026-08-17 — H2 (REVIEW5-HARDENING): the localization budget at domain boundaries — EARNED, no blocker
+
+**Was:** the abstract quoted `vol(E_eps) >= ((eta-eps)/L)^(d+m)` without the corollary's
+premise that the guaranteed ball is not clipped by the domain boundary, and the exemption
+clause said "a hybrid mode boundary, having no finite local constant, pays no such budget"
+— an over-claim, since a continuous hybrid boundary (kink, saturation) is Lipschitz.
+
+**Now (earned, not hedged):**
+
+1. `cor:locbudget` states the always-valid clipped form first —
+   `vol(E_eps) >= vol(B_inf(z0, (eta-eps)/2L) ∩ (S x A))` — with no position condition;
+   the unclipped display is the interior case.
+2. New `cor:kappabudget`: any domain with interior-volume constant `kappa` gives
+   `vol(E_eps) >= kappa ((eta-eps)/L)^(d+m)` and `L >= (eta-eps)(kappa/V)^(1/(d+m))`.
+   Box instantiation with the per-point refinement `2^-k` (`k` = clipped coordinates):
+   interior `kappa = 1`, face `1/2`, corner `2^-(d+m)` sharp; unbounded coordinates
+   contribute factor 1, so the instruments' domains (states unbounded, scalar action in
+   `[-a_max, a_max]`) have `k <= 1`, `kappa >= 1/2`. Boundary clipping costs at most a
+   factor 2 in `L`, never the budget.
+3. Constants generated, not asserted: `scripts/locbudget_boundary_constants.py` (exact
+   product formula) + `tests/test_locbudget_boundary.py` (Monte Carlo oracle, sharpness,
+   and the load-bearing extent condition `r <= min side`).
+4. Hybrid claims scoped everywhere (abstract, contributions, rem:fourstatements,
+   contrapositive paragraph, limitations, conclusion, certificate-scope prose) to the
+   **discontinuous reset modes** actually studied.
+
+**Permanent by design (not a blocker):** the universal exemption "every hybrid boundary
+escapes the budget" is *false* — continuous hybrid boundaries pay it — so the reset-mode
+scoping is the content, not a weakening to be earned back. The only optional extension
+left is instantiating `kappa` for non-box domains (e.g. a Lipschitz domain, or the cart's
+sheared step-1 box `U` if a claim ever needs the budget *within `U`* rather than within
+`S x A`); `cor:kappabudget` already applies verbatim once such a `kappa` is computed —
+cost: one geometry computation in the existing script; no current claim needs it.
+
+## 2026-08-18 — H3/H4/H5/H6/H7 (REVIEW5-HARDENING): manuscript integration, and what remains
+
+**H3 — EARNED and integrated.** The body now defines the instrument–stream block as the
+primary unit and states 50/56 CP [0.781, 0.960] beside the strictest raw-stream 30/36 and
+the knob-cell census 64/70; the stale probe-criterion "pendulum 34/34, lower bound 0.897"
+is corrected to 30/34 CP [0.725, 0.967] (changelog #31). The per-campaign accepted play
+cost promised by `sec:estimand` now exists: `accepted_play_cost` per campaign/arm in
+`results/paper2_statistics.json`, block-clustered bootstrap CI, quoted in prose for the
+headline cell (0.508 [0.344, 0.671], n=61).
+
+**H4 — partially earned; the remaining route is a measurement campaign.** The adaptive
+chain rule `P(miss) = prod_i (1 - r_i(history))` with sharp interval brackets is now
+`rem:adaptive` in the manuscript, making the i.i.d. exponent, the two-budget sum, the
+stratified product and the Fréchet bracket corollaries of one display
+(`results/danger_law_h4.json`). Every danger curve carries a family-wise 95% rarity band;
+**both-factor bands exist only for the 5 curves with committed paired episode triples**
+(cart x_wall=8, pendulum th_stop=1.4, PatchField2D k=(3,7) x 3 events). *Route to the
+full criterion:* re-run paired (J_truth, J_blind, J_random) episode triples for the other
+35 rows (CPU-only, `scripts/play_cost_intervals.py` pattern, checkpoint per cell) and let
+`danger_law_h4.py` consume them; the JSON deliberately records
+`all_estimated_factors_band: null` until then.
+
+**H5 — EARNED, and the claim came back stronger.** The mode-capable learned baseline
+(hard-threshold / two-circle event functions on the pinned off-mode plant) is measured
+and integrated in `sec:smooth`; "capability that learned models lack" is replaced by the
+conditional-on-class statement (changelog #32). The 2D arm gives the sharpest contrast in
+the section: estimator-with-form 12/20 near-patch blocks vs synthesizer-with-form 0/20.
+*Optional extension:* an end-to-end hybrid learner (MoE / event functions at scale) on
+the same samples; the current baseline deliberately bounds representation, not learning
+stacks.
+
+**H6 — matrix earned; "identified mechanism" still not claimable.** The exclusion matrix
+(`results/h6_exclusion_matrix_v1.json`) is now cited from the ablation ledger and
+summarized in `sup:ablations`, with the mechanism-upgrade sentence rolled back to the
+earned form: the template prior survives as a *stable disposition* (unmoved by dose,
+witnessing, budget, rule difficulty) that remains unlocalized inside the model. *Route to
+"identified":* the four factorial follow-ups specified in the JSON (prompt/budget
+three-way; post-state x calibrated dose; coverage x start law; arity x identifiability on
+a bounded 1-coordinate region). Each is an LLM campaign at the usual 20-block scale.
+
+**H7 — one axis earned; the external benchmark remains the decisive follow-up.** The
+bounded-observation-noise gate is integrated (`sup:noisygate` + a Limitations paragraph):
+pre-specified, hash-pinned, masking boundary measured at eta=1. Open, in increasing cost:
+process noise; an unknown noise law; planning under noise; and the externally authored
+contact/saturation benchmark with its own critical event — freeze the adapter and the
+analysis before inspecting any outcome, then run the unchanged synthesis/gate/planner
+chain and report failures as well as confirmations.

@@ -1,0 +1,780 @@
+"""Gather the reproducibility FACTS for paper 2 into results/repro_manifest.json.
+
+Review points #18/#19 ask for an appendix that a stranger can act on: exact
+interpreter and platform, a pinned dependency set, a table/figure -> JSON
+manifest, total runtime, LLM cost, licence status and a credentials-free config
+template. Every number this emits is READ from the repo (results/*.json,
+pyproject.toml, docs/paper2/main.tex, scripts/audit_paper2_numbers.py) or from
+the machine itself (sysctl/uname/pip) -- nothing is hand-typed.
+
+The table/figure manifest is DERIVED from scripts/audit_paper2_numbers.py rather
+than restated: that script already re-derives every table cell from results/, so
+whatever it reads per section IS the backing evidence. Two independent routes are
+used and cross-checked, which is the non-vacuous part:
+
+  (static)  parse the audit source into its `# --- ... ---` sections and collect
+            the literal load("X") / tabular_rows("Y") arguments per section;
+  (dynamic) exec the audit with pathlib.Path.read_text spied on, recording every
+            file it actually opens.
+
+If the static parse missed a JSON the audit really reads, the cross-check fails
+loudly (manifest["audit_coverage"]["static_vs_dynamic_ok"] is False and the
+offending names are listed). Also emits, as gaps, every table/figure label in
+main.tex that no audit section mentions.
+
+Writes:
+  results/repro_manifest.json
+  docs/paper2/requirements-frozen.txt   (pip freeze; there is no lockfile)
+  docs/paper2/env.example               (names only, no values)
+
+Usage: PYTHONPATH=src python scripts/repro_manifest.py
+"""
+import json
+import os
+import pathlib
+import platform
+import re
+import subprocess
+import sys
+import tempfile
+import time
+
+REPO = pathlib.Path(__file__).resolve().parents[1]
+if not (REPO / "docs" / "paper2" / "main.tex").exists():          # scratchpad run
+    REPO = pathlib.Path("/Users/javieraguilarmartin1/Documents/repos/code-world-models")
+RESULTS = REPO / "results"
+TEX = REPO / "docs" / "paper2" / "main.tex"
+AUDIT = REPO / "scripts" / "audit_paper2_numbers.py"
+
+
+def sh(*cmd):
+    try:
+        return subprocess.run(cmd, capture_output=True, text=True,
+                              timeout=120).stdout.strip()
+    except Exception as e:                                    # pragma: no cover
+        return f"<unavailable: {e!r}>"
+
+
+def atomic_write(path, text):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent))
+    with os.fdopen(fd, "w") as fh:
+        fh.write(text)
+    os.replace(tmp, path)
+
+
+# --------------------------------------------------------------- platform ----
+def platform_facts():
+    return {
+        "python_version": sys.version,
+        "python_version_tuple": list(sys.version_info[:3]),
+        "python_implementation": platform.python_implementation(),
+        "python_executable": sys.executable.replace(str(REPO), "<repo>"),
+        "platform": platform.platform(),
+        "machine": platform.machine(),
+        "processor": platform.processor(),
+        "uname": sh("uname", "-a"),
+        "sw_vers": sh("sw_vers"),
+        "cpu_brand": sh("sysctl", "-n", "machdep.cpu.brand_string"),
+        "hw_model": sh("sysctl", "-n", "hw.model"),
+        "hw_ncpu": sh("sysctl", "-n", "hw.ncpu"),
+        "hw_memsize_bytes": sh("sysctl", "-n", "hw.memsize"),
+        "float_repr_style": sys.float_repr_style,
+        "maxsize": sys.maxsize,
+        "byteorder": sys.byteorder,
+        "hardware_dependence_of_results": (
+            "All CPU results are pure-Python/numpy float64 arithmetic with "
+            "explicitly seeded random.Random / numpy Generator streams; no "
+            "threading, no GPU, no BLAS-dependent reduction order in the "
+            "sweeps. Bit-identical replay is expected on any IEEE-754 x86-64 "
+            "or arm64 host with the same CPython minor version; the numbers "
+            "quoted to twelve digits (J_truth) are the ones most exposed to a "
+            "different libm, and are the ones to re-check first on another "
+            "platform. Only WALL-CLOCK figures are hardware-dependent."),
+    }
+
+
+# ----------------------------------------------------------- dependencies ----
+LOCKFILE_CANDIDATES = ["uv.lock", "poetry.lock", "Pipfile.lock",
+                       "requirements.txt", "requirements.lock",
+                       "conda-lock.yml", "environment.yml", "pdm.lock"]
+
+
+def dependency_facts():
+    py = (REPO / "pyproject.toml").read_text()
+    deps = re.search(r"^dependencies\s*=\s*\[(.*?)\]", py,
+                     re.S | re.M).group(1)
+    declared = re.findall(r'"([^"]+)"', deps)
+    dev = re.findall(r'"([^"]+)"',
+                     re.search(r"dev\s*=\s*\[(.*?)\]", py, re.S).group(1))
+    freeze = sh(sys.executable, "-m", "pip", "freeze")
+    frozen_path = REPO / "docs" / "paper2" / "requirements-frozen.txt"
+    header = (
+        "# Pinned environment for docs/paper2 (review points #18/#19).\n"
+        f"# Produced by `{pathlib.Path(sys.executable).name} -m pip freeze` on "
+        f"{time.strftime('%Y-%m-%d', time.gmtime())} (UTC) inside the repo's\n"
+        "# .venv, on the machine described in results/repro_manifest.json.\n"
+        "# THIS IS NOT A LOCKFILE: it has no hashes and no resolver metadata,\n"
+        "# and pyproject.toml declares only lower bounds. A release tag of the\n"
+        "# repository is still required to make the artifact set citable.\n")
+    atomic_write(frozen_path, header + freeze + "\n")
+    return {
+        "pyproject_requires_python": re.search(
+            r'requires-python\s*=\s*"([^"]+)"', py).group(1),
+        "declared_runtime_dependencies": declared,
+        "declared_dev_dependencies": dev,
+        "declared_bounds_are_lower_only": all(
+            (">=" in d and "==" not in d) for d in declared),
+        "lockfile_present": {c: (REPO / c).exists()
+                             for c in LOCKFILE_CANDIDATES},
+        "any_lockfile": any((REPO / c).exists() for c in LOCKFILE_CANDIDATES),
+        "frozen_list_written_to": "docs/paper2/requirements-frozen.txt",
+        "frozen_package_count": len([l for l in freeze.splitlines()
+                                     if l and not l.startswith("#")]),
+        "installed_versions_of_declared": {
+            name: sh(sys.executable, "-c",
+                     f"import importlib.metadata as m;print(m.version({name!r}))")
+            for name in sorted({re.split(r"[<>=!\[]", d)[0].strip()
+                                for d in declared + dev})},
+        "release_tag_present": bool(sh("git", "-C", str(REPO), "tag").strip()),
+        "gap": ("No lockfile of any kind exists and pyproject declares only "
+                "lower bounds, so `pip install -e .` today resolves to newer "
+                "versions than the ones the results were produced with. "
+                "docs/paper2/requirements-frozen.txt closes the version gap "
+                "but not the integrity gap (no hashes). A git tag / Zenodo DOI "
+                "for the artifact set is still missing."),
+    }
+
+
+# ------------------------------------------------- audit-derived manifest ----
+SECTION_RE = re.compile(r"^#\s-{2,}\s*(.*?)\s*-*\s*$", re.M)
+
+
+def audit_sections():
+    """(title, body) for each `# --- ... ---` section of the audit script."""
+    src = AUDIT.read_text()
+    marks = [(m.start(), m.group(1).strip()) for m in SECTION_RE.finditer(src)]
+    out = []
+    for i, (pos, title) in enumerate(marks):
+        end = marks[i + 1][0] if i + 1 < len(marks) else len(src)
+        out.append((title, src[pos:end]))
+    return out
+
+
+def static_audit_map():
+    """label/section -> results JSONs it reads, from the audit source.
+
+    Three routes into results/ exist in the audit and all three must be parsed,
+    or the static/dynamic cross-check fails (it did, first time round, on the
+    synth_cells() wrapper and the glob): the load()/synth_cells() helpers, a
+    bare "<name>.json" string literal joined onto _REPO/"results", and a
+    glob pattern, which is expanded against the directory here.
+    """
+    sections = []
+    for title, body in audit_sections():
+        loads = set(re.findall(r'(?:load|synth_cells)\(\s*"([^"]+)"\s*\)', body))
+        loads |= {n[:-5] for n in re.findall(r'"([A-Za-z0-9_.\-]+\.json)"', body)}
+        labels = sorted(set(re.findall(r'tabular_rows\(\s*"([^"]+)"\s*\)', body)))
+        globs = sorted(set(re.findall(r'glob\(\s*"([^"]+)"\s*\)', body)))
+        for pat in globs:
+            if pat.endswith(".json"):
+                loads |= {p.stem for p in RESULTS.glob(pat)}
+        loads = sorted(loads)
+        agree_sites = len(re.findall(r"\bagree\(", body))
+        claim_sites = len(re.findall(r"\bclaim\(", body))
+        sections.append({
+            "audit_section": title,
+            "tex_labels_parsed": labels,
+            "results_json_read": loads,
+            "results_globs": globs,
+            "agree_call_sites": agree_sites,
+            "claim_call_sites": claim_sites,
+        })
+    # loads that appear before the first section marker (module preamble)
+    return sections
+
+
+def dynamic_audit_files():
+    """Every file the audit actually opens, by spying on Path.read_text."""
+    seen = []
+    orig = pathlib.Path.read_text
+
+    def spy(self, *a, **k):
+        seen.append(str(self))
+        return orig(self, *a, **k)
+
+    pathlib.Path.read_text = spy
+    ns = {"__name__": "__main__", "__file__": str(AUDIT)}
+    try:
+        exec(compile(AUDIT.read_text(), str(AUDIT), "exec"), ns)  # noqa: S102
+        exit_code = 0
+    except SystemExit as e:
+        exit_code = int(e.code or 0)
+    finally:
+        pathlib.Path.read_text = orig
+    checks = ns.get("CHECKS", [None])[0]
+    fails = ns.get("FAILS", [])
+    return {
+        "files_opened": sorted({p for p in seen}),
+        "results_json_opened": sorted({pathlib.Path(p).stem for p in seen
+                                       if "/results/" in p and p.endswith(".json")}),
+        "audit_checks_executed": checks,
+        "audit_failures": fails,
+        "audit_exit_code": exit_code,
+    }
+
+
+def tex_objects():
+    """Every table and figure of main.tex with its label and caption stub."""
+    tex = TEX.read_text()
+    lines = tex.splitlines()
+    out = []
+    for env in ("table", "figure"):
+        for m in re.finditer(r"\\begin\{" + env + r"\}", tex):
+            end = tex.index("\\end{" + env + "}", m.start())
+            body = tex[m.start():end]
+            lab = re.search(r"\\label\{([^}]+)\}", body)
+            cap = re.search(r"\\caption\{(.{0,120})", body, re.S)
+            gfx = re.findall(r"\\includegraphics\[[^\]]*\]\{([^}]+)\}", body)
+            out.append({
+                "kind": env,
+                "label": lab.group(1) if lab else None,
+                "tex_line": tex[:m.start()].count("\n") + 1,
+                "caption_stub": re.sub(r"\s+", " ", cap.group(1)).strip()
+                                if cap else None,
+                "graphics": gfx,
+            })
+    return sorted(out, key=lambda d: d["tex_line"]), lines
+
+
+def figure_sources():
+    """figure basename -> backing JSONs, from scripts/make_paper2_figures.py.
+
+    The script binds one variable per JSON at module level and then emits each
+    figure with `save(fig, "<basename>")`, so the JSONs behind a figure are the
+    bound variables that appear in the text between the previous save() and this
+    one. Attribution is therefore per figure, not per module.
+    """
+    src = (REPO / "scripts" / "make_paper2_figures.py").read_text()
+    var2json = dict(re.findall(r'(\w+)\s*=\s*load\(\s*"([^"]+)\.json"\s*\)', src))
+    saves = list(re.finditer(r'save\(\s*\w+\s*,\s*"([^"]+)"', src))
+    # the module preamble binds every JSON, so the first figure's block must
+    # start after the last binding or it inherits all of them
+    last_bind = max((m.end() for m in
+                     re.finditer(r'\w+\s*=\s*load\(\s*"[^"]+\.json"\s*\)', src)),
+                    default=0)
+    per_fig, prev = {}, last_bind
+    for m in saves:
+        block = src[prev:m.end()]
+        per_fig[m.group(1)] = sorted({j for v, j in var2json.items()
+                                      if re.search(r"\b" + re.escape(v) + r"\b",
+                                                   block)})
+        prev = m.end()
+    return {
+        "generator": "scripts/make_paper2_figures.py",
+        "module_level_json": sorted(set(var2json.values())),
+        "per_figure_backing_json": per_fig,
+        "note": ("make_paper2_figures.py renders committed JSONs only -- it "
+                 "runs no experiment, so every figure inherits the provenance "
+                 "and the audit coverage of its table."),
+    }
+
+
+def script_of(name):
+    p = RESULTS / f"{name}.json"
+    if not p.exists():
+        return None
+    try:
+        b = json.loads(p.read_text())
+    except Exception:
+        return None
+    return b.get("script") if isinstance(b, dict) else None
+
+
+def build_manifest_rows(sections, objs, figs):
+    """One manifest row per table/figure of main.tex.
+
+    Three coverage tiers are distinguished, because conflating them is how a
+    "complete manifest" becomes a false claim:
+      cell_parsed   the audit reads the tabular out of main.tex and compares
+                    every cell (tabular_rows(label) -> agree()).
+      claims_only   the audit does not parse the table, but a section of it
+                    names the table and asserts values quoted from it.
+      unaudited     nothing in the audit refers to it.
+    """
+    label_to_sections = {}
+    for s in sections:
+        for lab in s["tex_labels_parsed"]:
+            label_to_sections.setdefault(lab, []).append(s)
+    body_by_title = {t: b for t, b in audit_sections()}
+    rows = []
+    for o in objs:
+        lab = o["label"]
+        secs = label_to_sections.get(lab, [])
+        jsons = sorted({j for s in secs for j in s["results_json_read"]})
+        # sections that quote the table without parsing it: their comment text
+        # names the label (e.g. "Values from the paper's Table epsstar")
+        key = (lab or "").split(":")[-1]
+        by_mention = [s for s in sections
+                      if key and s not in secs
+                      and (key in s["audit_section"]
+                           or key in body_by_title.get(s["audit_section"], ""))]
+        fig_json = []
+        for g in o["graphics"]:
+            fig_json += figs["per_figure_backing_json"].get(
+                pathlib.PurePath(g).stem, [])
+        if not jsons:
+            jsons = sorted(set(fig_json)
+                           or {j for s in by_mention
+                               for j in s["results_json_read"]})
+        tier = ("cell_parsed" if secs else
+                "claims_only" if (by_mention or fig_json) else "unaudited")
+        rows.append({
+            "kind": o["kind"],
+            "label": lab,
+            "tex_line": o["tex_line"],
+            "caption_stub": o["caption_stub"],
+            "graphics": o["graphics"],
+            "backing_results_json": jsons,
+            "producing_scripts": sorted({script_of(j) for j in jsons
+                                         if script_of(j)}),
+            "audit_sections_parsing_cells": [s["audit_section"] for s in secs],
+            "audit_sections_quoting_values": [s["audit_section"]
+                                              for s in by_mention],
+            "coverage": tier,
+            "mechanically_audited": tier != "unaudited",
+            "audit_agree_call_sites": sum(s["agree_call_sites"] for s in secs),
+            "audit_claim_call_sites": sum(s["claim_call_sites"]
+                                          for s in secs + by_mention),
+        })
+    return rows
+
+
+# --------------------------------------------------------------- runtime ----
+CAMPAIGN_RULES = [
+    ("1D mechanism sweeps (CPU)", ("continuous_reach", "continuous_pendulum",
+                                   "continuous_axes", "continuous_smooth_probe")),
+    ("sharp-plateau variant (CPU)", ("continuous_reach_sharp",
+                                     "continuous_pendulum_sharp",
+                                     "continuous_pendulum_sharpphantom")),
+    ("PatchField2D mechanism (CPU)", ("continuous_patch2d",
+                                      "continuous_patch2d_square")),
+    ("second planner family, CEM (CPU)", ("continuous_cem",
+                                          "continuous_cem_patch2d")),
+    ("eps-sensitivity sweeps (CPU)", ("continuous_eps_sweep",
+                                      "continuous_eps_sweep_patch2d")),
+    ("mitigation sweeps (CPU)", ("continuous_mitigation",
+                                 "continuous_mitigation_patch2d")),
+    ("LLM synthesis, 1D cart", ("continuous_synthesis_mini_xwall8",
+                                "continuous_synthesis_large_xwall8",
+                                "continuous_synthesis_large_xwall8_off20",
+                                "continuous_synthesis_mini_xwall4",
+                                "continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8")),
+    ("LLM synthesis, pendulum", ("continuous_synthesis_pendulum_",)),
+    ("LLM synthesis, PatchField2D", ("continuous_synthesis_patch2d",
+                                     "continuous_synthesis_patch2dsq")),
+]
+
+
+def campaign_of(stem):
+    for name, keys in CAMPAIGN_RULES:
+        for k in keys:
+            if stem == k or stem.startswith(k):
+                return name
+    return "other / theory certificates"
+
+
+def runtime_facts():
+    per_file, by_campaign = {}, {}
+    for f in sorted(RESULTS.glob("*.json")):
+        try:
+            b = json.loads(f.read_text())
+        except Exception:
+            continue
+        if not isinstance(b, dict) or "elapsed_s" not in b:
+            continue
+        e = float(b["elapsed_s"])
+        per_file[f.stem] = e
+        c = campaign_of(f.stem)
+        by_campaign.setdefault(c, {"files": [], "elapsed_s": 0.0})
+        by_campaign[c]["files"].append(f.stem)
+        by_campaign[c]["elapsed_s"] = round(
+            by_campaign[c]["elapsed_s"] + e, 1)
+    for c in by_campaign:
+        by_campaign[c]["elapsed_min"] = round(by_campaign[c]["elapsed_s"] / 60, 1)
+        by_campaign[c]["files"].sort()
+    total = round(sum(per_file.values()), 1)
+
+    # runtimes that exist only as "~N min" annotations in main.tex's verbatim
+    tex = TEX.read_text()
+    verbatim = "\n".join(re.findall(r"\\begin\{verbatim\}(.*?)\\end\{verbatim\}",
+                                    tex, re.S))
+    tex_scripts = {}
+    for m in re.finditer(r"scripts/([a-z0-9_]+\.py)(.*?)(?=\n(?:PYTHONPATH|python|#|\Z))",
+                         verbatim, re.S):
+        name, tail = m.group(1), m.group(2)
+        est = re.search(r"~\s*([0-9.]+)\s*(min|s)\b", tail)
+        tex_scripts.setdefault(name, None)
+        if est:
+            secs = float(est.group(1)) * (60 if est.group(2) == "min" else 1)
+            tex_scripts[name] = secs
+    produced_by = {}
+    for stem in per_file:
+        s = script_of(stem)
+        if s:
+            produced_by.setdefault(s, []).append(stem)
+    unverified, stale = [], []
+    for name, est in sorted(tex_scripts.items()):
+        recorded = sorted(produced_by.get(name, []))
+        # a script may write a JSON named after itself while recording a
+        # different producer in the "script" field (continuous_cem.py writes
+        # continuous_cem_patch2d.json), so match by name as well
+        own = RESULTS / (name[:-3] + ".json")
+        by_name = own.stem if own.exists() and own.stem in per_file else None
+        if by_name and by_name not in recorded:
+            recorded.append(by_name)
+        row = {
+            "script": f"scripts/{name}",
+            "tex_estimate_s": est,
+            "own_json_exists": own.exists(),
+            "own_json_records_elapsed_s": bool(by_name),
+            "results_json_with_elapsed_s": recorded,
+            "runtime_verified_from_json": bool(recorded),
+        }
+        unverified.append(row)
+        if est and recorded:
+            # compare against the DEFAULT run (the JSON named after the script)
+            # rather than a sibling variant produced by a different invocation
+            ref = by_name or max(recorded, key=lambda r: per_file[r])
+            got = per_file[ref]
+            if got > 1.35 * est or got < est / 1.35:
+                stale.append({"script": f"scripts/{name}",
+                              "tex_estimate_s": est,
+                              "compared_against": f"results/{ref}.json",
+                              "recorded_elapsed_s": got,
+                              "ratio_recorded_over_tex": round(got / est, 2)})
+    cpu = round(sum(v["elapsed_s"] for k, v in by_campaign.items()
+                    if "(CPU)" in k), 1)
+    llm = round(sum(v["elapsed_s"] for k, v in by_campaign.items()
+                    if k.startswith("LLM")), 1)
+    other = round(total - cpu - llm, 1)
+    return {
+        "subtotals": {
+            "cpu_sweeps_s": cpu, "cpu_sweeps_h": round(cpu / 3600, 2),
+            "llm_synthesis_s": llm, "llm_synthesis_h": round(llm / 3600, 2),
+            "paper2_named_campaigns_h": round((cpu + llm) / 3600, 2),
+            "unclassified_s": other,
+            "unclassified_files": sorted(
+                by_campaign.get("other / theory certificates", {})
+                .get("files", [])),
+            "unclassified_note": (
+                "Files that match no campaign rule. As of generated_at_utc "
+                "these are artifacts of the in-progress revision written by "
+                "other work in the same tree, not part of the paper as "
+                "committed at git.head; treat paper2_named_campaigns_h as the "
+                "figure for the submitted version."),
+        },
+        "tex_estimates_contradicted_by_recorded_elapsed_s": stale,
+        "tex_estimate_staleness_note": (
+            "The appendix's ~N min annotations were written when the sweeps ran "
+            "at their original sample sizes; the 2026-07-25 censored-zero fix "
+            "raised rarity rollouts (cart 3000->30,000, pendulum 3000->30,000, "
+            "axes 2000->20,000) without updating the annotations, so the listed "
+            "estimates understate the current scripts. Use "
+            "per_results_file_elapsed_s, which each script wrote itself."),
+        "per_results_file_elapsed_s": per_file,
+        "by_campaign": by_campaign,
+        "total_recorded_elapsed_s": total,
+        "total_recorded_elapsed_h": round(total / 3600, 2),
+        "n_files_with_elapsed_s": len(per_file),
+        "n_results_json_total": len(list(RESULTS.glob("*.json"))),
+        "scripts_named_in_tex_verbatim": unverified,
+        "note": ("elapsed_s is wall-clock for ONE run of the script that wrote "
+                 "the file; it excludes every superseded run (the 5-seed cells "
+                 "later overwritten at 20 seeds, the square-ablation resume "
+                 "passes, failed LLM calls) and excludes every script that does "
+                 "not record it. The total is therefore a LOWER BOUND on the "
+                 "compute the paper cost."),
+    }
+
+
+# -------------------------------------------------------------- LLM cost ----
+def llm_facts():
+    rows = []
+    tokens_recorded = False
+    for f in sorted(RESULTS.glob("continuous_synthesis_*.json")):
+        b = json.loads(f.read_text())
+        cells = b.get("cells", [])
+        calls = sum(1 + int(c.get("refine_iterations") or 0) for c in cells)
+        if any("usage" in c for c in cells):
+            tokens_recorded = True
+        rows.append({
+            "file": f"results/{f.name}",
+            "model": b.get("model"),
+            "size": b.get("size"),
+            "instrument": (b.get("params") or {}).get("instrument", "cart"),
+            "n_cells": len(cells),
+            "llm_calls": calls,
+            "refine_iterations_total": sum(int(c.get("refine_iterations") or 0)
+                                           for c in cells),
+            "elapsed_s": b.get("elapsed_s"),
+            "campaign": campaign_of(f.stem),
+            "usage_recorded": any("usage" in c for c in cells),
+        })
+    relay = RESULTS / "continuous_claude_relay.json"
+    relay_calls = None
+    if relay.exists():
+        blob = json.loads(relay.read_text())
+        relay_calls = sum(1 + int(c.get("refine_iterations") or 0)
+                          for c in blob) if isinstance(blob, list) else None
+    by_camp = {}
+    for r in rows:
+        d = by_camp.setdefault(r["campaign"], {"llm_calls": 0, "cells": 0,
+                                              "files": 0})
+        d["llm_calls"] += r["llm_calls"]
+        d["cells"] += r["n_cells"]
+        d["files"] += 1
+    # paper-1 JSONs DO record dollar cost; carry them as the only measured
+    # $/call anchor available in-repo.
+    anchors = {}
+    for f in sorted(RESULTS.glob("*.json")):
+        try:
+            b = json.loads(f.read_text())
+        except Exception:
+            continue
+        if isinstance(b, dict) and "cost_usd_total" in b:
+            anchors[f.stem] = b["cost_usd_total"]
+    return {
+        "per_file": rows,
+        "by_campaign": by_camp,
+        "total_llm_calls_paper2_api_arms": sum(r["llm_calls"] for r in rows),
+        "claude_relay_calls": relay_calls,
+        "token_usage_recorded_in_paper2_artifacts": tokens_recorded,
+        "why_not": ("cwm.llm providers DO capture prompt/completion tokens "
+                    "(src/cwm/llm/provider.py Usage; azure_openai.py raises if "
+                    "Azure omits it) and contract.refine_continuous keeps them "
+                    "in RefineResult.usages, but "
+                    "contract.synthesize_and_evaluate does not copy them into "
+                    "the emitted cell, so no paper-2 artifact carries tokens. "
+                    "Paper 1's runners did record dollars (cost_usd_total)."),
+        "paper1_cost_usd_anchors": anchors,
+        "paper1_cost_usd_total": round(sum(anchors.values()), 4),
+        "cost_statement_for_the_appendix": (
+            "Report paper 2's LLM cost as a RANGE, not a point: the exact call "
+            "count is known (see total_llm_calls_paper2_api_arms) but the token "
+            "count is not recorded. The design spec's own pre-run estimate was "
+            "'~2-7 LLM calls per seed, 1-2k prompt tokens each'; combined with "
+            "the measured call count that brackets the API arms at roughly "
+            "1e6-1e7 total tokens, i.e. single-digit to low-double-digit US "
+            "dollars at 2026 GPT-5.x-class prices. The only measured dollar "
+            "figures in the repo are paper 1's (paper1_cost_usd_anchors, "
+            "$%.2f total), which are a different campaign. Anyone needing an "
+            "exact figure must take it from the Azure billing export for the "
+            "run window 2026-07-07 .. 2026-07-25."
+            % round(sum(anchors.values()), 2)),
+    }
+
+
+# --------------------------------------------------------------- licence ----
+def licence_facts():
+    names = ["LICENSE", "LICENSE.md", "LICENSE.txt", "LICENCE", "COPYING",
+             "NOTICE"]
+    py = (REPO / "pyproject.toml").read_text()
+    return {
+        "licence_files_present": {n: (REPO / n).exists() for n in names},
+        "any_licence_file": any((REPO / n).exists() for n in names),
+        "pyproject_declares_license": bool(re.search(r"^\s*license\s*=", py,
+                                                     re.M)),
+        "pyproject_classifiers": re.findall(r'"(License :: [^"]+)"', py),
+        "readme_mentions_licence": bool(
+            re.search(r"licen[cs]e", (REPO / "README.md").read_text(), re.I)),
+        "gap": ("There is NO licence file and pyproject.toml declares no "
+                "`license` field and no License classifier, so the code, the "
+                "synthesized artifacts under results/ and the paper source are "
+                "all-rights-reserved by default. A reviewer told to 'reproduce "
+                "this' has no licence to redistribute anything. Fix before "
+                "submission: add a LICENSE (e.g. MIT or Apache-2.0 for code, "
+                "CC-BY-4.0 for the paper and data) and set "
+                "[project].license in pyproject.toml."),
+    }
+
+
+# ------------------------------------------------------------- env config ----
+ENV_DOC = {
+    "AZURE_OPENAI_ENDPOINT": "Azure OpenAI resource endpoint URL",
+    "AZURE_OPENAI_API_KEY": "Azure OpenAI API key (secret)",
+    "AZURE_OPENAI_API_VERSION": "Azure OpenAI API version; paper 2 used 2025-04-01-preview",
+    "AZURE_DEPLOYMENT_LARGE": "deployment name behind the paper's \"large\" (gpt-5.4)",
+    "AZURE_DEPLOYMENT_MINI": "deployment name behind the paper's \"mini\" (gpt-5.4-mini)",
+    "AZURE_DEPLOYMENT_NANO": "deployment name behind \"nano\" (paper 1 arms only)",
+    "HF_TOKEN": "Hugging Face token for the Inference Providers router (Qwen cross-family arm)",
+}
+
+
+def env_facts():
+    hits = {}
+    for root in ("src", "scripts", "tests"):
+        for p in sorted((REPO / root).rglob("*.py")):
+            txt = p.read_text()
+            for m in re.finditer(r"os\.environ\[\s*\"([A-Z0-9_]+)\"\s*\]"
+                                 r"|os\.environ\.get\(\s*\"([A-Z0-9_]+)\""
+                                 r"|os\.getenv\(\s*\"([A-Z0-9_]+)\"", txt):
+                name = m.group(1) or m.group(2) or m.group(3)
+                hits.setdefault(name, []).append(
+                    f"{p.relative_to(REPO)}:{txt[:m.start()].count(chr(10)) + 1}")
+    dotenv_users = sorted(
+        str(p.relative_to(REPO))
+        for root in ("src", "scripts", "tests")
+        for p in (REPO / root).rglob("*.py")
+        if "load_dotenv" in p.read_text())
+    lines = ["# Credentials template for docs/paper2 (review point #19).",
+             "# Copy to <repo-root>/.env and fill in. NEVER commit the filled file:",
+             "# .gitignore already excludes .env. No value here is a real secret.",
+             "#",
+             "# Every variable below is read by name from os.environ by the",
+             "# scripts listed in results/repro_manifest.json -> env_config.",
+             "# The CPU-only reproduction (Tables 2-9, all figures, the whole",
+             "# audit) needs NONE of them; they are required only for the LLM",
+             "# synthesis arms.",
+             ""]
+    for name in sorted(set(list(ENV_DOC) + list(hits))):
+        lines.append(f"# {ENV_DOC.get(name, 'read by the scripts listed in the manifest')}")
+        default = {"AZURE_OPENAI_ENDPOINT": "https://YOUR-RESOURCE.openai.azure.com/",
+                   "AZURE_OPENAI_API_VERSION": "2025-04-01-preview",
+                   "AZURE_DEPLOYMENT_LARGE": "gpt-5.4",
+                   "AZURE_DEPLOYMENT_MINI": "gpt-5.4-mini",
+                   "AZURE_DEPLOYMENT_NANO": "gpt-5.4-nano"}.get(name, "")
+        lines.append(f"{name}={default}")
+        lines.append("")
+    atomic_write(REPO / "docs" / "paper2" / "env.example", "\n".join(lines))
+    return {
+        "variables": {k: sorted(v) for k, v in sorted(hits.items())},
+        "documented_template": "docs/paper2/env.example",
+        "load_dotenv_modules": dotenv_users,
+        "existing_repo_root_template": {
+            "path": ".env.example",
+            "exists": (REPO / ".env.example").exists(),
+            "lists_HF_TOKEN": "HF_TOKEN" in (REPO / ".env.example").read_text()
+            if (REPO / ".env.example").exists() else None,
+            "api_version_matches_paper": "2025-04-01-preview"
+            in (REPO / ".env.example").read_text()
+            if (REPO / ".env.example").exists() else None,
+        },
+        "cpu_only_reproduction_needs_no_credentials": True,
+    }
+
+
+def paper2_unaudited(dyn_json):
+    """Paper-2 evidence files the audit never opens.
+
+    "Paper-2 evidence" = written by a script main.tex names in \\texttt{} or in
+    the reproducibility verbatim. That is the honest boundary: paper-1 JSONs in
+    the same directory are not this paper's business.
+    """
+    tex = TEX.read_text()
+    named = set(re.findall(r"scripts/([a-z0-9_\\]+\.py)", tex))
+    named = {n.replace("\\", "") for n in named}
+    named |= {n.replace("\\_", "_") for n in named}
+    out = []
+    for p in sorted(RESULTS.glob("*.json")):
+        if p.stem in dyn_json or p.stem == "repro_manifest":
+            continue
+        s = script_of(p.stem)
+        if s and s in named:
+            out.append({"file": f"results/{p.name}", "written_by": f"scripts/{s}"})
+    return out
+
+
+# ------------------------------------------------------------------ main ----
+def main():
+    sections = static_audit_map()
+    dyn = dynamic_audit_files()
+    objs, _ = tex_objects()
+    figs = figure_sources()
+    rows = build_manifest_rows(sections, objs, figs)
+
+    static_json = sorted({j for s in sections for j in s["results_json_read"]})
+    # the audit also reads JSONs from module-level code outside any section
+    dyn_json = dyn["results_json_opened"]
+    missed = sorted(set(dyn_json) - set(static_json))
+    extra = sorted(set(static_json) - set(dyn_json))
+
+    manifest = {
+        "what_this_is": (
+            "Reproducibility facts for docs/paper2/main.tex (review points "
+            "#18/#19). Generated, not hand-typed: see docs/paper2/REPRO-FACTS.md "
+            "for the prose version and the generator's source."),
+        "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "generator": "scripts/repro_manifest.py (source archived in docs/paper2/REPRO-FACTS.md)",
+        "git": {
+            "head": sh("git", "-C", str(REPO), "rev-parse", "HEAD"),
+            "head_short": sh("git", "-C", str(REPO), "rev-parse", "--short", "HEAD"),
+            "head_date": sh("git", "-C", str(REPO), "log", "-1", "--date=iso",
+                            "--format=%ad"),
+            "branch": sh("git", "-C", str(REPO), "rev-parse", "--abbrev-ref", "HEAD"),
+            "describe": sh("git", "-C", str(REPO), "describe", "--always", "--dirty"),
+            "note": ("A working tree with concurrent edits: the manifest is a "
+                     "snapshot of results/ at generated_at_utc."),
+        },
+        "platform": platform_facts(),
+        "dependencies": dependency_facts(),
+        "manifest": rows,
+        "audit_coverage": {
+            "audit_script": "scripts/audit_paper2_numbers.py",
+            "audit_checks_executed": dyn["audit_checks_executed"],
+            "audit_failures": dyn["audit_failures"],
+            "audit_exit_code": dyn["audit_exit_code"],
+            "sections": sections,
+            "results_json_read_static": static_json,
+            "results_json_read_dynamic": dyn_json,
+            "static_vs_dynamic_ok": not missed,
+            "read_dynamically_but_not_matched_statically": missed,
+            "matched_statically_but_not_read": extra,
+            "tables_and_figures_total": len(rows),
+            "coverage_counts": {
+                t: sum(1 for r in rows if r["coverage"] == t)
+                for t in ("cell_parsed", "claims_only", "unaudited")},
+            "tables_and_figures_mechanically_audited": sum(
+                1 for r in rows if r["mechanically_audited"]),
+            "gaps": [
+                {"label": r["label"], "kind": r["kind"], "tex_line": r["tex_line"],
+                 "coverage": r["coverage"],
+                 "backing_results_json": r["backing_results_json"],
+                 "caption_stub": r["caption_stub"]}
+                for r in rows if r["coverage"] != "cell_parsed"],
+            "results_json_in_repo_not_read_by_audit": sorted(
+                {p.stem for p in RESULTS.glob("*.json")} - set(dyn_json)
+                - {"repro_manifest"}),
+            "paper2_results_json_not_read_by_audit": paper2_unaudited(dyn_json),
+            "paper2_unaudited_note": (
+                "These files were written by a script main.tex names, so they "
+                "are paper-2 evidence, yet no assertion in "
+                "audit_paper2_numbers.py reads them: the numbers they back "
+                "(PatchField2D CEM rows, PatchField2D eps rows, the "
+                "square-patch CPU calibration, the 2D Claude relay ledger) are "
+                "quoted in prose and are NOT covered by any of the checks "
+                "audit_checks_executed counts."),
+        },
+        "figures": figure_sources(),
+        "runtime": runtime_facts(),
+        "llm_cost": llm_facts(),
+        "licence": licence_facts(),
+        "env_config": env_facts(),
+    }
+    out = RESULTS / "repro_manifest.json"
+    atomic_write(out, json.dumps(manifest, indent=1, sort_keys=False) + "\n")
+    print(f"wrote {out.relative_to(REPO)}")
+    print(f"  audit checks executed: {dyn['audit_checks_executed']}, "
+          f"failures: {len(dyn['audit_failures'])}")
+    print(f"  tables+figures: {len(rows)}, mechanically audited: "
+          f"{sum(1 for r in rows if r['mechanically_audited'])}")
+    print(f"  static/dynamic JSON coverage match: {not missed}"
+          + (f"  MISSED {missed}" if missed else ""))
+    print(f"  recorded wall clock: {manifest['runtime']['total_recorded_elapsed_h']} h "
+          f"over {manifest['runtime']['n_files_with_elapsed_s']} files")
+    print(f"  paper-2 LLM calls: {manifest['llm_cost']['total_llm_calls_paper2_api_arms']}"
+          f" (tokens recorded: {manifest['llm_cost']['token_usage_recorded_in_paper2_artifacts']})")
+
+
+if __name__ == "__main__":
+    main()

@@ -19,6 +19,20 @@ jobs:
             texlive-fonts-recommended texlive-science texlive-bibtex-extra biber
       - name: Compile paper and check overfull / undefined refs
         run: bash scripts/check_latex.sh
+      # check_latex.sh reads the LOG; this reads the SOURCE too, and catches the classes it
+      # cannot: duplicate labels (a cross-reference silently resolving to the wrong section),
+      # section headers left empty by a restructuring, and numbered results that are stated
+      # and never cited. The last is the one LaTeX never warns about.
+      - name: Structural guard (duplicate labels, empty sections, orphaned results)
+        run: |
+          for d in docs/paper docs/paper2; do
+            ( cd "$d" \
+              && pdflatex -interaction=nonstopmode main.tex >/dev/null 2>&1 \
+              && bibtex main >/dev/null 2>&1 \
+              && pdflatex -interaction=nonstopmode main.tex >/dev/null 2>&1 \
+              && pdflatex -interaction=nonstopmode main.tex >/dev/null 2>&1 )
+          done
+          python scripts/check_paper_build.py docs/paper/main.tex docs/paper2/main.tex
 
   tests:
     name: Python tests (Azure-free)
@@ -32,3 +46,49 @@ jobs:
         run: pip install -e ".[dev]"
       - name: Run test suite
         run: pytest -q
+
+  lean_proofs:
+    name: Lean formalization (prop:risk + the machine-checked counterexample)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Builds formal/Paper2Props against the pinned toolchain; lean-action detects
+      # Mathlib and fetches the binary cache, so this compiles only our file (~minutes).
+      # The fourth review could not certify the local build finished; this job makes the
+      # green check public. The template's nested workflow inside formal/Paper2Props/
+      # never ran (GitHub only reads /.github/workflows) -- that gap is why this exists.
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: formal/Paper2Props
+
+  paper_numbers:
+    name: Paper 2 numbers match results/
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Every table cell and the counted prose claims of docs/paper2/main.tex are
+      # re-derived from the versioned result JSONs, at the paper's own printed
+      # precision. A stale transcription fails here rather than in a preprint.
+      - name: Audit paper 2 tables against the result JSONs
+        run: python scripts/audit_paper2_numbers.py
+      # The two constants that peer review found wrong were hand-computed in prose,
+      # so they are now derived by scripts and the audit reads them from the output.
+      # These two are cheap enough to re-derive on every push rather than trusting
+      # a checked-in JSON.
+      - name: Re-derive the circle covering AND packing numbers
+        run: PYTHONPATH=src python scripts/circle_covering_number.py
+      - name: Recount the distinct rollout-seed blocks behind every pooled claim
+        run: PYTHONPATH=src python scripts/sample_stream_census.py
+      # The partition certificate's headline is EXACT (per-cell probability 1/K), so
+      # part (a) needs no Monte Carlo and is re-derived on every push and VERIFIED
+      # against the versioned JSON. --part-a-only never writes: an earlier version of
+      # this step ran the script in a degraded mode and clobbered part (b)'s result.
+      # The play-cost normalizers are closed-form given the instrument constants, so
+      # CI re-derives them (and re-runs the policy oracle) on every push.
+      - name: Re-derive the play-cost normalizers and run the policy oracle
+        run: PYTHONPATH=src python scripts/play_cost_proved_bounds.py --verify --oracle-policies 400
+      - name: Re-derive the exact partition certificate (part a)
+        run: PYTHONPATH=src python scripts/gate_partition_certificate.py --part-a-only

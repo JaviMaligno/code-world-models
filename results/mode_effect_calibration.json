@@ -1,0 +1,100 @@
+{
+  "script": "calibrate_mode_effect.py",
+  "params": {
+    "rollouts": 1500,
+    "episodes": 12,
+    "k1": 3.0,
+    "k2": 7.0,
+    "seed": 555000
+  },
+  "question": "does the mode's post-state make the region's interior witnessable, and does the instrument still carry the trap?",
+  "variants": {
+    "freeze": {
+      "mode_effect": "freeze",
+      "rollouts": 1500,
+      "n_steps": 120000,
+      "rarity": 0.15266666666666667,
+      "rarity_ci": [
+        0.13535425682688934,
+        0.1717535543800634
+      ],
+      "steps_from_inside_the_region": 0,
+      "steps_from_STRICTLY_inside": 0,
+      "transitions_separating_membership_from_entry": 0,
+      "premise_broken": false,
+      "equivalence_class_collapsed": false,
+      "episodes": 12,
+      "j_truth": 18.379765305454477,
+      "j_blind": 0.0008134168024159405,
+      "j_random": 1.0328732370463987,
+      "play_cost": 1.059495373359909,
+      "blind_contact_rate": 1.0,
+      "gate_sample_contacts": 21,
+      "gate_sample_contact_share": 0.0065625,
+      "gate_sample_transitions": 3200
+    },
+    "landing": {
+      "mode_effect": "landing",
+      "rollouts": 1500,
+      "n_steps": 120000,
+      "rarity": 0.15266666666666667,
+      "rarity_ci": [
+        0.13535425682688934,
+        0.1717535543800634
+      ],
+      "steps_from_inside_the_region": 4836,
+      "steps_from_STRICTLY_inside": 4836,
+      "transitions_separating_membership_from_entry": 4614,
+      "premise_broken": true,
+      "equivalence_class_collapsed": true,
+      "episodes": 12,
+      "j_truth": 18.379765305454477,
+      "j_blind": 0.0010050672008065102,
+      "j_random": 1.0103832362799998,
+      "play_cost": 1.0581124973277283,
+      "blind_contact_rate": 1.0,
+      "gate_sample_contacts": 232,
+      "admissible": {
+        "premise_broken": true,
+        "equivalence_collapsed": true,
+        "rarity_within_2x_of_freeze": true,
+        "trap_preserved": true,
+        "all": true
+      },
+      "gate_sample_contact_share": 0.0725,
+      "gate_sample_transitions": 3200
+    },
+    "clamp": {
+      "mode_effect": "clamp",
+      "rollouts": 1500,
+      "n_steps": 120000,
+      "rarity": 0.15266666666666667,
+      "rarity_ci": [
+        0.13535425682688934,
+        0.1717535543800634
+      ],
+      "steps_from_inside_the_region": 482,
+      "steps_from_STRICTLY_inside": 0,
+      "transitions_separating_membership_from_entry": 233,
+      "premise_broken": true,
+      "equivalence_class_collapsed": true,
+      "episodes": 12,
+      "j_truth": 18.379765305454477,
+      "j_blind": 0.0039053103676997096,
+      "j_random": 1.0324083399725899,
+      "play_cost": 1.0592887453490136,
+      "blind_contact_rate": 1.0,
+      "gate_sample_contacts": 24,
+      "admissible": {
+        "premise_broken": true,
+        "equivalence_collapsed": true,
+        "rarity_within_2x_of_freeze": true,
+        "trap_preserved": true,
+        "all": true
+      },
+      "gate_sample_contact_share": 0.0075,
+      "gate_sample_transitions": 3200
+    }
+  },
+  "contact_share_note": "Rollout-level rarity is identical across variants because the firing predicate is untouched, but the mode's share of the SAMPLE's transitions is not: `landing` leaves the mover inside the region, where most thrusts keep it, so its dwell time and hence its contact share rise 11x. That is a confound in the direction FAVOURABLE to repair (more mode evidence), and it is why `clamp` -- whose contact share matches freeze's -- is the better-controlled of the two on this axis while being the worse-controlled on rule complexity. The two confounds are complementary."
+}

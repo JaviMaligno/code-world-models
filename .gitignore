@@ -26,3 +26,4 @@ docs/paper3/main.aux
 docs/paper3/main.log
 docs/paper3/main.out
 docs/paper3/main.blg
+docs/paper2/*.fdb_latexmk

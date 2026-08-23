@@ -1,0 +1,2182 @@
+{
+ "what_this_is": "Reproducibility facts for docs/paper2/main.tex (review points #18/#19). Generated, not hand-typed: see docs/paper2/REPRO-FACTS.md for the prose version and the generator's source.",
+ "generated_at_utc": "2026-08-01T20:01:16Z",
+ "generator": "scripts/repro_manifest.py (source archived in docs/paper2/REPRO-FACTS.md)",
+ "git": {
+  "head": "2222db454dd0f46a71bc465a5f171712dbaa182e",
+  "head_short": "2222db4",
+  "head_date": "2026-07-31 18:00:04 +0100",
+  "branch": "paper2-major-revision",
+  "describe": "paper2-v1.5-qwen-arm-complete-dirty",
+  "note": "A working tree with concurrent edits: the manifest is a snapshot of results/ at generated_at_utc."
+ },
+ "platform": {
+  "python_version": "3.12.8 (v3.12.8:2dc476bcb91, Dec  3 2024, 14:43:20) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "python_version_tuple": [
+   3,
+   12,
+   8
+  ],
+  "python_implementation": "CPython",
+  "python_executable": "<repo>/.venv/bin/python",
+  "platform": "macOS-15.7.7-x86_64-i386-64bit",
+  "machine": "x86_64",
+  "processor": "i386",
+  "uname": "Darwin Javiers-MacBook-Pro.local 24.6.0 Darwin Kernel Version 24.6.0: Tue Apr 21 20:17:54 PDT 2026; root:xnu-11417.140.69.710.16~1/RELEASE_X86_64 x86_64",
+  "sw_vers": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.7\nBuildVersion:\t\t24G720",
+  "cpu_brand": "Intel(R) Core(TM) i9-9880H CPU @ 2.30GHz",
+  "hw_model": "MacBookPro16,1",
+  "hw_ncpu": "16",
+  "hw_memsize_bytes": "17179869184",
+  "float_repr_style": "short",
+  "maxsize": 9223372036854775807,
+  "byteorder": "little",
+  "hardware_dependence_of_results": "All CPU results are pure-Python/numpy float64 arithmetic with explicitly seeded random.Random / numpy Generator streams; no threading, no GPU, no BLAS-dependent reduction order in the sweeps. Bit-identical replay is expected on any IEEE-754 x86-64 or arm64 host with the same CPython minor version; the numbers quoted to twelve digits (J_truth) are the ones most exposed to a different libm, and are the ones to re-check first on another platform. Only WALL-CLOCK figures are hardware-dependent."
+ },
+ "dependencies": {
+  "pyproject_requires_python": ">=3.11",
+  "declared_runtime_dependencies": [
+   "openai>=1.40.0",
+   "python-dotenv>=1.0.0",
+   "numpy>=1.24"
+  ],
+  "declared_dev_dependencies": [
+   "pytest>=8.0.0"
+  ],
+  "declared_bounds_are_lower_only": true,
+  "lockfile_present": {
+   "uv.lock": false,
+   "poetry.lock": false,
+   "Pipfile.lock": false,
+   "requirements.txt": false,
+   "requirements.lock": false,
+   "conda-lock.yml": false,
+   "environment.yml": false,
+   "pdm.lock": false
+  },
+  "any_lockfile": false,
+  "frozen_list_written_to": "docs/paper2/requirements-frozen.txt",
+  "frozen_package_count": 24,
+  "installed_versions_of_declared": {
+   "numpy": "2.5.1",
+   "openai": "2.43.0",
+   "pytest": "9.1.1",
+   "python-dotenv": "1.2.2"
+  },
+  "release_tag_present": true,
+  "gap": "No lockfile of any kind exists and pyproject declares only lower bounds, so `pip install -e .` today resolves to newer versions than the ones the results were produced with. docs/paper2/requirements-frozen.txt closes the version gap but not the integrity gap (no hashes). A git tag / Zenodo DOI for the artifact set is still missing."
+ },
+ "manifest": [
+  {
+   "kind": "table",
+   "label": "tab:danger",
+   "tex_line": 317,
+   "caption_stub": "The danger curve on the wall-position knob. ``blind hit'' = fraction of episodes in which the blind planner's trajectory",
+   "graphics": [],
+   "backing_results_json": [
+    "continuous_reach"
+   ],
+   "producing_scripts": [
+    "continuous_reach.py"
+   ],
+   "audit_sections_parsing_cells": [
+    "tab:danger"
+   ],
+   "audit_sections_quoting_values": [
+    "cited code artifacts: paths exist, quoted code is verbatim"
+   ],
+   "coverage": "cell_parsed",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 5
+  },
+  {
+   "kind": "figure",
+   "label": "fig:threshold",
+   "tex_line": 337,
+   "caption_stub": "The threshold law on the wall-position knob (Table~\\ref{tab:danger} rendered): danger $\\approx 0$ while the wall is insi",
+   "graphics": [
+    "figures/danger_threshold.pdf"
+   ],
+   "backing_results_json": [
+    "eps_invariance_threshold"
+   ],
+   "producing_scripts": [
+    "eps_invariance_threshold.py"
+   ],
+   "audit_sections_parsing_cells": [],
+   "audit_sections_quoting_values": [
+    "Proposition (eps-invariance): the threshold and its predictions",
+    "eps* is a sample minimum: the spread is quoted, so check it"
+   ],
+   "coverage": "claims_only",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 7
+  },
+  {
+   "kind": "figure",
+   "label": "fig:reach",
+   "tex_line": 344,
+   "caption_stub": "The two reach distributions of the danger law: the exploited planner's mode reach is flat at 1.00 across the knob; rando",
+   "graphics": [
+    "figures/reach_mechanism.pdf"
+   ],
+   "backing_results_json": [
+    "continuous_reach"
+   ],
+   "producing_scripts": [
+    "continuous_reach.py"
+   ],
+   "audit_sections_parsing_cells": [],
+   "audit_sections_quoting_values": [
+    "tab:danger",
+    "tab:cem (with the cross-source play_cost check)",
+    "Prop 8's hypothesis: the truth planner's knob-invariance regime",
+    "Proposition (knob-invariance): the affine identity, to the digit",
+    "CEM: only the zero-crossing rows instantiate the low-query-reach branch",
+    "the play-cost normalizers, derived rather than measured",
+    "the partition certificate: the recovery, and it must stay exact",
+    "sharp-plateau variant: the claims the variant exists to make",
+    "the arity/evidence ablations and mode identifiability (review point 4)",
+    "the disc/slab contrast: what an independent gate is worth"
+   ],
+   "coverage": "claims_only",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 53
+  },
+  {
+   "kind": "figure",
+   "label": "fig:perseed",
+   "tex_line": 361,
+   "caption_stub": "Per-seed return distributions for the three $100$-paired-episode experiments (violins with every seed overplotted). The",
+   "graphics": [
+    "figures/per_seed_distributions.pdf"
+   ],
+   "backing_results_json": [
+    "play_cost_intervals"
+   ],
+   "producing_scripts": [
+    "play_cost_intervals.py"
+   ],
+   "audit_sections_parsing_cells": [],
+   "audit_sections_quoting_values": [],
+   "coverage": "claims_only",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 0
+  },
+  {
+   "kind": "table",
+   "label": "tab:pendulum",
+   "tex_line": 373,
+   "caption_stub": "Pendulum-with-stop: threshold law, knob-invariant exploitation (pinned at the stop in every episode at every knob), trut",
+   "graphics": [],
+   "backing_results_json": [
+    "continuous_pendulum"
+   ],
+   "producing_scripts": [
+    "continuous_pendulum.py"
+   ],
+   "audit_sections_parsing_cells": [
+    "tab:pendulum"
+   ],
+   "audit_sections_quoting_values": [
+    "tab:cem (with the cross-source play_cost check)",
+    "tab:mitigation",
+    "prose claims that are not table cells",
+    "Proposition (eps-invariance): the threshold and its predictions",
+    "the 1D repair count, ALL cells (peer review 2026-07-25 caught 106/106",
+    "the eps-flatness RATE: the population statement behind eps*",
+    "the fence census: what the proposition bounds vs what the table counts",
+    "the sampling unit is the rollout-seed block",
+    "sharp-plateau variant: the claims the variant exists to make",
+    "cited code artifacts: paths exist, quoted code is verbatim",
+    "100 paired episodes on the headline rows (review points 8, 9)",
+    "ablations 6 and 7: lifting prop:entryclass's premise",
+    "the four phantom-stop artifacts, third review points 2-3: the accounting the",
+    "draws vs blocks (fourth review, point 2): 111 are DRAWS; the block unit is the"
+   ],
+   "coverage": "cell_parsed",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 2,
+   "audit_claim_call_sites": 84
+  },
+  {
+   "kind": "table",
+   "label": "tab:patch2d",
+   "tex_line": 404,
+   "caption_stub": "PatchField2D mechanism sweep ($3\\times3$ knobs; 600 rarity rollouts, 20 MPC episodes/arm; $J_\\mathrm{blind} = 0$, $J_\\ma",
+   "graphics": [],
+   "backing_results_json": [
+    "continuous_patch2d"
+   ],
+   "producing_scripts": [
+    "continuous_patch2d.py"
+   ],
+   "audit_sections_parsing_cells": [
+    "tab:patch2d"
+   ],
+   "audit_sections_quoting_values": [
+    "tab:patch2d-mitigation",
+    "synthesis counts cited in prose",
+    "prose claims that are not table cells",
+    "Proposition (fence covering number)",
+    "the fence census: what the proposition bounds vs what the table counts",
+    "the dependence sign, resolved at 50k",
+    "Proposition (joint gate miss): bracket + sign rule vs the measurement",
+    "cited code artifacts: paths exist, quoted code is verbatim",
+    "100 paired episodes on the headline rows (review points 8, 9)",
+    "the positive controls (the 2D negatives' upper bound on difficulty)",
+    "draws vs blocks (fourth review, point 2): 111 are DRAWS; the block unit is the",
+    "the disc/slab contrast: what an independent gate is worth"
+   ],
+   "coverage": "cell_parsed",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 74
+  },
+  {
+   "kind": "table",
+   "label": "tab:axes",
+   "tex_line": 435,
+   "caption_stub": "Axis separation at $\\varepsilon = 0.01$, $N = 40$; d@$N$ = $\\mathrm{play\\_cost}\\cdot(1-r)^N$, as in Table~\\ref{tab:dange",
+   "graphics": [],
+   "backing_results_json": [
+    "continuous_axes"
+   ],
+   "producing_scripts": [
+    "continuous_axes.py"
+   ],
+   "audit_sections_parsing_cells": [
+    "tab:axes"
+   ],
+   "audit_sections_quoting_values": [],
+   "coverage": "cell_parsed",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 0
+  },
+  {
+   "kind": "figure",
+   "label": "fig:axes",
+   "tex_line": 454,
+   "caption_stub": "Table~\\ref{tab:axes} as the danger quadrant: gate-miss probability (log) vs play\\_cost. Only the rare hard mode reaches",
+   "graphics": [
+    "figures/axis_separation.pdf"
+   ],
+   "backing_results_json": [
+    "continuous_axes"
+   ],
+   "producing_scripts": [
+    "continuous_axes.py"
+   ],
+   "audit_sections_parsing_cells": [],
+   "audit_sections_quoting_values": [
+    "tab:axes"
+   ],
+   "coverage": "claims_only",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 0
+  },
+  {
+   "kind": "table",
+   "label": "tab:pendulum-synthesis",
+   "tex_line": 492,
+   "caption_stub": "Pendulum synthesis cells (20 seeds/cell, both GPT-5.x sizes; 3-seed Qwen spot-check at $\\theta_\\mathrm{stop}=1.4$). $k \\",
+   "graphics": [],
+   "backing_results_json": [],
+   "producing_scripts": [],
+   "audit_sections_parsing_cells": [],
+   "audit_sections_quoting_values": [],
+   "coverage": "unaudited",
+   "mechanically_audited": false,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 0
+  },
+  {
+   "kind": "table",
+   "label": "tab:ablations",
+   "tex_line": 566,
+   "caption_stub": "The eight ablations on the 2D mode. ``repaired'' counts mode-containing synthesis draws recovering the region rule, by t",
+   "graphics": [],
+   "backing_results_json": [
+    "arity_evidence_ablations",
+    "mode_effect_calibration",
+    "mode_identifiability",
+    "paper2_statistics",
+    "repair_exactness_1d"
+   ],
+   "producing_scripts": [
+    "arity_evidence_ablations.py",
+    "calibrate_mode_effect.py",
+    "mode_identifiability.py",
+    "paper2_statistics.py",
+    "repair_exactness_1d.py"
+   ],
+   "audit_sections_parsing_cells": [],
+   "audit_sections_quoting_values": [
+    "the arity/evidence ablations and mode identifiability (review point 4)",
+    "ablations 6 and 7: lifting prop:entryclass's premise"
+   ],
+   "coverage": "claims_only",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 18
+  },
+  {
+   "kind": "table",
+   "label": "tab:smooth",
+   "tex_line": 620,
+   "caption_stub": "Smooth learners on the synthesis samples ($x_\\mathrm{wall} = 8$). ``probe err'' is the wall-region probe error (4.2 $\\ap",
+   "graphics": [],
+   "backing_results_json": [
+    "continuous_smooth_probe"
+   ],
+   "producing_scripts": [
+    "continuous_smooth_probe.py"
+   ],
+   "audit_sections_parsing_cells": [
+    "tab:smooth"
+   ],
+   "audit_sections_quoting_values": [
+    "prose claims that are not table cells"
+   ],
+   "coverage": "cell_parsed",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 3,
+   "audit_claim_call_sites": 18
+  },
+  {
+   "kind": "figure",
+   "label": "fig:smooth",
+   "tex_line": 637,
+   "caption_stub": "Off-mode max error (log) by model and training data. The wall-free linear fit sits at float noise and passes both gates",
+   "graphics": [
+    "figures/smooth_localization.pdf"
+   ],
+   "backing_results_json": [
+    "continuous_smooth_probe"
+   ],
+   "producing_scripts": [
+    "continuous_smooth_probe.py"
+   ],
+   "audit_sections_parsing_cells": [],
+   "audit_sections_quoting_values": [
+    "tab:smooth",
+    "prose claims that are not table cells"
+   ],
+   "coverage": "claims_only",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 18
+  },
+  {
+   "kind": "table",
+   "label": "tab:epsstar",
+   "tex_line": 757,
+   "caption_stub": "The $\\varepsilon$-invariance threshold, computed on the sweep's own rollout stream (2000 rollouts/arm, gate policy only,",
+   "graphics": [],
+   "backing_results_json": [
+    "eps_invariance_threshold"
+   ],
+   "producing_scripts": [
+    "eps_invariance_threshold.py"
+   ],
+   "audit_sections_parsing_cells": [],
+   "audit_sections_quoting_values": [
+    "Proposition (eps-invariance): the threshold and its predictions"
+   ],
+   "coverage": "claims_only",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 3
+  },
+  {
+   "kind": "table",
+   "label": "tab:cem",
+   "tex_line": 1011,
+   "caption_stub": "The same gate-accepted, mode-blind models under two base planner families (20 paired episodes/row). ``pc'' is blind-mode",
+   "graphics": [],
+   "backing_results_json": [
+    "cem_crossing_bound",
+    "continuous_cem"
+   ],
+   "producing_scripts": [
+    "cem_crossing_bound.py",
+    "continuous_cem.py"
+   ],
+   "audit_sections_parsing_cells": [
+    "tab:cem (with the cross-source play_cost check)"
+   ],
+   "audit_sections_quoting_values": [
+    "prose claims that are not table cells",
+    "CEM: only the zero-crossing rows instantiate the low-query-reach branch",
+    "the fence census: what the proposition bounds vs what the table counts",
+    "the CEM censored zeros, re-measured (review point 7)"
+   ],
+   "coverage": "cell_parsed",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 1,
+   "audit_claim_call_sites": 34
+  },
+  {
+   "kind": "table",
+   "label": "tab:mitigation",
+   "tex_line": 1047,
+   "caption_stub": "Mitigation sweep (20 episodes/knob, both instruments). pc\\_blind / pc\\_mit = play\\_cost of the blind planner under plain",
+   "graphics": [],
+   "backing_results_json": [
+    "continuous_mitigation"
+   ],
+   "producing_scripts": [
+    "continuous_mitigation.py"
+   ],
+   "audit_sections_parsing_cells": [
+    "tab:mitigation"
+   ],
+   "audit_sections_quoting_values": [
+    "tab:patch2d-mitigation",
+    "prose claims that are not table cells",
+    "Proposition (fence covering number)",
+    "the fence census: what the proposition bounds vs what the table counts"
+   ],
+   "coverage": "cell_parsed",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 35
+  },
+  {
+   "kind": "table",
+   "label": "tab:patch2d-mitigation",
+   "tex_line": 1119,
+   "caption_stub": "PatchField2D mitigation sweep (paired seeds). The collapse is partial and degrades with patch distance. Read the means w",
+   "graphics": [],
+   "backing_results_json": [
+    "continuous_mitigation_patch2d"
+   ],
+   "producing_scripts": [
+    "continuous_mitigation_patch2d.py"
+   ],
+   "audit_sections_parsing_cells": [
+    "tab:patch2d-mitigation"
+   ],
+   "audit_sections_quoting_values": [],
+   "coverage": "cell_parsed",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 0
+  },
+  {
+   "kind": "table",
+   "label": "tab:eps-sweep",
+   "tex_line": 1171,
+   "caption_stub": "Reveal-rarity vs. $\\varepsilon$ (cart). The mode arm is flat across the whole grid; the pervasive arms switch at their o",
+   "graphics": [],
+   "backing_results_json": [
+    "continuous_eps_sweep"
+   ],
+   "producing_scripts": [
+    "continuous_eps_sweep.py"
+   ],
+   "audit_sections_parsing_cells": [
+    "tab:eps-sweep (cart rows)"
+   ],
+   "audit_sections_quoting_values": [],
+   "coverage": "cell_parsed",
+   "mechanically_audited": true,
+   "audit_agree_call_sites": 0,
+   "audit_claim_call_sites": 0
+  }
+ ],
+ "audit_coverage": {
+  "audit_script": "scripts/audit_paper2_numbers.py",
+  "audit_checks_executed": 712,
+  "audit_failures": [
+   "claim the reproduced training block returns the stored accuracy in 99/99 spot-checks: FALSE ()",
+   "claim 40 of 647 in-sample-accepted draws are rejected by an independent gate (6.2% of draws, spanning 25 distinct rollout-seed blocks), all 40 incomplete-arm, 0 of 434 full-arm: FALSE ()",
+   "claim 3 draws move the other way (below 1.000 in-sample, at 0.9975 to 0.9991, yet accepted held-out), which is why 647 - 40 leaves 610 rather than 607: FALSE ()",
+   "claim all 610 independently accepted draws are exact outside the mode region ON THE 100-rollout evaluation sample (reported as a count, no binomial bound attached): FALSE (613/613)"
+  ],
+  "audit_exit_code": 1,
+  "sections": [
+   {
+    "audit_section": "LaTeX table extraction",
+    "tex_labels_parsed": [],
+    "results_json_read": [],
+    "results_globs": [],
+    "agree_call_sites": 2,
+    "claim_call_sites": 0
+   },
+   {
+    "audit_section": "tab:danger",
+    "tex_labels_parsed": [
+     "tab:danger"
+    ],
+    "results_json_read": [
+     "continuous_reach"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 0
+   },
+   {
+    "audit_section": "tab:pendulum",
+    "tex_labels_parsed": [
+     "tab:pendulum"
+    ],
+    "results_json_read": [
+     "continuous_pendulum"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 2,
+    "claim_call_sites": 0
+   },
+   {
+    "audit_section": "tab:patch2d",
+    "tex_labels_parsed": [
+     "tab:patch2d"
+    ],
+    "results_json_read": [
+     "continuous_patch2d"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 0
+   },
+   {
+    "audit_section": "tab:cem (with the cross-source play_cost check)",
+    "tex_labels_parsed": [
+     "tab:cem"
+    ],
+    "results_json_read": [
+     "cem_crossing_bound",
+     "continuous_cem"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 1,
+    "claim_call_sites": 0
+   },
+   {
+    "audit_section": "tab:axes",
+    "tex_labels_parsed": [
+     "tab:axes"
+    ],
+    "results_json_read": [
+     "continuous_axes"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 0
+   },
+   {
+    "audit_section": "tab:eps-sweep (cart rows)",
+    "tex_labels_parsed": [
+     "tab:eps-sweep"
+    ],
+    "results_json_read": [
+     "continuous_eps_sweep"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 0
+   },
+   {
+    "audit_section": "tab:mitigation",
+    "tex_labels_parsed": [
+     "tab:mitigation"
+    ],
+    "results_json_read": [
+     "continuous_mitigation"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 0
+   },
+   {
+    "audit_section": "tab:patch2d-mitigation",
+    "tex_labels_parsed": [
+     "tab:patch2d-mitigation"
+    ],
+    "results_json_read": [
+     "continuous_mitigation_patch2d"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 0
+   },
+   {
+    "audit_section": "tab:smooth",
+    "tex_labels_parsed": [
+     "tab:smooth"
+    ],
+    "results_json_read": [
+     "continuous_smooth_probe"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 3,
+    "claim_call_sites": 0
+   },
+   {
+    "audit_section": "synthesis counts cited in prose",
+    "tex_labels_parsed": [],
+    "results_json_read": [],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 1
+   },
+   {
+    "audit_section": "prose claims that are not table cells",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "continuous_cem",
+     "continuous_smooth_probe",
+     "patch2d_artifact_audit"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 18
+   },
+   {
+    "audit_section": "Prop 8's hypothesis: the truth planner's knob-invariance regime",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "truth_plan_invariance_certificate",
+     "truth_planner_knob_regime"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 8
+   },
+   {
+    "audit_section": "Corollary: the gate density constant, analytic vs Monte Carlo",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "gate_density_constant"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 4
+   },
+   {
+    "audit_section": "Proposition (eps-invariance): the threshold and its predictions",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "eps_invariance_threshold"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 3
+   },
+   {
+    "audit_section": "Proposition (fence covering number)",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "circle_covering_number",
+     "continuous_mitigation",
+     "continuous_mitigation_patch2d"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 8
+   },
+   {
+    "audit_section": "Proposition (knob-invariance): the affine identity, to the digit",
+    "tex_labels_parsed": [],
+    "results_json_read": [],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 4
+   },
+   {
+    "audit_section": "Proposition (coverage certificate): the two instantiated bounds",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "gate_coverage_certificate"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 6
+   },
+   {
+    "audit_section": "the 1D repair count, ALL cells (peer review 2026-07-25 caught 106/106",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "continuous_synthesis_mini_xwall4"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 2
+   },
+   {
+    "audit_section": "CEM: only the zero-crossing rows instantiate the low-query-reach branch",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "continuous_cem"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 1
+   },
+   {
+    "audit_section": "the universal two-action Jacobian and the query-mass measurement",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "certified_region_query_mass"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 4
+   },
+   {
+    "audit_section": "density at step t, and the tightness validation",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "gate_coverage_dependent",
+     "gate_coverage_validation",
+     "gate_density_step_t"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 10
+   },
+   {
+    "audit_section": "the invariance certificate's SCOPE, not just its verdict",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "truth_plan_invariance_certificate"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 3
+   },
+   {
+    "audit_section": "phantom targeting: what the plan provably chases, and from where",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "phantom_targeting_probability"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 5
+   },
+   {
+    "audit_section": "the play-cost normalizers, derived rather than measured",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "play_cost_proved_bounds"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 9
+   },
+   {
+    "audit_section": "the eps-flatness RATE: the population statement behind eps*",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "eps_flatness_rate"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 4
+   },
+   {
+    "audit_section": "the partition certificate: the recovery, and it must stay exact",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "gate_partition_certificate"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 7
+   },
+   {
+    "audit_section": "the partition certificate's all-steps arm, and its falsification test",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "certificate_simultaneity",
+     "gate_partition_validation"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 12
+   },
+   {
+    "audit_section": "the fence census: what the proposition bounds vs what the table counts",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "fence_separation_census"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 9
+   },
+   {
+    "audit_section": "the fence bound is a PACKING number, and the counterexample is exhibited",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "circle_covering_number"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 4
+   },
+   {
+    "audit_section": "the dependence sign, resolved at 50k",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "patch2d_dependence_50k"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 6
+   },
+   {
+    "audit_section": "the sampling unit is the rollout-seed block",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "sample_stream_census"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 5
+   },
+   {
+    "audit_section": "eps* is a sample minimum: the spread is quoted, so check it",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "eps_invariance_threshold"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 4
+   },
+   {
+    "audit_section": "the dependence-exact coverage certificate",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "gate_coverage_dependent"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 4
+   },
+   {
+    "audit_section": "geometry of the one fitted disc (the claim that got a correction)",
+    "tex_labels_parsed": [],
+    "results_json_read": [],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 4
+   },
+   {
+    "audit_section": "sharp-plateau variant: the claims the variant exists to make",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "continuous_pendulum",
+     "continuous_pendulum_sharp",
+     "continuous_pendulum_sharpphantom",
+     "continuous_reach",
+     "continuous_reach_sharp"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 11
+   },
+   {
+    "audit_section": "Proposition (joint gate miss): bracket + sign rule vs the measurement",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "continuous_patch2d"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 4
+   },
+   {
+    "audit_section": "cited code artifacts: paths exist, quoted code is verbatim",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "continuous_claude_relay",
+     "continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8",
+     "continuous_synthesis_large_xwall8",
+     "continuous_synthesis_large_xwall8_off20",
+     "continuous_synthesis_mini_xwall4",
+     "continuous_synthesis_mini_xwall8",
+     "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7",
+     "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
+     "continuous_synthesis_patch2d_large_k3_7",
+     "continuous_synthesis_patch2d_large_k3_7_arc120",
+     "continuous_synthesis_patch2d_large_k3_7_arc240",
+     "continuous_synthesis_patch2d_large_k3_7_arc240_hint-centre",
+     "continuous_synthesis_patch2d_large_k3_7_hint-centre",
+     "continuous_synthesis_patch2d_large_k3_7_hint-radius",
+     "continuous_synthesis_patch2d_large_k3_7_pv-landing_it15",
+     "continuous_synthesis_patch2d_large_k3_7_pv-region_it15",
+     "continuous_synthesis_patch2d_large_k5_9",
+     "continuous_synthesis_patch2d_mini_k3_7",
+     "continuous_synthesis_patch2d_mini_k3_7_pv-landing_it15",
+     "continuous_synthesis_patch2d_mini_k3_7_pv-region_it15",
+     "continuous_synthesis_patch2d_mini_k5_9",
+     "continuous_synthesis_patch2dclamp_large_k3_7",
+     "continuous_synthesis_patch2dclamp_mini_k3_7",
+     "continuous_synthesis_patch2dlanding_large_k3_7",
+     "continuous_synthesis_patch2dlanding_mini_k3_7",
+     "continuous_synthesis_patch2dslab_large_k5.5_7",
+     "continuous_synthesis_patch2dslab_mini_k5.5_7",
+     "continuous_synthesis_patch2dsq_large_k3_7",
+     "continuous_synthesis_patch2dsq_mini_k3_7",
+     "continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4",
+     "continuous_synthesis_pendulum_large_thstop1",
+     "continuous_synthesis_pendulum_large_thstop1.4",
+     "continuous_synthesis_pendulum_large_thstop1.4_off20",
+     "continuous_synthesis_pendulum_mini_thstop1",
+     "continuous_synthesis_pendulum_mini_thstop1.4"
+    ],
+    "results_globs": [
+     "*_reply*.txt",
+     "continuous_synthesis_*.json"
+    ],
+    "agree_call_sites": 0,
+    "claim_call_sites": 5
+   },
+   {
+    "audit_section": "100 paired episodes on the headline rows (review points 8, 9)",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "play_cost_intervals"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 6
+   },
+   {
+    "audit_section": "constants that live only in prose (the repo's known weak class)",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "prose_constants"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 8
+   },
+   {
+    "audit_section": "the arity/evidence ablations and mode identifiability (review point 4)",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "arity_evidence_ablations",
+     "mode_identifiability"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 8
+   },
+   {
+    "audit_section": "the positive controls (the 2D negatives' upper bound on difficulty)",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "continuous_synthesis_patch2d_large_k3_7_hint-radius",
+     "region_fit_baseline"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 5
+   },
+   {
+    "audit_section": "the evidence dose: the one 2D treatment whose direction was recorded first",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "evidence_dose_calibration"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 7
+   },
+   {
+    "audit_section": "ablations 6 and 7: lifting prop:entryclass's premise",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "mode_effect_calibration",
+     "paper2_statistics",
+     "repair_exactness_1d"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 10
+   },
+   {
+    "audit_section": "bibliography verification (review point 21)",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "bib_verification"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 1
+   },
+   {
+    "audit_section": "the CEM censored zeros, re-measured (review point 7)",
+    "tex_labels_parsed": [],
+    "results_json_read": [],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 6
+   },
+   {
+    "audit_section": "the held-out acceptance sample (sec:heldout)",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "heldout_gate_audit",
+     "heldout_gate_paper_numbers"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 10
+   },
+   {
+    "audit_section": "the four phantom-stop artifacts, third review points 2-3: the accounting the",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "continuous_synthesis_pendulum_mini_thstop1.4",
+     "repair_exactness_1d"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 4
+   },
+   {
+    "audit_section": "draws vs blocks (fourth review, point 2): 111 are DRAWS; the block unit is the",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "qwen_vllm_provenance"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 7
+   },
+   {
+    "audit_section": "the disc/slab contrast: what an independent gate is worth",
+    "tex_labels_parsed": [],
+    "results_json_read": [
+     "continuous_synthesis_patch2d_large_k3_7",
+     "continuous_synthesis_patch2d_large_k3_7_hint-radius",
+     "continuous_synthesis_patch2dslab_large_k5.5_7"
+    ],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 5
+   },
+   {
+    "audit_section": "report",
+    "tex_labels_parsed": [],
+    "results_json_read": [],
+    "results_globs": [],
+    "agree_call_sites": 0,
+    "claim_call_sites": 0
+   }
+  ],
+  "results_json_read_static": [
+   "arity_evidence_ablations",
+   "bib_verification",
+   "cem_crossing_bound",
+   "certificate_simultaneity",
+   "certified_region_query_mass",
+   "circle_covering_number",
+   "continuous_axes",
+   "continuous_cem",
+   "continuous_claude_relay",
+   "continuous_eps_sweep",
+   "continuous_mitigation",
+   "continuous_mitigation_patch2d",
+   "continuous_patch2d",
+   "continuous_pendulum",
+   "continuous_pendulum_sharp",
+   "continuous_pendulum_sharpphantom",
+   "continuous_reach",
+   "continuous_reach_sharp",
+   "continuous_smooth_probe",
+   "continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8",
+   "continuous_synthesis_large_xwall8",
+   "continuous_synthesis_large_xwall8_off20",
+   "continuous_synthesis_mini_xwall4",
+   "continuous_synthesis_mini_xwall8",
+   "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7",
+   "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
+   "continuous_synthesis_patch2d_large_k3_7",
+   "continuous_synthesis_patch2d_large_k3_7_arc120",
+   "continuous_synthesis_patch2d_large_k3_7_arc240",
+   "continuous_synthesis_patch2d_large_k3_7_arc240_hint-centre",
+   "continuous_synthesis_patch2d_large_k3_7_hint-centre",
+   "continuous_synthesis_patch2d_large_k3_7_hint-radius",
+   "continuous_synthesis_patch2d_large_k3_7_pv-landing_it15",
+   "continuous_synthesis_patch2d_large_k3_7_pv-region_it15",
+   "continuous_synthesis_patch2d_large_k5_9",
+   "continuous_synthesis_patch2d_mini_k3_7",
+   "continuous_synthesis_patch2d_mini_k3_7_pv-landing_it15",
+   "continuous_synthesis_patch2d_mini_k3_7_pv-region_it15",
+   "continuous_synthesis_patch2d_mini_k5_9",
+   "continuous_synthesis_patch2dclamp_large_k3_7",
+   "continuous_synthesis_patch2dclamp_mini_k3_7",
+   "continuous_synthesis_patch2dlanding_large_k3_7",
+   "continuous_synthesis_patch2dlanding_mini_k3_7",
+   "continuous_synthesis_patch2dslab_large_k5.5_7",
+   "continuous_synthesis_patch2dslab_mini_k5.5_7",
+   "continuous_synthesis_patch2dsq_large_k3_7",
+   "continuous_synthesis_patch2dsq_mini_k3_7",
+   "continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4",
+   "continuous_synthesis_pendulum_large_thstop1",
+   "continuous_synthesis_pendulum_large_thstop1.4",
+   "continuous_synthesis_pendulum_large_thstop1.4_off20",
+   "continuous_synthesis_pendulum_mini_thstop1",
+   "continuous_synthesis_pendulum_mini_thstop1.4",
+   "eps_flatness_rate",
+   "eps_invariance_threshold",
+   "evidence_dose_calibration",
+   "fence_separation_census",
+   "gate_coverage_certificate",
+   "gate_coverage_dependent",
+   "gate_coverage_validation",
+   "gate_density_constant",
+   "gate_density_step_t",
+   "gate_partition_certificate",
+   "gate_partition_validation",
+   "heldout_gate_audit",
+   "heldout_gate_paper_numbers",
+   "mode_effect_calibration",
+   "mode_identifiability",
+   "paper2_statistics",
+   "patch2d_artifact_audit",
+   "patch2d_dependence_50k",
+   "phantom_targeting_probability",
+   "play_cost_intervals",
+   "play_cost_proved_bounds",
+   "prose_constants",
+   "qwen_vllm_provenance",
+   "region_fit_baseline",
+   "repair_exactness_1d",
+   "sample_stream_census",
+   "truth_plan_invariance_certificate",
+   "truth_planner_knob_regime"
+  ],
+  "results_json_read_dynamic": [
+   "arity_evidence_ablations",
+   "bib_verification",
+   "cem_crossing_bound",
+   "certificate_simultaneity",
+   "certified_region_query_mass",
+   "circle_covering_number",
+   "continuous_axes",
+   "continuous_cem",
+   "continuous_claude_relay",
+   "continuous_eps_sweep",
+   "continuous_mitigation",
+   "continuous_mitigation_patch2d",
+   "continuous_patch2d",
+   "continuous_pendulum",
+   "continuous_pendulum_sharp",
+   "continuous_pendulum_sharpphantom",
+   "continuous_reach",
+   "continuous_reach_sharp",
+   "continuous_smooth_probe",
+   "continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8",
+   "continuous_synthesis_large_xwall8",
+   "continuous_synthesis_large_xwall8_off20",
+   "continuous_synthesis_mini_xwall4",
+   "continuous_synthesis_mini_xwall8",
+   "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7",
+   "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
+   "continuous_synthesis_patch2d_large_k3_7",
+   "continuous_synthesis_patch2d_large_k3_7_arc120",
+   "continuous_synthesis_patch2d_large_k3_7_arc240",
+   "continuous_synthesis_patch2d_large_k3_7_arc240_hint-centre",
+   "continuous_synthesis_patch2d_large_k3_7_hint-centre",
+   "continuous_synthesis_patch2d_large_k3_7_hint-radius",
+   "continuous_synthesis_patch2d_large_k3_7_pv-landing_it15",
+   "continuous_synthesis_patch2d_large_k3_7_pv-region_it15",
+   "continuous_synthesis_patch2d_large_k5_9",
+   "continuous_synthesis_patch2d_mini_k3_7",
+   "continuous_synthesis_patch2d_mini_k3_7_pv-landing_it15",
+   "continuous_synthesis_patch2d_mini_k3_7_pv-region_it15",
+   "continuous_synthesis_patch2d_mini_k5_9",
+   "continuous_synthesis_patch2dclamp_large_k3_7",
+   "continuous_synthesis_patch2dclamp_mini_k3_7",
+   "continuous_synthesis_patch2dlanding_large_k3_7",
+   "continuous_synthesis_patch2dlanding_mini_k3_7",
+   "continuous_synthesis_patch2dslab_large_k5.5_7",
+   "continuous_synthesis_patch2dslab_mini_k5.5_7",
+   "continuous_synthesis_patch2dsq_large_k3_7",
+   "continuous_synthesis_patch2dsq_mini_k3_7",
+   "continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4",
+   "continuous_synthesis_pendulum_large_thstop1",
+   "continuous_synthesis_pendulum_large_thstop1.4",
+   "continuous_synthesis_pendulum_large_thstop1.4_off20",
+   "continuous_synthesis_pendulum_mini_thstop1",
+   "continuous_synthesis_pendulum_mini_thstop1.4",
+   "eps_flatness_rate",
+   "eps_invariance_threshold",
+   "evidence_dose_calibration",
+   "fence_separation_census",
+   "gate_coverage_certificate",
+   "gate_coverage_dependent",
+   "gate_coverage_validation",
+   "gate_density_constant",
+   "gate_density_step_t",
+   "gate_partition_certificate",
+   "gate_partition_validation",
+   "heldout_gate_audit",
+   "heldout_gate_paper_numbers",
+   "mode_effect_calibration",
+   "mode_identifiability",
+   "paper2_statistics",
+   "patch2d_artifact_audit",
+   "patch2d_dependence_50k",
+   "phantom_targeting_probability",
+   "play_cost_intervals",
+   "play_cost_proved_bounds",
+   "prose_constants",
+   "qwen_vllm_provenance",
+   "region_fit_baseline",
+   "repair_exactness_1d",
+   "sample_stream_census",
+   "truth_plan_invariance_certificate",
+   "truth_planner_knob_regime"
+  ],
+  "static_vs_dynamic_ok": true,
+  "read_dynamically_but_not_matched_statically": [],
+  "matched_statically_but_not_read": [],
+  "tables_and_figures_total": 17,
+  "coverage_counts": {
+   "cell_parsed": 9,
+   "claims_only": 7,
+   "unaudited": 1
+  },
+  "tables_and_figures_mechanically_audited": 16,
+  "gaps": [
+   {
+    "label": "fig:threshold",
+    "kind": "figure",
+    "tex_line": 337,
+    "coverage": "claims_only",
+    "backing_results_json": [
+     "eps_invariance_threshold"
+    ],
+    "caption_stub": "The threshold law on the wall-position knob (Table~\\ref{tab:danger} rendered): danger $\\approx 0$ while the wall is insi"
+   },
+   {
+    "label": "fig:reach",
+    "kind": "figure",
+    "tex_line": 344,
+    "coverage": "claims_only",
+    "backing_results_json": [
+     "continuous_reach"
+    ],
+    "caption_stub": "The two reach distributions of the danger law: the exploited planner's mode reach is flat at 1.00 across the knob; rando"
+   },
+   {
+    "label": "fig:perseed",
+    "kind": "figure",
+    "tex_line": 361,
+    "coverage": "claims_only",
+    "backing_results_json": [
+     "play_cost_intervals"
+    ],
+    "caption_stub": "Per-seed return distributions for the three $100$-paired-episode experiments (violins with every seed overplotted). The"
+   },
+   {
+    "label": "fig:axes",
+    "kind": "figure",
+    "tex_line": 454,
+    "coverage": "claims_only",
+    "backing_results_json": [
+     "continuous_axes"
+    ],
+    "caption_stub": "Table~\\ref{tab:axes} as the danger quadrant: gate-miss probability (log) vs play\\_cost. Only the rare hard mode reaches"
+   },
+   {
+    "label": "tab:pendulum-synthesis",
+    "kind": "table",
+    "tex_line": 492,
+    "coverage": "unaudited",
+    "backing_results_json": [],
+    "caption_stub": "Pendulum synthesis cells (20 seeds/cell, both GPT-5.x sizes; 3-seed Qwen spot-check at $\\theta_\\mathrm{stop}=1.4$). $k \\"
+   },
+   {
+    "label": "tab:ablations",
+    "kind": "table",
+    "tex_line": 566,
+    "coverage": "claims_only",
+    "backing_results_json": [
+     "arity_evidence_ablations",
+     "mode_effect_calibration",
+     "mode_identifiability",
+     "paper2_statistics",
+     "repair_exactness_1d"
+    ],
+    "caption_stub": "The eight ablations on the 2D mode. ``repaired'' counts mode-containing synthesis draws recovering the region rule, by t"
+   },
+   {
+    "label": "fig:smooth",
+    "kind": "figure",
+    "tex_line": 637,
+    "coverage": "claims_only",
+    "backing_results_json": [
+     "continuous_smooth_probe"
+    ],
+    "caption_stub": "Off-mode max error (log) by model and training data. The wall-free linear fit sits at float noise and passes both gates"
+   },
+   {
+    "label": "tab:epsstar",
+    "kind": "table",
+    "tex_line": 757,
+    "coverage": "claims_only",
+    "backing_results_json": [
+     "eps_invariance_threshold"
+    ],
+    "caption_stub": "The $\\varepsilon$-invariance threshold, computed on the sweep's own rollout stream (2000 rollouts/arm, gate policy only,"
+   }
+  ],
+  "results_json_in_repo_not_read_by_audit": [
+   "beacon_adversarial_gate",
+   "beacon_claimA",
+   "connect4_mini_vs_large",
+   "connect4_nano_vs_large",
+   "continuous_cem_patch2d",
+   "continuous_claude_relay_patch2d_k3_7",
+   "continuous_eps_sweep_patch2d",
+   "continuous_patch2d_square",
+   "crossfamily_probe",
+   "danger_synthesis_large",
+   "danger_synthesis_mini",
+   "declarative_recall_probe",
+   "divergence",
+   "equilibrium_coverage",
+   "exhaustive_tictactoe",
+   "gap_army5x5a_material_incomplete_mini",
+   "gap_army5x5a_material_incomplete_nano",
+   "gap_army5x5a_material_mini",
+   "gap_army5x5a_material_nano",
+   "gap_army5x5a_mini",
+   "gap_army5x5a_mini_norules",
+   "gap_army5x5a_nano",
+   "gap_army5x5a_nano_norules",
+   "gap_gen_tictactoe_mini",
+   "gap_gen_tictactoe_mini_norules",
+   "gap_gen_tictactoe_nano",
+   "gap_gen_tictactoe_nano_norules",
+   "gap_trike_mini",
+   "gap_trike_mini_norules",
+   "gap_trike_nano",
+   "gap_trike_nano_norules",
+   "law_curve",
+   "law_sweep",
+   "leduc_coverage",
+   "llm_protocol_facts",
+   "paper_claims_baseline",
+   "patch2d_slab_calibration",
+   "play_cost_ci",
+   "play_cost_synth_mini",
+   "refine_feedback_cell",
+   "shape2d_calibration",
+   "tictactoe_mini_vs_large",
+   "tictactoe_nano_vs_large"
+  ],
+  "paper2_results_json_not_read_by_audit": [
+   {
+    "file": "results/continuous_cem_patch2d.json",
+    "written_by": "scripts/continuous_cem.py"
+   },
+   {
+    "file": "results/continuous_claude_relay_patch2d_k3_7.json",
+    "written_by": "scripts/claude_relay_ledger.py"
+   },
+   {
+    "file": "results/continuous_eps_sweep_patch2d.json",
+    "written_by": "scripts/continuous_eps_sweep.py"
+   },
+   {
+    "file": "results/continuous_patch2d_square.json",
+    "written_by": "scripts/continuous_patch2d.py"
+   }
+  ],
+  "paper2_unaudited_note": "These files were written by a script main.tex names, so they are paper-2 evidence, yet no assertion in audit_paper2_numbers.py reads them: the numbers they back (PatchField2D CEM rows, PatchField2D eps rows, the square-patch CPU calibration, the 2D Claude relay ledger) are quoted in prose and are NOT covered by any of the checks audit_checks_executed counts."
+ },
+ "figures": {
+  "generator": "scripts/make_paper2_figures.py",
+  "module_level_json": [
+   "continuous_axes",
+   "continuous_reach",
+   "continuous_smooth_probe",
+   "play_cost_intervals"
+  ],
+  "per_figure_backing_json": {
+   "danger_threshold": [],
+   "reach_mechanism": [
+    "continuous_reach"
+   ],
+   "axis_separation": [
+    "continuous_axes"
+   ],
+   "smooth_localization": [
+    "continuous_smooth_probe"
+   ],
+   "per_seed_distributions": [
+    "play_cost_intervals"
+   ]
+  },
+  "note": "make_paper2_figures.py renders committed JSONs only -- it runs no experiment, so every figure inherits the provenance and the audit coverage of its table."
+ },
+ "runtime": {
+  "subtotals": {
+   "cpu_sweeps_s": 17206.2,
+   "cpu_sweeps_h": 4.78,
+   "llm_synthesis_s": 39064.2,
+   "llm_synthesis_h": 10.85,
+   "paper2_named_campaigns_h": 15.63,
+   "unclassified_s": 3161.9,
+   "unclassified_files": [
+    "cem_crossing_bound",
+    "heldout_gate_audit",
+    "patch2d_slab_calibration",
+    "play_cost_intervals"
+   ],
+   "unclassified_note": "Files that match no campaign rule. As of generated_at_utc these are artifacts of the in-progress revision written by other work in the same tree, not part of the paper as committed at git.head; treat paper2_named_campaigns_h as the figure for the submitted version."
+  },
+  "tex_estimates_contradicted_by_recorded_elapsed_s": [],
+  "tex_estimate_staleness_note": "The appendix's ~N min annotations were written when the sweeps ran at their original sample sizes; the 2026-07-25 censored-zero fix raised rarity rollouts (cart 3000->30,000, pendulum 3000->30,000, axes 2000->20,000) without updating the annotations, so the listed estimates understate the current scripts. Use per_results_file_elapsed_s, which each script wrote itself.",
+  "per_results_file_elapsed_s": {
+   "cem_crossing_bound": 164.0,
+   "continuous_axes": 716.0,
+   "continuous_cem": 3278.9,
+   "continuous_cem_patch2d": 837.0,
+   "continuous_eps_sweep": 3835.1,
+   "continuous_eps_sweep_patch2d": 448.9,
+   "continuous_mitigation": 1770.3,
+   "continuous_mitigation_patch2d": 832.5,
+   "continuous_patch2d": 557.4,
+   "continuous_patch2d_square": 144.8,
+   "continuous_pendulum": 591.0,
+   "continuous_pendulum_sharp": 600.4,
+   "continuous_pendulum_sharpphantom": 2367.2,
+   "continuous_reach": 641.8,
+   "continuous_reach_sharp": 573.8,
+   "continuous_smooth_probe": 11.1,
+   "continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8": 377.9,
+   "continuous_synthesis_large_xwall8": 2832.7,
+   "continuous_synthesis_large_xwall8_off20": 604.9,
+   "continuous_synthesis_mini_xwall4": 163.7,
+   "continuous_synthesis_mini_xwall8": 2740.3,
+   "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7": 47.5,
+   "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm": 268.2,
+   "continuous_synthesis_patch2d_large_k3_7": 812.5,
+   "continuous_synthesis_patch2d_large_k3_7_arc120": 573.5,
+   "continuous_synthesis_patch2d_large_k3_7_arc240": 1318.6,
+   "continuous_synthesis_patch2d_large_k3_7_arc240_hint-centre": 693.4,
+   "continuous_synthesis_patch2d_large_k3_7_hint-centre": 691.5,
+   "continuous_synthesis_patch2d_large_k3_7_hint-radius": 1969.6,
+   "continuous_synthesis_patch2d_large_k3_7_pv-landing_it15": 3099.0,
+   "continuous_synthesis_patch2d_large_k3_7_pv-region_it15": 2452.4,
+   "continuous_synthesis_patch2d_large_k5_9": 821.0,
+   "continuous_synthesis_patch2d_mini_k3_7": 643.9,
+   "continuous_synthesis_patch2d_mini_k3_7_pv-landing_it15": 1309.6,
+   "continuous_synthesis_patch2d_mini_k3_7_pv-region_it15": 1330.2,
+   "continuous_synthesis_patch2d_mini_k5_9": 789.1,
+   "continuous_synthesis_patch2dclamp_large_k3_7": 1682.9,
+   "continuous_synthesis_patch2dclamp_mini_k3_7": 1190.5,
+   "continuous_synthesis_patch2dlanding_large_k3_7": 1759.2,
+   "continuous_synthesis_patch2dlanding_mini_k3_7": 1192.1,
+   "continuous_synthesis_patch2dslab_large_k5.5_7": 1026.2,
+   "continuous_synthesis_patch2dslab_mini_k5.5_7": 611.3,
+   "continuous_synthesis_patch2dsq_large_k3_7": 779.3,
+   "continuous_synthesis_patch2dsq_mini_k3_7": 580.2,
+   "continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4": 165.1,
+   "continuous_synthesis_pendulum_large_thstop1.4": 916.3,
+   "continuous_synthesis_pendulum_large_thstop1.4_off20": 646.1,
+   "continuous_synthesis_pendulum_large_thstop1": 1990.6,
+   "continuous_synthesis_pendulum_mini_thstop1.4": 1081.2,
+   "continuous_synthesis_pendulum_mini_thstop1": 1903.7,
+   "heldout_gate_audit": 5.9,
+   "patch2d_slab_calibration": 1300.5,
+   "play_cost_intervals": 1691.5
+  },
+  "by_campaign": {
+   "other / theory certificates": {
+    "files": [
+     "cem_crossing_bound",
+     "heldout_gate_audit",
+     "patch2d_slab_calibration",
+     "play_cost_intervals"
+    ],
+    "elapsed_s": 3161.9,
+    "elapsed_min": 52.7
+   },
+   "1D mechanism sweeps (CPU)": {
+    "files": [
+     "continuous_axes",
+     "continuous_pendulum",
+     "continuous_pendulum_sharp",
+     "continuous_pendulum_sharpphantom",
+     "continuous_reach",
+     "continuous_reach_sharp",
+     "continuous_smooth_probe"
+    ],
+    "elapsed_s": 5501.3,
+    "elapsed_min": 91.7
+   },
+   "second planner family, CEM (CPU)": {
+    "files": [
+     "continuous_cem",
+     "continuous_cem_patch2d"
+    ],
+    "elapsed_s": 4115.9,
+    "elapsed_min": 68.6
+   },
+   "eps-sensitivity sweeps (CPU)": {
+    "files": [
+     "continuous_eps_sweep",
+     "continuous_eps_sweep_patch2d"
+    ],
+    "elapsed_s": 4284.0,
+    "elapsed_min": 71.4
+   },
+   "mitigation sweeps (CPU)": {
+    "files": [
+     "continuous_mitigation",
+     "continuous_mitigation_patch2d"
+    ],
+    "elapsed_s": 2602.8,
+    "elapsed_min": 43.4
+   },
+   "PatchField2D mechanism (CPU)": {
+    "files": [
+     "continuous_patch2d",
+     "continuous_patch2d_square"
+    ],
+    "elapsed_s": 702.2,
+    "elapsed_min": 11.7
+   },
+   "LLM synthesis, 1D cart": {
+    "files": [
+     "continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8",
+     "continuous_synthesis_large_xwall8",
+     "continuous_synthesis_large_xwall8_off20",
+     "continuous_synthesis_mini_xwall4",
+     "continuous_synthesis_mini_xwall8"
+    ],
+    "elapsed_s": 6719.5,
+    "elapsed_min": 112.0
+   },
+   "LLM synthesis, PatchField2D": {
+    "files": [
+     "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7",
+     "continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm",
+     "continuous_synthesis_patch2d_large_k3_7",
+     "continuous_synthesis_patch2d_large_k3_7_arc120",
+     "continuous_synthesis_patch2d_large_k3_7_arc240",
+     "continuous_synthesis_patch2d_large_k3_7_arc240_hint-centre",
+     "continuous_synthesis_patch2d_large_k3_7_hint-centre",
+     "continuous_synthesis_patch2d_large_k3_7_hint-radius",
+     "continuous_synthesis_patch2d_large_k3_7_pv-landing_it15",
+     "continuous_synthesis_patch2d_large_k3_7_pv-region_it15",
+     "continuous_synthesis_patch2d_large_k5_9",
+     "continuous_synthesis_patch2d_mini_k3_7",
+     "continuous_synthesis_patch2d_mini_k3_7_pv-landing_it15",
+     "continuous_synthesis_patch2d_mini_k3_7_pv-region_it15",
+     "continuous_synthesis_patch2d_mini_k5_9",
+     "continuous_synthesis_patch2dclamp_large_k3_7",
+     "continuous_synthesis_patch2dclamp_mini_k3_7",
+     "continuous_synthesis_patch2dlanding_large_k3_7",
+     "continuous_synthesis_patch2dlanding_mini_k3_7",
+     "continuous_synthesis_patch2dslab_large_k5.5_7",
+     "continuous_synthesis_patch2dslab_mini_k5.5_7",
+     "continuous_synthesis_patch2dsq_large_k3_7",
+     "continuous_synthesis_patch2dsq_mini_k3_7"
+    ],
+    "elapsed_s": 25641.7,
+    "elapsed_min": 427.4
+   },
+   "LLM synthesis, pendulum": {
+    "files": [
+     "continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4",
+     "continuous_synthesis_pendulum_large_thstop1",
+     "continuous_synthesis_pendulum_large_thstop1.4",
+     "continuous_synthesis_pendulum_large_thstop1.4_off20",
+     "continuous_synthesis_pendulum_mini_thstop1",
+     "continuous_synthesis_pendulum_mini_thstop1.4"
+    ],
+    "elapsed_s": 6703.0,
+    "elapsed_min": 111.7
+   }
+  },
+  "total_recorded_elapsed_s": 59432.3,
+  "total_recorded_elapsed_h": 16.51,
+  "n_files_with_elapsed_s": 53,
+  "n_results_json_total": 125,
+  "scripts_named_in_tex_verbatim": [],
+  "note": "elapsed_s is wall-clock for ONE run of the script that wrote the file; it excludes every superseded run (the 5-seed cells later overwritten at 20 seeds, the square-ablation resume passes, failed LLM calls) and excludes every script that does not record it. The total is therefore a LOWER BOUND on the compute the paper cost."
+ },
+ "llm_cost": {
+  "per_file": [
+   {
+    "file": "results/continuous_synthesis_compat-qwen3-coder-30b-a3b-instruct_xwall8.json",
+    "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+    "size": "mini",
+    "instrument": "cart",
+    "n_cells": 6,
+    "llm_calls": 16,
+    "refine_iterations_total": 10,
+    "elapsed_s": 377.9,
+    "campaign": "LLM synthesis, 1D cart",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_large_xwall8.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "cart",
+    "n_cells": 40,
+    "llm_calls": 48,
+    "refine_iterations_total": 8,
+    "elapsed_s": 2832.7,
+    "campaign": "LLM synthesis, 1D cart",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_large_xwall8_off20.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "cart",
+    "n_cells": 40,
+    "llm_calls": 50,
+    "refine_iterations_total": 10,
+    "elapsed_s": 604.9,
+    "campaign": "LLM synthesis, 1D cart",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_mini_xwall4.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "cart",
+    "n_cells": 10,
+    "llm_calls": 27,
+    "refine_iterations_total": 17,
+    "elapsed_s": 163.7,
+    "campaign": "LLM synthesis, 1D cart",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_mini_xwall8.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "cart",
+    "n_cells": 40,
+    "llm_calls": 62,
+    "refine_iterations_total": 22,
+    "elapsed_s": 2740.3,
+    "campaign": "LLM synthesis, 1D cart",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7.json",
+    "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+    "size": "mini",
+    "instrument": "patch2d",
+    "n_cells": 6,
+    "llm_calls": 21,
+    "refine_iterations_total": 15,
+    "elapsed_s": 47.5,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_compat-qwen3-coder-30b-a3b-instruct_k3_7_matched-vllm.json",
+    "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+    "size": "mini",
+    "instrument": "patch2d",
+    "n_cells": 6,
+    "llm_calls": 21,
+    "refine_iterations_total": 15,
+    "elapsed_s": 268.2,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_large_k3_7.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 140,
+    "refine_iterations_total": 100,
+    "elapsed_s": 812.5,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_large_k3_7_arc120.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 20,
+    "llm_calls": 120,
+    "refine_iterations_total": 100,
+    "elapsed_s": 573.5,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_large_k3_7_arc240.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 140,
+    "refine_iterations_total": 100,
+    "elapsed_s": 1318.6,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_large_k3_7_arc240_hint-centre.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 20,
+    "llm_calls": 120,
+    "refine_iterations_total": 100,
+    "elapsed_s": 693.4,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_large_k3_7_hint-centre.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 20,
+    "llm_calls": 120,
+    "refine_iterations_total": 100,
+    "elapsed_s": 691.5,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_large_k3_7_hint-radius.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 20,
+    "llm_calls": 46,
+    "refine_iterations_total": 26,
+    "elapsed_s": 1969.6,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_large_k3_7_pv-landing_it15.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 20,
+    "llm_calls": 294,
+    "refine_iterations_total": 274,
+    "elapsed_s": 3099.0,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_large_k3_7_pv-region_it15.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 20,
+    "llm_calls": 320,
+    "refine_iterations_total": 300,
+    "elapsed_s": 2452.4,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_large_k5_9.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 130,
+    "refine_iterations_total": 90,
+    "elapsed_s": 821.0,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_mini_k3_7.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 140,
+    "refine_iterations_total": 100,
+    "elapsed_s": 643.9,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_mini_k3_7_pv-landing_it15.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "patch2d",
+    "n_cells": 20,
+    "llm_calls": 320,
+    "refine_iterations_total": 300,
+    "elapsed_s": 1309.6,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_mini_k3_7_pv-region_it15.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "patch2d",
+    "n_cells": 20,
+    "llm_calls": 320,
+    "refine_iterations_total": 300,
+    "elapsed_s": 1330.2,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2d_mini_k5_9.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 130,
+    "refine_iterations_total": 90,
+    "elapsed_s": 789.1,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2dclamp_large_k3_7.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 140,
+    "refine_iterations_total": 100,
+    "elapsed_s": 1682.9,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2dclamp_mini_k3_7.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 140,
+    "refine_iterations_total": 100,
+    "elapsed_s": 1190.5,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2dlanding_large_k3_7.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 140,
+    "refine_iterations_total": 100,
+    "elapsed_s": 1759.2,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2dlanding_mini_k3_7.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 140,
+    "refine_iterations_total": 100,
+    "elapsed_s": 1192.1,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2dslab_large_k5.5_7.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 68,
+    "refine_iterations_total": 28,
+    "elapsed_s": 1026.2,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2dslab_mini_k5.5_7.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 136,
+    "refine_iterations_total": 96,
+    "elapsed_s": 611.3,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2dsq_large_k3_7.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 140,
+    "refine_iterations_total": 100,
+    "elapsed_s": 779.3,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_patch2dsq_mini_k3_7.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "patch2d",
+    "n_cells": 40,
+    "llm_calls": 140,
+    "refine_iterations_total": 100,
+    "elapsed_s": 580.2,
+    "campaign": "LLM synthesis, PatchField2D",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_pendulum_compat-qwen3-coder-30b-a3b-instruct_thstop1.4.json",
+    "model": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+    "size": "mini",
+    "instrument": "pendulum",
+    "n_cells": 6,
+    "llm_calls": 16,
+    "refine_iterations_total": 10,
+    "elapsed_s": 165.1,
+    "campaign": "LLM synthesis, pendulum",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_pendulum_large_thstop1.4.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "pendulum",
+    "n_cells": 40,
+    "llm_calls": 50,
+    "refine_iterations_total": 10,
+    "elapsed_s": 916.3,
+    "campaign": "LLM synthesis, pendulum",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_pendulum_large_thstop1.4_off20.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "pendulum",
+    "n_cells": 40,
+    "llm_calls": 54,
+    "refine_iterations_total": 14,
+    "elapsed_s": 646.1,
+    "campaign": "LLM synthesis, pendulum",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_pendulum_large_thstop1.json",
+    "model": "gpt-5.4",
+    "size": "large",
+    "instrument": "pendulum",
+    "n_cells": 40,
+    "llm_calls": 59,
+    "refine_iterations_total": 19,
+    "elapsed_s": 1990.6,
+    "campaign": "LLM synthesis, pendulum",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_pendulum_mini_thstop1.4.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "pendulum",
+    "n_cells": 40,
+    "llm_calls": 56,
+    "refine_iterations_total": 16,
+    "elapsed_s": 1081.2,
+    "campaign": "LLM synthesis, pendulum",
+    "usage_recorded": false
+   },
+   {
+    "file": "results/continuous_synthesis_pendulum_mini_thstop1.json",
+    "model": "gpt-5.4-mini",
+    "size": "mini",
+    "instrument": "pendulum",
+    "n_cells": 40,
+    "llm_calls": 58,
+    "refine_iterations_total": 18,
+    "elapsed_s": 1903.7,
+    "campaign": "LLM synthesis, pendulum",
+    "usage_recorded": false
+   }
+  ],
+  "by_campaign": {
+   "LLM synthesis, 1D cart": {
+    "llm_calls": 203,
+    "cells": 136,
+    "files": 5
+   },
+   "LLM synthesis, PatchField2D": {
+    "llm_calls": 3426,
+    "cells": 692,
+    "files": 23
+   },
+   "LLM synthesis, pendulum": {
+    "llm_calls": 293,
+    "cells": 206,
+    "files": 6
+   }
+  },
+  "total_llm_calls_paper2_api_arms": 3922,
+  "claude_relay_calls": 20,
+  "token_usage_recorded_in_paper2_artifacts": false,
+  "why_not": "cwm.llm providers DO capture prompt/completion tokens (src/cwm/llm/provider.py Usage; azure_openai.py raises if Azure omits it) and contract.refine_continuous keeps them in RefineResult.usages, but contract.synthesize_and_evaluate does not copy them into the emitted cell, so no paper-2 artifact carries tokens. Paper 1's runners did record dollars (cost_usd_total).",
+  "paper1_cost_usd_anchors": {
+   "connect4_mini_vs_large": 0.13501299999999966,
+   "connect4_nano_vs_large": 0.13205849999999963,
+   "gap_army5x5a_material_incomplete_mini": 0.11282174999999998,
+   "gap_army5x5a_material_incomplete_nano": 0.44280839999999994,
+   "gap_army5x5a_material_mini": 0.05039175,
+   "gap_army5x5a_material_nano": 0.4066532500000001,
+   "gap_army5x5a_mini": 0.08824874999999999,
+   "gap_army5x5a_mini_norules": 0.17412300000000003,
+   "gap_army5x5a_nano": 0.43414695000000003,
+   "gap_army5x5a_nano_norules": 0.3989158000000001,
+   "gap_gen_tictactoe_mini": 0.04571100000000001,
+   "gap_gen_tictactoe_mini_norules": 0.15016874999999996,
+   "gap_gen_tictactoe_nano": 0.0328695,
+   "gap_gen_tictactoe_nano_norules": 0.15108374999999996,
+   "gap_trike_mini": 0.1332795,
+   "gap_trike_mini_norules": 0.2081505,
+   "gap_trike_nano": 0.07194629999999999,
+   "gap_trike_nano_norules": 0.4748123,
+   "tictactoe_mini_vs_large": 0.043223250000000005,
+   "tictactoe_nano_vs_large": 0.043033950000000015
+  },
+  "paper1_cost_usd_total": 3.7295,
+  "cost_statement_for_the_appendix": "Report paper 2's LLM cost as a RANGE, not a point: the exact call count is known (see total_llm_calls_paper2_api_arms) but the token count is not recorded. The design spec's own pre-run estimate was '~2-7 LLM calls per seed, 1-2k prompt tokens each'; combined with the measured call count that brackets the API arms at roughly 1e6-1e7 total tokens, i.e. single-digit to low-double-digit US dollars at 2026 GPT-5.x-class prices. The only measured dollar figures in the repo are paper 1's (paper1_cost_usd_anchors, $3.73 total), which are a different campaign. Anyone needing an exact figure must take it from the Azure billing export for the run window 2026-07-07 .. 2026-07-25."
+ },
+ "licence": {
+  "licence_files_present": {
+   "LICENSE": true,
+   "LICENSE.md": false,
+   "LICENSE.txt": false,
+   "LICENCE": false,
+   "COPYING": false,
+   "NOTICE": false
+  },
+  "any_licence_file": true,
+  "pyproject_declares_license": true,
+  "pyproject_classifiers": [],
+  "readme_mentions_licence": false,
+  "gap": "There is NO licence file and pyproject.toml declares no `license` field and no License classifier, so the code, the synthesized artifacts under results/ and the paper source are all-rights-reserved by default. A reviewer told to 'reproduce this' has no licence to redistribute anything. Fix before submission: add a LICENSE (e.g. MIT or Apache-2.0 for code, CC-BY-4.0 for the paper and data) and set [project].license in pyproject.toml."
+ },
+ "env_config": {
+  "variables": {
+   "AZURE_DEPLOYMENT_LARGE": [
+    "scripts/repair_spikes/spike_harvest.py:24"
+   ],
+   "AZURE_DEPLOYMENT_MINI": [
+    "scripts/repair_spikes/spike_dagger2.py:26",
+    "scripts/repair_spikes/spike_harvest.py:24",
+    "scripts/repair_spikes/spike_targeted2.py:21"
+   ],
+   "AZURE_OPENAI_API_KEY": [
+    "scripts/beacon_claimB_probe.py:40",
+    "scripts/continuous_danger_synthesis.py:369",
+    "scripts/danger_synthesis_sweep.py:35",
+    "scripts/declarative_recall_probe.py:85",
+    "scripts/exhaustive_verify_tictactoe.py:121",
+    "scripts/mtt_claimB_probe.py:99",
+    "scripts/play_cost_synth_ci.py:199",
+    "scripts/refine_feedback_cell.py:84",
+    "scripts/repair_spikes/spike_dagger2.py:24",
+    "scripts/repair_spikes/spike_harvest.py:22",
+    "scripts/repair_spikes/spike_targeted2.py:19",
+    "scripts/run_kuhn_validation.py:26",
+    "src/cwm/run_experiment.py:52",
+    "src/cwm/run_gap.py:110"
+   ],
+   "AZURE_OPENAI_API_VERSION": [
+    "scripts/beacon_claimB_probe.py:41",
+    "scripts/continuous_danger_synthesis.py:370",
+    "scripts/danger_synthesis_sweep.py:36",
+    "scripts/declarative_recall_probe.py:86",
+    "scripts/exhaustive_verify_tictactoe.py:122",
+    "scripts/mtt_claimB_probe.py:100",
+    "scripts/play_cost_synth_ci.py:200",
+    "scripts/refine_feedback_cell.py:85",
+    "scripts/repair_spikes/spike_dagger2.py:25",
+    "scripts/repair_spikes/spike_harvest.py:23",
+    "scripts/repair_spikes/spike_targeted2.py:20",
+    "scripts/run_kuhn_validation.py:27",
+    "src/cwm/run_experiment.py:53",
+    "src/cwm/run_gap.py:111"
+   ],
+   "AZURE_OPENAI_ENDPOINT": [
+    "scripts/beacon_claimB_probe.py:40",
+    "scripts/continuous_danger_synthesis.py:368",
+    "scripts/danger_synthesis_sweep.py:35",
+    "scripts/declarative_recall_probe.py:85",
+    "scripts/exhaustive_verify_tictactoe.py:121",
+    "scripts/mtt_claimB_probe.py:99",
+    "scripts/play_cost_synth_ci.py:199",
+    "scripts/refine_feedback_cell.py:84",
+    "scripts/repair_spikes/spike_dagger2.py:24",
+    "scripts/repair_spikes/spike_harvest.py:22",
+    "scripts/repair_spikes/spike_targeted2.py:19",
+    "scripts/run_kuhn_validation.py:26",
+    "src/cwm/run_experiment.py:51",
+    "src/cwm/run_gap.py:109"
+   ],
+   "HF_TOKEN": [
+    "scripts/continuous_danger_synthesis.py:361",
+    "scripts/crossfamily_probe.py:82"
+   ]
+  },
+  "documented_template": "docs/paper2/env.example",
+  "load_dotenv_modules": [
+   "scripts/beacon_claimB_probe.py",
+   "scripts/continuous_danger_synthesis.py",
+   "scripts/crossfamily_claude_step.py",
+   "scripts/crossfamily_probe.py",
+   "scripts/danger_synthesis_sweep.py",
+   "scripts/declarative_recall_probe.py",
+   "scripts/exhaustive_verify_tictactoe.py",
+   "scripts/mtt_claimB_probe.py",
+   "scripts/play_cost_synth_ci.py",
+   "scripts/refine_feedback_cell.py",
+   "scripts/repair_spikes/spike_dagger2.py",
+   "scripts/repair_spikes/spike_harvest.py",
+   "scripts/repair_spikes/spike_targeted2.py",
+   "scripts/repro_manifest.py",
+   "scripts/run_kuhn_validation.py",
+   "src/cwm/run_experiment.py",
+   "src/cwm/run_gap.py"
+  ],
+  "existing_repo_root_template": {
+   "path": ".env.example",
+   "exists": true,
+   "lists_HF_TOKEN": false,
+   "api_version_matches_paper": false
+  },
+  "cpu_only_reproduction_needs_no_credentials": true
+ }
+}

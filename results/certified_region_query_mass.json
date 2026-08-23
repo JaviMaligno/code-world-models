@@ -1,0 +1,43 @@
+{
+  "script": "certified_region_query_mass.py",
+  "params": {
+    "episodes": 2,
+    "horizon": 40,
+    "n_samples": 200,
+    "block": 10,
+    "regions": [
+      1.0,
+      1.0,
+      3.0,
+      2.0
+    ]
+  },
+  "regions": [
+    [
+      1.0,
+      1.0
+    ],
+    [
+      3.0,
+      2.0
+    ]
+  ],
+  "rows": [
+    {
+      "planner": "blind (the exploited)",
+      "queries": 1299200,
+      "inside_fraction": {
+        "1.0,1.0": 0.019263392857142857,
+        "3.0,2.0": 0.07822583128078818
+      }
+    },
+    {
+      "planner": "truth",
+      "queries": 1299200,
+      "inside_fraction": {
+        "1.0,1.0": 0.02316887315270936,
+        "3.0,2.0": 0.07316810344827586
+      }
+    }
+  ]
+}

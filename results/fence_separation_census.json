@@ -1,0 +1,931 @@
+{
+  "script": "fence_separation_census.py",
+  "params": {
+    "seeds": 5,
+    "seeds_2d": 20,
+    "horizon": 40
+  },
+  "fence_placement_1d": [
+    {
+      "arm": "cart wall@10",
+      "eps": 0.25,
+      "boundary": 10.0,
+      "first_fence_overshoot": [
+        0.37799080296364096,
+        0.31092559413915666,
+        0.5810189008059616,
+        0.17244541287638349,
+        0.5425714308721936
+      ],
+      "band_misses_boundary": 4,
+      "n": 5
+    },
+    {
+      "arm": "pendulum stop@2.0",
+      "eps": 0.1,
+      "boundary": 2.0,
+      "first_fence_overshoot": [
+        0.043026481967476826,
+        0.05004740298505306,
+        0.09055395696640556,
+        0.06602137545844133,
+        0.09578175656689325
+      ],
+      "band_misses_boundary": 0,
+      "n": 5
+    }
+  ],
+  "eps_invariance_1d": [
+    {
+      "arm": "cart wall@10",
+      "eps_grid": [
+        0.25,
+        0.1,
+        0.05,
+        0.01
+      ],
+      "returns_and_violations": {
+        "0.25": [
+          [
+            4.092434,
+            1
+          ],
+          [
+            4.090239,
+            1
+          ],
+          [
+            3.800196,
+            1
+          ],
+          [
+            4.086529,
+            1
+          ]
+        ],
+        "0.1": [
+          [
+            4.092434,
+            1
+          ],
+          [
+            4.090239,
+            1
+          ],
+          [
+            3.800196,
+            1
+          ],
+          [
+            4.086529,
+            1
+          ]
+        ],
+        "0.05": [
+          [
+            4.092434,
+            1
+          ],
+          [
+            4.090239,
+            1
+          ],
+          [
+            3.800196,
+            1
+          ],
+          [
+            4.086529,
+            1
+          ]
+        ],
+        "0.01": [
+          [
+            4.092434,
+            1
+          ],
+          [
+            3.808225,
+            2
+          ],
+          [
+            3.518182,
+            2
+          ],
+          [
+            4.086529,
+            1
+          ]
+        ]
+      },
+      "identical_across_eps": false,
+      "eps_ratio": 25.0
+    },
+    {
+      "arm": "pendulum stop@2.0",
+      "eps_grid": [
+        0.1,
+        0.05,
+        0.02,
+        0.005
+      ],
+      "returns_and_violations": {
+        "0.1": [
+          [
+            15.836075,
+            1
+          ],
+          [
+            15.836025,
+            1
+          ],
+          [
+            15.836392,
+            1
+          ],
+          [
+            15.836066,
+            1
+          ]
+        ],
+        "0.05": [
+          [
+            15.836075,
+            1
+          ],
+          [
+            15.836025,
+            1
+          ],
+          [
+            15.836392,
+            1
+          ],
+          [
+            15.836066,
+            1
+          ]
+        ],
+        "0.02": [
+          [
+            15.836075,
+            1
+          ],
+          [
+            15.836025,
+            1
+          ],
+          [
+            15.836392,
+            1
+          ],
+          [
+            15.836066,
+            1
+          ]
+        ],
+        "0.005": [
+          [
+            15.836075,
+            1
+          ],
+          [
+            15.836025,
+            1
+          ],
+          [
+            15.836392,
+            1
+          ],
+          [
+            15.836066,
+            1
+          ]
+        ]
+      },
+      "identical_across_eps": true,
+      "eps_ratio": 20.0
+    }
+  ],
+  "separation_numbers": {
+    "line_cut_number": 1,
+    "circle_cut_number": 2,
+    "note": "removing one arc leaves S^1 connected; removing two disconnects it"
+  },
+  "patch2d_episode_census": [
+    {
+      "knob": [
+        2.0,
+        6.0
+      ],
+      "mean_violations": 1.05,
+      "median_violations": 1.0,
+      "max_violations": 2,
+      "mean_distinct_fences": 1.05,
+      "max_distinct_fences": 2,
+      "pinned_episodes": 0,
+      "n_episodes": 20,
+      "mean_violations_ex_max": 1,
+      "median_probed_arc_fraction": 0.0,
+      "max_probed_arc_fraction": 0.13117383203352118,
+      "episodes": [
+        {
+          "seed": 0,
+          "ret": 14.004196859383281,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 1000,
+          "ret": 14.52297955846293,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 2000,
+          "ret": 12.906301086147714,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 3000,
+          "ret": 14.304039084139276,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 4000,
+          "ret": 13.753968434697558,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 5000,
+          "ret": 13.621865516185332,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 6000,
+          "ret": 13.119960788645697,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 7000,
+          "ret": 13.46883227746815,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 8000,
+          "ret": 13.755342767752941,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 9000,
+          "ret": 13.873231051715337,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 10000,
+          "ret": 13.750667204773201,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 11000,
+          "ret": 13.323825912303127,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 12000,
+          "ret": 13.411074757907246,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 13000,
+          "ret": 13.60967518267373,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 14000,
+          "ret": 13.738844255076438,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 15000,
+          "ret": 13.955669354935944,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 16000,
+          "ret": 8.200618019589244,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 0.8241894941194632,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 17000,
+          "ret": 13.314468442463136,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 18000,
+          "ret": 13.940106465794006,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 19000,
+          "ret": 13.33792842784947,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        }
+      ]
+    },
+    {
+      "knob": [
+        3.0,
+        7.0
+      ],
+      "mean_violations": 2.65,
+      "median_violations": 1.0,
+      "max_violations": 28,
+      "mean_distinct_fences": 1.5,
+      "max_distinct_fences": 5,
+      "pinned_episodes": 2,
+      "n_episodes": 20,
+      "mean_violations_ex_max": 1.3157894736842106,
+      "median_probed_arc_fraction": 0.0,
+      "max_probed_arc_fraction": 0.8887135789021744,
+      "episodes": [
+        {
+          "seed": 0,
+          "ret": 0.0152106307427035,
+          "violations": 28,
+          "distinct_fences": 5,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0702743543674389
+          },
+          "patches_touched": 2
+        },
+        {
+          "seed": 1000,
+          "ret": 11.906898475391403,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 2000,
+          "ret": 10.337293945055201,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 3000,
+          "ret": 12.00672413080206,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 4000,
+          "ret": 5.323544565920492,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.212507054165968,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 5000,
+          "ret": 10.885340899155088,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 6000,
+          "ret": 0.172259393068105,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 0.6806171323311836,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 7000,
+          "ret": 6.169113970777204,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.583952101249128,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 8000,
+          "ret": 11.656242735899362,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 9000,
+          "ret": 10.7549257795443,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 10000,
+          "ret": 12.199095550250165,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 11000,
+          "ret": 2.3190090721307977,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.480140604171461,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 12000,
+          "ret": 9.229872926909787,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 13000,
+          "ret": 10.53258315510716,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 14000,
+          "ret": 10.653783130383461,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 15000,
+          "ret": 6.368726213875657,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.482938065095341,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 16000,
+          "ret": 10.113594278265822,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 17000,
+          "ret": 11.931523210153996,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 18000,
+          "ret": 11.70648258313876,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 19000,
+          "ret": 6.379397177251959,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.562815648406454,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        }
+      ]
+    },
+    {
+      "knob": [
+        4.0,
+        8.0
+      ],
+      "mean_violations": 4.25,
+      "median_violations": 2.0,
+      "max_violations": 28,
+      "mean_distinct_fences": 2.85,
+      "max_distinct_fences": 6,
+      "pinned_episodes": 7,
+      "n_episodes": 20,
+      "mean_violations_ex_max": 3,
+      "median_probed_arc_fraction": 0.8730920148767409,
+      "max_probed_arc_fraction": 0.9041588271417971,
+      "episodes": [
+        {
+          "seed": 0,
+          "ret": 6.197694900134636,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.668255977739153,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 1000,
+          "ret": 4.165995395691873,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.656594575523679,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 2000,
+          "ret": 0.18281418067492036,
+          "violations": 28,
+          "distinct_fences": 6,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.027042468395056307
+          },
+          "patches_touched": 2
+        },
+        {
+          "seed": 3000,
+          "ret": 10.02184992839558,
+          "violations": 1,
+          "distinct_fences": 1,
+          "arc_spread_rad": {
+            "1": 0.0,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 4000,
+          "ret": 5.284838645282864,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.484264216610901,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 5000,
+          "ret": 4.50757923490636,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.5530343239343924,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 6000,
+          "ret": 0.0020709363417063037,
+          "violations": 10,
+          "distinct_fences": 5,
+          "arc_spread_rad": {
+            "1": 5.680997458054066,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 7000,
+          "ret": 0.0007488056690984792,
+          "violations": 3,
+          "distinct_fences": 3,
+          "arc_spread_rad": {
+            "1": 5.278782376819425,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 8000,
+          "ret": 1.2078667889484973,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.634417333023497,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 9000,
+          "ret": 1.4909099781706658,
+          "violations": 5,
+          "distinct_fences": 4,
+          "arc_spread_rad": {
+            "1": 0.9829584021762294,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 10000,
+          "ret": 0.0817208275998468,
+          "violations": 5,
+          "distinct_fences": 5,
+          "arc_spread_rad": {
+            "1": 5.6465222542530045,
+            "2": 0.28733861973923225
+          },
+          "patches_touched": 2
+        },
+        {
+          "seed": 11000,
+          "ret": 0.001210466763759708,
+          "violations": 3,
+          "distinct_fences": 3,
+          "arc_spread_rad": {
+            "1": 5.4824784459790905,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 12000,
+          "ret": 0.05502806059347408,
+          "violations": 6,
+          "distinct_fences": 6,
+          "arc_spread_rad": {
+            "1": 5.487333622767818,
+            "2": 0.1641056117779114
+          },
+          "patches_touched": 2
+        },
+        {
+          "seed": 13000,
+          "ret": 2.8954616258451416,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.651898571990387,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 14000,
+          "ret": 0.0062357399663418335,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.612566022826084,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 15000,
+          "ret": 5.314703585782942,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.426205571310743,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 16000,
+          "ret": 5.355620847738555,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 0.6448185786605207,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 17000,
+          "ret": 2.845756657400685,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 0.8102739005908011,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 18000,
+          "ret": 2.065753335078992,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 5.561757667006981,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        },
+        {
+          "seed": 19000,
+          "ret": 2.969132184728084,
+          "violations": 2,
+          "distinct_fences": 2,
+          "arc_spread_rad": {
+            "1": 0.6793601572019976,
+            "2": 0.0
+          },
+          "patches_touched": 1
+        }
+      ]
+    }
+  ]
+}

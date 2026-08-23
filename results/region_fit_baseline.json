@@ -1,0 +1,1344 @@
+{
+  "script": "region_fit_baseline.py",
+  "why": "an upper bound on the 2D task's difficulty, from outside the pipeline",
+  "truth": {
+    "centre": [
+      3.0,
+      0.0
+    ],
+    "R": 1.0
+  },
+  "tol_centre": 0.1,
+  "tol_radius": 0.1,
+  "n_seeds": 20,
+  "n_recovering_centre": 13,
+  "n_recovering_both": 12,
+  "n_with_enough_contacts": 20,
+  "median_contacts": 14.5,
+  "median_landing_arc_deg": 110.65309387677075,
+  "median_prev_arc_deg": 103.89427855421165,
+  "rows": [
+    {
+      "seed": 10000,
+      "n_contacts_p1": 21,
+      "fit_centre": [
+        3.0089352091099957,
+        0.004007365670810166
+      ],
+      "fit_R": 0.975607716171934,
+      "cond": 40.60794905316317,
+      "centre_error": 0.009792698374755427,
+      "radius_error": 0.02439228382806602,
+      "landing_arc_deg": 110.95979301183445,
+      "prev_arc_deg": 100.97890130602923,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 20000,
+      "n_contacts_p1": 12,
+      "fit_centre": [
+        2.1269880245076753,
+        -0.09542485356138423
+      ],
+      "fit_R": 0.13555479262577128,
+      "cond": 150.04437176956986,
+      "centre_error": 0.8782117125330445,
+      "radius_error": 0.8644452073742287,
+      "landing_arc_deg": 16.63015847467699,
+      "prev_arc_deg": 10.99738824073654,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 30000,
+      "n_contacts_p1": 10,
+      "fit_centre": [
+        2.9109612168367476,
+        -0.04570376066096767
+      ],
+      "fit_R": 0.8752869975476723,
+      "cond": 38.89200002201149,
+      "centre_error": 0.10008365823523688,
+      "radius_error": 0.12471300245232775,
+      "landing_arc_deg": 96.96417453827166,
+      "prev_arc_deg": 94.04617140167119,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 40000,
+      "n_contacts_p1": 16,
+      "fit_centre": [
+        2.9346274882908205,
+        -0.04395468359274465
+      ],
+      "fit_R": 0.8943235849382255,
+      "cond": 85.32564465678671,
+      "centre_error": 0.07877550061348453,
+      "radius_error": 0.1056764150617745,
+      "landing_arc_deg": 79.16708469662001,
+      "prev_arc_deg": 71.6310330749277,
+      "recovers_centre": true,
+      "recovers_both": false
+    },
+    {
+      "seed": 50000,
+      "n_contacts_p1": 9,
+      "fit_centre": [
+        2.795750946208803,
+        0.08073707147317058
+      ],
+      "fit_R": 0.7768647762577368,
+      "cond": 69.04057661337085,
+      "centre_error": 0.21962729949772458,
+      "radius_error": 0.22313522374226324,
+      "landing_arc_deg": 67.08270624548231,
+      "prev_arc_deg": 69.51119007853129,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 60000,
+      "n_contacts_p1": 21,
+      "fit_centre": [
+        2.9601097422601144,
+        -0.011676771348268604
+      ],
+      "fit_R": 0.9276500287715086,
+      "cond": 27.973884961350652,
+      "centre_error": 0.04156416306957537,
+      "radius_error": 0.0723499712284914,
+      "landing_arc_deg": 138.87596818971087,
+      "prev_arc_deg": 136.16090802948258,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 70000,
+      "n_contacts_p1": 20,
+      "fit_centre": [
+        2.9978826600032673,
+        0.0123439596649658
+      ],
+      "fit_R": 0.963658054426631,
+      "cond": 32.84280806912457,
+      "centre_error": 0.012524235260967695,
+      "radius_error": 0.036341945573369006,
+      "landing_arc_deg": 141.16821671893328,
+      "prev_arc_deg": 128.01367923284062,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 80000,
+      "n_contacts_p1": 7,
+      "fit_centre": [
+        2.9768070395312938,
+        -0.000628215241035807
+      ],
+      "fit_R": 0.9557385309996074,
+      "cond": 18.01971237614176,
+      "centre_error": 0.023201466972845475,
+      "radius_error": 0.04426146900039263,
+      "landing_arc_deg": 162.93129182868296,
+      "prev_arc_deg": 168.5687224659475,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 90000,
+      "n_contacts_p1": 11,
+      "fit_centre": [
+        2.6118222366584707,
+        -0.034287098650104056
+      ],
+      "fit_R": 0.6099009880750897,
+      "cond": 118.64613114873427,
+      "centre_error": 0.38968908258594354,
+      "radius_error": 0.39009901192491026,
+      "landing_arc_deg": 45.3034402540232,
+      "prev_arc_deg": 39.55425408871713,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 100000,
+      "n_contacts_p1": 9,
+      "fit_centre": [
+        2.8387754402401955,
+        -0.017092175045699157
+      ],
+      "fit_R": 0.8243675639443628,
+      "cond": 31.925491301773533,
+      "centre_error": 0.1621280392700029,
+      "radius_error": 0.17563243605563716,
+      "landing_arc_deg": 110.34639474170706,
+      "prev_arc_deg": 106.80965580239408,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 110000,
+      "n_contacts_p1": 14,
+      "fit_centre": [
+        2.9714775125883763,
+        0.004070476004202383
+      ],
+      "fit_R": 0.9561823378434791,
+      "cond": 16.329131375112336,
+      "centre_error": 0.02881147450317352,
+      "radius_error": 0.04381766215652094,
+      "landing_arc_deg": 187.42609564480608,
+      "prev_arc_deg": 178.62063836128675,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 120000,
+      "n_contacts_p1": 25,
+      "fit_centre": [
+        2.9977151400307624,
+        0.012596852121459026
+      ],
+      "fit_R": 0.9706724908578995,
+      "cond": 14.087570904273166,
+      "centre_error": 0.012802393075082914,
+      "radius_error": 0.029327509142100472,
+      "landing_arc_deg": 187.84884862944477,
+      "prev_arc_deg": 184.84175640576223,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 130000,
+      "n_contacts_p1": 15,
+      "fit_centre": [
+        2.9578917483349088,
+        -0.027642715240412827
+      ],
+      "fit_R": 0.9301145892860243,
+      "cond": 31.325130772148775,
+      "centre_error": 0.05037087019452028,
+      "radius_error": 0.06988541071397569,
+      "landing_arc_deg": 136.80274808162972,
+      "prev_arc_deg": 124.62715392841551,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 140000,
+      "n_contacts_p1": 21,
+      "fit_centre": [
+        3.043428768598946,
+        0.02666798419186502
+      ],
+      "fit_R": 1.019156043849548,
+      "cond": 36.678845289144206,
+      "centre_error": 0.05096311727983628,
+      "radius_error": 0.019156043849547943,
+      "landing_arc_deg": 106.46953522917909,
+      "prev_arc_deg": 97.75321123116191,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 150000,
+      "n_contacts_p1": 5,
+      "fit_centre": [
+        2.6747855029865844,
+        -0.1758903118078507
+      ],
+      "fit_R": 0.6156905701430998,
+      "cond": 92.40041857155222,
+      "centre_error": 0.36973216097000794,
+      "radius_error": 0.3843094298569002,
+      "landing_arc_deg": 58.60540593435047,
+      "prev_arc_deg": 63.966141271762126,
+      "recovers_centre": false,
+      "recovers_both": false
+    },
+    {
+      "seed": 160000,
+      "n_contacts_p1": 7,
+      "fit_centre": [
+        3.0181650709068033,
+        -0.013782315047506415
+      ],
+      "fit_R": 0.9949827180441596,
+      "cond": 40.6384113322403,
+      "centre_error": 0.022801798374643908,
+      "radius_error": 0.005017281955840391,
+      "landing_arc_deg": 94.58230397329169,
+      "prev_arc_deg": 94.27156968749,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 170000,
+      "n_contacts_p1": 24,
+      "fit_centre": [
+        2.983522784973081,
+        -0.014308489953871587
+      ],
+      "fit_R": 0.957785304307142,
+      "cond": 19.398096432842294,
+      "centre_error": 0.021822728972412452,
+      "radius_error": 0.04221469569285796,
+      "landing_arc_deg": 177.23080546079194,
+      "prev_arc_deg": 172.26504707802684,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 180000,
+      "n_contacts_p1": 11,
+      "fit_centre": [
+        2.96636765680067,
+        0.019251246774705747
+      ],
+      "fit_R": 0.9438913667373859,
+      "cond": 32.62268879451454,
+      "centre_error": 0.038752354915000314,
+      "radius_error": 0.05610863326261406,
+      "landing_arc_deg": 116.87801030772226,
+      "prev_arc_deg": 125.47596137472573,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 190000,
+      "n_contacts_p1": 27,
+      "fit_centre": [
+        3.022628711463108,
+        0.01921586325794023
+      ],
+      "fit_R": 0.9731577991379216,
+      "cond": 15.658399425866365,
+      "centre_error": 0.029686831815275542,
+      "radius_error": 0.026842200862078447,
+      "landing_arc_deg": 182.21545161574636,
+      "prev_arc_deg": 180.31929251167526,
+      "recovers_centre": true,
+      "recovers_both": true
+    },
+    {
+      "seed": 200000,
+      "n_contacts_p1": 18,
+      "fit_centre": [
+        2.7872680750204144,
+        -0.0852893869179534
+      ],
+      "fit_R": 0.7713235121179964,
+      "cond": 89.3418007386932,
+      "centre_error": 0.22919238954721075,
+      "radius_error": 0.22867648788200357,
+      "landing_arc_deg": 69.22657297147225,
+      "prev_arc_deg": 62.5645078970889,
+      "recovers_centre": false,
+      "recovers_both": false
+    }
+  ],
+  "dose_arms": {
+    "default": {
+      "label": "default",
+      "start_arc_deg": null,
+      "n_rollouts": 40,
+      "n_recovering_centre": 13,
+      "n_recovering_both": 12,
+      "n_with_enough_contacts": 20,
+      "median_contacts": 14.5,
+      "median_landing_arc_deg": 110.65309387677075,
+      "median_prev_arc_deg": 103.89427855421165,
+      "rows": [
+        {
+          "seed": 10000,
+          "n_contacts_p1": 21,
+          "fit_centre": [
+            3.0089352091099957,
+            0.004007365670810166
+          ],
+          "fit_R": 0.975607716171934,
+          "cond": 40.60794905316317,
+          "centre_error": 0.009792698374755427,
+          "radius_error": 0.02439228382806602,
+          "landing_arc_deg": 110.95979301183445,
+          "prev_arc_deg": 100.97890130602923,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 20000,
+          "n_contacts_p1": 12,
+          "fit_centre": [
+            2.1269880245076753,
+            -0.09542485356138423
+          ],
+          "fit_R": 0.13555479262577128,
+          "cond": 150.04437176956986,
+          "centre_error": 0.8782117125330445,
+          "radius_error": 0.8644452073742287,
+          "landing_arc_deg": 16.63015847467699,
+          "prev_arc_deg": 10.99738824073654,
+          "recovers_centre": false,
+          "recovers_both": false
+        },
+        {
+          "seed": 30000,
+          "n_contacts_p1": 10,
+          "fit_centre": [
+            2.9109612168367476,
+            -0.04570376066096767
+          ],
+          "fit_R": 0.8752869975476723,
+          "cond": 38.89200002201149,
+          "centre_error": 0.10008365823523688,
+          "radius_error": 0.12471300245232775,
+          "landing_arc_deg": 96.96417453827166,
+          "prev_arc_deg": 94.04617140167119,
+          "recovers_centre": false,
+          "recovers_both": false
+        },
+        {
+          "seed": 40000,
+          "n_contacts_p1": 16,
+          "fit_centre": [
+            2.9346274882908205,
+            -0.04395468359274465
+          ],
+          "fit_R": 0.8943235849382255,
+          "cond": 85.32564465678671,
+          "centre_error": 0.07877550061348453,
+          "radius_error": 0.1056764150617745,
+          "landing_arc_deg": 79.16708469662001,
+          "prev_arc_deg": 71.6310330749277,
+          "recovers_centre": true,
+          "recovers_both": false
+        },
+        {
+          "seed": 50000,
+          "n_contacts_p1": 9,
+          "fit_centre": [
+            2.795750946208803,
+            0.08073707147317058
+          ],
+          "fit_R": 0.7768647762577368,
+          "cond": 69.04057661337085,
+          "centre_error": 0.21962729949772458,
+          "radius_error": 0.22313522374226324,
+          "landing_arc_deg": 67.08270624548231,
+          "prev_arc_deg": 69.51119007853129,
+          "recovers_centre": false,
+          "recovers_both": false
+        },
+        {
+          "seed": 60000,
+          "n_contacts_p1": 21,
+          "fit_centre": [
+            2.9601097422601144,
+            -0.011676771348268604
+          ],
+          "fit_R": 0.9276500287715086,
+          "cond": 27.973884961350652,
+          "centre_error": 0.04156416306957537,
+          "radius_error": 0.0723499712284914,
+          "landing_arc_deg": 138.87596818971087,
+          "prev_arc_deg": 136.16090802948258,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 70000,
+          "n_contacts_p1": 20,
+          "fit_centre": [
+            2.9978826600032673,
+            0.0123439596649658
+          ],
+          "fit_R": 0.963658054426631,
+          "cond": 32.84280806912457,
+          "centre_error": 0.012524235260967695,
+          "radius_error": 0.036341945573369006,
+          "landing_arc_deg": 141.16821671893328,
+          "prev_arc_deg": 128.01367923284062,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 80000,
+          "n_contacts_p1": 7,
+          "fit_centre": [
+            2.9768070395312938,
+            -0.000628215241035807
+          ],
+          "fit_R": 0.9557385309996074,
+          "cond": 18.01971237614176,
+          "centre_error": 0.023201466972845475,
+          "radius_error": 0.04426146900039263,
+          "landing_arc_deg": 162.93129182868296,
+          "prev_arc_deg": 168.5687224659475,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 90000,
+          "n_contacts_p1": 11,
+          "fit_centre": [
+            2.6118222366584707,
+            -0.034287098650104056
+          ],
+          "fit_R": 0.6099009880750897,
+          "cond": 118.64613114873427,
+          "centre_error": 0.38968908258594354,
+          "radius_error": 0.39009901192491026,
+          "landing_arc_deg": 45.3034402540232,
+          "prev_arc_deg": 39.55425408871713,
+          "recovers_centre": false,
+          "recovers_both": false
+        },
+        {
+          "seed": 100000,
+          "n_contacts_p1": 9,
+          "fit_centre": [
+            2.8387754402401955,
+            -0.017092175045699157
+          ],
+          "fit_R": 0.8243675639443628,
+          "cond": 31.925491301773533,
+          "centre_error": 0.1621280392700029,
+          "radius_error": 0.17563243605563716,
+          "landing_arc_deg": 110.34639474170706,
+          "prev_arc_deg": 106.80965580239408,
+          "recovers_centre": false,
+          "recovers_both": false
+        },
+        {
+          "seed": 110000,
+          "n_contacts_p1": 14,
+          "fit_centre": [
+            2.9714775125883763,
+            0.004070476004202383
+          ],
+          "fit_R": 0.9561823378434791,
+          "cond": 16.329131375112336,
+          "centre_error": 0.02881147450317352,
+          "radius_error": 0.04381766215652094,
+          "landing_arc_deg": 187.42609564480608,
+          "prev_arc_deg": 178.62063836128675,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 120000,
+          "n_contacts_p1": 25,
+          "fit_centre": [
+            2.9977151400307624,
+            0.012596852121459026
+          ],
+          "fit_R": 0.9706724908578995,
+          "cond": 14.087570904273166,
+          "centre_error": 0.012802393075082914,
+          "radius_error": 0.029327509142100472,
+          "landing_arc_deg": 187.84884862944477,
+          "prev_arc_deg": 184.84175640576223,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 130000,
+          "n_contacts_p1": 15,
+          "fit_centre": [
+            2.9578917483349088,
+            -0.027642715240412827
+          ],
+          "fit_R": 0.9301145892860243,
+          "cond": 31.325130772148775,
+          "centre_error": 0.05037087019452028,
+          "radius_error": 0.06988541071397569,
+          "landing_arc_deg": 136.80274808162972,
+          "prev_arc_deg": 124.62715392841551,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 140000,
+          "n_contacts_p1": 21,
+          "fit_centre": [
+            3.043428768598946,
+            0.02666798419186502
+          ],
+          "fit_R": 1.019156043849548,
+          "cond": 36.678845289144206,
+          "centre_error": 0.05096311727983628,
+          "radius_error": 0.019156043849547943,
+          "landing_arc_deg": 106.46953522917909,
+          "prev_arc_deg": 97.75321123116191,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 150000,
+          "n_contacts_p1": 5,
+          "fit_centre": [
+            2.6747855029865844,
+            -0.1758903118078507
+          ],
+          "fit_R": 0.6156905701430998,
+          "cond": 92.40041857155222,
+          "centre_error": 0.36973216097000794,
+          "radius_error": 0.3843094298569002,
+          "landing_arc_deg": 58.60540593435047,
+          "prev_arc_deg": 63.966141271762126,
+          "recovers_centre": false,
+          "recovers_both": false
+        },
+        {
+          "seed": 160000,
+          "n_contacts_p1": 7,
+          "fit_centre": [
+            3.0181650709068033,
+            -0.013782315047506415
+          ],
+          "fit_R": 0.9949827180441596,
+          "cond": 40.6384113322403,
+          "centre_error": 0.022801798374643908,
+          "radius_error": 0.005017281955840391,
+          "landing_arc_deg": 94.58230397329169,
+          "prev_arc_deg": 94.27156968749,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 170000,
+          "n_contacts_p1": 24,
+          "fit_centre": [
+            2.983522784973081,
+            -0.014308489953871587
+          ],
+          "fit_R": 0.957785304307142,
+          "cond": 19.398096432842294,
+          "centre_error": 0.021822728972412452,
+          "radius_error": 0.04221469569285796,
+          "landing_arc_deg": 177.23080546079194,
+          "prev_arc_deg": 172.26504707802684,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 180000,
+          "n_contacts_p1": 11,
+          "fit_centre": [
+            2.96636765680067,
+            0.019251246774705747
+          ],
+          "fit_R": 0.9438913667373859,
+          "cond": 32.62268879451454,
+          "centre_error": 0.038752354915000314,
+          "radius_error": 0.05610863326261406,
+          "landing_arc_deg": 116.87801030772226,
+          "prev_arc_deg": 125.47596137472573,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 190000,
+          "n_contacts_p1": 27,
+          "fit_centre": [
+            3.022628711463108,
+            0.01921586325794023
+          ],
+          "fit_R": 0.9731577991379216,
+          "cond": 15.658399425866365,
+          "centre_error": 0.029686831815275542,
+          "radius_error": 0.026842200862078447,
+          "landing_arc_deg": 182.21545161574636,
+          "prev_arc_deg": 180.31929251167526,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 200000,
+          "n_contacts_p1": 18,
+          "fit_centre": [
+            2.7872680750204144,
+            -0.0852893869179534
+          ],
+          "fit_R": 0.7713235121179964,
+          "cond": 89.3418007386932,
+          "centre_error": 0.22919238954721075,
+          "radius_error": 0.22867648788200357,
+          "landing_arc_deg": 69.22657297147225,
+          "prev_arc_deg": 62.5645078970889,
+          "recovers_centre": false,
+          "recovers_both": false
+        }
+      ]
+    },
+    "arc120": {
+      "label": "arc120",
+      "start_arc_deg": 120.0,
+      "n_rollouts": 15,
+      "n_recovering_centre": 17,
+      "n_recovering_both": 16,
+      "n_with_enough_contacts": 20,
+      "median_contacts": 16.0,
+      "median_landing_arc_deg": 128.8920222829409,
+      "median_prev_arc_deg": 124.54234334696918,
+      "rows": [
+        {
+          "seed": 10000,
+          "n_contacts_p1": 19,
+          "fit_centre": [
+            3.0085474354599304,
+            -0.012916354677132822
+          ],
+          "fit_R": 0.9902699860019687,
+          "cond": 15.514601520339518,
+          "centre_error": 0.015488410863841612,
+          "radius_error": 0.009730013998031306,
+          "landing_arc_deg": 192.21770246072822,
+          "prev_arc_deg": 180.86414838579344,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 20000,
+          "n_contacts_p1": 7,
+          "fit_centre": [
+            2.9889234123670394,
+            -0.0014845974059073872
+          ],
+          "fit_R": 0.9704842948193568,
+          "cond": 13.66056217372343,
+          "centre_error": 0.011175635241375884,
+          "radius_error": 0.02951570518064317,
+          "landing_arc_deg": 208.59387788726173,
+          "prev_arc_deg": 207.85325993149524,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 30000,
+          "n_contacts_p1": 16,
+          "fit_centre": [
+            3.0572075394983007,
+            0.027476561497835596
+          ],
+          "fit_R": 1.0128507732357142,
+          "cond": 42.924062843053854,
+          "centre_error": 0.06346387954729822,
+          "radius_error": 0.012850773235714152,
+          "landing_arc_deg": 126.38505106318769,
+          "prev_arc_deg": 120.73150070563253,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 40000,
+          "n_contacts_p1": 37,
+          "fit_centre": [
+            2.9666127688835364,
+            -0.007909560052888733
+          ],
+          "fit_R": 0.9433030634353055,
+          "cond": 41.56736963373234,
+          "centre_error": 0.034311344215206825,
+          "radius_error": 0.056696936564694544,
+          "landing_arc_deg": 105.50546880405548,
+          "prev_arc_deg": 104.80151563127123,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 50000,
+          "n_contacts_p1": 15,
+          "fit_centre": [
+            2.9838283370282315,
+            -0.004485540525855466
+          ],
+          "fit_R": 0.961317657506547,
+          "cond": 51.41228789328609,
+          "centre_error": 0.016782215499795045,
+          "radius_error": 0.03868234249345304,
+          "landing_arc_deg": 94.22179873356743,
+          "prev_arc_deg": 86.76841574109841,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 60000,
+          "n_contacts_p1": 12,
+          "fit_centre": [
+            2.973376897030211,
+            -0.014152915789641776
+          ],
+          "fit_R": 0.9488814181145244,
+          "cond": 46.092602781853074,
+          "centre_error": 0.030151196279562083,
+          "radius_error": 0.05111858188547558,
+          "landing_arc_deg": 96.01935181074731,
+          "prev_arc_deg": 90.63138792961138,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 70000,
+          "n_contacts_p1": 26,
+          "fit_centre": [
+            3.0356337957384962,
+            0.01646393836942982
+          ],
+          "fit_R": 0.9924208765603635,
+          "cond": 35.09058680428548,
+          "centre_error": 0.039253390495156665,
+          "radius_error": 0.007579123439636515,
+          "landing_arc_deg": 160.7912161059711,
+          "prev_arc_deg": 151.10634997956163,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 80000,
+          "n_contacts_p1": 16,
+          "fit_centre": [
+            2.9066644797836987,
+            0.01128789390966415
+          ],
+          "fit_R": 0.8916559865138192,
+          "cond": 56.968563438246434,
+          "centre_error": 0.09401561510176606,
+          "radius_error": 0.10834401348618083,
+          "landing_arc_deg": 86.52690493831972,
+          "prev_arc_deg": 78.87289002836093,
+          "recovers_centre": true,
+          "recovers_both": false
+        },
+        {
+          "seed": 90000,
+          "n_contacts_p1": 19,
+          "fit_centre": [
+            2.991468955366466,
+            -0.01863256826694879
+          ],
+          "fit_R": 0.96681995661834,
+          "cond": 15.026838464591142,
+          "centre_error": 0.020492713894500487,
+          "radius_error": 0.03318004338166003,
+          "landing_arc_deg": 175.65317495187054,
+          "prev_arc_deg": 172.50419140463413,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 100000,
+          "n_contacts_p1": 11,
+          "fit_centre": [
+            3.000143262574992,
+            0.0014363126207935578
+          ],
+          "fit_R": 0.9767484126170936,
+          "cond": 13.702734049130463,
+          "centre_error": 0.001443439680085105,
+          "radius_error": 0.023251587382906447,
+          "landing_arc_deg": 228.33102579048085,
+          "prev_arc_deg": 229.85810693764336,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 110000,
+          "n_contacts_p1": 12,
+          "fit_centre": [
+            2.998263240745273,
+            0.005151624490641291
+          ],
+          "fit_R": 0.9787397817848715,
+          "cond": 29.690623641358066,
+          "centre_error": 0.005436503251305422,
+          "radius_error": 0.021260218215128468,
+          "landing_arc_deg": 135.69395074078216,
+          "prev_arc_deg": 132.36327401262895,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 120000,
+          "n_contacts_p1": 24,
+          "fit_centre": [
+            2.9870035902776713,
+            -0.027974979042903414
+          ],
+          "fit_R": 0.9568510794781094,
+          "cond": 24.589745194443736,
+          "centre_error": 0.030846492800989972,
+          "radius_error": 0.043148920521890566,
+          "landing_arc_deg": 143.08910222156953,
+          "prev_arc_deg": 140.4297387692705,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 130000,
+          "n_contacts_p1": 3,
+          "fit_centre": [
+            2.7192566121363515,
+            0.0009090045652807575
+          ],
+          "fit_R": 0.7554785901793634,
+          "cond": 109.37364504610612,
+          "centre_error": 0.2807448594693386,
+          "radius_error": 0.24452140982063664,
+          "landing_arc_deg": 67.78525093990925,
+          "prev_arc_deg": 61.240160356206445,
+          "recovers_centre": false,
+          "recovers_both": false
+        },
+        {
+          "seed": 140000,
+          "n_contacts_p1": 41,
+          "fit_centre": [
+            2.8729519708317253,
+            0.04302902428870406
+          ],
+          "fit_R": 0.8536896947089023,
+          "cond": 85.6710732014442,
+          "centre_error": 0.13413686535319316,
+          "radius_error": 0.14631030529109768,
+          "landing_arc_deg": 81.65689723560763,
+          "prev_arc_deg": 80.10706717772166,
+          "recovers_centre": false,
+          "recovers_both": false
+        },
+        {
+          "seed": 150000,
+          "n_contacts_p1": 30,
+          "fit_centre": [
+            2.9970823119308823,
+            0.0027341484955771098
+          ],
+          "fit_R": 0.9812946797905727,
+          "cond": 18.566190764746022,
+          "centre_error": 0.0039985586983985345,
+          "radius_error": 0.01870532020942728,
+          "landing_arc_deg": 173.82372462034513,
+          "prev_arc_deg": 167.63731118885548,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 160000,
+          "n_contacts_p1": 8,
+          "fit_centre": [
+            2.79425480956908,
+            -0.005286261020786613
+          ],
+          "fit_R": 0.7764509357936082,
+          "cond": 63.905077393191476,
+          "centre_error": 0.20581308981946583,
+          "radius_error": 0.22354906420639176,
+          "landing_arc_deg": 70.61022890622121,
+          "prev_arc_deg": 70.54792945179611,
+          "recovers_centre": false,
+          "recovers_both": false
+        },
+        {
+          "seed": 170000,
+          "n_contacts_p1": 18,
+          "fit_centre": [
+            2.980942860219095,
+            -0.001260123002412014
+          ],
+          "fit_R": 0.96619014410044,
+          "cond": 56.07162298968923,
+          "centre_error": 0.019098756153481996,
+          "radius_error": 0.03380985589955998,
+          "landing_arc_deg": 112.93918566226472,
+          "prev_arc_deg": 105.12255524139826,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 180000,
+          "n_contacts_p1": 12,
+          "fit_centre": [
+            2.94687191719942,
+            -0.022026988012318928
+          ],
+          "fit_R": 0.9346330629982481,
+          "cond": 34.78022814757962,
+          "centre_error": 0.057513314831959594,
+          "radius_error": 0.06536693700175189,
+          "landing_arc_deg": 110.62877433093462,
+          "prev_arc_deg": 107.23637184492475,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 190000,
+          "n_contacts_p1": 25,
+          "fit_centre": [
+            2.995022335716723,
+            -0.00054387345003095
+          ],
+          "fit_R": 0.9764818876353586,
+          "cond": 12.5204030579601,
+          "centre_error": 0.005007288692162727,
+          "radius_error": 0.023518112364641408,
+          "landing_arc_deg": 208.82120030706238,
+          "prev_arc_deg": 204.64343083273016,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 200000,
+          "n_contacts_p1": 16,
+          "fit_centre": [
+            2.9803545130432814,
+            0.0012715436400941751
+          ],
+          "fit_R": 0.9543925289436406,
+          "cond": 22.297742645824247,
+          "centre_error": 0.01968659394093519,
+          "radius_error": 0.04560747105635943,
+          "landing_arc_deg": 131.39899350269408,
+          "prev_arc_deg": 128.35318598830582,
+          "recovers_centre": true,
+          "recovers_both": true
+        }
+      ]
+    },
+    "arc240": {
+      "label": "arc240",
+      "start_arc_deg": 240.0,
+      "n_rollouts": 15,
+      "n_recovering_centre": 20,
+      "n_recovering_both": 20,
+      "n_with_enough_contacts": 20,
+      "median_contacts": 15.0,
+      "median_landing_arc_deg": 184.96774524683562,
+      "median_prev_arc_deg": 181.65505055627787,
+      "rows": [
+        {
+          "seed": 10000,
+          "n_contacts_p1": 12,
+          "fit_centre": [
+            3.005082939088196,
+            -0.038400872782616974
+          ],
+          "fit_R": 0.999351927544238,
+          "cond": 16.70618044224462,
+          "centre_error": 0.03873581418069127,
+          "radius_error": 0.0006480724557620388,
+          "landing_arc_deg": 119.86268675258916,
+          "prev_arc_deg": 112.76056512264768,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 20000,
+          "n_contacts_p1": 9,
+          "fit_centre": [
+            2.974586718082196,
+            0.005922673140995489
+          ],
+          "fit_R": 0.9534060139345526,
+          "cond": 18.17605332624407,
+          "centre_error": 0.026094308861682066,
+          "radius_error": 0.0465939860654474,
+          "landing_arc_deg": 201.4799725401764,
+          "prev_arc_deg": 191.31903486758387,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 30000,
+          "n_contacts_p1": 20,
+          "fit_centre": [
+            2.9799809687481047,
+            0.013648695733574832
+          ],
+          "fit_R": 0.9683967591797658,
+          "cond": 27.796011525109716,
+          "centre_error": 0.024229083917723028,
+          "radius_error": 0.031603240820234246,
+          "landing_arc_deg": 181.1968038092042,
+          "prev_arc_deg": 176.28857093918674,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 40000,
+          "n_contacts_p1": 35,
+          "fit_centre": [
+            3.006643530453114,
+            0.006625935188490136
+          ],
+          "fit_R": 0.9847655231588216,
+          "cond": 19.03690244638935,
+          "centre_error": 0.009382937386742103,
+          "radius_error": 0.015234476841178402,
+          "landing_arc_deg": 191.14099159399152,
+          "prev_arc_deg": 189.41683174894177,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 50000,
+          "n_contacts_p1": 15,
+          "fit_centre": [
+            2.9871548128479333,
+            -0.006728743003308916
+          ],
+          "fit_R": 0.963211783046491,
+          "cond": 18.89367208604534,
+          "centre_error": 0.01450085567737983,
+          "radius_error": 0.03678821695350898,
+          "landing_arc_deg": 157.240493658756,
+          "prev_arc_deg": 145.47500235642093,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 60000,
+          "n_contacts_p1": 12,
+          "fit_centre": [
+            3.0271347500741737,
+            -0.0021917183286388952
+          ],
+          "fit_R": 0.9792177427999261,
+          "cond": 59.971741124138006,
+          "centre_error": 0.027223120519513533,
+          "radius_error": 0.020782257200073873,
+          "landing_arc_deg": 80.31606794300626,
+          "prev_arc_deg": 76.79361765331328,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 70000,
+          "n_contacts_p1": 16,
+          "fit_centre": [
+            2.99925546849777,
+            -0.005632124639041068
+          ],
+          "fit_R": 0.9825232425115697,
+          "cond": 17.70904908208323,
+          "centre_error": 0.005681122697804205,
+          "radius_error": 0.01747675748843025,
+          "landing_arc_deg": 233.24301140995567,
+          "prev_arc_deg": 232.84047385333417,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 80000,
+          "n_contacts_p1": 12,
+          "fit_centre": [
+            3.019378544535721,
+            0.009837927031980116
+          ],
+          "fit_R": 0.9736933920462653,
+          "cond": 19.234406636246643,
+          "centre_error": 0.021732758605604818,
+          "radius_error": 0.02630660795373474,
+          "landing_arc_deg": 198.21214363669026,
+          "prev_arc_deg": 201.24664102016533,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 90000,
+          "n_contacts_p1": 19,
+          "fit_centre": [
+            3.0062819791452973,
+            0.007180522611309642
+          ],
+          "fit_R": 0.9889705665614594,
+          "cond": 25.195678082081493,
+          "centre_error": 0.009540606215198215,
+          "radius_error": 0.01102943343854057,
+          "landing_arc_deg": 168.05911053326088,
+          "prev_arc_deg": 162.03186219889875,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 100000,
+          "n_contacts_p1": 15,
+          "fit_centre": [
+            2.968024336690077,
+            -0.01428200621315503
+          ],
+          "fit_R": 0.9519939824872538,
+          "cond": 15.118188584128678,
+          "centre_error": 0.03502026192909127,
+          "radius_error": 0.048006017512746246,
+          "landing_arc_deg": 247.03569440514588,
+          "prev_arc_deg": 251.69015412781516,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 110000,
+          "n_contacts_p1": 10,
+          "fit_centre": [
+            3.024236283114025,
+            0.00427858410449745
+          ],
+          "fit_R": 0.9967463669623005,
+          "cond": 36.01872547197024,
+          "centre_error": 0.024611048354802413,
+          "radius_error": 0.0032536330376995437,
+          "landing_arc_deg": 154.95505970956788,
+          "prev_arc_deg": 151.53273929668467,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 120000,
+          "n_contacts_p1": 18,
+          "fit_centre": [
+            2.9712558728433494,
+            0.012792657843551391
+          ],
+          "fit_R": 0.9633317239872305,
+          "cond": 27.55892495971874,
+          "centre_error": 0.03146230984368246,
+          "radius_error": 0.03666827601276945,
+          "landing_arc_deg": 188.73868668446704,
+          "prev_arc_deg": 187.97121859399027,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 130000,
+          "n_contacts_p1": 8,
+          "fit_centre": [
+            3.0582259229447777,
+            0.019572539020336285
+          ],
+          "fit_R": 0.9945326974568016,
+          "cond": 51.654177738922506,
+          "centre_error": 0.06142753768851373,
+          "radius_error": 0.005467302543198382,
+          "landing_arc_deg": 165.44344487527377,
+          "prev_arc_deg": 166.19282414840404,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 140000,
+          "n_contacts_p1": 31,
+          "fit_centre": [
+            2.989690385421828,
+            0.012521816632012942
+          ],
+          "fit_R": 0.9696552020588572,
+          "cond": 18.582658876239435,
+          "centre_error": 0.016219865736688717,
+          "radius_error": 0.030344797941142754,
+          "landing_arc_deg": 177.21979272960886,
+          "prev_arc_deg": 168.79001555681725,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 150000,
+          "n_contacts_p1": 7,
+          "fit_centre": [
+            3.0082111678836156,
+            0.0019938261409644677
+          ],
+          "fit_R": 0.9646031130731736,
+          "cond": 24.40383586497953,
+          "centre_error": 0.008449770452107814,
+          "radius_error": 0.03539688692682641,
+          "landing_arc_deg": 208.78788326081528,
+          "prev_arc_deg": 208.6458217379469,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 160000,
+          "n_contacts_p1": 13,
+          "fit_centre": [
+            2.9655713278070497,
+            -0.010818237132824161
+          ],
+          "fit_R": 0.9394706811621422,
+          "cond": 16.873367365026727,
+          "centre_error": 0.036088332236772123,
+          "radius_error": 0.06052931883785784,
+          "landing_arc_deg": 197.8805140421581,
+          "prev_arc_deg": 185.56537456495602,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 170000,
+          "n_contacts_p1": 12,
+          "fit_centre": [
+            3.024834500790175,
+            -0.00757142177372083
+          ],
+          "fit_R": 0.9736945031487073,
+          "cond": 25.16810164942325,
+          "centre_error": 0.025963028659475997,
+          "radius_error": 0.026305496851292687,
+          "landing_arc_deg": 171.27043217823672,
+          "prev_arc_deg": 177.74472654759973,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 180000,
+          "n_contacts_p1": 16,
+          "fit_centre": [
+            2.981780809151349,
+            0.025212036335268015
+          ],
+          "fit_R": 0.950544836396028,
+          "cond": 17.54151829464594,
+          "centre_error": 0.03110603946744809,
+          "radius_error": 0.04945516360397195,
+          "landing_arc_deg": 166.71210855727227,
+          "prev_arc_deg": 168.47010961346976,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 190000,
+          "n_contacts_p1": 28,
+          "fit_centre": [
+            2.9932903760673133,
+            0.002298020141227874
+          ],
+          "fit_R": 0.9716497246995461,
+          "cond": 16.68796720312275,
+          "centre_error": 0.007092245757697005,
+          "radius_error": 0.028350275300453864,
+          "landing_arc_deg": 285.9212687928602,
+          "prev_arc_deg": 279.42863689371393,
+          "recovers_centre": true,
+          "recovers_both": true
+        },
+        {
+          "seed": 200000,
+          "n_contacts_p1": 16,
+          "fit_centre": [
+            3.0068322643153067,
+            0.0064227298205957045
+          ],
+          "fit_R": 0.9703057200360673,
+          "cond": 15.265279555210528,
+          "centre_error": 0.009377168763682494,
+          "radius_error": 0.0296942799639327,
+          "landing_arc_deg": 222.74239037892403,
+          "prev_arc_deg": 217.93015059982713,
+          "recovers_centre": true,
+          "recovers_both": true
+        }
+      ]
+    }
+  },
+  "reading": "The contact landings cover a median ~110 degrees of the circle, so the evidence is partial rather than either full or a thin crescent. Even so, a plain least-squares circle fit on those landings -- three lines of linear algebra, no prior, no LLM -- recovers both constants within a tenth of the radius on 12 of 20 samples and the centre alone on 13. GPT-5.x, given the form and asked for the constants, recovers them on 0 of 20, INCLUDING on the samples where the fit succeeds. So on those samples the region is recoverable from the evidence and the synthesizer does not recover it: the negative is an induction failure, not a limit of the evidence and not an inability to fit constants (given the centres it fits the radius exactly, 20 of 20). On the 8 samples where the trivial fit also fails, the negative is NOT attributable to the synthesizer, and we do not attribute it."
+}

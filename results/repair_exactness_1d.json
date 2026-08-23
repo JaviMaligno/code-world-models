@@ -1,0 +1,113 @@
+{
+  "script": "repair_exactness_1d.py",
+  "tolerance": 1e-09,
+  "criterion": "an artifact the paper counts as REPAIRED (gate 1.000 and mode_blindness 0) is re-tested against the truth on a dense (state, action) grid; an invented mode shows up as a mismatch where the truth does NOT fire its mode",
+  "arms": {
+    "cart_xwall8": {
+      "n_repaired": 30,
+      "n_exact": 30,
+      "n_with_invented_mode": 0,
+      "n_missing_true_mode": 0,
+      "exceptions": []
+    },
+    "cart_xwall4": {
+      "n_repaired": 3,
+      "n_exact": 3,
+      "n_with_invented_mode": 0,
+      "n_missing_true_mode": 0,
+      "exceptions": []
+    },
+    "pendulum_thstop1.4": {
+      "n_repaired": 36,
+      "n_exact": 32,
+      "n_with_invented_mode": 4,
+      "n_missing_true_mode": 0,
+      "exceptions": [
+        {
+          "file": "continuous_synthesis_pendulum_mini_thstop1.4.json",
+          "seed": 50000,
+          "model": "gpt-5.4-mini",
+          "rules": [
+            "if th2 >= 1.4:",
+            "elif th2 <= -1.4:"
+          ],
+          "n_grid": 1275,
+          "n_mismatch": 280,
+          "exact": false,
+          "mismatch_x_min": -2.5,
+          "mismatch_x_max": -1.1,
+          "n_mismatch_where_truth_fires": 0,
+          "n_mismatch_where_truth_does_not": 280,
+          "invents_a_mode": true,
+          "misses_the_true_mode": false
+        },
+        {
+          "file": "continuous_synthesis_pendulum_mini_thstop1.4.json",
+          "seed": 70000,
+          "model": "gpt-5.4-mini",
+          "rules": [
+            "if th2 >= 1.4:",
+            "elif th2 <= -2.0:"
+          ],
+          "n_grid": 1275,
+          "n_mismatch": 131,
+          "exact": false,
+          "mismatch_x_min": -2.5,
+          "mismatch_x_max": -1.7,
+          "n_mismatch_where_truth_fires": 0,
+          "n_mismatch_where_truth_does_not": 131,
+          "invents_a_mode": true,
+          "misses_the_true_mode": false
+        },
+        {
+          "file": "continuous_synthesis_pendulum_large_thstop1.4_off20.json",
+          "seed": 260000,
+          "model": "gpt-5.4",
+          "rules": [
+            "if th2 > 1.4:",
+            "elif th2 < -2.0:"
+          ],
+          "n_grid": 1275,
+          "n_mismatch": 131,
+          "exact": false,
+          "mismatch_x_min": -2.5,
+          "mismatch_x_max": -1.7,
+          "n_mismatch_where_truth_fires": 0,
+          "n_mismatch_where_truth_does_not": 131,
+          "invents_a_mode": true,
+          "misses_the_true_mode": false
+        },
+        {
+          "file": "continuous_synthesis_pendulum_large_thstop1.4_off20.json",
+          "seed": 280000,
+          "model": "gpt-5.4",
+          "rules": [
+            "if th2 > 1.4:",
+            "elif th2 < -2.0:"
+          ],
+          "n_grid": 1275,
+          "n_mismatch": 131,
+          "exact": false,
+          "mismatch_x_min": -2.5,
+          "mismatch_x_max": -1.7,
+          "n_mismatch_where_truth_fires": 0,
+          "n_mismatch_where_truth_does_not": 131,
+          "invents_a_mode": true,
+          "misses_the_true_mode": false
+        }
+      ]
+    },
+    "pendulum_thstop1": {
+      "n_repaired": 40,
+      "n_exact": 40,
+      "n_with_invented_mode": 0,
+      "n_missing_true_mode": 0,
+      "exceptions": []
+    }
+  },
+  "totals": {
+    "n_repaired": 109,
+    "n_exact": 105,
+    "n_not_exact": 4
+  }
+}

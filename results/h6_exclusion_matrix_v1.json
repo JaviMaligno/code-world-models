@@ -1,0 +1,212 @@
+{
+  "causal_status": "The matrix narrows tested explanations but does not identify a unique internal LLM mechanism.",
+  "factorial_followups": [
+    {
+      "factors": [
+        "prompt guidance",
+        "example/failure-line budget",
+        "iteration budget"
+      ],
+      "why": "separate the three components jointly changed by intervention 1"
+    },
+    {
+      "factors": [
+        "post-state semantics",
+        "mode-evidence quantity"
+      ],
+      "why": "cross clamp/landing semantics with calibrated equal contact dose"
+    },
+    {
+      "factors": [
+        "angular coverage",
+        "start distribution"
+      ],
+      "why": "vary coverage within each start-family or importance-reweight to a common trajectory law"
+    },
+    {
+      "factors": [
+        "trigger arity",
+        "identifiability"
+      ],
+      "why": "use a bounded one-coordinate region whose near and far faces are reachable"
+    }
+  ],
+  "positive_statement": "On every widest-coverage block the specified circle fit recovers the located rule, while neither tested synthesis arm does (0/40); when form and location are supplied, the withheld radius is recovered 20/20.",
+  "rows": [
+    {
+      "changed_variables": [
+        "prompt order and de-bias instruction",
+        "examples 40->120",
+        "failure lines 20->40",
+        "iterations 5->15"
+      ],
+      "experimental_unit": "20 reused rollout-seed blocks; 40 GPT-5.x draws",
+      "id": 1,
+      "intervention": "region-first guidance and 3x budget",
+      "licensed_inference": "the tested joint prompt-and-budget escalation did not suffice",
+      "not_licensed": "prompting in general, longer context, tools, or persistent refinement cannot work",
+      "outcome": "behavioural recovery: gate pass, mode probe, and exact grid agreement",
+      "positive_control": "the stated full region is translated at gate 1.000",
+      "prediction_status": "post-hoc; no preregistered direction",
+      "result": "0/40 behavioural repairs; failure class changes from half-planes toward bounded evidence-hull templates",
+      "target_hypothesis": "default prompting or insufficient synthesis/refinement budget",
+      "unavoidable_cochanges": [
+        "context length",
+        "number of optimization opportunities"
+      ],
+      "unit_note": "draw counts are descriptive; rollout-seed blocks are the sampling unit"
+    },
+    {
+      "changed_variables": [
+        "region geometry: disc->square",
+        "predicate algebra: quadratic->max/abs"
+      ],
+      "experimental_unit": "20 reused rollout-seed blocks; 40 GPT-5.x draws",
+      "id": 2,
+      "intervention": "axis-aligned square with flat edges",
+      "licensed_inference": "removing curvature in this matched plant did not suffice",
+      "not_licensed": "geometry is irrelevant to induction",
+      "outcome": "behavioural recovery: gate pass, mode probe, and exact grid agreement",
+      "positive_control": "full square clause translated 40/40 at zero refinement",
+      "prediction_status": "post-hoc directional diagnostic",
+      "result": "0/40 behavioural repairs; artifacts often write discs on square evidence",
+      "target_hypothesis": "circle curvature causes the induction failure",
+      "unavoidable_cochanges": [
+        "contact geometry and distribution",
+        "truth clause"
+      ],
+      "unit_note": "draw counts are descriptive; rollout-seed blocks are the sampling unit"
+    },
+    {
+      "changed_variables": [
+        "model family",
+        "relay execution path"
+      ],
+      "experimental_unit": "3 mode-containing rollout-seed blocks; one draw per block",
+      "id": 3,
+      "intervention": "second model family (Claude relay)",
+      "licensed_inference": "the qualitative failure class is not confined to the tested GPT-5.x implementation",
+      "not_licensed": "cross-family prevalence or a universal LLM mechanism",
+      "outcome": "behavioural recovery: gate pass, mode probe, and exact grid agreement",
+      "positive_control": "one full-clause control translates the rule at iteration 0",
+      "prediction_status": "post-hoc exploratory spot-check",
+      "result": "0/3 repairs; period-2 cycles traverse the same low-complexity template classes",
+      "target_hypothesis": "the observed template failures are unique to GPT-5.x",
+      "unavoidable_cochanges": [
+        "provider training data and decoding stack"
+      ],
+      "unit_note": "draw counts are descriptive; rollout-seed blocks are the sampling unit"
+    },
+    {
+      "changed_variables": [
+        "predicate arity 2->1",
+        "disc->slab",
+        "mode count 2->1"
+      ],
+      "experimental_unit": "20 reused rollout-seed blocks; 40 GPT-5.x draws",
+      "id": 4,
+      "intervention": "one-coordinate slab",
+      "licensed_inference": "none about arity; the intervention reveals an observational equivalence class",
+      "not_licensed": "arity has been excluded as a cause",
+      "outcome": "behavioural recovery: gate pass, mode probe, and exact grid agreement",
+      "positive_control": "full slab clause translated 40/40 at zero refinement",
+      "prediction_status": "post-hoc diagnostic whose assumed repair target failed admissibility",
+      "result": "0/40 behavioural repairs; 19/20 large-model draws instead find an unfalsifiable near-face half-plane",
+      "target_hypothesis": "lower trigger arity restores induction",
+      "unavoidable_cochanges": [
+        "the slab screens the far mode",
+        "the target becomes observationally non-identifiable"
+      ],
+      "unit_note": "draw counts are descriptive; rollout-seed blocks are the sampling unit"
+    },
+    {
+      "changed_variables": [
+        "one prompt sentence names the landing state"
+      ],
+      "experimental_unit": "20 reused rollout-seed blocks; 40 GPT-5.x draws",
+      "id": 5,
+      "intervention": "name the trigger's landing-state argument",
+      "licensed_inference": "explicitly naming the argument did not suffice",
+      "not_licensed": "all variable-binding errors are eliminated",
+      "outcome": "behavioural recovery: gate pass, mode probe, and exact grid agreement",
+      "positive_control": "matched region-guided comparator and executable full clause",
+      "prediction_status": "post-hoc diagnostic",
+      "result": "0/40 behavioural repairs; failures shift toward memorizing contact locations",
+      "target_hypothesis": "variable identification blocks region induction",
+      "unavoidable_cochanges": [
+        "prompt text"
+      ],
+      "unit_note": "draw counts are descriptive; rollout-seed blocks are the sampling unit"
+    },
+    {
+      "changed_variables": [
+        "post-contact state: previous position->landing position"
+      ],
+      "experimental_unit": "20 reused rollout-seed blocks; 40 GPT-5.x draws",
+      "id": 6,
+      "intervention": "stop at the interior landing point",
+      "licensed_inference": "lifting interior censoring while increasing mode evidence did not suffice",
+      "not_licensed": "post-state semantics have no causal role",
+      "outcome": "behavioural recovery: gate pass, mode probe, and exact grid agreement",
+      "positive_control": "full clause translated 40/40; interior-witness count is measured",
+      "prediction_status": "post-hoc directional hypothesis expected to restore repair",
+      "result": "0/40 behavioural repairs and no incomplete gate passes",
+      "target_hypothesis": "freeze semantics fail because they censor interior states",
+      "unavoidable_cochanges": [
+        "dwell time",
+        "mode-transition share rises about 11x"
+      ],
+      "unit_note": "draw counts are descriptive; rollout-seed blocks are the sampling unit"
+    },
+    {
+      "changed_variables": [
+        "post-contact state: previous position->radial boundary projection"
+      ],
+      "experimental_unit": "20 reused rollout-seed blocks; 40 GPT-5.x draws",
+      "id": 7,
+      "intervention": "project contacts to the boundary",
+      "licensed_inference": "breaking entry-only equivalence at matched evidence did not suffice",
+      "not_licensed": "all evidence-censoring explanations are excluded",
+      "outcome": "behavioural recovery: gate pass, mode probe, and exact grid agreement",
+      "positive_control": "full clause translated in all 40 cells; three contacts identify a circle in 20/20 blocks",
+      "prediction_status": "post-hoc complementary diagnostic",
+      "result": "0/40 behavioural repairs and no incomplete gate passes",
+      "target_hypothesis": "the entry-only evidence class causes the failure",
+      "unavoidable_cochanges": [
+        "post-state rule complexity",
+        "contact locations"
+      ],
+      "unit_note": "draw counts are descriptive; rollout-seed blocks are the sampling unit"
+    },
+    {
+      "changed_variables": [
+        "start distribution",
+        "rollout count",
+        "contact arc about 111->185 degrees"
+      ],
+      "experimental_unit": "20 rollout-seed blocks; 20 no-hint and 20 form-hint draws",
+      "id": 8,
+      "intervention": "increase angular contact coverage at calibrated contact count",
+      "licensed_inference": "coverage sufficient for the declared estimator did not suffice for either tested synthesis arm",
+      "not_licensed": "arbitrary coverage or tool-assisted fitting cannot restore induction",
+      "outcome": "behavioural recovery: gate pass, mode probe, and exact grid agreement",
+      "positive_control": "least-squares circle fit succeeds 20/20; radius-only synthesis control repairs 20/20",
+      "prediction_status": "direction recorded before this run (B21), but question arose post-hoc; not preregistered",
+      "result": "0/40 behavioural repairs",
+      "target_hypothesis": "insufficient boundary coverage prevents a located-circle fit",
+      "unavoidable_cochanges": [
+        "trajectory distribution"
+      ],
+      "unit_note": "draw counts are descriptive; rollout-seed blocks are the sampling unit"
+    }
+  ],
+  "script": "h6_exclusion_matrix.py",
+  "source": "results/arity_evidence_ablations.json",
+  "surviving_mechanism_classes": [
+    "failure to execute an algebraic/geometric fit over textual transitions",
+    "a refinement loop that does not retain a stable located hypothesis",
+    "an objective/prompt that rewards sample fit without explicit system identification",
+    "other model-internal causes not separated by these interventions"
+  ],
+  "version": 1
+}

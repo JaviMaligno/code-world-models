@@ -1,0 +1,155 @@
+{
+  "script": "play_cost_proved_bounds.py",
+  "params": {
+    "walls": [
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      8.0,
+      10.0
+    ],
+    "oracle_policies": 4000,
+    "seed": 31337
+  },
+  "J_truth": 17.7722,
+  "J_rand": 0.5343,
+  "rows": [
+    {
+      "x_wall": 2.0,
+      "J_max_proved": 18.009113866645205,
+      "oracle_best": 18.009113701812517,
+      "oracle_within_bound": true,
+      "slack_ratio": 1.0000000091527375,
+      "right_plateau_cap": 2.0611536181902037e-09,
+      "leftmost_reachable": -50.99407947370875,
+      "J_min_proved": 2.8657361787775323e-06,
+      "min_reward": 3.5821702234719155e-08,
+      "argmin_x": 1.999999999999993
+    },
+    {
+      "x_wall": 3.0,
+      "J_max_proved": 18.00911492015128,
+      "oracle_best": 18.009113701812517,
+      "oracle_within_bound": true,
+      "slack_ratio": 1.000000067651234,
+      "right_plateau_cap": 1.522997951276035e-08,
+      "leftmost_reachable": -50.99407947370875,
+      "J_min_proved": 1.334688530430891e-06,
+      "min_reward": 1.668360663038614e-08,
+      "argmin_x": 2.6989830069340712
+    },
+    {
+      "x_wall": 4.0,
+      "J_max_proved": 18.009122704565883,
+      "oracle_best": 18.009113701812517,
+      "oracle_within_bound": true,
+      "slack_ratio": 1.000000499899857,
+      "right_plateau_cap": 1.12535162055095e-07,
+      "leftmost_reachable": -50.99407947370875,
+      "J_min_proved": 1.3346885602073072e-06,
+      "min_reward": 1.668360700259134e-08,
+      "argmin_x": 2.6991150500494214
+    },
+    {
+      "x_wall": 5.0,
+      "J_max_proved": 18.009180223995124,
+      "oracle_best": 18.009113701812517,
+      "oracle_within_bound": true,
+      "slack_ratio": 1.0000036938065753,
+      "right_plateau_cap": 8.315280276641321e-07,
+      "leftmost_reachable": -50.99407947370875,
+      "J_min_proved": 1.3346885475260508e-06,
+      "min_reward": 1.6683606844075637e-08,
+      "argmin_x": 2.698923304027936
+    },
+    {
+      "x_wall": 6.0,
+      "J_max_proved": 18.009605235721104,
+      "oracle_best": 18.009113701812517,
+      "oracle_within_bound": true,
+      "slack_ratio": 1.0000272936201484,
+      "right_plateau_cap": 6.144174602214718e-06,
+      "leftmost_reachable": -50.99407947370875,
+      "J_min_proved": 1.3346885577222269e-06,
+      "min_reward": 1.6683606971527837e-08,
+      "argmin_x": 2.698902916882787
+    },
+    {
+      "x_wall": 8.0,
+      "J_max_proved": 18.035941712190255,
+      "oracle_best": 18.009113701812517,
+      "oracle_within_bound": true,
+      "slack_ratio": 1.0014896907655726,
+      "right_plateau_cap": 0.0003353501304664781,
+      "leftmost_reachable": -50.99407947370875,
+      "J_min_proved": 1.3346885460905155e-06,
+      "min_reward": 1.6683606826131442e-08,
+      "argmin_x": 2.6990869888898956
+    },
+    {
+      "x_wall": 10.0,
+      "J_max_proved": 19.44801049872022,
+      "oracle_best": 18.009113701812517,
+      "oracle_within_bound": true,
+      "slack_ratio": 1.079898257112058,
+      "right_plateau_cap": 0.01798620996209156,
+      "leftmost_reachable": -50.99407947370875,
+      "J_min_proved": 1.3346885289307173e-06,
+      "min_reward": 1.6683606611633967e-08,
+      "argmin_x": 2.699008686997068
+    }
+  ],
+  "pinning_structure": [
+    {
+      "x_wall": 2.0,
+      "steps_to_wall_full_thrust": 14,
+      "imagined_return_right": 8.306201936159045,
+      "imagined_return_left": 5.694909259757923,
+      "asymmetry_ratio": 1.4585310418997128
+    },
+    {
+      "x_wall": 3.0,
+      "steps_to_wall_full_thrust": 16,
+      "imagined_return_right": 8.306201936159045,
+      "imagined_return_left": 5.694909259757923,
+      "asymmetry_ratio": 1.4585310418997128
+    },
+    {
+      "x_wall": 4.0,
+      "steps_to_wall_full_thrust": 19,
+      "imagined_return_right": 8.306201936159045,
+      "imagined_return_left": 5.694909259757923,
+      "asymmetry_ratio": 1.4585310418997128
+    },
+    {
+      "x_wall": 5.0,
+      "steps_to_wall_full_thrust": 21,
+      "imagined_return_right": 8.306201936159045,
+      "imagined_return_left": 5.694909259757923,
+      "asymmetry_ratio": 1.4585310418997128
+    },
+    {
+      "x_wall": 6.0,
+      "steps_to_wall_full_thrust": 23,
+      "imagined_return_right": 8.306201936159045,
+      "imagined_return_left": 5.694909259757923,
+      "asymmetry_ratio": 1.4585310418997128
+    },
+    {
+      "x_wall": 8.0,
+      "steps_to_wall_full_thrust": 27,
+      "imagined_return_right": 8.306201936159045,
+      "imagined_return_left": 5.694909259757923,
+      "asymmetry_ratio": 1.4585310418997128
+    },
+    {
+      "x_wall": 10.0,
+      "steps_to_wall_full_thrust": 30,
+      "imagined_return_right": 8.306201936159045,
+      "imagined_return_left": 5.694909259757923,
+      "asymmetry_ratio": 1.4585310418997128
+    }
+  ]
+}

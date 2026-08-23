@@ -49,12 +49,14 @@ _REPO = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO / "src"))
 sys.path.insert(0, str(_REPO / "scripts"))
 
-from cwm.continuous.envs import CartWall, PendulumStop, RingField2D  # noqa: E402
+from cwm.continuous.envs import (CartWall, PatchField2D,  # noqa: E402
+                                 PendulumStop, RingField2D)
 from cwm.continuous import harness  # noqa: E402
 from cwm.continuous.contract import (  # noqa: E402
     SynthesizedModel, build_contract, build_synthesis_messages,
     collect_transitions, contract_accuracy, mode_blindness,
     sample_contains_mode)
+from cwm.continuous.instruments import spec_for  # noqa: E402
 from cwm.synthesizer import extract_code  # noqa: E402
 
 # Reuse (do not reimplement) the ring2d prompt-variant table and the per-seed
@@ -73,7 +75,8 @@ ap.add_argument("cmd", choices=["init", "check"])
 ap.add_argument("seed", type=int)
 ap.add_argument("outdir")
 ap.add_argument("iter_or_reply", nargs="*", default=[])
-ap.add_argument("--instrument", choices=["cart", "pendulum", "ring2d"],
+ap.add_argument("--instrument",
+                choices=["cart", "pendulum", "ring2d", "patch2d"],
                 default="cart")
 ap.add_argument("--arm", choices=["incomplete", "full"], default="incomplete")
 ap.add_argument("--gap", type=float, default=0.0,
@@ -89,12 +92,22 @@ ap.add_argument("--prompt-variant", choices=["default", "region", "tda"],
                 help="ring2d-only confound-closure knob (paper 2 s10 / "
                 "paper 3); see continuous_danger_synthesis.py --help for the "
                 "full description of each variant")
+ap.add_argument("--k1", type=float, default=3.0,
+                help="patch2d: x of the near patch center (the common mode)")
+ap.add_argument("--k2", type=float, default=7.0,
+                help="patch2d: x of the far patch center (the rare mode)")
+ap.add_argument("--model-label", default="claude-sonnet (agent-relayed)",
+                help="the exact model that answered the relayed messages, "
+                     "recorded verbatim in the results so the arm is "
+                     "attributable to a named model")
 args = ap.parse_args()
 
 if args.instrument != "ring2d" and (
         args.gap != 0.0 or args.channel != "facing" or args.start != "outside"
         or args.prompt_variant != "default"):
     ap.error("--gap/--channel/--start/--prompt-variant are ring2d knobs")
+if args.instrument != "patch2d" and (args.k1 != 3.0 or args.k2 != 7.0):
+    ap.error("--k1/--k2 are patch2d knobs")
 
 if args.instrument == "ring2d":
     ENV = RingField2D(
@@ -109,17 +122,26 @@ if args.instrument == "ring2d":
               if args.prompt_variant != "default" else "")
     TAG = f"ring2d_{KNOB}{SUFFIX}_{args.arm}"
     RESULTS_NAME = f"claude_results_ring2d_{KNOB}{SUFFIX}.json"
+elif args.instrument == "patch2d":
+    ENV = PatchField2D(p1=(args.k1, 0.0), p2=(args.k2, 0.0))
+    KNOB = f"k{args.k1:g}_{args.k2:g}"
+    # the knob is in the tag because this instrument is run at several knobs
+    TAG = f"patch2d_{KNOB}_{args.arm}"
+    # every knob writes the same file; the cells are told apart by "knob"
+    RESULTS_NAME = "claude_results.json"
 elif args.instrument == "pendulum":
     ENV = PendulumStop(th_stop=1.4)
-    TAG = f"{args.instrument}_{args.arm}"
+    KNOB = "thstop1.4"
+    TAG = f"{args.instrument}_{args.arm}"       # unchanged: 1D transcripts
     RESULTS_NAME = "claude_results.json"
 else:
     ENV = CartWall(x_wall=8.0)
-    TAG = f"{args.instrument}_{args.arm}"
+    KNOB = "xwall8"
+    TAG = f"{args.instrument}_{args.arm}"       # unchanged: 1D transcripts
     RESULTS_NAME = "claude_results.json"
 
-# args.prompt_variant is forced to "default" for cart/pendulum by the guard
-# above, so VARIANT is always {"max_examples": 30, "guidance": "",
+# args.prompt_variant is forced to "default" for cart/pendulum/patch2d by the
+# guard above, so VARIANT is always {"max_examples": 30, "guidance": "",
 # "max_failures": 20} there -- the exact hardcoded values this script used
 # before ring2d support, so init/check stay byte-identical for those paths.
 VARIANT = danger_synthesis.PROMPT_VARIANTS[args.prompt_variant]
@@ -178,9 +200,11 @@ if acc < 1.0 and it < MAX_ITERS:
 
 # terminal: classify (and play if the gate passed), mirroring
 # synthesize_and_evaluate + the danger script's play block.
+_mb = mode_blindness(code, ENV) if acc == 1.0 else None
 cell = {
-    "model": "claude-sonnet (agent-relayed)",
+    "model": args.model_label,
     "instrument": args.instrument,
+    "knob": KNOB,
     "arm": args.arm,
     "seed": args.seed,
     "n_rollouts": N_ROLLOUTS,
@@ -189,7 +213,10 @@ cell = {
     "gate_accuracy": acc,
     "gate_passed": acc == 1.0,
     "refine_iterations": it,
-    "wall_blindness": mode_blindness(code, ENV) if acc == 1.0 else None,
+    # single-mode instruments keep the scalar; multi-mode ones report the mean
+    # here and the per-mode dict below, exactly as synthesize_and_evaluate does
+    "wall_blindness": (_mb if not isinstance(_mb, dict)
+                       else (sum(_mb.values()) / len(_mb) if _mb else None)),
     "code": code,
     "transcript_prefix": str(_msg_path(0))[:-len("_msg0.txt")],
 }
@@ -203,6 +230,10 @@ if args.instrument == "ring2d":
 if GUIDANCE_TEXT:
     cell["guidance_text"] = GUIDANCE_TEXT   # audit trail, mirrors
                                             # synthesize_and_evaluate
+_spec = spec_for(ENV)
+if _spec.sample_modes is not None:
+    cell["mode_blindness"] = _mb
+    cell["sample_contains_mode_per"] = _spec.sample_modes(ENV, transitions)
 if cell["gate_passed"]:
     base_t, base_r = [], []
     for i in range(PLAY_EPISODES):
@@ -223,7 +254,9 @@ results = OUT / RESULTS_NAME
 data = json.loads(results.read_text()) if results.exists() else []
 data = [c for c in data
         if not (c["instrument"] == args.instrument and c["arm"] == args.arm
-                and c["seed"] == args.seed)]
+                and c["seed"] == args.seed
+                # older 1D cells carry no "knob"; they are unique without it
+                and c.get("knob", KNOB) == KNOB)]
 data.append(cell)
 results.write_text(json.dumps(data, indent=2))
 print(f"classified: gate_passed={cell['gate_passed']} "

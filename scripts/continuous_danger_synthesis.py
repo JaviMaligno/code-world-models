@@ -62,7 +62,7 @@ from cwm.continuous.envs import (  # noqa: E402
 from cwm.continuous.tda import topological_summary  # noqa: E402
 from cwm.continuous import harness  # noqa: E402
 from cwm.continuous.contract import (  # noqa: E402
-    SynthesizedModel, synthesize_and_evaluate)
+    SynthesizedModel, build_contract, synthesize_and_evaluate)
 from cwm.law import wilson_ci  # noqa: E402
 from cwm.llm.azure_openai import AzureOpenAIProvider  # noqa: E402
 from cwm.llm.openai_compat import OpenAICompatProvider  # noqa: E402
@@ -80,14 +80,15 @@ def _atomic_write_json(path: pathlib.Path, obj) -> None:
     os.replace(tmp, path)
 
 
-def _seed_index(cell: dict) -> int:
-    """Invert the seed-index -> rollout-seed transform used by the sweep
-    loop below (rollout_seed = 10_000 * (seed_index + 1)), so a resumed run
-    can tell which (arm, seed_index) pairs an existing checkpoint covers."""
-    return cell["seed"] // 10_000 - 1
+def _seed_index(cell: dict, seed_offset: int = 0) -> int:
+    """Invert the seed-index -> rollout-seed transform used by the sweep loop
+    below (rollout_seed = 10_000 * (seed_index + 1 + seed_offset)), so a resumed
+    run can tell which (arm, seed_index) pairs an existing checkpoint covers."""
+    return cell["seed"] // 10_000 - 1 - seed_offset
 
 
 def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
+                  seed_offset: int = 0, hint=None,
                    n_rollouts, eps, max_iters, max_examples=30, guidance="",
                    max_failures=20, keep_history=False, play_episodes=6,
                    j_truth, j_random, meta, print_fn=print) -> dict:
@@ -126,6 +127,7 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
         current_p = meta.get("params", {}) or {}
         _RESULT_KEYS = ("instrument", "x_wall", "th_stop", "k1", "k2",
                         "patch_shape", "gap", "channel", "start", "ring_norm",
+                        "mode_effect", "mode_hint", "start_arc",
                         "prompt_variant", "n_rollouts", "eps",
                         "max_iters", "play_episodes", "compat_model")
         mismatch = {k: (stored_p[k], current_p[k]) for k in _RESULT_KEYS
@@ -155,7 +157,7 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
         results["j_random"] = j_random
         results["cells"] = []
 
-    done = {(c["arm"], _seed_index(c)) for c in results["cells"]}
+    done = {(c["arm"], _seed_index(c, seed_offset)) for c in results["cells"]}
 
     for arm in arms:
         for seed in range(n_seeds):
@@ -163,10 +165,11 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
                 continue
             cell = synthesize_and_evaluate(
                 provider, model_name, env, include_mode=(arm == "full"),
-                n_rollouts=n_rollouts, seed=10_000 * (seed + 1),
+                n_rollouts=n_rollouts,
+                seed=10_000 * (seed + 1 + seed_offset),
                 eps=eps, max_iters=max_iters, max_examples=max_examples,
                 guidance=guidance, max_failures=max_failures,
-                keep_history=keep_history)
+                keep_history=keep_history, hint=hint)
             if cell["gate_passed"]:
                 model = SynthesizedModel(cell["code"], env)
                 eps_play = []
@@ -211,6 +214,8 @@ _REGION_TEXT = (
     "x > c or an axis-aligned half-plane. Check your hypothesized region "
     "against ALL matching and non-matching transitions before settling "
     "on it.")
+
+
 def _contact_landings(env, transitions):
     """The refuted integrator landings of the contact transitions — the
     contact-evidence cloud a repair loop can honestly compute."""
@@ -230,6 +235,23 @@ def _tda_guidance(env, transitions):
             + topological_summary(_contact_landings(env, transitions)))
 
 
+# Review point #4's second confound (2026-07-27). The audit of the 40 guided
+# PatchField2D artifacts found 36/40 conditioning the freeze rule on the
+# CURRENT position (x, y) instead of on the LANDING position (x2, y2) — the
+# causal variable of the true rule. That is a variable-identification failure,
+# which is a DIFFERENT failure from getting the region's geometry wrong, so it
+# has to be removed on its own to tell the two apart. This sentence names the
+# trigger's ARGUMENT and nothing else: it does not state or hint at the
+# region's shape, its centre, its radius, how many regions there are, or how
+# the predicate is written. It only reuses the variable names the contract's
+# own integrator block already introduces (x2, y2 vs x, y).
+_LANDING_TEXT = (
+    "A localized rule's trigger is evaluated on the state the integrator "
+    "WOULD produce for this step — the landing position (x2, y2) from the "
+    "integrator equations above — not on the position the step began at "
+    "(x, y).")
+
+
 PROMPT_VARIANTS = {
     "default": {"max_examples": 30, "guidance": "", "max_failures": 20},
     "guided": {"max_examples": 120, "guidance": _GUIDED_TEXT,
@@ -239,10 +261,21 @@ PROMPT_VARIANTS = {
                "max_failures": 40},
     "tda": {"max_examples": 120, "guidance": _tda_guidance,
             "max_failures": 40},
+    # 'landing' = 'region' + _LANDING_TEXT, appended and nothing else changed
+    # (same 120 examples / 40 failure lines), so a landing-vs-region contrast
+    # isolates the variable-identification confound exactly.
+    "landing": {"max_examples": 120,
+                "guidance": (_GUIDED_TEXT + "\n\n" + _REGION_TEXT + "\n\n"
+                             + _LANDING_TEXT),
+                "max_failures": 40},
 }
 
 
-if __name__ == "__main__":
+def build_parser() -> argparse.ArgumentParser:
+    """The CLI surface, extracted from __main__ so tests can introspect the
+    declared choices (that a variant/shape is actually reachable from the
+    command line, not merely present in PROMPT_VARIANTS) without importing
+    credentials or running anything."""
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("size", choices=["mini", "large", "nano"])
@@ -260,11 +293,49 @@ if __name__ == "__main__":
                     help="patch2d: x of patch 1 center (nearer patch, common mode)")
     ap.add_argument("--k2", type=float, default=7.0,
                     help="patch2d: x of patch 2 center (farther patch, rare mode)")
-    ap.add_argument("--patch-shape", choices=["disc", "square"], default="disc",
+    ap.add_argument("--start-arc", type=float, default=None,
+                    help="patch2d only. The EVIDENCE-DOSE knob (2026-07-29): start episodes "
+                    "on a ring just outside the near patch, at a bearing drawn from an arc "
+                    "of this width centred on the patch's west side, instead of from the box "
+                    "at the origin. It raises the angular coverage of the contacts a sample "
+                    "contains -- a default sample covers a median 111 degrees, an arc of 240 "
+                    "gives 185 -- so it tests whether the failure to induce the region's "
+                    "form yields to wider evidence. Pair it with --n-rollouts to hold the "
+                    "contact COUNT fixed (15 at --start-arc 240), or coverage and quantity "
+                    "move together and neither is answered. Omit for the committed default.")
+    ap.add_argument("--mode-hint", choices=["radius", "centre"], default=None,
+                    help="patch2d only. The POSITIVE CONTROL for the 2D negatives "
+                    "(2026-07-29): replace the incomplete arm's missing clause with a "
+                    "PARTIAL one that states the rule's form and effect while withholding "
+                    "constants. 'radius' withholds one scalar (centres given); 'centre' "
+                    "withholds three (no form to induce). Every 2D result in this paper is "
+                    "a negative, and a negative is only as strong as the guarantee that "
+                    "its target is learnable by this pipeline at all: if 'radius' is not "
+                    "repaired, the failure is upstream of region induction.")
+    ap.add_argument("--mode-effect", choices=["freeze", "landing", "clamp"],
+                    default="freeze",
+                    help="patch2d only. WHERE the mover ends up when the mode fires; the "
+                    "experiment that tests prop:entryclass (2026-07-29). 'freeze' returns "
+                    "it to its PREVIOUS position, so the region's interior is never "
+                    "witnessed and an entry rule is unfalsifiable by any sample. "
+                    "'landing' stops it where it entered, strictly INSIDE the region, "
+                    "breaking that premise without making the rule harder to write -- the "
+                    "confound-free test. 'clamp' projects it onto the boundary, which also "
+                    "breaks the premise but makes the post-state a function of the "
+                    "landing. 'freeze' is byte-identical to every committed run (tested).")
+    ap.add_argument("--patch-shape", choices=["disc", "square", "slab"],
+                    default="disc",
                     help="patch2d only. square = the fixed-topology ablation "
                     "(2026-07-19): same patches as axis-aligned squares "
                     "(max/abs membership), separating boundary curvature from "
-                    "2D-ness as the cause of the 0/76 repair collapse")
+                    "2D-ness as the cause of the 0/76 repair collapse. "
+                    "slab = the rarity-matched predicate-ARITY ablation "
+                    "(2026-07-27, review point #4): each patch becomes the "
+                    "axis-aligned slab |x2 - c| <= slab_half_width, so the "
+                    "trigger reads ONE landing coordinate instead of two, with "
+                    "patch-1 contact rarity calibrated to match the disc's; "
+                    "everything else (4D state, two modes, lodes, freeze "
+                    "semantics) is unchanged")
     ap.add_argument("--gap", type=float, default=0.0,
                     help="ring2d: angular channel width (0 = closed ring, "
                     "beta1=1 and the interior is reach-null)")
@@ -284,14 +355,29 @@ if __name__ == "__main__":
                     "cheby (square ring, the zero-curvature separator "
                     "ablation)")
     ap.add_argument("--prompt-variant",
-                    choices=["default", "guided", "region", "tda"],
+                    choices=["default", "guided", "region", "tda", "landing"],
                     default="default",
                     help="confound-closure arms for the 0/76 (paper 2 s10): "
                     "'guided' = 120 examples + 40 failures shown + describe-the-"
                     "region-first process guidance; 'region' = guided + an "
                     "explicit de-biasing note that a localized rule's trigger "
-                    "region need not be a 1D threshold (never names the shape). "
+                    "region need not be a 1D threshold (never names the shape); "
+                    "'landing' = region + ONE sentence saying the trigger is "
+                    "evaluated on the landing position (x2, y2) rather than the "
+                    "position the step began at — review point #4's second "
+                    "confound (36/40 guided artifacts conditioned on the current "
+                    "position), and it still never names the region's shape, "
+                    "centre or radius. "
                     "'default' is byte-identical to all committed runs")
+    ap.add_argument("--seed-offset", type=int, default=0,
+                    help="shift the gate-sample seed block: rollout_seed = "
+                    "10_000*(i+1+offset). The samples are drawn from the seed "
+                    "index alone, so mini and large at offset 0 share them and a "
+                    "pooled count is n samples x 2 synthesis draws. Running the "
+                    "second size at --seed-offset 20 makes the two blocks "
+                    "DISJOINT, so the pooled count is 2n independent samples and "
+                    "a pooled Wilson bound is legitimate. Written to a distinct "
+                    "JSON (_off{N}), never overwriting an offset-0 run.")
     ap.add_argument("--n-rollouts", type=int, default=40, help="the danger-law N")
     ap.add_argument("--eps", type=float, default=1e-9,
                     help="pinned-integrator gate tolerance; loosen to 1e-6 if a "
@@ -307,6 +393,18 @@ if __name__ == "__main__":
                     help="record per-iteration (code, gate) in each cell as "
                     "'history' (additive metadata; off by default so "
                     "existing outputs are byte-identical)")
+    # A FILENAME tag, deliberately not a treatment: it never enters _RESULT_KEYS. Use it
+    # when the same treatment is re-run under a different SERVING PATH so the runs land in
+    # separate, self-describing files instead of resuming into a mixed-provenance one --
+    # the fourth review's point 1 (the Qwen 2D arm mixed HF-router and vLLM cells in one
+    # file whose top-level params could only name one endpoint).
+    ap.add_argument("--out-tag", default=None,
+                    help="suffix appended to the output filename; provenance, not treatment")
+    return ap
+
+
+if __name__ == "__main__":
+    ap = build_parser()
     args = ap.parse_args()
 
     if args.compat_model:
@@ -357,24 +455,55 @@ if __name__ == "__main__":
         INSTR_TAG = "pendulum_"
     elif args.instrument == "patch2d":
         ENV = PatchField2D(p1=(args.k1, 0.0), p2=(args.k2, 0.0),
-                           patch_shape=args.patch_shape)
+                           patch_shape=args.patch_shape,
+                           mode_effect=args.mode_effect,
+                           start_arc_deg=args.start_arc)
         KNOB = f"k{args.k1:g}_{args.k2:g}"
-        INSTR_TAG = "patch2d_" if args.patch_shape == "disc" else "patch2dsq_"
+        INSTR_TAG = {"disc": "patch2d_", "square": "patch2dsq_",
+                     "slab": "patch2dslab_"}[args.patch_shape]
+        if args.mode_effect != "freeze":
+            INSTR_TAG = INSTR_TAG[:-1] + args.mode_effect + "_"
     else:
         ENV = CartWall(x_wall=args.x_wall)
         KNOB = f"xwall{args.x_wall:g}"
         INSTR_TAG = ""
     ARMS = ["full", "incomplete"] if args.arm == "both" else [args.arm]
 
+    # Fail fast rather than run a full arm against the WRONG contract. The
+    # patch2d rules text (src/cwm/continuous/instruments.py, not owned here)
+    # branches on patch_shape; if the slab clause has not been added there yet,
+    # the full arm would silently be handed the DISC clause ("radius R = ...")
+    # while the truth is a slab, making the control meaningless. The incomplete
+    # arm is unaffected (it never mentions the mode at all, which is exactly
+    # what keeps it byte-identical across shapes).
+    if args.patch_shape == "slab" and "full" in ARMS:
+        _full_text = build_contract(ENV, include_mode=True)
+        if "radius R =" in _full_text or "half-side R =" in _full_text:
+            ap.error(
+                "--patch-shape slab --arm full/both: the patch2d rules text "
+                "still emits the disc/square mode clause for the slab env, so "
+                "the full arm's contract would not describe the truth. Add the "
+                "slab clause to _patch2d_rules_text in "
+                "src/cwm/continuous/instruments.py, or run "
+                "--arm incomplete only.")
+
     VARIANT = PROMPT_VARIANTS[args.prompt_variant]
 
     SUFFIX = ""
+    if args.seed_offset:
+        SUFFIX += f"_off{args.seed_offset}"
+    if args.start_arc:
+        SUFFIX += f"_arc{args.start_arc:g}"
+    if args.mode_hint:
+        SUFFIX += f"_hint-{args.mode_hint}"
     if args.prompt_variant != "default":
         SUFFIX += f"_pv-{args.prompt_variant}"
     if args.max_iters != 5:
         SUFFIX += f"_it{args.max_iters}"
     if args.n_rollouts != 40:
         SUFFIX += f"_N{args.n_rollouts}"
+    if args.out_tag:
+        SUFFIX += f"_{args.out_tag}"
 
     # Truth-planner + random baselines, shared across all seeds/arms (paired).
     print(f"baselines: {args.play_episodes} truth-MPC + random episodes...", flush=True)
@@ -392,6 +521,7 @@ if __name__ == "__main__":
             "size": args.size, "tag": TAG, "params": vars(args)}
     results = run_synthesis(
         provider, MODEL, ENV, ARMS, args.n_seeds, out,
+        seed_offset=args.seed_offset, hint=args.mode_hint,
         n_rollouts=args.n_rollouts, eps=args.eps, max_iters=args.max_iters,
         max_examples=VARIANT["max_examples"], guidance=VARIANT["guidance"],
         max_failures=VARIANT["max_failures"], keep_history=args.keep_history,
