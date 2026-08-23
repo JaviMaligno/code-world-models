@@ -130,7 +130,12 @@ def test_landing_sentence_names_the_variable_and_not_the_geometry():
 def test_landing_guidance_shares_no_line_with_the_full_arm_mode_clause():
     """Independent leak check: whatever the full (mode-stating) contract says
     that the incomplete contract does not is exactly the answer. No such line
-    may appear in the guidance of any variant."""
+    may appear in the guidance of any variant.
+
+    'tda' guidance is a CALLABLE (its topological summary is computed from the
+    seed's own sample), so it is resolved against a real sample before the
+    check rather than skipped — a dynamic guidance is exactly the kind that
+    could leak the answer by accident."""
     full = build_contract(P2D, include_mode=True)
     inc_lines = {ln.strip() for ln in build_contract(
         P2D, include_mode=False).splitlines()}
@@ -138,9 +143,14 @@ def test_landing_guidance_shares_no_line_with_the_full_arm_mode_clause():
               if ln.strip() and ln.strip() not in inc_lines]
     assert len(secret) >= 5, "the mode clause must be non-empty (non-vacuous)"
     assert any("radius R" in ln for ln in secret)   # it really is the answer
+    tr = collect_transitions(P2D, n_rollouts=40, seed=0)
     for name, v in VARIANTS.items():
+        guidance = v["guidance"]
+        if callable(guidance):
+            guidance = guidance(P2D, tr)
+            assert guidance, f"{name} resolved to empty guidance"
         for ln in secret:
-            assert ln not in v["guidance"], f"{name} leaks {ln!r}"
+            assert ln not in guidance, f"{name} leaks {ln!r}"
 
 
 def test_landing_guidance_inserts_cleanly_into_both_messages():
