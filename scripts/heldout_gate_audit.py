@@ -131,13 +131,26 @@ def verify_r_sources() -> dict:
     ring_sweep = _REPO / "results" / "ring2d_rarity_sweep.json"
     _ring_rows = {row["knob"]: row
                   for row in json.loads(ring_sweep.read_text())["rows"]}
+    # Thin-neck cells were calibrated by their own 30k sweep
+    # (results/ring2d_thin_neck.json), whose rows key on "nk{...}" /
+    # "nk{...}-hid" without the campaign knob's "gap0-" prefix.
+    thin_neck = _REPO / "results" / "ring2d_thin_neck.json"
+    _thin_rows = {row["knob"]: row
+                  for row in json.loads(thin_neck.read_text())["rows"]}
     ring_interior_live = {}
     for key in R_SOURCES:
         if not key.startswith("ring2d_"):
             continue
         knob = key[len("ring2d_"):].split("_n")[0]
-        live[key] = _ring_rows[knob]["r"]
-        ring_interior_live[key] = _ring_rows[knob]["r_interior"]
+        if "-nk" in knob:
+            tail = knob.split("-nk", 1)[1]
+            tknob = (f"nk{tail[:-1]}-hid" if tail.endswith("h")
+                     else f"nk{tail}")
+            row = _thin_rows[tknob]
+        else:
+            row = _ring_rows[knob]
+        live[key] = row["r"]
+        ring_interior_live[key] = row["r_interior"]
     drift = []
     for key, val in ring_interior_live.items():
         if R_SOURCES[key].get("r_interior") != val:

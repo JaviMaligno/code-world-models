@@ -52,13 +52,20 @@ STREAM_FIELDS = ("gap", "channel", "start", "ring_norm", "multi")
 
 def config_of(params: dict) -> dict:
     """The stream-defining subset, with the synthesis script's own defaults."""
-    return {
+    cfg = {
         "gap": float(params.get("gap", 0.0)),
         "channel": params.get("channel", "facing"),
         "start": params.get("start", "outside"),
         "ring_norm": params.get("ring_norm", "euclid"),
         "multi": bool(params.get("multi", False)),
     }
+    # The thin-neck knob is omitted when absent so every stored config key
+    # (discover()'s dedup, the sweep JSON's resume keys) is unchanged for the
+    # pre-neck campaigns.
+    if params.get("neck") is not None:
+        cfg["neck"] = float(params["neck"])
+        cfg["neck_channel"] = params.get("neck_channel", "facing")
+    return cfg
 
 
 def env_of(cfg: dict) -> RingField2D:
@@ -73,6 +80,10 @@ def env_of(cfg: dict) -> RingField2D:
         gap_center=math.pi if cfg["channel"] == "facing" else 0.0,
         x0_center=x0,
         norm=cfg["ring_norm"],
+        neck=cfg.get("neck"),
+        neck_center=(math.pi
+                     if cfg.get("neck_channel", "facing") == "facing"
+                     else 0.0),
         r_in2=7.5 if cfg["multi"] else None,
         r_out2=9.0 if cfg["multi"] else None)
 
@@ -83,7 +94,11 @@ def knob_of(cfg: dict) -> str:
             + f"gap{cfg['gap']:g}"
             + ("-m2" if cfg["multi"] else "")
             + ("" if cfg["channel"] == "facing" else "-hid")
-            + {"outside": "", "inside": "-in", "middle": "-mid"}[cfg["start"]])
+            + {"outside": "", "inside": "-in", "middle": "-mid"}[cfg["start"]]
+            + ("" if cfg.get("neck") is None else
+               f"-nk{cfg['neck']:g}"
+               + ("" if cfg.get("neck_channel", "facing") == "facing"
+                  else "h")))
 
 
 def discover() -> dict:

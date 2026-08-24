@@ -770,6 +770,48 @@ def test_env_key_ring2d_matches_the_campaigns_own_knob():
         assert env_key(params) == expect, f.name
 
 
+def test_env_key_ring2d_neck_enters_the_key():
+    """The thin-neck knob changes the rollout stream (the band's outer face
+    dips inside the sector), so it must enter the key, with placement as the
+    'h' suffix; absent and explicit-None key identically, so no committed key
+    moves."""
+    base = {"instrument": "ring2d"}
+    assert env_key({**base, "neck": 0.1}) == "ring2d_gap0-nk0.1"
+    assert env_key({**base, "neck": 0.1, "neck_channel": "hidden"}) \
+        == "ring2d_gap0-nk0.1h"
+    assert env_key({**base, "neck": None, "neck_channel": "facing"}) \
+        == "ring2d_gap0"
+    keys = [env_key({**base, "neck": n}) for n in (0.1, 0.2, 0.4)]
+    assert len(set(keys)) == 3
+
+
+def test_env_from_params_ring2d_carries_the_neck():
+    """Dropping the neck would rebuild a neck campaign as the uniform band and
+    score it against the wrong truth (the start_arc bug on a third
+    instrument)."""
+    from cwm.continuous.envs import RingField2D
+    assert env_from_params({"instrument": "ring2d", "neck": 0.1}) \
+        == RingField2D(neck=0.1)
+    assert env_from_params({"instrument": "ring2d", "neck": 0.1,
+                            "neck_channel": "hidden"}) \
+        == RingField2D(neck=0.1, neck_center=0.0)
+    assert env_from_params({"instrument": "ring2d", "neck": None}) \
+        == RingField2D()
+
+
+def test_sweep_mirror_carries_the_neck():
+    """config_of/env_of/knob_of must carry the neck exactly as the synthesis
+    script's block does, and OMIT it when None so no stored config key
+    changes retroactively."""
+    import dataclasses
+    p = {"instrument": "ring2d", "neck": 0.1, "neck_channel": "facing"}
+    cfg = ring_sweep.config_of(p)
+    assert ring_sweep.knob_of(cfg) == "gap0-nk0.1"
+    assert dataclasses.asdict(ring_sweep.env_of(cfg)) \
+        == dataclasses.asdict(env_from_params(p))
+    assert "neck" not in ring_sweep.config_of({"instrument": "ring2d"})
+
+
 def test_env_from_params_ring2d_matches_the_sweep_mirror():
     """env_from_params and the sweep script's env_of are two mirrors of the
     same synthesis-script block; they must rebuild the SAME env for every
@@ -808,14 +850,27 @@ def test_ring2d_rarity_entries_use_the_firing_rarity():
     sweep = json.loads((_REPO / "results" / "ring2d_rarity_sweep.json")
                        .read_text())
     rows = {r["knob"]: r for r in sweep["rows"]}
+    thin = json.loads((_REPO / "results" / "ring2d_thin_neck.json")
+                      .read_text())
+    thin_rows = {r["knob"]: r for r in thin["rows"]}
     ring_keys = {k: v for k, v in R_SOURCES.items() if k.startswith("ring2d_")}
     assert ring_keys, "no ring2d entries in R_SOURCES"
     for key, meta in ring_keys.items():
         knob = key[len("ring2d_"):].split("_n")[0]
+        if "-nk" in knob:
+            # thin-neck cells: calibrated by their own 30k sweep, whose rows
+            # key on "nk{...}"/"nk{...}-hid" without the "gap0-" prefix
+            tail = knob.split("-nk", 1)[1]
+            row = thin_rows[f"nk{tail[:-1]}-hid" if tail.endswith("h")
+                            else f"nk{tail}"]
+            expect_source = "results/ring2d_thin_neck.json"
+        else:
+            row = rows[knob]
+            expect_source = "results/ring2d_rarity_sweep.json"
         assert meta["kind"] == "firing", key
-        assert meta["r"] == rows[knob]["r"], key
-        assert meta["r_interior"] == rows[knob]["r_interior"], key
-        assert meta["source"] == "results/ring2d_rarity_sweep.json", key
+        assert meta["r"] == row["r"], key
+        assert meta["r_interior"] == row["r_interior"], key
+        assert meta["source"] == expect_source, key
         assert "r_interior_path" in meta, key
 
 

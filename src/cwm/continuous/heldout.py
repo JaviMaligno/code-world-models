@@ -197,6 +197,10 @@ def env_from_params(params: dict):
                         else 0.0),
             x0_center=x0,
             norm=params.get("ring_norm", "euclid"),
+            neck=params.get("neck"),
+            neck_center=(math.pi
+                         if params.get("neck_channel", "facing") == "facing"
+                         else 0.0),
             r_in2=7.5 if params.get("multi") else None,
             r_out2=9.0 if params.get("multi") else None)
     if instrument == "cart":
@@ -426,6 +430,34 @@ R_SOURCES = {
         "r_interior": 0.0,
         "r_interior_path": "rows[knob=='gap0'].r_interior",
         "note": "30k-rollout mode-firing rarity (ring2d rarity sweep)"},
+    "ring2d_gap0-nk0.1": {
+        "r": 0.022733333333333335, "kind": "firing",
+        "source": "results/ring2d_thin_neck.json",
+        "path": "rows[knob=='nk0.1'].r",
+        "r_interior": 0.002033333333333333,
+        "r_interior_path": "rows[knob=='nk0.1'].r_interior",
+        "note": "30k-rollout mode-firing rarity (thin-neck sweep, facing). "
+                "The leak regime: the only neck where the random gate "
+                "records leap-through entries (61 at 30k, 60 clean)"},
+    "ring2d_gap0-nk0.2": {
+        "r": 0.0248, "kind": "firing",
+        "source": "results/ring2d_thin_neck.json",
+        "path": "rows[knob=='nk0.2'].r",
+        "r_interior": 0.00016666666666666666,
+        "r_interior_path": "rows[knob=='nk0.2'].r_interior",
+        "note": "30k-rollout mode-firing rarity (thin-neck sweep, facing). "
+                "Certified-and-costly regime: dis_fill 0/320k, pc_fill 0.573"},
+    "ring2d_gap0-nk0.4": {
+        "r": 0.025533333333333335, "kind": "firing",
+        "source": "results/ring2d_thin_neck.json",
+        "path": "rows[knob=='nk0.4'].r",
+        "r_interior": 0.0,
+        "r_interior_path": "rows[knob=='nk0.4'].r_interior "
+                           "(a censored zero: the witness proves "
+                           "reachability at this neck, the 30k sample "
+                           "never realizes it)",
+        "note": "30k-rollout mode-firing rarity (thin-neck sweep, facing). "
+                "Certified-and-costly regime: dis_fill 0/320k, pc_fill 0.500"},
     "ring2d_gap0-in": {
         "r": 0.7577333333333334, "kind": "firing",
         "source": "results/ring2d_rarity_sweep.json",

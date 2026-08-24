@@ -354,6 +354,17 @@ def build_parser() -> argparse.ArgumentParser:
                     help="ring2d: separator norm — euclid (round ring) or "
                     "cheby (square ring, the zero-curvature separator "
                     "ablation)")
+    ap.add_argument("--neck", type=float, default=None,
+                    help="ring2d: thin-neck thickness (THIN-NECK-DESIGN.md) — "
+                    "the band dips FROM OUTSIDE to [r_in, r_in+neck] inside "
+                    "the sector; beta1 stays 1, Lemma 2's METRIC hypothesis "
+                    "breaks. None = uniform band, bit-identical to every "
+                    "committed run")
+    ap.add_argument("--neck-channel", choices=["facing", "hidden"],
+                    default="facing",
+                    help="ring2d: neck placement — facing the start "
+                    "(neck_center=pi) or hidden on the far side "
+                    "(neck_center=0)")
     ap.add_argument("--prompt-variant",
                     choices=["default", "guided", "region", "tda", "landing"],
                     default="default",
@@ -427,8 +438,10 @@ if __name__ == "__main__":
     if args.instrument != "ring2d" and (
             args.gap != 0.0 or args.channel != "facing"
             or args.start != "outside" or args.ring_norm != "euclid"
-            or args.multi):
-        ap.error("--gap/--channel/--start/--ring-norm/--multi are ring2d knobs")
+            or args.multi or args.neck is not None
+            or args.neck_channel != "facing"):
+        ap.error("--gap/--channel/--start/--ring-norm/--multi/--neck/"
+                 "--neck-channel are ring2d knobs")
 
     if args.instrument == "ring2d":
         if args.start == "middle" and not args.multi:
@@ -441,13 +454,18 @@ if __name__ == "__main__":
             gap_center=math.pi if args.channel == "facing" else 0.0,
             x0_center=_x0,
             norm=args.ring_norm,
+            neck=args.neck,
+            neck_center=math.pi if args.neck_channel == "facing" else 0.0,
             r_in2=7.5 if args.multi else None,
             r_out2=9.0 if args.multi else None)
         KNOB = (("sq" if args.ring_norm == "cheby" else "")
                 + f"gap{args.gap:g}"
                 + ("-m2" if args.multi else "")
                 + ("" if args.channel == "facing" else "-hid")
-                + {"outside": "", "inside": "-in", "middle": "-mid"}[args.start])
+                + {"outside": "", "inside": "-in", "middle": "-mid"}[args.start]
+                + ("" if args.neck is None else
+                   f"-nk{args.neck:g}"
+                   + ("" if args.neck_channel == "facing" else "h")))
         INSTR_TAG = "ring2d_"
     elif args.instrument == "pendulum":
         ENV = PendulumStop(th_stop=args.th_stop)
@@ -476,6 +494,19 @@ if __name__ == "__main__":
     # while the truth is a slab, making the control meaningless. The incomplete
     # arm is unaffected (it never mentions the mode at all, which is exactly
     # what keeps it byte-identical across shapes).
+    # Same failure shape as the slab guard below, on the ring: the ring2d
+    # rules text has no variable-thickness clause, so a full arm at --neck
+    # would hand the model a UNIFORM-band contract while the truth dips —
+    # the control would not describe the truth. The neck campaign's question
+    # (does a family ever WRITE a variable-thickness band from evidence?) is
+    # the incomplete arm's; add the neck clause to _ring2d_rules_text before
+    # ever running a full arm here.
+    if args.instrument == "ring2d" and args.neck is not None and "full" in ARMS:
+        ap.error("--neck with --arm full/both: _ring2d_rules_text has no "
+                 "variable-thickness clause yet, so the full arm's contract "
+                 "would describe the uniform band, not the truth. Run "
+                 "--arm incomplete, or add the neck clause first.")
+
     if args.patch_shape == "slab" and "full" in ARMS:
         _full_text = build_contract(ENV, include_mode=True)
         if "radius R =" in _full_text or "half-side R =" in _full_text:
