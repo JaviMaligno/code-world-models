@@ -708,3 +708,147 @@ def test_a_surrogate_is_never_built_from_a_missing_rarity():
     assert slab["r"] is None
     assert slab["per_mode"]["patch2"] is None
     assert slab["per_mode"]["patch1"] is not None
+
+
+# --- 9. ring2d (paper 3) enters the audit -------------------------------------
+_RING_SWEEP = _REPO / "scripts" / "ring2d_rarity_sweep.py"
+_ring_spec = importlib.util.spec_from_file_location("ring2d_rarity_sweep_mod",
+                                                    _RING_SWEEP)
+ring_sweep = importlib.util.module_from_spec(_ring_spec)
+_ring_spec.loader.exec_module(ring_sweep)
+
+
+def _ring2d_campaign_files():
+    return sorted((_REPO / "results").glob("continuous_synthesis_ring2d_*.json"))
+
+
+def test_env_key_ring2d_separates_every_stream_field():
+    """All five stream-defining fields (gap, channel, start, ring_norm, multi)
+    plus n_rollouts must each change the key: leaving one out is the
+    slab-vs-square collision on a sixth instrument."""
+    base = {"instrument": "ring2d"}
+    variants = [
+        base,
+        {**base, "gap": 0.6},
+        {**base, "gap": 0.6, "channel": "hidden"},
+        {**base, "start": "inside"},
+        {**base, "ring_norm": "cheby"},
+        {**base, "multi": True, "start": "middle"},
+        {**base, "start": "inside", "n_rollouts": 80},
+    ]
+    keys = [env_key(v) for v in variants]
+    assert len(set(keys)) == len(keys), keys
+
+
+def test_env_key_ring2d_defaults_are_indistinguishable_from_absent():
+    """A campaign that serialised the explicit defaults must key identically to
+    an old file that predates the flags (this is what keeps committed keys
+    stable when a flag is added)."""
+    assert env_key({"instrument": "ring2d"}) == "ring2d_gap0"
+    assert env_key({"instrument": "ring2d", "gap": 0.0, "channel": "facing",
+                    "start": "outside", "ring_norm": "euclid", "multi": False,
+                    "n_rollouts": 40,
+                    # other instruments' defaults ride along in the namespace
+                    # and must not touch the key
+                    "x_wall": 8.0, "k1": 3.0, "k2": 7.0,
+                    "patch_shape": "disc"}) == "ring2d_gap0"
+
+
+def test_env_key_ring2d_matches_the_campaigns_own_knob():
+    """The key must be ring2d_<KNOB> with the synthesis script's own knob
+    string (mirrored by the sweep's knob_of), plus the _n suffix exactly when
+    the campaign overrode --n-rollouts."""
+    files = _ring2d_campaign_files()
+    assert files, "no committed ring2d campaigns found"
+    for f in files:
+        params = json.loads(f.read_text())["params"]
+        knob = ring_sweep.knob_of(ring_sweep.config_of(params))
+        expect = f"ring2d_{knob}"
+        n = params.get("n_rollouts", 40)
+        if n != 40:
+            expect += f"_n{n}"
+        assert env_key(params) == expect, f.name
+
+
+def test_env_from_params_ring2d_matches_the_sweep_mirror():
+    """env_from_params and the sweep script's env_of are two mirrors of the
+    same synthesis-script block; they must rebuild the SAME env for every
+    committed campaign, field for field."""
+    import dataclasses
+    for f in _ring2d_campaign_files():
+        params = json.loads(f.read_text())["params"]
+        a = env_from_params(params)
+        b = ring_sweep.env_of(ring_sweep.config_of(params))
+        assert dataclasses.asdict(a) == dataclasses.asdict(b), f.name
+
+
+@pytest.mark.parametrize("fname", [
+    # closed ring, outside start (the headline configuration)
+    "continuous_synthesis_ring2d_compat-qwen3-coder-30b-a3b-instruct_gap0.json",
+])
+def test_reproduced_training_sample_reproduces_the_stored_gate_score_ring2d(fname):
+    """Same strongest-available check as for the paper-2 instruments: the
+    reproduced D_train must give back the committed artifact's stored gate
+    accuracy and mode-presence flag exactly."""
+    d = json.loads((_REPO / "results" / fname).read_text())
+    env = env_from_params(d["params"])
+    cell = d["cells"][0]
+    d_train, _, _ = split_for_cell(env, cell, n_eval=1)
+    assert mode_presence(env, d_train)["any"] == cell["sample_contains_wall"]
+    acc, _ = contract_accuracy(cell["code"], d_train, eps=cell["eps"],
+                               timeout=300.0)
+    assert acc == cell["gate_accuracy"]
+
+
+def test_ring2d_rarity_entries_use_the_firing_rarity():
+    """The r-vs-r_int decision, pinned: every ring2d entry's prediction
+    argument is the mode-FIRING rarity (kind 'firing', the event the audit's
+    contingency counts), r_interior is carried alongside as provenance with
+    its own source path, and both values match the sweep JSON exactly."""
+    sweep = json.loads((_REPO / "results" / "ring2d_rarity_sweep.json")
+                       .read_text())
+    rows = {r["knob"]: r for r in sweep["rows"]}
+    ring_keys = {k: v for k, v in R_SOURCES.items() if k.startswith("ring2d_")}
+    assert ring_keys, "no ring2d entries in R_SOURCES"
+    for key, meta in ring_keys.items():
+        knob = key[len("ring2d_"):].split("_n")[0]
+        assert meta["kind"] == "firing", key
+        assert meta["r"] == rows[knob]["r"], key
+        assert meta["r_interior"] == rows[knob]["r_interior"], key
+        assert meta["source"] == "results/ring2d_rarity_sweep.json", key
+        assert "r_interior_path" in meta, key
+
+
+def test_committed_ring2d_audit_json_is_self_consistent():
+    """The ring2d audit's own output file, held to the same recount checks as
+    paper 2's -- and completeness judged against the ring2d campaigns only
+    (its scope), never against paper 2's."""
+    path = _REPO / "results" / "heldout_gate_audit_ring2d.json"
+    if not path.exists():
+        pytest.skip("results/heldout_gate_audit_ring2d.json not produced yet")
+    doc = json.loads(path.read_text())
+    assert doc["split"]["all_disjoint"] is True
+    assert doc["params"]["n_gate"] >= N_GATE
+    assert doc["params"].get("instruments") == ["ring2d"]
+    arts = doc["artifacts"]
+    keys = [(a["file"], a["arm"], a["seed"]) for a in arts]
+    assert len(set(keys)) == len(keys), "duplicate artifacts in the audit"
+    agg = doc["aggregates"]
+    assert agg["totals"]["n_artifacts"] == len(arts)
+    assert agg["totals"]["n_heldout_accepted"] == sum(
+        1 for a in arts if a["accepted_heldout"])
+    assert agg["totals"]["n_regressions"] == sum(
+        1 for a in arts if a["in_sample_gate_passed"]
+        and not a["accepted_heldout"])
+    for a in arts:
+        assert a["accepted_heldout"] == (a["gate"]["accuracy"] == 1.0)
+        assert a["gate"]["n"] == doc["params"]["n_gate"] * 80
+    if doc.get("complete"):
+        expected = sum(
+            len(json.loads(f.read_text()).get("cells", []))
+            for f in _ring2d_campaign_files())
+        assert agg["totals"]["n_artifacts"] == expected, (
+            f"the ring2d audit covers {agg['totals']['n_artifacts']} artifacts "
+            f"but the committed ring2d campaigns hold {expected}: re-run "
+            f"scripts/heldout_gate_audit.py --instruments ring2d")
+        assert agg["train_reproduction_check"]["mismatches"] == []

@@ -52,20 +52,21 @@ sys.path.insert(0, str(_REPO / "src"))
 from cwm.continuous.contract import contract_accuracy  # noqa: E402
 from cwm.continuous.heldout import (  # noqa: E402
     EVAL_SEED_OFFSET, GATE_SEED_OFFSET, N_EVAL_DEFAULT, N_GATE, R_SOURCES,
-    blind_from_cell, contingency, disjointness_report, env_from_params,
+    TRAIN_N_ROLLOUTS, blind_from_cell, contingency, disjointness_report,
+    env_from_params,
     env_key, failure_class, independence_surrogate, mode_presence,
     score_transitions, split_for_cell, wilson)
 
 OUT_DEFAULT = _REPO / "results" / "heldout_gate_audit.json"
 SYNTH_GLOB = "continuous_synthesis_*.json"
 
-# The instruments this audit covers. results/ is shared with paper 3, whose
-# ring2d campaigns are outside its scope: every campaign needs a calibrated
-# rarity entry in heldout.R_SOURCES, and _two_factor raises SystemExit rather
-# than predict without one -- so auditing ring2d is not a matter of re-running
-# this script, it needs ring2d's rarity measured first (paper 3's work, and its
-# own decision). Completeness is therefore judged against THIS scope; see
-# tests/test_heldout_gate.py::test_committed_audit_json_is_self_consistent.
+# The DEFAULT scope: paper 2's instruments. Its committed output
+# (results/heldout_gate_audit.json) reproduces the PUBLISHED numbers, so this
+# tuple never widens; completeness of that file is judged against it (see
+# tests/test_heldout_gate.py::test_committed_audit_json_is_self_consistent).
+# Paper 3's ring2d campaigns are audited by the SAME script under
+# `--instruments ring2d` with their own --out (the rarity decision and the
+# R_SOURCES entries landed 2026-08-24); the two scopes never share a file.
 AUDITED_INSTRUMENTS = ("cart", "pendulum", "patch2d")
 
 
@@ -122,7 +123,26 @@ def verify_r_sources() -> dict:
             "patch2": _read_row(p2dsq, {"k1": 5.0, "k2": 9.0})["r2"]},
         "patch2dslab_k5.5_7": {"patch1": _slab["r1"], "patch2": None},
     }
+    # ring2d (paper 3): every entry reads results/ring2d_rarity_sweep.json by
+    # its knob string, which is the env_key minus the "ring2d_" prefix and any
+    # "_n{...}" dose suffix (the dose campaigns share their config's row).
+    # Both r AND the carried r_interior are re-read -- a provenance field that
+    # drifts is as wrong as a prediction argument that drifts.
+    ring_sweep = _REPO / "results" / "ring2d_rarity_sweep.json"
+    _ring_rows = {row["knob"]: row
+                  for row in json.loads(ring_sweep.read_text())["rows"]}
+    ring_interior_live = {}
+    for key in R_SOURCES:
+        if not key.startswith("ring2d_"):
+            continue
+        knob = key[len("ring2d_"):].split("_n")[0]
+        live[key] = _ring_rows[knob]["r"]
+        ring_interior_live[key] = _ring_rows[knob]["r_interior"]
     drift = []
+    for key, val in ring_interior_live.items():
+        if R_SOURCES[key].get("r_interior") != val:
+            drift.append((f"{key}.r_interior",
+                          R_SOURCES[key].get("r_interior"), val))
     for key, val in live.items():
         if R_SOURCES[key]["r"] != val:
             drift.append((key, R_SOURCES[key]["r"], val))
@@ -735,16 +755,25 @@ def main(argv=None) -> int:
                     "accuracy against the stored one (0 disables)")
     ap.add_argument("--timeout-gate", type=float, default=300.0)
     ap.add_argument("--timeout-eval", type=float, default=600.0)
+    ap.add_argument("--instruments", nargs="+", default=None,
+                    metavar="INSTRUMENT",
+                    help="audit scope; default is paper 2's "
+                    f"{AUDITED_INSTRUMENTS}, whose committed output "
+                    "(results/heldout_gate_audit.json) reproduces the "
+                    "PUBLISHED numbers and must not widen. A ring2d (paper 3) "
+                    "audit passes '--instruments ring2d' together with its own "
+                    "--out; the two scopes never share an output file")
     args = ap.parse_args(argv)
+    instruments = tuple(args.instruments or AUDITED_INSTRUMENTS)
+    if instruments != AUDITED_INSTRUMENTS and args.out == OUT_DEFAULT:
+        ap.error(f"a non-default scope {instruments} must name its own --out: "
+                 f"{OUT_DEFAULT.name} is paper 2's committed audit and its "
+                 f"scope is fixed at {AUDITED_INSTRUMENTS}")
 
     if args.n_gate < N_GATE:
         ap.error(f"--n-gate must be >= {N_GATE}")
 
     r_sources = verify_r_sources()
-    split = disjointness_report(n_gate=args.n_gate, n_eval=args.n_eval)
-    if not split["all_disjoint"]:
-        raise SystemExit(f"held-out blocks are NOT disjoint from the training "
-                         f"blocks: {split}")
 
     files = sorted(args.results_dir.glob(args.glob))
     if not files:
@@ -757,23 +786,39 @@ def main(argv=None) -> int:
     in_scope = []
     for path in files:
         params = json.loads(path.read_text()).get("params", {})
-        if params.get("instrument", "cart") in AUDITED_INSTRUMENTS:
+        if params.get("instrument", "cart") in instruments:
             in_scope.append(path)
         else:
             skipped.append(path.name)
     if skipped:
         print(f"skipping {len(skipped)} campaign(s) outside "
-              f"AUDITED_INSTRUMENTS={AUDITED_INSTRUMENTS}: "
+              f"instruments={instruments}: "
               f"{', '.join(skipped)}", flush=True)
     files = in_scope
     if not files:
         raise SystemExit(f"every file matching {args.glob} is out of scope "
-                         f"(AUDITED_INSTRUMENTS={AUDITED_INSTRUMENTS})")
+                         f"(instruments={instruments})")
+
+    # The disjointness proof must cover the LONGEST training block any in-scope
+    # cell used, not the default 40: ring2d's dose campaigns trained on up to
+    # 320 rollouts, and a proof over 40-long blocks says nothing about the
+    # extra 280 seeds. For every paper-2 scope run the maximum is 40, so the
+    # stored split dict is unchanged there.
+    n_train_max = max((cell.get("n_rollouts", TRAIN_N_ROLLOUTS)
+                       for path in files
+                       for cell in json.loads(path.read_text()).get("cells", []))
+                      , default=TRAIN_N_ROLLOUTS)
+    split = disjointness_report(n_train=n_train_max, n_gate=args.n_gate,
+                                n_eval=args.n_eval)
+    if not split["all_disjoint"]:
+        raise SystemExit(f"held-out blocks are NOT disjoint from the training "
+                         f"blocks: {split}")
 
     params_now = {"n_gate": args.n_gate, "n_eval": args.n_eval,
                   "gate_seed_offset": GATE_SEED_OFFSET,
                   "eval_seed_offset": EVAL_SEED_OFFSET,
-                  "glob": args.glob}
+                  "glob": args.glob,
+                  "instruments": list(instruments)}
     if args.out.exists():
         doc = json.loads(args.out.read_text())
         stored = doc.get("params", {})

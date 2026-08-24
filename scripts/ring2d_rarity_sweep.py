@@ -2,9 +2,12 @@
 configuration that a committed synthesis campaign actually used.
 
 Why this exists. `heldout_gate_audit.py` refuses to audit a campaign whose
-env_key has no calibrated entry in `heldout.R_SOURCES`, and no ring2d
-configuration has one -- so paper 3's 31 campaigns (663 artifacts) sit outside
-the held-out audit. The existing calibration
+env_key has no calibrated entry in `heldout.R_SOURCES`, and when this was
+written no ring2d configuration had one -- so paper 3's 31 campaigns (663
+artifacts) sat outside the held-out audit. (RESOLVED 2026-08-24: the entries
+exist now, built from this file's output with r -- the FIRING rarity -- as
+the prediction's argument and r_int carried as labelled provenance; the
+reasoning is with the entries in heldout.py.) The existing calibration
 (`results/continuous_ring2d.json`) does not close that: it covers 3 gap values
 of the ~14 configurations in use, at 600 rollouts against the 30k that paper
 2's own rarities were measured with (see the `note` fields in R_SOURCES).
