@@ -375,6 +375,19 @@ that boundary; the topology enters through what the gauge region and its
 boundary class organize, not through the crossing proof.
 \end{remark}
 
+\begin{remark}[machine-checked]
+The metric core is formalized in Lean~4 over mathlib
+(\texttt{formal/}, library \texttt{Paper3Ring}; no \texttt{sorry}):
+Lemma~\ref{lem:crossing} in both halves --- the discrete crossing bound
+over an arbitrary pseudometric space, and the freeze invariant that keeps
+an outside start at distance $> r_{\mathrm{out}}$ forever ---
+Corollary~\ref{cor:evidence} as a pathwise identity of trajectories and
+contact processes, the gate quotient
+(Proposition~\ref{prop:quotient}) at realization level, and the constants
+paragraph above ($\lVert v \rVert \le \mathrm{gain}/\mathrm{drag}$
+through freeze events, $\Delta = 1.0 < w = 1.5$ by \texttt{norm\_num}).
+\end{remark}
+
 \begin{proposition}[wrong topology: unfalsifiable and harmless at $\gamma = 0$]
 \label{prop:harmless}
 Let $f$ be the closed-ring dynamics and $\hat f_{\mathrm{fill}}$ the
@@ -579,6 +592,16 @@ $r_{\mathrm{int}}(\gamma) > 0$ for every $\gamma > 0$
 identifiability \emph{continuously from an exact zero}; the instrument's
 claims need nothing from M1/M2.
 \end{corollary}
+
+Positivity is also where sample size earns its keep: $30{,}000$ rollouts
+measure $3$ and $12$ interior entries at $\gamma = 0.05$ and $0.1$
+(rates $1.0\times10^{-4}$ and $4.0\times10^{-4}$;
+\texttt{results/ring2d\_rarity\_sweep.json}, unit rollout) ---
+confirming Proposition~\ref{prop:positivity} at gaps where the witness
+tube's own bound is astronomically small, and where any calibration of a
+few hundred rollouts would typically read $0$, indistinguishable from
+the theorem's exact zero at $\gamma = 0$. Zero is a theorem only at
+$\gamma = 0$; everywhere else a printed zero is a sample statement.
 
 \begin{proposition}[query lower bound]
 \label{prop:query}
@@ -805,14 +828,44 @@ GPT passer.}
 \end{table}
 
 \paragraph{The identifiability event is family-independent.} Every
-mode-absent sample --- probability $(1 - r)^N \approx 0.16$ at the
-defaults --- yielded a certified, fully mode-blind artifact, exploited at
+mode-absent sample --- probability $(1 - r)^{40} = 0.28$ at the defaults,
+with $r = 0.0312$ measured at $30{,}000$ calibration rollouts
+(\texttt{results/ring2d\_rarity\_sweep.json}; realized: $6/20$ seed
+blocks, the unit both sizes share) --- yielded a certified, fully
+mode-blind artifact, exploited at
 $\mathrm{play\_cost} \approx 1.12$ with contact rate $1.0$, in every
 family tested: GPT-5.x (both sizes, full arm $20/20$ clean in both), Qwen
 (HF router, spot check), and Claude (agent-relayed, spot check). The play
 number is bit-identical across families because the blind artifact is the
 same program: identifiability is a property of the sample, not the model
 --- the companion papers' law, now on a mode with an inside.
+
+\paragraph{Held-out replication: independent-gate acceptance coincides
+with that gate's own mode-miss, $112/112$.} Re-scoring every committed
+artifact on an independent gate
+block (a disjoint $40$-rollout stream per seed;
+\texttt{scripts/heldout\_gate\_audit.py} under its \texttt{ring2d} scope,
+output \texttt{results/heldout\_\allowbreak gate\_\allowbreak
+audit\_\allowbreak ring2d.json}: $663$
+artifacts over $31$ campaigns) turns the identifiability law into a held-out
+measurement. On the incomplete arm restricted to artifacts whose
+\emph{training} sample missed the mode, held-out acceptance coincides
+with ``the independent gate's own block also missed the mode'' in
+$112/112$ artifacts --- an exact identity checked per artifact, over
+$69$ disjoint seed blocks (the two sizes share their blocks by
+construction), zero off-diagonal --- and the two-factor prediction
+$(1-r)^{N_{\mathrm{train}}+N_{\mathrm{gate}}}$ lies inside
+the Wilson $95\%$ interval of the measured accepted-and-blind rate in
+every one of the $31$ campaigns (each interval over that campaign's own
+disjoint, independent seed blocks --- never pooled across sizes), the
+hidden-channel cells included --- audited
+under the closed ring's $r$, which their own $30$k calibration equals to
+five decimals. The same audit measures the converse: of $169$ in-sample
+gate passes, $88$ fail the independent gate, and every one of the $88$
+fails \emph{at a mode contact} --- an in-sample pass is training-set
+consistency, and what it omits is exactly the mode. Acceptance --- by
+the training sample or by an independent block --- is a sample event on
+this instrument in both directions, measured on held-out evidence.
 
 \paragraph{No family repairs the ring from outside evidence.} Across A--C,
 zero mode-present artifacts pass the gate with the mode genuinely encoded.
@@ -821,7 +874,15 @@ mode-present artifacts in B and C are \emph{textual point fits} ---
 integrator plus a comment hypothesizing a tiny localized trap and an
 exact-coordinate snap at $10^{-12}$ tolerance --- whose freeze-mask is
 empty: behaviorally blind ($\mathrm{wall\_blindness} = 1.0$), exploited
-like the pure blinds. This is Corollary~\ref{cor:evidence} operating:
+like the pure blinds. The held-out audit supplies the class's sharpest
+specimen: one trap (a hidden-channel cell, observationally the closed
+ring) freezes on exact \texttt{==} equality with its sample's single
+contact state, and the hardcoded coordinate sits $2$ ulps from the same
+trajectory under a different \texttt{libm} --- its stored in-sample
+$1.000$ is a property of the last bit of $\sin/\cos$ on the machine that
+ran the campaign, and the independent gate rejects it on every platform
+(\texttt{results/heldout\_gate\_audit\_ring2d.json},
+\texttt{train\_reproduction\_check}). This is Corollary~\ref{cor:evidence} operating:
 from outside, ring and disc evidence are pathwise identical, so the
 honest summary can only report the reachable arc, and it does not pose the
 hole. Notably, richer prompting made the \emph{terminal} attempts less
@@ -966,7 +1027,13 @@ seeds --- with mode blindness $1.0$ and $\mathrm{play\_cost}$ $0.0$. The
 passing models match the sample through wrong parameters, fail the mode
 probes, and are harmless only because the wide-open ring no longer
 obstructs anything. Certification, correctness, and consequence come apart
-again (Remark~\ref{rem:triad}), now with real synthesis.
+again (Remark~\ref{rem:triad}), now with real synthesis. Held-out
+re-scoring adds what the inside failures are made of: $237/320$
+inside-start artifacts fail the independent evaluation \emph{off} the
+mode as well (accuracies down to $0.05$), against $87/343$ for outside
+starts (\texttt{results/heldout\_gate\_audit\_ring2d.json}, unit
+artifact) --- the loop-evidence regime produces globally wrong models,
+not clean integrators missing a clause.
 
 \paragraph{The identifiability axis moves independently alongside.} As
 $\gamma$ grows the ring shrinks and the mode-absent rate rises ($6 \to 16$
@@ -1866,7 +1933,17 @@ repository:
   \texttt{continuous\_ring2d\_open\_sweep.py};
 \item aggregator: \texttt{ring2d\_open\_aggregate.py};
 \item ShellField-$n$ scripts and the behavioral audit
-  (\texttt{ring2d\_artifact\_audit.py}, oracle self-tested).
+  (\texttt{ring2d\_artifact\_audit.py}, oracle self-tested);
+\item rarity calibration at every campaign configuration
+  (\texttt{ring2d\_rarity\_sweep.py}, $30{,}000$ rollouts per
+  configuration, configurations discovered from the committed campaigns
+  rather than typed);
+\item held-out re-scoring of every artifact on disjoint gate and
+  evaluation blocks: \texttt{heldout\_\allowbreak gate\_\allowbreak
+  audit.py}, ring2d scope (block disjointness proved by set intersection
+  at run time);
+\item the Lean formalization of the metric core (\texttt{formal/},
+  library \texttt{Paper3Ring}; built by CI).
 \end{itemize}
 Every seed, checkpoint, and classified artifact is committed; long runs
 checkpoint per unit and resume exactly; paired seeds (common random

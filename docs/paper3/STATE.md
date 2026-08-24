@@ -9,29 +9,31 @@ Last updated 2026-08-24 (second session — the audit session, below).
 
 ## The state in one paragraph
 
-The theory list is nearly closed, the experimental programme is finished
+The theory list is CLOSED (T1–T8 all resolved in `THEORY.md` — the earlier
+version of this file called T7's second half open, but its section and its
+ledger entry both end "T7 is CLOSED", 2026-07-25; the residuals THEORY.md
+itself records as out of scope are T2's argmax-angle distribution, a planner
+property, and T3's final factor being the instrument's own rarity r, which
+the series treats as an input). The experimental programme is finished
 except for one item that needs designing rather than running, and paper 3's
 campaigns are now INSIDE the held-out audit (663/663, the two-factor law
-inside Wilson95 at 31/31 campaigns). What is left is mathematical (the second
-half of T7) plus the thin-neck design question.
+inside Wilson95 at 31/31 campaigns). What is left is the PAPER: the tex is
+behind what has been measured since 2026-07-30.
 
 ## Open, in the order the work naturally goes
 
-1. **T7 second half — the relative-homology evidence estimator** (`THEORY.md`,
-   section "T7 (second half)"). First half closed: R1 (no infinite bars, by
-   construction) and R2 (the estimator is a union-find) are proved, and with the
-   free evidence entered as PATHS rather than a point cloud the synthetic
-   discrimination is 12/12. This is the live mathematical frontier.
+1. **Folding the new measurements into the tex**: the 30k rarity sweep
+   (which supersedes the 600-rollout calibration's small-gap zeros and the
+   (1-r)^N constant quoted in the synthesis section), the held-out audit
+   (31/31 two-factor confirmation, the exact 2x2 on the incomplete arm,
+   hidden≡closed carrying into the audit, the inside-start cells'
+   globally-wrong-models regime, the 2-ULP point-trap gate hack), and a
+   note that the metric core is now machine-checked in Lean. All in
+   EXPERIMENTS.md "ring2d held-out audit" and FORMALIZATION.md.
 2. **Thin-neck ring** — the only unrun item of the v2 programme, and not
-   runnable as written: the env has to be designed first and that design is the
-   question (where Lemma 2's hypothesis fails, and what the measurement reads
-   once it does). See `V2-PROGRAM.md`.
-3. **Folding the audit's findings into the tex** when the paper prose is next
-   touched: the 31/31 two-factor confirmation, the exact 2x2 on the incomplete
-   arm, hidden≡closed carrying into the audit, the inside-start cells'
-   globally-wrong-models regime (237/320 off-mode eval exceptions vs 87/343
-   outside), and the 2-ULP point-trap gate hack. All in EXPERIMENTS.md,
-   "ring2d held-out audit".
+   runnable as written: the env has to be designed first and that design is
+   the question (where Lemma 2's hypothesis fails, and what the measurement
+   reads once it does). See `V2-PROGRAM.md`.
 
 RESOLVED since the last update: the rarity decision (r, the firing rarity,
 with r_int carried as labelled provenance — reasoning recorded with the

@@ -55,6 +55,10 @@ _REPO = pathlib.Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = (
     _REPO / "docs" / "paper2" / "main.tex",
     _REPO / "docs" / "paper" / "main.tex",
+    # paper 3 enters the ratchet 2026-08-24: its standing debt is recorded in
+    # the baseline (never raise it), so new prose cannot add violations even
+    # while the old ones are worked down.
+    _REPO / "docs" / "paper3" / "main.tex",
 )
 DEFAULT_ALLOWLIST = _REPO / "docs" / "paper2" / "claims-allowlist.txt"
 BASELINE_PATH = _REPO / "results" / "paper_claims_baseline.json"
@@ -936,7 +940,7 @@ def build_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("targets", nargs="*", type=pathlib.Path,
                    help="LaTeX sources to lint (default: docs/paper2/main.tex "
-                        "docs/paper/main.tex)")
+                        "docs/paper/main.tex docs/paper3/main.tex)")
     p.add_argument("--json", action="store_true", help="machine-readable output for CI")
     p.add_argument("--strict", action="store_true",
                    help="treat hand-constant warnings as errors")
