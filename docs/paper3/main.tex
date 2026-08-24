@@ -1048,6 +1048,76 @@ mode?) and the play axis (does the omission obstruct the planner?) are
 separate knobs even within one instrument --- the theme
 Section~\ref{sec:ndim} pushes to its extreme.
 
+\subsection{The metric converse: a thin neck, topology held fixed}
+\label{sec:thinneck}
+
+The $\gamma$-channel reopens the interior \emph{topologically}. Its
+converse thins the band from outside inside a $0.3$-rad sector
+($r_{\mathrm{out}}$ dips to $r_{\mathrm{in}} + \mathrm{neck}$; the hole is
+invariant): $\beta_1 = 1$ and the band still separates the plane in the
+continuum at every neck $> 0$, but interior entry now requires a
+\emph{single step longer than the neck} --- the local crossing lemma,
+machine-checked in Lean beside Lemma~\ref{lem:crossing}: a mode set
+containing the thin annulus $[r_{\mathrm{in}}, r_{\mathrm{in}} + w]$ with
+$w > \Delta$ seals the hole whatever its shape. With $\Delta = 1.0$ the
+knob crosses Lemma~\ref{lem:crossing}'s metric hypothesis while the
+topology never moves, and reachability below the threshold is
+\emph{exhibited}, not sampled: a deterministic constant-thrust witness
+leaps the $0.5$ neck (one $0.547$-step from $d = 4.03$), and the same
+$40$-witness family is blocked at neck $\ge 1.0$.
+
+\begin{center}\small
+\begin{tabular}{lrrrrr}
+\toprule
+neck (facing) & $r$ & $r_{\mathrm{int}}$ & $\mathrm{dis}_{\mathrm{fill}}$ &
+$\mathrm{pc}_{\mathrm{blind}}$ & $\mathrm{pc}_{\mathrm{fill}}$ \\
+\midrule
+closed & 0.0312 & $0^{\ast}$ & $0^{\ast}$ & 0.999 & $0.000^{\ast}$ \\
+0.1 & 0.0227 & 0.0020 & $4.3\times10^{-4}$ & 0.451 & 0.594 \\
+0.2 & 0.0248 & $1.7\times10^{-4}$ & $0^{\dagger}$ & 0.962 & 0.573 \\
+0.4 & 0.0255 & $0^{\dagger}$ & $0^{\dagger}$ & 0.971 & 0.500 \\
+0.6 & 0.0262 & $0^{\dagger}$ & $0^{\dagger}$ & 0.962 & $0.000^{\dagger}$ \\
+0.8 & 0.0269 & $0^{\dagger}$ & $0^{\dagger}$ & 0.976 & $0.000^{\dagger}$ \\
+1.2 & 0.0292 & $0^{\ast}$ & $0^{\ast}$ & 0.993 & $0.000^{\ast}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent ($30{,}000$ rollouts, $320{,}000$ disagreement transitions and
+$16$ paired MPC episodes per cell,
+\texttt{results/ring2d\_thin\_neck.json}; design and readings
+pre-registered in the repository before the run. $^{\ast}$exact --- the
+closed row by Lemma~\ref{lem:crossing} and
+Proposition~\ref{prop:harmless}, the neck-$1.2$ row by the local lemma at
+$\Delta = 1.0 < 1.2$, imagined steps included; $^{\dagger}$censored ---
+$0$ occurrences in that sample, Wilson uppers $1.2\times10^{-4}$
+(rollouts), $9.4\times10^{-6}$ (transitions), $0.19$ (episodes).)
+
+Three findings. \textbf{Hidden necks are bit-identical to the closed
+ring} at all six thicknesses (the same $r$ to the last float, $0$
+entries, $\mathrm{pc}_{\mathrm{blind}} = 0.999$): reach, not geometry, a
+third time on this instrument. \textbf{The planner leaks only at the
+thinnest neck}: $\mathrm{pc}_{\mathrm{blind}}$ collapses to $0.451$ at
+neck $0.1$ (blind contact rate $0.56$ --- the blind planner escapes
+through the neck in half the paired episodes) and recovers to
+$0.96$--$0.99$ from neck $0.2$ up, because one landing in the thin band
+pins the episode (freeze zeroes the velocity, and from rest the next
+step is $R_L = 0.03$): threading needs the landing phase to skip a band
+the realized approach rarely skips. \textbf{Certified-and-costly, on the
+metric axis}: the filled-disc model can disagree with truth on a sampled
+transition only via a leap --- $139/320{,}000$ transitions at neck
+$0.1$, $0/320{,}000$ at every thicker neck --- yet
+$\mathrm{pc}_{\mathrm{fill}} = 0.59/0.57/0.50$ at neck $0.1/0.2/0.4$,
+with fill contact rate $0.00$: the cost is plan divergence, because the
+\emph{planner's imagined candidates} leap (imagination reaches speed
+$> 4$) where the random gate's rollouts never do (arrival speeds
+$\approx 1.5$). At neck $\in \{0.2, 0.4\}$ the wrong topology is
+behaviorally indistinguishable from truth across $320{,}000$ sampled
+transitions and $30{,}000$ rollouts while costing half the play margin
+--- the companion paper's certified-region/query-mass gap, reproduced
+with the topology knob held fixed. The gate certifies where it looks;
+the planner leaps where it plans.
+
 \section{Mitigation against an enclosed mode: a covering law}
 \label{sec:mitigation}
 

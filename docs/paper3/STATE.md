@@ -22,24 +22,30 @@ behind what has been measured since 2026-07-30.
 
 ## Open, in the order the work naturally goes
 
-1. **Folding the new measurements into the tex**: the 30k rarity sweep
-   (which supersedes the 600-rollout calibration's small-gap zeros and the
-   (1-r)^N constant quoted in the synthesis section), the held-out audit
-   (31/31 two-factor confirmation, the exact 2x2 on the incomplete arm,
-   hidden≡closed carrying into the audit, the inside-start cells'
-   globally-wrong-models regime, the 2-ULP point-trap gate hack), and a
-   note that the metric core is now machine-checked in Lean. All in
-   EXPERIMENTS.md "ring2d held-out audit" and FORMALIZATION.md.
-2. **Thin-neck ring** — the only unrun item of the v2 programme, and not
-   runnable as written: the env has to be designed first and that design is
-   the question (where Lemma 2's hypothesis fails, and what the measurement
-   reads once it does). See `V2-PROGRAM.md`.
+1. **LLM synthesis on the thin neck** — the one decision left, and it is
+   Javier's (Azure bills to the client resource): does any family ever
+   WRITE a variable-thickness band from evidence that contains leap
+   events? The instrument, the calibrated cells (neck 0.1 for the leak
+   regime, 0.2–0.4 for certified-and-costly) and env_key support exist;
+   see THIN-NECK-DESIGN.md "Costs".
+2. **Second Lean tranche** per FORMALIZATION.md's triage (Prop 3 composed,
+   T2-I telescoping, T3-P defect theorems) — mechanical-to-moderate,
+   no blocker.
+3. **Paper 1's linter debt** (22 soundness-scope, 20 printed-zero,
+   3 process-prose at baseline) if that paper is ever revised.
 
-RESOLVED since the last update: the rarity decision (r, the firing rarity,
-with r_int carried as labelled provenance — reasoning recorded with the
-R_SOURCES entries and in EXPERIMENTS.md) and the two heldout branches
-(`env_key` / `env_from_params`, plus 21 R_SOURCES entries and the audit's
-`--instruments` scope flag).
+RESOLVED since the last update: the rarity decision (r, firing) + heldout
+branches + 663/663 audit; the Lean first tranche and the standing
+formalize-as-it-lands rule; the tex caught up (audit, 30k rarity,
+positivity note, machine-checked remark) and reached linter zero; and the
+THIN-NECK ring — designed (pre-registered, committed before the run),
+proved (local crossing lemma in Lean), witnessed (deterministic leap at
+neck 0.5), swept at 30k, and folded into the tex
+(Section "The metric converse"). The v2 programme's bucket 1 is now
+fully run. Headlines: planner leak only at neck 0.1 (pc_blind 0.451);
+certified-and-costly at neck 0.2–0.4 (0 disagreements in 320k sampled
+transitions, pc_fill 0.57/0.50); hidden necks bit-identical to closed at
+all six thicknesses.
 
 Everything else in `V2-PROGRAM.md` buckets 1 and 2 has run; the table there
 carries each outcome and its file.

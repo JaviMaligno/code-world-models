@@ -1,5 +1,69 @@
 # Experiments Log
 
+## Thin-neck ring: the metric reopening, run (2026-08-24, CPU)
+
+`scripts/ring2d_thin_neck.py` -> `results/ring2d_thin_neck.json`. 13 cells
+(neck in {0.1..1.2} x {facing, hidden} + closed control), 30k rollouts + 16
+paired MPC episodes each, 742 s. Design and pre-registered readings in
+`docs/paper3/THIN-NECK-DESIGN.md`, committed BEFORE this ran (c369bb7); the
+local crossing lemma behind the knob is proved in Lean
+(`freeze_stays_outside_of_superset`: interior entry needs a single step
+longer than the neck; max step 1.0).
+
+| neck (facing) | r | r_int (entries, clean) | dis_fill | pc_blind | pc_fill |
+|---|---|---|---|---|---|
+| closed | 0.03123 | 0 | 0/320k | 0.999 | 0.000 |
+| 0.1 | 0.02273 | 0.00203 (61, 60) | 139/320k | **0.451** | **0.594** |
+| 0.2 | 0.02480 | 0.00017 (5, 5) | 0/320k | 0.962 | **0.573** |
+| 0.4 | 0.02553 | 0 | 0/320k | 0.971 | **0.500** |
+| 0.6 | 0.02623 | 0 | 0/320k | 0.962 | 0.000 |
+| 0.8 | 0.02693 | 0 | 0/320k | 0.976 | 0.000 |
+| 1.2 | 0.02920 | 0 | 0/320k | 0.993 | 0.000 |
+
+Readings against the pre-registration:
+
+1. **H-T1 CONFIRMED, event-by-event.** Random-gate entries only at
+   neck <= 0.2; all 66 recorded leaps satisfy `step > neck` from
+   `d_prev > r_in + neck` (0 arithmetic violations) -- the Lean lemma's
+   hypothesis checked per event, not only as a rate. At neck = 0.1 the
+   entries are CLEAN leaps (60/61 with no prior contact), median entering
+   step 0.203, median speed 2.03. neck = 1.2 is the exact-zero side.
+2. **H-T2 PARTIALLY WRONG, in an informative direction.** r is NOT ~= the
+   closed ring's: facing r drops to 0.0227-0.0292, rising monotonically back
+   toward 0.0312 as the neck thickens -- the dip removes contact surface
+   exactly where the corridor delivers contacts. The pre-registration
+   predicted ~=; the measured drop is 8-27% and the Wilson intervals exclude
+   the closed value through neck 0.8.
+3. **H-T3 resolves to a THRESHOLD, not a curve: the planner leaks only at
+   neck = 0.1.** pc_blind collapses to 0.451 (blind contact rate 0.56: the
+   blind planner escapes through the neck in half the paired episodes) and
+   recovers to 0.96-0.99 from neck 0.2 up. The metric hole behaves like the
+   topological channel for play at the thinnest neck only -- the realized
+   approach lands in a 0.2-wide band too often to thread it, and one landing
+   pins the episode (freeze zeroes v; from rest the next step is 0.03).
+4. **H-T4 CONFIRMED to the last bit.** Every hidden-neck cell reproduces the
+   closed ring EXACTLY (r = 0.03123333... identical float, 0 entries,
+   pc 0.999/0.000, dis_fill 0/320k) across all six thicknesses: reach, not
+   geometry, for the third time on this instrument.
+5. **H-T5's conditional fires: certified-and-costly on the metric axis.**
+   The filled-disc model disagrees with truth on a sampled transition only
+   via a leap: 139/320,000 transitions at neck 0.1, 0/320,000 at every other
+   cell (censored zeros, upper ~9.4e-6). Yet pc_fill = 0.594/0.573/0.500 at
+   neck 0.1/0.2/0.4 (fill contact rate 0.00 -- the cost is plan divergence,
+   not contact): at neck in {0.2, 0.4} the wrong topology is
+   **behaviorally certified in 320k sampled transitions and 30k rollouts
+   while costing half the play margin**, because the PLANNER's imagined
+   candidates leap (imagination reaches speed > 4) where the random gate's
+   rollouts never do (arrival speeds ~1.5). That is the certified-region /
+   query-mass gap of paper 2 reproduced on a topology knob held FIXED --
+   the gate certifies where it looks, the planner leaps where it plans.
+
+The pinned witness (deterministic leap at neck 0.5, blocked at >= 1.0) is in
+`tests/test_ring2d_thin_neck.py`; note the RANDOM gate measured 0 entries at
+neck in [0.4, 0.8] where the witness proves reachability -- those zeros are
+censored, and the design doc said which side each zero would fall on before
+the run.
+
 ## ring2d held-out audit: 663 artifacts enter, and the two-factor law holds at 31/31 campaigns (2026-08-24, CPU)
 
 The rarity sweep's open items are closed. `results/heldout_gate_audit_ring2d.json`

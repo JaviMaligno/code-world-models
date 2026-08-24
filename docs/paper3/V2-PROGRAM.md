@@ -17,11 +17,9 @@ hidden≡closed observational identity, r(n) concentration order).
 
 ## Bucket 1 — paper 3 v2 extensions (same thesis, run and fold as measured)
 
-STATUS 2026-08-24: everything in this bucket has RUN except the thin-neck
-ring; the rows below were left at their pre-run state and are corrected here
-against `results/` and the EXPERIMENTS.md sections named in each row. This is
-the ledger-hygiene failure CAMPAIGN-LOG.md warns about, in its other
-direction: the sections were updated and the table was not.
+STATUS 2026-08-24 (second session): **everything in this bucket has now
+RUN**, the thin-neck included. The rows carry each outcome and its file,
+checked against `results/` and the EXPERIMENTS.md sections named in each row.
 
 | # | experiment | cost | status |
 |---|---|---|---|
@@ -29,7 +27,7 @@ direction: the sections were updated and the table was not.
 | 1a | **Square ring** (Chebyshev annulus, zero curvature, corners): mechanism grid + synthesis cells A/D. Pairs with paper 2's square ablation: do models write ROUND rings on square-ring evidence (template prior on the separator)? Honest note: Chebyshev distance is 1-Lipschitz, so Lemma 2 SURVIVES — this is still the metric side; it ablates curvature-of-the-separator, not the metric proof. | env + CPU + Azure | **DONE** — models write ROUND rings on SQUARE evidence (11/12 posed structures at corner ratio ≈1.0, 12/12 written with hypot). Everything else norm-invariant. Files `..._mini_sqgap0{,-in_pv-tda}.json`; EXPERIMENTS.md "Square ring". |
 | 1d | **Smooth learners on the ring** — DEPRIORITIZED (2026-07-24): paper 2's smoothness-forbids-localized-error proposition is geometry-independent and already covers the ring in principle; the probe code is 1D-hardcoded and porting it buys a foregone confirmation. Revisit only if a reviewer asks. | — | deprioritized |
 | 1b | **Multi-chamber** (nested annuli; gauge structure is nested; D-cell from the middle chamber). | design + all arms | **DONE** — three mutually reach-null chambers verified; D-cell from the middle chamber 0/20, and ZERO nested artifacts: the loop does not even pose layer two. The true two-circle cloud draws a detector lottery {0:9, 1:10, 2:1}. File `..._mini_gap0-m2-mid_pv-tda.json`; EXPERIMENTS.md "Second wave". |
-| — | thin-neck ring (thickness < Δ locally: where Lemma 2's hypothesis fails, leap-through becomes possible and measurable) | env + CPU | **the only one left.** Not runnable as written: it needs the env designed first, and the design IS the question (where Lemma 2's hypothesis fails and what the measurement then reads). |
+| — | thin-neck ring (thickness < Δ locally: where Lemma 2's hypothesis fails, leap-through becomes possible and measurable) | env + CPU | **DONE (2026-08-24)** — designed (`THIN-NECK-DESIGN.md`, pre-registered, committed before the run), proved (local crossing lemma in Lean: entry needs a step > neck), witnessed (deterministic leap at neck 0.5), and swept at 30k. Headlines: planner leak only at neck 0.1 (pc_blind 0.451); **certified-and-costly at neck 0.2–0.4** (fill: 0 disagreements in 320k transitions, pc 0.57/0.50); hidden necks bit-identical to closed at all six thicknesses. `results/ring2d_thin_neck.json`; EXPERIMENTS.md "Thin-neck ring". |
 
 ## Bucket 2 — paper-4 seeds (prototype-first; outcomes decide)
 
