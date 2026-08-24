@@ -1006,8 +1006,11 @@ def main(argv: list[str] | None = None) -> int:
     per_file_census: dict[str, dict] = {}
     for t in targets:
         f, c = audit_file(t, allow, index, n_blocks, args.strict, enabled)
-        per_file[rel(t)] = f
-        per_file_census[rel(t)] = c
+        # POSIX-style keys always: the committed baseline was written with
+        # forward slashes, and a Windows run must look its counts up under
+        # the same key or every recorded number silently reads as 0.
+        per_file[rel(t).replace("\\", "/")] = f
+        per_file_census[rel(t).replace("\\", "/")] = c
 
     all_findings = [f for fs in per_file.values() for f in fs]
 

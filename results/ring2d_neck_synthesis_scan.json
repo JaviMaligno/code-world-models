@@ -1,0 +1,137 @@
+{
+ "script": "ring2d_neck_synthesis_scan.py",
+ "definitions": {
+  "angular": "\\batan2\\b|\\btheta\\b|\\bangles?\\b|\\bsector\\b|\\barc\\b|\\bangular\\b",
+  "band": "one if-line comparing a radial variable from both sides (any spelling of r_in <= d <= r_out)",
+  "point_trap": "==\\s*-?\\d+\\.\\d{8,}|abs\\([^)]*\\)\\s*<\\s*1e-1\\d",
+  "leap": "training transition landing strictly inside the hole (env.in_interior on the reproduced D_train)"
+ },
+ "rows": [
+  {
+   "file": "continuous_synthesis_ring2d_large_gap0-nk0.1.json",
+   "model": "gpt-5.4",
+   "neck": 0.1,
+   "n_artifacts": 20,
+   "n_angular": 0,
+   "n_band": 0,
+   "n_point_traps": 0,
+   "n_free_flight": 10,
+   "n_gate_passes": 8,
+   "n_gate_passes_blind": 8,
+   "n_train_mode_present": 12,
+   "leap_seeds": [
+    {
+     "seed": 170000,
+     "n_interior_landings": 16,
+     "gate_accuracy": 0.99,
+     "gate_passed": false,
+     "artifact_has_angular": false,
+     "artifact_has_band": false
+    },
+    {
+     "seed": 180000,
+     "n_interior_landings": 12,
+     "gate_accuracy": 0.999375,
+     "gate_passed": false,
+     "artifact_has_angular": false,
+     "artifact_has_band": false
+    }
+   ]
+  },
+  {
+   "file": "continuous_synthesis_ring2d_large_gap0-nk0.2.json",
+   "model": "gpt-5.4",
+   "neck": 0.2,
+   "n_artifacts": 20,
+   "n_angular": 0,
+   "n_band": 0,
+   "n_point_traps": 0,
+   "n_free_flight": 7,
+   "n_gate_passes": 7,
+   "n_gate_passes_blind": 7,
+   "n_train_mode_present": 13,
+   "leap_seeds": []
+  },
+  {
+   "file": "continuous_synthesis_ring2d_large_gap0-nk0.4.json",
+   "model": "gpt-5.4",
+   "neck": 0.4,
+   "n_artifacts": 20,
+   "n_angular": 0,
+   "n_band": 0,
+   "n_point_traps": 0,
+   "n_free_flight": 7,
+   "n_gate_passes": 7,
+   "n_gate_passes_blind": 7,
+   "n_train_mode_present": 13,
+   "leap_seeds": []
+  },
+  {
+   "file": "continuous_synthesis_ring2d_mini_gap0-nk0.1.json",
+   "model": "gpt-5.4-mini",
+   "neck": 0.1,
+   "n_artifacts": 20,
+   "n_angular": 0,
+   "n_band": 0,
+   "n_point_traps": 1,
+   "n_free_flight": 15,
+   "n_gate_passes": 9,
+   "n_gate_passes_blind": 9,
+   "n_train_mode_present": 12,
+   "leap_seeds": [
+    {
+     "seed": 170000,
+     "n_interior_landings": 16,
+     "gate_accuracy": 0.16,
+     "gate_passed": false,
+     "artifact_has_angular": false,
+     "artifact_has_band": false
+    },
+    {
+     "seed": 180000,
+     "n_interior_landings": 12,
+     "gate_accuracy": 0.999375,
+     "gate_passed": false,
+     "artifact_has_angular": false,
+     "artifact_has_band": false
+    }
+   ]
+  },
+  {
+   "file": "continuous_synthesis_ring2d_mini_gap0-nk0.2.json",
+   "model": "gpt-5.4-mini",
+   "neck": 0.2,
+   "n_artifacts": 20,
+   "n_angular": 0,
+   "n_band": 0,
+   "n_point_traps": 0,
+   "n_free_flight": 9,
+   "n_gate_passes": 7,
+   "n_gate_passes_blind": 7,
+   "n_train_mode_present": 13,
+   "leap_seeds": []
+  },
+  {
+   "file": "continuous_synthesis_ring2d_mini_gap0-nk0.4.json",
+   "model": "gpt-5.4-mini",
+   "neck": 0.4,
+   "n_artifacts": 20,
+   "n_angular": 0,
+   "n_band": 0,
+   "n_point_traps": 2,
+   "n_free_flight": 9,
+   "n_gate_passes": 7,
+   "n_gate_passes_blind": 7,
+   "n_train_mode_present": 13,
+   "leap_seeds": []
+  }
+ ],
+ "totals": {
+  "artifacts": 120,
+  "angular": 0,
+  "band": 0,
+  "point_traps": 3,
+  "gate_passes": 45,
+  "gate_passes_blind": 45
+ }
+}

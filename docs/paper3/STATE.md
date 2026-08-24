@@ -16,23 +16,23 @@ itself records as out of scope are T2's argmax-angle distribution, a planner
 property, and T3's final factor being the instrument's own rarity r, which
 the series treats as an input). The experimental programme is FINISHED —
 the thin-neck LLM synthesis, the last open item, ran on 2026-08-24 (third
-session) — and paper 3's campaigns are all INSIDE the held-out audit
-(723/723, the two-factor law inside Wilson95 at 34/34 campaigns). What is
-left is the PAPER: folding the synthesis result into the tex, and the Lean
+session, both sizes) — and paper 3's campaigns are all INSIDE the held-out
+audit (783/783, the two-factor law inside Wilson95 at 37/37 campaigns).
+The synthesis result is folded into the tex (Section "The metric
+converse"), which builds clean at linter zero. What is left is the Lean
 second tranche.
 
 ## Open, in the order the work naturally goes
 
-1. **Fold the thin-neck synthesis result into the tex** (Section "The
-   metric converse" is where the CPU sweep landed): 0/60 artifacts write
-   any angular structure, even with leap evidence in the sample; the
-   audit absorbs the cells at 34/34. EXPERIMENTS.md "Thin-neck LLM
-   synthesis" has the numbers.
-2. **Second Lean tranche** per FORMALIZATION.md's triage (Prop 3 composed,
+1. **Second Lean tranche** per FORMALIZATION.md's triage (Prop 3 composed,
    T2-I telescoping, T3-P defect theorems) — mechanical-to-moderate,
    no blocker.
-3. **Paper 1's linter debt** (22 soundness-scope, 20 printed-zero,
-   3 process-prose at baseline) if that paper is ever revised.
+2. **Paper 1's linter debt** (22 soundness-scope, 20 printed-zero,
+   3 process-prose at baseline) if that paper is ever revised. The
+   baseline is READ correctly on Windows now (the linter's lookup
+   normalized path separators on 2026-08-24; before that every recorded
+   count silently read as 0 here and the run always reported false
+   regressions).
 
 RESOLVED since the last update: the rarity decision (r, firing) + heldout
 branches + 663/663 audit; the Lean first tranche and the standing
@@ -63,15 +63,25 @@ origin; this branch is the only one).
   sweep's three mirrors carry it, omitted-when-None so no committed key
   moves; three R_SOURCES entries read `results/ring2d_thin_neck.json`; the
   full arm is refused at `--neck` until the rules text can describe a dip).
-- **Three campaigns, mini, 20 seeds, incomplete arm** (neck 0.1/0.2/0.4
-  facing). The campaign's answer: **0/60 artifacts write any angular
-  structure** — not the neck, not even the uniform band; the two seeds
-  whose evidence contained leaps answered with a reward threshold and free
-  flight. A second exact-equality gate hack (seed 140000, all four floats
-  of the sample's single contact state) passed in-sample and fell held-out
-  as mode_only. EXPERIMENTS.md "Thin-neck LLM synthesis".
-- **The audit re-run absorbed the cells**: 723/723 artifacts, 34/34
-  campaigns inside Wilson95, incomplete-arm contingency 134/134 exact.
+- **Six campaigns, both sizes, 20 seeds, incomplete arm** (neck
+  0.1/0.2/0.4 facing; mini first, large as the family control on Javier's
+  go). The campaign's answer: **0/120 artifacts write any angular
+  structure** — not the neck, not even the uniform band
+  (`results/ring2d_neck_synthesis_scan.json` carries the counts); the two
+  seed blocks whose evidence contained leaps (shared by both sizes) were
+  answered with a reward threshold and free flight. A second
+  exact-equality gate hack (mini seed 140000, all four floats of the
+  sample's single contact state) passed in-sample and fell held-out as
+  mode_only; two more point traps stalled at 0.999.
+- **The audit re-run absorbed the cells**: 783/783 artifacts, 37/37
+  campaigns inside Wilson95, incomplete-arm contingency 156/156 exact
+  over 91 blocks.
+- **The result is folded into the tex**: new paragraph "The loop does not
+  write the neck" in Section "The metric converse"; the held-out
+  paragraph's counts updated (783/37/156/91/214/121). Claims linter at
+  zero for paper 3, `check_latex.sh` green (30 pages, 0 overfull, 0
+  dangling refs). Fixed on the way: the linter's baseline lookup broke on
+  Windows path separators (every recorded count read as 0).
 
 Picked up exactly where the list above pointed: the rarity decision, then the
 plumbing it unblocks, then the audit itself. No mathematics attempted (T7

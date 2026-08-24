@@ -846,27 +846,29 @@ same program: identifiability is a property of the sample, not the model
 --- the companion papers' law, now on a mode with an inside.
 
 \paragraph{Held-out replication: independent-gate acceptance coincides
-with that gate's own mode-miss, $112/112$.} Re-scoring every committed
+with that gate's own mode-miss, $156/156$.} Re-scoring every committed
 artifact on an independent gate
 block (a disjoint $40$-rollout stream per seed;
 \texttt{scripts/heldout\_gate\_audit.py} under its \texttt{ring2d} scope,
 output \texttt{results/heldout\_\allowbreak gate\_\allowbreak
-audit\_\allowbreak ring2d.json}: $663$
-artifacts over $31$ campaigns) turns the identifiability law into a held-out
+audit\_\allowbreak ring2d.json}: $783$
+artifacts over $37$ campaigns, the thin-neck synthesis cells of
+Section~\ref{sec:thinneck} included) turns the identifiability law into a
+held-out
 measurement. On the incomplete arm restricted to artifacts whose
 \emph{training} sample missed the mode, held-out acceptance coincides
 with ``the independent gate's own block also missed the mode'' in
-$112/112$ artifacts --- an exact identity checked per artifact, over
-$69$ disjoint seed blocks (the two sizes share their blocks by
+$156/156$ artifacts --- an exact identity checked per artifact, over
+$91$ disjoint seed blocks (the two sizes share their blocks by
 construction), zero off-diagonal --- and the two-factor prediction
 $(1-r)^{N_{\mathrm{train}}+N_{\mathrm{gate}}}$ lies inside
 the Wilson $95\%$ interval of the measured accepted-and-blind rate in
-every one of the $31$ campaigns (each interval over that campaign's own
+every one of the $37$ campaigns (each interval over that campaign's own
 disjoint, independent seed blocks --- never pooled across sizes), the
 hidden-channel cells included --- audited
 under the closed ring's $r$, which their own $30$k calibration equals to
-five decimals. The same audit measures the converse: of $169$ in-sample
-gate passes, $88$ fail the independent gate, and every one of the $88$
+five decimals. The same audit measures the converse: of $214$ in-sample
+gate passes, $121$ fail the independent gate, and every one of the $121$
 fails \emph{at a mode contact} --- an in-sample pass is training-set
 consistency, and what it omits is exactly the mode. Acceptance --- by
 the training sample or by an independent block --- is a sample event on
@@ -1117,6 +1119,33 @@ transitions and $30{,}000$ rollouts while costing half the play margin
 --- the companion paper's certified-region/query-mass gap, reproduced
 with the topology knob held fixed. The gate certifies where it looks;
 the planner leaps where it plans.
+
+\paragraph{The loop does not write the neck: $0/120$ artifacts pose any
+angular structure.} The synthesis analogue of posing the hole is posing
+the dip, and at neck $\in \{0.1, 0.2, 0.4\}$ (facing, incomplete arm,
+both sizes, $20$ seeds per cell;
+\texttt{results/continuous\_\allowbreak synthesis\_\allowbreak
+ring2d\_\allowbreak \{mini,large\}\_\allowbreak gap0-nk\{0.1,0.2,0.4\}.json},
+scanned by \texttt{results/ring2d\_\allowbreak neck\_\allowbreak
+synthesis\_\allowbreak scan.json}) no artifact does either: $0/120$
+contain an angular term of any kind and $0/120$ pose even a
+\emph{uniform} band --- the conditionals that appear are one-sided discs
+at the reward radius, velocity thresholds, and three exact-coordinate
+point fits of the family above, one of which (freezing on \texttt{==}
+equality with its training sample's single contact state) reached
+in-sample $1.000$ on the platform that synthesized it and fails the
+independent gate \texttt{mode\_only}. Evidence is not the bottleneck:
+the two seed blocks at neck $0.1$ whose training samples contain
+leap-through transitions ($16$ and $12$ interior landings; the sizes
+share their blocks by construction) are answered by a reward-threshold
+freeze and by free flight --- shown the metric hole, the loop writes no
+geometry at all. All $45$ gate passes across the six cells are
+wall-blind, and the held-out audit absorbs the cells without strain
+(the $37/37$ and $156/156$ above). The regime above --- certified
+relative to the gate's sampled transitions, costly in play --- therefore
+carries a synthesis-side converse: at necks the gate cannot distinguish
+from the closed ring, the accepted artifacts are the same blind
+integrators as everywhere else, admitted by the same two-factor law.
 
 \section{Mitigation against an enclosed mode: a covering law}
 \label{sec:mitigation}

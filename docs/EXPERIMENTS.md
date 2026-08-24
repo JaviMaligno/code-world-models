@@ -1,11 +1,15 @@
 # Experiments Log
 
-## Thin-neck LLM synthesis: no family writes the neck, and the audit absorbs the cells (2026-08-24, Azure mini)
+## Thin-neck LLM synthesis: no family writes the neck, and the audit absorbs the cells (2026-08-24, Azure mini + large)
 
-The one Azure decision STATE.md left open, taken and run: three campaigns of
-`continuous_danger_synthesis.py mini 20 --instrument ring2d --neck {0.1, 0.2,
-0.4} --arm incomplete --keep-history` (gpt-5.4-mini, ~31/20/19 min) ->
-`results/continuous_synthesis_ring2d_mini_gap0-nk{0.1,0.2,0.4}.json`. The
+The one Azure decision STATE.md left open, taken and run: six campaigns of
+`continuous_danger_synthesis.py {mini,large} 20 --instrument ring2d --neck
+{0.1, 0.2, 0.4} --arm incomplete --keep-history` (gpt-5.4-mini ~31/20/19 min,
+gpt-5.4 ~52/21/21 min) ->
+`results/continuous_synthesis_ring2d_{mini,large}_gap0-nk{0.1,0.2,0.4}.json`,
+scanned by `scripts/ring2d_neck_synthesis_scan.py` ->
+`results/ring2d_neck_synthesis_scan.json` (the counts below are its output,
+not hand tallies). The
 campaign's question: does a model ever WRITE a variable-thickness band from
 evidence that contains leap events? The knob entered the synthesis script for
 this run (`--neck/--neck-channel`, KNOB suffix `-nk{...}` matching `env_key`'s
@@ -13,44 +17,54 @@ existing branch); the full arm is REFUSED at `--neck` until
 `_ring2d_rules_text` grows a variable-thickness clause, so the contract can
 never describe a uniform band while the truth dips.
 
-1. **No, 0/60 — and not for lack of evidence.** No artifact in any cell
-   carries an angular term of any kind (zero occurrences of atan2 across all
-   60), and none poses even a UNIFORM two-sided band: the conditionals that do
-   appear are one-sided discs at the lode radius 2.0, velocity/box thresholds,
-   one reward-level freeze, and two exact-equality traps. 36/60 artifacts are
-   pure free flight. The bottleneck the gap sweep measured (parameters, not
-   structure) does not even arise here: the loop never reaches the structure.
-2. **Two seeds at neck 0.1 saw the leak and neither wrote it.** Seeds 170000
-   and 180000 carried 16 and 12 interior-landing transitions in D_train
-   (expected seeds with >=1 leap at r_int = 0.00203: ~1.6 of 20; 2 observed).
-   The first answered with a reward-threshold freeze (gate 0.16), the second
-   with free flight (gate 0.999); neither poses any geometry. Evidence of the
-   metric hole does not buy a metric model, the dose-curve reading on the
-   neck axis.
+1. **No, 0/120 — both sizes, and not for lack of evidence.** No artifact in
+   any cell carries an angular term of any kind (scan regex over
+   atan2/theta/angle/sector/arc/angular, word-bounded), and none poses even a
+   UNIFORM two-sided band (0/120 band conditions): the conditionals that do
+   appear are one-sided discs at the reward radius 2.0, velocity/box
+   thresholds, one reward-level freeze, and three exact-coordinate point
+   traps. 57/120 artifacts are pure free flight. The bottleneck the gap sweep
+   measured (parameters, not structure) does not even arise here: the loop
+   never reaches the structure.
+2. **Two seed blocks at neck 0.1 saw the leak and no artifact wrote it.**
+   Seeds 170000 and 180000 carry 16 and 12 interior-landing transitions in
+   D_train (expected seeds with >=1 leap at r_int = 0.00203: ~1.6 of 20; 2
+   observed; the sizes share their blocks by construction, so both models saw
+   the same leaps). mini answered with a reward-threshold freeze (gate 0.16)
+   and free flight (0.999); large with free flight twice (0.99, 0.999).
+   Evidence of the metric hole does not buy a metric model — the dose-curve
+   reading on the neck axis, now in two families.
 3. **A second exact-equality gate hack, this one caught at synthesis time.**
-   Gate passes are 9/7/7 of 20, every one wall-blind. At neck 0.1, eight are
-   the (1-r)^N event (training sample missed the mode); the ninth — seed
-   140000 — reached in-sample 1.0 with the mode PRESENT by freezing on `==`
-   equality with its sample's single contact state, all four floats. Same
-   family as the audit's mini_gap0.6-hid seed 10000 (2 ULPs), but produced on
-   THIS platform, so the equality holds and the in-sample gate accepted it.
-   The held-out audit rejects it, `mode_only` on both gates.
-4. **The audit absorbs the cells without strain: 34/34.** Re-run resumed
+   Gate passes are 9/7/7 (mini) and 8/7/7 (large) of 20, every one
+   wall-blind (45/45). At mini neck 0.1, eight are the (1-r)^N event
+   (training sample missed the mode); the ninth — seed 140000 — reached
+   in-sample 1.0 with the mode PRESENT by freezing on `==` equality with its
+   sample's single contact state, all four floats. Same family as the
+   audit's mini_gap0.6-hid seed 10000 (2 ULPs), but produced on THIS
+   platform, so the equality holds and the in-sample gate accepted it. The
+   held-out audit rejects it, `mode_only` on both gates. Two more point
+   traps (mini nk0.4 seeds 70000/110000, 1e-12 snaps and a bare `==`) stall
+   at gate 0.999 without passing.
+4. **The audit absorbs the cells without strain: 37/37.** Re-run resumed
    (`--instruments ring2d --glob "continuous_synthesis_ring2d_*.json"`), now
-   723 artifacts / 34 campaigns / 500 blocks. The three new cells: 2x2
+   783 artifacts / 37 campaigns / 500 blocks. The six new cells: 2x2
    contingency exact (the incomplete-arm restriction grows 112/112 ->
-   134/134, still zero off-diagonal), two-factor prediction inside Wilson95
-   at all three (measured 0.15 vs predicted 0.159 at nk0.1; 0.10 vs 0.134;
-   0.05 vs 0.126), r from `results/ring2d_thin_neck.json` via the new
-   R_SOURCES entries, drift-checked. Regressions 6/5/6, the memorizer among
+   156/156 over 91 blocks, still zero off-diagonal), two-factor prediction
+   inside Wilson95 at all six (mini: measured 0.15 vs predicted 0.159 at
+   nk0.1, 0.10 vs 0.134, 0.05 vs 0.126; large: 0.15/0.10/0.05 measured
+   against the same predictions and intervals — the sizes share blocks), r
+   from `results/ring2d_thin_neck.json` via the new R_SOURCES entries,
+   drift-checked. Total regressions 121, all mode_only, the memorizer among
    them.
 
 The synthesis-side reading in one line: the thin neck is invisible to the
 loop at every level — it does not pose the band the neck is cut into, so the
 metric question (would it write the dip?) never becomes live. The
 certified-and-costly regime of the CPU sweep therefore stands with an LLM
-witness: the artifacts that pass do so blind, by the same two-factor law as
-everywhere else.
+witness in both families: the artifacts that pass do so blind, by the same
+two-factor law as everywhere else. Folded into the tex (Section "The metric
+converse", paragraph "The loop does not write the neck"), whose held-out
+paragraph now carries 783/37/156/91/214/121.
 
 ## Thin-neck ring: the metric reopening, run (2026-08-24, CPU)
 
