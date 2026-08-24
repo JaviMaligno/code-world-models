@@ -5,14 +5,15 @@ numbers and the arguments live in the documents it names, and are not copied
 here, because a second copy is how `THEORY.md`'s list and its sections came to
 contradict each other twice (CAMPAIGN-LOG.md, "Ledger hygiene").
 
-Last updated 2026-08-24.
+Last updated 2026-08-24 (second session — the audit session, below).
 
 ## The state in one paragraph
 
-The theory list is nearly closed and the experimental programme is finished
-except for one item that needs designing rather than running. What is left is
-mathematical: the second half of T7. Everything below that is either a decision
-for you or a piece of plumbing that a decision unblocks.
+The theory list is nearly closed, the experimental programme is finished
+except for one item that needs designing rather than running, and paper 3's
+campaigns are now INSIDE the held-out audit (663/663, the two-factor law
+inside Wilson95 at 31/31 campaigns). What is left is mathematical (the second
+half of T7) plus the thin-neck design question.
 
 ## Open, in the order the work naturally goes
 
@@ -21,22 +22,50 @@ for you or a piece of plumbing that a decision unblocks.
    construction) and R2 (the estimator is a union-find) are proved, and with the
    free evidence entered as PATHS rather than a point cloud the synthetic
    discrimination is 12/12. This is the live mathematical frontier.
-2. **The rarity decision: is it `r` or `r_int`?** Needed before ring2d can enter
-   the held-out audit. The data is measured and waiting
-   (`results/ring2d_rarity_sweep.json`); see EXPERIMENTS.md, "ring2d rarity
-   sweep", whose reading 2 is the reason this is not mechanical — the answer may
-   differ between the outside cells and the inside ones.
-3. **Two branches, once (2) is decided**: `heldout.env_from_params` and
-   `heldout.env_key` have no ring2d case. `env_key` now RAISES instead of
-   silently returning a cart key; `env_of` in `scripts/ring2d_rarity_sweep.py`
-   is the mirror `env_from_params` needs.
-4. **Thin-neck ring** — the only unrun item of the v2 programme, and not
+2. **Thin-neck ring** — the only unrun item of the v2 programme, and not
    runnable as written: the env has to be designed first and that design is the
    question (where Lemma 2's hypothesis fails, and what the measurement reads
    once it does). See `V2-PROGRAM.md`.
+3. **Folding the audit's findings into the tex** when the paper prose is next
+   touched: the 31/31 two-factor confirmation, the exact 2x2 on the incomplete
+   arm, hidden≡closed carrying into the audit, the inside-start cells'
+   globally-wrong-models regime (237/320 off-mode eval exceptions vs 87/343
+   outside), and the 2-ULP point-trap gate hack. All in EXPERIMENTS.md,
+   "ring2d held-out audit".
+
+RESOLVED since the last update: the rarity decision (r, the firing rarity,
+with r_int carried as labelled provenance — reasoning recorded with the
+R_SOURCES entries and in EXPERIMENTS.md) and the two heldout branches
+(`env_key` / `env_from_params`, plus 21 R_SOURCES entries and the audit's
+`--instruments` scope flag).
 
 Everything else in `V2-PROGRAM.md` buckets 1 and 2 has run; the table there
 carries each outcome and its file.
+
+## What happened on 2026-08-24, second session
+
+Picked up exactly where the list above pointed: the rarity decision, then the
+plumbing it unblocks, then the audit itself. No mathematics attempted (T7
+stays for its own session).
+
+- **The rarity decision taken and pinned: r, the firing rarity** — the
+  audit's whole event algebra is contact-based, r_int is Lemma 2's curve and
+  cannot reveal blindness to a gate; it rides along as `r_interior`,
+  drift-checked. A test pins the decision.
+- **ring2d audited, completely**: 663/663 artifacts into
+  `results/heldout_gate_audit_ring2d.json` (paper 2's committed audit
+  untouched — its scope cannot widen by construction now). Headlines: the
+  two-factor law inside Wilson95 at **31/31 campaigns**; the 2x2 exact at
+  112/112 on the incomplete arm; 88 regressions all mode_only; the
+  inside-start cells produce globally wrong models rather than blind
+  integrators (237/320 off-mode eval exceptions vs 87/343 outside). Full
+  numbers in EXPERIMENTS.md, "ring2d held-out audit".
+- **A 2-ULP-wide gate hack found by the reproduction check**: one artifact
+  (mini_gap0.6-hid seed 10000) reached its stored in-sample 1.0 by freezing
+  on exact `==` equality with its sample's single contact state; this
+  platform's libm puts that y 2 ULPs away, so the trap misses here. No
+  held-out conclusion moves; pinned as the only tolerated mismatch. Fourth
+  portability finding, first one where the fragility is the artifact's own.
 
 ## What happened on 2026-08-24
 

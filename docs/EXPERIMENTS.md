@@ -1,5 +1,89 @@
 # Experiments Log
 
+## ring2d held-out audit: 663 artifacts enter, and the two-factor law holds at 31/31 campaigns (2026-08-24, CPU)
+
+The rarity sweep's open items are closed. `results/heldout_gate_audit_ring2d.json`
+(complete: 663 artifacts, 31 campaigns, 21 env_keys, 440 distinct (env, seed)
+blocks), produced by `scripts/heldout_gate_audit.py --instruments ring2d` --
+the same script and scoring as paper 2's audit, whose committed output is
+untouched (its default scope cannot widen: a non-default `--instruments` must
+name its own `--out`).
+
+**The decision: the rarity is r, the FIRING rarity, at every configuration.**
+The audit's event algebra is contact-based end to end: `mode_presence` counts
+`t["contact"]`, the contingency's rows are "D_gate contains a mode contact",
+and `(1-r)^N` is the probability a sample misses the MODE -- the same event
+every pre-existing entry's `kind: "firing"` names. r_int is a different random
+variable (Lemma 2's curve; entering the interior through the channel touches
+no mode, so it cannot reveal blindness to a gate). It rides along in every
+entry as `r_interior` with its own source path, drift-checked, as provenance
+rather than argument. The inside-start cells do NOT get a different quantity:
+their r of 0.49-0.76 makes the product degenerate rather than small, which the
+entries state -- and the measurement below confirms -- instead of substituting
+a variable (their r_int = 1.0 identically would be no rarity either). So
+reading 2's "the answer may differ between outside and inside" resolved to:
+same argument, different REGIME, and the audit reports the regime.
+
+**Plumbing.** `env_key` gets its ring2d branch: `ring2d_<KNOB>` with the
+synthesis script's own knob string over all five stream fields, plus `_n{80,
+160,320}` for the dose campaigns (21 keys, 31 campaigns; the other
+instruments' argparse defaults riding in `params` cannot touch it).
+`env_from_params` mirrors the synthesis construction exactly; the reproduced
+D_train returns committed artifacts' stored gate scores bit-for-bit (tested,
+and re-verified on the first 3 artifacts of every campaign during the audit).
+21 `R_SOURCES` entries read `results/ring2d_rarity_sweep.json`;
+`verify_r_sources` re-reads r AND r_interior and refuses on drift. The
+disjointness proof now covers the longest in-scope training block (320, not
+40).
+
+**(a) The 2x2 contingency is EXACT on the incomplete arm.** Restricted to the
+112 incomplete-arm artifacts whose training sample missed the mode: held-out
+acceptance coincides with "D_gate also missed the mode" in 112/112 -- 36
+gate-miss/accepted, 76 gate-hit/rejected, zero off-diagonal. Acceptance of a
+blind artifact is exactly the event "the independent gate drew no contact".
+
+**(b) The two-factor prediction (1-r)^(N_train+N_gate) sits inside the Wilson
+95% interval at 31 of 31 campaigns.** Outside cells run from measured 0.050
+against predicted 0.079 (gap0, both sizes) through 0.300 vs 0.216 (gap0.6) to
+0.550 vs 0.475 (gap1.2, where r has fallen to 0.0093). The hidden-channel
+campaigns are audited under the closed ring's r (their own entries, identical
+to five decimals) and land inside as well -- hidden≡closed carries from the
+rarity column into the audit. The inside-start cells are the predicted
+degeneracy measured: predictions of 1e-24 down to 1e-222 (dose N320), measured
+0.000 everywhere, 0 accepted-and-blind artifacts in 340.
+
+**(c) 88 regressions (in-sample pass, independent gate fail), every one
+mode_only.** 76 of the 88 trained on mode-missing samples -- the acceptance
+was a property of the training draw, not the artifact, and the independent
+gate's own draw contained the contact. The 24 REVERSE regressions (in-sample
+refused, held-out accepts) concentrate in the small-gap outside cells: the
+same law seen from the other side (this time the independent gate drew no
+contact). Together they are the paper-2 finding on a sixth instrument:
+gate outcomes are sample events, not artifact properties.
+
+**(d) Out-of-sample exactness splits by REGIME, not by knob.** Off-mode eval
+failures: 237/320 inside-start artifacts vs 87/343 outside-start. The
+loop-evidence regime does not produce clean-integrator-plus-missing-mode
+artifacts; it produces globally wrong models (eval accuracies down to 0.05),
+which is a different failure class from the blindness the danger law is about
+-- worth its own sentence wherever the inside cells are written up.
+
+**A 2-ULP-wide gate hack, and the one reproduction mismatch, explained.** The
+train-reproduction check flagged exactly one artifact in 663:
+`mini_gap0.6-hid` seed 10000 stored gate 1.0, recomputed 3199/3200. Its code
+is a textual point trap -- it hardcodes the full float coordinates of its
+training sample's single contact state and freezes ONLY on exact `==`
+equality. The hardcoded y is 2 ULPs (4.4e-16) from what this platform's libm
+produces along the same trajectory, so the trap fired on the machine that ran
+the campaign and misses here: the stored 1.0 is platform-contingent to the
+last bit of `sin`/`cos`. No held-out conclusion moves (D_gate's contact states
+are different floats entirely, so the trap misses them on every platform, and
+the artifact is rejected as the blind artifact it behaviorally is). Pinned as
+the ONLY tolerated mismatch in `test_committed_ring2d_audit_json_is_self_
+consistent`; any other mismatch fails CI. Fourth member of the portability
+family, and the first one where the fragility is the ARTIFACT's own gate-hack
+rather than our harness.
+
 ## ring2d rarity sweep: r and r_int at every configuration the campaigns used (2026-08-24, CPU)
 
 `scripts/ring2d_rarity_sweep.py` -> `results/ring2d_rarity_sweep.json`. 18
@@ -46,7 +130,7 @@ Wilson intervals in the JSON. Three readings, none of them assumed beforehand:
    at gap = 0 (Lemma 2); everywhere else it was a sample-size artifact.
 
 **What is still open before ring2d can be audited** (all three, not just the
-rarity):
+rarity) — **RESOLVED 2026-08-24, see the audit section above**:
 
 - `env_key` had NO ring2d branch: every configuration above fell through to
   `cart_xwall8`, colliding with each other and with cart's campaigns on the key

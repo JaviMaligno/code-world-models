@@ -851,4 +851,19 @@ def test_committed_ring2d_audit_json_is_self_consistent():
             f"the ring2d audit covers {agg['totals']['n_artifacts']} artifacts "
             f"but the committed ring2d campaigns hold {expected}: re-run "
             f"scripts/heldout_gate_audit.py --instruments ring2d")
-        assert agg["train_reproduction_check"]["mismatches"] == []
+        # ONE reproduction mismatch is known and pinned rather than allowed
+        # away: mini_gap0.6-hid seed 10000 hacked the in-sample gate with an
+        # exact-equality point trap on the contact state's floats, and its
+        # hardcoded y is 2 ULPs from what this platform's libm produces along
+        # the same trajectory -- so the stored 1.0 is platform-contingent and
+        # the recomputed score is 3199/3200. Held-out conclusions are
+        # unaffected (D_gate's contact states are different floats entirely,
+        # so the trap misses them on EVERY platform). Any OTHER mismatch is a
+        # real reproduction failure and must fail here.
+        mm = agg["train_reproduction_check"]["mismatches"]
+        assert [(m["file"], m["seed"], m["recomputed_train_accuracy"])
+                for m in mm] in (
+            [],  # a run on the original platform reproduces even the trap
+            [("continuous_synthesis_ring2d_mini_gap0.6-hid.json", 10000,
+              0.9996875)],
+        ), mm
