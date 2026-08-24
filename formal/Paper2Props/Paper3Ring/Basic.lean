@@ -206,6 +206,55 @@ theorem lemma2_interior_unreachable (c : E) {rIn rOut Δ : ℝ} (hΔw : Δ < rOu
   have hout := freeze_stays_outside c hΔw hstep hfreeze h₀ t
   exact not_lt.mpr (le_of_lt (lt_trans hio hout))
 
+/-! ### The thin-neck generalization (the local crossing lemma)
+
+RingField2D's `neck` knob thins the band from outside inside an angular
+sector, so the mode set is no longer an annulus — but it still CONTAINS the
+thin annulus `[r_in, r_in + neck]` at every angle, and that inclusion is all
+the invariant needs. The lemma below says: however the mode set is shaped,
+containing a thin annulus of thickness `w > Δ` makes the hole unreachable
+from outside. Its contrapositive is the instrument's design statement:
+interior entry requires a single step longer than the neck — and with the
+integrator's max step `(gain/drag)·dt = 1.0`, a neck ≥ 1.2 keeps the interior
+exactly unreachable while a thinner one admits leap-through at speed
+(witnessed deterministically in `tests/test_ring2d_thin_neck.py`). -/
+
+/-- **Local crossing lemma (thin neck).** If the mode set `M` contains the
+annulus `[rIn, rIn + w]` about `c`, every tentative step moves the position by
+at most `Δ < w`, and freezing preserves position, then a trajectory started at
+distance `> rIn + w` keeps distance `> rIn + w` forever. -/
+theorem freeze_stays_outside_of_superset (c : E) {rIn w Δ : ℝ} (hΔw : Δ < w)
+    {M : Set E} (hM : annulus c rIn (rIn + w) ⊆ M)
+    (hstep : ∀ t s, dist (pos (F t s)) (pos s) ≤ Δ)
+    (hfreeze : ∀ s, pos (freeze s) = pos s)
+    {s₀ : σ} (h₀ : rIn + w < dist (pos s₀) c) :
+    ∀ t, rIn + w < dist (pos (freezeTraj pos F freeze M s₀ t)) c := by
+  intro t
+  induction t with
+  | zero => simpa [freezeTraj] using h₀
+  | succ n ih =>
+    classical
+    by_cases h : pos (F n (freezeTraj pos F freeze M s₀ n)) ∈ M
+    · rw [freezeTraj_succ, if_pos h, hfreeze]
+      exact ih
+    · rw [freezeTraj_succ, if_neg h]
+      exact step_stays_out (by linarith : Δ < (rIn + w) - rIn) ih (hstep n _)
+        (fun hin => h (hM hin))
+
+/-- **The neck threshold, as unreachability.** Under the same hypotheses the
+open hole `dist < rIn` is never visited: with max step Δ, a neck of thickness
+`w > Δ` seals the interior exactly, whatever the rest of the mode set looks
+like. -/
+theorem neck_interior_unreachable (c : E) {rIn w Δ : ℝ} (hΔw : Δ < w)
+    (hΔ0 : 0 ≤ Δ) {M : Set E} (hM : annulus c rIn (rIn + w) ⊆ M)
+    (hstep : ∀ t s, dist (pos (F t s)) (pos s) ≤ Δ)
+    (hfreeze : ∀ s, pos (freeze s) = pos s)
+    {s₀ : σ} (h₀ : rIn + w < dist (pos s₀) c) :
+    ∀ t, ¬ dist (pos (freezeTraj pos F freeze M s₀ t)) c < rIn := by
+  intro t
+  have h := freeze_stays_outside_of_superset c hΔw hM hstep hfreeze h₀ t
+  exact not_lt.mpr (le_of_lt (lt_of_le_of_lt (by linarith) h))
+
 /-! ## The corollary: disc and annulus are evidence-equivalent from outside -/
 
 /-- **Disc ≡ annulus, trajectory half (Lemma 2's corollary).** From an outside start,

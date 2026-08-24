@@ -259,6 +259,12 @@ def env_key(params: dict) -> str:
                    else "-hid")
                 + {"outside": "", "inside": "-in",
                    "middle": "-mid"}[params.get("start", "outside")])
+        # The thin-neck knob changes the rollout stream (2026-08-24); no
+        # committed campaign carries it yet, so keys without it are unchanged.
+        if params.get("neck") is not None:
+            knob += f"-nk{float(params['neck']):g}"
+            if params.get("neck_channel", "facing") != "facing":
+                knob += "h"
         key = f"ring2d_{knob}"
         n_roll = params.get("n_rollouts", 40)
         if n_roll != 40:

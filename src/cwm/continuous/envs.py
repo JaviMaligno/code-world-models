@@ -441,6 +441,26 @@ class RingField2D:
                                     # survives verbatim — this ablates the
                                     # separator's curvature, not the metric
                                     # proof.
+    neck: float | None = None       # THIN-NECK knob (V2-PROGRAM's last item):
+                                    # inside the neck sector the band thins
+                                    # FROM OUTSIDE to thickness `neck`
+                                    # (r_out dips to r_in + neck; the hole
+                                    # d < r_in is invariant, so r_int stays
+                                    # comparable across arms). None = uniform
+                                    # band, bit-identical to every committed
+                                    # run. The band still separates the plane
+                                    # in the continuum at every neck > 0
+                                    # (beta_1 = 1, no channel): the knob
+                                    # breaks Lemma 2's METRIC hypothesis, not
+                                    # the topology -- interior entry requires
+                                    # a step longer than `neck`, and the max
+                                    # step is (gain/drag)*dt = 1.0, so
+                                    # neck >= 1.2 is an exact zero (local
+                                    # crossing lemma) while neck < 1.0 admits
+                                    # leap-through at speed.
+    neck_center: float = math.pi    # facing the start (like gap_center);
+                                    # 0.0 = hidden on the far side
+    neck_halfwidth: float = 0.3     # angular half-width (rad) of the sector
     r_in2: float | None = None      # optional SECOND (outer) ring
     r_out2: float | None = None     # [r_in2, r_out2]: the multi-chamber
                                     # instrument (V2-PROGRAM 1b). Nested
@@ -485,6 +505,19 @@ class RingField2D:
         delta = (ang - self.gap_center + math.pi) % (2 * math.pi) - math.pi
         return abs(delta) <= self.gap / 2.0
 
+    def _r_out_eff(self, x: float, y: float) -> float:
+        """The band's outer radius at this position's angle: `r_out`
+        everywhere except inside the neck sector, where the band thins from
+        outside to thickness `neck`. Guarded so the `neck is None` path does
+        no arithmetic at all -- every committed run stays bit-identical."""
+        if self.neck is None:
+            return self.r_out
+        ang = math.atan2(y - self.center[1], x - self.center[0])
+        delta = (ang - self.neck_center + math.pi) % (2 * math.pi) - math.pi
+        if abs(delta) <= self.neck_halfwidth:
+            return self.r_in + self.neck
+        return self.r_out
+
     def _in_mode(self, x: float, y: float) -> bool:
         if self.r_in is None:
             return False
@@ -494,7 +527,8 @@ class RingField2D:
                 and not self._in_gap_sector(x, y)):
             return True
         lo = 0.0 if self.filled else self.r_in
-        if not (lo <= d <= self.r_out):
+        hi = self.r_out if self.neck is None else self._r_out_eff(x, y)
+        if not (lo <= d <= hi):
             return False
         return not self._in_gap_sector(x, y)
 

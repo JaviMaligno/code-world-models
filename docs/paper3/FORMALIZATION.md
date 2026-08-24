@@ -31,6 +31,7 @@ not silently weakened.
 | r_int(0) = 0 (pathwise, at the defaults) | `ring2d_interior_unreachable_at_defaults` | **PROVED** for the RingField2D-shaped dynamics (semi-implicit integrator, `‖u‖ ≤ 1` heading, freeze on annulus landing) |
 | Prop 1 (gate quotient) | `prop1_traj_eq`, `prop1_gate_quotient`, `prop1_no_statistic_distinguishes` | **PROVED at realization level** — the induction that IS the proof; the measure wrapper (a.s. over seeds) adds only quantification and is not formalized |
 | Prop 3(i) (unfalsifiable) | composition of `prop1_gate_quotient` + `lemma2_interior_unreachable` | components proved; the composed statement is next-tranche mechanical work |
+| Local crossing lemma (thin neck, 2026-08-24) | `freeze_stays_outside_of_superset`, `neck_interior_unreachable` | **PROVED** the same session the design landed (the standing rule's first exercise): a mode set CONTAINING the thin annulus `[r_in, r_in+w]` with `w > Δ` seals the hole, whatever its shape — interior entry requires a single step longer than the neck. The deterministic leap witness at neck = 0.5 (`tests/test_ring2d_thin_neck.py`) is the measured complement |
 | Prop 3(ii) (harmless / planner equivalence) | `disc_annulus_same_return` | **engine PROVED** (any return functional coincides); the planner/environment loop wrapper is next-tranche mechanical work |
 
 ### Modelling notes (what the Lean statements quantify over)
