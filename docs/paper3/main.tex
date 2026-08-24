@@ -55,7 +55,7 @@ the region (superstitious point fits); from inside, models pose the right
 topology but cannot pin its parameters to the gate's precision --- and the
 persistent-homology summary that guides them has a measurable resolution
 limit --- geometric, not budgetary --- that propagates its own wrong
-$\hat\beta_1$ into the certified artifacts. Planner-side mitigation obeys
+$\hat\beta_1$ into the gate-certified artifacts. Planner-side mitigation obeys
 the same geometry: point distrust-fences, a zero-dimensional cover, fail
 against the one-dimensional closed boundary at their calibrated radius ---
 while a fence matched to the boundary's dimension and \emph{persisted}
@@ -148,7 +148,7 @@ $\mathcal{R}$.
   1.12$). No family repairs the ring from outside evidence --- a behavioral
   audit shows the gate-passing ``repairs'' are measure-zero point fits.
   From inside, models \emph{pose} the right topology but repair is
-  \textbf{parameter-bound}: the single certified recovery (1/20) used the
+  \textbf{parameter-bound}: the single gate-certified recovery (1/20) used the
   gauge-free disc-complement form whose one parameter is the true round
   radius anchored in the reward specification --- and the strongest
   cross-family repairer (Claude, 3/3) used exactly the same form.
@@ -188,7 +188,7 @@ $\mathcal{R}$.
   narrower than ${\sim}2$ arc-units (flip at $\gamma \approx 1.8$) even
   though the true $\beta_1 = 0$ for all $\gamma > 0$; the posed artifact
   topology tracks the \emph{guidance}, not the truth. An honest,
-  finite-resolution sensor causes wrong-topology certified models. On the
+  finite-resolution sensor causes wrong-topology gate-certified models. On the
   $n$-dimensional shell, inside-start evidence recovers $\beta_{n-1}$ up to
   $n = 5$ where outside evidence recovers it at \emph{no} $n$ --- recovery
   is start-governed, and the Niyogi--Smale--Weinberger density bound makes
@@ -692,16 +692,16 @@ $\gamma$ & channel & start & $r$ & $r_{\mathrm{int}}$ &
 $\mathrm{disagree}_{\mathrm{fill}}$ &
 $\mathrm{pc}_{\mathrm{blind}}$ & $\mathrm{pc}_{\mathrm{fill}}$ \\
 \midrule
-0.0 & ---     & outside & 0.0450 & 0.0000 & 0.000000 & 0.999 & 0.000 \\
+0.0 & ---     & outside & 0.0450 & 0.0000$^{\ast}$ & 0.000000$^{\ast}$ & 0.999 & 0.000$^{\ast}$ \\
 0.6 & facing  & outside & 0.0350 & 0.0075 & 0.000844 & 0.022 & 0.343 \\
-0.6 & hidden  & outside & 0.0450 & 0.0000 & 0.000000 & 0.999 & 0.000 \\
+0.6 & hidden  & outside & 0.0450 & 0.0000$^{\dagger}$ & 0.000000$^{\dagger}$ & 0.999 & 0.000$^{\dagger}$ \\
 1.2 & facing  & outside & 0.0175 & 0.0125 & 0.000625 & 0.007 & 0.220 \\
-1.2 & hidden  & outside & 0.0450 & 0.0000 & 0.000000 & 0.999 & 0.000 \\
-0.0 & ---     & inside  & 0.7325 & 1.0000 & 0.968500 & 0.000 & 1.769 \\
-0.6 & facing  & inside  & 0.6875 & 1.0000 & 0.862969 & 0.000 & 0.663 \\
-0.6 & hidden  & inside  & 0.6700 & 1.0000 & 0.854094 & 0.000 & 1.769 \\
-1.2 & facing  & inside  & 0.6100 & 1.0000 & 0.774062 & 0.000 & 0.351 \\
-1.2 & hidden  & inside  & 0.5975 & 1.0000 & 0.757500 & 0.000 & 1.741 \\
+1.2 & hidden  & outside & 0.0450 & 0.0000$^{\dagger}$ & 0.000000$^{\dagger}$ & 0.999 & 0.000$^{\dagger}$ \\
+0.0 & ---     & inside  & 0.7325 & 1.0000 & 0.968500 & 0.000$^{\dagger}$ & 1.769 \\
+0.6 & facing  & inside  & 0.6875 & 1.0000 & 0.862969 & 0.000$^{\dagger}$ & 0.663 \\
+0.6 & hidden  & inside  & 0.6700 & 1.0000 & 0.854094 & 0.000$^{\dagger}$ & 1.769 \\
+1.2 & facing  & inside  & 0.6100 & 1.0000 & 0.774062 & 0.000$^{\dagger}$ & 0.351 \\
+1.2 & hidden  & inside  & 0.5975 & 1.0000 & 0.757500 & 0.000$^{\dagger}$ & 1.741 \\
 \bottomrule
 \end{tabular}
 \caption{The full mechanism grid. One wrong-topology artifact:
@@ -714,7 +714,12 @@ $32{,}000$ transitions ($\mathrm{disagree}_{\mathrm{fill}}$); a zero cell
 has 95\% Wilson upper bound $0.0095$ (rollout rates) and $1.2 \times
 10^{-4}$ (transition rates) --- every qualitative separation in the table
 exceeds its CI by orders of magnitude. $\mathrm{pc}$ over $16$ paired MPC
-episodes.}
+episodes. $^{\ast}$exact --- $r_{\mathrm{int}}$ and the interior
+disagreement by Lemma~\ref{lem:crossing} (no sampled transition can land
+inside), $\mathrm{pc}_{\mathrm{fill}}$ bitwise by
+Proposition~\ref{prop:harmless}; $^{\dagger}$censored --- no occurrence
+in that sample, content is the stated upper bound (episode-rate zeros:
+$0/16$, Wilson upper $0.19$).}
 \label{tab:mechanism}
 \end{table}
 
@@ -923,15 +928,15 @@ $\sqrt 2$) and $12/12$ are written with \texttt{hypot} --- zero use the
 truth's \texttt{max}/\texttt{abs} form. The companion paper's
 bidirectional template prior, measured there on small patches, reaches the
 enclosing separator itself: the topology axis and the template-prior axis
-compose, and the certified artifact's \emph{shape} comes from the prior
+compose, and the gate-certified artifact's \emph{shape} comes from the prior
 even when its \emph{topology} comes from the guidance. The D failures
 are not template-prior collapse: the behavioral audit classifies them as
 right-structure-wrong-parameters, which is a different failure mode.
 
-\paragraph{How the one passer passed.} The single certified D recovery
+\paragraph{How the one passer passed.} The single gate-certified D recovery
 (large, $1/20$) freezes exactly when the post-integration landing has
 $\lVert p - c \rVert \ge 3.5$: the \emph{disc-complement} form. It is
-certified perfect (gate $1.0$, blindness $0.0$, $\mathrm{play\_cost}$
+certified perfect on its own gate sample (gate $1.0$, blindness $0.0$, $\mathrm{play\_cost}$
 $0.0$) although its outer boundary is wrong --- from inside, the probe
 freezes at the inner boundary and never reaches the outer one, so the
 complement is indistinguishable from the annulus on $\mathcal{R}$: the
@@ -984,7 +989,7 @@ sits where the channel's arc width admits the planner's step.}
 $\gamma$ & 0.0 & 0.02 & 0.05 & 0.1 & 0.15 & 0.2 & 0.4 & 0.6 & 1.2 \\
 \midrule
 $\mathrm{pc}_{\mathrm{blind}}$ (facing) & 0.999 & 0.543 & 0.340 & 0.139 & 0.001 & 0.015 & 0.023 & 0.022 & 0.007 \\
-contact rate & 1.00 & 0.94 & 0.56 & 0.44 & 0.12 & 0.06 & 0.00 & 0.00 & 0.00 \\
+contact rate & 1.00 & 0.94 & 0.56 & 0.44 & 0.12 & 0.06 & 0.00$^{\dagger}$ & 0.00$^{\dagger}$ & 0.00$^{\dagger}$ \\
 \bottomrule
 \end{tabular}
 \caption{H1, the danger curve (CPU, 16 paired MPC episodes/point): the blind
@@ -995,7 +1000,8 @@ $\mathrm{pc} = 1.116$ at $\gamma = 0.6$ \emph{and} $1.2$: same $\beta_1$,
 opposite danger. LLM-arm confirmations at $\gamma \in \{0.1, 0.6\}$
 reproduce the curve in both model sizes and in the Claude relay
 (0.348 at the knee, all three families); Figure~\ref{fig:dangercurve}
-plots all three series.}
+plots all three series. $^{\dagger}$censored: $0/16$ episodes, Wilson
+upper $0.19$.}
 \label{tab:dangercurve}
 \end{table}
 
@@ -1185,8 +1191,8 @@ Let $\hat f$ freeze on a region $B$ where $f$ moves freely, and suppose
 \textup{(CERT)}: every point of $B$ visited by any candidate's imagined
 path from the current real state lies within $\varepsilon_f$ of the
 freedom-certificate set. Then patched imagination equals truth imagination
-for every candidate (off $B$ the models agree; on the certified part of $B$
-the patch substitutes the pinned integrator, which \emph{is} $f$ there),
+for every candidate (off $B$ the models agree; on the part of $B$ the
+freedom certificates cover, the patch substitutes the pinned integrator, which \emph{is} $f$ there),
 so the argmax coincides with the truth planner's and
 $\mathrm{play\_cost} = 0$ exactly.
 \end{proposition}
@@ -1367,8 +1373,8 @@ flip, not the true $\beta_1$. The within-gap contrast at $\gamma = 1.8$
 flip --- is directionally consistent (closed structures appear only in the
 $\hat\beta_1 = 1$ subset) though underpowered at $n = 30$. The
 conclusion is uncomfortable and, we think, general: \textbf{an honest
-evidence summary with finite resolution causes wrong-topology certified
-models}. The repair loop's topology channel is only as good as the
+evidence summary with finite resolution causes wrong-topology
+gate-certified models}. The repair loop's topology channel is only as good as the
 sensor's resolving power at the operative sampling density.
 
 \paragraph{The same law governs the sensor directly in $n$ dimensions.} On
@@ -1577,13 +1583,14 @@ torus's hole on or off the start--lode axis:
 \toprule
 config & $r$ & $\mathrm{pc}_{\mathrm{blind}}$ & contact \\
 \midrule
-hole on-axis (plan threads it) & 0.0033 & 0.019 & 0.00 \\
+hole on-axis (plan threads it) & 0.0033 & 0.019 & 0.00$^{\dagger}$ \\
 tube on-axis (plan clips it) & 0.0033 & 0.898 & 0.94 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Same rarity, same (trivial) topology, same instrument: only the position of
+\noindent ($^{\dagger}$censored: $0/16$ MPC episodes, Wilson upper
+$0.19$.) Same rarity, same (trivial) topology, same instrument: only the position of
 the mode relative to the optimal path changes, and the exploitation swings
 from $0.02$ to $0.90$. The decomposition this completes: \textbf{danger is
 path-relative} (an on-path mode is exploited whether or not it separates
@@ -1658,9 +1665,10 @@ supply the evidence sensor; homology-inference sample bounds
 \citep{federer1959curvature} calibrate when that sensor can work.
 Section~\ref{sec:sensor}'s contribution is not a new TDA method but a
 measured failure law for TDA \emph{as a component of a certification
-loop}: the sensor's resolution propagates into the certified artifact.
+loop}: the sensor's resolution propagates into the gate-certified
+artifact.
 
-\section{Limitations and honest assessment}
+\section{Limitations and scope}
 \label{sec:limitations}
 
 \paragraph{One instrument family, mostly round and separating.} The core

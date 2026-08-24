@@ -576,6 +576,23 @@ SOUNDNESS_QUALIFIERS = (
     r"\bcertified \$?\\?rho\b", r"\bbetter certificate\b",
     r"\bcertificate bounds\b", r"\bcertificates transfer\b",
     r"\bonly to the smooth case\b", r"\bsmooth case\b",
+    # --- paper 3's defined scopes. The quotient paper states certification
+    # relative to the reachable set, and each of these phrases IS that scope
+    # stated in the sentence: the restriction operator, the reach clause, the
+    # extension class, the gauge region, the sample event that produced the
+    # acceptance, or the certifier named outright. A sentence carrying one is
+    # scoped prose, not an unscoped assertion. --------------------------------
+    r"\brestricted to\b", r"\breachable restriction\b",
+    r"\bcan reach\b",
+    r"\bmode[-\s]absent\b",           # acceptance BECAUSE the sample missed the mode
+    r"\bgate[-\s]certified\b",        # names the certifier
+    r"\bgate[-\s]pass",               # gate-pass / gate-passes / gate-passing
+    r"\bE\(f\)",                      # the extension class is the scope object
+    r"\bgauge region\b",
+    r"\bcertified[-\s]free\b",        # T7's compound noun: evidence certified free
+                                      # by trajectories, not a soundness claim
+    r"\bbounded by\b",                # an explicit bound is a scope (as \leq is)
+    r"\bits own consecutive samples\b",
 )
 _SOUND_QUAL_RX = [re.compile(p, re.IGNORECASE) for p in SOUNDNESS_QUALIFIERS]
 

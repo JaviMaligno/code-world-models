@@ -40,3 +40,45 @@ soundness-scope :: not a proof that the gate certifies nothing
 # "Certifying the planner's own visitation" names a hypothetical procedure -- the
 # object one would have to certify -- and the scope is the phrase itself.
 soundness-scope :: Certifying the planner's own visitation
+
+# --- paper 3 (docs/paper3/main.tex) -----------------------------------------
+
+# "the certification question and the topology question are the same question"
+# names a QUESTION the instrument poses, not an assertion of soundness.
+soundness-scope :: certification question
+
+# "is certifying less than it appears to" ASSERTS the scope deficit -- it is the
+# rule's own point stated as the sentence's content.
+soundness-scope :: certifying less than it appears
+
+# "a certified slack of 6.7e-4" is the funnel certificate's measured output; the
+# sentence carries its sample (50,000 CRN rollouts per gap) and the effect size
+# it is compared against.
+soundness-scope :: certified slack
+
+# "One artifact, three certification regimes, two knobs" labels the three
+# regimes the mechanism-grid section then separates; the scope of each regime
+# is that section's content.
+soundness-scope :: three certification regimes
+
+# The triad heading names the paper's three axes; each axis's scope is defined
+# where the triad is introduced (Remark rem:triad / Prop prop:harmless).
+soundness-scope :: [Cc]ertification, correctness, and consequence
+
+# "Certification peels one boundary layer per start placement (Proposition ...)"
+# carries its quantifier (per start placement) and names the proposition.
+soundness-scope :: peels one boundary layer per start placement
+
+# "certification-wise this mode is back in the companion papers' merely-rare
+# regime": the clause names the regime -- (1-r)^N-gated rarity -- which is the
+# scope.
+soundness-scope :: certification-wise this mode is back
+
+# gamma-header rows list the knob values swept; the 0.0 entry is a knob
+# setting (the closed ring), not a measured zero.
+printed-zero :: ^\$\\gamma\$ & 0\.0 &
+
+# beta1-hat rows report the estimator's discrete OUTPUT value per gamma; the
+# 0 at gamma = 2.4 is the reading (and the true beta_1 there), not an event
+# count with a censoring interval.
+printed-zero :: \\hat\\beta_1\$ & 1 & 1
