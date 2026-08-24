@@ -66,6 +66,18 @@ stays for its own session).
   platform's libm puts that y 2 ULPs away, so the trap misses here. No
   held-out conclusion moves; pinned as the only tolerated mismatch. Fourth
   portability finding, first one where the fragility is the artifact's own.
+- **The Lean formalization started, and it is now a standing rule** (Javier:
+  "me gustaría formalizar lo que llevamos hasta ahora en lean... y lo que
+  siga a partir de ahora también"). First tranche PROVED, 0 sorries, builds
+  clean: Lemma 2 (both halves), the disc≡annulus evidence-equivalence
+  corollary, Prop 1 at realization level, Prop 3(ii)'s engine, the
+  integrator speed invariant, and the capstone "interior unreachable at the
+  frozen defaults". Lives in `formal/Paper2Props/Paper3Ring/` (same package
+  and CI job as paper 2's `Paper2Props`); the item-by-item map, the
+  modelling notes and the triage of what is next are in
+  `docs/paper3/FORMALIZATION.md`, and the going-forward rule is in
+  CLAUDE.md: new THEORY.md proofs get formalized in the same session or the
+  ledger records why not.
 
 ## What happened on 2026-08-24
 
