@@ -5,7 +5,7 @@ numbers and the arguments live in the documents it names, and are not copied
 here, because a second copy is how `THEORY.md`'s list and its sections came to
 contradict each other twice (CAMPAIGN-LOG.md, "Ledger hygiene").
 
-Last updated 2026-08-24 (second session — the audit session, below).
+Last updated 2026-08-24 (third session — the thin-neck synthesis campaign).
 
 ## The state in one paragraph
 
@@ -14,20 +14,20 @@ version of this file called T7's second half open, but its section and its
 ledger entry both end "T7 is CLOSED", 2026-07-25; the residuals THEORY.md
 itself records as out of scope are T2's argmax-angle distribution, a planner
 property, and T3's final factor being the instrument's own rarity r, which
-the series treats as an input). The experimental programme is finished
-except for one item that needs designing rather than running, and paper 3's
-campaigns are now INSIDE the held-out audit (663/663, the two-factor law
-inside Wilson95 at 31/31 campaigns). What is left is the PAPER: the tex is
-behind what has been measured since 2026-07-30.
+the series treats as an input). The experimental programme is FINISHED —
+the thin-neck LLM synthesis, the last open item, ran on 2026-08-24 (third
+session) — and paper 3's campaigns are all INSIDE the held-out audit
+(723/723, the two-factor law inside Wilson95 at 34/34 campaigns). What is
+left is the PAPER: folding the synthesis result into the tex, and the Lean
+second tranche.
 
 ## Open, in the order the work naturally goes
 
-1. **LLM synthesis on the thin neck** — the one decision left, and it is
-   Javier's (Azure bills to the client resource): does any family ever
-   WRITE a variable-thickness band from evidence that contains leap
-   events? The instrument, the calibrated cells (neck 0.1 for the leak
-   regime, 0.2–0.4 for certified-and-costly) and env_key support exist;
-   see THIN-NECK-DESIGN.md "Costs".
+1. **Fold the thin-neck synthesis result into the tex** (Section "The
+   metric converse" is where the CPU sweep landed): 0/60 artifacts write
+   any angular structure, even with leap evidence in the sample; the
+   audit absorbs the cells at 34/34. EXPERIMENTS.md "Thin-neck LLM
+   synthesis" has the numbers.
 2. **Second Lean tranche** per FORMALIZATION.md's triage (Prop 3 composed,
    T2-I telescoping, T3-P defect theorems) — mechanical-to-moderate,
    no blocker.
@@ -50,7 +50,28 @@ all six thicknesses.
 Everything else in `V2-PROGRAM.md` buckets 1 and 2 has run; the table there
 carries each outcome and its file.
 
-## What happened on 2026-08-24, second session
+## What happened on 2026-08-24, third session
+
+The thin-neck LLM synthesis — the one decision that was waiting on Javier
+(Azure bills to the client resource) — authorized and run. Also: the two
+paper-3 branches unified (`claude/paper-tres-topology-4w813y` was strictly
+contained in `claude/paper-3-experiments-bc45nn` and was deleted, local and
+origin; this branch is the only one).
+
+- **The neck knob entered the synthesis pipeline** (`--neck/--neck-channel`,
+  KNOB `-nk{...}` matching `env_key`; `env_from_params` and the rarity
+  sweep's three mirrors carry it, omitted-when-None so no committed key
+  moves; three R_SOURCES entries read `results/ring2d_thin_neck.json`; the
+  full arm is refused at `--neck` until the rules text can describe a dip).
+- **Three campaigns, mini, 20 seeds, incomplete arm** (neck 0.1/0.2/0.4
+  facing). The campaign's answer: **0/60 artifacts write any angular
+  structure** — not the neck, not even the uniform band; the two seeds
+  whose evidence contained leaps answered with a reward threshold and free
+  flight. A second exact-equality gate hack (seed 140000, all four floats
+  of the sample's single contact state) passed in-sample and fell held-out
+  as mode_only. EXPERIMENTS.md "Thin-neck LLM synthesis".
+- **The audit re-run absorbed the cells**: 723/723 artifacts, 34/34
+  campaigns inside Wilson95, incomplete-arm contingency 134/134 exact.
 
 Picked up exactly where the list above pointed: the rarity decision, then the
 plumbing it unblocks, then the audit itself. No mathematics attempted (T7
