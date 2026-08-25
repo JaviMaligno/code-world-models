@@ -19,16 +19,17 @@ the thin-neck LLM synthesis, the last open item, ran on 2026-08-24 (third
 session, both sizes) — and paper 3's campaigns are all INSIDE the held-out
 audit (783/783, the two-factor law inside Wilson95 at 37/37 campaigns).
 The synthesis result is folded into the tex (Section "The metric
-converse"), which builds clean at linter zero. The Lean second tranche is
+converse"), which builds clean at linter zero. The Lean second AND third tranches are
 DONE (2026-08-25): Prop 3 composed with the planner loop, T2-I exact,
-T3-P/T3-P″ — 0 sorries. What is left is FORMALIZATION.md's remaining
-triage (Prop 7's pathwise engine first), none of it blocking.
+T3-P/T3-P″, and Prop 7's pathwise engine — 0 sorries. What is left is
+FORMALIZATION.md's remaining triage (Prop 10/11 first), none of it
+blocking.
 
 ## Open, in the order the work naturally goes
 
-1. **Lean, remaining triage** (FORMALIZATION.md): Prop 7's pathwise
-   coupled-trajectory engine is next — it would also discharge the T3-P
-   theorems' `hdirect` hypothesis. Nothing blocks on it.
+1. **Lean, remaining triage** (FORMALIZATION.md): Prop 10/11 (metric
+   covering) is next; then Prop 8's witness tube (interval arithmetic).
+   Nothing blocks on either.
 2. **Paper 1's linter debt** (22 soundness-scope, 20 printed-zero,
    3 process-prose at baseline) if that paper is ever revised. The
    baseline is READ correctly on Windows now (the linter's lookup
@@ -91,9 +92,17 @@ origin; this branch is the only one).
   and `Advantage.lean` — T2-I as an exact telescoping identity with
   clean-steps-contribute-0 and the dirty-step restriction, plus
   T3-P/T3-P″ from the named split-and-Prop-7 hypotheses. 0 sorries;
-  ledger and triage updated in FORMALIZATION.md (Prop 7's pathwise engine
-  is now triage item 1). Local builds need `lake exe cache get` first —
-  this machine's saturation kills parallel from-source mathlib builds.
+  ledger and triage updated in FORMALIZATION.md. Local builds need
+  `lake exe cache get` first — this machine's saturation kills parallel
+  from-source mathlib builds.
+- **And the third tranche too** (`DirectEntries.lean`): Prop 7 proved at
+  realization level from one induction — freeze-free prefixes are
+  mode-set monotone — with first-entry preservation, the
+  direct-trajectory-is-free corollary, the no-wall endpoint, and the
+  channel-family antitonicity for any monotone sector family. The
+  predicted "coupled-trajectory setup" was unnecessary: a direct
+  trajectory never queries either mode set before entry. 0 sorries,
+  8703 jobs green.
 
 Picked up exactly where the list above pointed: the rarity decision, then the
 plumbing it unblocks, then the audit itself. No mathematics attempted (T7

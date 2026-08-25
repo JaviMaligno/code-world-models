@@ -3,3 +3,4 @@
 import Paper3Ring.Basic
 import Paper3Ring.PlannerLoop
 import Paper3Ring.Advantage
+import Paper3Ring.DirectEntries
