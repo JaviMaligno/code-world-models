@@ -19,14 +19,16 @@ the thin-neck LLM synthesis, the last open item, ran on 2026-08-24 (third
 session, both sizes) — and paper 3's campaigns are all INSIDE the held-out
 audit (783/783, the two-factor law inside Wilson95 at 37/37 campaigns).
 The synthesis result is folded into the tex (Section "The metric
-converse"), which builds clean at linter zero. What is left is the Lean
-second tranche.
+converse"), which builds clean at linter zero. The Lean second tranche is
+DONE (2026-08-25): Prop 3 composed with the planner loop, T2-I exact,
+T3-P/T3-P″ — 0 sorries. What is left is FORMALIZATION.md's remaining
+triage (Prop 7's pathwise engine first), none of it blocking.
 
 ## Open, in the order the work naturally goes
 
-1. **Second Lean tranche** per FORMALIZATION.md's triage (Prop 3 composed,
-   T2-I telescoping, T3-P defect theorems) — mechanical-to-moderate,
-   no blocker.
+1. **Lean, remaining triage** (FORMALIZATION.md): Prop 7's pathwise
+   coupled-trajectory engine is next — it would also discharge the T3-P
+   theorems' `hdirect` hypothesis. Nothing blocks on it.
 2. **Paper 1's linter debt** (22 soundness-scope, 20 printed-zero,
    3 process-prose at baseline) if that paper is ever revised. The
    baseline is READ correctly on Windows now (the linter's lookup
@@ -82,6 +84,16 @@ origin; this branch is the only one).
   zero for paper 3, `check_latex.sh` green (30 pages, 0 overfull, 0
   dangling refs). Fixed on the way: the linter's baseline lookup broke on
   Windows path separators (every recorded count read as 0).
+- **The Lean second tranche landed** (2026-08-25, continuation of the same
+  session): `PlannerLoop.lean` — Prop 3 COMPOSED, closed loop included
+  (unfalsifiable over arbitrary policies; the planner as any deterministic
+  function of the model's imagined rollouts, and play_cost exactly 0) —
+  and `Advantage.lean` — T2-I as an exact telescoping identity with
+  clean-steps-contribute-0 and the dirty-step restriction, plus
+  T3-P/T3-P″ from the named split-and-Prop-7 hypotheses. 0 sorries;
+  ledger and triage updated in FORMALIZATION.md (Prop 7's pathwise engine
+  is now triage item 1). Local builds need `lake exe cache get` first —
+  this machine's saturation kills parallel from-source mathlib builds.
 
 Picked up exactly where the list above pointed: the rarity decision, then the
 plumbing it unblocks, then the audit itself. No mathematics attempted (T7
