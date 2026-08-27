@@ -4,3 +4,5 @@ import Paper3Ring.Basic
 import Paper3Ring.PlannerLoop
 import Paper3Ring.Advantage
 import Paper3Ring.DirectEntries
+import Paper3Ring.Mitigation
+import Paper3Ring.WitnessTube

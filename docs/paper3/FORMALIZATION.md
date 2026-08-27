@@ -36,6 +36,9 @@ not silently weakened.
 | Lemma T2-I (hybrid telescoping — exact) | `polRet`/`polTraj`/`prefixRet`/`advantage`/`hybrid`, `t2i_hybrid_telescoping`, `clean_step_advantage_zero`, `t2i_sum_over_dirty` (`Advantage.lean`, second tranche) | **PROVED**: J(π_T) − J(π_B) = Σ_{t<H} A_t exactly, clean steps contribute definitionally 0, and the sum restricts to the dirty steps — the identity that localizes all of play_cost on the dirty steps' advantage terms. Realization level (deterministic dynamics, Markov policies), exactly the setting THEORY.md states it in |
 | Theorems T3-P and T3-P″ (defect monotonicity) | `t3p_defect`, `t3p_exact_of_no_funnel`, `t3p_double_prime`, `t3p_double_prime_exact_of_nondecreasing` (`Advantage.lean`, second tranche) | **PROVED from the named hypotheses** `hsplit` (r_int = d + f, the exclusive event split) and `hdirect` (Prop 7's conclusion d(γ₁) ≤ d(γ₂)): the defect bound, its exactness at f(γ₁) = 0, the sharper drop form [f(γ₁) − f(γ₂)]⁺, and exactness wherever f is nondecreasing. These theorems machine-check the step from Prop 7 to M1/M2-with-defect, where THEORY.md records two earlier wrong routes; Prop 7's own pathwise engine is now proved too (next row), and `hdirect` remains a hypothesis only through the measure wrapper (inclusion ⟹ inequality of measured d-values) |
 | Prop 7 (direct entries pathwise monotone) | `freezeTraj_eq_of_avoid` (the engine), `entersDirectlyAt`, `prop7_direct_monotone`, `prop7_first_entry_preserved`, `direct_entry_traj_is_free`, `no_wall_every_entry_direct`, `channelMode_antitone`, `prop7_channel` (`DirectEntries.lean`, third tranche) | **PROVED at realization level**, and slightly past the paper's statement: the engine (freeze-free prefixes are mode-set monotone) holds for ANY mode sets `M₂ ⊆ M₁`; Prop 7 is transport along it, minimality of the first entry transports too, a direct trajectory is proved equal to the FREE trajectory through its entry (the `M₂ = ∅` case), the no-wall endpoint d(2π) = r_int(2π) is the vacuous-avoidance corollary, and the knob instantiation A(γ) = annulus \ S(γ) is antitone for any monotone sector family `S` (the sector's shape is never used, as the paper says). The measure wrapper (pathwise inclusion ⟹ d(γ₁) ≤ d(γ₂) over seeds) adds only monotonicity of a measure under inclusion and is noted, not formalized. THEORY.md's seed-50543 counterexample is visible in the formalization: no theorem here mentions full entries — the induction has no invariant without `havoid` |
+| Prop 10 (fence sufficiency) | `loopTraj_eq_of_policy_agree` (the loop engine), `maximizers`, `maximizers_transport`, `prop10_fence_sufficiency`, `prop10_play_cost_zero` (`Mitigation.lean`, fourth tranche) | **PROVED from the named hypotheses**: at every state of the reachable envelope, mitigated and truth imagined returns agree on the non-crossing candidates, and every crossing candidate is strictly dominated under both (the dominance form of (COV)+(RG-west), the latter a measured margin, like T3-P's `hdirect`). Conclusion machine-checked: the maximizer SETS coincide — so any deterministic tie-break picks the same candidate — and the real trajectories are identical, play_cost exactly 0. The geometric step (COV ⟹ truncation of crossing candidates) stays with the mitigation module's semantics |
+| Prop 11 (patch sufficiency) | `freezeTraj_eq_of_landing_mem_iff` (the coupling engine — Remark R2's "Lemma-3 coupling", generalized), `prop11_patch_sufficiency`, `prop11_play_cost_zero` (`Mitigation.lean`, fourth tranche) | **PROVED**: the patched mode set is `Mt ∪ (B \ N)` (truth mode plus the invented region minus the certified neighborhood); with (CERT) distilled — no queried landing in the residue `B \ N` from any reachable state — patched imagination equals truth imagination for every candidate (the coupling engine: mode sets agreeing on membership at every queried landing give identical trajectories), the planner picks the same action, and play_cost is exactly 0. The engine also subsumes `DirectEntries.freezeTraj_eq_of_avoid` as the `M₂ ⊆ M₁` special case |
+| Prop 8, 1-D reduction (witness tube) | `prop8_witness_stays_on_axis` (`WitnessTube.lean`, fourth tranche) | **PARTIAL, the structural half**: for the instrument's own `ringF`/`ringFreeze` dynamics, axis-aligned heading inputs and initial velocity keep every state — freeze events included, any mode set — on the line `p₀ + ℝ·e`. The triage's feared "interval arithmetic over cos/sin" dissolves for the paper's witness (action ≡ 0 ⟹ heading exactly (1,0)). What stays measured: the entry within the horizon and the channel membership of the line's band crossings (numeric facts at the frozen defaults; the Python witness `test_positivity_witness_tube` carries them), plus the start-set-positive-measure wrapper |
 
 ### Modelling notes (what the Lean statements quantify over)
 
@@ -69,22 +72,34 @@ machinery at all: the "coupled-trajectory setup" the earlier triage
 predicted collapses to one induction on freeze-free prefixes, because a
 direct trajectory never queries either mode set before its entry.
 
+## Status (2026-08-25, fourth tranche)
+
+`Mitigation.lean` (Props 10 and 11: the loop engine, the argmax-set
+transport, the coupling engine) and `WitnessTube.lean` (Prop 8's 1-D
+reduction) — 0 sorries, both default targets green (8705 jobs). Two
+structural finds: the deterministic tie-break needs no least-index
+machinery (any function of the maximizer SET transports, because the sets
+themselves coincide); and Prop 8's witness needs no trigonometry at all —
+constant action 0 makes the heading exactly (1, 0), so the tube reduction
+is pure linear algebra (`module`).
+
 ## Not yet formalized — triage
 
 Ordered by (value × feasibility), highest first:
 
-1. **Prop 10/11 (fence/patch sufficiency)** — metric covering arguments.
-2. **Prop 8 (positivity via witness tube)** — constructive; the honest form
-   exhibits one explicit action stream entering at γ > 0, which needs interval
-   arithmetic over cos/sin (fiddly, not deep).
-3. **Prop 5/6, T4 (coupling monotonicity of r; Hölder modulus)** —
+1. **Prop 8, remaining halves** — the witness line's channel membership and
+   in-horizon entry at the frozen defaults (numeric; the 1-D reduction above
+   makes both statements about scalars, so `norm_num`-style bounds are now
+   plausible if wanted), and the concrete angular sector if the channel
+   membership is to be stated non-abstractly.
+2. **Prop 5/6, T4 (coupling monotonicity of r; Hölder modulus)** —
    probabilistic: needs the uniform action measure and the anticoncentration
    Lemma A; mathlib has the ingredients (circle measure, Lipschitz), real
    work to assemble.
-4. **T5 (cone bounds, spherical caps, Cor T5-U)** — probability with explicit
+3. **T5 (cone bounds, spherical caps, Cor T5-U)** — probability with explicit
    constants (Lemma G is a clean self-contained target; the Berry–Esseen
    transfer is out of reasonable reach).
-5. **T1 (Rips birth/death lemmas), T7 (relative estimator)** — mathlib has no
+4. **T1 (Rips birth/death lemmas), T7 (relative estimator)** — mathlib has no
    Vietoris–Rips persistence; formalizing these means building that theory
    first. Out of scope until that changes; recorded here so the gap is a
    stated fact rather than an omission.

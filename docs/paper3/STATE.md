@@ -19,17 +19,20 @@ the thin-neck LLM synthesis, the last open item, ran on 2026-08-24 (third
 session, both sizes) — and paper 3's campaigns are all INSIDE the held-out
 audit (783/783, the two-factor law inside Wilson95 at 37/37 campaigns).
 The synthesis result is folded into the tex (Section "The metric
-converse"), which builds clean at linter zero. The Lean second AND third tranches are
+converse"), which builds clean at linter zero. The Lean tranches two through four are
 DONE (2026-08-25): Prop 3 composed with the planner loop, T2-I exact,
-T3-P/T3-P″, and Prop 7's pathwise engine — 0 sorries. What is left is
-FORMALIZATION.md's remaining triage (Prop 10/11 first), none of it
-blocking.
+T3-P/T3-P″, Prop 7's pathwise engine, Props 10/11 (fence and patch
+sufficiency, with the coupling engine that also carries Remark R2), and
+Prop 8's 1-D witness-tube reduction — 0 sorries throughout. What is left
+in FORMALIZATION.md's triage is the numeric tail of Prop 8 and the
+genuinely probabilistic/persistence items; none of it blocking.
 
 ## Open, in the order the work naturally goes
 
-1. **Lean, remaining triage** (FORMALIZATION.md): Prop 10/11 (metric
-   covering) is next; then Prop 8's witness tube (interval arithmetic).
-   Nothing blocks on either.
+1. **Lean, remaining triage** (FORMALIZATION.md): Prop 8's numeric tail
+   (now scalar statements, thanks to the 1-D reduction), then the
+   probabilistic items (Prop 5/6, T4; T5), then the Rips/persistence
+   theory T1/T7 would need. Nothing blocks on any of it.
 2. **Paper 1's linter debt** (22 soundness-scope, 20 printed-zero,
    3 process-prose at baseline) if that paper is ever revised. The
    baseline is READ correctly on Windows now (the linter's lookup
@@ -103,6 +106,18 @@ origin; this branch is the only one).
   predicted "coupled-trajectory setup" was unnecessary: a direct
   trajectory never queries either mode set before entry. 0 sorries,
   8703 jobs green.
+- **And the fourth** (`Mitigation.lean`, `WitnessTube.lean`): Props 10
+  and 11 — the loop engine (policy agreement on an invariant ⟹ identical
+  closed loops), the argmax-set transport (any deterministic tie-break
+  picks the same candidate because the maximizer SETS coincide), the
+  coupling engine (mode sets agreeing at every queried landing ⟹
+  identical trajectories — Remark R2's Lemma-3 coupling, subsuming
+  DirectEntries' avoid-form), and both play_cost-exactly-0 conclusions
+  from the named coverage/dominance hypotheses. Plus Prop 8's 1-D
+  reduction: the witness tube is pure linear algebra (action ≡ 0 makes
+  the heading exactly (1,0) — the feared cos/sin interval arithmetic
+  dissolves); its numeric tail stays with the Python witness. 0 sorries,
+  8705 jobs green.
 
 Picked up exactly where the list above pointed: the rarity decision, then the
 plumbing it unblocks, then the audit itself. No mathematics attempted (T7
