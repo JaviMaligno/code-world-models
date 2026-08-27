@@ -54,8 +54,9 @@ parameter-bound and sensor-bound}: from outside evidence no family recovers
 the region (superstitious point fits); from inside, models pose the right
 topology but cannot pin its parameters to the gate's precision --- and the
 persistent-homology summary that guides them has a measurable resolution
-limit --- geometric, not budgetary --- that propagates its own wrong
-$\hat\beta_1$ into the gate-certified artifacts. Planner-side mitigation obeys
+limit --- geometric, not budgetary --- and the topology the loop's
+artifacts pose tracks that summary's wrong $\hat\beta_1$, not the truth.
+Planner-side mitigation obeys
 the same geometry: point distrust-fences, a zero-dimensional cover, fail
 against the one-dimensional closed boundary at their calibrated radius ---
 while a fence matched to the boundary's dimension and \emph{persisted}
@@ -184,8 +185,8 @@ $\mathcal{R}$.
   wrongnesses need opposite defenses, and each defense's cost is set by its
   failure's lie rate: false obstructions refute themselves at every step;
   false freedoms only at the rare boundary.
-\item \textbf{The evidence sensor has finite resolution --- and it
-  propagates} (Section~\ref{sec:sensor}). The pre-registered
+\item \textbf{The evidence sensor has finite resolution --- and the loop
+  follows its report} (Section~\ref{sec:sensor}). The pre-registered
   persistent-homology summary reports $\hat\beta_1 = 1$ for every channel
   narrower than ${\sim}2$ arc-units (flip at $\gamma \approx 1.8$) even
   though the true $\beta_1 = 0$ for all $\gamma > 0$; the posed artifact
@@ -300,11 +301,12 @@ $f$ under the gate policy $\rho$, and let $\hat f$ be any model with
 $\hat f|_{\mathcal{R}} = f|_{\mathcal{R}}$. Then for every $N$ the sampling
 gate accepts $\hat f$ with probability~1, and the trajectory law of any
 policy whose queries stay in $\mathcal{R}$ is identical under $f$ and
-$\hat f$. Conversely, acceptance with certainty determines the model exactly up to
-$\mu_{\mathrm{query}}$-null modification: a model accepted with
-probability~$1$ at every $N$ agrees with $f$ at
-$\mu_{\mathrm{query}}$-almost every query of $\mathcal{R}$, and may
-otherwise differ only on a $\mu_{\mathrm{query}}$-null subset of
+$\hat f$. Conversely, let $\mu_{\mathrm{query}}$ be the gate's query-occupation
+measure (the expected number of queries per rollout landing in each
+measurable set of $S \times A$) and let $D$ be the set where $\hat f$
+disagrees with $f$ beyond the gate's tolerance. Acceptance with
+probability~$1$ at every $N$ forces $\mu_{\mathrm{query}}(D) = 0$: the
+model may differ from $f$ only on a $\mu_{\mathrm{query}}$-null subset of
 $\mathcal{R}$ and on the gauge complement
 $\mathcal{G} = (S \times A) \setminus \mathcal{R}$, which no sample drawn
 under $\rho$ can falsify. In particular the extension class
@@ -321,11 +323,13 @@ $\mu_0$, the action sequence, and the queried values of $f$, which agree
 with $\hat f$'s on $\mathcal{R}$. Gate draws use $\pi = \rho$, whose
 queries lie in $\mathcal{R}$ by definition (up to a null set), so acceptance
 statistics coincide; $f \in E(f)$ is accepted almost surely, hence so is
-every member. For the converse, let $q$ be the $\mu_{\mathrm{query}}$-mass
-of the disagreement set of $\hat f$ against $f$: a single gate rollout hits
-it with probability $q$, so the gate of size $N$ accepts $\hat f$ with
-probability $(1 - q)^N$; acceptance with certainty at every $N$ forces
-$q = 0$, i.e.\ agreement $\mu_{\mathrm{query}}$-almost everywhere.
+every member. For the converse, let $p$ be the probability that a single
+gate rollout queries $D$ at least once. Rollouts are i.i.d., so the
+size-$N$ gate accepts $\hat f$ with probability $(1 - p)^N$, and
+acceptance with certainty at every $N$ forces $p = 0$. Finally $p = 0$
+iff $\mu_{\mathrm{query}}(D) = 0$: the per-rollout count of $D$-queries
+is a nonnegative random variable, so its expectation vanishes iff the
+count is almost surely zero.
 \end{proof}
 
 \begin{remark}[relation to the companion identifiability proposition]
@@ -590,8 +594,12 @@ certified slack of $6.7 \times 10^{-4}$ against an effect size of
 $1.12 \times 10^{-2}$ --- a factor of $17$, with zero empirical
 violations and Proposition~\ref{prop:direct} confirmed across
 $550{,}000$ pathwise comparisons. So M1 and M2 hold as theorems up to a
-defect an order of magnitude below the phenomenon, and exactly for
-$\gamma \ge 3.2$ where the funnel mass measures zero. What remains open
+defect an order of magnitude below the phenomenon; for
+$\gamma \ge 3.2$ the funnel mass measures $0/50{,}000$ (a censored zero,
+Wilson upper $7.7 \times 10^{-5}$), so there the defect is at most that
+bound --- exactness itself holds wherever $f = 0$
+(Corollary~\ref{cor:funneldefect}(c)), which a censored zero bounds but
+does not prove. What remains open
 is an \emph{a priori} bound on the funnel mass; the one pointwise
 estimate that would have given unconditional monotonicity was
 \emph{refuted} by a freeze-rescue effect ($91/91$ CI-separated
@@ -610,11 +618,12 @@ event of positive probability under the uniform start). The constant
 action $a \equiv 0$ drives the state due east along $y = y_0$; a landing
 inside the band at radius $d \ge r_{\mathrm{in}}$ has angular offset
 $\theta$ from $\pi$ with
-$\sin\theta = |y_0|/d \le |y_0|/r_{\mathrm{in}} \le \gamma/8
-< \sin(\gamma/2)$ (Jordan's inequality,
-$\sin(\gamma/2) \ge \gamma/\pi > \gamma/8$), and since both angles lie in
-$[0, \pi/2]$ this gives $\theta < \gamma/2$: the landings lie in the
-channel, so
+$\sin\theta = |y_0|/d \le |y_0|/r_{\mathrm{in}} \le \gamma/8$. For
+$\gamma \le \pi$, Jordan's inequality gives
+$\gamma/8 < \gamma/\pi \le \sin(\gamma/2)$, and since both angles lie in
+$[0, \pi/2]$ this yields $\theta < \gamma/2$; for $\gamma > \pi$ the
+bound is immediate, $\theta \le \pi/2 < \gamma/2$. The landings lie in
+the channel, so
 the witness path is freeze-free with clearance
 $c(\gamma) > 0$ from $A(\gamma)$ and first lands past the band at depth
 $< r_{\mathrm{in}} - c$. On the freeze-free tube the $h$-step flow map is
@@ -861,7 +870,9 @@ D$_{\mathrm{mi}}$ & tda / inside  & 0/20 & 20 & 0.971 & disc 5, loop 5, arc 5, b
 \end{tabular}
 \caption{GPT-5.x on the closed ring ($\gamma = 0$; lg = large, mi = mini;
 the two sizes share seeds, so their samples --- and the mode-present counts
---- are identical by construction, not independent replications). ``Blind
+--- are identical by construction, not independent replications;
+\texttt{results/continuous\_synthesis\_ring2d\_\{mini,large\}\_gap0\{,\_pv-tda,-in\_pv-tda\}.json},
+the seed block as the unit). ``Blind
 ref'' is the pure integrator's gate on the same evidence: the interpretive
 baseline for terminal gates. Every gate pass in A--C is a mode-absent blind
 artifact (exploited at $\mathrm{play\_cost} \approx 1.12$) or a
@@ -1416,9 +1427,13 @@ pointwise law reproduces $78/80$ rows, the $2$ misses falling in the
 proved undecided band ($\gamma = 1.8$ boundary, subsampling-gap
 lottery). Worse, more evidence is counterproductive at the
 boundary: at $\gamma = 1.8$ the false-loop rate \emph{rises} from $1/5$
-to $3/5$ seeds when the dose quadruples, because the persistence threshold
-($3\times$ median nearest-neighbor spacing) shrinks with density while
-the spurious bar's absolute persistence stays fixed --- the sensor gets
+to $3/5$ seeds when the dose quadruples ($n = 5$ paired seeds ---
+directional, underpowered;
+\texttt{results/ring2d\_sensor\_resolution.json}, cap $90$). The per-seed
+mechanism is that the denser subsample fills the channel-adjacent shells:
+on the two flipping seeds the spurious bar's persistence grows with the
+dose ($0.05 \to 0.50$ and $0.11 \to 0.43$), outrunning the threshold,
+which itself grows modestly ($4/5$ seeds) --- the sensor gets
 \emph{more confident} in the wrong topology as the data grows. Resolving a
 narrow channel requires a different filtration, not a bigger sample. A
 prototype confirms the direction and locates the real problem: censoring
@@ -1471,8 +1486,10 @@ the persistence threshold grows with sample size as the shells fill in.
 Measured at $40/120/320$ rollouts per arm: shells saturate at
 $[3.50, 3.71]$ and $[4.83, 5.00]$, bar length $0.160/0.197/0.253$
 against $\tau = 0.183/0.324/0.439$ --- sub-threshold at every size, with
-the gap \emph{widening}. So no recalibration recovers $\gamma = 0$: the
-limit is in the evidence, not the rule, and more data makes it worse.
+the gap \emph{widening}. So the registered $3\times$ calibration is not
+rescued by dose --- the bar-to-threshold gap widens as the data grows;
+whether some other single calibration could recover $\gamma = 0$ while
+keeping the open-ring specificity is unmeasured.
 The same one-step landing law that makes the continuity modulus explicit
 (Proposition~\ref{prop:continuity}) is what caps the sensor here. Only
 the interleaving-stability theorem, which the pair formulation makes
@@ -1505,8 +1522,8 @@ guidance $\hat\beta_1$ & 1 & 1 & 1 & 1 & mixed & 0 \\
 \caption{H2: posed artifact topology tracks the \emph{guidance's}
 $\hat\beta_1$, not the true $\beta_1$ (which is $0$ for every
 $\gamma > 0$): closed structures dominate while the summary says ``closed
-loop'' and vanish where it honestly says ``arc'' --- at $\gamma = 2.4$,
-$1$ closed versus $26$ arc across both sizes. $n$ counts inside-start cells
+loop'' and all but vanish where it honestly says ``arc'' --- at
+$\gamma = 2.4$, $1$ closed versus $26$ arc across both sizes. $n$ counts inside-start cells
 (mini at every $\gamma$; large twins at $0.0$, $0.6$, $2.4$). The
 within-gap contrast at $\gamma = 1.8$, where seeds' own summaries straddle
 the detector flip, remains directional-only after doubling the cell to
@@ -1517,7 +1534,7 @@ significant; the load-bearing H2 evidence is the cross-gap crossover.}
 \end{table}
 
 \paragraph{H2: the artifacts follow the sensor.} Closed structures
-dominate exactly while the summary says ``closed loop'' and \emph{vanish}
+dominate while the summary says ``closed loop'' and all but vanish
 where it honestly says ``arc'' (Table~\ref{tab:sensor}: $1$ closed versus
 $26$ arc at $\gamma = 2.4$, both sizes); the crossover tracks the detector
 flip, not the true $\beta_1$. The within-gap contrast at $\gamma = 1.8$
@@ -1722,7 +1739,7 @@ exploitable model.
 \toprule
 $n$ & 2 & 3 & 4 & 5 & 6 \\
 \midrule
-$r(n)$ & 0.0133 & 0.0033 & 0.0017 & ${\sim}0$ & ${\sim}0$ \\
+$r(n)$ & 0.0133 & 0.0033 & 0.0017 & $0^{\dagger}$ & $0^{\dagger}$ \\
 $J$ truth-MPC & 16.92 & 15.55 & 14.26 & 12.96 & 11.31 \\
 $J$ random & 0.50 & 0.33 & 0.04 & 0.01 & 0.07 \\
 $\mathrm{pc}_{\mathrm{blind}}$ & 1.023 & 1.013 & 0.994 & 0.991 & 0.996 \\
@@ -1732,6 +1749,10 @@ blind contact & 1.0 & 1.0 & 1.0 & 1.0 & 1.0 \\
 \caption{The two axes are independent: rarity collapses with $n$
 (synthesis axis: mis-synthesis near-certain) while exploitation stays at
 full strength (play axis: the competent planner always reaches the shell).
+$600$ rollouts per cell,
+\texttt{results/continuous\_shellfield.json}; $^{\dagger}$censored ---
+$0/600$ observed, the $600$ rollouts being independent samples within the
+cell, Wilson $95\%$ upper $6.4 \times 10^{-3}$.
 $\mathrm{pc}_{\mathrm{blind}}$ with the axial-candidate planner (see the
 methods note in the text).}
 \label{tab:ndim}

@@ -143,3 +143,150 @@ in the paper as identified-but-not-run.
     **Suggested repair**: State the proved asymptotic decay separately from the measurement: \(r(4)=1/600\), with its Wilson interval, and zero observed contacts at \(n=5,6\).
 
 **Overall verdict:** Reject in the current form, with encouragement to resubmit after major revision. The paper contains a strong instrument and several valuable negative results, but its central quotient is stated with a false continuous-space converse, and the sensor/dimensional evidence contains both a serious denominator error and an invalid \(n=6\) homology interpretation. The two highest-value changes are: first, rebuild the gate quotient as an occupation-measure/a.e. theorem with an honest converse and matching Lean statement; second, redo the H2/ShellField analysis using the actual independent points supplied to persistence and a within-environment randomized summary intervention that measures gate-passing artifacts.
+
+
+---
+
+# Round 2 (2026-08-27, after the round-1 repairs)
+
+Same reviewer, briefed to audit the round-1 repairs and hunt new findings.
+Verbatim below; triage:
+
+**Repair audit**: 11 REPAIRED, 5 PARTIAL, 1 NEW DEFECT (the round-1 repair
+of #1). All PARTIALs and the defect addressed in the same session:
+
+| finding | verdict | disposition |
+|---|---|---|
+| A#1 / B1 | CONFIRMED — my round-1 converse proof conflated occupation mass with per-rollout hit probability | prop:quotient rewritten: μ_query DEFINED (query-occupation measure), D the beyond-tolerance disagreement set, the proof now goes p := P(one rollout queries D), (1−p)^N by i.i.d. rollouts, and p = 0 ⟺ μ_query(D) = 0 by nonnegativity of the count; THEORY.md synced with the correction history |
+| B2 | CONFIRMED — my pre-registered "net ≥ 8" rule was not a fixed-level test | design doc amended (before any outcome inspected): exact two-sided conditional binomial/McNemar with effect + CI |
+| B3 | CONFIRMED — temporal/stochastic confound (historical control, no inference seed) | design doc amended: a CONTEMPORANEOUS honest replicate (same seeds, --out-tag ctrl2, same session/deployment) becomes the primary control; the committed arm demoted to a drift check |
+| B4 | CONFIRMED — gate passage is a downstream outcome, not an invariant | design doc amended: secondary causal outcome, invariance null removed |
+| B5 (+A#4/A#5 partials) | CONFIRMED | abstract clause and contribution-bullet heading re-scoped to the measured tracking claim; both "vanish" spots now "all but vanish" with the 1/40 visible |
+| B6 | CONFIRMED against the JSON — τ GROWS with dose on 4/5 seeds; the flips come from the spurious bar's persistence growing (0.05→0.50, 0.11→0.43) | mechanism sentence rewritten to the per-seed truth, labeled directional/underpowered, JSON + cap named |
+| B7 | CONFIRMED | "exactly for γ ≥ 3.2" replaced by the censored-zero bound (Wilson upper 7.7e-5) with exactness stated as conditional on f = 0 |
+| B8 | CONFIRMED | "no recalibration recovers γ = 0" scoped to the registered 3× calibration, with the untested-recalibration caveat explicit |
+| B9 (+A#6 partial) | CONFIRMED — same domain split as the Lean proof | γ > π case added (θ ≤ π/2 < γ/2) |
+| B10 (+A#10 partial) | CONFIRMED | tab:ndim prints 0/600 with Wilson upper 6.4e-3 and its JSON; tab:closedring gains its JSON provenance + unit |
+| A#11 partial | acknowledged | environment lock / archival URL / checksum manifest remain the explicit submission-time TODO (Javier's call on the public URL) |
+
+## Round-2 findings (verbatim)
+
+## A. Repair audit
+
+#1: NEW DEFECT — The a.e. converse is plausible only after defining \(\mu_{\mathrm{query}}\), but the proof wrongly equates its disagreement mass \(q\) with the probability that a rollout hits the disagreement set. Within-rollout queries are dependent, so \((1-q)^N\) does not follow. The abstract, practitioner summary, conclusion, `THEORY.md`, and Lean still state/prove only the old pointwise-forward result.
+
+#2: REPAIRED — Recomputed used/NSW ratios are outside \(17.381, 2.500, 0.1824, 0.00806, 0.00249\) and inside \(23.810, 4.6875, 0.9947, 0.2197, 0.04974\), consistent with the displayed rounding. Raw contacts, deduplication, cap, and dependence are now distinguished correctly.
+
+#3: REPAIRED — The \(n=6\) result is clearly labeled a projected-\(H_1\) diagnostic, not evidence for \(\beta_5\).
+
+#4: PARTIAL — The rewritten H2 paragraph and bold sentence are correctly scoped, but the abstract and contribution list still claim that the sensor “propagates” error into gate-certified artifacts and “causes” wrong-topology gate-certified models.
+
+#5: PARTIAL — The \(3/27\) versus \(2/33\), \(n=60\), nonsignificant statement is correct, but the caption and paragraph still say closed structures “vanish” under arc guidance despite reporting one closed structure.
+
+#6: PARTIAL — The Jordan route is sound for \(0<\gamma\le\pi\), but the proposition quantifies over every \(\gamma>0\); the displayed sine comparison is invalid for \(\gamma>\pi\). A trivial second case would complete it.
+
+#7: REPAIRED — \(z^2/(n+z^2)\) gives \(1.2804\times10^{-4}\) for \(0/30{,}000\) and \(1.2005\times10^{-5}\) for \(0/320{,}000\), correctly rounded to \(1.3\times10^{-4}\) and \(1.2\times10^{-5}\).
+
+#8: REPAIRED — The mean-radius expression now has the correct minus sign, is labeled a measured predictor, and is separated from the proved sandwich.
+
+#9: REPAIRED — The heading now quantifies only over the three tested families.
+
+#10: PARTIAL — Sources were added to the specifically repaired H1, mitigation, and ShellField displays, but other result-bearing captions, notably the closed-ring and \(n\)-dimensional tables, still omit exact JSON provenance and/or the independent unit.
+
+#11: PARTIAL — Embedded parameters and model names improve traceability, but there is still no paper-3 environment lock, archival/public URL, checksum manifest, or executable result-to-command map; the source retains the submission-time TODO.
+
+#12: REPAIRED — All ten records have the correct authors, venue, and year: [PHAVer](https://www-verimag.imag.fr/~frehse/phaver_web/frehse_hscc2005.pdf), [SpaceEx](https://researchportal.ip-paris.fr/en/publications/spaceex-scalable-verification-of-hybrid-systems/), [Flow*](https://home.cs.colorado.edu/~srirams/papers/cav2013-flowstar.html), [KeYmaera X](https://logic.kastel.kit.edu/publications/dblp_conf_cade_fultonmqvp15/), [Kearns–Singh](https://www.cis.upenn.edu/~mkearns/papers/KearnsSinghE3.pdf), [Strehl–Li–Littman](https://jmlr.org/papers/v10/strehl09a.html), [Aswani et al.](https://www.sciencedirect.com/science/article/pii/S0005109813000678), [Berkenkamp et al.](https://papers.nips.cc/paper_files/paper/2017/hash/766ebcd59621e305170616ba3d3dac32-Abstract.html), [Perea–Harer](https://scholars.duke.edu/publication/959004), and [Khasawneh–Munch](https://www.sciencedirect.com/science/article/pii/S0888327015004598).
+
+#13: REPAIRED — The calibrated \(937/30{,}000=0.03123\) rate and the lower-powered \(18/400=0.045\) realization are correctly reconciled.
+
+#14: REPAIRED — \(1/(\mathrm{drag}\,dt)\approx33\) steps has the correct units and agrees with the discrete \(32.8\)-step e-folding time.
+
+#15: REPAIRED — \(h=80\) is stated before the \(1033\sqrt{\varepsilon}\) constant.
+
+#16: REPAIRED — The orphaned `(d)` is gone.
+
+#17: REPAIRED — The proved asymptotic/bound and finite measurements \(1/600,0/600,0/600\) are separated correctly in the contribution statement.
+
+## B. New findings
+
+### 1. The repaired quotient proof does not establish its converse
+
+**Severity:** error  
+**Location:** [main.tex:283](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/main.tex:283), [THEORY.md:36](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/THEORY.md:36)  
+**Problem:** \(\mu_{\mathrm{query}}\) is never defined. If it is the occupation measure, its mass \(q\) is not the probability that one rollout hits the disagreement set. Moreover, a nonzero gate tolerance identifies equality only modulo that tolerance, not literal equality. The conclusion and practitioner summary still say that a sampling gate certifies the full reachable restriction pointwise.  
+**Check performed:** Compared the proposition with the gate definition, theory ledger, and `prop1_gate_quotient`; Lean proves only the forward realization-level implication.  
+**Suggested repair:** Define \(p=P(\text{one rollout queries }D_\varepsilon)\), where \(D_\varepsilon=\{\|\hat f-f\|>\varepsilon\}\). Independence across rollouts gives \((1-p)^N\). Separately prove \(p=0\iff\mu_{\rm occ}(D_\varepsilon)=0\), then synchronize the abstract, conclusion, ledger, and formalization.
+
+### 2. The intervention’s preregistered significance rule is mathematically invalid
+
+**Severity:** error  
+**Location:** [INTERVENTION-DESIGN.md:37](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/INTERVENTION-DESIGN.md:37)  
+**Problem:** “At least 8 net discordant flips” is not a fixed \(p<0.05\) criterion. Exact McNemar/sign significance depends on the total number \(d\) of discordant pairs: \(9{:}1\) has net eight and two-sided \(p=0.0215\), while \(34{:}26\) also has net eight but is nonsignificant.  
+**Check performed:** Evaluated the exact conditional binomial test under \(X\sim\mathrm{Binomial}(d,1/2)\).  
+**Suggested repair:** Pre-register the exact two-sided McNemar/binomial \(p\)-value as a function of \(d\), plus the paired effect and confidence interval; delete the fixed “net eight” threshold before inspecting outcomes.
+
+### 3. The crossover does not isolate each per-seed difference as claimed
+
+**Severity:** major  
+**Location:** [INTERVENTION-DESIGN.md:15](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/INTERVENTION-DESIGN.md:15)  
+**Problem:** The old honest arm is always historical and the flipped arm is run later. The LLM request supplies no synthesis seed, so pairing fixes \(D_{\rm train}\), not response randomness. A per-seed difference can therefore arise from stochastic generation or period/deployment drift; it is not attributable to the summary “alone.”  
+**Check performed:** Traced `tda`/`tda-flip` through `continuous_danger_synthesis.py` and the Azure provider: evidence seeds are fixed, but no inference seed or randomized treatment order is used.  
+**Suggested repair:** Run both arms contemporaneously, randomize order within evidence block, record immutable deployment/API identity, and use repeated synthesis draws if the target is an average causal effect over model randomness.
+
+### 4. H-I3 mistakes a downstream outcome for an invariant
+
+**Severity:** major  
+**Location:** [INTERVENTION-DESIGN.md:57](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/INTERVENTION-DESIGN.md:57)  
+**Problem:** The gate need not see the prompt for gate passage to move. The prompt changes the synthesized artifact, which the gate directly evaluates; passage is therefore a legitimate treatment outcome. Calling movement a “synthesis-side artifact” would discard precisely one causal pathway of interest.  
+**Check performed:** Followed the pipeline summary \(\rightarrow\) synthesized code \(\rightarrow\) gate score.  
+**Suggested repair:** Treat paired gate passage and held-out acceptance as secondary causal outcomes, without an invariance null justified by prompt blindness.
+
+### 5. The repaired H2 scope is contradicted by headline claims
+
+**Severity:** major  
+**Location:** [main.tex:57](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/main.tex:57), [main.tex:187](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/main.tex:187), [main.tex:1508](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/main.tex:1508)  
+**Problem:** The body correctly says causation is not isolated and Table 5 counts terminal artifacts, yet the abstract/contribution list assert propagation into “gate-certified artifacts” and causal production of them. The same section says closed structures “vanish” where the table reports \(1/40\).  
+**Check performed:** Compared the abstract, contribution bullet, table caption, and repaired H2 paragraph.  
+**Suggested repair:** Until the corrected intervention finishes, make every headline state the measured cross-gap association in posed terminal topology; reserve gate-certified and causal language for treatment-specific gate outcomes.
+
+### 6. The claimed dose mechanism is contradicted by its JSON
+
+**Severity:** error  
+**Location:** [main.tex:1417](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/main.tex:1417)  
+**Problem:** The paper explains \(1/5\rightarrow3/5\) false loops by saying the threshold shrinks with density while persistence stays fixed. At \(\gamma=1.8\), cap 90, \(N=40\rightarrow160\), \(\tau\) instead increases for four of five seeds: \(0.1868\to0.2044\), \(0.1697\to0.2239\), \(0.2494\to0.3206\), and \(0.2613\to0.2800\). Bar persistence also changes.  
+**Check performed:** Recomputed directly from `results/ring2d_sensor_resolution.json`.  
+**Suggested repair:** Report the paired \(1/5\rightarrow3/5\) observation as directional and underpowered, and derive any mechanism from the actual per-seed cap/subsampling behavior.
+
+### 7. A censored funnel zero is promoted to exact monotonicity
+
+**Severity:** error  
+**Location:** [main.tex:580](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/main.tex:580)  
+**Problem:** The paper says M1/M2 hold “exactly for \(\gamma\ge3.2\) where the funnel mass measures zero.” Measurement of zero events does not prove \(f=0\); the corollary gives exactness conditional on \(f=0\), not from a censored estimate.  
+**Check performed:** Compared the corollary’s algebraic hypothesis with the \(50{,}000\)-rollout measurement and the theory ledger.  
+**Suggested repair:** State a confidence upper bound on the funnel mass and the corresponding measured slack, or prove structural vanishing for that range.
+
+### 8. “No recalibration recovers \(\gamma=0\)” is not supported
+
+**Severity:** major  
+**Location:** [main.tex:1474](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/main.tex:1474)  
+**Problem:** The reported bars \(0.160/0.197/0.253\) are below the particular thresholds \(0.183/0.324/0.439\), but lowering the threshold factor would make them fire. The data establish failure of the registered \(3\times\) rule as dose increases, not impossibility under every recalibration.  
+**Check performed:** Compared each bar directly with the displayed threshold and considered the same detector with a smaller multiplier.  
+**Suggested repair:** Either say “more data does not rescue the registered calibration,” or sweep the threshold and demonstrate that no single calibration recovers \(\gamma=0\) while retaining the required open-ring specificity.
+
+### 9. The positivity proof omits half its stated domain
+
+**Severity:** minor  
+**Location:** [main.tex:603](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/main.tex:603)  
+**Problem:** Jordan’s inequality and monotonicity of sine are used as though \(\gamma/2\in[0,\pi/2]\), but the proposition says every \(\gamma>0\) and the paper permits widths up to \(2\pi\).  
+**Check performed:** Checked the domains of \(\sin x\ge2x/\pi\) and sine monotonicity.  
+**Suggested repair:** Prove the displayed case for \(0<\gamma\le\pi\); for \(\gamma>\pi\), use \(\theta\le\pi/2<\gamma/2\) directly.
+
+### 10. The dimensional table regresses to unqualified censored zeros
+
+**Severity:** minor  
+**Location:** [main.tex:1723](C:/Users/Usuario/GitHub/code-world-models/docs/paper3/main.tex:1723)  
+**Problem:** \(n=5,6\) are printed as \({\sim}0\), without \(0/600\), a Wilson upper, exact JSON source, or unit. This obscures the distinction repaired in contribution #17.  
+**Check performed:** Compared the table with `results/continuous_shellfield.json`, where both cells are \(0/600\).  
+**Suggested repair:** Print \(0/600\) with the rollout-level Wilson upper and add the exact JSON source to the caption.
+
+**Overall verdict:** No—the paper is not yet acceptable merely modulo the running intervention. Most round-1 empirical repairs are sound, but the central quotient still lacks a valid converse proof, headline H2 claims remain stronger than the repaired body, and the preregistered intervention currently has an invalid test and a temporal/stochastic confound. The single highest-value change is to rebuild Proposition 1 around a defined trajectory-hit probability \(p\), connect it rigorously to occupation-measure a.e. agreement, and synchronize every headline, ledger entry, and Lean claim with that theorem.

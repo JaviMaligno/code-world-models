@@ -37,9 +37,36 @@ attributable to the summary's claim alone.
 
 **Analysis** (`scripts/ring2d_summary_intervention.py` →
 `results/ring2d_summary_intervention.json`): the paired 2×2 of posed-closed
-against summary-claims-closed, per seed; discordant pairs are the causal
-signal (McNemar-style exact count; with n = 60 pairs, ≥ 8 net discordant
-flips in the claimed direction is significant at 0.05 by sign test).
+against summary-claims-closed, per seed. The test is the exact two-sided
+McNemar/binomial: with `d` discordant pairs of which `k` flip in the
+claimed direction, `p = P(|Binomial(d, 1/2) − d/2| ≥ |k − d/2|)`,
+significance at `p < 0.05`; the report carries the paired effect (the
+discordant split) and its exact binomial confidence interval, not only the
+verdict.
+
+**AMENDMENTS (2026-08-27, before any outcome was inspected; prompted by
+the round-2 review, REVIEW-CODEX.md B2–B4):**
+
+1. *Test corrected.* The original text pre-registered "≥ 8 net discordant
+   flips" as the criterion — invalid, since significance depends on the
+   total discordant count `d` (9:1 is significant, 34:26 is not). Replaced
+   by the exact conditional binomial above. No outcome had been generated,
+   let alone read, when this was corrected.
+2. *Temporal control added.* The committed honest arm is historical; the
+   flipped arm runs today, and the LLM call carries no inference seed, so a
+   naive pairing confounds the summary's effect with generation randomness
+   and possible deployment drift. A CONTEMPORANEOUS honest replicate
+   (variant `tda`, same 60 seeds, `--out-tag ctrl2`, run in the same
+   session and against the same deployment as the flipped arm) becomes the
+   PRIMARY control; the committed arm is demoted to a drift check
+   (honest-then vs honest-now). The primary contrast is flip-now vs
+   honest-now, paired per seed; residual generation stochasticity is what
+   the paired binomial's null absorbs.
+3. *Gate passage re-classified.* H-I3 wrongly treated gate passage as an
+   invariance check "because the gate never sees the prompt" — but the
+   prompt changes the artifact and the gate scores the artifact, so
+   passage is a downstream causal OUTCOME. It is now a secondary outcome
+   (paired, reported with the same exact test), with no invariance null.
 
 ## Pre-registered readings
 

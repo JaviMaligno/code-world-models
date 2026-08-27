@@ -37,9 +37,14 @@ tolerance, including exactly).
 
 Let f̂ be any model with f̂|𝓡 = f|𝓡. Then for every N, the gate accepts f̂
 with probability 1, and the trajectory law of ANY policy π whose queries stay
-in 𝓡 is identical under f and f̂. Consequently the set of models accepted
-with certainty is exactly the extension class E(f) = { f̂ : f̂|𝓡 = f|𝓡 }, and
-no gate statistic distinguishes two members of E(f). The complement
+in 𝓡 is identical under f and f̂. Conversely (2026-08-27, the Codex review's
+finding 1 — the earlier "exactly E(f)" claim was FALSE at μ_query-null
+disagreements on 𝓡): with μ_query the gate's query-occupation measure and D
+the beyond-tolerance disagreement set, acceptance w.p. 1 at every N forces
+p = P(one rollout queries D) = 0 via (1−p)^N, and p = 0 ⟺ μ_query(D) = 0
+(a nonnegative count has zero mean iff it is a.s. zero). So the accepted
+class is E(f) up to μ_query-null modification on 𝓡, and no gate statistic
+distinguishes two members of E(f). The complement
 𝓖 = (S×A) \ 𝓡 is **gauge freedom**: model content on 𝓖 is chosen by the
 synthesizer's prior and is unfalsifiable by any sample drawn from ρ.
 
