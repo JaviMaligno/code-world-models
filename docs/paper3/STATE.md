@@ -19,24 +19,26 @@ the thin-neck LLM synthesis, the last open item, ran on 2026-08-24 (third
 session, both sizes) — and paper 3's campaigns are all INSIDE the held-out
 audit (783/783, the two-factor law inside Wilson95 at 37/37 campaigns).
 The synthesis result is folded into the tex (Section "The metric
-converse"), which builds clean at linter zero. The Lean tranches two through six are
+converse"), which builds clean at linter zero. The Lean tranches two through seven are
 DONE (2026-08-25): Prop 3 composed with the planner loop, T2-I exact,
 T3-P/T3-P″, Prop 7's pathwise engine, Props 10/11 (fence and patch
 sufficiency, with the coupling engine that also carries Remark R2),
-Prop 8 CLOSED up to the measure wrapper (1-D reduction, scalar window,
-channel membership via Jordan's inequality), and Lemma G's analytic
-core — 0 sorries throughout. Every deterministic/realization-level item
-of THEORY.md is now machine-checked; FORMALIZATION.md's remaining
-triage is purely measure-theoretic assembly (Prop 5/6, T4; T5's
-sphere-measure reduction) or needs Rips persistence theory mathlib does
-not have (T1, T7). None of it blocking.
+Prop 8 CLOSED up to the measure wrapper, Lemma G's analytic core,
+Prop 5's pathwise core, T4's Lemma W, and T1's foundation layer
+(Lemma D⁻'s mathematical content, persistence bookkeeping stripped) —
+0 sorries throughout. FORMALIZATION.md's remaining triage is the
+measure assembly (Lemma A/S + union bound for T4; the sphere-marginal
+reduction for T5) and T1's upper floors on the laid foundation. None of
+it blocking.
 
 ## Open, in the order the work naturally goes
 
-1. **Lean, remaining triage** (FORMALIZATION.md): only the genuinely
-   probabilistic items (Prop 5/6, T4; T5's Lemma G) and the Rips
-   persistence theory T1/T7 would need. Nothing blocks on any of it,
-   and nothing mechanical remains.
+1. **Lean, remaining triage** (FORMALIZATION.md): the measure assembly
+   (Lemma A's arcsin/circle-measure computations, Lemma S's pushforward,
+   the h-step union bound; T5's sphere-marginal reduction) and T1's
+   upper floors (persistence language, Lemma B's existence half, D⁺'s
+   filling chain) on the `RipsCircle.lean` foundation. Nothing blocks on
+   any of it.
 2. **Paper 1's linter debt** (22 soundness-scope, 20 printed-zero,
    3 process-prose at baseline) if that paper is ever revised. The
    baseline is READ correctly on Windows now (the linter's lookup
@@ -138,6 +140,16 @@ origin; this branch is the only one).
   the exponent's extra 1/2, pointwise bound, range enlargement),
   generalized to any real exponent p ≥ 0. The sphere-measure reduction
   and T5-I's symmetry-of-sums step remain, honestly probabilistic.
+- **And the seventh opens both remaining programs.** Prop 5's core
+  turned out to be PATHWISE (mis-triaged as probabilistic): one
+  application of the coupling engine, unifying the paper's two cases
+  (`prop5_fire_monotone`). T4 gains Lemma W's geometric core. And
+  `RipsCircle.lean` lays T1's foundation with no persistence machinery:
+  the law of cosines, the edge–angle bound below √3·r_min, the exact
+  triangle telescope over `Real.Angle`, and winding as an additive
+  functional on `Finsupp` chains that vanishes on scale-s triangle
+  boundaries — Lemma D⁻'s content, "the winding class is not a boundary
+  below √3·r_min", machine-checked. 0 sorries, 8707 jobs green.
 
 Picked up exactly where the list above pointed: the rarity decision, then the
 plumbing it unblocks, then the audit itself. No mathematics attempted (T7

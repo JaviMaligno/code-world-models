@@ -25,6 +25,7 @@ the exact cap integral at n = 3…30 (`scripts/t5_isotropic_bound.py`).
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 import Mathlib.Analysis.SpecialFunctions.Sqrt
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.Tactic.Linarith
 
 namespace Paper3Ring
@@ -125,5 +126,28 @@ theorem lemmaG_integral_core {p κ : ℝ} (hp : 0 ≤ p) (hκ0 : 0 ≤ κ)
     _ = (1 - κ ^ 2) ^ (p + 1 / 2) * ∫ y in (0 : ℝ)..1, (1 - y ^ 2) ^ p := by
         rw [hs_def, Real.sqrt_eq_rpow, ← mul_assoc,
           ← Real.rpow_add hκ2, add_comm (1 / 2 : ℝ) p]
+
+/-- **Lemma W (sliver-in-strip), the geometric core** (THEORY.md, T4's
+ingredient): a point at radius `ρ ≤ r_out` and angular offset `φ` from a
+line through the ring center has distance `ρ·|sin φ|` to that line, and for
+`|φ| ≤ ε/4` that distance is at most `r_out·ε/4` — each γ-sliver lies in the
+strip of half-width `r_out·ε/4` about its angular bisector. Together with
+Lemma A (whose arcsin computations are the remaining analytic piece) and
+Lemma S's exactly-uniform landing direction, this is T4's geometry. -/
+theorem lemmaW_sliver_in_strip {ρ φ ε rout : ℝ} (hρ0 : 0 ≤ ρ) (hρ : ρ ≤ rout)
+    (hφ : |φ| ≤ ε / 4) :
+    |ρ * Real.sin φ| ≤ rout * ε / 4 := by
+  have hε4 : 0 ≤ ε / 4 := le_trans (abs_nonneg φ) hφ
+  have h1 : |ρ * Real.sin φ| = ρ * |Real.sin φ| := by
+    rw [abs_mul, abs_of_nonneg hρ0]
+  have h2 : |Real.sin φ| ≤ ε / 4 := Real.abs_sin_le_abs.trans hφ
+  have h3 : ρ * |Real.sin φ| ≤ ρ * (ε / 4) :=
+    mul_le_mul_of_nonneg_left h2 hρ0
+  have h4 : ρ * (ε / 4) ≤ rout * (ε / 4) :=
+    mul_le_mul_of_nonneg_right hρ hε4
+  calc |ρ * Real.sin φ| = ρ * |Real.sin φ| := h1
+    _ ≤ ρ * (ε / 4) := h3
+    _ ≤ rout * (ε / 4) := h4
+    _ = rout * ε / 4 := by ring
 
 end Paper3Ring

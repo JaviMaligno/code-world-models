@@ -235,6 +235,38 @@ lemma freezeTraj_eq_of_landing_mem_iff {M₁ M₂ : Set E} {s₀ : σ} {T : ℕ}
     · rw [if_pos (hif.mp h), if_pos h]
     · rw [if_neg (fun h₂ => h (hif.mpr h₂)), if_neg h]
 
+omit [PseudoMetricSpace E] in
+/-- **Proposition 5 (r is nonincreasing in γ), realization core.** Shrinking
+the wall preserves firing: if the `M₂`-system's trajectory ever lands in
+`M₂ ⊆ M₁`, the `M₁`-system's trajectory (same realizations — same tentative
+steps) lands in `M₁` at the same step or earlier. One application of the
+coupling engine unifies THEORY.md's two cases: take the FIRST step `w` at
+which the `M₂`-trajectory's landing is in `M₁` (the firing landing is one);
+before `w` the landings are in neither set, so the two trajectories agree
+through `w`, and the `M₁`-trajectory's landing at `w` is the same point. The
+measure wrapper (pathwise fire(γ₂) ⊆ fire(γ₁) ⟹ r(γ₂) ≤ r(γ₁) over seeds)
+is monotonicity of a measure under inclusion, noted as everywhere in the
+package. -/
+theorem prop5_fire_monotone {M₁ M₂ : Set E} (hsub : M₂ ⊆ M₁) {s₀ : σ} {t : ℕ}
+    (hfire : pos (F t (freezeTraj pos F freeze M₂ s₀ t)) ∈ M₂) :
+    ∃ u ≤ t, pos (F u (freezeTraj pos F freeze M₁ s₀ u)) ∈ M₁ := by
+  classical
+  have hex : ∃ u, pos (F u (freezeTraj pos F freeze M₂ s₀ u)) ∈ M₁ :=
+    ⟨t, hsub hfire⟩
+  set w := Nat.find hex with hw_def
+  have hw : pos (F w (freezeTraj pos F freeze M₂ s₀ w)) ∈ M₁ :=
+    Nat.find_spec hex
+  have hwt : w ≤ t := Nat.find_min' hex (hsub hfire)
+  have heq : ∀ u ≤ w, freezeTraj pos F freeze M₁ s₀ u
+      = freezeTraj pos F freeze M₂ s₀ u := by
+    apply freezeTraj_eq_of_landing_mem_iff
+    intro u hu
+    have hnot := Nat.find_min hex hu
+    exact ⟨fun h₂ => absurd (hsub h₂) hnot, fun h₁ => absurd h₁ hnot⟩
+  refine ⟨w, hwt, ?_⟩
+  rw [heq w le_rfl]
+  exact hw
+
 variable {A I : Type*}
 
 omit [PseudoMetricSpace E] in
