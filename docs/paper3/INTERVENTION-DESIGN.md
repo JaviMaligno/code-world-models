@@ -81,7 +81,12 @@ the round-2 review, REVIEW-CODEX.md B2–B4):**
   must be attributed to the rest of the evidence channel — the paper's
   causal reading is then WRONG as stated and the sensor section's
   conclusion weakens to the association, permanently.
-- **H-I3 (gate invariance).** Gate passage should NOT move (the gate never
+- **H-I3 (gate invariance).** *[SUPERSEDED by amendment 3 above, dated
+  before any outcome was inspected: gate passage is a downstream causal
+  outcome — the prompt changes the artifact and the gate scores the
+  artifact — analyzed as a secondary paired outcome with no invariance
+  null. The original text is kept below for the record.]* Gate passage
+  should NOT move (the gate never
   sees the prompt): any drift is a synthesis-side artifact and is reported
   as such, not as a sensor effect.
 

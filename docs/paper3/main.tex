@@ -1154,7 +1154,9 @@ closed row by Lemma~\ref{lem:crossing} and
 Proposition~\ref{prop:harmless}, the neck-$1.2$ row by the local lemma at
 $\Delta = 1.0 < 1.2$, imagined steps included; $^{\dagger}$censored ---
 $0$ occurrences in that sample, Wilson $95\%$ uppers $1.3\times10^{-4}$
-(rollouts), $1.2\times10^{-5}$ (transitions), $0.19$ (episodes).)
+(rollouts), $1.2\times10^{-5}$ (transitions), $0.19$ (episodes;
+\texttt{results/ring2d\_zero\_wilson.json}, emitted from the sweep's own
+denominators).)
 
 Three findings. \textbf{Hidden necks are bit-identical to the closed
 ring} at all six thicknesses (the same $r$ to the last float, $0$
@@ -1559,14 +1561,18 @@ scored against a \emph{contemporaneous} honest replicate as primary
 control. The paired contrast is directionally consistent with steering
 --- of $11$ discordant pairs, $9$ moved toward the claimed topology and
 $2$ against --- but does not reach the pre-registered level (exact
-two-sided binomial $p = 0.065$ on $60$ pairs;
+two-sided binomial $p = 0.065$ on $60$ pairs; the registered exact
+$95\%$ interval for the toward-claim share of discordant pairs is
+$[0.48, 0.98]$, spanning $1/2$;
 \texttt{results/ring2d\_summary\_intervention.json}), so the causal
 reading is \emph{not} earned and H2's conclusion stands as the
-association above. The null is not control instability: the two honest
-controls agree (honest-then vs.\ honest-now, $4{:}5$ discordant,
-$p = 1.0$ --- no deployment drift), and gate passage never moves under
-the flip ($0$ discordant pairs), consistent with the artifact-level
-effect being small at this cell.
+association above. Per-seed classification is itself stochastic at this
+cell --- the two honest controls (honest-then vs.\ honest-now) disagree
+on $9$ of $60$ pairs, split $4{:}5$ ($p = 1.0$): balanced, so no
+\emph{directional} drift, though a balanced split cannot rule out
+generation variability as such --- and this seedless generation noise is
+exactly what the paired binomial's null absorbs. Gate passage never
+moves under the flip ($0$ discordant pairs).
 The repair loop's topology channel is, at minimum, no better than the
 sensor's resolving power at the operative sampling density.
 
@@ -2119,10 +2125,18 @@ the record.
 \paragraph{The sensor constant is ours; the mechanism is the claim.} The
 resolution flip at $\gamma \approx 1.8$ belongs to one pre-registered
 detector at one density (Rips, dedup $0.05$, cap $90$, $3\times$
-median-NN). Other detectors move the constant; the propagated-resolution
-mechanism --- artifacts tracking $\hat\beta_1$ rather than $\beta_1$
---- is the claim, and it is detector-generic in the sense that any honest
-summary has \emph{some} flip.
+median-NN). Other detectors move the constant; what the paper measures
+is the tracking --- artifacts following $\hat\beta_1$ rather than
+$\beta_1$ --- and the flipped-summary intervention
+(Section~\ref{sec:sensor}) left the claim line's causal share of it
+unearned at the one cell tested. The genericity is scoped to what is
+proved: for Rips-type detectors the flip is forced by the barcode
+sandwich above --- below the bridging scale the gap is invisible ---
+and we \emph{expect}, but do not prove, an analogous blind width for
+any summary that must decide topology from finitely many samples at a
+fixed scale (an exact oracle has no flip, but no sampled summary is
+one). Whether other finite-resolution detectors propagate their own
+flip into posed topology is measured here only for the registered one.
 
 \paragraph{Normalization at wide $\gamma$.} As the channel opens, the
 truth baseline itself changes (the phantom lode becomes reachable and

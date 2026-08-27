@@ -290,3 +290,36 @@ of #1). All PARTIALs and the defect addressed in the same session:
 **Suggested repair:** Print \(0/600\) with the rollout-level Wilson upper and add the exact JSON source to the caption.
 
 **Overall verdict:** No—the paper is not yet acceptable merely modulo the running intervention. Most round-1 empirical repairs are sound, but the central quotient still lacks a valid converse proof, headline H2 claims remain stronger than the repaired body, and the preregistered intervention currently has an invalid test and a temporal/stochastic confound. The single highest-value change is to rebuild Proposition 1 around a defined trajectory-hit probability \(p\), connect it rigorously to occupation-measure a.e. agreement, and synchronize every headline, ledger entry, and Lean claim with that theorem.
+
+# Round 3 (2026-08-28, after the intervention fold and the round-2 repairs)
+
+Same reviewer and brief (adversarial referee over the repo, read-only;
+round-3 brief targeted the new material: the intervention fold, the
+903/39 audit counts, and the round-2 repairs themselves). Verbatim
+findings below; triage inline.
+
+**Reviewer's summary: no BLOCKING defects; two MAJOR and three MINOR
+defects not reported in rounds 1–2.** Clean bill (verbatim): the primary
+intervention numbers are correct (60 pairs, 11 discordant, 9:2, exact
+p = 0.0654296875; gate discordance 0); git history supports genuine
+pre-registration (design `181ec28` 22:18, amendments `c0a329b` 22:35,
+analysis script `fa92e03` 23:02, outcomes `879b9e5` 00:00); the paper
+does not bury the primary null; held-out counts all reproduce (903
+artifacts, 39 campaigns, 156/156 over 91 blocks, 214/121, all 121
+mode-only, 39/39 Wilson); prop:quotient repaired correctly; every
+ShellField `used (×NSW)` entry matches; the dose-mechanism rewrite
+matches its JSON; the strict claims audit reports paper 3 clean.
+
+## Round-3 triage (2026-08-28, same session)
+
+| # | severity | verdict | disposition |
+|---|---|---|---|
+| 1 | MAJOR | CONFIRMED | "any honest summary has *some* flip" (main.tex "The sensor constant is ours") overgeneralized: honesty does not imply finite resolution. Re-scoped: the flip is PROVED for Rips-type detectors (barcode sandwich; below the bridging scale the gap is invisible); the analogous blind width for any fixed-scale sampled summary is stated as an explicit expectation, not an assertion; propagation into posed topology stays measured-for-the-registered-detector-only |
+| 2 | MAJOR | CONFIRMED | "The null is not control instability … no deployment drift" exceeded the evidence: the honest controls disagree on 9/60 pairs (4:5); p = 1.0 shows balance, not stability. Rewritten: per-seed classification is stochastic at this cell, the balanced split shows no *directional* drift but cannot rule out generation variability as such, and this seedless generation noise is exactly what the paired binomial's null absorbs |
+| 3 | MINOR | CONFIRMED | the registered exact CI for the discordant split was never emitted. `clopper_pearson` added to the analysis script (bisection on the binomial CDF, no new deps), JSON re-emitted (`toward_claim_share_ci95_clopper_pearson` = [0.482, 0.977]), tex reports it spanning 1/2 |
+| 4 | MINOR | CONFIRMED | H-I3's original invariance reading contradicted amendment 3. H-I3 annotated [SUPERSEDED by amendment 3] in INTERVENTION-DESIGN.md with the original text kept for the record |
+| 5 | MINOR | CONFIRMED | the round-2 Wilson uppers were hand-derived (arithmetically correct, wrong provenance). New `scripts/ring2d_zero_wilson.py` emits them from the sweep's own denominators into `results/ring2d_zero_wilson.json` (1.2804e-4, 1.2005e-5, 0.1936); tex cites the file |
+
+All five repaired in the same session; linter zero, LaTeX green. The full
+round-3 transcript (~950 KB) lives outside the repo; the findings above
+are the complete list.

@@ -1696,7 +1696,11 @@
   "discordant": 11,
   "toward_claim": 9,
   "against_claim": 2,
-  "p_two_sided": 0.0654296875
+  "p_two_sided": 0.0654296875,
+  "toward_claim_share_ci95_clopper_pearson": [
+   0.4822441476398275,
+   0.9771688017000404
+  ]
  },
  "drift_check_contemporaneous_vs_committed_closed": {
   "a_only": 4,

@@ -1,0 +1,22 @@
+{
+ "script": "ring2d_zero_wilson.py",
+ "source": "results/ring2d_thin_neck.json",
+ "definition": "Wilson 95% upper bound for a rate observed 0 times in n trials, per censored-zero row of the thin-neck sweep; denominators are the sweep's own (uniform across rows).",
+ "uppers": {
+  "rollouts": {
+   "n": 30000,
+   "k": 0,
+   "wilson95_upper": 0.00012803693777666122
+  },
+  "transitions": {
+   "n": 320000,
+   "k": 0,
+   "wilson95_upper": 1.200485588170514e-05
+  },
+  "episodes": {
+   "n": 16,
+   "k": 0,
+   "wilson95_upper": 0.19361341827271994
+  }
+ }
+}

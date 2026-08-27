@@ -53,6 +53,40 @@ def binom_two_sided(d: int, k: int) -> float:
                if abs(j - d / 2) >= dev - 1e-12) / 2 ** d
 
 
+def _binom_cdf(n: int, p: float, k: int) -> float:
+    return sum(math.comb(n, j) * p ** j * (1 - p) ** (n - j)
+               for j in range(k + 1))
+
+
+def clopper_pearson(k: int, n: int, alpha: float = 0.05):
+    """Exact (Clopper-Pearson) two-sided CI for a binomial proportion,
+    by bisection on the binomial CDF -- the interval the design
+    registered for the discordant split."""
+    if n == 0:
+        return [0.0, 1.0]
+
+    def _solve(target, lo, hi, upper_tail):
+        for _ in range(200):
+            mid = (lo + hi) / 2
+            tail = (1 - _binom_cdf(n, mid, k - 1)) if upper_tail \
+                else _binom_cdf(n, mid, k)
+            if tail > target:
+                if upper_tail:
+                    hi = mid
+                else:
+                    lo = mid
+            else:
+                if upper_tail:
+                    lo = mid
+                else:
+                    hi = mid
+        return (lo + hi) / 2
+
+    lower = 0.0 if k == 0 else _solve(alpha / 2, 0.0, 1.0, upper_tail=True)
+    upper = 1.0 if k == n else _solve(alpha / 2, 0.0, 1.0, upper_tail=False)
+    return [lower, upper]
+
+
 def load(path):
     cells = json.loads((_REPO / path).read_text())["cells"]
     out = {}
@@ -90,7 +124,9 @@ def paired_opposite_claims(a, b):
     d = d_pos + d_neg
     return {"rows": rows, "n_pairs": len([r for r in rows if "D" in r]),
             "discordant": d, "toward_claim": d_pos, "against_claim": d_neg,
-            "p_two_sided": binom_two_sided(d, d_pos)}
+            "p_two_sided": binom_two_sided(d, d_pos),
+            "toward_claim_share_ci95_clopper_pearson":
+                clopper_pearson(d_pos, d)}
 
 
 def paired_same_outcome(a, b, key):
