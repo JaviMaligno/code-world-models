@@ -599,6 +599,175 @@ theorem union_bound_le {Ω : Type*} [MeasurableSpace Ω]
     _ = h * B := by
         rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
 
+/-! ## Window invariance and rotation: Lemma A for arbitrary strips
+
+Lemma A's proof opens with "rotating coordinates shifts the uniform ψ" —
+the strip's orientation is arbitrary because the uniform angle is rotation
+invariant. Machine-checked below: any length-2π window carries the same
+sin-strip mass (whole-window 2π-translations plus one split-and-translate
+at a representative), hence the ROTATED strip event has the same measure,
+and the per-step bound applies to strips in every orientation. -/
+
+section WindowInvariance
+
+/-- Closed and half-open windows carry the same mass against any set: the
+left endpoint is null. -/
+private lemma volume_Icc_inter_eq_Ioc_inter (P : Set ℝ) (c d : ℝ) :
+    MeasureTheory.volume (Set.Icc c d ∩ P)
+      = MeasureTheory.volume (Set.Ioc c d ∩ P) := by
+  apply le_antisymm
+  · have hsub : Set.Icc c d ∩ P ⊆ (Set.Ioc c d ∩ P) ∪ {c} := by
+      rintro ψ ⟨⟨h1, h2⟩, hp⟩
+      rcases eq_or_lt_of_le h1 with h | h
+      · exact Or.inr (by simp [← h])
+      · exact Or.inl ⟨⟨h, h2⟩, hp⟩
+    calc MeasureTheory.volume (Set.Icc c d ∩ P)
+        ≤ MeasureTheory.volume ((Set.Ioc c d ∩ P) ∪ {c}) :=
+          MeasureTheory.measure_mono hsub
+      _ ≤ MeasureTheory.volume (Set.Ioc c d ∩ P)
+            + MeasureTheory.volume {c} := MeasureTheory.measure_union_le _ _
+      _ = MeasureTheory.volume (Set.Ioc c d ∩ P) := by
+          rw [Real.volume_singleton, add_zero]
+  · exact MeasureTheory.measure_mono
+      (Set.inter_subset_inter_left P Set.Ioc_subset_Icc_self)
+
+/-- Whole-window translation by `2πk` preserves the sin-strip mass — sin is
+periodic and Lebesgue is translation invariant; no splitting needed. -/
+private lemma volume_sin_Ioc_translate {a b : ℝ} (c d : ℝ) (k : ℤ) :
+    MeasureTheory.volume (Set.Ioc c d ∩ Real.sin ⁻¹' Set.Icc a b)
+      = MeasureTheory.volume
+        (Set.Ioc (c + (k : ℝ) * (2 * π)) (d + (k : ℝ) * (2 * π))
+          ∩ Real.sin ⁻¹' Set.Icc a b) := by
+  have hset : ((fun ψ : ℝ => -((k : ℝ) * (2 * π)) + ψ) ⁻¹'
+      (Set.Ioc c d ∩ Real.sin ⁻¹' Set.Icc a b))
+      = Set.Ioc (c + (k : ℝ) * (2 * π)) (d + (k : ℝ) * (2 * π))
+        ∩ Real.sin ⁻¹' Set.Icc a b := by
+    ext ψ
+    simp only [Set.mem_preimage, Set.mem_inter_iff, Set.mem_Ioc, Set.mem_Icc]
+    constructor
+    · rintro ⟨⟨h1, h2⟩, hp⟩
+      refine ⟨⟨by linarith, by linarith⟩, ?_⟩
+      rwa [show -((k : ℝ) * (2 * π)) + ψ = ψ - (k : ℝ) * (2 * π) by ring,
+        Real.sin_sub_int_mul_two_pi] at hp
+    · rintro ⟨⟨h1, h2⟩, hp⟩
+      refine ⟨⟨by linarith, by linarith⟩, ?_⟩
+      rwa [show -((k : ℝ) * (2 * π)) + ψ = ψ - (k : ℝ) * (2 * π) by ring,
+        Real.sin_sub_int_mul_two_pi]
+  rw [← hset, MeasureTheory.measure_preimage_add]
+
+/-- Split-and-translate at a representative: for `c ∈ [−π, π]`, the window
+`(c, c + 2π]` carries the same sin-strip mass as `(−π, π]`. -/
+private lemma volume_sin_window_rep {a b c : ℝ} (hc1 : -π ≤ c) (hc2 : c ≤ π) :
+    MeasureTheory.volume (Set.Ioc (-π) π ∩ Real.sin ⁻¹' Set.Icc a b)
+      = MeasureTheory.volume
+        (Set.Ioc c (c + 2 * π) ∩ Real.sin ⁻¹' Set.Icc a b) := by
+  have hπ := pi_pos
+  set P : Set ℝ := Real.sin ⁻¹' Set.Icc a b with hP
+  have hPm : MeasurableSet P :=
+    measurableSet_Icc.preimage Real.continuous_sin.measurable
+  have hsplit1 : Set.Ioc (-π) π ∩ P
+      = (Set.Ioc (-π) c ∩ P) ∪ (Set.Ioc c π ∩ P) := by
+    rw [← Set.union_inter_distrib_right, Set.Ioc_union_Ioc_eq_Ioc hc1 hc2]
+  have hsplit2 : Set.Ioc c (c + 2 * π) ∩ P
+      = (Set.Ioc c π ∩ P) ∪ (Set.Ioc π (c + 2 * π) ∩ P) := by
+    rw [← Set.union_inter_distrib_right,
+      Set.Ioc_union_Ioc_eq_Ioc hc2 (by linarith)]
+  have hdisj1 : Disjoint (Set.Ioc (-π) c ∩ P) (Set.Ioc c π ∩ P) := by
+    rw [Set.disjoint_left]
+    rintro ψ ⟨⟨_, h1⟩, _⟩ ⟨⟨h2, _⟩, _⟩
+    linarith
+  have hdisj2 : Disjoint (Set.Ioc c π ∩ P) (Set.Ioc π (c + 2 * π) ∩ P) := by
+    rw [Set.disjoint_left]
+    rintro ψ ⟨⟨_, h1⟩, _⟩ ⟨⟨h2, _⟩, _⟩
+    linarith
+  have htail := volume_sin_Ioc_translate (a := a) (b := b) (-π) c 1
+  rw [show (-π + (1 : ℤ) * (2 * π) : ℝ) = π by push_cast; ring,
+    show (c + (1 : ℤ) * (2 * π) : ℝ) = c + 2 * π by push_cast; ring] at htail
+  rw [← hP] at htail
+  rw [hsplit1, hsplit2,
+    MeasureTheory.measure_union hdisj1 (measurableSet_Ioc.inter hPm),
+    MeasureTheory.measure_union hdisj2 (measurableSet_Ioc.inter hPm),
+    htail]
+  ring
+
+/-- **Any length-2π window carries the same sin-strip mass.** -/
+lemma volume_sin_window_any {a b : ℝ} (c : ℝ) :
+    MeasureTheory.volume
+        (Set.Ioc c (c + 2 * π) ∩ Real.sin ⁻¹' Set.Icc a b)
+      = MeasureTheory.volume (Set.Ioc (-π) π ∩ Real.sin ⁻¹' Set.Icc a b) := by
+  have hπ := pi_pos
+  set k := ⌊(c + π) / (2 * π)⌋ with hk
+  have h2π : (0 : ℝ) < 2 * π := by linarith
+  have hfl := Int.floor_le ((c + π) / (2 * π))
+  have hfl' := Int.lt_floor_add_one ((c + π) / (2 * π))
+  have hdiv : (c + π) / (2 * π) * (2 * π) = c + π := by field_simp
+  have hc1 : -π ≤ c - (k : ℝ) * (2 * π) := by nlinarith
+  have hc2 : c - (k : ℝ) * (2 * π) ≤ π := by nlinarith
+  have htr := volume_sin_Ioc_translate (a := a) (b := b)
+    (c - (k : ℝ) * (2 * π)) (c - (k : ℝ) * (2 * π) + 2 * π) k
+  rw [show c - (k : ℝ) * (2 * π) + (k : ℝ) * (2 * π) = c by ring,
+    show c - (k : ℝ) * (2 * π) + 2 * π + (k : ℝ) * (2 * π) = c + 2 * π
+      by ring] at htr
+  rw [← htr, ← volume_sin_window_rep hc1 hc2]
+
+/-- **Rotation invariance of the strip event** — Lemma A's "rotating
+coordinates shifts the uniform ψ": the strip event for the rotated angle
+`φ₀ + ψ` carries the same mass over the heading window as the unrotated
+one, for EVERY φ₀. -/
+theorem volume_sin_rotate (φ₀ : ℝ) {a b : ℝ} :
+    MeasureTheory.volume
+        {ψ ∈ Set.Icc (-π) π | Real.sin (φ₀ + ψ) ∈ Set.Icc a b}
+      = MeasureTheory.volume
+        {ψ ∈ Set.Icc (-π) π | Real.sin ψ ∈ Set.Icc a b} := by
+  have hπ := pi_pos
+  set P : Set ℝ := Real.sin ⁻¹' Set.Icc a b with hP
+  have hrepr1 : {ψ ∈ Set.Icc (-π) π | Real.sin (φ₀ + ψ) ∈ Set.Icc a b}
+      = Set.Icc (-π) π ∩ (fun ψ => φ₀ + ψ) ⁻¹' P := rfl
+  have hrepr2 : {ψ ∈ Set.Icc (-π) π | Real.sin ψ ∈ Set.Icc a b}
+      = Set.Icc (-π) π ∩ P := rfl
+  rw [hrepr1, hrepr2,
+    volume_Icc_inter_eq_Ioc_inter ((fun ψ => φ₀ + ψ) ⁻¹' P),
+    volume_Icc_inter_eq_Ioc_inter P]
+  have hset : Set.Ioc (-π) π ∩ (fun ψ => φ₀ + ψ) ⁻¹' P
+      = (fun ψ : ℝ => φ₀ + ψ) ⁻¹' (Set.Ioc (φ₀ - π) (φ₀ + π) ∩ P) := by
+    ext ψ
+    simp only [Set.mem_preimage, Set.mem_inter_iff, Set.mem_Ioc]
+    constructor
+    · rintro ⟨⟨h1, h2⟩, hp⟩
+      exact ⟨⟨by linarith, by linarith⟩, hp⟩
+    · rintro ⟨⟨h1, h2⟩, hp⟩
+      exact ⟨⟨by linarith, by linarith⟩, hp⟩
+  rw [hset, MeasureTheory.measure_preimage_add]
+  have := volume_sin_window_any (a := a) (b := b) (φ₀ - π)
+  rw [show φ₀ - π + 2 * π = φ₀ + π by ring] at this
+  exact this
+
+/-- **Lemma A(i) for arbitrarily rotated strips**: the per-step strip bound
+holds whatever the strip's orientation relative to the heading's zero. -/
+theorem lemmaA_part_i_rotated (φ₀ : ℝ) {a b : ℝ}
+    (ha : -1 ≤ a) (hb : b ≤ 1) (hab : a ≤ b) :
+    MeasureTheory.volume
+        {ψ ∈ Set.Icc (-π) π | Real.sin (φ₀ + ψ) ∈ Set.Icc a b}
+      ≤ ENNReal.ofReal (2 * π * Real.sqrt ((b - a) / 2)) := by
+  rw [volume_sin_rotate]
+  exact lemmaA_part_i' ha hb hab
+
+end WindowInvariance
+
+/-- **The Fubini slice bound, first-coordinate version**: conditioning on
+the SECOND factor (the suffix of the action sequence, which the current
+landing does not depend on). -/
+theorem prod_slice_bound' {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
+    (μ : MeasureTheory.Measure α) (ν : MeasureTheory.Measure β)
+    [MeasureTheory.SFinite μ] [MeasureTheory.SFinite ν]
+    {E : Set (α × β)} (hE : MeasurableSet E) {B : ENNReal}
+    (hslice : ∀ y, μ ((fun x => (x, y)) ⁻¹' E) ≤ B) :
+    (μ.prod ν) E ≤ B * ν Set.univ := by
+  rw [MeasureTheory.Measure.prod_apply_symm hE]
+  calc ∫⁻ y, μ ((fun x => (x, y)) ⁻¹' E) ∂ν
+      ≤ ∫⁻ _, B ∂ν := MeasureTheory.lintegral_mono hslice
+    _ = B * ν Set.univ := MeasureTheory.lintegral_const B
+
 /-- **Lemma W (sliver-in-strip), the geometric core** (THEORY.md, T4's
 ingredient): a point at radius `ρ ≤ r_out` and angular offset `φ` from a
 line through the ring center has distance `ρ·|sin φ|` to that line, and for

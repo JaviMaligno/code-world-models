@@ -49,7 +49,8 @@ not silently weakened.
 | Lemma B's gap-jump core (the birth lower bound) | `wrap_eq_add_int`, `exists_lift_above`, `exists_big_step_of_climb` (the upcrossing lemma), `lemmaB_gap_jump` (`RipsCircle.lean`, eighth tranche) | **PROVED**: a walk whose wrapped increments sum to 2πw, w ≠ 0, on vertices all keeping distance ≥ Δ/2 from every lift of the gap midpoint (no vertex in the open gap arc), has a step with \|wrapped increment\| ≥ Δ. The proof lifts the walk (no wrapping needed at all): the lift climbs 2πw, crosses a lift of the gap midpoint, and both crossing endpoints are ≥ Δ/2 away — the negative-winding case by NEGATING the lift, which sidesteps the wrap-reversal pathology at ±π. With the chord–angle bound this is Lemma B's `s_w ≥ 2·r_min·sin(Δθ_max/2)`. Remaining for full Lemma B: the existence half (the consecutive-neighbors cycle at the upper scale) |
 | Lemma S (one-step landing law) | `lemmaS_landing_eq` (`WitnessTube.lean`: the read-off half — one integrator step from ANY state lands at drift-center + `gain·dt²`·heading, one `module`), `lemmaS_heading_uniform` (`CapBound.lean`: the measure half — the heading map `a ↦ π·a` carries the uniform action law on [−1,1] to `(1/π)`·Lebesgue on [−π,π], via `Real.map_volume_mul_left` and `restrict_map`) (eighth tranche) | **PROVED, both halves**: the landing law is exactly the uniform arc-length measure on the circle of radius `gain·dt²` about the drift center, state-independent |
 | The per-step T4 ingredient, composed | `volume_sin_window_shift` (the period-window glue: split at the shared part, translate the tail by 2π with null endpoints), `lemmaA_part_i'` (`CapBound.lean`, eighth tranche) | **PROVED**: the strip bound `≤ 2π·√(ℓ/2)` holds over the heading's ACTUAL window `[−π, π]` — Lemma A(i) transported to where Lemma S delivers the uniform angle |
-| T4's union-bound skeleton | `prod_slice_bound` (the Fubini conditioning step: uniform slice bound ⟹ product-measure bound, via `Measure.prod_apply` + `lintegral_mono`), `union_bound_le` (h events ≤ B each ⟹ union ≤ h·B) (`CapBound.lean`, eighth tranche) | **PROVED** — the two measure steps of T4's h-step argument. What remains for the fully composed T4 modulus is only the process-model instantiation: the h-fold product of the action law and the trajectory map's measurability, where these two lemmas apply once per step |
+| T4's union-bound skeleton | `prod_slice_bound` / `prod_slice_bound'` (the Fubini conditioning step in both factor orders, via `Measure.prod_apply`/`prod_apply_symm` + `lintegral_mono`), `union_bound_le` (h events ≤ B each ⟹ union ≤ h·B) (`CapBound.lean`, eighth tranche) | **PROVED** — the two measure steps of T4's h-step argument, in both conditioning orders |
+| Rotation invariance: Lemma A for arbitrary strips | `volume_Icc_inter_eq_Ioc_inter`, `volume_sin_Ioc_translate` (whole-window 2πk-translation), `volume_sin_window_rep` (split-and-translate at a representative), `volume_sin_window_any` (ANY length-2π window carries the same sin-strip mass), `volume_sin_rotate` ("rotating coordinates shifts the uniform ψ" — the rotated strip event has the same measure for every φ₀), `lemmaA_part_i_rotated` (`CapBound.lean`, eighth tranche) | **PROVED**: the per-step strip bound `≤ 2π√(ℓ/2)` holds for strips in EVERY orientation — the step Lemma A's proof opens with. With this, the per-step conditional bound is fully orientation-free, exactly what the slice bound consumes |
 | T5's Lemma G, analytic core | `lemmaG_integral_core` (`CapBound.lean`, sixth tranche) | **PROVED**, generalized to any real exponent p ≥ 0 (Lemma G takes p = (n−3)/2): `∫_κ¹ (1−u²)^p ≤ (1−κ²)^{p+1/2}·∫_0¹ (1−y²)^p` — the substitution u = κ + √(1−κ²)·y (its Jacobian is the extra 1/2 in the exponent), the pointwise bound 1−u² ≤ (1−κ²)(1−y²), and the range enlargement, i.e. the entire computation Lemma G's proof runs on. NOT formalized (the genuinely probabilistic part, per the triage): the reduction from the uniform sphere measure to the 1-D marginal density, and Theorem T5-I's spherical-symmetry-of-sums step. Measured complement: the cap bound checked against the exact cap integral at n = 3…30 |
 
 ### Modelling notes (what the Lean statements quantify over)
@@ -140,11 +141,11 @@ machine-checked at the level the paper proves them.
 Ordered by (value × feasibility), highest first:
 
 1. **T4's process-model instantiation** — the h-fold product of the action
-   law, the trajectory map's measurability, and the per-step application of
-   `prod_slice_bound`. Every INGREDIENT of T4 is now proved (Lemma A through
-   (i)'s measure form in the heading's own window, Lemma S both halves,
-   Lemma W, Prop 5, the slice bound, the union bound); what remains is
-   wiring them along the process.
+   law, the trajectory map's measurability (an `ite`-induction over the
+   freeze branches), the `piFinSuccAbove`-style coordinate split, and the
+   per-step application of `prod_slice_bound'`. Every INGREDIENT of T4 is
+   now proved, including rotation invariance (the per-step bound is
+   orientation-free); what remains is pure wiring along the process.
 2. **T5 measure assembly** — the sphere-measure reduction to the 1-D
    marginal density and T5-I's spherical-symmetry-of-sums step (Lemma G's
    analytic core is done); the Berry–Esseen transfer stays out of
