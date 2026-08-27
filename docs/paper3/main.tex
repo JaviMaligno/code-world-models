@@ -376,16 +376,34 @@ boundary class organize, not through the crossing proof.
 \end{remark}
 
 \begin{remark}[machine-checked]
-The metric core is formalized in Lean~4 over mathlib
-(\texttt{formal/}, library \texttt{Paper3Ring}; no \texttt{sorry}):
-Lemma~\ref{lem:crossing} in both halves --- the discrete crossing bound
-over an arbitrary pseudometric space, and the freeze invariant that keeps
-an outside start at distance $> r_{\mathrm{out}}$ forever ---
+The paper's deterministic results are formalized in Lean~4 over mathlib
+(\texttt{formal/}, library \texttt{Paper3Ring}; no \texttt{sorry}), each at
+the level its proof actually operates: Lemma~\ref{lem:crossing} in both
+halves over an arbitrary pseudometric space, with the constants paragraph
+above ($\lVert v \rVert \le \mathrm{gain}/\mathrm{drag}$ through freeze
+events, $\Delta = 1.0 < w = 1.5$ by \texttt{norm\_num});
 Corollary~\ref{cor:evidence} as a pathwise identity of trajectories and
-contact processes, the gate quotient
-(Proposition~\ref{prop:quotient}) at realization level, and the constants
-paragraph above ($\lVert v \rVert \le \mathrm{gain}/\mathrm{drag}$
-through freeze events, $\Delta = 1.0 < w = 1.5$ by \texttt{norm\_num}).
+contact processes; the gate quotient (Proposition~\ref{prop:quotient}) at
+realization level; Proposition~\ref{prop:harmless} composed with the
+planner/environment loop --- unfalsifiability over arbitrary closed-loop
+policies, and play cost exactly $0$ for any deterministic planner acting
+on imagined rollouts; the firing coupling of
+Proposition~\ref{prop:rmono} and the direct-entry transport of
+Proposition~\ref{prop:direct}, with
+Corollary~\ref{cor:funneldefect}'s defect algebra checked from its named
+hypotheses; the fence and patch sufficiency theorems
+(Propositions~\ref{prop:fence} and~\ref{prop:patch}) from their
+coverage/dominance hypotheses; Proposition~\ref{prop:positivity} closed up
+to the start box's positive probability (the 1-D tube reduction, the
+in-horizon window, and channel membership via Jordan's inequality); and
+every measure step of Proposition~\ref{prop:continuity}'s modulus end to
+end --- the landing law's exact uniformity, the circle--strip bound with
+rotation invariance as a measure statement, measurability of the freeze
+trajectory in the action sequence, and the $h$-step slice/union
+composition --- leaving only each application's coordinate computation.
+The item-by-item map, the modelling conventions, and the exact boundary of
+what remains measured are recorded in the repository's formalization
+ledger.
 \end{remark}
 
 \begin{proposition}[wrong topology: unfalsifiable and harmless at $\gamma = 0$]
