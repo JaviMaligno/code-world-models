@@ -768,6 +768,68 @@ theorem prod_slice_bound' {α β : Type*} [MeasurableSpace α] [MeasurableSpace 
       ≤ ∫⁻ _, B ∂ν := MeasureTheory.lintegral_mono hslice
     _ = B * ν Set.univ := MeasureTheory.lintegral_const B
 
+/-- **T4's process wiring.** For the (n+1)-fold product of a per-step action
+law: if every event `E t` has all its coordinate-`t` slices bounded by `B`
+uniformly in the other coordinates — the conditional per-step bound that
+Lemma A + S + W supply, since the prefix fixes the state and the landing
+ignores the suffix — then the union has measure at most
+`(n+1)·B·(mass of one factor)^n`. Normalizing by the total mass
+`(mass)^{n+1}` this is `P(⋃ E_t) ≤ (n+1)·(B/mass)`: the h-step modulus of
+Theorem T4 from the per-step conditional bound. -/
+theorem pi_union_slice_bound {n : ℕ} (μ₀ : MeasureTheory.Measure ℝ)
+    [MeasureTheory.SigmaFinite μ₀]
+    (E : Fin (n + 1) → Set (Fin (n + 1) → ℝ))
+    (hEm : ∀ t, MeasurableSet (E t)) {B : ENNReal}
+    (hslice : ∀ (t : Fin (n + 1)) (rest : Fin n → ℝ),
+      μ₀ {a | t.insertNth a rest ∈ E t} ≤ B) :
+    MeasureTheory.Measure.pi (fun _ : Fin (n + 1) => μ₀) (⋃ t, E t)
+      ≤ (n + 1 : ENNReal) * (B * μ₀ Set.univ ^ n) := by
+  have hstep : ∀ t : Fin (n + 1),
+      MeasureTheory.Measure.pi (fun _ : Fin (n + 1) => μ₀) (E t)
+        ≤ B * μ₀ Set.univ ^ n := by
+    intro t
+    set e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (n + 1) => ℝ) t
+      with he
+    have hmp := MeasureTheory.measurePreserving_piFinSuccAbove
+      (fun _ : Fin (n + 1) => μ₀) t
+    rw [← he] at hmp
+    have hE' : MeasurableSet (e.symm ⁻¹' E t) :=
+      e.symm.measurable (hEm t)
+    have hEeq : e ⁻¹' (e.symm ⁻¹' E t) = E t := by
+      ext ω
+      simp
+    have hkey : MeasureTheory.Measure.pi (fun _ : Fin (n + 1) => μ₀) (E t)
+        = (μ₀.prod (MeasureTheory.Measure.pi fun _ : Fin n => μ₀))
+            (e.symm ⁻¹' E t) := by
+      have h := hmp.measure_preimage hE'.nullMeasurableSet
+      rw [hEeq] at h
+      exact h
+    rw [hkey]
+    have hb := prod_slice_bound' μ₀
+      (MeasureTheory.Measure.pi fun _ : Fin n => μ₀) hE' (B := B)
+      (fun rest => by
+        have hset : ((fun a => (a, rest)) ⁻¹' (e.symm ⁻¹' E t))
+            = {a | t.insertNth a rest ∈ E t} := rfl
+        rw [hset]
+        exact hslice t rest)
+    calc (μ₀.prod (MeasureTheory.Measure.pi fun _ : Fin n => μ₀))
+          (e.symm ⁻¹' E t)
+        ≤ B * (MeasureTheory.Measure.pi fun _ : Fin n => μ₀) Set.univ := hb
+      _ = B * μ₀ Set.univ ^ n := by
+          rw [MeasureTheory.Measure.pi_univ, Finset.prod_const,
+            Finset.card_univ, Fintype.card_fin]
+  calc MeasureTheory.Measure.pi (fun _ : Fin (n + 1) => μ₀) (⋃ t, E t)
+      ≤ ∑ t : Fin (n + 1),
+          MeasureTheory.Measure.pi (fun _ : Fin (n + 1) => μ₀) (E t) :=
+        MeasureTheory.measure_iUnion_fintype_le _ _
+    _ ≤ ∑ _t : Fin (n + 1), B * μ₀ Set.univ ^ n :=
+        Finset.sum_le_sum fun t _ => hstep t
+    _ = (n + 1 : ENNReal) * (B * μ₀ Set.univ ^ n) := by
+        rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+          nsmul_eq_mul]
+        push_cast
+        ring
+
 /-- **Lemma W (sliver-in-strip), the geometric core** (THEORY.md, T4's
 ingredient): a point at radius `ρ ≤ r_out` and angular offset `φ` from a
 line through the ring center has distance `ρ·|sin φ|` to that line, and for
