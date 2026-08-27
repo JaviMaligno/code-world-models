@@ -333,6 +333,108 @@ theorem lemmaA_transversal_bound {m a b : ℝ} (hm0 : 0 < m) (hm1 : m ≤ 1)
     abs_of_nonneg (by linarith [Real.arcsin_le_arcsin hab])] at h
   exact h
 
+/-! ## The circle-measure preimage, and Lemma A(i) end to end -/
+
+/-- **The circle-measure preimage** — Lemma A's last ingredient: over the
+period `[−π/2, 3π/2]`, `Leb{ψ : sin ψ ∈ [a, b]} = 2·(arcsin b − arcsin a)`.
+The preimage is the union of one interval on each monotone branch of sin,
+and the two touch in at most the single point π/2. -/
+theorem volume_sin_mem_Icc {a b : ℝ} (ha : -1 ≤ a) (hb : b ≤ 1) (hab : a ≤ b) :
+    MeasureTheory.volume
+        {ψ ∈ Set.Icc (-(π / 2)) (3 * π / 2) | Real.sin ψ ∈ Set.Icc a b}
+      = ENNReal.ofReal (2 * (Real.arcsin b - Real.arcsin a)) := by
+  have hπ := pi_pos
+  have hA1 := Real.neg_pi_div_two_le_arcsin a
+  have hA2 := Real.arcsin_le_pi_div_two b
+  have hA1' := Real.arcsin_le_pi_div_two a
+  have hA2' := Real.neg_pi_div_two_le_arcsin b
+  have hmono := Real.arcsin_le_arcsin hab
+  -- the preimage is the union of one interval per monotone branch
+  have hset : {ψ ∈ Set.Icc (-(π / 2)) (3 * π / 2) | Real.sin ψ ∈ Set.Icc a b}
+      = Set.Icc (Real.arcsin a) (Real.arcsin b)
+        ∪ Set.Icc (π - Real.arcsin b) (π - Real.arcsin a) := by
+    ext ψ
+    simp only [Set.mem_Icc, Set.mem_union]
+    constructor
+    · rintro ⟨⟨hψ1, hψ2⟩, hsa, hsb⟩
+      by_cases hc : ψ ≤ π / 2
+      · left
+        constructor
+        · have h := Real.arcsin_le_arcsin hsa
+          rwa [Real.arcsin_sin hψ1 hc] at h
+        · have h := Real.arcsin_le_arcsin hsb
+          rwa [Real.arcsin_sin hψ1 hc] at h
+      · right
+        rw [not_le] at hc
+        have hπψ1 : -(π / 2) ≤ π - ψ := by linarith
+        have hπψ2 : π - ψ ≤ π / 2 := by linarith
+        have hs : Real.sin (π - ψ) = Real.sin ψ := Real.sin_pi_sub ψ
+        constructor
+        · have h := Real.arcsin_le_arcsin hsb
+          rw [← hs, Real.arcsin_sin hπψ1 hπψ2] at h
+          linarith
+        · have h := Real.arcsin_le_arcsin hsa
+          rw [← hs, Real.arcsin_sin hπψ1 hπψ2] at h
+          linarith
+    · rintro (⟨h1, h2⟩ | ⟨h1, h2⟩)
+      · have hm : ψ ∈ Set.Icc (-(π / 2)) (π / 2) :=
+          ⟨by linarith, by linarith⟩
+        refine ⟨⟨by linarith, by linarith⟩, ?_, ?_⟩
+        · have h := Real.strictMonoOn_sin.monotoneOn
+            ⟨hA1, by linarith⟩ hm h1
+          rwa [Real.sin_arcsin ha (le_trans hab hb)] at h
+        · have h := Real.strictMonoOn_sin.monotoneOn hm
+            ⟨by linarith, hA2⟩ h2
+          rwa [Real.sin_arcsin (le_trans ha hab) hb] at h
+      · have hπψ : π - ψ ∈ Set.Icc (-(π / 2)) (π / 2) :=
+          ⟨by linarith, by linarith⟩
+        have hs : Real.sin ψ = Real.sin (π - ψ) := (Real.sin_pi_sub ψ).symm
+        refine ⟨⟨by linarith, by linarith⟩, ?_, ?_⟩
+        · rw [hs]
+          have h := Real.strictMonoOn_sin.monotoneOn
+            ⟨hA1, by linarith⟩ hπψ (by linarith)
+          rwa [Real.sin_arcsin ha (le_trans hab hb)] at h
+        · rw [hs]
+          have h := Real.strictMonoOn_sin.monotoneOn hπψ
+            ⟨by linarith, hA2⟩ (by linarith)
+          rwa [Real.sin_arcsin (le_trans ha hab) hb] at h
+  rw [hset]
+  -- the two branch intervals meet in at most the point π/2
+  have hinter : MeasureTheory.volume
+      (Set.Icc (Real.arcsin a) (Real.arcsin b)
+        ∩ Set.Icc (π - Real.arcsin b) (π - Real.arcsin a)) = 0 := by
+    refine MeasureTheory.measure_mono_null ?_
+      (MeasureTheory.measure_singleton (π / 2))
+    rintro x ⟨⟨_, hx2⟩, hx3, _⟩
+    have h1 : x ≤ π / 2 := le_trans hx2 hA2
+    have h2 : π / 2 ≤ x := by linarith
+    simp [le_antisymm h1 h2]
+  have hunion := MeasureTheory.measure_union_add_inter
+    (μ := MeasureTheory.volume)
+    (t := Set.Icc (π - Real.arcsin b) (π - Real.arcsin a))
+    (Set.Icc (Real.arcsin a) (Real.arcsin b)) measurableSet_Icc
+  rw [hinter, add_zero] at hunion
+  rw [hunion, Real.volume_Icc, Real.volume_Icc,
+    show π - Real.arcsin a - (π - Real.arcsin b)
+      = Real.arcsin b - Real.arcsin a by ring,
+    ← ENNReal.ofReal_add (by linarith) (by linarith)]
+  congr 1
+  ring
+
+/-- **Lemma A(i), end to end**: the measure of the strip event over the full
+period is at most `2π·√(ℓ/2)` — i.e. the PROBABILITY under the uniform angle
+is at most `√(ℓ/2)`, with `ℓ = b − a` the interval length. Composed from the
+preimage computation, the endpoint-maximality, and the arccos bound. -/
+theorem lemmaA_part_i {a b : ℝ} (ha : -1 ≤ a) (hb : b ≤ 1) (hab : a ≤ b) :
+    MeasureTheory.volume
+        {ψ ∈ Set.Icc (-(π / 2)) (3 * π / 2) | Real.sin ψ ∈ Set.Icc a b}
+      ≤ ENNReal.ofReal (2 * π * Real.sqrt ((b - a) / 2)) := by
+  rw [volume_sin_mem_Icc ha hb hab]
+  apply ENNReal.ofReal_le_ofReal
+  have h1 := arcsin_increment_le_arccos ha hb hab
+  have h2 := lemmaA_endpoint_bound (ℓ := b - a) (by linarith) (by linarith)
+  linarith
+
 /-- **Lemma W (sliver-in-strip), the geometric core** (THEORY.md, T4's
 ingredient): a point at radius `ρ ≤ r_out` and angular offset `φ` from a
 line through the ring center has distance `ρ·|sin φ|` to that line, and for

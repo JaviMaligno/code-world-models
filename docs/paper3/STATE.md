@@ -152,6 +152,14 @@ origin; this branch is the only one).
   functional on `Finsupp` chains that vanishes on scale-s triangle
   boundaries — Lemma D⁻'s content, "the winding class is not a boundary
   below √3·r_min", machine-checked. 0 sorries, 8707 jobs green.
+- **The eighth (continued) closes Lemma A(i) end to end as a MEASURE
+  statement** — the package's first genuinely probabilistic result:
+  `volume_sin_mem_Icc` computes the circle-measure preimage over the
+  period (one interval per monotone branch of sin, null overlap at π/2)
+  and `lemmaA_part_i` composes it with the endpoint-maximality (proved
+  by elementary trigonometry, no convexity needed) and the arccos bound
+  into `P(strip) ≤ √(ℓ/2)` for the uniform angle. What remains of T4's
+  assembly: Lemma S's pushforward and the h-step union bound.
 - **The eighth adds Lemma A's analytic cores and Lemma B's gap jump.**
   `CapBound.lean`: arccos(1−ℓ) = 2·arcsin√(ℓ/2) (via `abs_sin_half`),
   the inverse Jordan bound arcsin u ≤ (π/2)u, and Lemma A's (i) endpoint
