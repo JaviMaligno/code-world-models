@@ -216,6 +216,67 @@ theorem lemmaA_tangency_bound {ℓ : ℝ} (h0 : 0 ≤ ℓ) (h2 : ℓ ≤ 2) :
   have := le_arcsin hu0 hu1
   linarith
 
+/-- **The endpoint-maximality of the arcsin increment** (the step Lemma A(i)
+asserts as "maximized when the interval abuts an endpoint"): over ANY
+`[a, b] ⊆ [−1, 1]`, `arcsin b − arcsin a ≤ arccos(1 − (b − a))` — the
+increment of the abutting-endpoint interval of the same length. The proof is
+elementary trigonometry, no convexity: with `α = arcsin a`, `β = arcsin b`,
+sum-to-product gives `b − a = 2·sin((β−α)/2)·cos((α+β)/2)`, and
+`sin((β−α)/2) ≤ cos((α+β)/2)` because `(β−α) + |β+α| ≤ π`; hence
+`sin²((β−α)/2) ≤ (b−a)/2`, and the half-angle identity `arccos(1−ℓ) =
+2·arcsin√(ℓ/2)` finishes. -/
+theorem arcsin_increment_le_arccos {a b : ℝ} (ha : -1 ≤ a) (hb : b ≤ 1)
+    (hab : a ≤ b) :
+    Real.arcsin b - Real.arcsin a ≤ Real.arccos (1 - (b - a)) := by
+  have hπ := pi_pos
+  set α := Real.arcsin a with hα
+  set β := Real.arcsin b with hβ
+  have hα1 : -(π / 2) ≤ α := Real.neg_pi_div_two_le_arcsin a
+  have hα2 : α ≤ π / 2 := Real.arcsin_le_pi_div_two a
+  have hβ1 : -(π / 2) ≤ β := Real.neg_pi_div_two_le_arcsin b
+  have hβ2 : β ≤ π / 2 := Real.arcsin_le_pi_div_two b
+  have hαβ : α ≤ β := Real.arcsin_le_arcsin hab
+  have hsin_a : Real.sin α = a := Real.sin_arcsin ha (le_trans hab hb)
+  have hsin_b : Real.sin β = b := Real.sin_arcsin (le_trans ha hab) hb
+  set u := (β - α) / 2 with hu
+  set v := (α + β) / 2 with hv
+  have hu0 : 0 ≤ u := by rw [hu]; linarith
+  have huπ : u ≤ π / 2 := by rw [hu]; linarith
+  have hv2 : |v| ≤ π / 2 := by
+    rw [abs_le, hv]
+    constructor <;> linarith
+  -- sin u ≤ cos v, because u + |v| ≤ π/2
+  have hkey : u + |v| ≤ π / 2 := by
+    rcases abs_cases v with ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h, hu, hv] <;> linarith
+  have hsc : Real.sin u ≤ Real.cos v := by
+    have h1 : Real.cos v = Real.sin (π / 2 - |v|) := by
+      rw [Real.sin_pi_div_two_sub, Real.cos_abs]
+    rw [h1]
+    have habs0 : 0 ≤ |v| := abs_nonneg v
+    exact Real.strictMonoOn_sin.monotoneOn
+      ⟨by linarith, by linarith⟩ ⟨by linarith, by linarith⟩ (by linarith)
+  -- sum-to-product
+  have hprod : b - a = 2 * Real.sin u * Real.cos v := by
+    have h := Real.sin_sub_sin β α
+    rw [hsin_a, hsin_b] at h
+    rw [h, hu, hv]
+    ring_nf
+  have hsin_u0 : 0 ≤ Real.sin u :=
+    Real.sin_nonneg_of_nonneg_of_le_pi (by linarith) (by linarith)
+  have hsq : Real.sin u ^ 2 ≤ (b - a) / 2 := by
+    nlinarith [mul_le_mul_of_nonneg_left hsc hsin_u0]
+  have hsqrt : Real.sin u ≤ Real.sqrt ((b - a) / 2) := by
+    rw [← Real.sqrt_sq hsin_u0]
+    exact Real.sqrt_le_sqrt hsq
+  have harc : u ≤ Real.arcsin (Real.sqrt ((b - a) / 2)) := by
+    calc u = Real.arcsin (Real.sin u) :=
+          (Real.arcsin_sin (by linarith) (by linarith)).symm
+      _ ≤ Real.arcsin (Real.sqrt ((b - a) / 2)) :=
+          Real.arcsin_le_arcsin hsqrt
+  rw [arccos_one_sub_eq (by linarith) (by linarith)]
+  rw [hu] at harc
+  linarith
+
 /-- **Lemma A(ii)'s transversal bound**: on an interval bounded away from ±1
 by `m/2`, the arcsin increment is LINEAR in the interval length —
 `arcsin b − arcsin a ≤ (2/√(3m))·(b − a)` for `[a, b] ⊆ [−(1−m/2), 1−m/2]`,
