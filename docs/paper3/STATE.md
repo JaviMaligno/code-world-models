@@ -213,9 +213,24 @@ artifacts over 39 campaigns, 39/39 inside Wilson95, contingency still
 156/156 exact over 91 blocks, 214 in-sample passes / 121 regressions
 unchanged (both new arms: 0 gate passes). Tex counts updated.
 
-Still open from this session: Codex round 3 after the fold, and round-2
-PARTIAL A#11 (environment lock / archival URL / checksum manifest) as a
-submission-time TODO on Javier's call.
+Codex round 3 ran after the fold (2026-08-28): NO blocking defects, a
+clean bill on the intervention numbers, the pre-registration (verified
+via git history), the audit counts, and every round-2 repair; 2 MAJOR
+(both wording-scope: the "any honest summary has some flip"
+overgeneralization, the drift sentence claiming stability) + 3 MINOR
+(registered CI never emitted; H-I3 vs amendment 3; Wilson uppers
+hand-derived) — all five repaired same session (REVIEW-CODEX.md round-3
+triage). Findings are converging: 17 → 10 → 5, none blocking.
+
+Round 4 (convergence check on the round-3 repairs) LAUNCHED and cut off
+mid-review by the Codex workspace SPEND CAP (86.6k tokens in; before
+the cut it had independently reproduced the Clopper–Pearson interval
+[0.4822, 0.9772] and the linter's clean report — no verdict emitted).
+Re-running it needs the cap raised, Javier's call.
+
+Still open: Codex round 4 re-run once the spend cap allows, and
+round-2 PARTIAL A#11 (environment lock / archival URL / checksum
+manifest) as a submission-time TODO on Javier's call.
 
 - **The rarity decision taken and pinned: r, the firing rarity** — the
   audit's whole event algebra is contact-based, r_int is Lemma 2's curve and
