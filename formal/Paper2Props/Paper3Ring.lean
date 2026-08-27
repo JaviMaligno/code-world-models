@@ -8,3 +8,4 @@ import Paper3Ring.Mitigation
 import Paper3Ring.WitnessTube
 import Paper3Ring.CapBound
 import Paper3Ring.RipsCircle
+import Paper3Ring.ProcessWiring

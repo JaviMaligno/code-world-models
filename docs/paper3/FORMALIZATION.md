@@ -51,6 +51,7 @@ not silently weakened.
 | The per-step T4 ingredient, composed | `volume_sin_window_shift` (the period-window glue: split at the shared part, translate the tail by 2π with null endpoints), `lemmaA_part_i'` (`CapBound.lean`, eighth tranche) | **PROVED**: the strip bound `≤ 2π·√(ℓ/2)` holds over the heading's ACTUAL window `[−π, π]` — Lemma A(i) transported to where Lemma S delivers the uniform angle |
 | T4's union-bound skeleton | `prod_slice_bound` / `prod_slice_bound'` (the Fubini conditioning step in both factor orders, via `Measure.prod_apply`/`prod_apply_symm` + `lintegral_mono`), `union_bound_le` (h events ≤ B each ⟹ union ≤ h·B) (`CapBound.lean`, eighth tranche) | **PROVED** — the two measure steps of T4's h-step argument, in both conditioning orders |
 | T4's process wiring | `pi_union_slice_bound` (`CapBound.lean`, eighth tranche) | **PROVED**: for the (n+1)-fold product of the per-step action law, coordinate-`t` slice bounds uniform in the other coordinates give `μ(⋃ E_t) ≤ (n+1)·B·mass^n` — the `piFinSuccAbove` split composed with `prod_slice_bound'` per step and the finite union bound. Normalized, this is T4's `P(⋃) ≤ h·(B/mass)`. What now remains of the fully composed concrete T4 is ONLY the instrument side of the hypotheses: measurability of the freeze-trajectory map in the action sequence (an `ite`-induction) and the slice computation `landing ∈ sliver ⟹ rotated-strip event` through `lemmaS_landing_eq` + `lemmaW` + `lemmaA_part_i_rotated` — every measure-theoretic step is done |
+| Trajectory measurability (T4's hypothesis (a)) | `measurable_freezeTraj_param`, `measurable_landing_param`, `measurableSet_landing_event` (`ProcessWiring.lean`, ninth tranche) | **PROVED**: the freeze trajectory driven through an action-indexed tentative step is a measurable function of the action sequence (an induction over the freeze branches with `Measurable.ite`), and so are the landing map and every landing event — exactly the measurability `pi_union_slice_bound` consumes. T4's ONLY remaining gap is the per-slice computation: landing ∈ sliver ⟹ rotated-strip event, chaining `lemmaS_landing_eq` + `lemmaW_sliver_in_strip` + `lemmaA_part_i_rotated` — geometry already proved, one composition left |
 | Rotation invariance: Lemma A for arbitrary strips | `volume_Icc_inter_eq_Ioc_inter`, `volume_sin_Ioc_translate` (whole-window 2πk-translation), `volume_sin_window_rep` (split-and-translate at a representative), `volume_sin_window_any` (ANY length-2π window carries the same sin-strip mass), `volume_sin_rotate` ("rotating coordinates shifts the uniform ψ" — the rotated strip event has the same measure for every φ₀), `lemmaA_part_i_rotated` (`CapBound.lean`, eighth tranche) | **PROVED**: the per-step strip bound `≤ 2π√(ℓ/2)` holds for strips in EVERY orientation — the step Lemma A's proof opens with. With this, the per-step conditional bound is fully orientation-free, exactly what the slice bound consumes |
 | T5's Lemma G, analytic core | `lemmaG_integral_core` (`CapBound.lean`, sixth tranche) | **PROVED**, generalized to any real exponent p ≥ 0 (Lemma G takes p = (n−3)/2): `∫_κ¹ (1−u²)^p ≤ (1−κ²)^{p+1/2}·∫_0¹ (1−y²)^p` — the substitution u = κ + √(1−κ²)·y (its Jacobian is the extra 1/2 in the exponent), the pointwise bound 1−u² ≤ (1−κ²)(1−y²), and the range enlargement, i.e. the entire computation Lemma G's proof runs on. NOT formalized (the genuinely probabilistic part, per the triage): the reduction from the uniform sphere measure to the 1-D marginal density, and Theorem T5-I's spherical-symmetry-of-sums step. Measured complement: the cap bound checked against the exact cap integral at n = 3…30 |
 
@@ -141,13 +142,12 @@ machine-checked at the level the paper proves them.
 
 Ordered by (value × feasibility), highest first:
 
-1. **T4's instrument-side hypotheses** — the process wiring itself is now
-   PROVED (`pi_union_slice_bound`); what remains is feeding it: the
-   measurability of the freeze-trajectory map in the action sequence (an
-   `ite`-induction over the freeze branches) and the per-slice computation
-   (landing ∈ sliver ⟹ rotated-strip event, through `lemmaS_landing_eq`,
-   `lemmaW_sliver_in_strip` and `lemmaA_part_i_rotated`). No
-   measure-theoretic step remains.
+1. **T4's final composition** — one step remains: the per-slice computation
+   (landing ∈ sliver ⟹ rotated-strip event, chaining `lemmaS_landing_eq`,
+   `lemmaW_sliver_in_strip`, `lemmaA_part_i_rotated` and
+   `lemmaS_heading_uniform`), then plugging everything into
+   `pi_union_slice_bound` with `measurableSet_landing_event`. Every
+   ingredient — measure-theoretic AND measurability — is proved.
 2. **T5 measure assembly** — the sphere-measure reduction to the 1-D
    marginal density and T5-I's spherical-symmetry-of-sums step (Lemma G's
    analytic core is done); the Berry–Esseen transfer stays out of
