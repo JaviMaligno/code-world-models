@@ -119,7 +119,8 @@ $\mathcal{R}$.
 \begin{enumerate}
 \item \textbf{The gate quotient and the unfalsifiable-and-harmless theorem}
   (Section~\ref{sec:theory}). Acceptance-with-certainty determines a model
-  exactly up to $\mathcal{R}$; beyond it is gauge
+  exactly up to $\mu_{\mathrm{query}}$-null modification on $\mathcal{R}$;
+  beyond $\mathcal{R}$ is gauge
   (Proposition~\ref{prop:quotient}). On the closed ring, the wrong-topology
   filled-disc artifact is unfalsifiable by any sampling gate \emph{and}
   bitwise planner-equivalent to the truth
@@ -145,7 +146,8 @@ $\mathcal{R}$.
   (Section~\ref{sec:synthesis}). The identifiability event is
   family-independent (GPT-5.x, Qwen, Claude: every mode-absent sample yields
   a certified, blind, exploited model at $\mathrm{play\_cost} \approx
-  1.12$). No family repairs the ring from outside evidence --- a behavioral
+  1.12$). None of the three tested families repairs the ring from outside
+  evidence --- a behavioral
   audit shows the gate-passing ``repairs'' are measure-zero point fits.
   From inside, models \emph{pose} the right topology but repair is
   \textbf{parameter-bound}: the single gate-certified recovery (1/20) used the
@@ -195,7 +197,10 @@ $\mathcal{R}$.
   the outside failure computable in advance.
 \item \textbf{Dimension as the rarity knob; the two axes are independent}
   (Section~\ref{sec:ndim}). On ShellField-$n$ the contact rarity collapses
-  geometrically ($r(n) \to 0$ by $n = 4$), making mis-synthesis
+  geometrically (measured factor $0.411$ per dimension; the exponential
+  rate is proved under the isotropic action interface, and an explicit
+  $4h/(n\kappa^2)$ bound for the instrument's box thrust; contacts $1/600$
+  at $n = 4$, censored zeros at $n = 5, 6$), making mis-synthesis
   near-certain, while a competent vector planner is exploited at
   $\mathrm{play\_cost} \approx 1.0$ at \emph{every} $n \le 6$ --- rarity
   (synthesis axis) and reachability (play axis) are independent knobs, and
@@ -255,10 +260,13 @@ is reachable, without touching the mode's local physics:
   the hole (the interior evidence regime).
 \end{itemize}
 The defaults were frozen once at calibration and never tuned per cell:
-thickness $w = 1.5$ exceeds the maximal per-step displacement
+episode horizon $h = 80$ steps; thickness $w = 1.5$ exceeds the maximal
+per-step displacement
 $\Delta \le 1.0$ (Section~\ref{sec:theory}), so the no-jump-over lemma
-holds with margin for real and imagined rollouts alike; the outside contact
-rarity at the defaults is $r = 0.045$ per rollout. The synthesis protocol is
+holds with margin for real and imagined rollouts alike. The outside contact
+rarity at the defaults is $r = 0.0312$ per rollout ($937/30{,}000$
+calibration rollouts; the mechanism grid's own $400$-rollout realization
+reads $18/400 = 0.045$, statistically compatible). The synthesis protocol is
 the companion paper's, verbatim: $N = 40$ uniform-random rollouts as
 evidence and gate, the integrator pinned in the contract, exactness
 tolerance $\varepsilon = 10^{-9}$, at most $5$ refine iterations, and
@@ -292,10 +300,17 @@ $f$ under the gate policy $\rho$, and let $\hat f$ be any model with
 $\hat f|_{\mathcal{R}} = f|_{\mathcal{R}}$. Then for every $N$ the sampling
 gate accepts $\hat f$ with probability~1, and the trajectory law of any
 policy whose queries stay in $\mathcal{R}$ is identical under $f$ and
-$\hat f$. The set of models accepted with certainty is exactly the extension
-class $E(f) = \{ \hat f : \hat f|_{\mathcal{R}} = f|_{\mathcal{R}} \}$; the
-complement $\mathcal{G} = (S \times A) \setminus \mathcal{R}$ is gauge
-freedom, unfalsifiable by any sample drawn under $\rho$.
+$\hat f$. Conversely, acceptance with certainty determines the model exactly up to
+$\mu_{\mathrm{query}}$-null modification: a model accepted with
+probability~$1$ at every $N$ agrees with $f$ at
+$\mu_{\mathrm{query}}$-almost every query of $\mathcal{R}$, and may
+otherwise differ only on a $\mu_{\mathrm{query}}$-null subset of
+$\mathcal{R}$ and on the gauge complement
+$\mathcal{G} = (S \times A) \setminus \mathcal{R}$, which no sample drawn
+under $\rho$ can falsify. In particular the extension class
+$E(f) = \{ \hat f : \hat f|_{\mathcal{R}} = f|_{\mathcal{R}} \}$ is
+accepted with certainty, and is the full accepted class up to
+$\mu_{\mathrm{query}}$-null sets.
 \end{proposition}
 
 \begin{proof}
@@ -306,7 +321,11 @@ $\mu_0$, the action sequence, and the queried values of $f$, which agree
 with $\hat f$'s on $\mathcal{R}$. Gate draws use $\pi = \rho$, whose
 queries lie in $\mathcal{R}$ by definition (up to a null set), so acceptance
 statistics coincide; $f \in E(f)$ is accepted almost surely, hence so is
-every member.
+every member. For the converse, let $q$ be the $\mu_{\mathrm{query}}$-mass
+of the disagreement set of $\hat f$ against $f$: a single gate rollout hits
+it with probability $q$, so the gate of size $N$ accepts $\hat f$ with
+probability $(1 - q)^N$; acceptance with certainty at every $N$ forces
+$q = 0$, i.e.\ agreement $\mu_{\mathrm{query}}$-almost everywhere.
 \end{proof}
 
 \begin{remark}[relation to the companion identifiability proposition]
@@ -588,9 +607,14 @@ $r_{\mathrm{int}}(\gamma) > 0$ for every $\gamma > 0$.
 \begin{proof}[Proof (witness tube, compact)]
 Condition on $|y_0| \le \eta(\gamma) := (3.5/8)\gamma \wedge 0.4$ (an
 event of positive probability under the uniform start). The constant
-action $a \equiv 0$ drives the state due east along $y = y_0$; its
-landings inside the band have angular offset from $\pi$ at most
-$|y_0|/r_{\mathrm{in}} < \gamma/2$, i.e.\ they lie in the channel, so
+action $a \equiv 0$ drives the state due east along $y = y_0$; a landing
+inside the band at radius $d \ge r_{\mathrm{in}}$ has angular offset
+$\theta$ from $\pi$ with
+$\sin\theta = |y_0|/d \le |y_0|/r_{\mathrm{in}} \le \gamma/8
+< \sin(\gamma/2)$ (Jordan's inequality,
+$\sin(\gamma/2) \ge \gamma/\pi > \gamma/8$), and since both angles lie in
+$[0, \pi/2]$ this gives $\theta < \gamma/2$: the landings lie in the
+channel, so
 the witness path is freeze-free with clearance
 $c(\gamma) > 0$ from $A(\gamma)$ and first lands past the band at depth
 $< r_{\mathrm{in}} - c$. On the freeze-free tube the $h$-step flow map is
@@ -666,7 +690,7 @@ waypoint family finds a controller entering $100/100$ within the same
 horizon, machine-checked. Reachability is jointly a property of geometry,
 policy, and budget, and the policy axis is cheap to search: what the gate
 policy cannot reach in $400$ rollouts, ten tuned parameters reach every
-time.) \textbf{(d)} Under two checkable
+time.) Under two checkable
 hypotheses --- (RG), a reward gap making some channel-entering candidate
 dominate every non-entering one, and (C), candidate coverage --- the blind
 planner's imagined argmax path must cross the annulus, so the planner
@@ -892,7 +916,8 @@ consistency, and what it omits is exactly the mode. Acceptance --- by
 the training sample or by an independent block --- is a sample event on
 this instrument in both directions, measured on held-out evidence.
 
-\paragraph{No family repairs the ring from outside evidence.} Across A--C,
+\paragraph{None of the three tested families repairs the ring from outside
+evidence.} Across A--C,
 zero mode-present artifacts pass the gate with the mode genuinely encoded.
 The behavioral audit is what makes this claim sharp: the gate-passing
 mode-present artifacts in B and C are \emph{textual point fits} ---
@@ -1025,7 +1050,10 @@ upper $0.19$.}
 \label{tab:dangercurve}
 \end{table}
 
-\paragraph{H1 confirmed --- with the clincher.} The facing curve collapses
+\paragraph{H1 confirmed --- with the clincher
+(\texttt{results/continuous\_ring2d\_open\_sweep\_summary.json}, one
+seed-block cell per $(\gamma, \text{arm}, \text{size})$).} The facing
+curve collapses
 over a knee at $\gamma \approx 0.1$--$0.15$; the LLM cells reproduce it on
 their exploited blind artifacts in both sizes and in the Claude relay
 ($0.348$ at the knee in all three families --- the play number is the blind
@@ -1110,8 +1138,8 @@ pre-registered in the repository before the run. $^{\ast}$exact --- the
 closed row by Lemma~\ref{lem:crossing} and
 Proposition~\ref{prop:harmless}, the neck-$1.2$ row by the local lemma at
 $\Delta = 1.0 < 1.2$, imagined steps included; $^{\dagger}$censored ---
-$0$ occurrences in that sample, Wilson uppers $1.2\times10^{-4}$
-(rollouts), $9.4\times10^{-6}$ (transitions), $0.19$ (episodes).)
+$0$ occurrences in that sample, Wilson $95\%$ uppers $1.3\times10^{-4}$
+(rollouts), $1.2\times10^{-5}$ (transitions), $0.19$ (episodes).)
 
 Three findings. \textbf{Hidden necks are bit-identical to the closed
 ring} at all six thicknesses (the same $r$ to the last float, $0$
@@ -1198,7 +1226,10 @@ nerve fence, episodic & 0.5 & 0.999 & 0.957 & 1.00 & 2.0 \\
 \bottomrule
 \end{tabular}
 \caption{Distrust-region replanning on the ring ($16$ paired MPC episodes
-per cell). Point fences --- the defense that collapsed the patch
+per cell;
+\texttt{results/continuous\_mitigation\_ring\{,\_eps1,\_eps2,\_nerve\}.json}
+and \texttt{results/continuous\_ring2d\_optimism.json}, the paired episode
+as the unit). Point fences --- the defense that collapsed the patch
 exploitation --- do \emph{nothing} at their calibrated radius, partially
 relieve only at a radius of the geometry's own scale, and are exactly inert
 against the invented mode while firing constantly ($18.6$ fences per
@@ -1349,9 +1380,13 @@ $N \in \{40, 160\}$ rollouts $\times$ $\gamma$, five seeds each)
 shows the flip does not move: $\hat\beta_1 = 1$ at every
 $\gamma \le 1.2$ under \emph{every} budget and dose, $0$ at $2.4$ under
 all of them, with only the boundary gap $1.8$ wobbling. The mechanism is
-Rips geometry, and it can be written as a law: the detector reports
-$\hat\beta_1 = 1$ exactly when $\sqrt{3}\rho - 2\rho
-\sin(\Delta\theta_{\max}/2) > \tau$, where $\rho$ is the cloud's mean
+Rips geometry, and it can be written as a law: to the resolution of the
+proved two-sided sandwich below, the detector reports
+$\hat\beta_1 = 1$ when $\sqrt{3}\rho - 2\rho
+\sin(\Delta\theta_{\max}/2) > \tau$ --- the mean-radius display is the
+sandwich's collapse at $r_{\min} \approx r_{\max} \approx \rho$, and as a
+pointwise predictor it is measured, not exact ---
+where $\rho$ is the cloud's mean
 radius, $\Delta\theta_{\max}$ the \emph{largest angular gap of the
 sample} (the channel or a subsampling gap, whichever is larger), and
 $\tau$ the detector's persistence threshold --- the bar is born exactly at the
@@ -1487,11 +1522,18 @@ where it honestly says ``arc'' (Table~\ref{tab:sensor}: $1$ closed versus
 $26$ arc at $\gamma = 2.4$, both sizes); the crossover tracks the detector
 flip, not the true $\beta_1$. The within-gap contrast at $\gamma = 1.8$
 --- seeds of the \emph{same} environment whose own summaries straddled the
-flip --- is directionally consistent (closed structures appear only in the
-$\hat\beta_1 = 1$ subset) though underpowered at $n = 30$. The
-conclusion is uncomfortable and, we think, general: \textbf{an honest
-evidence summary with finite resolution causes wrong-topology
-gate-certified models}. The repair loop's topology channel is only as good as the
+flip --- is directional only (closed structures $3/27$ in the
+$\hat\beta_1 = 1$ subset versus $2/33$ in the $\hat\beta_1 = 0$ subset,
+$n = 60$: consistent in sign, not significant). What these measurements
+establish is: \textbf{posed topology tracks the sensor's report, not the
+truth} --- the cross-gap crossover above. That an honest finite-resolution
+summary thereby \emph{causes} wrong-topology certified models is the
+reading the data are consistent with but do not isolate: the cross-gap
+comparison varies the environment together with the summary, and the
+isolating intervention --- randomizing correct against deliberately
+flipped summaries on the same committed evidence blocks, scoring posed
+topology and gate passage per seed block --- is identified but not run.
+The repair loop's topology channel is, at minimum, no better than the
 sensor's resolving power at the operative sampling density.
 
 \paragraph{The same law governs the sensor directly in $n$ dimensions.} On
@@ -1499,15 +1541,25 @@ ShellField-$n$ (Section~\ref{sec:ndim}), persistent homology of the
 \emph{outside} contact cloud recovers $\beta_{n-1}$ at \emph{no}
 $n \in \{2..6\}$ --- at low $n$ the cloud is plentiful but traces only
 the reachable arc (signal clarity), at high $n$ it starves as $r(n)$
-collapses ($0.2\times$ to $0.003\times$ the Niyogi--Smale--Weinberger
-covering density \citep{niyogi2008finding}) --- while the \emph{inside}
-cloud recovers it cleanly at $n = 2..5$ (marginal at $6$, via 2-plane
-slices), with densities $10$--$2700\times$ the NSW floor. Recovery is
+collapses ($0.18\times$ down to $0.002\times$ the
+Niyogi--Smale--Weinberger covering density \citep{niyogi2008finding},
+computed on the points the detector actually receives) --- while the
+\emph{inside} cloud recovers it cleanly at $n = 2..5$. The density
+bookkeeping matters: inside clouds \emph{offer} $10$--$2700\times$ the
+NSW floor in raw trajectory contacts, but the detector consumes a
+deduplicated subsample capped at $300$ points --- $24\times$ the floor at
+$n = 2$ falling to $0.22\times$ at $n = 5$ --- so recovery held at and
+even below the naive floor (the NSW bound assumes i.i.d.\ uniform
+samples; a well-spread deduplicated subsample beats it), and at $n = 6$
+only a 2-plane projection diagnostic was computed, which detects
+projected circles and is \emph{not} evidence about $\beta_5$. Recovery is
 start-governed: reachability again, now for the sensor itself. We flag the
 program-level statement this suggests, as a conjecture and not a result:
 \emph{the topology a certified repair loop can recover is bounded by the
 persistent-homology resolution of its contact evidence at the operative
-density} --- a bound that NSW-style estimates make computable in advance.
+density} --- a bound that NSW-style estimates make computable in advance,
+provided the operative density is the consumed subsample's, not the raw
+stream's.
 
 \begin{table}[h]
 \centering
@@ -1516,22 +1568,27 @@ density} --- a bound that NSW-style estimates make computable in advance.
 \toprule
  & \multicolumn{3}{c}{outside start} & \multicolumn{3}{c}{inside start} \\
 \cmidrule(lr){2-4}\cmidrule(lr){5-7}
-$n$ & contacts & $\times$NSW & $\beta_{n-1}$? & contacts & $\times$NSW & $\beta_{n-1}$? \\
+$n$ & contacts & used ($\times$NSW) & $\beta_{n-1}$? & contacts & used ($\times$NSW) & $\beta_{n-1}$? \\
 \midrule
-2 & 388 & 30.9  & \ding{55} & 33{,}702 & 2682 & \checkmark \\
-3 & 167 & 2.6   & \ding{55} & 45{,}697 & 714  & \checkmark \\
-4 & 59  & 0.20  & \ding{55} & 54{,}170 & 180  & \checkmark \\
-5 & 11  & 0.008 & \ding{55} & 59{,}961 & 43.9 & \checkmark \\
-6 & 18  & 0.003 & \ding{55} & 63{,}949 & 10.6 & (marginal) \\
+2 & 388 & 219 (17.4)  & \ding{55} & 33{,}702 & 300 (23.8) & \checkmark \\
+3 & 167 & 160 (2.5)   & \ding{55} & 45{,}697 & 300 (4.7)  & \checkmark \\
+4 & 59  & 55 (0.18)   & \ding{55} & 54{,}170 & 300 (1.0)  & \checkmark \\
+5 & 11  & 11 (0.008)  & \ding{55} & 59{,}961 & 300 (0.22) & \checkmark \\
+6 & 18  & 15 (0.002)  & \ding{55} & 63{,}949 & 300 (0.05) & proj.\ only \\
 \bottomrule
 \end{tabular}
 \caption{Persistent homology of the ShellField-$n$ contact cloud
-($20{,}000$-rollout budget; alpha complexes, 2-plane slices at $n = 6$).
-``$\times$NSW'' is the cloud density relative to the
-Niyogi--Smale--Weinberger covering bound. Outside evidence never recovers
-the shell's $\beta_{n-1}$ --- at low $n$ the cloud is plentiful but traces
-only the reachable arc; at high $n$ it starves --- while inside evidence
-recovers it up to $n = 5$. Recovery is start-governed.}
+($20{,}000$-rollout budget; alpha complexes;
+\texttt{results/continuous\_shellfield\_tda\{,\_inside\}.json}, one cell
+per $(n, \text{start})$). ``contacts'' counts raw trajectory contacts
+(dependent samples); ``used'' is the deduplicated subsample the detector
+receives (cap $300$), and ``$\times$NSW'' is \emph{used} relative to the
+Niyogi--Smale--Weinberger i.i.d.\ covering bound. Outside evidence never
+recovers the shell's $\beta_{n-1}$ --- at low $n$ the cloud traces only
+the reachable arc; at high $n$ it starves --- while inside evidence
+recovers it up to $n = 5$, at and below the naive floor. The $n = 6$
+inside entry is a 2-plane projection diagnostic (projected $H_1$), not a
+$\beta_5$ computation. Recovery is start-governed.}
 \label{tab:shelltda}
 \end{table}
 
@@ -1765,21 +1822,38 @@ what such acceptance can pin down.
 nagabandi2018neural, chua2018deep} is the backdrop the companion continuous
 paper argued against for hybrid systems; here the localized error is not
 merely rare but \emph{structurally unreachable}, a regime that
-pervasive-error analyses do not model at all.
+pervasive-error analyses do not model at all. The PAC model-learning line
+and the simulation lemma \citep{kearns2002near, strehl2009reinforcement}
+bound value loss by model error \emph{on visited states} --- exactly the
+coverage the gauge region lacks by construction, which is why those bounds
+are silent here; safe learning-based control
+\citep{aswani2013provably, berkenkamp2017safe} assumes the model's
+uncertainty is representable where it matters, the assumption the gauge
+region breaks.
 
 \paragraph{Hybrid systems and reachability.} Modes and guards are the
 bread of hybrid control \citep{paoletti2007hybrid, bemporad1999control};
 falsification tools \citep{annpureddy2011staliro, corso2021survey} search
 for violating trajectories and inherit exactly the reachability limit
 formalized here --- a falsifier driven by any policy whose queries stay in
-$\mathcal{R}$ cannot exit $E(f)$. Shielding \citep{alshiekh2018shielding}
+$\mathcal{R}$ cannot exit $E(f)$. Reach-set computation and deductive
+verification (PHAVer \citep{frehse2005phaver}, SpaceEx
+\citep{frehse2011spaceex}, Flow* \citep{chen2013flow}, KeYmaera~X
+\citep{fulton2015keymaerax}) prove properties relative to a \emph{given}
+hybrid model; our question is the dual --- what a behavioral certificate
+can mean when the model itself was learned from reachability-limited
+evidence.
+Shielding \citep{alshiekh2018shielding}
 assumes the very mode knowledge whose recoverability this paper measures.
 
 \paragraph{Topological data analysis.} Persistent homology and its
 stability \citep{edelsbrunner2010computational, cohensteiner2007stability}
 supply the evidence sensor; homology-inference sample bounds
 \citep{niyogi2008finding} and the reach of a manifold
-\citep{federer1959curvature} calibrate when that sensor can work.
+\citep{federer1959curvature} calibrate when that sensor can work, and
+persistence on dynamical and time-series data
+\citep{perea2015sliding, khasawneh2016chatter} is the nearest use of TDA
+as a component of a running system.
 Section~\ref{sec:sensor}'s contribution is not a new TDA method but a
 measured failure law for TDA \emph{as a component of a certification
 loop}: the sensor's resolution propagates into the gate-certified
@@ -1951,7 +2025,8 @@ measured $\gamma^{1.72}$. Two independent estimates of $T$ agree to
 $10\%$. The throughput has a kinematic account with a derived rather than fitted
 constant. The crossing takes $k \approx 9$ steps (the arrival radial speed
 is ${\approx}1.5$ against a band of thickness $1.5$), while drag's time
-constant is $1/\mathrm{drag} = 33$ steps, so the arrival's tangential
+constant is $1/(\mathrm{drag}\cdot dt) \approx 33$ steps, so the arrival's
+tangential
 velocity persists ballistically through the crossing and survival inside
 an arc of half-width $r\gamma/2$ requires
 $|v_{\mathrm{tan}}| \le r\gamma/(2k\,dt) \approx 2.2\gamma$. Since the
@@ -2067,13 +2142,22 @@ repository:
   evaluation blocks: \texttt{heldout\_\allowbreak gate\_\allowbreak
   audit.py}, ring2d scope (block disjointness proved by set intersection
   at run time);
-\item the Lean formalization of the metric core (\texttt{formal/},
-  library \texttt{Paper3Ring}; built by CI).
+\item the Lean formalization (\texttt{formal/}, library
+  \texttt{Paper3Ring}; built by CI) --- the deterministic results and the
+  continuity modulus's measure steps, per the machine-checked remark in
+  Section~\ref{sec:theory}.
 \end{itemize}
 Every seed, checkpoint, and classified artifact is committed; long runs
 checkpoint per unit and resume exactly; paired seeds (common random
-numbers) are used for every play contrast.
-% TODO: public repo URL at submission time.
+numbers) are used for every play contrast. Each campaign JSON embeds its
+complete invocation (the harness's full argument namespace, under
+\texttt{params}) and the serving identity (\texttt{model} records the
+deployment name, created to equal the model version, so provenance is in
+the data rather than the lab notebook). Numbers in tables and prose are
+emitted by the named scripts from the committed JSONs, never hand-carried;
+a claims audit enforces this as a ratchet in CI.
+% TODO: public repo URL + archival snapshot + environment lock at
+% submission time.
 
 \bibliography{references}
 

@@ -1,4 +1,4 @@
-\begin{thebibliography}{21}
+\begin{thebibliography}{31}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -15,7 +15,9 @@ Micha{\l} Adamaszek and Henry Adams.
 Javier Aguilar~Mart\'in.
 \newblock An omitted mode is a rare rule: The sampling-verification danger law
   in continuous code world models, 2026{\natexlab{a}}.
-\newblock Companion paper, in preparation.
+\newblock Companion paper (paper 2). arXiv:2608.17956,
+  \url{https://arxiv.org/abs/2608.17956}; repository:
+  \url{https://github.com/JaviMaligno/code-world-models}.
 
 \bibitem[Aguilar~Mart\'in(2026{\natexlab{b}})]{aguilar2026verified}
 Javier Aguilar~Mart\'in.
@@ -43,10 +45,29 @@ Yashwanth Annpureddy, Che Liu, Georgios Fainekos, and Sriram Sankaranarayanan.
   Systems (TACAS)}, volume 6605 of \emph{Lecture Notes in Computer Science},
   pages 254--257. Springer, 2011.
 
+\bibitem[Aswani et~al.(2013)Aswani, Gonzalez, Sastry, and
+  Tomlin]{aswani2013provably}
+Anil Aswani, Humberto Gonzalez, S.~Shankar Sastry, and Claire Tomlin.
+\newblock Provably safe and robust learning-based model predictive control.
+\newblock \emph{Automatica}, 49\penalty0 (5):\penalty0 1216--1226, 2013.
+
 \bibitem[Bemporad and Morari(1999)]{bemporad1999control}
 Alberto Bemporad and Manfred Morari.
 \newblock Control of systems integrating logic, dynamics, and constraints.
 \newblock \emph{Automatica}, 35\penalty0 (3):\penalty0 407--427, 1999.
+
+\bibitem[Berkenkamp et~al.(2017)Berkenkamp, Turchetta, Schoellig, and
+  Krause]{berkenkamp2017safe}
+Felix Berkenkamp, Matteo Turchetta, Angela~P. Schoellig, and Andreas Krause.
+\newblock Safe model-based reinforcement learning with stability guarantees.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2017.
+
+\bibitem[Chen et~al.(2013)Chen, {\'A}brah{\'a}m, and
+  Sankaranarayanan]{chen2013flow}
+Xin Chen, Erika {\'A}brah{\'a}m, and Sriram Sankaranarayanan.
+\newblock Flow*: An analyzer for non-linear hybrid systems.
+\newblock In \emph{Computer Aided Verification (CAV)}, pages 258--263, 2013.
 
 \bibitem[Chua et~al.(2018)Chua, Calandra, McAllister, and Levine]{chua2018deep}
 Kurtland Chua, Roberto Calandra, Rowan McAllister, and Sergey Levine.
@@ -89,6 +110,29 @@ Herbert Federer.
 \newblock \emph{Transactions of the American Mathematical Society}, 93\penalty0
   (3):\penalty0 418--491, 1959.
 
+\bibitem[Frehse(2005)]{frehse2005phaver}
+Goran Frehse.
+\newblock {PHAVer}: Algorithmic verification of hybrid systems past {HyTech}.
+\newblock In \emph{Hybrid Systems: Computation and Control (HSCC)}, pages
+  258--273, 2005.
+
+\bibitem[Frehse et~al.(2011)Frehse, Le~Guernic, Donz{\'e}, Cotton, Ray,
+  Lebeltel, Ripado, Girard, Dang, and Maler]{frehse2011spaceex}
+Goran Frehse, Colas Le~Guernic, Alexandre Donz{\'e}, Scott Cotton, Rajarshi
+  Ray, Olivier Lebeltel, Rodolfo Ripado, Antoine Girard, Thao Dang, and Oded
+  Maler.
+\newblock {SpaceEx}: Scalable verification of hybrid systems.
+\newblock In \emph{Computer Aided Verification (CAV)}, pages 379--395, 2011.
+
+\bibitem[Fulton et~al.(2015)Fulton, Mitsch, Quesel, V{\"o}lp, and
+  Platzer]{fulton2015keymaerax}
+Nathan Fulton, Stefan Mitsch, Jan-David Quesel, Marcus V{\"o}lp, and Andr{\'e}
+  Platzer.
+\newblock {KeYmaera X}: An axiomatic tactical theorem prover for hybrid
+  systems.
+\newblock In \emph{International Conference on Automated Deduction (CADE)},
+  pages 527--538, 2015.
+
 \bibitem[Gao et~al.(2023)Gao, Madaan, Zhou, Alon, Liu, Yang, Callan, and
   Neubig]{gao2023pal}
 Luyu Gao, Aman Madaan, Shuyan Zhou, Uri Alon, Pengfei Liu, Yiming Yang, Jamie
@@ -110,6 +154,17 @@ Michael Janner, Justin Fu, Marvin Zhang, and Sergey Levine.
 \newblock When to trust your model: Model-based policy optimization.
 \newblock In \emph{Advances in Neural Information Processing Systems
   (NeurIPS)}, 2019.
+
+\bibitem[Kearns and Singh(2002)]{kearns2002near}
+Michael Kearns and Satinder Singh.
+\newblock Near-optimal reinforcement learning in polynomial time.
+\newblock \emph{Machine Learning}, 49:\penalty0 209--232, 2002.
+
+\bibitem[Khasawneh and Munch(2016)]{khasawneh2016chatter}
+Firas~A. Khasawneh and Elizabeth Munch.
+\newblock Chatter detection in turning using persistent homology.
+\newblock \emph{Mechanical Systems and Signal Processing}, 70--71:\penalty0
+  527--541, 2016.
 
 \bibitem[Lambert et~al.(2020)Lambert, Amos, Yadan, and
   Calandra]{lambert2020objective}
@@ -162,5 +217,18 @@ Simone Paoletti, Aleksandar~Lj. Juloski, Giancarlo Ferrari-Trecate, and Ren\'e
 \newblock Identification of hybrid systems: A tutorial.
 \newblock \emph{European Journal of Control}, 13\penalty0 (2-3):\penalty0
   242--260, 2007.
+
+\bibitem[Perea and Harer(2015)]{perea2015sliding}
+Jose~A. Perea and John Harer.
+\newblock Sliding windows and persistence: An application of topological
+  methods to signal analysis.
+\newblock \emph{Foundations of Computational Mathematics}, 15:\penalty0
+  799--838, 2015.
+
+\bibitem[Strehl et~al.(2009)Strehl, Li, and Littman]{strehl2009reinforcement}
+Alexander~L. Strehl, Lihong Li, and Michael~L. Littman.
+\newblock Reinforcement learning in finite {MDPs}: {PAC} analysis.
+\newblock \emph{Journal of Machine Learning Research}, 10:\penalty0 2413--2444,
+  2009.
 
 \end{thebibliography}

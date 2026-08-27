@@ -114,7 +114,8 @@ Readings against the pre-registration:
 5. **H-T5's conditional fires: certified-and-costly on the metric axis.**
    The filled-disc model disagrees with truth on a sampled transition only
    via a leap: 139/320,000 transitions at neck 0.1, 0/320,000 at every other
-   cell (censored zeros, upper ~9.4e-6). Yet pc_fill = 0.594/0.573/0.500 at
+   cell (censored zeros, Wilson95 upper ~1.2e-5). Yet pc_fill =
+   0.594/0.573/0.500 at
    neck 0.1/0.2/0.4 (fill contact rate 0.00 -- the cost is plan divergence,
    not contact): at neck in {0.2, 0.4} the wrong topology is
    **behaviorally certified in 320k sampled transitions and 30k rollouts
