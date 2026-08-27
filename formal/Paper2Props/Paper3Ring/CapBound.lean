@@ -26,6 +26,7 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
 import Mathlib.Tactic.Linarith
 
 namespace Paper3Ring
@@ -214,6 +215,62 @@ theorem lemmaA_tangency_bound {ℓ : ℝ} (h0 : 0 ≤ ℓ) (h2 : ℓ ≤ 2) :
   rw [heq, ← h4]
   have := le_arcsin hu0 hu1
   linarith
+
+/-- **Lemma A(ii)'s transversal bound**: on an interval bounded away from ±1
+by `m/2`, the arcsin increment is LINEAR in the interval length —
+`arcsin b − arcsin a ≤ (2/√(3m))·(b − a)` for `[a, b] ⊆ [−(1−m/2), 1−m/2]`,
+`m ∈ (0, 1]` — the mean value inequality with the derivative
+`(1−t²)^{-1/2} ≤ 2/√(3m)` on the interval. This is why a transversal
+crossing gives a linear (not √) per-step bound. -/
+theorem lemmaA_transversal_bound {m a b : ℝ} (hm0 : 0 < m) (hm1 : m ≤ 1)
+    (ha : -(1 - m / 2) ≤ a) (hb : b ≤ 1 - m / 2) (hab : a ≤ b) :
+    Real.arcsin b - Real.arcsin a ≤ 2 / Real.sqrt (3 * m) * (b - a) := by
+  have h3m0 : (0 : ℝ) < 3 * m := by linarith
+  have h3m : 0 < Real.sqrt (3 * m) := Real.sqrt_pos.mpr h3m0
+  have h4 : 2 * Real.sqrt (3 * m / 4) = Real.sqrt (3 * m) := by
+    have h2' : Real.sqrt 4 = 2 := by
+      rw [show (4 : ℝ) = 2 ^ 2 by norm_num,
+        Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 2)]
+    rw [← h2', ← Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 4)]
+    congr 1
+    ring
+  have hbound : ∀ x ∈ Set.Ico a b,
+      ‖1 / Real.sqrt (1 - x ^ 2)‖ ≤ 2 / Real.sqrt (3 * m) := by
+    intro x hx
+    have hx1 : -(1 - m / 2) ≤ x := le_trans ha hx.1
+    have hx2 : x ≤ 1 - m / 2 := le_of_lt (lt_of_lt_of_le hx.2 hb)
+    have hlow : 3 * m / 4 ≤ 1 - x ^ 2 := by nlinarith
+    have hs : Real.sqrt (3 * m) / 2 ≤ Real.sqrt (1 - x ^ 2) := by
+      rw [← h4]
+      have h := Real.sqrt_le_sqrt hlow
+      linarith
+    have hpos : 0 < Real.sqrt (1 - x ^ 2) := by
+      have : (0 : ℝ) < Real.sqrt (3 * m) / 2 := by positivity
+      linarith
+    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+    calc 1 / Real.sqrt (1 - x ^ 2)
+        ≤ 1 / (Real.sqrt (3 * m) / 2) :=
+          one_div_le_one_div_of_le (by positivity) hs
+      _ = 2 / Real.sqrt (3 * m) := one_div_div _ _
+  have hderiv : ∀ x ∈ Set.Icc a b, HasDerivWithinAt Real.arcsin
+      (1 / Real.sqrt (1 - x ^ 2)) (Set.Icc a b) x := by
+    intro x hx
+    have hx1 : x ≠ -1 := by
+      intro h
+      have := le_trans ha hx.1
+      rw [h] at this
+      linarith
+    have hx2 : x ≠ 1 := by
+      intro h
+      have := le_trans hx.2 hb
+      rw [h] at this
+      linarith
+    exact (Real.hasDerivAt_arcsin hx1 hx2).hasDerivWithinAt
+  have h := norm_image_sub_le_of_norm_deriv_le_segment' hderiv hbound b
+    (Set.right_mem_Icc.mpr hab)
+  rw [Real.norm_eq_abs,
+    abs_of_nonneg (by linarith [Real.arcsin_le_arcsin hab])] at h
+  exact h
 
 /-- **Lemma W (sliver-in-strip), the geometric core** (THEORY.md, T4's
 ingredient): a point at radius `ρ ≤ r_out` and angular offset `φ` from a
