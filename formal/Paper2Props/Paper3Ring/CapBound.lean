@@ -28,6 +28,7 @@ import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
 import Mathlib.MeasureTheory.Group.Measure
+import Mathlib.MeasureTheory.Measure.Prod
 import Mathlib.Tactic.Linarith
 
 namespace Paper3Ring
@@ -558,6 +559,45 @@ theorem lemmaS_heading_uniform :
           MeasureTheory.volume.restrict (Set.Icc (-π) π) := by
         rw [MeasureTheory.Measure.restrict_smul,
           abs_of_pos (by positivity : (0 : ℝ) < π⁻¹)]
+
+/-! ## T4's union-bound skeleton
+
+The two measure steps that turn the per-step strip bound into T4's modulus:
+the Fubini slice bound (conditioning on the past — the prefix fixes the
+state, and the current action's slice is a strip event bounded uniformly
+over states by Lemma A + S + W), and the h-step union bound. What remains
+for the fully composed T4 is the process-model instantiation: the h-fold
+product of the action law with the trajectory map's measurability, which is
+where these two lemmas get applied once per step. -/
+
+/-- **The Fubini slice bound** (T4's conditioning step): if every `x`-slice
+of a product event has `ν`-measure at most `B`, the product measure of the
+event is at most `B · μ(univ)`. -/
+theorem prod_slice_bound {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
+    (μ : MeasureTheory.Measure α) (ν : MeasureTheory.Measure β)
+    [MeasureTheory.SFinite ν]
+    {E : Set (α × β)} (hE : MeasurableSet E) {B : ENNReal}
+    (hslice : ∀ x, ν (Prod.mk x ⁻¹' E) ≤ B) :
+    (μ.prod ν) E ≤ B * μ Set.univ := by
+  rw [MeasureTheory.Measure.prod_apply hE]
+  calc ∫⁻ x, ν (Prod.mk x ⁻¹' E) ∂μ
+      ≤ ∫⁻ _, B ∂μ := MeasureTheory.lintegral_mono hslice
+    _ = B * μ Set.univ := MeasureTheory.lintegral_const B
+
+/-- **The h-step union bound**: h events each of measure at most `B` have
+union of measure at most `h·B` — the step that turns the per-step bound into
+T4's `h·√(r_out·ε/(gain·dt²))` modulus. -/
+theorem union_bound_le {Ω : Type*} [MeasurableSpace Ω]
+    (μ : MeasureTheory.Measure Ω) (h : ℕ) (E : ℕ → Set Ω) {B : ENNReal}
+    (hE : ∀ t < h, μ (E t) ≤ B) :
+    μ (⋃ t ∈ Finset.range h, E t) ≤ h * B := by
+  calc μ (⋃ t ∈ Finset.range h, E t)
+      ≤ ∑ t ∈ Finset.range h, μ (E t) :=
+        MeasureTheory.measure_biUnion_finset_le _ _
+    _ ≤ ∑ _t ∈ Finset.range h, B :=
+        Finset.sum_le_sum fun t ht => hE t (Finset.mem_range.mp ht)
+    _ = h * B := by
+        rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
 
 /-- **Lemma W (sliver-in-strip), the geometric core** (THEORY.md, T4's
 ingredient): a point at radius `ρ ≤ r_out` and angular offset `φ` from a
