@@ -830,6 +830,94 @@ theorem pi_union_slice_bound {n : ℕ} (μ₀ : MeasureTheory.Measure ℝ)
         push_cast
         ring
 
+/-- **T4's per-slice bound, fully composed**: under the uniform action law
+on `[−1, 1]`, any rotated sin-interval event — the form every strip landing
+event reduces to via Lemma S (landing = drift + R·heading) and Lemma W (the
+sliver sits in a strip) — has mass at most `2·√(ℓ/2)`, i.e. probability
+`√(ℓ/2)` after normalizing by the action mass 2, with ℓ the interval
+length. Composed from `lemmaS_heading_uniform` and
+`lemmaA_part_i_rotated`. -/
+theorem t4_slice_bound (φ₀ : ℝ) {lo hi : ℝ}
+    (hlo : -1 ≤ lo) (hhi : hi ≤ 1) (hlohi : lo ≤ hi) :
+    (MeasureTheory.volume.restrict (Set.Icc (-1 : ℝ) 1))
+        {a : ℝ | Real.sin (φ₀ + π * a) ∈ Set.Icc lo hi}
+      ≤ ENNReal.ofReal (2 * Real.sqrt ((hi - lo) / 2)) := by
+  have hπ := pi_pos
+  have hne : (π : ℝ) ≠ 0 := ne_of_gt hπ
+  have hev : MeasurableSet {ψ : ℝ | Real.sin (φ₀ + ψ) ∈ Set.Icc lo hi} :=
+    (Real.continuous_sin.comp (continuous_const.add continuous_id)).measurable
+      measurableSet_Icc
+  have hmap : (MeasureTheory.volume.restrict (Set.Icc (-1 : ℝ) 1))
+      {a : ℝ | Real.sin (φ₀ + π * a) ∈ Set.Icc lo hi}
+      = (MeasureTheory.Measure.map (fun a : ℝ => π * a)
+          (MeasureTheory.volume.restrict (Set.Icc (-1 : ℝ) 1)))
+        {ψ | Real.sin (φ₀ + ψ) ∈ Set.Icc lo hi} := by
+    rw [MeasureTheory.Measure.map_apply (measurable_const_mul π) hev]
+    rfl
+  rw [hmap, lemmaS_heading_uniform, MeasureTheory.Measure.smul_apply,
+    MeasureTheory.Measure.restrict_apply hev, smul_eq_mul]
+  have hset : {ψ | Real.sin (φ₀ + ψ) ∈ Set.Icc lo hi} ∩ Set.Icc (-π) π
+      = {ψ ∈ Set.Icc (-π) π | Real.sin (φ₀ + ψ) ∈ Set.Icc lo hi} := by
+    rw [Set.inter_comm]
+    rfl
+  rw [hset]
+  calc ENNReal.ofReal π⁻¹ * MeasureTheory.volume
+        {ψ ∈ Set.Icc (-π) π | Real.sin (φ₀ + ψ) ∈ Set.Icc lo hi}
+      ≤ ENNReal.ofReal π⁻¹
+          * ENNReal.ofReal (2 * π * Real.sqrt ((hi - lo) / 2)) := by
+        gcongr
+        exact lemmaA_part_i_rotated φ₀ hlo hhi hlohi
+    _ = ENNReal.ofReal (2 * Real.sqrt ((hi - lo) / 2)) := by
+        rw [← ENNReal.ofReal_mul (by positivity)]
+        congr 1
+        field_simp
+
+/-- **Theorem T4's modulus, composed.** For events whose coordinate slices
+all have the rotated sin-interval form of length ≤ ℓ — what Lemma S and
+Lemma W give every sliver-landing event — the union over `h = n + 1` steps
+has action-process mass at most `(n+1)·2√(ℓ/2)·2^n`. Normalized by the
+total action mass `2^{n+1}`, this reads
+`P(some landing in the sliver within h steps) ≤ h·√(ℓ/2)`: with
+`ℓ = w_ε/R_L`, THEORY.md's `|q(γ) − q(γ′)| ≤ h·√(r_out·ε/(gain·dt²))`
+modulus. Every ingredient is machine-checked; the instrument supplies
+`hform` per sliver through `lemmaS_landing_eq` and
+`lemmaW_sliver_in_strip`. -/
+theorem t4_modulus {n : ℕ}
+    (E : Fin (n + 1) → Set (Fin (n + 1) → ℝ))
+    (hEm : ∀ t, MeasurableSet (E t)) {ℓ : ℝ}
+    (hform : ∀ (t : Fin (n + 1)) (rest : Fin n → ℝ),
+      ∃ φ₀ lo hi, -1 ≤ lo ∧ hi ≤ 1 ∧ lo ≤ hi ∧ hi - lo ≤ ℓ ∧
+        {a : ℝ | t.insertNth a rest ∈ E t}
+          = {a : ℝ | Real.sin (φ₀ + π * a) ∈ Set.Icc lo hi}) :
+    MeasureTheory.Measure.pi
+        (fun _ : Fin (n + 1) =>
+          MeasureTheory.volume.restrict (Set.Icc (-1 : ℝ) 1))
+        (⋃ t, E t)
+      ≤ (n + 1 : ENNReal)
+        * (ENNReal.ofReal (2 * Real.sqrt (ℓ / 2)) * (2 : ENNReal) ^ n) := by
+  have h2 : (MeasureTheory.volume.restrict (Set.Icc (-1 : ℝ) 1)) Set.univ
+      = (2 : ENNReal) := by
+    rw [MeasureTheory.Measure.restrict_apply MeasurableSet.univ,
+      Set.univ_inter, Real.volume_Icc]
+    norm_num
+  have h := pi_union_slice_bound
+    (MeasureTheory.volume.restrict (Set.Icc (-1 : ℝ) 1)) E hEm
+    (B := ENNReal.ofReal (2 * Real.sqrt (ℓ / 2)))
+    (fun t rest => by
+      obtain ⟨φ₀, lo, hi, hlo, hhi, hlohi, hlen, hset⟩ := hform t rest
+      rw [hset]
+      calc (MeasureTheory.volume.restrict (Set.Icc (-1 : ℝ) 1))
+            {a : ℝ | Real.sin (φ₀ + π * a) ∈ Set.Icc lo hi}
+          ≤ ENNReal.ofReal (2 * Real.sqrt ((hi - lo) / 2)) :=
+            t4_slice_bound φ₀ hlo hhi hlohi
+        _ ≤ ENNReal.ofReal (2 * Real.sqrt (ℓ / 2)) := by
+            apply ENNReal.ofReal_le_ofReal
+            have hs := Real.sqrt_le_sqrt
+              (show (hi - lo) / 2 ≤ ℓ / 2 by linarith)
+            linarith)
+  rw [h2] at h
+  exact h
+
 /-- **Lemma W (sliver-in-strip), the geometric core** (THEORY.md, T4's
 ingredient): a point at radius `ρ ≤ r_out` and angular offset `φ` from a
 line through the ring center has distance `ρ·|sin φ|` to that line, and for

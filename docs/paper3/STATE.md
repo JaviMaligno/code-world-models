@@ -35,12 +35,15 @@ blocking.
 
 ## Open, in the order the work naturally goes
 
-1. **Lean, remaining triage** (FORMALIZATION.md): the measure assembly
-   (Lemma A's arcsin/circle-measure computations, Lemma S's pushforward,
-   the h-step union bound; T5's sphere-marginal reduction) and T1's
-   upper floors (persistence language, Lemma B's existence half, D⁺'s
-   filling chain) on the `RipsCircle.lean` foundation. Nothing blocks on
-   any of it.
+1. **Lean, remaining triage** (FORMALIZATION.md): **Theorem T4's modulus
+   is now COMPOSED end to end** (`t4_modulus`, ninth tranche) — Lemma A
+   complete with rotation invariance, Lemma S both halves, Lemma W,
+   trajectory measurability, the Fubini slice bound and the union bound,
+   all machine-checked; only the per-instrument `hform` coordinate
+   computation remains. Elsewhere: T5's sphere-marginal reduction, and
+   T1's upper floors (Lemma B's existence half, D⁺'s filling chain,
+   persistence language) on the `RipsCircle.lean` foundation. Nothing
+   blocks on any of it.
 2. **Paper 1's linter debt** (22 soundness-scope, 20 printed-zero,
    3 process-prose at baseline) if that paper is ever revised. The
    baseline is READ correctly on Windows now (the linter's lookup
