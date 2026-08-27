@@ -38,7 +38,9 @@ not silently weakened.
 | Prop 7 (direct entries pathwise monotone) | `freezeTraj_eq_of_avoid` (the engine), `entersDirectlyAt`, `prop7_direct_monotone`, `prop7_first_entry_preserved`, `direct_entry_traj_is_free`, `no_wall_every_entry_direct`, `channelMode_antitone`, `prop7_channel` (`DirectEntries.lean`, third tranche) | **PROVED at realization level**, and slightly past the paper's statement: the engine (freeze-free prefixes are mode-set monotone) holds for ANY mode sets `M₂ ⊆ M₁`; Prop 7 is transport along it, minimality of the first entry transports too, a direct trajectory is proved equal to the FREE trajectory through its entry (the `M₂ = ∅` case), the no-wall endpoint d(2π) = r_int(2π) is the vacuous-avoidance corollary, and the knob instantiation A(γ) = annulus \ S(γ) is antitone for any monotone sector family `S` (the sector's shape is never used, as the paper says). The measure wrapper (pathwise inclusion ⟹ d(γ₁) ≤ d(γ₂) over seeds) adds only monotonicity of a measure under inclusion and is noted, not formalized. THEORY.md's seed-50543 counterexample is visible in the formalization: no theorem here mentions full entries — the induction has no invariant without `havoid` |
 | Prop 10 (fence sufficiency) | `loopTraj_eq_of_policy_agree` (the loop engine), `maximizers`, `maximizers_transport`, `prop10_fence_sufficiency`, `prop10_play_cost_zero` (`Mitigation.lean`, fourth tranche) | **PROVED from the named hypotheses**: at every state of the reachable envelope, mitigated and truth imagined returns agree on the non-crossing candidates, and every crossing candidate is strictly dominated under both (the dominance form of (COV)+(RG-west), the latter a measured margin, like T3-P's `hdirect`). Conclusion machine-checked: the maximizer SETS coincide — so any deterministic tie-break picks the same candidate — and the real trajectories are identical, play_cost exactly 0. The geometric step (COV ⟹ truncation of crossing candidates) stays with the mitigation module's semantics |
 | Prop 11 (patch sufficiency) | `freezeTraj_eq_of_landing_mem_iff` (the coupling engine — Remark R2's "Lemma-3 coupling", generalized), `prop11_patch_sufficiency`, `prop11_play_cost_zero` (`Mitigation.lean`, fourth tranche) | **PROVED**: the patched mode set is `Mt ∪ (B \ N)` (truth mode plus the invented region minus the certified neighborhood); with (CERT) distilled — no queried landing in the residue `B \ N` from any reachable state — patched imagination equals truth imagination for every candidate (the coupling engine: mode sets agreeing on membership at every queried landing give identical trajectories), the planner picks the same action, and play_cost is exactly 0. The engine also subsumes `DirectEntries.freezeTraj_eq_of_avoid` as the `M₂ ⊆ M₁` special case |
-| Prop 8, 1-D reduction (witness tube) | `prop8_witness_stays_on_axis` (`WitnessTube.lean`, fourth tranche) | **PARTIAL, the structural half**: for the instrument's own `ringF`/`ringFreeze` dynamics, axis-aligned heading inputs and initial velocity keep every state — freeze events included, any mode set — on the line `p₀ + ℝ·e`. The triage's feared "interval arithmetic over cos/sin" dissolves for the paper's witness (action ≡ 0 ⟹ heading exactly (1,0)). What stays measured: the entry within the horizon and the channel membership of the line's band crossings (numeric facts at the frozen defaults; the Python witness `test_positivity_witness_tube` carries them), plus the start-set-positive-measure wrapper |
+| Prop 8, 1-D reduction (witness tube) | `prop8_witness_stays_on_axis` (`WitnessTube.lean`, fourth tranche) | **PROVED, the structural half**: for the instrument's own `ringF`/`ringFreeze` dynamics, axis-aligned heading inputs and initial velocity keep every state — freeze events included, any mode set — on the line `p₀ + ℝ·e`. The triage's feared "interval arithmetic over cos/sin" dissolves for the paper's witness (action ≡ 0 ⟹ heading exactly (1,0)) |
+| Prop 8, in-horizon entry (numeric tail) | `vSeq`/`bSeq`, `vSeq_le_ten`, `vSeq_lower`, `vSeq_ge_five`, `bSeq_growth`, `prop8_scalar_window`, `prop8_window_is_interior`, `prop8_free_witness_follows_scalar` (`WitnessTube.lean`, fifth tranche) | **PROVED**: the witness's scalar recursion (the exact frozen-defaults integrator, from rest) reaches speed ≥ 5 by step 34 (ratchet: below 5 each step gains ≥ 0.15), the offset then gains ≥ 0.5 per step, and the first crossing of the window `[9.5, 10.5)` happens by step 53 < h = 80 without overshoot (no step exceeds 1); any window landing is strictly inside the hole in the instrument's own metric (`hypot < 3.5`, from the start box); and a freeze-free witness trajectory is proved to FOLLOW that scalar recursion exactly |
+| Prop 8, channel membership + composed core | `hyp`, `sectorSin`, `ringModeSin`, `div_eight_le_sin_half` (Jordan for the η-margin), `witness_line_avoids_wall`, `prop8_positivity_core` (`WitnessTube.lean`, fifth tranche) | **PROVED, closing Prop 8 up to the measure wrapper**: the sector is modeled by its sine characterization on the west half-plane (`\|y\| ≤ d·sin(γ/2)` — the faithful model of `_in_gap_sector` there for γ ∈ (0, π], where every witness landing lives; larger γ has a smaller wall). Jordan's inequality (`Real.mul_le_sin`) with 8 > π turns the η(γ) = 3.5γ/8 margin into channel membership at every band radius, so the witness line avoids the wall outright, and `prop8_positivity_core` composes: from the start box, the constant-thrust witness reaches `hyp < r_in` within 53 < 80 steps against the γ-channel wall. What remains of THEORY.md's Prop 8 is ONLY the measure wrapper (the start box has positive probability) |
 
 ### Modelling notes (what the Lean statements quantify over)
 
@@ -83,23 +85,30 @@ themselves coincide); and Prop 8's witness needs no trigonometry at all —
 constant action 0 makes the heading exactly (1, 0), so the tube reduction
 is pure linear algebra (`module`).
 
+## Status (2026-08-25, fifth tranche)
+
+Prop 8 CLOSED up to the measure wrapper, all in `WitnessTube.lean` —
+0 sorries, both default targets green (8705 jobs). The numeric tail (the
+scalar window by step 53, the hypot bound into the hole, the freeze-free
+linkage) and the channel membership both landed: the sector's sine
+characterization on the west half-plane needs no angle API, and Jordan's
+inequality (`Real.mul_le_sin`, with 8 > π) is exactly the η(γ) margin.
+With this, every deterministic/realization-level item of THEORY.md's list
+is machine-checked; what the triage below holds is genuinely
+probabilistic or needs persistence theory mathlib does not have.
+
 ## Not yet formalized — triage
 
 Ordered by (value × feasibility), highest first:
 
-1. **Prop 8, remaining halves** — the witness line's channel membership and
-   in-horizon entry at the frozen defaults (numeric; the 1-D reduction above
-   makes both statements about scalars, so `norm_num`-style bounds are now
-   plausible if wanted), and the concrete angular sector if the channel
-   membership is to be stated non-abstractly.
-2. **Prop 5/6, T4 (coupling monotonicity of r; Hölder modulus)** —
+1. **Prop 5/6, T4 (coupling monotonicity of r; Hölder modulus)** —
    probabilistic: needs the uniform action measure and the anticoncentration
    Lemma A; mathlib has the ingredients (circle measure, Lipschitz), real
    work to assemble.
-3. **T5 (cone bounds, spherical caps, Cor T5-U)** — probability with explicit
+2. **T5 (cone bounds, spherical caps, Cor T5-U)** — probability with explicit
    constants (Lemma G is a clean self-contained target; the Berry–Esseen
    transfer is out of reasonable reach).
-4. **T1 (Rips birth/death lemmas), T7 (relative estimator)** — mathlib has no
+3. **T1 (Rips birth/death lemmas), T7 (relative estimator)** — mathlib has no
    Vietoris–Rips persistence; formalizing these means building that theory
    first. Out of scope until that changes; recorded here so the gap is a
    stated fact rather than an omission.

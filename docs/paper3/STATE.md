@@ -19,20 +19,23 @@ the thin-neck LLM synthesis, the last open item, ran on 2026-08-24 (third
 session, both sizes) — and paper 3's campaigns are all INSIDE the held-out
 audit (783/783, the two-factor law inside Wilson95 at 37/37 campaigns).
 The synthesis result is folded into the tex (Section "The metric
-converse"), which builds clean at linter zero. The Lean tranches two through four are
+converse"), which builds clean at linter zero. The Lean tranches two through five are
 DONE (2026-08-25): Prop 3 composed with the planner loop, T2-I exact,
 T3-P/T3-P″, Prop 7's pathwise engine, Props 10/11 (fence and patch
 sufficiency, with the coupling engine that also carries Remark R2), and
-Prop 8's 1-D witness-tube reduction — 0 sorries throughout. What is left
-in FORMALIZATION.md's triage is the numeric tail of Prop 8 and the
-genuinely probabilistic/persistence items; none of it blocking.
+Prop 8 CLOSED up to the measure wrapper (1-D reduction, scalar window,
+channel membership via Jordan's inequality) — 0 sorries throughout.
+Every deterministic/realization-level item of THEORY.md is now
+machine-checked; FORMALIZATION.md's remaining triage is genuinely
+probabilistic (Prop 5/6, T4, T5) or needs Rips persistence theory
+mathlib does not have (T1, T7). None of it blocking.
 
 ## Open, in the order the work naturally goes
 
-1. **Lean, remaining triage** (FORMALIZATION.md): Prop 8's numeric tail
-   (now scalar statements, thanks to the 1-D reduction), then the
-   probabilistic items (Prop 5/6, T4; T5), then the Rips/persistence
-   theory T1/T7 would need. Nothing blocks on any of it.
+1. **Lean, remaining triage** (FORMALIZATION.md): only the genuinely
+   probabilistic items (Prop 5/6, T4; T5's Lemma G) and the Rips
+   persistence theory T1/T7 would need. Nothing blocks on any of it,
+   and nothing mechanical remains.
 2. **Paper 1's linter debt** (22 soundness-scope, 20 printed-zero,
    3 process-prose at baseline) if that paper is ever revised. The
    baseline is READ correctly on Windows now (the linter's lookup
@@ -118,6 +121,16 @@ origin; this branch is the only one).
   the heading exactly (1,0) — the feared cos/sin interval arithmetic
   dissolves); its numeric tail stays with the Python witness. 0 sorries,
   8705 jobs green.
+- **And the fifth closes Prop 8** (still `WitnessTube.lean`): the scalar
+  window (speed ≥ 5 by step 34 by ratchet, window [9.5, 10.5) by step
+  53 < 80 without overshoot), the hypot bound into the hole, the
+  freeze-free linkage to the instrument's trajectory, and the channel
+  membership itself — the sector sine-modeled on the west half-plane (no
+  angle API) and the η(γ) margin discharged by Jordan's inequality with
+  8 > π. `prop8_positivity_core` composes it all: the witness enters the
+  hole against the γ-channel wall within 53 steps. Only the measure
+  wrapper (positive probability of the start box) remains, as everywhere
+  in the package. With this, NOTHING mechanical is left in the triage.
 
 Picked up exactly where the list above pointed: the rarity decision, then the
 plumbing it unblocks, then the audit itself. No mathematics attempted (T7
