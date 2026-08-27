@@ -31,6 +31,8 @@ import Mathlib.Tactic.Linarith
 namespace Paper3Ring
 
 open intervalIntegral
+open Real (pi_pos pi_ne_zero)
+open scoped Real
 
 /-- **Lemma G's analytic core.** For any exponent `p ≥ 0` and `κ ∈ [0, 1)`,
 `∫_κ¹ (1−u²)^p du ≤ (1−κ²)^{p+1/2} · ∫_0¹ (1−y²)^p dy` — the substitution
@@ -126,6 +128,92 @@ theorem lemmaG_integral_core {p κ : ℝ} (hp : 0 ≤ p) (hκ0 : 0 ≤ κ)
     _ = (1 - κ ^ 2) ^ (p + 1 / 2) * ∫ y in (0 : ℝ)..1, (1 - y ^ 2) ^ p := by
         rw [hs_def, Real.sqrt_eq_rpow, ← mul_assoc,
           ← Real.rpow_add hκ2, add_comm (1 / 2 : ℝ) p]
+
+/-! ## Lemma A's analytic cores
+
+Lemma A (circle–strip anticoncentration) reduces `P(U ∈ S)` to arc-length
+computations `Leb{ψ : sin ψ ∈ I}` and then runs on arcsin/arccos estimates.
+The circle-measure preimage is the measure-assembly step the triage records;
+the estimates themselves are below, exactly as the paper states them:
+`arccos(1−ℓ) = 2·arcsin√(ℓ/2) ≤ π·√(ℓ/2)` (part (i)'s endpoint bound, via
+`arcsin u ≤ (π/2)·u` — Jordan again) and `arccos(1−ℓ/2) ≥ √ℓ` (part (iv)'s
+tangency sharpness, via `arcsin u ≥ u`). -/
+
+/-- The half-angle identity Lemma A runs on:
+`arccos(1−ℓ) = 2·arcsin √(ℓ/2)` for `ℓ ∈ [0, 2]`. -/
+theorem arccos_one_sub_eq {ℓ : ℝ} (h0 : 0 ≤ ℓ) (h2 : ℓ ≤ 2) :
+    Real.arccos (1 - ℓ) = 2 * Real.arcsin (Real.sqrt (ℓ / 2)) := by
+  set α := Real.arccos (1 - ℓ) with hα_def
+  have hα0 : 0 ≤ α := Real.arccos_nonneg _
+  have hαπ : α ≤ π := Real.arccos_le_pi _
+  have hπ := Real.pi_pos
+  have hcos : Real.cos α = 1 - ℓ :=
+    Real.cos_arccos (by linarith) (by linarith)
+  have hsin0 : 0 ≤ Real.sin (α / 2) :=
+    Real.sin_nonneg_of_nonneg_of_le_pi (by linarith) (by linarith)
+  have hsin : Real.sin (α / 2) = Real.sqrt (ℓ / 2) := by
+    rw [← abs_of_nonneg hsin0, Real.abs_sin_half, hcos,
+      show (1 - (1 - ℓ)) / 2 = ℓ / 2 by ring]
+  have harc : Real.arcsin (Real.sin (α / 2)) = α / 2 :=
+    Real.arcsin_sin (by linarith) (by linarith)
+  rw [← hsin, harc]
+  ring
+
+/-- `arcsin u ≤ (π/2)·u` on `[0, 1]` — the inverse form of Jordan's
+inequality. -/
+theorem arcsin_le_pi_div_two_mul {u : ℝ} (h0 : 0 ≤ u) (h1 : u ≤ 1) :
+    Real.arcsin u ≤ π / 2 * u := by
+  have hπ := Real.pi_pos
+  have hx0 : 0 ≤ π / 2 * u := by positivity
+  have hx : π / 2 * u ≤ π / 2 := by nlinarith
+  have hs : u ≤ Real.sin (π / 2 * u) := by
+    have h := Real.mul_le_sin hx0 hx
+    rw [show 2 / π * (π / 2 * u) = u from by
+      field_simp] at h
+    exact h
+  calc Real.arcsin u ≤ Real.arcsin (Real.sin (π / 2 * u)) :=
+        Real.arcsin_le_arcsin hs
+    _ = π / 2 * u := Real.arcsin_sin (by linarith) hx
+
+/-- `u ≤ arcsin u` on `[0, 1]`. -/
+theorem le_arcsin {u : ℝ} (h0 : 0 ≤ u) (h1 : u ≤ 1) : u ≤ Real.arcsin u := by
+  have h := Real.sin_le (Real.arcsin_nonneg.mpr h0)
+  rwa [Real.sin_arcsin (by linarith) h1] at h
+
+/-- **Lemma A(i)'s endpoint bound**: the arcsin increment over an interval of
+length ℓ abutting the endpoint is `arccos(1−ℓ) ≤ π·√(ℓ/2)`. -/
+theorem lemmaA_endpoint_bound {ℓ : ℝ} (h0 : 0 ≤ ℓ) (h2 : ℓ ≤ 2) :
+    Real.arccos (1 - ℓ) ≤ π * Real.sqrt (ℓ / 2) := by
+  have hu0 : 0 ≤ Real.sqrt (ℓ / 2) := Real.sqrt_nonneg _
+  have hu1 : Real.sqrt (ℓ / 2) ≤ 1 := by
+    rw [show (1 : ℝ) = Real.sqrt 1 from (Real.sqrt_one).symm]
+    exact Real.sqrt_le_sqrt (by linarith)
+  have h := arcsin_le_pi_div_two_mul hu0 hu1
+  rw [arccos_one_sub_eq h0 h2]
+  linarith
+
+/-- **Lemma A(iv)'s tangency sharpness**: `arccos(1 − ℓ/2) ≥ √ℓ` — the
+tangent strip's mass is of order √ℓ, so no per-step bound better than √w
+holds without a hypothesis on the center's distance to the line. -/
+theorem lemmaA_tangency_bound {ℓ : ℝ} (h0 : 0 ≤ ℓ) (h2 : ℓ ≤ 2) :
+    Real.sqrt ℓ ≤ Real.arccos (1 - ℓ / 2) := by
+  have h4 : 2 * Real.sqrt (ℓ / 4) = Real.sqrt ℓ := by
+    have h2' : Real.sqrt 4 = 2 := by
+      rw [show (4 : ℝ) = 2 ^ 2 by norm_num,
+        Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 2)]
+    rw [← h2', ← Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 4)]
+    congr 1
+    ring
+  have hu0 : 0 ≤ Real.sqrt (ℓ / 4) := Real.sqrt_nonneg _
+  have hu1 : Real.sqrt (ℓ / 4) ≤ 1 := by
+    rw [show (1 : ℝ) = Real.sqrt 1 from (Real.sqrt_one).symm]
+    exact Real.sqrt_le_sqrt (by linarith)
+  have heq : Real.arccos (1 - ℓ / 2) = 2 * Real.arcsin (Real.sqrt (ℓ / 4)) := by
+    rw [arccos_one_sub_eq (by linarith) (by linarith),
+      show (ℓ / 2) / 2 = ℓ / 4 by ring]
+  rw [heq, ← h4]
+  have := le_arcsin hu0 hu1
+  linarith
 
 /-- **Lemma W (sliver-in-strip), the geometric core** (THEORY.md, T4's
 ingredient): a point at radius `ρ ≤ r_out` and angular offset `φ` from a

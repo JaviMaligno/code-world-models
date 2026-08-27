@@ -19,17 +19,19 @@ the thin-neck LLM synthesis, the last open item, ran on 2026-08-24 (third
 session, both sizes) — and paper 3's campaigns are all INSIDE the held-out
 audit (783/783, the two-factor law inside Wilson95 at 37/37 campaigns).
 The synthesis result is folded into the tex (Section "The metric
-converse"), which builds clean at linter zero. The Lean tranches two through seven are
+converse"), which builds clean at linter zero. The Lean tranches two through eight are
 DONE (2026-08-25): Prop 3 composed with the planner loop, T2-I exact,
 T3-P/T3-P″, Prop 7's pathwise engine, Props 10/11 (fence and patch
 sufficiency, with the coupling engine that also carries Remark R2),
-Prop 8 CLOSED up to the measure wrapper, Lemma G's analytic core,
-Prop 5's pathwise core, T4's Lemma W, and T1's foundation layer
-(Lemma D⁻'s mathematical content, persistence bookkeeping stripped) —
+Prop 8 CLOSED up to the measure wrapper, Prop 5's pathwise core,
+Lemma G's analytic core, Lemma A's (i)/(iv) cores, T4's Lemma W, and —
+on the Rips side — Lemma D⁻'s content AND Lemma B's gap-jump core
+(T1's birth lower bound), both at the level the paper proves them —
 0 sorries throughout. FORMALIZATION.md's remaining triage is the
-measure assembly (Lemma A/S + union bound for T4; the sphere-marginal
-reduction for T5) and T1's upper floors on the laid foundation. None of
-it blocking.
+measure assembly (circle-measure preimage, Lemma S, union bound;
+sphere-marginal reduction) and T1's upper floors (persistence
+language, Lemma B's existence half, D⁺'s filling chain). None of it
+blocking.
 
 ## Open, in the order the work naturally goes
 
@@ -150,6 +152,16 @@ origin; this branch is the only one).
   functional on `Finsupp` chains that vanishes on scale-s triangle
   boundaries — Lemma D⁻'s content, "the winding class is not a boundary
   below √3·r_min", machine-checked. 0 sorries, 8707 jobs green.
+- **The eighth adds Lemma A's analytic cores and Lemma B's gap jump.**
+  `CapBound.lean`: arccos(1−ℓ) = 2·arcsin√(ℓ/2) (via `abs_sin_half`),
+  the inverse Jordan bound arcsin u ≤ (π/2)u, and Lemma A's (i) endpoint
+  and (iv) tangency bounds. `RipsCircle.lean`: the upcrossing lemma — a
+  lifted walk that climbs 2πw while its vertices avoid the open gap arc
+  must take a single step ≥ Δ (negative winding by negating the lift,
+  sidestepping the wrap-reversal pathology at ±π) — which with the
+  chord–angle bound is Lemma B's birth lower bound
+  s_w ≥ 2·r_min·sin(Δθ_max/2). T1's two proved halves (B-lower, D⁻) are
+  now machine-checked at the paper's own level.
 
 Picked up exactly where the list above pointed: the rarity decision, then the
 plumbing it unblocks, then the audit itself. No mathematics attempted (T7

@@ -35,6 +35,8 @@ law is a program, not a tranche. This file is its foundation layer.
 -/
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Angle
 import Mathlib.Data.Finsupp.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Order.Floor.Defs
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 
@@ -244,6 +246,158 @@ theorem lemmaDminus_core {ι : Type*} (r θ : ι → ℝ) {rmin s : ℝ}
     wrap_lt_of_chordSq_lt hrmin (hr i) (hr k)
       (lt_of_le_of_lt ((chordSq_comm _ _ _ _).trans_le hki) hs)
   exact triangle_wrap_sum_eq_zero hij' hjk' hki'
+
+/-! ## Lemma B's gap-jump core
+
+The lower-bound half of Lemma B: a closed walk with nonzero winding on
+samples that all avoid an open gap arc must contain an edge whose wrapped
+increment is at least the gap width. The formalization works on the LIFTED
+cumulative sequence, where no wrapping is needed at all: the lift climbs by
+2πw, so it must cross a lift of the gap's midpoint, and both endpoints of
+the crossing step keep distance ≥ Δ/2 from that lift — the step is ≥ Δ. The
+negative-winding case follows by negating the lifted sequence (which avoids
+the wrap-reversal pathology at ±π entirely). -/
+
+/-- Every wrap differs from its argument by an integer multiple of 2π. -/
+lemma wrap_eq_add_int (x : ℝ) : ∃ p : ℤ, wrap x = x + (p : ℝ) * (2 * π) := by
+  obtain ⟨n, hn⟩ : ∃ n : ℤ, n • (2 * π) = x - wrap x := by
+    rw [← Real.Angle.coe_eq_zero_iff, Real.Angle.coe_sub]
+    simp [wrap, Real.Angle.coe_toReal]
+  have hn' : (n : ℝ) * (2 * π) = x - wrap x := by
+    rw [← zsmul_eq_mul]; exact hn
+  refine ⟨-n, ?_⟩
+  push_cast
+  linarith
+
+/-- Every real has a lift of `g` within one period above it. -/
+lemma exists_lift_above (g x : ℝ) :
+    ∃ p : ℤ, x < g + (p : ℝ) * (2 * π) ∧ g + (p : ℝ) * (2 * π) ≤ x + 2 * π := by
+  have hπ := pi_pos
+  have h2π : (0 : ℝ) < 2 * π := by linarith
+  refine ⟨⌊(x - g) / (2 * π)⌋ + 1, ?_, ?_⟩
+  · have h := Int.lt_floor_add_one ((x - g) / (2 * π))
+    have h2 : (x - g) / (2 * π) * (2 * π) = x - g := by field_simp
+    push_cast
+    nlinarith
+  · have h := Int.floor_le ((x - g) / (2 * π))
+    have h2 : (x - g) / (2 * π) * (2 * π) = x - g := by field_simp
+    push_cast
+    nlinarith
+
+/-- **The upcrossing lemma.** A finite real sequence that climbs by at least
+2π while keeping distance ≥ Δ/2 from every lift of `g` must take a single
+step of size ≥ Δ. -/
+lemma exists_big_step_of_climb {n : ℕ} {ψ : ℕ → ℝ} {g Δ : ℝ} (hΔ0 : 0 < Δ)
+    (hclimb : ψ 0 + 2 * π ≤ ψ n)
+    (hgap : ∀ k ≤ n, ∀ p : ℤ, Δ / 2 ≤ |ψ k - (g + (p : ℝ) * (2 * π))|) :
+    ∃ k < n, Δ ≤ ψ (k + 1) - ψ k := by
+  classical
+  have hπ := pi_pos
+  obtain ⟨p, hp1, hp2⟩ := exists_lift_above g (ψ 0)
+  set m := g + (p : ℝ) * (2 * π) with hm
+  have hψn : m < ψ n := by
+    rcases lt_or_eq_of_le (by linarith : m ≤ ψ n) with h | h
+    · exact h
+    · exfalso
+      have hg := hgap n le_rfl p
+      rw [← hm, ← h, sub_self, abs_zero] at hg
+      linarith
+  set K := Nat.findGreatest (fun j => ψ j ≤ m) n with hK
+  have hKspec : ψ K ≤ m := by
+    have h := Nat.findGreatest_spec (P := fun j => ψ j ≤ m)
+      (Nat.zero_le n) hp1.le
+    exact h
+  have hKle : K ≤ n := Nat.findGreatest_le n
+  have hKn : K < n := by
+    rcases lt_or_eq_of_le hKle with h | h
+    · exact h
+    · exfalso; rw [h] at hKspec; linarith
+  have hK1 : m < ψ (K + 1) := by
+    have h := Nat.findGreatest_is_greatest (P := fun j => ψ j ≤ m)
+      (by omega : K < K + 1) (by omega : K + 1 ≤ n)
+    exact not_le.mp h
+  have hdK : Δ / 2 ≤ m - ψ K := by
+    have h := hgap K hKle p
+    rw [← hm, abs_of_nonpos (by linarith)] at h
+    linarith
+  have hdK1 : Δ / 2 ≤ ψ (K + 1) - m := by
+    have h := hgap (K + 1) (by omega) p
+    rw [← hm, abs_of_nonneg (by linarith)] at h
+    linarith
+  exact ⟨K, hKn, by linarith⟩
+
+/-- **Lemma B's gap-jump core (the lower-bound half).** A walk whose wrapped
+increments sum to `2πw` with `w ≠ 0`, on vertices whose angles all keep
+distance ≥ Δ/2 from every lift of the gap midpoint `g` (i.e. no vertex in
+the open gap arc of width Δ), has a step with `|wrapped increment| ≥ Δ`.
+With the chord–angle bound (`chordSq_eq`; the chord between radii ≥ r_min at
+angular separation ≥ Δ is ≥ 2·r_min·sin(Δ/2)), this is the birth lower bound
+`s_w ≥ 2·r_min·sin(Δθ_max/2)`. -/
+theorem lemmaB_gap_jump {n : ℕ} (θw : ℕ → ℝ) {g Δ : ℝ} {w : ℤ}
+    (hΔ0 : 0 < Δ) (hw : w ≠ 0)
+    (hsum : ∑ k ∈ Finset.range n, wrap (θw (k + 1) - θw k) = (w : ℝ) * (2 * π))
+    (hgap : ∀ k ≤ n, ∀ p : ℤ, Δ / 2 ≤ |θw k - (g + (p : ℝ) * (2 * π))|) :
+    ∃ k < n, Δ ≤ |wrap (θw (k + 1) - θw k)| := by
+  classical
+  have hπ := pi_pos
+  set ψ := fun j => θw 0 + ∑ i ∈ Finset.range j, wrap (θw (i + 1) - θw i)
+    with hψ
+  have hstep : ∀ k, ψ (k + 1) - ψ k = wrap (θw (k + 1) - θw k) := by
+    intro k
+    simp only [hψ]
+    rw [Finset.sum_range_succ]
+    ring
+  have hlift : ∀ k, ∃ q : ℤ, ψ k = θw k + (q : ℝ) * (2 * π) := by
+    intro k
+    induction k with
+    | zero => exact ⟨0, by simp [hψ]⟩
+    | succ j ih =>
+      obtain ⟨q, hq⟩ := ih
+      obtain ⟨p, hp⟩ := wrap_eq_add_int (θw (j + 1) - θw j)
+      refine ⟨q + p, ?_⟩
+      have hs := hstep j
+      rw [hp] at hs
+      push_cast
+      linarith
+  have hgapψ : ∀ k ≤ n, ∀ p : ℤ, Δ / 2 ≤ |ψ k - (g + (p : ℝ) * (2 * π))| := by
+    intro k hk p
+    obtain ⟨q, hq⟩ := hlift k
+    have h := hgap k hk (p - q)
+    rw [hq, show θw k + (q : ℝ) * (2 * π) - (g + (p : ℝ) * (2 * π))
+      = θw k - (g + ((p - q : ℤ) : ℝ) * (2 * π)) by push_cast; ring]
+    exact h
+  have hψn : ψ n = ψ 0 + (w : ℝ) * (2 * π) := by
+    simp only [hψ, Finset.sum_range_zero, hsum]
+    ring
+  rcases lt_or_gt_of_ne hw with hneg | hpos
+  · -- negative winding: negate the lifted sequence
+    have hw1 : (1 : ℝ) ≤ -(w : ℝ) := by
+      have : w ≤ -1 := by omega
+      have h' : (w : ℝ) ≤ -1 := by exact_mod_cast this
+      linarith
+    have hclimb : (fun j => -ψ j) 0 + 2 * π ≤ (fun j => -ψ j) n := by
+      simp only
+      nlinarith
+    have hgap' : ∀ k ≤ n, ∀ p : ℤ,
+        Δ / 2 ≤ |(fun j => -ψ j) k - (-g + (p : ℝ) * (2 * π))| := by
+      intro k hk p
+      have h := hgapψ k hk (-p)
+      rw [show (fun j => -ψ j) k - (-g + (p : ℝ) * (2 * π))
+        = -(ψ k - (g + ((-p : ℤ) : ℝ) * (2 * π))) by push_cast; ring, abs_neg]
+      exact h
+    obtain ⟨k, hk, hbig⟩ := exists_big_step_of_climb hΔ0 hclimb hgap'
+    refine ⟨k, hk, ?_⟩
+    have hbig' : Δ ≤ -ψ (k + 1) - -ψ k := hbig
+    have : Δ ≤ -(ψ (k + 1) - ψ k) := by linarith
+    rw [hstep k] at this
+    exact le_trans this (neg_le_abs _)
+  · -- positive winding
+    have hw1 : (1 : ℝ) ≤ (w : ℝ) := by exact_mod_cast hpos
+    have hclimb : ψ 0 + 2 * π ≤ ψ n := by nlinarith
+    obtain ⟨k, hk, hbig⟩ := exists_big_step_of_climb hΔ0 hclimb hgapψ
+    refine ⟨k, hk, ?_⟩
+    rw [← hstep k]
+    exact le_trans hbig (le_abs_self _)
 
 end RipsCircle
 
