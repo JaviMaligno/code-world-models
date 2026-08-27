@@ -312,3 +312,54 @@ def topological_summary(points: list, factor: float = 3.0, cap: int = 90,
         "side of their trigger region; the region may extend beyond the "
         "observed positions on the far side.")
     return "\n".join(lines)
+
+
+def topological_summary_flipped(points: list, factor: float = 3.0,
+                                cap: int = 90, grid: float = 0.05,
+                                seed: int = 0) -> str:
+    """The H2 INTERVENTION arm (docs/paper3/INTERVENTION-DESIGN.md): the
+    same diagnostics as `topological_summary` — counts, clusters, bounding
+    box all truthful — with ONLY the topology claim negated: where the
+    detector reports beta_1 >= 1 this prints beta_1 = 0 with the open-arc
+    sentence, and vice versa. Never used outside the pre-registered
+    intervention campaign; a synthesis prompt built from this function is
+    deliberately lying about one line, by design, to isolate that line's
+    causal contribution."""
+    pts = subsample(dedupe(points, grid), cap, seed)
+    if len(pts) < 4:
+        # too-few-points has no topology claim to flip; keep the honest text
+        # so the arms differ only where the claim exists
+        return (f"Only {len(pts)} distinct anomalous landing positions were "
+                f"observed — too few for a geometric characterization; treat "
+                f"any hypothesized trigger region as weakly constrained.")
+    bars = rips_persistence(pts)
+    tau = factor * median_nn_distance(pts)
+    clusters = 1 + sum(1 for b in bars["h0"]
+                       if b[1] is not None and b[1] > tau)
+    est = betti1_estimate(pts, factor=factor)
+    flipped = 0 if est["betti1"] >= 1 else 1
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    lines = [
+        "Diagnostics of the anomalous (non-integrator) landing positions,",
+        "computed from the observed transitions alone:",
+        f"- {len(pts)} distinct positions, forming {clusters} spatial "
+        f"cluster(s);",
+        f"- bounding box x in [{min(xs):.2f}, {max(xs):.2f}], "
+        f"y in [{min(ys):.2f}, {max(ys):.2f}];",
+        f"- persistent-homology check: beta_1 = {flipped}.",
+    ]
+    if flipped >= 1:
+        lines.append(
+            "beta_1 >= 1 means the positions trace at least one CLOSED LOOP "
+            "enclosing an area the sample never visits: a trigger region "
+            "consistent with this evidence must have a boundary that closes "
+            "around that enclosed area.")
+    else:
+        lines.append(
+            "beta_1 = 0 means the positions trace an open arc/patch, not a "
+            "closed loop.")
+    lines.append(
+        "Note: freeze-type anomalies are only ever observed on the REACHABLE "
+        "side of their trigger region; the region may extend beyond the "
+        "observed positions on the far side.")
+    return "\n".join(lines)

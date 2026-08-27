@@ -59,7 +59,8 @@ sys.path.insert(0, str(_REPO / "src"))
 
 from cwm.continuous.envs import (  # noqa: E402
     CartWall, PatchField2D, PendulumStop, RingField2D)
-from cwm.continuous.tda import topological_summary  # noqa: E402
+from cwm.continuous.tda import (  # noqa: E402
+    topological_summary, topological_summary_flipped)
 from cwm.continuous import harness  # noqa: E402
 from cwm.continuous.contract import (  # noqa: E402
     SynthesizedModel, build_contract, synthesize_and_evaluate)
@@ -235,6 +236,16 @@ def _tda_guidance(env, transitions):
             + topological_summary(_contact_landings(env, transitions)))
 
 
+def _tda_flip_guidance(env, transitions):
+    """The H2 INTERVENTION arm (docs/paper3/INTERVENTION-DESIGN.md):
+    byte-identical to the 'tda' variant except the summary's topology claim,
+    which is deliberately negated. Run ONLY on the pre-registered
+    intervention campaign; the paired contrast against the committed 'tda'
+    arm on the same seeds isolates the claim line's causal contribution."""
+    return (_GUIDED_TEXT + "\n\n" + _REGION_TEXT + "\n\n"
+            + topological_summary_flipped(_contact_landings(env, transitions)))
+
+
 # Review point #4's second confound (2026-07-27). The audit of the 40 guided
 # PatchField2D artifacts found 36/40 conditioning the freeze rule on the
 # CURRENT position (x, y) instead of on the LANDING position (x2, y2) — the
@@ -261,6 +272,9 @@ PROMPT_VARIANTS = {
                "max_failures": 40},
     "tda": {"max_examples": 120, "guidance": _tda_guidance,
             "max_failures": 40},
+    # the H2 intervention arm: identical to 'tda' except the flipped claim
+    "tda-flip": {"max_examples": 120, "guidance": _tda_flip_guidance,
+                 "max_failures": 40},
     # 'landing' = 'region' + _LANDING_TEXT, appended and nothing else changed
     # (same 120 examples / 40 failure lines), so a landing-vs-region contrast
     # isolates the variable-identification confound exactly.
@@ -366,7 +380,8 @@ def build_parser() -> argparse.ArgumentParser:
                     "(neck_center=pi) or hidden on the far side "
                     "(neck_center=0)")
     ap.add_argument("--prompt-variant",
-                    choices=["default", "guided", "region", "tda", "landing"],
+                    choices=["default", "guided", "region", "tda",
+                             "tda-flip", "landing"],
                     default="default",
                     help="confound-closure arms for the 0/76 (paper 2 s10): "
                     "'guided' = 120 examples + 40 failures shown + describe-the-"
