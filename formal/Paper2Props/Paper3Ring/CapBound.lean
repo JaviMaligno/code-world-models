@@ -435,6 +435,45 @@ theorem lemmaA_part_i {a b : ℝ} (ha : -1 ≤ a) (hb : b ≤ 1) (hab : a ≤ b)
   have h2 := lemmaA_endpoint_bound (ℓ := b - a) (by linarith) (by linarith)
   linarith
 
+/-- **Lemma S's measure half** (THEORY.md, "Lemma S"): the heading map
+`a ↦ π·a` carries the uniform action law on `[−1, 1]` to `(1/π)`·Lebesgue on
+`[−π, π]` — the heading angle is EXACTLY uniform, and nothing about the state
+enters. Combined with the read-off half (`lemmaS_landing_eq` in
+`WitnessTube.lean`), the one-step landing law is exactly the uniform
+arc-length measure on the circle of radius `gain·dt²` about the drift
+center. -/
+theorem lemmaS_heading_uniform :
+    MeasureTheory.Measure.map (fun a : ℝ => π * a)
+        (MeasureTheory.volume.restrict (Set.Icc (-1 : ℝ) 1))
+      = ENNReal.ofReal π⁻¹ •
+        MeasureTheory.volume.restrict (Set.Icc (-π) π) := by
+  have hπ := pi_pos
+  have hne : (π : ℝ) ≠ 0 := ne_of_gt hπ
+  have hpre : (fun a : ℝ => π * a) ⁻¹' Set.Icc (-π) π
+      = Set.Icc (-1 : ℝ) 1 := by
+    ext a
+    simp only [Set.mem_preimage, Set.mem_Icc]
+    constructor
+    · rintro ⟨h1, h2⟩
+      constructor <;> nlinarith
+    · rintro ⟨h1, h2⟩
+      constructor <;> nlinarith
+  calc MeasureTheory.Measure.map (fun a : ℝ => π * a)
+        (MeasureTheory.volume.restrict (Set.Icc (-1 : ℝ) 1))
+      = MeasureTheory.Measure.map (fun a : ℝ => π * a)
+        (MeasureTheory.volume.restrict
+          ((fun a : ℝ => π * a) ⁻¹' Set.Icc (-π) π)) := by rw [hpre]
+    _ = (MeasureTheory.Measure.map (fun a : ℝ => π * a)
+          MeasureTheory.volume).restrict (Set.Icc (-π) π) :=
+        (MeasureTheory.Measure.restrict_map
+          (measurable_const_mul π) measurableSet_Icc).symm
+    _ = (ENNReal.ofReal |π⁻¹| • MeasureTheory.volume).restrict
+          (Set.Icc (-π) π) := by rw [Real.map_volume_mul_left hne]
+    _ = ENNReal.ofReal π⁻¹ •
+          MeasureTheory.volume.restrict (Set.Icc (-π) π) := by
+        rw [MeasureTheory.Measure.restrict_smul,
+          abs_of_pos (by positivity : (0 : ℝ) < π⁻¹)]
+
 /-- **Lemma W (sliver-in-strip), the geometric core** (THEORY.md, T4's
 ingredient): a point at radius `ρ ≤ r_out` and angular offset `φ` from a
 line through the ring center has distance `ρ·|sin φ|` to that line, and for

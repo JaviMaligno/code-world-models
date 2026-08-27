@@ -278,6 +278,21 @@ theorem prop8_free_witness_follows_scalar (e : V) (M : Set V) (p₀ : V) {T : �
 
 end PositivityLinkage
 
+/-- **Lemma S's read-off half** (THEORY.md, "Lemma S"): one integrator step
+from ANY state — post-freeze states included — lands at the drift center plus
+`gain·dt²` times the heading vector:
+`(ringF …).1 = s.1 + (dt·(1 − drag·dt))•s.2 + (gain·dt²)•(u t)`. With the
+heading on the unit circle this sweeps the circle of radius `R_L = gain·dt²`
+(0.03 at the defaults) about the drift center, so the landing law is the
+pushforward of the heading law — whose exact uniformity is
+`lemmaS_heading_uniform` in `CapBound.lean`. -/
+theorem lemmaS_landing_eq {V : Type*} [SeminormedAddCommGroup V]
+    [NormedSpace ℝ V] (gain drag dt : ℝ) (u : ℕ → V) (t : ℕ) (s : V × V) :
+    (ringF gain drag dt u t s).1
+      = s.1 + (dt * (1 - drag * dt)) • s.2 + (gain * dt ^ 2) • u t := by
+  simp only [ringF]
+  module
+
 /-! ## The channel membership, and the composed positivity core
 
 The last measured ingredient becomes a lemma. The channel sector is modeled
