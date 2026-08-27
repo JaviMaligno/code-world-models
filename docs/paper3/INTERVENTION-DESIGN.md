@@ -94,3 +94,30 @@ Azure mini, 60 cells, ~1.5–2 h; the control arm is already committed. The
 audit absorbs the new campaign under the existing `ring2d_gap1.8-in`
 rarity entry (prompt variant is not part of the stream key, by
 construction).
+
+---
+
+## RESULT (2026-08-27, written AFTER the outcome — everything above this
+line was committed before)
+
+`results/ring2d_summary_intervention.json`, emitted by the pre-committed
+analysis script, all 60 pairs valid (claims opposite by construction,
+0 skipped):
+
+- **Primary (flip vs contemporaneous honest control):** 11 discordant
+  pairs, **9 toward the claimed topology, 2 against**; exact two-sided
+  binomial **p = 0.065**. Directionally consistent with the summary's
+  claim line steering the posed artifact, but NOT significant at the
+  pre-registered 0.05. **Reading H-I1 is not earned; H-I2 applies**: the
+  paper's causal sentence is downgraded to the measured association
+  (folded into `main.tex` — contributions bullet and Section "The
+  evidence sensor", same session).
+- **Drift check (honest-now vs honest-committed):** 9 discordant, 4:5,
+  p = 1.0 — no deployment drift; the contemporaneous control behaves
+  like the committed arm (closed counts 4 vs 5 of 60).
+- **Secondary (gate passage, flip vs control):** 0 discordant pairs —
+  passage does not move under the flip at this cell (0/60 both arms;
+  the committed arm had 1/60).
+
+No re-test, no enlargement, no alternative classifier was run. The 9:2
+split is reported in the tex as what it is: suggestive, not significant.

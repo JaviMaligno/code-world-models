@@ -1,0 +1,1713 @@
+{
+ "design": "docs/paper3/INTERVENTION-DESIGN.md (amended 2026-08-27)",
+ "classifier": "freeze_mask_class; closed = disc/loop/complement",
+ "arms": {
+  "control_committed": {
+   "10000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "20000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "30000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "40000": {
+    "class": "disc",
+    "closed": true,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "50000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "60000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "70000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "80000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "90000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "100000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "110000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "120000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "130000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "140000": {
+    "class": "disc",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "150000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "160000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "170000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "180000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": true
+   },
+   "190000": {
+    "class": "loop",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "200000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "210000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "220000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "230000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "240000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "250000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "260000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "270000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "280000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "290000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "300000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "310000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "320000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "330000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "340000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "350000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "360000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "370000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "380000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "390000": {
+    "class": "disc",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "400000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "410000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "420000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "430000": {
+    "class": "disc",
+    "closed": true,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "440000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "450000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "460000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "470000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "480000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "490000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "500000": {
+    "class": "point",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "510000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "520000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "530000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "540000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "550000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "560000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "570000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "580000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "590000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "600000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   }
+  },
+  "control_contemporaneous": {
+   "10000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "20000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "30000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "40000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "50000": {
+    "class": "point",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "60000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "70000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "80000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "90000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "100000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "110000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "120000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "130000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "140000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "150000": {
+    "class": "point",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "160000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "170000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "180000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "190000": {
+    "class": "point",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "200000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "210000": {
+    "class": "point",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "220000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "230000": {
+    "class": "point",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "240000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "250000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "260000": {
+    "class": "point",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "270000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "280000": {
+    "class": "point",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "290000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "300000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "310000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "320000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "330000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "340000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "350000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "360000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "370000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "380000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "390000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "400000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "410000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "420000": {
+    "class": "loop",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "430000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "440000": {
+    "class": "point",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "450000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "460000": {
+    "class": "loop",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "470000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "480000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "490000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "500000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "510000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "520000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "530000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "540000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "550000": {
+    "class": "disc",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "560000": {
+    "class": "loop",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "570000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "580000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "590000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "600000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   }
+  },
+  "flipped": {
+   "10000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "20000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "30000": {
+    "class": "fill-unbounded",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "40000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "50000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "60000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "70000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "80000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "90000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "100000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "110000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "120000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "130000": {
+    "class": "complement",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "140000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "150000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "160000": {
+    "class": "point",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "170000": {
+    "class": "point",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "180000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "190000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "200000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "210000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "220000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "230000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "240000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "250000": {
+    "class": "disc",
+    "closed": true,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "260000": {
+    "class": "disc",
+    "closed": true,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "270000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "280000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "290000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "300000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "310000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "320000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "330000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "340000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "350000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "360000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "370000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "380000": {
+    "class": "disc",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "390000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "400000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "410000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "420000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "430000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "440000": {
+    "class": "loop",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "450000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "460000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "470000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "480000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "490000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "500000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "510000": {
+    "class": "blind",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "520000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "530000": {
+    "class": "disc",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "540000": {
+    "class": "point",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "550000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "560000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 0,
+    "gate_passed": false
+   },
+   "570000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "580000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "590000": {
+    "class": "disc",
+    "closed": true,
+    "claim": 1,
+    "gate_passed": false
+   },
+   "600000": {
+    "class": "arc",
+    "closed": false,
+    "claim": 1,
+    "gate_passed": false
+   }
+  }
+ },
+ "primary_flip_vs_contemporaneous": {
+  "rows": [
+   {
+    "seed": 10000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 20000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 30000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "fill-unbounded",
+     "blind"
+    ]
+   },
+   {
+    "seed": 40000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "arc"
+    ]
+   },
+   {
+    "seed": 50000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "point"
+    ]
+   },
+   {
+    "seed": 60000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 70000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "arc"
+    ]
+   },
+   {
+    "seed": 80000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "blind"
+    ]
+   },
+   {
+    "seed": 90000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "blind"
+    ]
+   },
+   {
+    "seed": 100000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "arc"
+    ]
+   },
+   {
+    "seed": 110000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 120000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 130000,
+    "claim_loop_arm_closed": true,
+    "claim_arc_arm_closed": false,
+    "D": 1,
+    "classes": [
+     "complement",
+     "blind"
+    ]
+   },
+   {
+    "seed": 140000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "blind"
+    ]
+   },
+   {
+    "seed": 150000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "point"
+    ]
+   },
+   {
+    "seed": 160000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "point",
+     "arc"
+    ]
+   },
+   {
+    "seed": 170000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "point",
+     "arc"
+    ]
+   },
+   {
+    "seed": 180000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "arc"
+    ]
+   },
+   {
+    "seed": 190000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "point"
+    ]
+   },
+   {
+    "seed": 200000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 210000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "point"
+    ]
+   },
+   {
+    "seed": 220000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 230000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "point"
+    ]
+   },
+   {
+    "seed": 240000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "blind"
+    ]
+   },
+   {
+    "seed": 250000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": true,
+    "D": -1,
+    "classes": [
+     "disc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 260000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": true,
+    "D": -1,
+    "classes": [
+     "disc",
+     "point"
+    ]
+   },
+   {
+    "seed": 270000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "blind"
+    ]
+   },
+   {
+    "seed": 280000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "point"
+    ]
+   },
+   {
+    "seed": 290000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 300000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "arc"
+    ]
+   },
+   {
+    "seed": 310000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 320000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "arc"
+    ]
+   },
+   {
+    "seed": 330000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 340000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "blind"
+    ]
+   },
+   {
+    "seed": 350000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "blind"
+    ]
+   },
+   {
+    "seed": 360000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 370000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 380000,
+    "claim_loop_arm_closed": true,
+    "claim_arc_arm_closed": false,
+    "D": 1,
+    "classes": [
+     "disc",
+     "blind"
+    ]
+   },
+   {
+    "seed": 390000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "arc"
+    ]
+   },
+   {
+    "seed": 400000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "blind"
+    ]
+   },
+   {
+    "seed": 410000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "blind"
+    ]
+   },
+   {
+    "seed": 420000,
+    "claim_loop_arm_closed": true,
+    "claim_arc_arm_closed": false,
+    "D": 1,
+    "classes": [
+     "blind",
+     "loop"
+    ]
+   },
+   {
+    "seed": 430000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "blind"
+    ]
+   },
+   {
+    "seed": 440000,
+    "claim_loop_arm_closed": true,
+    "claim_arc_arm_closed": false,
+    "D": 1,
+    "classes": [
+     "loop",
+     "point"
+    ]
+   },
+   {
+    "seed": 450000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "blind"
+    ]
+   },
+   {
+    "seed": 460000,
+    "claim_loop_arm_closed": true,
+    "claim_arc_arm_closed": false,
+    "D": 1,
+    "classes": [
+     "arc",
+     "loop"
+    ]
+   },
+   {
+    "seed": 470000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 480000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 490000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 500000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 510000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "blind",
+     "arc"
+    ]
+   },
+   {
+    "seed": 520000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 530000,
+    "claim_loop_arm_closed": true,
+    "claim_arc_arm_closed": false,
+    "D": 1,
+    "classes": [
+     "disc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 540000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "point",
+     "blind"
+    ]
+   },
+   {
+    "seed": 550000,
+    "claim_loop_arm_closed": true,
+    "claim_arc_arm_closed": false,
+    "D": 1,
+    "classes": [
+     "arc",
+     "disc"
+    ]
+   },
+   {
+    "seed": 560000,
+    "claim_loop_arm_closed": true,
+    "claim_arc_arm_closed": false,
+    "D": 1,
+    "classes": [
+     "arc",
+     "loop"
+    ]
+   },
+   {
+    "seed": 570000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 580000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 590000,
+    "claim_loop_arm_closed": true,
+    "claim_arc_arm_closed": false,
+    "D": 1,
+    "classes": [
+     "disc",
+     "arc"
+    ]
+   },
+   {
+    "seed": 600000,
+    "claim_loop_arm_closed": false,
+    "claim_arc_arm_closed": false,
+    "D": 0,
+    "classes": [
+     "arc",
+     "blind"
+    ]
+   }
+  ],
+  "n_pairs": 60,
+  "discordant": 11,
+  "toward_claim": 9,
+  "against_claim": 2,
+  "p_two_sided": 0.0654296875
+ },
+ "drift_check_contemporaneous_vs_committed_closed": {
+  "a_only": 4,
+  "b_only": 5,
+  "discordant": 9,
+  "p_two_sided": 1.0
+ },
+ "secondary_gate_flip_vs_contemporaneous": {
+  "a_only": 0,
+  "b_only": 0,
+  "discordant": 0,
+  "p_two_sided": 1.0
+ }
+}

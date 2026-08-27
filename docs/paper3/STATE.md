@@ -5,7 +5,10 @@ numbers and the arguments live in the documents it names, and are not copied
 here, because a second copy is how `THEORY.md`'s list and its sections came to
 contradict each other twice (CAMPAIGN-LOG.md, "Ledger hygiene").
 
-Last updated 2026-08-24 (third session — the thin-neck synthesis campaign).
+Last updated 2026-08-27 (review-hardening session — Codex rounds 1–2
+triaged and repaired; the pre-registered H2 flipped-summary intervention
+RUN and folded: directional 9:2 but p = 0.065, the causal reading stays
+unearned).
 
 ## The state in one paragraph
 
@@ -17,7 +20,8 @@ property, and T3's final factor being the instrument's own rarity r, which
 the series treats as an input). The experimental programme is FINISHED —
 the thin-neck LLM synthesis, the last open item, ran on 2026-08-24 (third
 session, both sizes) — and paper 3's campaigns are all INSIDE the held-out
-audit (783/783, the two-factor law inside Wilson95 at 37/37 campaigns).
+audit (903/903, the two-factor law inside Wilson95 at 39/39 campaigns,
+the two intervention arms included).
 The synthesis result is folded into the tex (Section "The metric
 converse"), which builds clean at linter zero. The Lean tranches two through eight are
 DONE (2026-08-25): Prop 3 composed with the planner loop, T2-I exact,
@@ -178,6 +182,41 @@ Picked up exactly where the list above pointed: the rarity decision, then the
 plumbing it unblocks, then the audit itself. No mathematics attempted (T7
 stays for its own session).
 
+## What happened on 2026-08-26/27 — review hardening
+
+Two adversarial Codex review rounds (`codex exec -s read-only`,
+gpt-5.6-sol) run against the full tex; findings verbatim + triage in
+`REVIEW-CODEX.md`. Round 1: 17/17 confirmed and repaired (headline: the
+"exactly E(f)" converse was FALSE at μ_query-null disagreements — Prop
+quotient rebuilt on the per-rollout hit probability; the NSW table
+recomputed on n_used). Round 2 found round 1's own quotient repair
+invalid (occupation mass vs per-rollout probability) — rebuilt again; 11
+REPAIRED, 5 PARTIAL, 10 new findings triaged. Linter zero and LaTeX
+green after each round.
+
+**The H2 intervention ran** (design pre-registered in
+`INTERVENTION-DESIGN.md`, amendments dated before any outcome existed;
+analysis `scripts/ring2d_summary_intervention.py` committed before the
+arms finished): full paired crossover at γ=1.8 inside, mini, 60 seeds —
+flipped summary vs a CONTEMPORANEOUS honest replicate (`ctrl2`) as
+primary control. Result (`results/ring2d_summary_intervention.json`):
+11 discordant pairs, 9 toward the claim / 2 against, exact two-sided
+p = 0.065 — directionally consistent with steering, NOT significant at
+the pre-registered 0.05. Per H-I2 the tex's causal sentence is
+permanently downgraded to the measured association (contributions
+bullet + Section "The evidence sensor" both updated). Drift check
+honest-then vs honest-now 4:5 (p = 1.0, no deployment drift); gate
+passage 0 discordant.
+
+The ring2d audit re-ran absorbing the two intervention arms: 903/903
+artifacts over 39 campaigns, 39/39 inside Wilson95, contingency still
+156/156 exact over 91 blocks, 214 in-sample passes / 121 regressions
+unchanged (both new arms: 0 gate passes). Tex counts updated.
+
+Still open from this session: Codex round 3 after the fold, and round-2
+PARTIAL A#11 (environment lock / archival URL / checksum manifest) as a
+submission-time TODO on Javier's call.
+
 - **The rarity decision taken and pinned: r, the firing rarity** — the
   audit's whole event algebra is contact-based, r_int is Lemma 2's curve and
   cannot reveal blindness to a gate; it rides along as `r_interior`,
@@ -249,9 +288,11 @@ maths is done in a separate session.
   both answer a live round-trip. Two things to know about it:
   - It points at **`ai-gonvarri-foundry`** (`rg-pharo-gonvarri`, swedencentral),
     which is a **client resource** — usage bills to it. The deployments were
-    created there on 2026-08-24 at the default capacity (10) rather than
-    something larger, deliberately, since it is not our infrastructure. If the
-    campaigns crawl, that capacity is the first thing to raise.
+    created there on 2026-08-24 at the default capacity (10); on 2026-08-27
+    Javier authorized raising `gpt-5.4-mini` to **capacity 100**
+    (GlobalStandard — the capacity is a rate ceiling only, billing stays
+    per-token), which is what let the tda-variant campaigns run without
+    429 crawl. `gpt-5.4` (large) remains at 10.
   - The deployment names match the models exactly (`gpt-5.4` -> gpt-5.4
     2026-03-05, `gpt-5.4-mini` -> gpt-5.4-mini 2026-03-17). That is load-bearing
     and not cosmetic: the deployment name is what gets written as `"model"` in

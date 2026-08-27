@@ -190,8 +190,11 @@ $\mathcal{R}$.
   persistent-homology summary reports $\hat\beta_1 = 1$ for every channel
   narrower than ${\sim}2$ arc-units (flip at $\gamma \approx 1.8$) even
   though the true $\beta_1 = 0$ for all $\gamma > 0$; the posed artifact
-  topology tracks the \emph{guidance}, not the truth. An honest,
-  finite-resolution sensor causes wrong-topology gate-certified models. On the
+  topology tracks the \emph{guidance}, not the truth. A pre-registered
+  flipped-summary crossover ($60$ paired seeds) is directionally
+  consistent with the claim line steering the artifact ($9{:}2$
+  discordant split) but not significant ($p = 0.065$), so the causal
+  reading stays unearned: what is measured is the association. On the
   $n$-dimensional shell, inside-start evidence recovers $\beta_{n-1}$ up to
   $n = 5$ where outside evidence recovers it at \emph{no} $n$ --- recovery
   is start-governed, and the Niyogi--Smale--Weinberger density bound makes
@@ -904,9 +907,10 @@ artifact on an independent gate
 block (a disjoint $40$-rollout stream per seed;
 \texttt{scripts/heldout\_gate\_audit.py} under its \texttt{ring2d} scope,
 output \texttt{results/heldout\_\allowbreak gate\_\allowbreak
-audit\_\allowbreak ring2d.json}: $783$
-artifacts over $37$ campaigns, the thin-neck synthesis cells of
-Section~\ref{sec:thinneck} included) turns the identifiability law into a
+audit\_\allowbreak ring2d.json}: $903$
+artifacts over $39$ campaigns, the thin-neck synthesis cells of
+Section~\ref{sec:thinneck} and the two summary-intervention arms of
+Section~\ref{sec:sensor} included) turns the identifiability law into a
 held-out
 measurement. On the incomplete arm restricted to artifacts whose
 \emph{training} sample missed the mode, held-out acceptance coincides
@@ -916,7 +920,7 @@ $91$ disjoint seed blocks (the two sizes share their blocks by
 construction), zero off-diagonal --- and the two-factor prediction
 $(1-r)^{N_{\mathrm{train}}+N_{\mathrm{gate}}}$ lies inside
 the Wilson $95\%$ interval of the measured accepted-and-blind rate in
-every one of the $37$ campaigns (each interval over that campaign's own
+every one of the $39$ campaigns (each interval over that campaign's own
 disjoint, independent seed blocks --- never pooled across sizes), the
 hidden-channel cells included --- audited
 under the closed ring's $r$, which their own $30$k calibration equals to
@@ -1198,7 +1202,7 @@ share their blocks by construction) are answered by a reward-threshold
 freeze and by free flight --- shown the metric hole, the loop writes no
 geometry at all. All $45$ gate passes across the six cells are
 wall-blind, and the held-out audit absorbs the cells without strain
-(the $37/37$ and $156/156$ above). The regime above --- certified
+(the $39/39$ and $156/156$ above). The regime above --- certified
 relative to the gate's sampled transitions, costly in play --- therefore
 carries a synthesis-side converse: at necks the gate cannot distinguish
 from the closed ring, the accepted artifacts are the same blind
@@ -1543,13 +1547,26 @@ flip --- is directional only (closed structures $3/27$ in the
 $\hat\beta_1 = 1$ subset versus $2/33$ in the $\hat\beta_1 = 0$ subset,
 $n = 60$: consistent in sign, not significant). What these measurements
 establish is: \textbf{posed topology tracks the sensor's report, not the
-truth} --- the cross-gap crossover above. That an honest finite-resolution
-summary thereby \emph{causes} wrong-topology certified models is the
-reading the data are consistent with but do not isolate: the cross-gap
-comparison varies the environment together with the summary, and the
-isolating intervention --- randomizing correct against deliberately
-flipped summaries on the same committed evidence blocks, scoring posed
-topology and gate passage per seed block --- is identified but not run.
+truth} --- the cross-gap crossover above. Whether the summary's
+\emph{claim line alone} causes this we tested with a pre-registered
+isolating intervention
+(\texttt{docs/paper3/INTERVENTION-DESIGN.md}, analysis committed before
+any outcome was read): a full paired crossover at $\gamma = 1.8$ inside
+(mini, the same $60$ seeds, bit-identical evidence blocks) in which the
+treatment prompt negates exactly the summary's $\hat\beta_1$ line and its
+one interpretive sentence --- every other prompt byte held fixed ---
+scored against a \emph{contemporaneous} honest replicate as primary
+control. The paired contrast is directionally consistent with steering
+--- of $11$ discordant pairs, $9$ moved toward the claimed topology and
+$2$ against --- but does not reach the pre-registered level (exact
+two-sided binomial $p = 0.065$ on $60$ pairs;
+\texttt{results/ring2d\_summary\_intervention.json}), so the causal
+reading is \emph{not} earned and H2's conclusion stands as the
+association above. The null is not control instability: the two honest
+controls agree (honest-then vs.\ honest-now, $4{:}5$ discordant,
+$p = 1.0$ --- no deployment drift), and gate passage never moves under
+the flip ($0$ discordant pairs), consistent with the artifact-level
+effect being small at this cell.
 The repair loop's topology channel is, at minimum, no better than the
 sensor's resolving power at the operative sampling density.
 
