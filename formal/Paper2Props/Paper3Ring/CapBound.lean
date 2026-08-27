@@ -27,6 +27,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
+import Mathlib.MeasureTheory.Group.Measure
 import Mathlib.Tactic.Linarith
 
 namespace Paper3Ring
@@ -434,6 +435,90 @@ theorem lemmaA_part_i {a b : ℝ} (ha : -1 ≤ a) (hb : b ≤ 1) (hab : a ≤ b)
   have h1 := arcsin_increment_le_arccos ha hb hab
   have h2 := lemmaA_endpoint_bound (ℓ := b - a) (by linarith) (by linarith)
   linarith
+
+/-- **The period-window glue**: the strip event carries the same mass over
+Lemma S's window `[−π, π]` as over the preimage computation's window
+`[−π/2, 3π/2]` — split at the shared part `(−π/2, π]` and translate the tail
+by 2π (endpoints are null). -/
+theorem volume_sin_window_shift {a b : ℝ} :
+    MeasureTheory.volume {ψ ∈ Set.Icc (-π) π | Real.sin ψ ∈ Set.Icc a b}
+      = MeasureTheory.volume
+        {ψ ∈ Set.Icc (-(π / 2)) (3 * π / 2) | Real.sin ψ ∈ Set.Icc a b} := by
+  have hπ := pi_pos
+  set P : Set ℝ := Real.sin ⁻¹' Set.Icc a b with hP
+  have hPm : MeasurableSet P := measurableSet_Icc.preimage Real.continuous_sin.measurable
+  have hrepr : ∀ s : Set ℝ, {ψ ∈ s | Real.sin ψ ∈ Set.Icc a b} = s ∩ P :=
+    fun _ => rfl
+  -- closed windows and half-open windows carry the same mass
+  have hIccIoc : ∀ c d : ℝ,
+      MeasureTheory.volume (Set.Icc c d ∩ P)
+        = MeasureTheory.volume (Set.Ioc c d ∩ P) := by
+    intro c d
+    apply le_antisymm
+    · have hsub : Set.Icc c d ∩ P ⊆ (Set.Ioc c d ∩ P) ∪ {c} := by
+        rintro ψ ⟨⟨h1, h2⟩, hp⟩
+        rcases eq_or_lt_of_le h1 with h | h
+        · exact Or.inr (by simp [← h])
+        · exact Or.inl ⟨⟨h, h2⟩, hp⟩
+      calc MeasureTheory.volume (Set.Icc c d ∩ P)
+          ≤ MeasureTheory.volume ((Set.Ioc c d ∩ P) ∪ {c}) :=
+            MeasureTheory.measure_mono hsub
+        _ ≤ MeasureTheory.volume (Set.Ioc c d ∩ P)
+              + MeasureTheory.volume {c} := MeasureTheory.measure_union_le _ _
+        _ = MeasureTheory.volume (Set.Ioc c d ∩ P) := by
+            rw [Real.volume_singleton, add_zero]
+    · exact MeasureTheory.measure_mono
+        (Set.inter_subset_inter_left P Set.Ioc_subset_Icc_self)
+  rw [hrepr, hrepr, hIccIoc, hIccIoc]
+  -- split both half-open windows at the shared middle
+  have hsplit1 : Set.Ioc (-π) π ∩ P
+      = (Set.Ioc (-π) (-(π / 2)) ∩ P) ∪ (Set.Ioc (-(π / 2)) π ∩ P) := by
+    rw [← Set.union_inter_distrib_right,
+      Set.Ioc_union_Ioc_eq_Ioc (by linarith) (by linarith)]
+  have hsplit2 : Set.Ioc (-(π / 2)) (3 * π / 2) ∩ P
+      = (Set.Ioc (-(π / 2)) π ∩ P) ∪ (Set.Ioc π (3 * π / 2) ∩ P) := by
+    rw [← Set.union_inter_distrib_right,
+      Set.Ioc_union_Ioc_eq_Ioc (by linarith) (by linarith)]
+  have hdisj1 : Disjoint (Set.Ioc (-π) (-(π / 2)) ∩ P)
+      (Set.Ioc (-(π / 2)) π ∩ P) := by
+    rw [Set.disjoint_left]
+    rintro ψ ⟨⟨_, h1⟩, _⟩ ⟨⟨h2, _⟩, _⟩
+    linarith
+  have hdisj2 : Disjoint (Set.Ioc (-(π / 2)) π ∩ P)
+      (Set.Ioc π (3 * π / 2) ∩ P) := by
+    rw [Set.disjoint_left]
+    rintro ψ ⟨⟨_, h1⟩, _⟩ ⟨⟨h2, _⟩, _⟩
+    linarith
+  -- the two tails are 2π-translates of one another
+  have htail : MeasureTheory.volume (Set.Ioc π (3 * π / 2) ∩ P)
+      = MeasureTheory.volume (Set.Ioc (-π) (-(π / 2)) ∩ P) := by
+    have hset : ((fun ψ : ℝ => -(2 * π) + ψ) ⁻¹'
+        (Set.Ioc (-π) (-(π / 2)) ∩ P)) = Set.Ioc π (3 * π / 2) ∩ P := by
+      ext ψ
+      simp only [Set.mem_preimage, Set.mem_inter_iff, Set.mem_Ioc, hP,
+        Set.mem_Icc]
+      constructor
+      · rintro ⟨⟨h1, h2⟩, hp⟩
+        refine ⟨⟨by linarith, by linarith⟩, ?_⟩
+        rwa [show -(2 * π) + ψ = ψ - 2 * π by ring, Real.sin_sub_two_pi] at hp
+      · rintro ⟨⟨h1, h2⟩, hp⟩
+        refine ⟨⟨by linarith, by linarith⟩, ?_⟩
+        rwa [show -(2 * π) + ψ = ψ - 2 * π by ring, Real.sin_sub_two_pi]
+    rw [← hset, MeasureTheory.measure_preimage_add]
+  rw [hsplit1, hsplit2,
+    MeasureTheory.measure_union hdisj1 (measurableSet_Ioc.inter hPm),
+    MeasureTheory.measure_union hdisj2 (measurableSet_Ioc.inter hPm),
+    htail]
+  ring
+
+/-- **Lemma A(i) in Lemma S's own window**: the per-step strip bound over the
+heading's actual range `[−π, π]` — the composition T4's per-step argument
+uses. -/
+theorem lemmaA_part_i' {a b : ℝ} (ha : -1 ≤ a) (hb : b ≤ 1) (hab : a ≤ b) :
+    MeasureTheory.volume {ψ ∈ Set.Icc (-π) π | Real.sin ψ ∈ Set.Icc a b}
+      ≤ ENNReal.ofReal (2 * π * Real.sqrt ((b - a) / 2)) := by
+  rw [volume_sin_window_shift]
+  exact lemmaA_part_i ha hb hab
 
 /-- **Lemma S's measure half** (THEORY.md, "Lemma S"): the heading map
 `a ↦ π·a` carries the uniform action law on `[−1, 1]` to `(1/π)`·Lebesgue on
