@@ -19,16 +19,17 @@ the thin-neck LLM synthesis, the last open item, ran on 2026-08-24 (third
 session, both sizes) — and paper 3's campaigns are all INSIDE the held-out
 audit (783/783, the two-factor law inside Wilson95 at 37/37 campaigns).
 The synthesis result is folded into the tex (Section "The metric
-converse"), which builds clean at linter zero. The Lean tranches two through five are
+converse"), which builds clean at linter zero. The Lean tranches two through six are
 DONE (2026-08-25): Prop 3 composed with the planner loop, T2-I exact,
 T3-P/T3-P″, Prop 7's pathwise engine, Props 10/11 (fence and patch
-sufficiency, with the coupling engine that also carries Remark R2), and
+sufficiency, with the coupling engine that also carries Remark R2),
 Prop 8 CLOSED up to the measure wrapper (1-D reduction, scalar window,
-channel membership via Jordan's inequality) — 0 sorries throughout.
-Every deterministic/realization-level item of THEORY.md is now
-machine-checked; FORMALIZATION.md's remaining triage is genuinely
-probabilistic (Prop 5/6, T4, T5) or needs Rips persistence theory
-mathlib does not have (T1, T7). None of it blocking.
+channel membership via Jordan's inequality), and Lemma G's analytic
+core — 0 sorries throughout. Every deterministic/realization-level item
+of THEORY.md is now machine-checked; FORMALIZATION.md's remaining
+triage is purely measure-theoretic assembly (Prop 5/6, T4; T5's
+sphere-measure reduction) or needs Rips persistence theory mathlib does
+not have (T1, T7). None of it blocking.
 
 ## Open, in the order the work naturally goes
 
@@ -131,6 +132,12 @@ origin; this branch is the only one).
   hole against the γ-channel wall within 53 steps. Only the measure
   wrapper (positive probability of the start box) remains, as everywhere
   in the package. With this, NOTHING mechanical is left in the triage.
+- **And a sixth takes the first bite of the probabilistic tail**
+  (`CapBound.lean`): Lemma G's analytic core — the interval-integral
+  inequality its proof runs on (substitution with the Jacobian giving
+  the exponent's extra 1/2, pointwise bound, range enlargement),
+  generalized to any real exponent p ≥ 0. The sphere-measure reduction
+  and T5-I's symmetry-of-sums step remain, honestly probabilistic.
 
 Picked up exactly where the list above pointed: the rarity decision, then the
 plumbing it unblocks, then the audit itself. No mathematics attempted (T7

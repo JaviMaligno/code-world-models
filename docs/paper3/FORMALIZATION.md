@@ -41,6 +41,7 @@ not silently weakened.
 | Prop 8, 1-D reduction (witness tube) | `prop8_witness_stays_on_axis` (`WitnessTube.lean`, fourth tranche) | **PROVED, the structural half**: for the instrument's own `ringF`/`ringFreeze` dynamics, axis-aligned heading inputs and initial velocity keep every state — freeze events included, any mode set — on the line `p₀ + ℝ·e`. The triage's feared "interval arithmetic over cos/sin" dissolves for the paper's witness (action ≡ 0 ⟹ heading exactly (1,0)) |
 | Prop 8, in-horizon entry (numeric tail) | `vSeq`/`bSeq`, `vSeq_le_ten`, `vSeq_lower`, `vSeq_ge_five`, `bSeq_growth`, `prop8_scalar_window`, `prop8_window_is_interior`, `prop8_free_witness_follows_scalar` (`WitnessTube.lean`, fifth tranche) | **PROVED**: the witness's scalar recursion (the exact frozen-defaults integrator, from rest) reaches speed ≥ 5 by step 34 (ratchet: below 5 each step gains ≥ 0.15), the offset then gains ≥ 0.5 per step, and the first crossing of the window `[9.5, 10.5)` happens by step 53 < h = 80 without overshoot (no step exceeds 1); any window landing is strictly inside the hole in the instrument's own metric (`hypot < 3.5`, from the start box); and a freeze-free witness trajectory is proved to FOLLOW that scalar recursion exactly |
 | Prop 8, channel membership + composed core | `hyp`, `sectorSin`, `ringModeSin`, `div_eight_le_sin_half` (Jordan for the η-margin), `witness_line_avoids_wall`, `prop8_positivity_core` (`WitnessTube.lean`, fifth tranche) | **PROVED, closing Prop 8 up to the measure wrapper**: the sector is modeled by its sine characterization on the west half-plane (`\|y\| ≤ d·sin(γ/2)` — the faithful model of `_in_gap_sector` there for γ ∈ (0, π], where every witness landing lives; larger γ has a smaller wall). Jordan's inequality (`Real.mul_le_sin`) with 8 > π turns the η(γ) = 3.5γ/8 margin into channel membership at every band radius, so the witness line avoids the wall outright, and `prop8_positivity_core` composes: from the start box, the constant-thrust witness reaches `hyp < r_in` within 53 < 80 steps against the γ-channel wall. What remains of THEORY.md's Prop 8 is ONLY the measure wrapper (the start box has positive probability) |
+| T5's Lemma G, analytic core | `lemmaG_integral_core` (`CapBound.lean`, sixth tranche) | **PROVED**, generalized to any real exponent p ≥ 0 (Lemma G takes p = (n−3)/2): `∫_κ¹ (1−u²)^p ≤ (1−κ²)^{p+1/2}·∫_0¹ (1−y²)^p` — the substitution u = κ + √(1−κ²)·y (its Jacobian is the extra 1/2 in the exponent), the pointwise bound 1−u² ≤ (1−κ²)(1−y²), and the range enlargement, i.e. the entire computation Lemma G's proof runs on. NOT formalized (the genuinely probabilistic part, per the triage): the reduction from the uniform sphere measure to the 1-D marginal density, and Theorem T5-I's spherical-symmetry-of-sums step. Measured complement: the cap bound checked against the exact cap integral at n = 3…30 |
 
 ### Modelling notes (what the Lean statements quantify over)
 
@@ -97,6 +98,13 @@ With this, every deterministic/realization-level item of THEORY.md's list
 is machine-checked; what the triage below holds is genuinely
 probabilistic or needs persistence theory mathlib does not have.
 
+## Status (2026-08-25, sixth tranche)
+
+One bite out of the probabilistic tail: Lemma G's analytic core landed in
+`CapBound.lean` (0 sorries, both targets green, 8706 jobs) — the interval
+integral inequality its proof runs on, generalized to any real exponent.
+The frontier of the triage is now purely measure-theoretic assembly.
+
 ## Not yet formalized — triage
 
 Ordered by (value × feasibility), highest first:
@@ -106,8 +114,10 @@ Ordered by (value × feasibility), highest first:
    Lemma A; mathlib has the ingredients (circle measure, Lipschitz), real
    work to assemble.
 2. **T5 (cone bounds, spherical caps, Cor T5-U)** — probability with explicit
-   constants (Lemma G is a clean self-contained target; the Berry–Esseen
-   transfer is out of reasonable reach).
+   constants. Lemma G's analytic core is now PROVED (`CapBound.lean`); what
+   remains here is the sphere-measure reduction to the marginal density and
+   T5-I's symmetry-of-sums step (measure theory), and the Berry–Esseen
+   transfer stays out of reasonable reach.
 3. **T1 (Rips birth/death lemmas), T7 (relative estimator)** — mathlib has no
    Vietoris–Rips persistence; formalizing these means building that theory
    first. Out of scope until that changes; recorded here so the gap is a
