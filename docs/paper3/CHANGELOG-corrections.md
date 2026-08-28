@@ -55,15 +55,27 @@ two proofs, the independence-of-axes result is carried by the play row
 $n$-dimensional section's argument is unchanged. What changes is one table
 cell, one parenthetical, and a caption's provenance.
 
-**Submission status.** The arXiv submission `submit/8006768` was already in
-the announcement queue when this was found. Options, Javier's call:
+**Submission status — RESOLVED 2026-08-28.** Javier chose unsubmit-and-replace
+over a v2. Executed the same day, before announcement:
 
-- **Unsubmit → replace the bundle → resubmit** (the corrected
-  `arxiv-submission-paper3.tar.gz` in this directory is ready). Cost: the
-  announcement slips by roughly a day.
-- **Let v1 announce and post a v2** with this correction. Cost: v1 carries
-  the wrong cell permanently, with the correction visible in the v2 diff.
+1. `submit/8006768` unsubmitted ("Submission status set to 'incomplete'").
+   It had been queued for **Sun 30 Aug 2026 20:00 US Eastern**; unsubmitting
+   removed it from that batch.
+2. The stale `main.tex` deleted and the corrected one uploaded (it is the only
+   file that changed: no citation moved, so `main.bbl` is untouched and was
+   again **retained** against arXiv's suggestion to drop it).
+3. Re-checked and recompiled by arXiv: pdflatex on TeX Live 2025, `main.tex =>
+   main.pdf [SUCCEEDED]`, top-level and compiler auto-selections unchanged.
+   The corrected row is verified *in the rendered PDF*, not just the source:
+   the page's text stream reads `r(n) 0.0133 0.0033 0.0017 0† 0.0017`.
+4. Metadata survived the round trip intact (title, author, the 1918-character
+   abstract, comments) and so did the categories (cs.LG primary, cs.AI
+   cross-list) and the CC BY 4.0 licence. PDF re-previewed as arXiv requires.
+5. **Resubmitted**: status back to `submitted`. The announcement slot moves to
+   the next cycle after this one, so expect the ID roughly a day later than
+   the original Sunday slot.
 
-Nothing else in the repository quotes the wrong figure: the blog post drafted
-for this paper (`personal-website`, branch `blog/being-wrong-can-be-free`)
-was corrected in the same session, before publication.
+The only cosmetic casualty: the preview page's HTML-rendering widget reported
+"Unauthorized. Your session may be expired" instead of showing the HTML
+version. The PDF path is what gates announcement and it was green; the HTML
+version is generated server-side after announcement anyway.

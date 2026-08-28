@@ -256,8 +256,11 @@ preview and pressed Submit himself.
 contact in 600 rollouts. Fixed in the tex, the bundle rebuilt, and a new
 `scripts/audit_paper3_numbers.py` now cross-checks every sourceable table
 cell against its JSON (it reproduces the bug when re-injected). No
-headline claim moves. **Open decision for Javier: unsubmit-and-replace
-before announcement, or announce v1 and post a v2.**
+headline claim moves. Javier chose unsubmit-and-replace: done the same
+day, corrected `main.tex` uploaded, arXiv recompiled SUCCEEDED (the fixed
+row verified in the rendered PDF), metadata/categories/licence intact,
+**resubmitted** — so the announcement slips from the Sunday 30 Aug 20:00 ET
+slot to the next cycle.
 
 ## Editorial cycle (2026-08-28, after the mathematical one closed)
 
