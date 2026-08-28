@@ -354,3 +354,21 @@ would remain only modulo the recorded archival-URL/environment-lock
 TODO." Findings across rounds: 17 → 10 → 5 → 4 (this round's four all
 against text introduced by round 3's own repairs; the structural sweep
 found nothing new). The review cycle CONVERGES here.
+
+# Round 5 (2026-08-28, final verification)
+
+Same reviewer and brief (verify the four round-4 repairs; issue the final
+verdict).
+
+**Reviewer's verdict (verbatim): "Final verdict: clean. No remaining
+BLOCKING, MAJOR, or MINOR defects found."** Per repair: (1) the sandwich
+genericity sentence matches THEORY.md's planar center-star-shaped
+setting, labels the rank condition measured, and uses the theorem's
+literal positive guarantee D⁻ − B⁺ > τ, invoking none of the upper-death
+hypotheses; (2) the drift wording reports only the observed imbalance
+with the variability caveat; (3) the Wilson provenance is correct —
+independent recomputation exactly matched every emitted value; (4) the
+intervention ledger is aligned. "The paper is submission-ready modulo
+the explicitly recorded public archival URL/environment lock TODO."
+
+**The review cycle is CLOSED**: 17 → 10 → 5 → 4-on-own-repairs → 0.
