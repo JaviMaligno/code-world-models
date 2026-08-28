@@ -251,6 +251,14 @@ BY 4.0; arXiv compile SUCCEEDED, 33 pages). Details and the
 post-announcement checklist: `ARXIV-SUBMISSION.md`. Javier reviewed the
 preview and pressed Submit himself.
 
+**One correction found AFTER submitting** (`CHANGELOG-corrections.md`):
+`tab:ndim` printed a censored zero at $r(6)$ where the JSON records 1
+contact in 600 rollouts. Fixed in the tex, the bundle rebuilt, and a new
+`scripts/audit_paper3_numbers.py` now cross-checks every sourceable table
+cell against its JSON (it reproduces the bug when re-injected). No
+headline claim moves. **Open decision for Javier: unsubmit-and-replace
+before announcement, or announce v1 and post a v2.**
+
 ## Editorial cycle (2026-08-28, after the mathematical one closed)
 
 A separate writing-quality review cycle (legibility, flow,

@@ -205,8 +205,11 @@ $\mathcal{R}$.
   (Section~\ref{sec:ndim}). On ShellField-$n$ the contact rarity collapses
   geometrically (measured factor $0.411$ per dimension; the exponential
   rate is proved under the isotropic action interface, and an explicit
-  $4h/(n\kappa^2)$ bound for the instrument's box thrust; contacts $1/600$
-  at $n = 4$, censored zeros at $n = 5, 6$), making mis-synthesis
+  $4h/(n\kappa^2)$ bound for the instrument's box thrust; contacts
+  $1/600$ at $n = 4$ and at $n = 6$, a censored zero at $n = 5$ ---
+  the $600$-rollout calibration is at its own resolution floor from
+  $n = 4$ on, and the rate above is measured on $10{,}000$ rollouts per
+  dimension), making mis-synthesis
   near-certain, while a competent vector planner is exploited at
   $\mathrm{play\_cost} \approx 1.0$ at \emph{every} $n \le 6$ --- rarity
   (synthesis axis) and reachability (play axis) are independent knobs, and
@@ -1794,7 +1797,7 @@ exploitable model.
 \toprule
 $n$ & 2 & 3 & 4 & 5 & 6 \\
 \midrule
-$r(n)$ & 0.0133 & 0.0033 & 0.0017 & $0^{\dagger}$ & $0^{\dagger}$ \\
+$r(n)$ & 0.0133 & 0.0033 & 0.0017 & $0^{\dagger}$ & 0.0017 \\
 $J$ truth-MPC & 16.92 & 15.55 & 14.26 & 12.96 & 11.31 \\
 $J$ random & 0.50 & 0.33 & 0.04 & 0.01 & 0.07 \\
 $\mathrm{pc}_{\mathrm{blind}}$ & 1.023 & 1.013 & 0.994 & 0.991 & 0.996 \\
@@ -1804,10 +1807,17 @@ blind contact & 1.0 & 1.0 & 1.0 & 1.0 & 1.0 \\
 \caption{The two axes are independent: rarity collapses with $n$
 (synthesis axis: mis-synthesis near-certain) while exploitation stays at
 full strength (play axis: the competent planner always reaches the shell).
-$600$ rollouts per cell,
-\texttt{results/continuous\_shellfield.json}; $^{\dagger}$censored ---
+Per row: $r(n)$ over $600$ rollouts per cell
+(\texttt{results/continuous\_shellfield.json}); the two $J$ rows from
+the navigation check (\texttt{results/continuous\_\allowbreak
+shellfield\_\allowbreak nav.json}, $20$ episodes); play cost and contact
+rate from the exploitation run
+(\texttt{results/continuous\_\allowbreak shellfield\_\allowbreak
+play.json}, $20$ episodes). $^{\dagger}$censored ---
 $0/600$ observed, the $600$ rollouts being independent samples within the
-cell, Wilson $95\%$ upper $6.4 \times 10^{-3}$.
+cell, Wilson $95\%$ upper $6.4 \times 10^{-3}$; at this rarity $600$
+rollouts no longer separate the cells, which is why the collapse rate is
+measured on the $10{,}000$-rollout cone sweep instead.
 $\mathrm{pc}_{\mathrm{blind}}$ with the axial-candidate planner (see
 ``Planner competence is a property of the action interface'' in the
 text).}
