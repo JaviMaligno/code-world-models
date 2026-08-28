@@ -45,3 +45,29 @@ problem is accumulation rather than lack of focus."
 | 24 | headings | MAJOR | all seven headings recast to quotable results (Setup / one passer / clincher / methods note / non-separating control / honest math ledger / sensor constant) |
 
 Linter zero after the pass; 33 pages, 0 overfull, 0 dangling refs.
+
+# Round E2 (2026-08-28, re-review of the E1 repairs)
+
+Verdict on the E1 repairs: 20 of 24 clean; the four seams below. Fresh
+judgments: E1 #18's PARTIAL upheld ("defensible ... reordering would not
+materially improve navigation"); E1 #23's PARTIAL split — tab:mechanism's
+interpretive opening legitimate, tab:closedring and tab:mitigation
+over-duplicated prose (and the mitigation glossary insertion had
+introduced a wrong row pointer). 10 findings: 2 MAJOR, 8 MINOR.
+
+## Triage (2026-08-28, same session — all 10 applied)
+
+| # | severity | disposition |
+|---|---|---|
+| 1 | MAJOR | abstract relative clause re-attached ("whose wrong β̂₁" pointed at the resolution limit, not the summary) |
+| 2 | MINOR | blind-reference paragraph deduplicated (the E1 repair had restated its own opening sentence) |
+| 3 | MINOR | tab:closedring caption reduced to glossary+unit+provenance; the Qwen refused-seed fact, which lived only in that caption, RELOCATED to the family-independence prose (contribution preservation) |
+| 4 | MAJOR | tab:mitigation caption: wrong "last two rows" pointer corrected to explicit row ranges (1–5 point fences, 6–7 nerve, final freedom patch); double nerve-fence definition and prose-duplicating interpretation removed (18.6/two-lessons facts verified present in prose/table) |
+| 5 | MINOR | the two new lead-ins no longer echoed by their opening sentences |
+| 6 | MINOR | cube-uniform "second ingredient" progression fixed (the corrected Gaussian comparison is the ingredient; the false clean form is named as false before use) |
+| 7 | MINOR | limitations roadmap now announces the closing normalization caveat |
+| 8 | MINOR | "in the pre-registration style of the discrete paper" dropped (no evidential content) |
+| 9 | MINOR | "A third candidate proof fails the same way" → the refuted condition stated directly |
+| 10 | MINOR | residual lab vocabulary: "formalization ledger"→"notes", "campaign configuration"→"synthesis configuration", "discovered from the committed campaigns rather than typed"→"enumerated automatically from the stored synthesis JSONs", "campaign JSON"→"result JSON" |
+
+Linter zero after the pass; 33 pages, 0 overfull, 0 dangling refs.

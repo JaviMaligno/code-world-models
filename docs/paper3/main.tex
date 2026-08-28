@@ -54,9 +54,10 @@ Betti number keeps it at full strength ($1.12$). Second, \textbf{repair is
 parameter-bound and sensor-bound}: from outside evidence no family recovers
 the region (superstitious point fits); from inside, models pose the right
 topology but cannot pin its parameters to the gate's precision --- and the
-persistent-homology summary that guides them has a measurable resolution
-limit, geometric rather than budgetary, whose wrong $\hat\beta_1$ the posed
-topology tracks instead of the truth.
+persistent-homology summary that guides them has a measurable,
+geometric rather than budgetary resolution limit, and the posed
+topology tracks that summary's wrong $\hat\beta_1$ rather than the
+truth.
 Third, \textbf{mitigation must match the dimension and direction of the
 model's error}: point distrust-fences, a zero-dimensional cover, fail
 against the one-dimensional closed boundary at their calibrated radius,
@@ -439,7 +440,7 @@ trajectory in the action sequence, and the $h$-step slice/union
 composition --- leaving only each application's coordinate computation.
 The item-by-item map, the modelling conventions, and the exact boundary of
 what remains measured are recorded in the repository's formalization
-ledger.
+notes.
 \end{remark}
 
 \begin{proposition}[wrong topology: unfalsifiable and harmless at $\gamma = 0$]
@@ -687,8 +688,8 @@ the argmax; the entering path passes from outside $r_{\mathrm{out}}$ to
 inside $r_0 < r_{\mathrm{in}}$ and Lemma~\ref{lem:crossing} places one of
 its steps in $A$. (RG) is \emph{checkable, not behavioral}: at the frozen
 defaults it holds with margin over the visited-state envelope and is
-verified numerically before every arm, in the pre-registration style of
-the discrete paper; (C) is logged. Measured: blind contact rate $1.0$ at
+verified numerically for every arm; (C) is logged. Measured: blind
+contact rate $1.0$ at
 every $\gamma$.
 \end{proof}
 
@@ -855,15 +856,14 @@ with a known class by construction (a hollow annulus, a filled disc, a
 half-plane, a velocity cap, a measure-zero trap, \ldots) must be labeled
 correctly before the classifier touches real artifacts.
 
-Two derived readings recur. \textbf{Blind-reference gates}: a terminal gate
-is only interpretable against the pure integrator's gate on the \emph{same}
-evidence (${\approx}0.999$ outside, $0.971$ inside) --- the empirical gate
+Two derived readings recur. \textbf{Blind-reference gates}: compare each
+terminal gate with the pure integrator's gate on the \emph{same}
+evidence (${\approx}0.999$ outside, $0.971$ inside). The empirical gate
 bands are: correct ${\approx}1.0$; blind ${\approx}0.97$; posed-but-%
-mis-parameterized hollow structures $0.5$--$0.9$; interior-filling
-structures $0.02$--$0.4$ (they freeze states the evidence shows moving). A
-posed region with wrong parameters scores far \emph{below} blind --- so a
-terminal gate is interpretable only relative to the blind reference: a
-lower mean gate can mean \emph{more} mode-posing, not less
+mis-parameterized hollow structures $0.5$--$0.9$; and interior-filling
+structures $0.02$--$0.4$, because they freeze states the evidence shows
+moving. A posed region with wrong parameters scores far \emph{below}
+blind, so a lower mean gate can mean \emph{more} mode-posing, not less
 (Section~\ref{sec:openring} shows this reversal live). \textbf{Per-patch
 coverage}: the same mask measures whether an artifact encodes a
 \emph{specific} region (e.g., the seen versus unseen patch of the companion
@@ -887,22 +887,14 @@ D$_{\mathrm{mi}}$ & tda / inside  & 0/20 & 20 & 0.971 & disc 5, loop 5, arc 5, b
 \bottomrule
 \end{tabular}
 \caption{GPT-5.x on the closed ring ($\gamma = 0$; lg = large, mi =
-mini; ``tda'' = the per-seed topological-data-analysis summary of the
-sample's own contact evidence, cell C/D's guidance; ``present'' counts
-mode-present training samples;
-the two sizes share seeds, so their samples --- and the mode-present counts
---- are identical by construction, not independent replications;
-\texttt{results/continuous\_synthesis\_ring2d\_\{mini,large\}\_gap0\{,\_pv-tda,-in\_pv-tda\}.json},
-the seed block as the unit). ``Blind
-ref'' is the pure integrator's gate on the same evidence: the interpretive
-baseline for terminal gates. Every gate pass in A--C is a mode-absent blind
-artifact (exploited at $\mathrm{play\_cost} \approx 1.12$) or a
-measure-zero point fit; the one D pass is the gauge-free complement form.
-Cross-family spot checks (3 seeds each): Qwen --- both mode-absent seeds
-certified blind and exploited at the same $1.116$, the mode-present seed
-refused by the gate; Claude (agent-relayed) --- same A-cell outcome
-bit-for-bit, and $3/3$ D-cell repairs via the same complement form as the
-GPT passer.}
+mini). ``tda'' denotes the per-seed topological-data-analysis summary
+used as guidance in cells C and D; ``present'' counts mode-present
+training samples; ``blind ref'' is the pure integrator's gate on the
+same evidence. The two sizes share seeds, so their samples and
+mode-present counts are identical by construction, not independent
+replications.
+\texttt{results/continuous\_synthesis\_ring2d\_\{mini,large\}\_gap0\{,\_pv-tda,-in\_pv-tda\}.json};
+unit: seed block.}
 \label{tab:closedring}
 \end{table}
 
@@ -914,8 +906,10 @@ blocks, the unit both sizes share) --- yielded a certified, fully
 mode-blind artifact, exploited at
 $\mathrm{play\_cost} \approx 1.12$ with contact rate $1.0$, in every
 family tested: GPT-5.x (both sizes, full arm $20/20$ clean in both), Qwen
-(Hugging Face router, spot check), and Claude (agent-relayed, spot
-check). The play
+(Hugging Face router, spot check: both mode-absent seeds certified blind
+and exploited at the same $1.116$, the mode-present seed refused by the
+gate), and Claude (agent-relayed, spot check: the same A-cell outcome
+bit-for-bit). The play
 number is bit-identical across families because the blind artifact is the
 same program: identifiability is a property of the sample, not the model
 --- the companion papers' law, now on a mode with an inside.
@@ -1263,25 +1257,18 @@ nerve fence, episodic & 0.5 & 0.999 & 0.957 & 1.00 & 2.0 \\
 \textbf{freedom patch} (inside, filled) & 0.5 & 1.769 & \textbf{0.029} & --- & 80 \\
 \bottomrule
 \end{tabular}
-\caption{Distrust-region replanning on the ring ($16$ paired MPC episodes
+\caption{Planner-side mitigation on the ring ($16$ paired MPC episodes
 per cell;
 \texttt{results/continuous\_mitigation\_ring\{,\_eps1,\_eps2,\_nerve\}.json}
-and \texttt{results/continuous\_ring2d\_optimism.json}, the paired episode
-as the unit). $\mathrm{pc}_{\mathrm{model}}$/$\mathrm{pc}_{\mathrm{mitigated}}$
-are \texttt{play\_cost} before/under the defense; a \emph{nerve} fence
-links violations into tangentially-extended segments; a \emph{freedom
-patch} locally un-freezes imagination where the model was refuted as too
-pessimistic. Point fences --- the defense that collapsed the patch
-exploitation --- do \emph{nothing} at their calibrated radius, partially
-relieve only at a radius of the geometry's own scale, and are exactly inert
-against the invented mode while firing constantly ($18.6$ fences per
-episode, $\mathrm{pc}$ unchanged to three decimals). The hidden-channel row
-is identical to the closed ring, as Section~\ref{sec:mechanism} predicts.
-The last two rows are the constructive turn: a \emph{nerve} fence
-(violations linked into tangentially-extended segments) still fails
-episodically, and collapses the exploitation once fences \emph{persist}
-across episodes --- two lessons total (episode 1), truth-equal returns ever
-after.}
+and \texttt{results/continuous\_ring2d\_optimism.json}; unit: paired
+episode). $\mathrm{pc}_{\mathrm{model}}$ and
+$\mathrm{pc}_{\mathrm{mitigated}}$ are \texttt{play\_cost} before and
+under the defense. A \emph{nerve fence} links violations into
+tangentially extended segments; a \emph{freedom patch} locally
+unfreezes imagination where the model was refuted as too pessimistic.
+Rows 1--5 use point fences, rows 6--7 compare episodic and persistent
+nerve fences, and the final row applies freedom patching to the
+inside-start filled model.}
 \label{tab:mitigation}
 \end{table}
 
@@ -1460,8 +1447,7 @@ proved undecided band ($\gamma = 1.8$ boundary, subsampling-gap
 lottery).
 
 \paragraph{More evidence can strengthen the wrong topological report.}
-More evidence is counterproductive at the
-boundary: at $\gamma = 1.8$ the false-loop rate \emph{rises} from $1/5$
+At $\gamma = 1.8$ the false-loop rate \emph{rises} from $1/5$
 to $3/5$ seeds when the dose quadruples ($n = 5$ paired seeds ---
 directional, underpowered;
 \texttt{results/ring2d\_sensor\_resolution.json}, cap $90$). The per-seed
@@ -1533,8 +1519,7 @@ the interleaving-stability theorem, which the pair formulation makes
 routine, remains.
 
 \paragraph{Nested boundaries expose a separate resolution failure.}
-Nested boundaries
-break the detector a third way: with two concentric rings (the
+With two concentric rings (the
 multi-chamber instrument) the middle-chamber evidence cloud is two
 concentric circles ($\beta_1 = 2$), and the pre-registered detector
 returns a seed-dependent \emph{lottery} --- $\hat\beta_1 = 0$ on $9/20$
@@ -1740,13 +1725,13 @@ $\gamma^2 = (1-\kappa^2)/\kappa^2$, a single Chernoff bound with matched
 exponent gives $P \le E[e^{\lambda\gamma^2 Z_1^2}]\prod_{i\ge2}
 E[e^{-\lambda Z_i^2}]$, and optimizing $\lambda$ in the Gaussian regime
 returns $\sqrt{en/(1+\gamma^2)}\,(1-\kappa^2)^{(n-1)/2}$: the cap rate
-exactly, losing only $\sqrt n$. Two ingredients close it. The first is Hoeffding
-sub-Gaussianity for $Z_1$. The second would be that a Rademacher sum is
-no
-more concentrated near zero than its Gaussian counterpart --- a direct
-Gaussian comparison whose clean form is \emph{false} (equal weights
-leave an atom at the
-origin), and whose correct form we prove by writing
+exactly, losing only $\sqrt n$. Two ingredients close the bound. The
+first is Hoeffding
+sub-Gaussianity for $Z_1$. The second is a corrected Gaussian comparison
+for Rademacher sums: the clean claim that such a sum is no more
+concentrated near zero than its Gaussian counterpart is \emph{false}
+(equal weights leave an atom at the origin), but a usable form follows
+by writing
 $E[e^{-\lambda Z^2}] = E_g\prod_s \cos(\sqrt{2\lambda}\,g\,c_s)$ and
 splitting on $|g|$: since $|\cos x| \le e^{-x^2/2}$ for
 $|x| \le 1.778$,
@@ -1954,10 +1939,11 @@ artifact.
 \section{Boundary results and limitations}
 \label{sec:limitations}
 
-This section separates empirical scope limitations from three boundary
-results: the mechanism behind the play-cost tail, the strongest
-available direct-entry bound, and the detector-specific scope of the
-sensor conclusion.
+This section first states the empirical scope limitations, then gives
+three boundary analyses --- the mechanism behind the play-cost tail, the
+strongest available direct-entry bound, and the detector-specific scope
+of the sensor conclusion --- and closes with a normalization caveat at
+wide $\gamma$.
 
 \subsection{Empirical scope}
 
@@ -2081,11 +2067,9 @@ entry) are theorems only \emph{up to the funnel defect}
 (Corollary~\ref{cor:funneldefect}), which we bound by measurement
 ($17\times$ below the effect) rather than by proof. Unconditional
 pathwise monotonicity is false: seed $50543$ is an explicit
-counterexample, and the required pointwise estimate fails in the data
-($91/91$ CI-separated
-violations via a freeze-rescue effect). A third candidate proof fails
-the same
-way. Since freeze-rescue is caused by one modelling choice --- a contact
+counterexample, and freeze-rescue violations refute the required
+pointwise estimate in the data ($91/91$ CI-separated cases). The same
+effect refutes an alternative sufficient condition. Since freeze-rescue is caused by one modelling choice --- a contact
 zeroes the velocity --- a variant in which contact blocks the position
 but leaves the velocity updating freely would, if it made the ordering
 pathwise, isolate that choice as the sole obstruction. It does not:
@@ -2250,10 +2234,10 @@ repository:
 \item aggregator: \texttt{ring2d\_open\_aggregate.py};
 \item ShellField-$n$ scripts and the behavioral audit
   (\texttt{ring2d\_artifact\_audit.py}, oracle self-tested);
-\item rarity calibration at every campaign configuration
+\item rarity calibration at every synthesis configuration
   (\texttt{ring2d\_rarity\_sweep.py}, $30{,}000$ rollouts per
-  configuration, configurations discovered from the committed campaigns
-  rather than typed);
+  configuration, the configurations enumerated automatically from the
+  stored synthesis JSONs);
 \item held-out re-scoring of every artifact on disjoint gate and
   evaluation blocks: \texttt{heldout\_\allowbreak gate\_\allowbreak
   audit.py}, ring2d scope (block disjointness proved by set intersection
@@ -2265,7 +2249,7 @@ repository:
 \end{itemize}
 Every seed, checkpoint, and classified artifact is committed; long runs
 checkpoint per unit and resume exactly; paired seeds (common random
-numbers) are used for every play contrast. Each campaign JSON embeds its
+numbers) are used for every play contrast. Each result JSON embeds its
 complete invocation (the harness's full argument namespace, under
 \texttt{params}) and the serving identity (\texttt{model} records the
 deployment name, created to equal the model version, so provenance is in
