@@ -245,6 +245,18 @@ review-hardening branch into main). Secret scan before anything: no
 
 Nothing stands between the paper and submission.
 
+## Editorial cycle (2026-08-28, after the mathematical one closed)
+
+A separate writing-quality review cycle (legibility, flow,
+paper-vs-process; ledger `docs/paper3/REVIEW-EDITORIAL.md`) ran to
+convergence on Javier's ask: E1 24 findings (14 MAJOR) → E2 10 (all on
+E1's repairs) → E3 clean bill + 3 mechanical copy-edits. Verdict
+verbatim: "Submission-ready after these three mechanical copy-edits" —
+applied same session. No claim's quantifier, scope, or evidence label
+moved; no scientific content deleted. The `paper3-v1` archival tag was
+moved to the post-editorial state (it is the snapshot the tex itself
+cites).
+
 - **The rarity decision taken and pinned: r, the firing rarity** — the
   audit's whole event algebra is contact-based, r_int is Lemma 2's curve and
   cannot reveal blindness to a gate; it rides along as `r_interior`,

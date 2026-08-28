@@ -71,3 +71,18 @@ introduced a wrong row pointer). 10 findings: 2 MAJOR, 8 MINOR.
 | 10 | MINOR | residual lab vocabulary: "formalization ledger"→"notes", "campaign configuration"→"synthesis configuration", "discovered from the committed campaigns rather than typed"→"enumerated automatically from the stored synthesis JSONs", "campaign JSON"→"result JSON" |
 
 Linter zero after the pass; 33 pages, 0 overfull, 0 dangling refs.
+
+# Round E3 (2026-08-28, convergence check)
+
+**Task 1 verdict (verbatim): "clean bill. All ten E2 repairs are
+correctly in place and introduce no new seam."** The mitigation
+caption's row ranges verified against the actual rows; the relocated
+Qwen fact confirmed in prose. Task 2 (copy-editor sweep): three MINOR
+mechanical findings — the theory setup's verbless list ("Consider..."
+added), the programming-style ranges $\{2..6\}$/$2..5$ →
+$\{2,\ldots,6\}$/$2,\ldots,5$, and a missing comma after "i.e." — all
+applied same session.
+
+**Verdict (verbatim): "Submission-ready after these three mechanical
+copy-edits."** Editorial findings across rounds: 24 → 10 → 3 mechanical.
+**The editorial cycle is CLOSED.**

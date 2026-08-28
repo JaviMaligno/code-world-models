@@ -295,8 +295,9 @@ ring --- where the extreme case is a theorem --- and shows how the
 channel width reopens identifiability from an exact zero.
 
 \paragraph{Reachable queries define the gate's equivalence class.}
-Deterministic dynamics $f : S \times A \to S$ on
-$S \subseteq \mathbb{R}^d$, initial distribution $\mu_0$, episode horizon
+Consider deterministic dynamics $f : S \times A \to S$ on
+$S \subseteq \mathbb{R}^d$, an initial distribution $\mu_0$, an episode
+horizon
 $h$, and a \emph{gate policy} $\rho$ selecting actions (uniform-random in
 our gates, though nothing below needs that). The \textbf{reachable query
 set} $\mathcal{R}(f, \mu_0, \rho, h)$ is the set of pairs $(s, a)$ at
@@ -1598,13 +1599,13 @@ sensor's resolving power at the operative sampling density.
 \paragraph{The same law governs the sensor directly in $n$ dimensions.} On
 ShellField-$n$ (Section~\ref{sec:ndim}), persistent homology of the
 \emph{outside} contact cloud recovers $\beta_{n-1}$ at \emph{no}
-$n \in \{2..6\}$ --- at low $n$ the cloud is plentiful but traces only
+$n \in \{2,\ldots,6\}$ --- at low $n$ the cloud is plentiful but traces only
 the reachable arc (signal clarity), at high $n$ it starves as $r(n)$
 collapses ($0.18\times$ down to $0.002\times$ the
 Niyogi--Smale--Weinberger (NSW) covering density
 \citep{niyogi2008finding},
 computed on the points the detector actually receives) --- while the
-\emph{inside} cloud recovers it cleanly at $n = 2..5$. The density
+\emph{inside} cloud recovers it cleanly at $n = 2,\ldots,5$. The density
 bookkeeping matters: inside clouds \emph{offer} $10$--$2700\times$ the
 NSW floor in raw trajectory contacts, but the detector consumes a
 deduplicated subsample capped at $300$ points --- $24\times$ the floor at
@@ -2084,7 +2085,7 @@ carries the tube's factor $\rho^{h}$ and is some ninety orders of
 magnitude below the measured value. The tube is the wrong instrument, and
 measurement says why: the direct-entry probability is a clean power law in
 the channel width (log-log slope $1.72$ over $\gamma \in [0.05, 0.4]$,
-$200{,}000$ rollouts per gap), i.e. a hitting probability rather than a
+$200{,}000$ rollouts per gap), i.e., a hitting probability rather than a
 tube probability. The plant explains it. In free flight the endpoint
 depends on each action with sensitivity
 $\mathrm{gain}\,\pi\,dt^{2}(1-\beta^{m})/(1-\beta)$ at lag $m$, rising
