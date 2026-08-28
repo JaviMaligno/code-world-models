@@ -323,3 +323,34 @@ matches its JSON; the strict claims audit reports paper 3 clean.
 All five repaired in the same session; linter zero, LaTeX green. The full
 round-3 transcript (~950 KB) lives outside the repo; the findings above
 are the complete list.
+
+# Round 4 (2026-08-28, convergence check on the round-3 repairs)
+
+Same reviewer and brief (round-4 brief targeted the five round-3 repairs
+plus one final structural sweep). First attempt was cut off by the Codex
+workspace spend cap; re-run complete under a fresh account.
+
+**Reviewer's verdict: no BLOCKING defects, one MAJOR and three MINOR —
+all four on the round-3 repairs themselves; "the final structural sweep
+found nothing else new."** Clean (verbatim): the Clopper–Pearson
+implementation is correct for 9/11 ([0.4822441, 0.9771688], so the tex's
+[0.48, 0.98] and "spanning 1/2" are correct); the other Wilson values
+match numerically; the "we expect, but do not prove" wording is honest;
+the strict claims audit reports paper 3 clean; the H-I3 [SUPERSEDED]
+annotation is coherent.
+
+## Round-4 triage (2026-08-28, same session)
+
+| # | severity | verdict | disposition |
+|---|---|---|---|
+| 1 | MAJOR | CONFIRMED | "for Rips-type detectors the flip is forced by the barcode sandwich" exceeded the sandwich's hypotheses (planar center-star-shaped clouds; class-to-bar rank condition measured, not assumed; non-winding exclusion unproved). Re-scoped to the sandwich's own hypotheses with its explicit condition √3·r_min − 2·r_max·sin(Δθ_max/2) > τ and the rank condition labeled measured |
+| 2 | MINOR | CONFIRMED | "balanced, so no *directional* drift" still inferred a population absence from a null; now "no *observed* directional imbalance", with the variability caveat kept |
+| 3 | MINOR | CONFIRMED | `ring2d_zero_wilson.py` read `r.get("episodes", 16)` but the rows store `n_episodes` — every lookup silently fell back to the literal 16 (numerically identical, provenance broken). Fixed to `r["n_episodes"]`, JSON re-emitted (same three uppers) |
+| 4 | MINOR | CONFIRMED | INTERVENTION-DESIGN.md's RESULT ledger still said "no deployment drift"; aligned with the tex's repaired reading (no observed directional imbalance; generation variability not excluded, absorbed by the paired null) |
+
+All four repaired in the same session; linter zero, LaTeX green.
+Reviewer's own closing line: after these repairs, "submission-readiness
+would remain only modulo the recorded archival-URL/environment-lock
+TODO." Findings across rounds: 17 → 10 → 5 → 4 (this round's four all
+against text introduced by round 3's own repairs; the structural sweep
+found nothing new). The review cycle CONVERGES here.

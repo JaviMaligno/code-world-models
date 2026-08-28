@@ -222,15 +222,17 @@ overgeneralization, the drift sentence claiming stability) + 3 MINOR
 hand-derived) — all five repaired same session (REVIEW-CODEX.md round-3
 triage). Findings are converging: 17 → 10 → 5, none blocking.
 
-Round 4 (convergence check on the round-3 repairs) LAUNCHED and cut off
-mid-review by the Codex workspace SPEND CAP (86.6k tokens in; before
-the cut it had independently reproduced the Clopper–Pearson interval
-[0.4822, 0.9772] and the linter's clean report — no verdict emitted).
-Re-running it needs the cap raised, Javier's call.
+Round 4 (convergence check) ran complete after Javier switched Codex
+accounts (first attempt hit the workspace spend cap): NO blocking, 1
+MAJOR + 3 MINOR, all four against text round 3's own repairs introduced,
+and "the final structural sweep found nothing else new" — all four
+repaired same session (REVIEW-CODEX.md round-4 triage). The reviewer's
+closing line: after these repairs, submission-readiness remains only
+modulo the archival-URL/environment-lock TODO. Findings across rounds:
+17 → 10 → 5 → 4-on-own-repairs. **The review cycle CONVERGES here.**
 
-Still open: Codex round 4 re-run once the spend cap allows, and
-round-2 PARTIAL A#11 (environment lock / archival URL / checksum
-manifest) as a submission-time TODO on Javier's call.
+Still open: round-2 PARTIAL A#11 (environment lock / archival URL /
+checksum manifest) as a submission-time TODO on Javier's call.
 
 - **The rarity decision taken and pinned: r, the firing rarity** — the
   audit's whole event algebra is contact-based, r_int is Lemma 2's curve and

@@ -29,7 +29,7 @@ def main() -> None:
     denominators = {
         "rollouts": sorted({r["rollouts"] for r in rows}),
         "transitions": sorted({r["transitions"] for r in rows}),
-        "episodes": sorted({r.get("episodes", 16) for r in rows}),
+        "episodes": sorted({r["n_episodes"] for r in rows}),
     }
     for key, vals in denominators.items():
         assert len(vals) == 1, f"non-uniform {key}: {vals}"

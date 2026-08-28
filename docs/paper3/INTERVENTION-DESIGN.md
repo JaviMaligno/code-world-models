@@ -118,8 +118,10 @@ analysis script, all 60 pairs valid (claims opposite by construction,
   (folded into `main.tex` — contributions bullet and Section "The
   evidence sensor", same session).
 - **Drift check (honest-now vs honest-committed):** 9 discordant, 4:5,
-  p = 1.0 — no deployment drift; the contemporaneous control behaves
-  like the committed arm (closed counts 4 vs 5 of 60).
+  p = 1.0 — no observed directional imbalance (closed counts 4 vs 5 of
+  60). Per-seed classification is stochastic across the two honest
+  runs; the comparison cannot rule out generation variability as such,
+  which is exactly the noise the primary test's paired null absorbs.
 - **Secondary (gate passage, flip vs control):** 0 discordant pairs —
   passage does not move under the flip at this cell (0/60 both arms;
   the committed arm had 1/60).
