@@ -226,13 +226,17 @@ Round 4 (convergence check) ran complete after Javier switched Codex
 accounts (first attempt hit the workspace spend cap): NO blocking, 1
 MAJOR + 3 MINOR, all four against text round 3's own repairs introduced,
 and "the final structural sweep found nothing else new" — all four
-repaired same session (REVIEW-CODEX.md round-4 triage). The reviewer's
-closing line: after these repairs, submission-readiness remains only
-modulo the archival-URL/environment-lock TODO. Findings across rounds:
-17 → 10 → 5 → 4-on-own-repairs. **The review cycle CONVERGES here.**
+repaired same session (REVIEW-CODEX.md round-4 triage). Round 5 (final
+verification, 2026-08-28) came back **CLEAN — zero defects of any
+severity**, all four round-4 repairs verified exact (Wilson values
+recomputed independently), verdict verbatim: "submission-ready modulo
+the explicitly recorded public archival URL/environment lock TODO."
+Findings across rounds: 17 → 10 → 5 → 4-on-own-repairs → 0. **The
+review cycle is CLOSED.**
 
 Still open: round-2 PARTIAL A#11 (environment lock / archival URL /
-checksum manifest) as a submission-time TODO on Javier's call.
+checksum manifest) as a submission-time TODO on Javier's call — the
+only item between the paper and submission.
 
 - **The rarity decision taken and pinned: r, the firing rarity** — the
   audit's whole event algebra is contact-based, r_int is Lemma 2's curve and
