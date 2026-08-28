@@ -245,6 +245,12 @@ review-hardening branch into main). Secret scan before anything: no
 
 Nothing stands between the paper and submission.
 
+**SUBMITTED to arXiv 2026-08-28** as `submit/8006768` (cs.LG primary,
+cs.AI cross-list — eess.SY not possible from this account's groups; CC
+BY 4.0; arXiv compile SUCCEEDED, 33 pages). Details and the
+post-announcement checklist: `ARXIV-SUBMISSION.md`. Javier reviewed the
+preview and pressed Submit himself.
+
 ## Editorial cycle (2026-08-28, after the mathematical one closed)
 
 A separate writing-quality review cycle (legibility, flow,
