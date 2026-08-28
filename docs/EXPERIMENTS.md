@@ -1,5 +1,281 @@
 # Experiments Log
 
+## Thin-neck LLM synthesis: no family writes the neck, and the audit absorbs the cells (2026-08-24, Azure mini + large)
+
+The one Azure decision STATE.md left open, taken and run: six campaigns of
+`continuous_danger_synthesis.py {mini,large} 20 --instrument ring2d --neck
+{0.1, 0.2, 0.4} --arm incomplete --keep-history` (gpt-5.4-mini ~31/20/19 min,
+gpt-5.4 ~52/21/21 min) ->
+`results/continuous_synthesis_ring2d_{mini,large}_gap0-nk{0.1,0.2,0.4}.json`,
+scanned by `scripts/ring2d_neck_synthesis_scan.py` ->
+`results/ring2d_neck_synthesis_scan.json` (the counts below are its output,
+not hand tallies). The
+campaign's question: does a model ever WRITE a variable-thickness band from
+evidence that contains leap events? The knob entered the synthesis script for
+this run (`--neck/--neck-channel`, KNOB suffix `-nk{...}` matching `env_key`'s
+existing branch); the full arm is REFUSED at `--neck` until
+`_ring2d_rules_text` grows a variable-thickness clause, so the contract can
+never describe a uniform band while the truth dips.
+
+1. **No, 0/120 — both sizes, and not for lack of evidence.** No artifact in
+   any cell carries an angular term of any kind (scan regex over
+   atan2/theta/angle/sector/arc/angular, word-bounded), and none poses even a
+   UNIFORM two-sided band (0/120 band conditions): the conditionals that do
+   appear are one-sided discs at the reward radius 2.0, velocity/box
+   thresholds, one reward-level freeze, and three exact-coordinate point
+   traps. 57/120 artifacts are pure free flight. The bottleneck the gap sweep
+   measured (parameters, not structure) does not even arise here: the loop
+   never reaches the structure.
+2. **Two seed blocks at neck 0.1 saw the leak and no artifact wrote it.**
+   Seeds 170000 and 180000 carry 16 and 12 interior-landing transitions in
+   D_train (expected seeds with >=1 leap at r_int = 0.00203: ~1.6 of 20; 2
+   observed; the sizes share their blocks by construction, so both models saw
+   the same leaps). mini answered with a reward-threshold freeze (gate 0.16)
+   and free flight (0.999); large with free flight twice (0.99, 0.999).
+   Evidence of the metric hole does not buy a metric model — the dose-curve
+   reading on the neck axis, now in two families.
+3. **A second exact-equality gate hack, this one caught at synthesis time.**
+   Gate passes are 9/7/7 (mini) and 8/7/7 (large) of 20, every one
+   wall-blind (45/45). At mini neck 0.1, eight are the (1-r)^N event
+   (training sample missed the mode); the ninth — seed 140000 — reached
+   in-sample 1.0 with the mode PRESENT by freezing on `==` equality with its
+   sample's single contact state, all four floats. Same family as the
+   audit's mini_gap0.6-hid seed 10000 (2 ULPs), but produced on THIS
+   platform, so the equality holds and the in-sample gate accepted it. The
+   held-out audit rejects it, `mode_only` on both gates. Two more point
+   traps (mini nk0.4 seeds 70000/110000, 1e-12 snaps and a bare `==`) stall
+   at gate 0.999 without passing.
+4. **The audit absorbs the cells without strain: 37/37.** Re-run resumed
+   (`--instruments ring2d --glob "continuous_synthesis_ring2d_*.json"`), now
+   783 artifacts / 37 campaigns / 500 blocks. The six new cells: 2x2
+   contingency exact (the incomplete-arm restriction grows 112/112 ->
+   156/156 over 91 blocks, still zero off-diagonal), two-factor prediction
+   inside Wilson95 at all six (mini: measured 0.15 vs predicted 0.159 at
+   nk0.1, 0.10 vs 0.134, 0.05 vs 0.126; large: 0.15/0.10/0.05 measured
+   against the same predictions and intervals — the sizes share blocks), r
+   from `results/ring2d_thin_neck.json` via the new R_SOURCES entries,
+   drift-checked. Total regressions 121, all mode_only, the memorizer among
+   them.
+
+The synthesis-side reading in one line: the thin neck is invisible to the
+loop at every level — it does not pose the band the neck is cut into, so the
+metric question (would it write the dip?) never becomes live. The
+certified-and-costly regime of the CPU sweep therefore stands with an LLM
+witness in both families: the artifacts that pass do so blind, by the same
+two-factor law as everywhere else. Folded into the tex (Section "The metric
+converse", paragraph "The loop does not write the neck"), whose held-out
+paragraph now carries 783/37/156/91/214/121.
+
+## Thin-neck ring: the metric reopening, run (2026-08-24, CPU)
+
+`scripts/ring2d_thin_neck.py` -> `results/ring2d_thin_neck.json`. 13 cells
+(neck in {0.1..1.2} x {facing, hidden} + closed control), 30k rollouts + 16
+paired MPC episodes each, 742 s. Design and pre-registered readings in
+`docs/paper3/THIN-NECK-DESIGN.md`, committed BEFORE this ran (c369bb7); the
+local crossing lemma behind the knob is proved in Lean
+(`freeze_stays_outside_of_superset`: interior entry needs a single step
+longer than the neck; max step 1.0).
+
+| neck (facing) | r | r_int (entries, clean) | dis_fill | pc_blind | pc_fill |
+|---|---|---|---|---|---|
+| closed | 0.03123 | 0 | 0/320k | 0.999 | 0.000 |
+| 0.1 | 0.02273 | 0.00203 (61, 60) | 139/320k | **0.451** | **0.594** |
+| 0.2 | 0.02480 | 0.00017 (5, 5) | 0/320k | 0.962 | **0.573** |
+| 0.4 | 0.02553 | 0 | 0/320k | 0.971 | **0.500** |
+| 0.6 | 0.02623 | 0 | 0/320k | 0.962 | 0.000 |
+| 0.8 | 0.02693 | 0 | 0/320k | 0.976 | 0.000 |
+| 1.2 | 0.02920 | 0 | 0/320k | 0.993 | 0.000 |
+
+Readings against the pre-registration:
+
+1. **H-T1 CONFIRMED, event-by-event.** Random-gate entries only at
+   neck <= 0.2; all 66 recorded leaps satisfy `step > neck` from
+   `d_prev > r_in + neck` (0 arithmetic violations) -- the Lean lemma's
+   hypothesis checked per event, not only as a rate. At neck = 0.1 the
+   entries are CLEAN leaps (60/61 with no prior contact), median entering
+   step 0.203, median speed 2.03. neck = 1.2 is the exact-zero side.
+2. **H-T2 PARTIALLY WRONG, in an informative direction.** r is NOT ~= the
+   closed ring's: facing r drops to 0.0227-0.0292, rising monotonically back
+   toward 0.0312 as the neck thickens -- the dip removes contact surface
+   exactly where the corridor delivers contacts. The pre-registration
+   predicted ~=; the measured drop is 8-27% and the Wilson intervals exclude
+   the closed value through neck 0.8.
+3. **H-T3 resolves to a THRESHOLD, not a curve: the planner leaks only at
+   neck = 0.1.** pc_blind collapses to 0.451 (blind contact rate 0.56: the
+   blind planner escapes through the neck in half the paired episodes) and
+   recovers to 0.96-0.99 from neck 0.2 up. The metric hole behaves like the
+   topological channel for play at the thinnest neck only -- the realized
+   approach lands in a 0.2-wide band too often to thread it, and one landing
+   pins the episode (freeze zeroes v; from rest the next step is 0.03).
+4. **H-T4 CONFIRMED to the last bit.** Every hidden-neck cell reproduces the
+   closed ring EXACTLY (r = 0.03123333... identical float, 0 entries,
+   pc 0.999/0.000, dis_fill 0/320k) across all six thicknesses: reach, not
+   geometry, for the third time on this instrument.
+5. **H-T5's conditional fires: certified-and-costly on the metric axis.**
+   The filled-disc model disagrees with truth on a sampled transition only
+   via a leap: 139/320,000 transitions at neck 0.1, 0/320,000 at every other
+   cell (censored zeros, Wilson95 upper ~1.2e-5). Yet pc_fill =
+   0.594/0.573/0.500 at
+   neck 0.1/0.2/0.4 (fill contact rate 0.00 -- the cost is plan divergence,
+   not contact): at neck in {0.2, 0.4} the wrong topology is
+   **behaviorally certified in 320k sampled transitions and 30k rollouts
+   while costing half the play margin**, because the PLANNER's imagined
+   candidates leap (imagination reaches speed > 4) where the random gate's
+   rollouts never do (arrival speeds ~1.5). That is the certified-region /
+   query-mass gap of paper 2 reproduced on a topology knob held FIXED --
+   the gate certifies where it looks, the planner leaps where it plans.
+
+The pinned witness (deterministic leap at neck 0.5, blocked at >= 1.0) is in
+`tests/test_ring2d_thin_neck.py`; note the RANDOM gate measured 0 entries at
+neck in [0.4, 0.8] where the witness proves reachability -- those zeros are
+censored, and the design doc said which side each zero would fall on before
+the run.
+
+## ring2d held-out audit: 663 artifacts enter, and the two-factor law holds at 31/31 campaigns (2026-08-24, CPU)
+
+The rarity sweep's open items are closed. `results/heldout_gate_audit_ring2d.json`
+(complete: 663 artifacts, 31 campaigns, 21 env_keys, 440 distinct (env, seed)
+blocks), produced by `scripts/heldout_gate_audit.py --instruments ring2d` --
+the same script and scoring as paper 2's audit, whose committed output is
+untouched (its default scope cannot widen: a non-default `--instruments` must
+name its own `--out`).
+
+**The decision: the rarity is r, the FIRING rarity, at every configuration.**
+The audit's event algebra is contact-based end to end: `mode_presence` counts
+`t["contact"]`, the contingency's rows are "D_gate contains a mode contact",
+and `(1-r)^N` is the probability a sample misses the MODE -- the same event
+every pre-existing entry's `kind: "firing"` names. r_int is a different random
+variable (Lemma 2's curve; entering the interior through the channel touches
+no mode, so it cannot reveal blindness to a gate). It rides along in every
+entry as `r_interior` with its own source path, drift-checked, as provenance
+rather than argument. The inside-start cells do NOT get a different quantity:
+their r of 0.49-0.76 makes the product degenerate rather than small, which the
+entries state -- and the measurement below confirms -- instead of substituting
+a variable (their r_int = 1.0 identically would be no rarity either). So
+reading 2's "the answer may differ between outside and inside" resolved to:
+same argument, different REGIME, and the audit reports the regime.
+
+**Plumbing.** `env_key` gets its ring2d branch: `ring2d_<KNOB>` with the
+synthesis script's own knob string over all five stream fields, plus `_n{80,
+160,320}` for the dose campaigns (21 keys, 31 campaigns; the other
+instruments' argparse defaults riding in `params` cannot touch it).
+`env_from_params` mirrors the synthesis construction exactly; the reproduced
+D_train returns committed artifacts' stored gate scores bit-for-bit (tested,
+and re-verified on the first 3 artifacts of every campaign during the audit).
+21 `R_SOURCES` entries read `results/ring2d_rarity_sweep.json`;
+`verify_r_sources` re-reads r AND r_interior and refuses on drift. The
+disjointness proof now covers the longest in-scope training block (320, not
+40).
+
+**(a) The 2x2 contingency is EXACT on the incomplete arm.** Restricted to the
+112 incomplete-arm artifacts whose training sample missed the mode: held-out
+acceptance coincides with "D_gate also missed the mode" in 112/112 -- 36
+gate-miss/accepted, 76 gate-hit/rejected, zero off-diagonal. Acceptance of a
+blind artifact is exactly the event "the independent gate drew no contact".
+
+**(b) The two-factor prediction (1-r)^(N_train+N_gate) sits inside the Wilson
+95% interval at 31 of 31 campaigns.** Outside cells run from measured 0.050
+against predicted 0.079 (gap0, both sizes) through 0.300 vs 0.216 (gap0.6) to
+0.550 vs 0.475 (gap1.2, where r has fallen to 0.0093). The hidden-channel
+campaigns are audited under the closed ring's r (their own entries, identical
+to five decimals) and land inside as well -- hidden≡closed carries from the
+rarity column into the audit. The inside-start cells are the predicted
+degeneracy measured: predictions of 1e-24 down to 1e-222 (dose N320), measured
+0.000 everywhere, 0 accepted-and-blind artifacts in 340.
+
+**(c) 88 regressions (in-sample pass, independent gate fail), every one
+mode_only.** 76 of the 88 trained on mode-missing samples -- the acceptance
+was a property of the training draw, not the artifact, and the independent
+gate's own draw contained the contact. The 24 REVERSE regressions (in-sample
+refused, held-out accepts) concentrate in the small-gap outside cells: the
+same law seen from the other side (this time the independent gate drew no
+contact). Together they are the paper-2 finding on a sixth instrument:
+gate outcomes are sample events, not artifact properties.
+
+**(d) Out-of-sample exactness splits by REGIME, not by knob.** Off-mode eval
+failures: 237/320 inside-start artifacts vs 87/343 outside-start. The
+loop-evidence regime does not produce clean-integrator-plus-missing-mode
+artifacts; it produces globally wrong models (eval accuracies down to 0.05),
+which is a different failure class from the blindness the danger law is about
+-- worth its own sentence wherever the inside cells are written up.
+
+**A 2-ULP-wide gate hack, and the one reproduction mismatch, explained.** The
+train-reproduction check flagged exactly one artifact in 663:
+`mini_gap0.6-hid` seed 10000 stored gate 1.0, recomputed 3199/3200. Its code
+is a textual point trap -- it hardcodes the full float coordinates of its
+training sample's single contact state and freezes ONLY on exact `==`
+equality. The hardcoded y is 2 ULPs (4.4e-16) from what this platform's libm
+produces along the same trajectory, so the trap fired on the machine that ran
+the campaign and misses here: the stored 1.0 is platform-contingent to the
+last bit of `sin`/`cos`. No held-out conclusion moves (D_gate's contact states
+are different floats entirely, so the trap misses them on every platform, and
+the artifact is rejected as the blind artifact it behaviorally is). Pinned as
+the ONLY tolerated mismatch in `test_committed_ring2d_audit_json_is_self_
+consistent`; any other mismatch fails CI. Fourth member of the portability
+family, and the first one where the fragility is the ARTIFACT's own gate-hack
+rather than our harness.
+
+## ring2d rarity sweep: r and r_int at every configuration the campaigns used (2026-08-24, CPU)
+
+`scripts/ring2d_rarity_sweep.py` -> `results/ring2d_rarity_sweep.json`. 18
+distinct configurations discovered from `results/` (not typed), 663 artifacts,
+30,000 rollouts each, 68s on 4 workers. 30k matches what paper 2's own
+`R_SOURCES` entries were measured with; the loop is the one from
+`continuous_ring2d.py` including its seed offset, and reproduces that file's
+three gap rows to five decimals (0.041667 / 0.028333 / 0.015 at 600 rollouts).
+
+**Why it was run.** `heldout_gate_audit.py` refuses a campaign whose env_key has
+no calibrated rarity, so paper 3's 663 artifacts are outside the held-out audit.
+This measures the input. It deliberately does NOT write `heldout.R_SOURCES` --
+see "what is still open" below.
+
+| knob | r | r_int | knob | r | r_int |
+|---|---|---|---|---|---|
+| gap0 | 0.03123 | **0** | gap0-in | 0.75773 | 1.0 |
+| gap0.05 | 0.03103 | 0.00010 | gap0.2-in | 0.74837 | 1.0 |
+| gap0.1 | 0.03040 | 0.00040 | gap0.6-in | 0.70583 | 1.0 |
+| gap0.2 | 0.02847 | 0.00163 | gap1.2-in | 0.63303 | 1.0 |
+| gap0.4 | 0.02373 | 0.00390 | gap1.8-in | 0.56090 | 1.0 |
+| gap0.6 | 0.01897 | 0.00617 | gap2.4-in | 0.48617 | 1.0 |
+| gap1.2 | 0.00927 | 0.00990 | sqgap0-in | 0.69717 | 1.0 |
+| sqgap0 | 0.04733 | **0** | gap0-m2-mid | 0.89533 | **0** |
+| gap0.6-hid | 0.03123 | **0** | gap1.2-hid | 0.03123 | **0** |
+
+Wilson intervals in the JSON. Three readings, none of them assumed beforehand:
+
+1. **A hidden channel is indistinguishable from a closed ring, to five
+   decimals.** `gap0.6-hid` and `gap1.2-hid` both give r = 0.03123 with the SAME
+   interval as `gap0`, and 0 interior entries at 30k. The channel is there, on
+   the far side, and the rollout stream never finds it. Measured support for
+   danger being topology relative to REACH rather than topology as such -- the
+   open-ring arm's thesis, now visible in the rarity column itself.
+2. **The inside-start cells are not a rarity regime at all.** r runs 0.49-0.76
+   against the 0.011-0.15 of paper 2's instruments, and r_int is 1.0 by
+   construction (the start IS the interior). (1-r)^N at r = 0.76, N = 40 is
+   ~1e-25: the two-factor prediction is not small there, it is degenerate. Any
+   use of these numbers in a (1-r)^N argument has to say which quantity it means
+   and why, which is exactly why this script does not choose.
+3. **600 rollouts would have given the wrong qualitative answer for small
+   gaps.** At 600, gap0.05 and gap0.1 both showed 0 interior entries -- reading
+   as "interior unreachable". At 30k they show 3 and 12. Zero is a theorem only
+   at gap = 0 (Lemma 2); everywhere else it was a sample-size artifact.
+
+**What is still open before ring2d can be audited** (all three, not just the
+rarity) — **RESOLVED 2026-08-24, see the audit section above**:
+
+- `env_key` had NO ring2d branch: every configuration above fell through to
+  `cart_xwall8`, colliding with each other and with cart's campaigns on the key
+  the audit deduplicates and looks rarities up by -- the slab-vs-square bug
+  again, hidden only because `env_from_params` raises on ring2d first. That
+  fall-through now raises instead (2026-08-24); a real branch has to key on all
+  five stream fields (gap, channel, start, ring_norm, multi).
+- `env_from_params` needs its ring2d branch, mirroring the synthesis script's
+  construction exactly (`env_of` in the sweep script is that mirror).
+- **The modelling choice, which is the actual decision: r or r_int?** Paper 3
+  treats them as two different curves, r is the firing rarity the danger law
+  takes as its argument, r_int is what Lemma 2 makes 0 at gap = 0. Reading 2
+  says the answer may also differ between the outside cells and the inside ones.
+
 ## PAPER 2 — The last gap closed: a universal Jacobian, and the certificate's own irrelevance measured (2026-07-25, closing)
 
 Two gaps were left: the nonlinear analogue of the density argument, and the fact
@@ -2888,6 +3164,141 @@ independent of the dynamics**. Candidate: a familiar-dynamics game (synthesizes 
 gate 1.0) overlaid with an arbitrary, non-recallable masking rule — see
 RESEARCH-DIRECTION.
 
+## Paper 3 — RingField2D mechanism grid + the γ-monotonicity probe (2026-07-19)
+
+Branch `claude/paper-tres-topology-4w813y` (carries the paper-2 stack by
+merge). Instrument: annular sticky mode enclosing the phantom lode
+(`RingField2D`; theory in `docs/paper3/THEORY.md`). Two probes, no LLM.
+
+### Mechanism grid (`scripts/continuous_ring2d_mechanism.py`, 400 rollouts +
+16 paired MPC episodes/cell, `results/continuous_ring2d_mechanism.json`)
+
+| gap | channel | start | r | r_int | disagree_fill | pc_blind | pc_fill |
+|-----|---------|-------|--------|--------|-----------|-------|-------|
+| 0.0 | —      | outside | 0.0450 | 0.0000 | 0.000000 | 0.999 | 0.000 |
+| 0.0 | —      | inside  | 0.7325 | 1.0000 | 0.968500 | 0.000 | 1.769 |
+| 0.6 | facing | outside | 0.0350 | 0.0075 | 0.000844 | 0.022 | 0.343 |
+| 0.6 | facing | inside  | 0.6875 | 1.0000 | 0.862969 | 0.000 | 0.663 |
+| 0.6 | hidden | outside | 0.0450 | 0.0000 | 0.000000 | 0.999 | 0.000 |
+| 0.6 | hidden | inside  | 0.6700 | 1.0000 | 0.854094 | 0.000 | 1.769 |
+| 1.2 | facing | outside | 0.0175 | 0.0125 | 0.000625 | 0.007 | 0.220 |
+| 1.2 | facing | inside  | 0.6100 | 1.0000 | 0.774062 | 0.000 | 0.351 |
+| 1.2 | hidden | outside | 0.0450 | 0.0000 | 0.000000 | 0.999 | 0.000 |
+| 1.2 | hidden | inside  | 0.5975 | 1.0000 | 0.757500 | 0.000 | 1.741 |
+
+(`disagree_fill` = fraction of random-rollout transitions where the filled
+wrong-topology model differs from truth — the gate-side falsifiability of the
+wrong topology; `pc_*` = play_cost of each wrong model.)
+
+Readings:
+1. **The three-regime walk is real** (filled model, outside starts): gap 0 —
+   unfalsifiable AND harmless (disagree 0, pc 0.000; Props 1+3, the pc=0 is
+   the bitwise theorem); facing gap>0 — falsifiable at rate ~10⁻³/transition
+   and costly (pc 0.343/0.220); inside start — instantly falsified
+   (disagree 0.77–0.97). One artifact, three certification regimes, two knobs.
+2. **Wrong topology exploited BELOW RANDOM from inside** (pc_fill 1.769 at
+   gap 0): the filled model hallucinates freezes everywhere near the lode, so
+   all imagined returns tie and the planner drifts off the lode it is already
+   sitting on. The dual of paper 2's phantom-free-space exploitation: an
+   *invented* mode (phantom obstruction) repels from value as destructively
+   as an omitted mode lures into danger.
+3. **Policy-relative reachability beats topology**: the hidden-channel rows
+   are observationally IDENTICAL to the closed ring (r_int 0, disagree 0,
+   pc_blind 0.999, pc_fill 0.000) although the channel changes the free
+   space's connectivity. Neither the random gate nor MPC ever finds the far
+   channel. With the facing channel, same topology, everything changes
+   (aligned-channel degeneracy: pc_blind 0.022). What certificates and play
+   see is the mode's topology RELATIVE TO the operative reach — the paper-3
+   thesis in one table. Note (THEORY.md Prop 8 remark): hidden-channel
+   r_int is *positive but below measurement*, a different impossibility
+   grade than gap 0's *exact* zero.
+4. Blind is harmless from inside (pc 0.000 — the lure is where you already
+   are) and fully exploited outside except in the aligned-channel case.
+
+### γ-monotonicity probe (`scripts/ring2d_rint_probe.py`, 4000 CRN rollouts,
+12 gaps to 2π, `results/continuous_ring2d_rint_probe.json`)
+
+r_int: 0.0000 / 0.0008 / 0.0020 / 0.0040 / 0.0067 / 0.0080 / 0.0097 /
+0.0105 / 0.0110, then EXACTLY 0.0110 (identical entering seed set) for
+γ ≥ 2.4 — monotone on the grid, saturating at the free-walk limit. Direct
+entries (no prior freeze) 3 → 44, monotone — a theorem (THEORY.md Prop 7);
+funnel-assisted entries ≤ 2/gap. Fire-monotonicity violations 0/44k (Prop 5,
+exact). ONE pathwise entry violation: seed 50543 enters at γ=0.4, not at
+γ=0.6 — and not at γ=2π either — a funnel-assisted entry destroyed by
+widening; certificate that full monotonicity (M1) and wall-never-helps (M2)
+admit no pathwise proof. Both stated as distributional conjectures with the
+reduction and obstruction in THEORY.md.
+
+### (KEY) stress probe + first-divergence identity (2026-07-19, second pass)
+
+`scripts/ring2d_key_probe.py` → `results/continuous_ring2d_key_probe.json`.
+The pointwise reduction hypothesis (KEY) of THEORY.md Prop 9 is **refuted**:
+91/91 corridor-parked-vs-flying-out divergence configs at (γ₁,γ₂)=(0.4,0.6)
+violate it with separated 95% CIs (h₁ 0.52–0.69 vs h₂ 0.00–0.33, n=2000/side)
+— the **freeze-rescue** mechanism (the wall parks the narrow-gap chain at
+rest in privileged corridor positions). The first-divergence identity
+(Lemma 4) self-validates numerically: over 6000 CRN rollouts, 79 first
+divergences, integrand negative at 3/79 with mean +0.162; reconstructed
+difference 0.00213 vs directly measured 0.00250. M1 therefore holds (here)
+because ~96% of divergence mass is inward-crossing — an occupation-measure
+fact with no pointwise proof; M1/M2 recorded as measured regularities in the
+identity's exact frame.
+
+### TDA arm, first measurement: contact clouds carry ∂𝓡's topology, not the mode's (2026-07-19)
+
+`scripts/ring2d_tda_probe.py` → `results/continuous_ring2d_tda_probe.json`;
+detector = from-scratch Rips persistence (`src/cwm/continuous/tda.py`,
+ground-truth-tested incl. the classical sqrt(3) circle death), pre-registered
+rule: bars with persistence > 3× median-NN spacing.
+
+| config | N=40 | 160 | 640 | 2560 | angular coverage @2560 |
+|--------|------|-----|-----|------|------------------------|
+| ring_out (β₁=1 mode) | β̂₁=0 | 0 | 0 | 0 | 0.33 |
+| disc_out (β₁=0 mode) | β̂₁=0 | 0 | 0 | 0 | 0.33 |
+| ring_in  (β₁=1 mode) | **β̂₁=1** | 1 | 1 | 1 | 1.00 |
+
+Readings: (1) ring_out and disc_out rows are IDENTICAL number-for-number —
+a theorem, not sampling luck (Lemma 2 corollary, THEORY.md: from outside, no
+landing reaches d < r_in, so disc and annulus fire on exactly the same
+steps; the evidence is pathwise identical). Outside data cannot pose the
+disc-vs-annulus question — paper 2's dimensional reduction is rational given
+its evidence. (2) From inside, β₁=1 is recovered already at N=40 (top
+persistence ~4.0 vs τ~0.5, full angular coverage by N=160). (3) Topology
+recovery is a property of the contact set's position relative to reach
+(∂𝓡), not of N: more outside data saturates an arc (coverage 0.25→0.33 from
+N=640→2560) and never closes the loop. The constructive arm's real question
+is therefore WHERE evidence comes from (μ0/policy), and only secondarily how
+much.
+
+### Ring mitigation: the one-sided fence does not survive a closed curved boundary (2026-07-19)
+
+`scripts/continuous_mitigation_ring.py` (module and settings verbatim from
+paper 2's 2D mitigation, pos_dims=(0,1); 16 paired episodes/cell) →
+`results/continuous_mitigation_ring{,_eps1,_eps2}.json`.
+
+| eps | pc_blind | pc_mitigated | mitigated contact | fences/episode |
+|-----|----------|--------------|-------------------|----------------|
+| 0.5 (patch2d-calibrated) | 0.999 | 1.003 | 1.00 | 3.8 |
+| 1.0 | 0.999 | 1.005 | 1.00 | 2.3 |
+| 2.0 (~r_in scale) | 0.999 | 0.742 | 1.00 | 1.0 |
+
+On the small convex patches the same fence collapsed exploitation to a
+first-contact transient; on the ring it fails at the calibrated eps and only
+partially relieves at eps of the geometry's own scale. Mechanism: point
+fences are a 0-dimensional cover of a 1-dimensional boundary — sealing the
+reachable west arc (~16 units) needs cover-number many violations, and the
+argmax planner concedes only ~2–4 per episode while hovering for unfenced
+gaps. Paper 2's "collapse decays with mode distance" was the small-boundary
+shadow of a covering law: **mitigation is incremental boundary estimation,
+and its cost is the boundary measure over the fence radius** (the nerve-
+certificate slot of RESEARCH-DIRECTION §8.3-3, now with a quantified failure
+to motivate it). gap0 and hidden-channel rows are identical at every eps —
+the observational-equivalence prediction, again. Honest scope note: eps=2.0
+on the patch instruments would swallow the entire R=1 patch plus free space,
+so "just coarsen the fence" is not a uniform remedy; a boundary-aware
+(1-dimensional) fence — segments/nerve, not points — is the designed next
+step, and belongs to the same machinery as the TDA arm's boundary summaries.
+
 ## Confound closure on the 0/76: richer prompting + 3× budget do NOT restore disc repair (2026-07-19)
 
 Best-shot cells from the runbook
@@ -2997,6 +3408,717 @@ geometries" are now BOTH measured negatives (confound entry above + this);
 the abstract's "geometry-dependent" stays correct but "curvature" should
 never be the stated axis.
 
+## RingField2D LLM synthesis arm (2026-07-21) — the annulus (rung 2)
+
+Protocol as paper 2 (N=40, ε=1e-9, ≤5 refine, 20 seeds/cell; gap=0 closed
+ring, center (12,0), r_in 3.5, r_out 5.0). Pre-registered cells A–D
+(`docs/superpowers/plans/2026-07-20-ring2d-synthesis-arm.md`). Results in
+`results/continuous_synthesis_ring2d_{large,mini}_gap0*.json` (committed
+f86e090 + db3dc29). Every gate-passing artifact code-inspected (trap 1: a
+filled disc at gap 0 would pass every metric — Prop 3).
+
+| cell | prompt / start | large: gate-pass (present) | mini: gate-pass (present) | mode-present shape |
+|------|----------------|----------------------------|---------------------------|-------------------|
+| A baseline | default / out | 6 (0 present) · full 20/20 | 6 (0 present) · full 20/20 | — |
+| B region | region / out | 8 (2 present) | — | superstitious point-fit (`trap_r=1e-12`; exact-coord reset) |
+| C TDA | tda / out | 9 (3 present) | 12 (6 present) | superstitious point-fit, wb=1.0 |
+| D TDA | tda / **inside** | 1 (1 present) | 0 | **hole (β₁=1)**, wb=0.0 pc=0.0 (large seed 160000) |
+
+Three measured findings:
+1. **Identifiability event on rung 2 (robust, both sizes).** Mode-absent seeds
+   (r=0.042, N=40 → ≈6/20) are certified fully blind (no mode clause written)
+   and exploited at play_cost ≈ 1.12 (phantom-obstruction, below random). Full
+   arm 20/20 both sizes — the two-curved-boundary annulus clause translates.
+2. **Repair is NOT restored from outside evidence (region OR TDA, both sizes).**
+   Every mode-present gate-passing artifact from an outside start is a
+   *superstitious point-fit* (memorizes the exact observed landing / state:
+   `trap_r=1e-12`, `abs(x-px)≤pos_tol`), wb=1.0, exploited pc≈1.12. Zero annuli,
+   zero large filled discs. Consistent with the TDA-probe finding (Lemma 2
+   corollary): from outside, ring and disc evidence are pathwise identical, so
+   the summary can only honestly report ∂𝓡's arc, and it does not pose the hole.
+3. **Inside-start + TDA recovers the HOLE — positive but RARE and size-dependent.**
+   large seed 160000 (only) wrote a region WITH A HOLE: the code comment cites
+   "closed loop (beta_1 = 1)" and the guard freezes for `d ≥ 3.5` — the
+   *disc-complement*, not the exact annulus. It is certified perfect (gate 1.0,
+   wb 0.0, pc 0.0) because from inside the probe freezes at d=3.5 and never
+   reaches the outer boundary: disc-complement is indistinguishable from the
+   annulus on the reachable set. The **outer boundary is gauge-free** — a clean
+   instance of the gate-quotient (Prop 1). Frequency: large 1/20, mini 0/20 —
+   the template prior dominates even with loop evidence + loop summary; hole
+   recovery is possible but fragile, not a robust repair.
+   *(MECHANISM SUPERSEDED by the per-artifact review below, 2026-07-21: the
+   19/20 failures are NOT mostly template-prior collapse — half the mini cells
+   DO pose closed/hollow structures; the bottleneck is exact PARAMETER
+   identification at 1e-9. See "Per-artifact behavioral audit".)*
+
+Net: the topology axis (this arm) is the surviving distinct axis (curvature was
+falsified in paper 2). What the synthesis loop can recover about the mode is
+governed by the topology of the evidence *relative to reachability* — the hole
+is recoverable only when the start makes the loop reachable, and even then only
+the reachable boundary is determined; the rest is gauge. Deeper per-artifact
+analysis (descriptive/AST complexity, cross-family) deferred to a stronger
+model over the committed JSONs.
+
+## ShellField-n: r(n) collapse — "n as the rarity knob" (2026-07-21, CPU)
+
+`scripts/continuous_shellfield.py` (resumable per-n) → `results/continuous_shellfield.json`.
+Normalized geometry (shell c=(12,0,…), r_in 3.5, r_out 5.0 in the first two
+coords; 2D lodes/dt/gain/drag; thrust-vector action a⃗∈[−1,1]ⁿ norm-capped) so n
+is the only knob. 600 random-vector rollouts/n, seed 0.
+
+| n | 2 | 3 | 4 | 5 | 6 |
+|---|------|------|------|------|------|
+| r(n) | 0.0133 | 0.0033 | 0.0017 | ~0 | ~0 |
+| r_int | 0 | 0 | 0 | 0 | 0 |
+
+r(n) collapses geometrically (concentration: a drift-free random walk loses the
+2-plane the shell lives in). By n≥3, r<0.005 ⇒ (1−r)^40≈1: the identifiability
+event (mode absent from the sample) is near-certain, so the **danger regime
+becomes automatic** as n grows (§8.2's n-as-rarity-knob mini-law). r_int=0 for
+all n (interior reach-null, as in 2D). Caveat: at n≥4, r≈1/600 is
+sampling-noise-limited — the collapse is qualitatively clear, the fine value at
+high n needs more rollouts. Next (design §8.1): truth-MPC navigation check per n
+with vector actions (does random-shooting MPC still reach the real lode at
+n=4–6?).
+
+### Cross-family spot-check on the ring (Qwen, 2026-07-21)
+
+`--compat-model Qwen/Qwen3-Coder-30B-A3B-Instruct` (HF router), 3 seeds.
+**Cell A (baseline, outside):** the identifiability event is family-independent
+(Prop 2) — both mode-absent seeds are certified blind (wb=1.0) and exploited at
+play_cost 1.116, IDENTICAL to GPT-5.x (the blind planner's behavior is
+family-independent by construction); the one mode-present seed is refused by the
+gate (0.9997), no repair. **Cell D (inside+TDA, hole recovery):** STILL NOT RUN.
+Retried 2026-07-21 after the monthly HF credit reset — two of the three account
+tokens returned 200 on a 1-token probe, but BOTH 402'd mid-first-seed on the
+real run (synthesis refine loop + play episodes exhausted the residual credit
+before a single cell was written). A trivial probe overstates available credit.
+Pending genuine HF credit (pre-paid or PRO); the GPT-5.x D result (large 1/20
+hole, mini 0/20) and the Claude D result (3/3, above) stand as the D-cell
+cross-family data until then.
+
+### Cross-family spot-check on the ring (Claude, A + D complete, 2026-07-21)
+
+`claude-sonnet`, agent-relayed context-free (each synthesis/refine message is a
+fresh agent with no history and no repo access — it sees ONLY the pipeline
+message, verbatim; harness `scripts/continuous_claude_step.py`, transcripts +
+replies under `results/claude_relay_ring2d/`, classified JSONs
+`claude_results_ring2d_gap0.json` and `…_gap0-in_pv-tda.json`). 3 seeds/cell.
+**Integrity check:** on the non-recovered cells the gate plateaus below 1.0
+(0.5966, 0.9728 pre-refine) rather than snapping to exact — evidence the
+context-free agents did not read the true env source (a leak would gate 1.0).
+
+| cell | prompt / start | seeds → outcome |
+|------|----------------|-----------------|
+| A baseline | default / out | 2/3 mode-absent → **blind, exploited pc 1.1164** (wb 1.0, IDENTICAL to GPT-5.x & Qwen); 1/3 mode-present → **no repair** (gate 0.5966) |
+| D TDA | tda / **inside** | **3/3 recover the HOLE** — gate 1.0, wb 0.0, **pc 0.0** (safe); seed 30000 iter0, seeds 10000/20000 iter1 |
+
+Two findings, both cross-family:
+1. **Identifiability event is family-independent (confirmed a third family).**
+   The two mode-absent A seeds are certified fully blind and exploited at
+   play_cost 1.1164 — bit-identical to GPT-5.x and Qwen (the blind planner is
+   family-independent by construction). The one mode-present A seed (seed 10000,
+   sample DOES contain the ring) still yields **no repair from outside**: Claude
+   oscillates over the ≤5 refines — blind → a *superstitious velocity-cap*
+   (`hypot(vx2,vy2)>1 → freeze`, gate 0.5966, worse than blind) → an
+   *approximate-radius disc* (`hypot(x2,y2)≥7.4 → freeze`, right STRUCTURE but
+   the radius is a guess from the single shown contact, gate 0.9803) → back to
+   blind. It recovers the *positional-ring structure* but cannot identify the
+   exact threshold to 1e-9 from sparse outside evidence — a richer failure than
+   Qwen's flat gate-refusal, same conclusion (repair not restored from outside).
+2. **Inside-start + TDA recovers the hole — and for Claude it is ROBUST, a
+   family DIFFERENCE in rate.** All three D seeds wrote a genuine
+   disc-complement-with-hole (freeze on `d ≥ r_in`), certified perfect (gate
+   1.0, wb 0.0, pc 0.0) because from inside the probe never reaches the outer
+   boundary (outer boundary gauge-free, Prop 1) — the SAME mechanism as GPT-5.x
+   seed 160000. The mechanism (inside evidence + loop summary → hole) is
+   family-independent; the *rate* is not: Claude 3/3 vs GPT-5.x large 1/20, mini
+   0/20. Consistent with paper 2's finding that repair *rate* (not the
+   three-way structure) is the family-varying quantity.
+
+Net cross-family (three families now): the identifiability event and the
+"repair only from inside + topology" law hold for GPT-5.x, Qwen, and Claude; the
+repair *rate* varies by family (Claude reconstructs the hole most reliably).
+
+### Exploratory control: OPEN ring (gap>0, β₁=0) — the 2×2 (GPT mini, 2026-07-21)
+
+NOT pre-registered — an exploratory topology control run on authorized Azure to
+isolate β₁ from reachability. Opens a facing angular channel (width 0.6 rad) so
+the ring is a C-shape (β₁=0, contractible) and the inside probe can ESCAPE
+through the gap. Two cells, mirroring the closed-ring A/D:
+- A: `mini 5 --instrument ring2d --arm incomplete --gap 0.6 --channel facing
+  --start outside` → `results/continuous_synthesis_ring2d_mini_gap0.6.json`
+- D: `… --start inside --prompt-variant tda` →
+  `…_gap0.6-in_pv-tda.json`
+
+| cell | closed ring (gap 0, β₁=1) | open facing ring (gap 0.6, β₁=0) |
+|------|--------------------------|----------------------------------|
+| **A** outside baseline | mode-absent → blind, exploited **pc ≈ 1.12** (DANGEROUS) | mode-absent → blind (ident. event 3/5), exploited **pc ≈ 0.029** (HARMLESS) |
+| **D** inside + TDA | 0/20 gate-pass; blind ~0.97 (misses rare contacts); rare hole (large 1/20) | **0/5 gate-pass; mean gate 0.44** (much lower) |
+
+Two findings (exploratory, 5 seeds — do not over-read):
+1. **Danger is topology RELATIVE TO reach, not β₁ (cell A).** The identifiability
+   event is unchanged by opening the ring (from outside a ring is an arc either
+   way — 3/5 mode-absent, blind gate 1.0, family/gap-independent). But the PLAY
+   danger collapses from pc≈1.12 (closed) to pc≈0.029 (open facing): the closed
+   ring BLOCKS the blind planner's straight run at the phantom → high regret; the
+   facing channel lets that same run through the *real* gap → the blind plan
+   executes fine on truth → near-zero regret. This is the aligned-channel
+   degeneracy from the mechanism grid (pc_blind 0.022 at gap 0.6 facing outside)
+   reproduced on the synthesis side. **Danger needs the topology to obstruct the
+   competent planner's path; an open facing channel removes the obstruction while
+   leaving the synthesis failure intact.**
+2. ~~**The OPEN ring is HARDER to synthesize (cell D).**~~ **RETRACTED by the
+   per-artifact review below (2026-07-21).** The 0.44-vs-0.97 comparison put
+   terminal-artifact gates against a *blind reference*: apples to oranges. The
+   canonical blind gate on the exact evidence is 0.973 (open) vs 0.971 (closed)
+   — contact richness is IDENTICAL — and the closed-ring D terminal artifacts
+   also collapse (mean 0.560, n=20) comparably to the open ring (0.436, n=5).
+   Both regimes: 0 gate-passes, geometric structures posed, parameters
+   unidentifiable. What differs at the open gap is a GUIDANCE confound: the
+   pre-registered topological summary still reports beta_1 = 1 at gap 0.6 (its
+   Rips detector bridges channels narrower than ~2 units of arc), so the 3/5
+   disc/loop artifacts there are guidance-compliant, not prior-driven. See
+   "Per-artifact behavioral audit" below.
+
+## Active boundary learning (bucket 2c): three routes to (COV) (2026-07-24)
+
+`scripts/ring2d_active_boundary.py` -> `results/ring2d_active_boundary.json`
+(rerun optimized after the FenceIndex fix: 269s vs 34+min unfinished).
+Boundary-tracing probe: 50 lessons in ONE episode (0.22-rad steps along the
+arc). Then plan_mitigated, POINTS mode (no nerve extension), persistent:
+
+| variant | lessons | pc | truth-equal from |
+|---|---|---|---|
+| nerve + persistent (prior run) | 2 | 0.058 | ep 2 |
+| active probe + points, persistent | 50 + 11 patch-up | 0.123 | ep 3 |
+| passive points, persistent | 9 (spread over 16 eps) | 0.152 | ~ep 5, with regressions |
+
+Reading: PERSISTENCE is the necessary ingredient in every working variant;
+the covering cost can be paid by fence GEOMETRY (tangential extension, 2
+lessons), by EXPLORATION (the probe, 50+11 — its 1.05-unit spacing left
+sub-eps gaps the planner found in eps 1-2: the covering law biting the
+prober too), or slowly by the planner's own contacts (9). Three routes to
+Prop 10's (COV), ranked by lesson-efficiency: geometry > exploration >
+passivity. Metadata fix: n_seed_fences aliasing bug corrected (passive row
+said 50, is 0).
+
+## Second wave: multi-chamber and the non-separating tube (2026-07-24)
+
+**1b — multi-chamber (nested rings).** RingField2D gains r_in2/r_out2
+([7.5, 9.0]); three mutually reach-null chambers verified (0 escapes / 240
+rollouts). Azure D-cell from the MIDDLE chamber (mini 20, tda):
+`continuous_synthesis_ring2d_mini_gap0-m2-mid_pv-tda.json`. 0/20 pass;
+classes arc 13 / blind 6 / point 1 — ZERO closed and ZERO nested (two-band)
+artifacts: the loop does not even POSE layer two. Sensor: the true
+two-circle cloud (beta1=2) draws a detector LOTTERY {0:9, 1:10, 2:1} —
+Rips bridges between concentric circles merge/kill loops seed-dependently
+(third failure mode of the pre-registered detector).
+
+**2d — TubeField3D (non-separating; T8's instrument).** Solid torus between
+start and phantom; complement CONNECTED (deterministic around-path test):
+no reach-null region, no exact gauge. Mechanism
+(`tubefield_mechanism.json`): aligned (hole on-axis) r=0.0033 pc_blind
+0.019 contact 0.00; offset (tube on-axis) r=0.0033 pc_blind 0.898 contact
+0.94. Same rarity, same trivial topology — the danger dichotomy is purely
+PATH-relative; separation contributes only the exact-gauge side. The ring
+conflated the two; the tube separates them. T8 (linking-number query
+bound) is the math this instrument opens.
+
+## Square ring (bucket-1a): phenomenology norm-invariant; the template prior reaches the separator (2026-07-24)
+
+RingField2D gains norm='cheby' (square annulus, zero curvature, corners;
+Chebyshev is 1-Lipschitz wrt Euclidean steps so Lemma 2 survives verbatim —
+tests: reach-null 0/200, Prop 3 planner-equivalence BITWISE, 12/12).
+CPU calibration: r=0.050, pc_blind 0.999, pc_filled 0.000. Azure cells
+(mini 20 seeds): A outside/default -> 3/20 mode-absent, ALL certified blind
+and exploited at pc 1.117 (= round ring's 1.116); 17 mode-present, 0
+repairs (terminals: blind 11, point 5, arc 3, fill-unb 1). D inside/tda ->
+0/20 pass, structures posed in 15/20 (disc 8, loop 4, arc 3).
+
+**The headline: models write ROUND rings on SQUARE evidence.** Of the 12
+posed closed structures, 11 have corner ratio ~1.0 (round; square = 1.414)
+and 12/12 are written with hypot — ZERO use the max/abs form the truth
+has. Paper 2's bidirectional template prior (flatten curves, curve flats),
+measured now on the ENCLOSING SEPARATOR itself: the topology axis and the
+template-prior axis compose. Everything else is norm-invariant — danger,
+identifiability, parameter-bound repair.
+
+Files: continuous_synthesis_ring2d_mini_sqgap0{,-in_pv-tda}.json,
+continuous_ring2d_cheby_calibration.json; corner-ratio analysis inline
+(EXPERIMENTS log).
+
+## Trajectory-censored filtration (bucket-2b prototype): strong signal, and a real research problem found (2026-07-24)
+
+`tda.rips_persistence` gains an opt-in `edge_filter` (golden-safe);
+`scripts/ring2d_censored_filtration.py` (selftested: C-arc+traffic 1->0,
+true loop 1->1) censors a Rips edge when a FREE trajectory segment properly
+crosses it -> `results/ring2d_censored_filtration.json`.
+
+| gap | plain beta1 (5 seeds) | censored |
+|---|---|---|
+| 0.0 (true 1) | 1,1,1,1,1 | 1,0,1,1,0 |
+| 0.6 (true 0) | 1,1,1,1,1 | 0,0,0,1,0 |
+| 1.2 (true 0) | 1,1,1,1,1 | 0,0,0,0,0 |
+| 1.8 (true 0) | 1,0,0,0,0 | all 0 |
+| 2.4 (true 0) | all 0 | all 0 |
+
+Net 22/25 correct vs plain 8/25: the geometric resolution limit IS
+breakable with trajectory knowledge — specificity restored at every gamma.
+Cost: 2/5 false negatives at gap 0 (free 'pokes' ending just past a chord
+censor true-loop edges). The margin refinement (require perpendicular
+clearance both sides) was tried and REJECTED with a finding: deleting edges
+from a Rips complex creates cycles around censored regions that can never
+be filled -> INFINITE spurious H1 bars, a topological artifact of naive
+edge deletion. The principled estimator is RELATIVE homology (contact set
+relative to certified-free space) — a genuine research problem, not a
+patch. Decision-gate reading: signal strong, estimator design open ->
+paper-4-grade ingredient; v1 numbers stand as the prototype record.
+
+## Dose curve: evidence cannot buy repair — the parameter is GUESSED, not estimated (2026-07-24)
+
+V2-PROGRAM bucket-1c. D-cell (closed ring, inside+tda, mini, 20 seeds) at
+N in {40, 80, 160, 320} rollouts (files `..._N{80,160,320}.json`; the
+pipeline couples evidence and gate — pre-registered reading: the deployed
+pipeline's dose curve). Result: **0/20 gate-pass at every dose**; mean
+terminal gates flat (0.56/0.63/0.45/0.61); class mixture unchanged. The
+sharp reading: median posed inner-radius error |r_lo - 3.5| = **0.5 at
+every dose** — i.e. the median artifact poses r = 4.0, a ROUND NUMBER,
+whether it saw 40 or 320 rollouts. The parameter is not estimated from
+evidence but guessed from the template library (round radii), so dose
+cannot buy repair: the synthesis-side twin of the sensor factorial's
+dose-independence. Aggregator patched to exclude `_N` dose files from the
+registered open-sweep summary (analyzed apart).
+
+## The dual defense: freedom patching collapses the invented-mode exploitation (2026-07-24)
+
+V2-PROGRAM bucket-2a prototype, decision gate PASSED.
+`mitigation.run_patched_episode` + `_PatchedModel`: record a FREEDOM point
+where the model predicted a freeze and the truth moved; during imagination,
+a model step that freezes within eps of a freedom point is replaced by the
+contract's pinned integrator (mode-free, legitimately known).
+`scripts/continuous_ring2d_optimism.py` -> `results/continuous_ring2d_optimism.json`.
+
+| defense on gap0-inside-filled | pc | freedom pts/ep | per-ep returns |
+|---|---|---|---|
+| none / any distrust variant | 1.769 | (fences 18.6, inert) | ~13.5 |
+| freedom patch, episodic | **0.029** | 80 | 76.6-77.5 (truth 78.1-78.4) from EP 1 |
+| freedom patch, persistent | **0.021** | 80 | same, slightly better late |
+
+The LIE-RATE symmetry is the finding: an invented mode lies at EVERY step
+(80 certificates/ep -> refutes itself constantly -> within-episode patching
+suffices, no persistence needed), an omitted mode lies RARELY (2 lessons/ep
+-> its fence must persist to pay the covering cost). Opposite defenses,
+each priced by its failure's lie rate. Both constructive legs now measured:
+omitted -> persistent nerve fence (0.999->0.058); invented -> freedom patch
+(1.769->0.029). Implementation note: freedom points now dedup at eps/2 (the
+prototype's linear scan paid ~6x for skipping this; semantics preserved).
+
+## The constructive turn: nerve fence + persistence beats the covering law (2026-07-23)
+
+`mitigation.py` gains `fence_mode="nerve"` (violations within link_r linked
+into segments, tangentially EXTENDED ext=3 beyond both endpoints — two
+violations 0.5 apart fix the local boundary direction) and cross-episode
+fence persistence (pass mutable fences/fence_edges lists). Oracle-tested
+(seg-seg distance; gap-sealing; extension-sealing; bitwise zero-cost control
+in nerve mode). `continuous_mitigation_ring.py --fence-mode nerve
+[--persist]` → `results/continuous_mitigation_ring_nerve{,_persist}.json`.
+
+| variant | pc_blind | pc_mitigated | contact | fences/ep |
+|---|---|---|---|---|
+| points, episodic (eps 0.5) | 0.999 | 1.003 | 1.00 | 3.8 |
+| nerve, episodic | 0.999 | 0.957 | 1.00 | 2.0 |
+| **nerve, persistent** | 0.999 | **0.058** | **0.06** | 0.1 |
+
+Per-episode trajectory (persistent): ep1 = 2 violations, return 1.01 (the
+learning transient); eps 2–16 = ZERO violations, returns EQUAL to the truth
+planner's episode-for-episode. Two lessons total pay the ring's covering
+cost; the extended fence blocks every imagined phantom crossing, so the
+planner goes to the real lode exactly as truth-MPC does — the fence
+engineers the blind model back into E(f) on the operative side (Prop 1 in
+reverse). Instrumentation of the episodic failure: the planner re-crosses
+the wall IN IMAGINATION beyond each sealed corridor (single fences block
+~1 unit of ~16); it slides down-wall at one freeze per lesson, and
+per-episode resets discard the lessons. The invented-mode cell stays inert
+under every variant (1.769, fences firing 18.6/ep) — one-sidedness intact.
+
+## Paper-completion additions: mitigation vs invented mode, steering witness, sensor factorial, H2 power (2026-07-23)
+
+Four additions closing the paper-3 draft's gaps (all committed with the tex):
+
+**(1) Mitigation vs the INVENTED mode (new cell,
+`continuous_mitigation_ring.py` extended, `continuous_mitigation_ring.json`
+regenerated with 3 cells).** gap0-inside-filled: pc_filled 1.769 ->
+pc_mitigated **1.769** (identical to 3 decimals) with **18.6 fences/episode**
+— the defense detects the lie constantly and changes nothing. Mechanism: the
+filled model freezes every imagined future at the current position, so all
+candidates tie BEFORE fences can matter; distrust truncates trust in imagined
+value, and the invented mode already flattened imagined value. Distrust-based
+mitigation is one-sided: lure (omitted mode) and repulsion (invented mode)
+need opposite defenses. Folded as the paper's mitigation section together
+with the 2026-07-19 covering-law rows (eps sweep 0.5/1.0/2.0).
+
+**(2) Hidden-channel steering witness (`ring2d_steering_witness.py` ->
+`ring2d_steering_witness.json`).** Velocity-aware waypoint policy: interior
+entries 100/100 at hidden gap 1.2 WITHIN the instrument's h=80 (gate policy
+0/100; same controller at gap 0: 0/100 — Lemma 2). Certifiability is
+policy-relative; the ledger's deferred witness is now measured. Honest note:
+at hidden gap 0.6 the hand controller cannot thread the ~2-unit corridor
+within h=80 (0/100) — reachability is jointly geometry x policy x budget.
+
+**(3) Sensor-resolution factorial (`ring2d_sensor_resolution.py` ->
+`ring2d_sensor_resolution.json`).** beta1_hat over cap {30,90,270} x dose
+N {40,160} x gap, 5 seeds: the flip DOES NOT MOVE with budget or dose
+(gap<=1.2 always 1; 2.4 always 0; only 1.8 wobbles) — the limit is GEOMETRIC
+(Rips bridging: channel chord vs fill scale, both properties of the shape).
+And more data is counterproductive at the boundary: at gap 1.8 the
+false-loop rate RISES 1/5 -> 3/5 when N quadruples (tau = 3x median-NN
+shrinks with density; the spurious bar's persistence is fixed). Resolving a
+narrow channel needs a different filtration, not a bigger sample.
+
+**(4) H2 within-gap power (gap 1.8 topped up 30 -> 60 seeds, mini).**
+Classes at n=60: arc 34, blind 20, disc 4, loop 1, point 1; within-gap split
+closed 3/27 (b1_hat=1) vs 2/33 (b1_hat=0) — consistent in sign, NOT
+significant even at n=60. Recorded as directional-only; the cross-gap
+crossover (22 closed at 0.6 vs 1 at 2.4) carries H2.
+
+## Per-artifact behavioral audit of the ring2d arms (2026-07-21, deep review pass)
+
+`scripts/ring2d_artifact_audit.py` → `results/ring2d_artifact_audit.json`.
+Three instruments, all CPU/deterministic, run over every committed ring2d
+synthesis cell: **(i) freeze-mask fingerprint** — probe each artifact's
+`step()` on an 81×81 state grid around the ring, mark deviations from the pure
+integrator, classify the deviation set by (inner-free × bounded × angular
+coverage): `blind / vdep / point / arc / loop(hollow) / disc(filled) /
+complement(hollow,unbounded) / fill-unbounded(≈half-plane)`; **(ii) canonical
+blind-reference gate** — `contract_accuracy` of the pure integrator on each
+cell's exact regenerated evidence, the right baseline for terminal gates;
+**(iii) guidance β̂₁ audit** — what the pre-registered topological summary
+actually told each cell, plus the detector's resolution curve β̂₁(gap) on
+regenerated inside evidence.
+
+| cell (incomplete arm) | pass | mean terminal gate | blind ref | terminal classes |
+|--------------|------|-------------------|-----------|------------------|
+| A closed large | 6/20 | 0.993 | 0.999 | fill-unbounded 13, blind 7 |
+| A closed mini | 6/20 | 0.980 | 0.999 | blind 15, arc 2, disc 2, fill-unb 1 |
+| B region large | 8/20 | 0.998 | 0.999 | blind 16, arc 2, disc 1, point 1 |
+| C tda large | 9/20 | 0.999 | 0.999 | blind 19, vdep 1 |
+| C tda mini | 12/20 | 0.999 | 0.999 | blind 17, arc 2, point 1 |
+| D in+tda large | 1/20 | 0.722 | **0.971** | arc 5, point 4, blind 4, disc 2, complement 2, loop 2, vdep 1 |
+| D in+tda mini | 0/20 | 0.560 | **0.971** | disc 5, loop 5, arc 5, blind 4, complement 1 |
+| D open0.6 mini | 0/5 | 0.436 | **0.973** | disc 3, arc 1, point 1 |
+
+Detector-resolution curve (5 seeds/gap): **β̂₁ = 1 at every gap ≤ 1.2; mixed
+(1,0,0,0,0) at 1.8; clean 0 at 2.4** — the Rips detector (dedup 0.05, cap 90,
+3×median-NN) bridges any channel narrower than ~2 units of arc.
+
+Findings (F1–F6):
+1. **B/C point-fit claim VERIFIED.** Every gate-passing mode-present artifact
+   from outside is a textual point-fit that is *behaviorally blind*: the
+   hypothesized "trap" is measure-zero (exact-coordinate match, `1e-12`
+   tolerances), so the freeze-mask class is `blind` and wb = 1.0. Zero
+   geometric mode encodings pass from outside — the published claim stands,
+   now behaviorally grounded.
+2. **Closed-D failure mechanism CORRECTED: parameter identifiability, not
+   template collapse.** From inside, models DO pose geometric mode structure
+   in most cells (mini: 5 disc + 5 loop + 1 complement + 5 arc; the TDA
+   guidance says "closed loop" and models comply ~half the time). But their
+   terminal gates average 0.56 — far BELOW the 0.971 blind reference — because
+   a posed region with wrong parameters over-freezes states the evidence shows
+   free. The bottleneck is pinning thresholds to 1e-9 from landing evidence,
+   not posing the topology. (Filled-disc attempts that freeze the interior
+   where the probe demonstrably moves tank the gate to 0.02–0.39 — 5/20 mini.)
+3. **How the ONE passer passed (large seed 160000): structure × round-number
+   guessability.** Its rule freezes when the post-integration landing has
+   `d ≥ 3.5` around the reward-spec center (12,0) — the gauge-free complement
+   form whose single parameter happens to be the TRUE inner radius, a round
+   number anchored to a center the contract's reward section already names.
+   Claude's 3/3 D-cell repairs used the same form. The D gate-pass rate
+   therefore measures *(reachable-equivalent structure) × (exact parameter
+   guessability)*, not topology-understanding alone. It also explains Claude's
+   A-cell failure mode: it guessed radius 7.4 in the WRONG (origin-centered)
+   frame, where the true boundary is not a circle.
+4. **Outside-start terminal attempts reveal the template ladder.** A-default
+   large's gate-failing mode-present terminals are 13/14 `fill-unbounded`
+   (half-plane-like `x ≥ c` — paper 2's 1D-threshold template, back again);
+   mini mostly stays blind. Richer prompting (B region, C tda) pushes
+   terminals AWAY from geometric attempts toward point-fits/blind (16–19/20)
+   — "describe the region first" made models MORE conservative, not more
+   geometric.
+5. **Guidance topology confound measured (the summarizer has a resolution
+   limit).** The pre-registered summary honestly computes β̂₁ from the
+   landing cloud, but its Rips detector cannot see channels narrower than ~2
+   arc-units at this density: it tells the model "CLOSED LOOP (beta_1 = 1)"
+   for every gap ≤ 1.2 even though the truth is an open C (β₁ = 0). The flip
+   sits at gap ≈ 1.8 (seed-dependent) and is clean by 2.4. Open-D artifact
+   classes at 0.6 (disc 3/5) are therefore guidance-COMPLIANT. This turns the
+   summary's β̂₁(gap) into a first-class instrument: sweeping gaps across the
+   flip lets us test whether artifacts track the guidance, the raw evidence,
+   or the template prior — the registered open-ring arm is designed around
+   this flip.
+6. **Blind-reference gates make terminal gates interpretable.** Outside
+   evidence: blind ref ≈ 0.999 (contacts are rare). Inside evidence: 0.971
+   at EVERY gap {0, 0.6} — escapability does NOT change per-transition
+   contact richness (basis of the retraction above). Gate bands: correct
+   ≈ 1.0 · blind ≈ 0.97 · posed-but-misparameterized hollow ≈ 0.5–0.9 ·
+   interior-filling ≈ 0.02–0.4.
+
+## Registered open-ring arm: danger = topology RELATIVE TO reach (2026-07-22)
+
+Spec `docs/superpowers/specs/2026-07-21-open-ring-arm-design.md`, plan
+`docs/superpowers/plans/2026-07-21-open-ring-arm.md`. Driver
+`scripts/continuous_ring2d_open_sweep.py` (shells out to the synthesis harness,
+resumable per cell+seed; CPU pc_blind curve), aggregator
+`scripts/ring2d_open_aggregate.py` → `results/continuous_ring2d_open_sweep_summary.json`.
+Opens a facing/hidden angular channel of width `gap` (rad) in the ring, turning
+the closed ring (β₁=1) into a C (β₁=0). Grid: A-facing/hidden (outside, danger)
++ D-facing (inside+tda, synthesis) across gaps, 20–30 seeds mini + large
+robustness + a Claude relay cross-family spot. Pre-registered H1/H2/H3.
+
+### H1 — CONFIRMED. The danger collapses with a FACING channel, PERSISTS with a hidden one.
+
+CPU dense pc_blind(gap) (16 paired MPC episodes/gap, `..._pcblind_curve.json`):
+
+| gap | 0.0 | 0.02 | 0.05 | 0.1 | 0.15 | 0.2 | 0.4 | 0.6 | 1.2 |
+|-----|----|----|----|----|----|----|----|----|----|
+| pc_blind | 0.999 | 0.543 | 0.340 | 0.139 | 0.001 | 0.015 | 0.023 | 0.022 | 0.007 |
+| blind_contact | 1.00 | 0.94 | 0.56 | 0.44 | 0.12 | 0.06 | 0.00 | 0.00 | 0.00 |
+
+The blind model's exploitation collapses smoothly from 1.0 to ~0 over a **knee
+at gap ≈ 0.1–0.15** (channel arc-width ≈ gap × r_in ≈ 0.35–0.5 world units — a
+channel barely wider than the planner's step suffices to let it through). LLM
+synthesis A-cells reproduce it on the exploited blind artifacts: mini pc_mean
+1.089 (gap 0) → 0.348 (0.1) → ~0.03 (≥0.2); large identical (0.348 at 0.1,
+0.029 at 0.6). **The clincher control:** the HIDDEN channel (same β₁=0, channel
+on the unreachable far side) holds pc_mean = **1.116 at gap 0.6 AND 1.2** —
+full danger, unchanged from the closed ring. Same topology, opposite danger:
+what collapses the danger is the competent planner's reachability of the
+omission, not β₁. This is the paper-3 thesis (danger = mode topology relative
+to the operative reach) demonstrated with a single knob that leaves the
+synthesis failure untouched.
+
+### H3 — CONFIRMED. Inside gate-pass stays ≈0 at every gap; passes are certified-wrong, not repairs.
+
+Inside (D, tda) gate-pass rate: 1/40 (gap 0) · 0/20 (0.2) · 0/40 (0.6) · 0/20
+(1.2) · 1/30 (1.8) · 1/40 (2.4) — essentially zero at every gap, both sizes.
+Terminal gates average 0.5–0.75, far below the blind reference (~0.97–0.98);
+the mode is posed but its exact parameters (channel-edge angles π ± gap/2, not
+round numbers) are never pinned to 1e-9. The **Claude relay** (strongest gap-0
+repairer, agent-relayed context-free) sharpens this: at gap 2.4 it explicitly
+reconstructs "ring r=3.5, gap 2.4 rad" from the sample and 2/3 seeds gate-PASS
+— but with `wall_blindness = 1.0` and `play_cost = 0.0`: the passing model is
+mode-blind (matches the sample via wrong/point parameters, fails the mode
+probes) and harmless only because the wide-open ring obstructs nothing. The
+third seed grinds 0.877→0.919→0.939→0.975 over five refines and still fails.
+gate-pass ≠ repair, even for the best repairer; certification succeeds only in
+the gauge-free + round-parameter corner (Prop 1).
+
+### H2 — SUPPORTED (guidance-following). Posed topology tracks the summary's β̂₁, which has a resolution limit.
+
+Terminal artifact structure vs gap (closed = disc+loop+complement; the
+pre-registered summary reports β̂₁=1 for gap ≤ 1.2, flips ~1.8, honest arc at
+2.4):
+
+| gap | 0.0 | 0.2 | 0.6 | 1.2 | 1.8 | 2.4 |
+|-----|----|----|----|----|----|----|
+| closed structures | 17 | 9 | 22 | 7 | 3 | 1 |
+| arc structures | 10 | 5 | 6 | 9 | 23 | 26 |
+| guidance β̂₁ | 1 | 1 | 1 | 1 | mixed | 0 |
+
+Closed structures dominate where the summary says "closed loop" and **vanish
+where it honestly says "arc"** (gap 2.4: 1 closed vs 26 arc, both sizes); the
+crossover tracks the detector flip, not the true β₁ (which is 0 at every
+gap>0). The synthesizer follows the guidance's topology claim, and the
+guidance's finite Rips resolution (it cannot see a channel narrower than ~2
+arc-units) therefore PROPAGATES into wrong-topology artifacts: an honest
+summary with limited resolution CAUSES closed models on an open ring. The
+gap-1.8 within-gap split (seeds straddle the flip) is directionally consistent
+(closed structures appear only in the β̂₁=1 subset) but arc-dominated and
+underpowered at n=30.
+
+### Net
+
+One knob (channel width × orientation) cleanly separates the danger law's two
+axes on the synthesis side: **identifiability** (whether the sample contains
+the mode — the mode-absent rate rises with gap as the ring shrinks, and the
+blind artifact is written regardless) is orthogonal to **exploitability**
+(whether a competent planner's path is obstructed — set by reachability, not
+β₁). Repair-from-inside remains parameter-bound at every gap. The topological
+summary is a load-bearing, finite-resolution sensor whose limits are now a
+measured, first-class part of the mechanism.
+
+## ShellField-n: truth-MPC navigation scales to n=6 (2026-07-21, CPU)
+
+`scripts/continuous_shellfield_nav.py` (resumable per-n) →
+`results/continuous_shellfield_nav.json`. Random-shooting MPC (horizon 40,
+n_samples 200, block 10; 20 episodes/n) with vector actions on the ShellFieldN
+truth, normalized geometry.
+
+| n | J_mpc | J_random | dist_mpc | reached |
+|---|-------|----------|----------|---------|
+| 2 | 16.92 | 0.50 | 0.38 | ✓ |
+| 3 | 15.55 | 0.33 | 0.76 | ✓ |
+| 4 | 14.26 | 0.04 | 1.03 | ✓ |
+| 5 | 12.96 | 0.01 | 0.95 | ✓ |
+| 6 | 11.31 | 0.07 | 1.18 | ✓ |
+
+Vector-action random-shooting MPC reaches the real lode at ALL n=2..6 (mild
+J_mpc degradation 16.9→11.3, dist growing 0.38→1.18) while the random policy
+collapses (J_random 0.50→0.01). **The planner is NOT the bottleneck through n=6**
+— the play arm is not capped by planner scaling in this range, so the danger
+mechanism (blind-model exploitation) can be measured across the full n sweep.
+`action_dim` planner threading is golden-safe: the scalar path is byte-identical
+(357 passed, cart golden included).
+
+## ShellField-n play arm: the danger EMPTIES with n (blind but harmless) (2026-07-21, CPU)
+
+`scripts/continuous_shellfield_play.py` (resumable per-n) →
+`results/continuous_shellfield_play.json`. Paired MPC episodes, truth vs
+blind_of vs random, per n.
+
+| n | play_cost | J_truth | J_blind | J_random | blind_contact |
+|---|-----------|---------|---------|----------|---------------|
+| 2 | 0.162 | 16.92 | 14.27 | 0.50 | 0.15 |
+| 3 | 0.012 | 15.55 | 15.37 | 0.33 | 0.00 |
+| 4 | 0.000 | 14.26 | 14.26 | 0.04 | 0.00 |
+| 5 | 0.000 | 12.96 | 12.96 | 0.01 | 0.00 |
+| 6 | 0.004 | 11.31 | 11.27 | 0.07 | 0.00 |
+
+**Finding (deviation from the naive expectation — recorded, not tuned; CAUSE
+CORRECTED on closer analysis).** play_cost ≈ 0 at EVERY n (0.162 at n=2, ~0 for
+n≥3), blind_contact ≈ 0 for n≥3, J_blind = J_truth (bit-identical at n=4,5). The
+cause is GEOMETRIC, not dimensional concentration (an earlier reading of this
+run wrongly attributed it to concentration — corrected here): at the normalized
+geometry the phantom lode (amp 1.0) sits at the shell center (12,0,…), distance
+12 from the start, while the real lode (amp 0.3) is at (−6,0,…), distance 6. The
+reward sigmoid (r0=2, width=0.5) is negligible beyond ~4 units, so the phantom
+at distance 12 is UNREACHABLE within horizon 40, while the real lode is
+reachable. Both truth and blind planners therefore go to the same real lode and
+NEVER cross the shell (which wraps the unreached phantom) — so the blind model is
+harmless at every n, by geometry, not by concentration. **Lesson for the danger
+law:** rarity collapse (r(n)→0) is NECESSARY BUT NOT SUFFICIENT for a play-cost
+blow-up — the mode must ALSO lie on the planner's optimal path (the ring2d
+finding: danger depends on whether the topology forces the error ONTO the
+planner's path). **This geometry is mis-calibrated for the play arm:** measuring
+blind exploitation across n needs a recalibrated ShellField-n where the pursued
+(higher-amplitude) lode sits REACHABLE behind the shell, so the planner must
+cross it. Recorded as the next calibration step; the r(n)/nav/TDA arms are
+unaffected (they don't depend on the play geometry).
+
+## ShellField-n contact-cloud TDA: two failure modes (2026-07-21, CPU, gudhi)
+
+`scripts/continuous_shellfield_tda.py` (resumable; run with the `.[tda]`
+interpreter) → `results/continuous_shellfield_tda.json`. Contact cloud from
+random rollouts (budget 20000), gudhi alpha-complex persistence in dim n−1
+(n≤5) / 2-plane H₁ slices (n=6).
+
+| n | n_contacts | dominant pers | 2nd | recovered | method | N_NSW |
+|---|-----------:|--------------:|----:|:---------:|:------:|------:|
+| 2 | 388 | 0.00118 | 0.00108 | ✗ | alpha | 12.6 |
+| 3 | 167 | 0.00024 | 0.00014 | ✗ | alpha | 64.0 |
+| 4 | 59 | 5.9e-06 | — | ✗ | alpha | 301.6 |
+| 5 | 11 | 0.0 | — | ✗ | alpha | 1365.3 |
+| 6 | 18 | 0.0302(slice) | — | ✗ | slices | 6031.9 |
+
+**Two distinct failure modes (both findings):** (1) n=2,3 have PLENTIFUL data
+(2.6×–31× the NSW covering heuristic) yet fail on **signal clarity** — dominant/2nd
+gap only ~1.1–1.7× (a clean shell gives ~100–700×, per the gudhi smoke test) —
+because ShellFieldN always starts OUTSIDE the shell, so the contact cloud traces
+only a reachable ARC, not the closed shell: the exact 2D TDA-probe finding (§4.3,
+"the contact set carries the topology of the REACHABLE boundary, not the mode")
+generalized to n dims. (2) n≥4 fall far below the NSW floor (0.2×, 0.008×, 0.003×)
+as r(n) collapses even at a 20000-rollout budget — concentration data-starvation.
+Implementation note: `recovered_bool` requires a genuine SECOND persistence bar
+before crediting a gap — n=4/n=6 each produced one accidental bar with no
+runner-up (gap = ∞), which a naive rule would miscall "recovered". So on the
+ring/shell, TDA of the OUTSIDE contact cloud cannot recover the mode's topology
+at any n — inside-start evidence (the ring2d D-cell) remains the only route, and
+concentration closes even that at high n.
+
+## ShellField-n play diagnostic: the cause is MISSING AXIAL CANDIDATES (2026-07-21, CPU)
+
+`scripts/continuous_shellfield_play_diag.py` → `results/continuous_shellfield_play_diag.json`.
+n=2 (directly comparable to ring2d 2D, which had play_cost_blind 0.998), three
+MPC action-candidate samplings:
+
+| variant | blind_contact | play_cost | j_blind |
+|---------|--------------:|----------:|--------:|
+| per-component (current) | 0.10 | 0.119 | 14.94 |
+| direction-uniform (S^{n-1}) | 0.00 | 0.000 | 16.69 |
+| per-component + axial ±e_i | **1.00** | **1.037** | 0.13 |
+
+**Verdict: the action INTERFACE is the cause, specifically the absence of
+constant AXIAL candidates — not the phantom distance (ring2d, same center=12,
+gave 0.998) nor dimensional concentration (this is n=2).** The 2D scalar-heading
+planner's constant candidates {−a_max, 0, +a_max} include a sustained east
+heading (straight at the phantom); the vector per-component candidate set does
+NOT, so the blind planner never drives straight into the shell. Adding the 2n
+axial unit candidates ±e_i recovers the ring2d exploit exactly (contact 1.0, pc
+1.04). Notably, direction-UNIFORM sampling does NOT fix it (pc 0.0) — the missing
+ingredient is the deterministic go-straight-at-the-target candidate, not random
+directional coverage. **Fix:** add ±e_i to the vector planner's constant
+candidates (the vector analogue of the scalar east/west constants); then re-run
+the play arm across n to measure the danger cleanly (and only THEN test whether
+it collapses with n by concentration, free of this confound).
+
+## ShellField-n play arm RE-RUN with the axial fix: danger is ROBUST across n (2026-07-21)
+
+After adding the axial ±e_i constant candidates to the vector MPC (commit
+c4a9fd3), re-ran `scripts/continuous_shellfield_play.py` across n:
+
+| n | play_cost | blind_contact | j_truth | j_blind |
+|---|----------:|--------------:|--------:|--------:|
+| 2 | 1.023 | 1.0 | 16.92 | 0.13 |
+| 3 | 1.013 | 1.0 | 15.69 | 0.13 |
+| 4 | 0.994 | 1.0 | 14.43 | 0.13 |
+| 5 | 0.991 | 1.0 | 13.44 | 0.13 |
+| 6 | 0.996 | 1.0 | 12.77 | 0.13 |
+
+**Definitive result — supersedes the two earlier play-arm folds.** With a
+competent planner (axial candidates), the blind model is exploited at play_cost
+≈ 1.0 and blind_contact 1.0 at EVERY n=2..6, j_blind pinned at 0.13 (like ring2d
+0.998). **The danger does NOT collapse with n — it is robust.** The earlier
+play_cost≈0 was entirely the action-interface confound (missing axial constant
+candidates), NOT dimensional concentration (my first reading) and NOT the phantom
+distance (the second reading — ring2d exploited at the same distance). **The
+danger law's two axes are orthogonal:** r(n) collapse governs SYNTHESIS
+(identifiability — whether the sample contains the mode, which does collapse with
+n, step-1 r(n)), while the PLAY danger governs EXPLOITATION and depends on the
+competent planner's REACHABILITY of the region (robust across n here, because the
+axial candidate always drives the blind planner into the shell) — exactly paper
+1's "danger needs a competent planner that reaches the region". Rarity and
+reachability are independent knobs; a high-n hybrid mode is both near-certainly
+mis-synthesized AND fully exploitable at play.
+
+## ShellField-n INSIDE-start TDA: inner-loop evidence recovers the topology (2026-07-21)
+
+`scripts/continuous_shellfield_tda.py --start inside` → `results/continuous_shellfield_tda_inside.json`.
+
+| n | n_contacts | dominant / 2nd | recovered | method |
+|---|-----------:|----------------|:---------:|:------:|
+| 2 | 33702 | 12.21 / 0.0026 (gap 4754) | ✓ | alpha |
+| 3 | 45697 | 10.67 / 1.6e-6 | ✓ | alpha |
+| 4 | 54170 | 7.67 / 0.0 (lone, dom≫floor) | ✓ | alpha |
+| 5 | 59961 | 7.16 / 0.0 (lone, dom≫floor) | ✓ | alpha |
+| 6 | 63949 | 0.55 / 0.38 (gap 1.47, slice) | ✗ | slices |
+
+**Inside-start recovers β_{n−1} at n=2..5 (marginal at n=6 via slices); OUTSIDE
+recovers at NO n.** Inside gives ~100× more contacts (33k–64k vs 388–11) and r is
+high AND RISES with n (10.6–2682× the NSW floor at every n) — so concentration
+starves the OUTSIDE contact cloud but NOT the inside one (the probe starts in the
+inner ball and floods the inner boundary). The 2D D-cell finding (inner-loop
+evidence recovers the hole where outside evidence provably cannot, §4.3)
+GENERALIZES to n dims: topology recovery is governed by whether the START makes
+the loop reachable — the reachability theme again, now for TDA.
+
+**recovered_bool RULE FIX (rigor).** The original rule required a genuine 2nd
+persistence bar (ratio dom/2nd ≥ gap_threshold), which false-negatived the inside
+n=4,5 CLEAN single features (dom 7–8, 2nd=0 = no noise competitor). Added a
+`lone_strong` clause + `--dom-floor` (0.5): a lone bar (2nd=0) counts as recovery
+iff its dominant persistence clears the floor — separating a clean single feature
+(dom 7–12, 54k contacts) from an accidental cycle in a sparse cloud (outside n=4:
+dom 6e-6, 59 contacts). Both TDA JSONs recomputed under the fixed rule (outside
+stays 0/5; inside becomes 4/5).
 
 ---
 

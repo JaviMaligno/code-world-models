@@ -48,7 +48,7 @@ jobs:
         run: pytest -q
 
   lean_proofs:
-    name: Lean formalization (prop:risk + the machine-checked counterexample)
+    name: Lean formalization (paper 2 prop:risk; paper 3 metric core)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

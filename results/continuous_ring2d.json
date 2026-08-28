@@ -1,0 +1,88 @@
+{
+  "script": "continuous_ring2d.py",
+  "params": {
+    "gaps": [
+      0.0,
+      0.6,
+      1.2
+    ],
+    "rollouts": 600,
+    "episodes": 20,
+    "seed": 0
+  },
+  "rows": [
+    {
+      "gap": 0.0,
+      "r": 0.041666666666666664,
+      "r_ci": [
+        0.02837953071156377,
+        0.06078557483929593
+      ],
+      "r_interior": 0.0,
+      "r_interior_ci": [
+        0.0,
+        0.006361933328210577
+      ],
+      "interior_entries": 0,
+      "rollouts": 600,
+      "j_truth": 17.322584983073035,
+      "j_blind": 0.13548569558467194,
+      "j_random": 0.10804464792007155,
+      "play_cost_blind": 0.9984059378217282,
+      "blind_contact_rate": 1.0,
+      "j_filled": 17.322584983073035,
+      "play_cost_filled": 0.0,
+      "filled_contact_rate": 0.0,
+      "n_episodes": 20
+    },
+    {
+      "gap": 0.6,
+      "r": 0.028333333333333332,
+      "r_ci": [
+        0.0177637898515876,
+        0.04490430058802438
+      ],
+      "r_interior": 0.006666666666666667,
+      "r_interior_ci": [
+        0.0025954592764893545,
+        0.017014981607345086
+      ],
+      "interior_entries": 4,
+      "rollouts": 600,
+      "j_truth": 42.321781325491195,
+      "j_blind": 41.37045907481222,
+      "j_random": 0.10804464792007155,
+      "play_cost_blind": 0.02253584556954019,
+      "blind_contact_rate": 0.0,
+      "j_filled": 27.987133386325127,
+      "play_cost_filled": 0.33957306477401494,
+      "filled_contact_rate": 1.0,
+      "n_episodes": 20
+    },
+    {
+      "gap": 1.2,
+      "r": 0.015,
+      "r_ci": [
+        0.00791115278835805,
+        0.028259922540006213
+      ],
+      "r_interior": 0.01,
+      "r_interior_ci": [
+        0.004590859523391853,
+        0.021643835138254512
+      ],
+      "interior_entries": 6,
+      "rollouts": 600,
+      "j_truth": 41.64786847373974,
+      "j_blind": 41.37045907481222,
+      "j_random": 0.10821522249608115,
+      "play_cost_blind": 0.006678182825688824,
+      "blind_contact_rate": 0.0,
+      "j_filled": 32.444978832524114,
+      "play_cost_filled": 0.2215446909379317,
+      "filled_contact_rate": 0.95,
+      "n_episodes": 20
+    }
+  ],
+  "elapsed_s": 283.3
+}

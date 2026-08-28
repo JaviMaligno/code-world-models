@@ -1,0 +1,80 @@
+```python
+import math
+
+# Physical constants (fixed integrator contract)
+DT = 0.1
+GAIN = 3.0
+DRAG = 0.3
+A_MAX = 1.0
+
+# --- Hypothesis about the anomalous ("non-integrator") transitions ---
+#
+# Every observed transition matches the plain integrator EXCEPT the ones
+# whose *starting* position [x, y] lies farther than a fixed radius from
+# the point (12.0, 0.0) -- which is exactly the center of the "phantom"
+# reward attractor used in reward(). For those transitions the returned
+# state is identical to the input state (zero change): the action is
+# simply ignored and velocity/position are frozen.
+#
+# Checking radius-from-(12,0) for every transition's *starting* position:
+#   - all transitions that match the plain integrator have
+#     hypot(x-12, y-0) <= ~3.449
+#   - both transitions that freeze have
+#     hypot(x-12, y-0) >= ~3.486
+# i.e. there is a clean gap between "normal" and "frozen" starting
+# positions, and no transition's *landing* radius played any role in
+# separating them (attempts to fly further out from an already-normal
+# position are handled by the ordinary integrator just fine). This means
+# the trigger condition depends only on where the object currently is,
+# not on where the integrator would send it next.
+#
+# The two frozen starting positions, (11.7356, 3.4757) and (9.2876,
+# -2.2053), sit at almost the same radius from (12, 0): 3.486 and 3.496
+# respectively. Combined with the diagnostic that the anomalous landing
+# positions (across the full sample) form 22 clusters with beta_1 = 1 --
+# i.e. they trace a single CLOSED LOOP enclosing an area the sample never
+# visits -- the natural reading is a circular "dead zone" boundary
+# centered on the phantom attractor (12, 0): once the agent is outside
+# that circle (radius ~ 3.46-3.47), it is stuck there forever (any action
+# leaves the state unchanged). The loop of anomalous positions is the
+# reachable rim of that circle; per the note in the prompt, the dead zone
+# itself may extend further outward than any position actually observed
+# (we only ever see its near/reachable edge, never deep inside it).
+#
+# We therefore pick the wall center and radius:
+RING_CENTER = (12.0, 0.0)
+RING_RADIUS = 3.46  # strictly between the largest normal radius (~3.4487)
+                     # and the smallest frozen radius (~3.4858) observed
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    # 1-6: fixed base integrator (part of the contract, exact order).
+    a = min(A_MAX, max(-A_MAX, action))
+    phi = math.pi * a / A_MAX
+    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT
+    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT
+    x2 = x + vx2 * DT
+    y2 = y + vy2 * DT
+
+    # Additional rule: circular dead zone centered on the phantom
+    # attractor (12, 0). If the CURRENT position already lies outside the
+    # wall, the state is frozen (the base-integrator result is discarded
+    # and the original state is returned unchanged).
+    dx = x - RING_CENTER[0]
+    dy = y - RING_CENTER[1]
+    if math.hypot(dx, dy) > RING_RADIUS:
+        return [x, y, vx, vy]
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+    d1 = math.hypot(x - (-6.0), y - 0.0)
+    d2 = math.hypot(x - 12.0, y - 0.0)
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```

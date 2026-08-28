@@ -1,0 +1,18 @@
+[
+ {
+  "n": 5,
+  "cone_events": 1722,
+  "mean_R_overall": 2.462848810836771,
+  "mean_R_given_cone": 1.0081331036233139,
+  "R_ratio": 0.40933617166731123,
+  "mean_Z1_given_cone": 2.8977452965082136
+ },
+ {
+  "n": 8,
+  "cone_events": 27,
+  "mean_R_overall": 2.713649226533875,
+  "mean_R_given_cone": 0.5823018765853784,
+  "R_ratio": 0.21458258896974258,
+  "mean_Z1_given_cone": 1.2909619768220835
+ }
+]

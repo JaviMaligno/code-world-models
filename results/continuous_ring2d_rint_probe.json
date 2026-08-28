@@ -1,0 +1,250 @@
+{
+  "script": "ring2d_rint_probe.py",
+  "params": {
+    "gaps": [
+      0.0,
+      0.1,
+      0.2,
+      0.4,
+      0.6,
+      0.9,
+      1.2,
+      1.8,
+      2.4,
+      3.2,
+      4.6,
+      6.283185307179586
+    ],
+    "rollouts": 4000,
+    "seed": 0
+  },
+  "rows": [
+    {
+      "gap": 0.0,
+      "r": 0.0305,
+      "r_ci": [
+        0.025604966044198076,
+        0.036295984283107575
+      ],
+      "r_int": 0.0,
+      "r_int_ci": [
+        0.0,
+        0.000959478516832434
+      ],
+      "funnel_entries": 0,
+      "direct_entries": 0,
+      "pathwise_enter_violations_vs_next": 0,
+      "violating_seeds": [],
+      "pathwise_enter_gains_vs_next": 3,
+      "pathwise_fire_violations_vs_next": 0
+    },
+    {
+      "gap": 0.1,
+      "r": 0.0285,
+      "r_ci": [
+        0.02377837617088588,
+        0.034126412070487104
+      ],
+      "r_int": 0.00075,
+      "r_int_ci": [
+        0.0002550951115929764,
+        0.0022029441874642083
+      ],
+      "funnel_entries": 0,
+      "direct_entries": 3,
+      "pathwise_enter_violations_vs_next": 0,
+      "violating_seeds": [],
+      "pathwise_enter_gains_vs_next": 5,
+      "pathwise_fire_violations_vs_next": 0
+    },
+    {
+      "gap": 0.2,
+      "r": 0.02725,
+      "r_ci": [
+        0.02264009034821574,
+        0.03276709658944932
+      ],
+      "r_int": 0.002,
+      "r_int_ci": [
+        0.0010137740726005333,
+        0.003941866530164571
+      ],
+      "funnel_entries": 1,
+      "direct_entries": 7,
+      "pathwise_enter_violations_vs_next": 0,
+      "violating_seeds": [],
+      "pathwise_enter_gains_vs_next": 8,
+      "pathwise_fire_violations_vs_next": 0
+    },
+    {
+      "gap": 0.4,
+      "r": 0.02375,
+      "r_ci": [
+        0.01946825839249128,
+        0.028945644894791612
+      ],
+      "r_int": 0.004,
+      "r_int_ci": [
+        0.0024636775743338587,
+        0.006488125114363915
+      ],
+      "funnel_entries": 1,
+      "direct_entries": 15,
+      "pathwise_enter_violations_vs_next": 1,
+      "violating_seeds": [
+        50543
+      ],
+      "pathwise_enter_gains_vs_next": 12,
+      "pathwise_fire_violations_vs_next": 0
+    },
+    {
+      "gap": 0.6,
+      "r": 0.01825,
+      "r_ci": [
+        0.014540350054863673,
+        0.02288410749610437
+      ],
+      "r_int": 0.00675,
+      "r_int_ci": [
+        0.004643196615295195,
+        0.00980332894156
+      ],
+      "funnel_entries": 2,
+      "direct_entries": 25,
+      "pathwise_enter_violations_vs_next": 0,
+      "violating_seeds": [],
+      "pathwise_enter_gains_vs_next": 5,
+      "pathwise_fire_violations_vs_next": 0
+    },
+    {
+      "gap": 0.9,
+      "r": 0.0115,
+      "r_ci": [
+        0.008633019939644788,
+        0.015304390571300498
+      ],
+      "r_int": 0.008,
+      "r_int_ci": [
+        0.005672551795765389,
+        0.011271575064797725
+      ],
+      "funnel_entries": 1,
+      "direct_entries": 31,
+      "pathwise_enter_violations_vs_next": 0,
+      "violating_seeds": [],
+      "pathwise_enter_gains_vs_next": 7,
+      "pathwise_fire_violations_vs_next": 0
+    },
+    {
+      "gap": 1.2,
+      "r": 0.00875,
+      "r_ci": [
+        0.006298307395636456,
+        0.01214438024715141
+      ],
+      "r_int": 0.00975,
+      "r_int_ci": [
+        0.00714061705578644,
+        0.013300151629967762
+      ],
+      "funnel_entries": 2,
+      "direct_entries": 37,
+      "pathwise_enter_violations_vs_next": 0,
+      "violating_seeds": [],
+      "pathwise_enter_gains_vs_next": 3,
+      "pathwise_fire_violations_vs_next": 0
+    },
+    {
+      "gap": 1.8,
+      "r": 0.0035,
+      "r_ci": [
+        0.002086047744245911,
+        0.005866714422968694
+      ],
+      "r_int": 0.0105,
+      "r_int_ci": [
+        0.007777592228137958,
+        0.014161737239840993
+      ],
+      "funnel_entries": 0,
+      "direct_entries": 42,
+      "pathwise_enter_violations_vs_next": 0,
+      "violating_seeds": [],
+      "pathwise_enter_gains_vs_next": 2,
+      "pathwise_fire_violations_vs_next": 0
+    },
+    {
+      "gap": 2.4,
+      "r": 0.00175,
+      "r_ci": [
+        0.000847954911038176,
+        0.0036081654309853438
+      ],
+      "r_int": 0.011,
+      "r_int_ci": [
+        0.008204479595479722,
+        0.014733890393982395
+      ],
+      "funnel_entries": 0,
+      "direct_entries": 44,
+      "pathwise_enter_violations_vs_next": 0,
+      "violating_seeds": [],
+      "pathwise_enter_gains_vs_next": 0,
+      "pathwise_fire_violations_vs_next": 0
+    },
+    {
+      "gap": 3.2,
+      "r": 0.00025,
+      "r_ci": [
+        4.413136673759807e-05,
+        0.0014148674108364198
+      ],
+      "r_int": 0.011,
+      "r_int_ci": [
+        0.008204479595479722,
+        0.014733890393982395
+      ],
+      "funnel_entries": 0,
+      "direct_entries": 44,
+      "pathwise_enter_violations_vs_next": 0,
+      "violating_seeds": [],
+      "pathwise_enter_gains_vs_next": 0,
+      "pathwise_fire_violations_vs_next": 0
+    },
+    {
+      "gap": 4.6,
+      "r": 0.0,
+      "r_ci": [
+        0.0,
+        0.000959478516832434
+      ],
+      "r_int": 0.011,
+      "r_int_ci": [
+        0.008204479595479722,
+        0.014733890393982395
+      ],
+      "funnel_entries": 0,
+      "direct_entries": 44,
+      "pathwise_enter_violations_vs_next": 0,
+      "violating_seeds": [],
+      "pathwise_enter_gains_vs_next": 0,
+      "pathwise_fire_violations_vs_next": 0
+    },
+    {
+      "gap": 6.283185307179586,
+      "r": 0.0,
+      "r_ci": [
+        0.0,
+        0.000959478516832434
+      ],
+      "r_int": 0.011,
+      "r_int_ci": [
+        0.008204479595479722,
+        0.014733890393982395
+      ],
+      "funnel_entries": 0,
+      "direct_entries": 44
+    }
+  ],
+  "elapsed_s": 9.9
+}

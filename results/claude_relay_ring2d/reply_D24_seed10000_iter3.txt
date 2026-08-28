@@ -1,0 +1,106 @@
+```python
+import math
+
+# --- Physical constants (integrator contract) ------------------------------
+DT = 0.1
+GAIN = 3.0
+DRAG = 0.3
+A_MAX = 1.0
+
+# --- Reward landmarks --------------------------------------------------------
+REAL_CENTER = (-6.0, 0.0)      # true target, weight 0.3
+PHANTOM_CENTER = (12.0, 0.0)   # decoy target, weight 1.0 (the "lure")
+
+# --- Anomaly re-analysis, round 3 --------------------------------------------
+# The round-2 rule had the polarity of the angular condition backwards, and
+# the flare placed in the wrong spot. Re-plotting *all* 40 new failures
+# (5 "should freeze but didn't", 35 "shouldn't freeze but did") against the
+# phantom lure at (12, 0), using dtheta = angular offset from the -x
+# direction (pi, i.e. facing the real target):
+#
+#   * The 5 true freezes (pre-step positions) all sit at
+#       r  in [3.386, 3.494]   (one outlier at r = 4.245)
+#       dtheta in [-1.443, -1.191]   (all on the SAME side, all negative)
+#   * The 35 false freezes fall into four separate clusters, all with much
+#     larger angular offset than the true freezes:
+#       dtheta in {-1.467..-1.455} (immediately adjacent to the true band!),
+#       {2.879..2.942}, {-2.892..-2.797}, {1.913..1.993}
+#     None of these should ever trap.
+#
+# The decisive fact: the false freezes closest in angle to the true freezes
+# (dtheta ~ -1.455..-1.467) sit *just past* the true band's edge
+# (dtheta ~ -1.443). So the trap is NOT "outside a gap half-width" (round 2's
+# assumption) -- it is the opposite: a narrow arc *closer* to the
+# real-target-facing direction (small |dtheta|), bounded above by
+# |dtheta| ~ 1.45, at radius ~[3.3, 3.6] from the phantom. The wide swath of
+# |dtheta| in [1.9, 2.94] that round 2 also trapped (as "outside the gap")
+# is plain, non-trapping arena -- that assumption is dropped entirely.
+#
+# One observed position (r = 4.245, dtheta = -1.191) sits well outside the
+# [3.3, 3.6] radial band, at the near (small-|dtheta|) end of the arc: a
+# single isolated bulge, modelled as its own small trap disk (a bell-mouth
+# flare that stands apart from the base band, as in round 2, but anchored at
+# the correct location this time -- close to the arc's inner edge, not
+# "further out along the gap-boundary direction").
+#
+# No evidence constrains the far (small-|dtheta|, toward 0) extent of the
+# arc or a mirrored twin on the other side (dtheta > 0) -- so none is added;
+# the rule below covers only what the data supports.
+# Once trapped, the object never escapes on its own: the whole state
+# (position AND velocity) is left exactly as it was, regardless of action.
+
+_RING_CENTER = PHANTOM_CENTER
+_GAP_CENTER_ANGLE = math.pi     # facing -x, i.e. toward the real target
+
+_R_IN = 3.30
+_R_OUT = 3.60
+_DTHETA_MAX = 1.449             # narrow arc close to the gap-facing side
+
+_FLARE_CENTER = (10.4266, 3.9426)   # isolated bulge near the arc's inner end
+_FLARE_R = 0.4
+
+
+def _in_ring_trap(x: float, y: float) -> bool:
+    dx = x - _RING_CENTER[0]
+    dy = y - _RING_CENTER[1]
+    r = math.hypot(dx, dy)
+    theta = math.atan2(dy, dx)
+    dtheta = math.atan2(
+        math.sin(theta - _GAP_CENTER_ANGLE),
+        math.cos(theta - _GAP_CENTER_ANGLE),
+    )
+    if _R_IN <= r <= _R_OUT and abs(dtheta) < _DTHETA_MAX:
+        return True
+    if math.hypot(x - _FLARE_CENTER[0], y - _FLARE_CENTER[1]) <= _FLARE_R:
+        return True
+    return False
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    # Trap check runs on the CURRENT (pre-step) position: this is an
+    # absorbing state -- if we're already inside the ring trap, position
+    # is left completely unchanged, velocity is forced to zero, and the
+    # action has no effect at all.
+    if _in_ring_trap(x, y):
+        return [x, y, 0.0, 0.0]
+
+    a = min(A_MAX, max(-A_MAX, action))
+    phi = math.pi * a / A_MAX
+    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT
+    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT
+    x2 = x + vx2 * DT
+    y2 = y + vy2 * DT
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y = state[0], state[1]
+    d1 = math.hypot(x - REAL_CENTER[0], y - REAL_CENTER[1])
+    d2 = math.hypot(x - PHANTOM_CENTER[0], y - PHANTOM_CENTER[1])
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```

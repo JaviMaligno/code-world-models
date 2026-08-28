@@ -1,7 +1,7 @@
 name = "Paper2Props"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["Paper2Props"]
+defaultTargets = ["Paper2Props", "Paper3Ring"]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
@@ -13,3 +13,8 @@ scope = "leanprover-community"
 
 [[lean_lib]]
 name = "Paper2Props"
+
+# Paper 3's formalization lives in the same package so the two share one
+# mathlib build and one CI job (lean_proofs builds both default targets).
+[[lean_lib]]
+name = "Paper3Ring"

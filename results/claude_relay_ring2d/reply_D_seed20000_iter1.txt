@@ -1,0 +1,76 @@
+```python
+import math
+
+# Physical constants (fixed integrator contract)
+DT = 0.1
+GAIN = 3.0
+DRAG = 0.3
+A_MAX = 1.0
+
+# --- Hypothesis about the anomalous ("non-integrator") transitions ---
+#
+# Every "frozen" transition (output == input position, velocity zeroed) has
+# a starting position that is NOT itself far from anything special: e.g.
+# [8.507, 0.115] and [8.529, 0.077] are both close to (8.5, 0.1) yet one
+# freezes and the other doesn't. So the trigger cannot depend only on the
+# CURRENT position. Likewise it cannot depend only on velocity magnitude:
+# several freezes happen with incoming speed exactly 0.3, while several
+# non-freezes also start at speed 0.3.
+#
+# What DOES separate the two groups cleanly is the CANDIDATE landing
+# position produced by the base integrator (steps 1-6, before any override,
+# i.e. (x2, y2)): computing hypot(x2 - 12, y2 - 0) for every transition,
+# every non-freeze case has landing radius <= ~3.4976, and every freeze
+# case has landing radius >= ~3.5014 -- a clean gap straddling 3.5 exactly.
+# This matches the persistent-homology diagnostic: the (would-be) landing
+# positions of the anomalous transitions trace a single closed loop
+# (beta_1 = 1) of radius ~3.5 around the phantom-reward attractor (12, 0),
+# and the sample never visits the interior of that loop -- because any
+# attempt to land inside it is blocked.
+#
+# So the region is a circular "force field" / wall around (12, 0): if the
+# integrator's proposed next position would land beyond radius RING_RADIUS
+# from (12, 0), the move is disallowed. Motion is blocked entirely (both
+# position and velocity are discarded) and the agent is left exactly where
+# it started, at rest (v = 0) -- it does NOT get to keep its old velocity,
+# which is why the very next call from that same (unchanged) position, now
+# with v = 0, produces a fresh candidate landing that is usually back
+# inside the circle and is applied normally (explaining the observed
+# freeze / normal-step / freeze / normal-step alternation at a fixed spot).
+RING_CENTER = (12.0, 0.0)
+RING_RADIUS = 3.5  # gap observed: max allowed landing radius ~3.4976,
+                    # min blocked landing radius ~3.5014
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    # 1-6: fixed base integrator (part of the contract, exact order).
+    a = min(A_MAX, max(-A_MAX, action))
+    phi = math.pi * a / A_MAX
+    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT
+    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT
+    x2 = x + vx2 * DT
+    y2 = y + vy2 * DT
+
+    # Additional rule: circular "wall" around the phantom attractor
+    # (12, 0). If the CANDIDATE next position (x2, y2) lies beyond the
+    # wall, the move is blocked: the agent stays at its current position
+    # and its velocity is zeroed (the base-integrator result is discarded
+    # entirely, including velocity).
+    dx = x2 - RING_CENTER[0]
+    dy = y2 - RING_CENTER[1]
+    if math.hypot(dx, dy) > RING_RADIUS:
+        return [x, y, 0.0, 0.0]
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+    d1 = math.hypot(x - (-6.0), y - 0.0)
+    d2 = math.hypot(x - 12.0, y - 0.0)
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```

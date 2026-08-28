@@ -1,0 +1,126 @@
+```python
+import math
+
+# --- Physical constants (integrator contract) ---------------------------
+DT = 0.1
+GAIN = 3.0
+DRAG = 0.3
+A_MAX = 1.0
+
+# --- Reward landmarks -----------------------------------------------------
+REAL_CENTER = (-6.0, 0.0)      # true target, weight 0.3
+PHANTOM_CENTER = (12.0, 0.0)   # decoy target, weight 1.0 (the "lure")
+
+# --- Anomaly re-analysis ----------------------------------------------------
+# All 40 supplied failing transitions share one signature: the returned
+# next-state is *exactly* the pre-step state (same x, y, AND velocity zeroed
+# in a way that is already zero if it was zero before) -- i.e. the object's
+# entire state is frozen solid, the action is ignored, and even x2/y2 are
+# NOT the integrator's computed next position -- they are literally the
+# input x, y. So the correct trigger check must run on the CURRENT (pre-
+# step) position, not on the integrator's output, and the "freeze" must
+# replace the *whole* returned state with the input state unchanged
+# (an absorbing state: once entered, every future action keeps it there).
+#
+# Plotting the 32 distinct trapped (x, y) in polar coordinates around the
+# phantom lure (12, 0):
+#   - Across almost the whole outside-the-gap arc (angular distance from
+#     the -x direction, i.e. from pi, between ~1.35 and ~3.01 rad) the
+#     radius from the lure sits in a tight band, ~3.39-3.50 -- a thin
+#     ring wall, consistent with the "ring2d" name.
+#   - The gap facing -x (toward the real target / arena interior) has
+#     half-width close to the "gap2.4" nominal value of 1.2 rad.
+#   - Right at the two mouths of that gap (angular distance from pi just
+#     under 1.2 rad) the trapped points suddenly reach much further out
+#     from the lure (r up to ~4.25, well outside the thin band) and this
+#     excess shrinks smoothly as you move a little further from the mouth.
+#     That is exactly the signature of the ring's rim being locally
+#     "flared" (like a bell-mouth/funnel) right where the wall is cut open
+#     -- a widened, roughly circular bulge sitting at each end of the
+#     otherwise-thin wall, rather than a simple constant-width band.
+#   - This also matches the aggregate diagnostics: 19 clusters / beta_1=0
+#     (an open arc, not a closed loop) and a bounding box (x in
+#     [10.43,15.59], y in [-3.84,4.05]) whose innermost x reach (toward
+#     -x) is achieved right at the flared mouths, not along the thin
+#     mid-arc band.
+#
+# Model: the trigger region is the union of
+#   (a) a thin annular sector centered on the phantom lure, radius in
+#       [R_IN, R_OUT], for angular distance from the -x direction (pi)
+#       greater than GAP_HALF_WIDTH (i.e. outside the 2.4-rad gap), and
+#   (b) two circular "end-cap" bulges of radius END_CAP_R, centered where
+#       the sector's mid-radius meets the gap boundary on each side --
+#       modelling the flared rim right at the gap's two mouths.
+# Radii/width were chosen generously (with margin over every observed
+# point) since the exact micro-shape of the flare can't be pinned down
+# from a small transition sample; all 40 given transitions satisfy this
+# region with clear margin.
+#
+# Once trapped, the object never escapes on its own: the whole state
+# (position AND velocity) is left exactly as it was, regardless of action.
+
+_RING_CENTER = PHANTOM_CENTER
+_GAP_CENTER_ANGLE = math.pi     # gap faces -x, i.e. toward the real target
+_GAP_HALF_WIDTH = 1.2           # full gap width = 2.4 radians ("gap2.4")
+
+_R_IN = 3.30
+_R_OUT = 3.60
+_R_MID = 0.5 * (_R_IN + _R_OUT)
+
+_PHI_MAX = math.pi - _GAP_HALF_WIDTH
+_END_CAP_POS = (
+    _RING_CENTER[0] + _R_MID * math.cos(_PHI_MAX),
+    _RING_CENTER[1] + _R_MID * math.sin(_PHI_MAX),
+)
+_END_CAP_NEG = (
+    _RING_CENTER[0] + _R_MID * math.cos(-_PHI_MAX),
+    _RING_CENTER[1] + _R_MID * math.sin(-_PHI_MAX),
+)
+_END_CAP_R = 0.90
+
+
+def _in_ring_trap(x: float, y: float) -> bool:
+    dx = x - _RING_CENTER[0]
+    dy = y - _RING_CENTER[1]
+    r = math.hypot(dx, dy)
+    theta = math.atan2(dy, dx)
+    dtheta = math.atan2(
+        math.sin(theta - _GAP_CENTER_ANGLE),
+        math.cos(theta - _GAP_CENTER_ANGLE),
+    )
+    if abs(dtheta) > _GAP_HALF_WIDTH and _R_IN <= r <= _R_OUT:
+        return True
+    for cx, cy in (_END_CAP_POS, _END_CAP_NEG):
+        if math.hypot(x - cx, y - cy) <= _END_CAP_R:
+            return True
+    return False
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    # Trap check runs on the CURRENT (pre-step) position: this is an
+    # absorbing state -- if we're already inside the ring trap, position
+    # is left completely unchanged, velocity is forced to zero, and the
+    # action has no effect at all.
+    if _in_ring_trap(x, y):
+        return [x, y, 0.0, 0.0]
+
+    a = min(A_MAX, max(-A_MAX, action))
+    phi = math.pi * a / A_MAX
+    vx2 = vx + (GAIN * math.cos(phi) - DRAG * vx) * DT
+    vy2 = vy + (GAIN * math.sin(phi) - DRAG * vy) * DT
+    x2 = x + vx2 * DT
+    y2 = y + vy2 * DT
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y = state[0], state[1]
+    d1 = math.hypot(x - REAL_CENTER[0], y - REAL_CENTER[1])
+    d2 = math.hypot(x - PHANTOM_CENTER[0], y - PHANTOM_CENTER[1])
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```

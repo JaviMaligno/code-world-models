@@ -1,0 +1,80 @@
+```python
+import math
+
+# Physical constants (fixed integrator contract).
+_DT = 0.1
+_GAIN = 3.0
+_DRAG = 0.3
+_A_MAX = 1.0
+
+# Reward centers.
+_REAL_CX, _REAL_CY = -6.0, 0.0
+_PHANTOM_CX, _PHANTOM_CY = 12.0, 0.0
+
+# --- Hypothesis about the anomalous ("freeze") trigger region --------------
+#
+# The 74 anomalous landing positions form 24 spatial clusters whose bounding
+# box (x in [8.46, 15.59], y in [-3.53, 3.54]) is a square of half-extent
+# ~3.5-3.6 centered almost exactly on (12.0, 0.0) -- the PHANTOM reward
+# center. beta_1 = 1 means those points trace a single closed loop around
+# an interior region the sample never fills in. Every position actually
+# visited in the *clean* transitions of this batch lies at radius at most
+# ~3.493 from (12, 0), and none of those is anomalous. That is exactly the
+# signature of a circular containment wall around the phantom target: once
+# the plain integrator's landing position would cross out to radius
+# _RING_R_IN (~3.5) or beyond, motion is disallowed for that step -- the
+# 74 recorded points sit right where trajectories first touch that inner
+# boundary from inside, tracing one closed loop (beta_1 = 1) instead of
+# filling the disk. Because the true outer edge of the wall is never
+# reached (no trajectory gets past it), we only model the inner
+# (reachable) boundary, per the diagnostics' note that the region "may
+# extend beyond the observed positions on the far side".
+#
+# Original attempt only zeroed the landing *velocity* while still letting
+# the landing *position* move to the plain integrator's (out-of-bounds)
+# prediction -- that is wrong: every failing transition shows the returned
+# position pinned exactly to the PREVIOUS state's (x, y), not to the
+# integrator's computed (x2, y2). I.e. the wall is a true containment: on
+# trigger, the whole step is nullified -- the agent doesn't move at all
+# and its velocity is killed, rather than sliding to the boundary.
+#
+# Rule: compute the plain-integrator landing position first (steps 1-6 of
+# the contract, unchanged). If that landing position's distance from the
+# phantom center (12, 0) is at least _RING_R_IN, discard the step entirely:
+# return the ORIGINAL (x, y) unchanged with velocity frozen to zero. This
+# never fires on any of the 120 given transitions (max radius reached is
+# ~3.493, safely below the threshold), by construction.
+_RING_CX, _RING_CY = _PHANTOM_CX, _PHANTOM_CY
+_RING_R_IN = 3.5  # just above the largest clean radius observed (~3.493)
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    a = min(_A_MAX, max(-_A_MAX, action))
+    phi = math.pi * a / _A_MAX
+
+    vx2 = vx + (_GAIN * math.cos(phi) - _DRAG * vx) * _DT
+    vy2 = vy + (_GAIN * math.sin(phi) - _DRAG * vy) * _DT
+    x2 = x + vx2 * _DT
+    y2 = y + vy2 * _DT
+
+    d_ring = math.hypot(x2 - _RING_CX, y2 - _RING_CY)
+    if d_ring >= _RING_R_IN:
+        # Containment wall: nullify the whole step -- stay put, stop dead.
+        return [x, y, 0.0, 0.0]
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+
+    d1 = math.hypot(x - _REAL_CX, y - _REAL_CY)
+    d2 = math.hypot(x - _PHANTOM_CX, y - _PHANTOM_CY)
+
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+
+    return real + phantom
+```

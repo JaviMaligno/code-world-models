@@ -1,0 +1,32 @@
+{
+  "script": "tubefield_mechanism.py",
+  "rows": [
+    {
+      "config": "aligned",
+      "core_yz": [
+        0.0,
+        0.0
+      ],
+      "r": 0.0033333333333333335,
+      "j_truth": 39.42226631986946,
+      "j_blind": 38.67748480865766,
+      "j_random": 0.41172537356789063,
+      "play_cost_blind": 0.019091801680909726,
+      "blind_contact": 0.0
+    },
+    {
+      "config": "offset",
+      "core_yz": [
+        1.5,
+        0.0
+      ],
+      "r": 0.0033333333333333335,
+      "j_truth": 22.253604241901392,
+      "j_blind": 2.629363348457159,
+      "j_random": 0.41172537356789063,
+      "play_cost_blind": 0.8984685343116515,
+      "blind_contact": 0.9375
+    }
+  ],
+  "elapsed_s": 775.2
+}

@@ -63,6 +63,42 @@ def invert_integrator(endpoint_xy, vx, vy, action, dt, gain, drag, a_max):
     return (endpoint_xy[0] - vx2 * dt, endpoint_xy[1] - vy2 * dt, vx, vy)
 
 
+def thrust_vector_nd(action, gain: float, a_max: float) -> tuple:
+    """Norm-capped thrust vector for the n-dim instruments' action interface
+    (docs/paper3/SHELLFIELD-N-DESIGN.md, "the action interface"): each
+    component is clamped to [-a_max, a_max] first (mirroring the 2D
+    instruments' scalar clamp), then thrust = gain * a / max(1, ||a||), so
+    ||thrust|| <= gain always -- the max thrust magnitude equals the 2D
+    instruments' (gain, reached at phi = 0)."""
+    a = tuple(max(-a_max, min(a_max, ai)) for ai in action)
+    norm = math.sqrt(sum(ai * ai for ai in a))
+    scale = gain / max(1.0, norm)
+    return tuple(ai * scale for ai in a)
+
+
+def integrate_nd(state, action, dt, gain, drag, a_max):
+    """One semi-implicit Euler step for the n-dim thrust-vector plant
+    (ShellFieldN). `state` is a flat 2n-tuple (first n = position, last n =
+    velocity); byte-for-byte the same per-component update as `integrate_2d`
+    once `thrust_vector_nd` replaces the heading trick, so the two families
+    share one integration contract."""
+    n = len(state) // 2
+    pos, vel = state[:n], state[n:]
+    thrust = thrust_vector_nd(action, gain, a_max)
+    vel2 = tuple(v + (t - drag * v) * dt for v, t in zip(vel, thrust))
+    pos2 = tuple(p + v2 * dt for p, v2 in zip(pos, vel2))
+    return pos2 + vel2
+
+
+def _embed_xy(xy: tuple, n: int) -> tuple:
+    """Embed a 2D point in R^n, first two coordinates only (the geometry-
+    normalization convention of SHELLFIELD-N-DESIGN.md: c and the real lode
+    live in the fixed 2-plane so n is the only knob that varies)."""
+    if n < 2:
+        raise ValueError("ShellFieldN requires n >= 2")
+    return (xy[0], xy[1]) + (0.0,) * (n - 2)
+
+
 @dataclass(frozen=True)
 class CartWall:
     # plant
@@ -352,6 +388,168 @@ class PatchField2D:
 
 
 @dataclass(frozen=True)
+class RingField2D:
+    """Paper-3 opening instrument: an annular sticky mode enclosing the lure.
+
+    Same 4D state, scalar heading action, integrator and freeze semantics as
+    PatchField2D. The mode region is an annulus r_in <= dist(pos', center)
+    <= r_out around `center`, and the phantom lode sits AT `center` —
+    strictly inside the hole. Knobs (docs/paper3/RESEARCH-DIRECTION.md §3):
+
+    - `gap` (radians): angular width of a channel cut from the ring, centered
+      at `gap_center` (default: facing the start). gap = 0 is the closed ring
+      (beta_1 = 1): the interior is REACH-NULL — no trajectory of the true
+      dynamics ever enters it (crossing lemma, docs/paper3/THEORY.md), so
+      whatever a certified model says there is pure prior. gap > 0 is
+      contractible and re-opens the interior through a channel of tunable
+      sampling mass — the (1-r)^N regime returns continuously.
+    - `filled`: the wrong-topology model (annulus completed to a disc:
+      freezes the interior too). At gap = 0, planner-equivalent to the true
+      ring for any planner whose imagined steps are shorter than the ring
+      thickness (Proposition 3, THEORY.md) — wrong topology that is both
+      unfalsifiable and harmless; gap > 0 makes it consequential.
+    - `r_in = None`: the mode-blind model (no ring at all).
+
+    Geometry defaults keep the crossing lemma's hypothesis with margin: top
+    speed is gain/drag = 10, so a step moves at most 1.0 < r_out - r_in = 1.5.
+    """
+    dt: float = 0.1
+    gain: float = 3.0
+    drag: float = 0.3
+    a_max: float = 1.0
+    center: tuple = (12.0, 0.0)
+    r_in: float | None = 3.5
+    r_out: float = 5.0
+    gap: float = 0.0
+    gap_center: float = math.pi
+    filled: bool = False
+    lode_real: tuple = (-6.0, 0.0)
+    amp_real: float = 0.3
+    amp_phantom: float = 1.0
+    r0: float = 2.0
+    width: float = 0.5
+    h_episode: int = 80
+    x0_range: float = 0.5
+    x0_center: tuple = (0.0, 0.0)   # start placement; set to `center` for
+                                    # inside-the-hole episodes (mu0 knob:
+                                    # moves the reachable set, Prop 1)
+    norm: str = "euclid"            # "euclid" (round ring) | "cheby" (square
+                                    # ring: the zero-curvature separator
+                                    # ablation, V2-PROGRAM 1a). Chebyshev
+                                    # distance is 1-Lipschitz w.r.t.
+                                    # Euclidean steps, so the crossing lemma
+                                    # survives verbatim — this ablates the
+                                    # separator's curvature, not the metric
+                                    # proof.
+    neck: float | None = None       # THIN-NECK knob (V2-PROGRAM's last item):
+                                    # inside the neck sector the band thins
+                                    # FROM OUTSIDE to thickness `neck`
+                                    # (r_out dips to r_in + neck; the hole
+                                    # d < r_in is invariant, so r_int stays
+                                    # comparable across arms). None = uniform
+                                    # band, bit-identical to every committed
+                                    # run. The band still separates the plane
+                                    # in the continuum at every neck > 0
+                                    # (beta_1 = 1, no channel): the knob
+                                    # breaks Lemma 2's METRIC hypothesis, not
+                                    # the topology -- interior entry requires
+                                    # a step longer than `neck`, and the max
+                                    # step is (gain/drag)*dt = 1.0, so
+                                    # neck >= 1.2 is an exact zero (local
+                                    # crossing lemma) while neck < 1.0 admits
+                                    # leap-through at speed.
+    neck_center: float = math.pi    # facing the start (like gap_center);
+                                    # 0.0 = hidden on the far side
+    neck_halfwidth: float = 0.3     # angular half-width (rad) of the sector
+    r_in2: float | None = None      # optional SECOND (outer) ring
+    r_out2: float | None = None     # [r_in2, r_out2]: the multi-chamber
+                                    # instrument (V2-PROGRAM 1b). Nested
+                                    # gauge: each band is uncrossable
+                                    # (thickness > step), so the plane
+                                    # splits into three mutually reach-null
+                                    # chambers — hole, middle, outside —
+                                    # and certification peels exactly one
+                                    # boundary layer per start placement.
+
+    def _d(self, x: float, y: float) -> float:
+        dx, dy = x - self.center[0], y - self.center[1]
+        if self.norm == "cheby":
+            return max(abs(dx), abs(dy))
+        return math.hypot(dx, dy)
+
+    def initial_state(self, rng) -> State:
+        return (self.x0_center[0] + rng.uniform(-self.x0_range, self.x0_range),
+                self.x0_center[1] + rng.uniform(-self.x0_range, self.x0_range),
+                0.0, 0.0)
+
+    def _lode(self, x: float, y: float, lode: tuple, amp: float) -> float:
+        d = math.hypot(x - lode[0], y - lode[1])
+        return amp / (1.0 + math.exp((d - self.r0) / self.width))
+
+    def reward(self, state: State) -> float:
+        x, y = state[0], state[1]
+        return (self._lode(x, y, self.lode_real, self.amp_real)
+                + self._lode(x, y, self.center, self.amp_phantom))
+
+    def in_interior(self, x: float, y: float) -> bool:
+        """Strictly inside the hole (call on the TRUTH env: the reach-null
+        measurement is about the true geometry, not a model's)."""
+        if self.r_in is None:
+            return False
+        return self._d(x, y) < self.r_in
+
+    def _in_gap_sector(self, x: float, y: float) -> bool:
+        if self.gap <= 0.0:
+            return False
+        ang = math.atan2(y - self.center[1], x - self.center[0])
+        delta = (ang - self.gap_center + math.pi) % (2 * math.pi) - math.pi
+        return abs(delta) <= self.gap / 2.0
+
+    def _r_out_eff(self, x: float, y: float) -> float:
+        """The band's outer radius at this position's angle: `r_out`
+        everywhere except inside the neck sector, where the band thins from
+        outside to thickness `neck`. Guarded so the `neck is None` path does
+        no arithmetic at all -- every committed run stays bit-identical."""
+        if self.neck is None:
+            return self.r_out
+        ang = math.atan2(y - self.center[1], x - self.center[0])
+        delta = (ang - self.neck_center + math.pi) % (2 * math.pi) - math.pi
+        if abs(delta) <= self.neck_halfwidth:
+            return self.r_in + self.neck
+        return self.r_out
+
+    def _in_mode(self, x: float, y: float) -> bool:
+        if self.r_in is None:
+            return False
+        d = self._d(x, y)
+        if (self.r_in2 is not None and self.r_out2 is not None
+                and self.r_in2 <= d <= self.r_out2
+                and not self._in_gap_sector(x, y)):
+            return True
+        lo = 0.0 if self.filled else self.r_in
+        hi = self.r_out if self.neck is None else self._r_out_eff(x, y)
+        if not (lo <= d <= hi):
+            return False
+        return not self._in_gap_sector(x, y)
+
+    def _integrate(self, state: State, action: float):
+        return integrate_2d(state, action, self.dt, self.gain, self.drag,
+                            self.a_max)
+
+    def contact_mode(self, state: State, action: float) -> bool:
+        x2, y2, _, _ = self._integrate(state, action)
+        return self._in_mode(x2, y2)
+
+    def step(self, state: State, action: float):
+        x2, y2, vx2, vy2 = self._integrate(state, action)
+        if self._in_mode(x2, y2):
+            s2 = (state[0], state[1], 0.0, 0.0)
+            return s2, self.reward(s2), True
+        s2 = (x2, y2, vx2, vy2)
+        return s2, self.reward(s2), False
+
+
+@dataclass(frozen=True)
 class ShapeField2D:
     """Fourth instrument: single-mode 2D navigation against an arbitrary
     `Shape` (the geometry-repair generalization of PatchField2D's disc).
@@ -406,6 +604,215 @@ class ShapeField2D:
         return s2, self.reward(s2), False
 
 
+@dataclass(frozen=True)
+class ShellFieldN:
+    """Paper-3 n-dim arm, step 1 (docs/paper3/SHELLFIELD-N-DESIGN.md): the
+    n-dimensional generalization of RingField2D. State (x⃗, v⃗) in R^{2n},
+    represented as a flat 2n-tuple (first n = position, last n = velocity).
+
+    The action is a thrust VECTOR a⃗ in [-1,1]^n, NOT the 2D instruments'
+    scalar heading (that parameterization does not generalize -- design
+    note, "the action interface"): thrust = gain * a⃗ / max(1, ||a⃗||), a
+    norm cap so ||thrust|| <= gain always, matching the 2D instruments' max
+    thrust magnitude. Same semi-implicit Euler, same dt/gain/drag as every
+    2D instrument (`integrate_nd`/`thrust_vector_nd` share the contract).
+
+    Mode = spherical shell r_in <= ||x⃗' - c|| <= r_out (Euclidean norm in
+    R^n); freeze-at-previous-position-with-zero-velocity semantics are
+    bit-identical to RingField2D's. Geometry is normalized across n: `c`
+    and the real lode sit in the fixed first-two-coordinates 2-plane
+    (c = (12, 0, 0, ...), lode_real at (-6, 0, 0, ...)), and r_in/r_out/lode
+    constants/h_episode are pinned at the 2D values, so n is the only knob
+    that varies -- the r(n)/r_int(n) concentration-of-measure measurement
+    (design note SS8.2) isolates the dimension effect purely.
+
+    r_in=None is the mode-blind model (blind_of): no shell, no freeze.
+
+    `start` (mu0 knob, mirrors RingField2D's x0_center trick -- design note
+    SS4.3's ring2d "start inside" arm): "outside" (default, BYTE-IDENTICAL to
+    the original behavior -- pos near the origin, Euclidean distance ~12
+    from `c`, far outside r_out) or "inside" (pos placed within `x0_range`
+    of `c` on the fixed first-two-coordinates 2-plane, i.e. strictly inside
+    the inner ball ||x - c|| < r_in since x0_range=0.5 << r_in=3.5): an
+    inside start approaches the shell's INNER boundary from within, tracing
+    the inner loop rather than only ever reaching the outer sphere from far
+    away.
+    """
+    n: int
+    dt: float = 0.1
+    gain: float = 3.0
+    drag: float = 0.3
+    a_max: float = 1.0
+    center_xy: tuple = (12.0, 0.0)
+    r_in: float | None = 3.5
+    r_out: float = 5.0
+    lode_real_xy: tuple = (-6.0, 0.0)
+    amp_real: float = 0.3
+    amp_phantom: float = 1.0
+    r0: float = 2.0
+    width: float = 0.5
+    h_episode: int = 80
+    x0_range: float = 0.5
+    start: str = "outside"     # "outside" (default) | "inside" (mu0 knob)
+
+    def __post_init__(self):
+        if self.n < 2:
+            raise ValueError("ShellFieldN requires n >= 2")
+        if self.start not in ("outside", "inside"):
+            raise ValueError(f"start must be 'outside' or 'inside', got {self.start!r}")
+
+    @property
+    def action_dim(self) -> int:
+        """The planner's action-vector width (docs/paper3/SHELLFIELD-N-DESIGN.md,
+        "the action interface"): mpc.plan/_candidates and cem.plan_cem read
+        this to switch from scalar to n-dim candidate sampling. The 2D/1D
+        instruments have no such attribute, so `getattr(model, "action_dim",
+        1)` there keeps them on the byte-identical scalar path."""
+        return self.n
+
+    def center(self) -> tuple:
+        return _embed_xy(self.center_xy, self.n)
+
+    def lode_real(self) -> tuple:
+        return _embed_xy(self.lode_real_xy, self.n)
+
+    def initial_state(self, rng) -> State:
+        pos = [0.0] * self.n
+        origin = self.center() if self.start == "inside" else (0.0, 0.0)
+        pos[0] = origin[0] + rng.uniform(-self.x0_range, self.x0_range)
+        pos[1] = origin[1] + rng.uniform(-self.x0_range, self.x0_range)
+        return tuple(pos) + tuple(0.0 for _ in range(self.n))
+
+    @staticmethod
+    def _dist(p: tuple, q: tuple) -> float:
+        return math.sqrt(sum((pi - qi) ** 2 for pi, qi in zip(p, q)))
+
+    def _lode(self, pos: tuple, point: tuple, amp: float) -> float:
+        d = self._dist(pos, point)
+        return amp / (1.0 + math.exp((d - self.r0) / self.width))
+
+    def reward(self, state: State) -> float:
+        pos = state[: self.n]
+        return (self._lode(pos, self.lode_real(), self.amp_real)
+                + self._lode(pos, self.center(), self.amp_phantom))
+
+    def in_interior(self, pos: tuple) -> bool:
+        """Strictly inside the hole (call on the TRUTH env, mirroring
+        RingField2D.in_interior: the reach-null measurement is about the
+        true geometry, not a model's)."""
+        if self.r_in is None:
+            return False
+        return self._dist(pos, self.center()) < self.r_in
+
+    def _in_mode(self, pos: tuple) -> bool:
+        if self.r_in is None:
+            return False
+        d = self._dist(pos, self.center())
+        return self.r_in <= d <= self.r_out
+
+    def _integrate(self, state: State, action: tuple) -> State:
+        return integrate_nd(state, action, self.dt, self.gain, self.drag,
+                            self.a_max)
+
+    def contact_mode(self, state: State, action: tuple) -> bool:
+        s2 = self._integrate(state, action)
+        return self._in_mode(s2[: self.n])
+
+    def step(self, state: State, action: tuple):
+        s2 = self._integrate(state, action)
+        pos2 = s2[: self.n]
+        if self._in_mode(pos2):
+            frozen = state[: self.n] + (0.0,) * self.n
+            return frozen, self.reward(frozen), True
+        return s2, self.reward(s2), False
+
+
+@dataclass
+class TubeField3D:
+    """The NON-SEPARATING mode (V2-PROGRAM 2d, T8's instrument): a solid
+    torus in R^3 whose core circle stands in the y-z plane at x = core_x,
+    between the start and the phantom lode. Unlike every ring/shell above,
+    the tube's complement is CONNECTED: nothing is reach-null, there is no
+    exact gauge region, and the crossing lemma has no separating surface to
+    work with — obstruction becomes a property of the PATH (does the
+    optimal plan thread the hole or clip the tube?), not of separation.
+    The `core_yz` offset knob moves the hole off the start->phantom axis:
+    offset 0 = the straight plan threads the hole (aligned-channel
+    analogue); offset ~1.5 = the straight plan clips the tube (danger).
+
+    Same integrator family and freeze-on-entry semantics as ShellFieldN
+    (thrust-vector action via action_dim = 3)."""
+    dt: float = 0.1
+    gain: float = 3.0
+    drag: float = 0.3
+    a_max: float = 1.0
+    core_x: float = 8.0
+    core_yz: tuple = (0.0, 0.0)
+    core_radius: float = 2.0
+    tube_radius: float | None = 1.0     # None = the blind model
+    lode_real_xy: tuple = (-6.0, 0.0)
+    center_xy: tuple = (12.0, 0.0)
+    amp_real: float = 0.3
+    amp_phantom: float = 1.0
+    r0: float = 2.0
+    width: float = 0.5
+    h_episode: int = 80
+    x0_range: float = 0.5
+
+    @property
+    def action_dim(self) -> int:
+        return 3
+
+    def center(self) -> tuple:
+        return (self.center_xy[0], self.center_xy[1], 0.0)
+
+    def lode_real(self) -> tuple:
+        return (self.lode_real_xy[0], self.lode_real_xy[1], 0.0)
+
+    def initial_state(self, rng) -> State:
+        return (rng.uniform(-self.x0_range, self.x0_range),
+                rng.uniform(-self.x0_range, self.x0_range),
+                0.0, 0.0, 0.0, 0.0)
+
+    def dist_core(self, pos: tuple) -> float:
+        """Distance from a point to the torus core circle."""
+        dyz = math.hypot(pos[1] - self.core_yz[0], pos[2] - self.core_yz[1])
+        return math.hypot(pos[0] - self.core_x, dyz - self.core_radius)
+
+    def _in_mode(self, pos: tuple) -> bool:
+        if self.tube_radius is None:
+            return False
+        return self.dist_core(pos) <= self.tube_radius
+
+    def _lode(self, pos: tuple, point: tuple, amp: float) -> float:
+        d = math.sqrt(sum((a - b) ** 2 for a, b in zip(pos, point)))
+        return amp / (1.0 + math.exp((d - self.r0) / self.width))
+
+    def reward(self, state: State) -> float:
+        pos = state[:3]
+        return (self._lode(pos, self.lode_real(), self.amp_real)
+                + self._lode(pos, self.center(), self.amp_phantom))
+
+    def _integrate(self, state: State, action: tuple) -> State:
+        return integrate_nd(state, action, self.dt, self.gain, self.drag,
+                            self.a_max)
+
+    def contact_mode(self, state: State, action: tuple) -> bool:
+        return self._in_mode(self._integrate(state, action)[:3])
+
+    def step(self, state: State, action: tuple):
+        s2 = self._integrate(state, action)
+        if self._in_mode(s2[:3]):
+            frozen = state[:3] + (0.0, 0.0, 0.0)
+            return frozen, self.reward(frozen), True
+        return s2, self.reward(s2), False
+
+
+def filled_of(env: "RingField2D") -> "RingField2D":
+    """The wrong-topology model: the annulus completed to a disc."""
+    return replace(env, filled=True)
+
+
 def blind_of_modes(env: "PatchField2D", omit: tuple) -> "PatchField2D":
     """Mode-selective blind model for the 2D instrument."""
     kw = {}
@@ -422,8 +829,14 @@ def blind_of(env):
         return replace(env, th_stop=None)
     if isinstance(env, PatchField2D):
         return replace(env, p1=None, p2=None)
+    if isinstance(env, RingField2D):
+        return replace(env, r_in=None, r_in2=None, r_out2=None)
+    if isinstance(env, TubeField3D):
+        return replace(env, tube_radius=None)
     if isinstance(env, ShapeField2D):
         return replace(env, shape=None)
+    if isinstance(env, ShellFieldN):
+        return replace(env, r_in=None)
     return replace(env, x_wall=None)
 
 

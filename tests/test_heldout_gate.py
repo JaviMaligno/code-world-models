@@ -620,10 +620,16 @@ def test_committed_audit_json_is_self_consistent():
         # DERIVED, not typed: the count was hardcoded to 625 and went stale the moment the
         # revision's campaigns landed. What the test is for is COMPLETENESS -- every cell
         # of every committed campaign was re-scored -- so it counts them.
+        # Counted over the audit's OWN scope: results/ is shared with paper 3, and a
+        # ring2d campaign is not an artifact this audit failed to cover, it is one it
+        # does not claim (audit.AUDITED_INSTRUMENTS says why).
         import glob
         expected = 0
         for f in glob.glob(str(_REPO / "results" / "continuous_synthesis_*.json")):
             d = json.loads(pathlib.Path(f).read_text())
+            instrument = d.get("params", {}).get("instrument", "cart")
+            if instrument not in audit.AUDITED_INSTRUMENTS:
+                continue
             expected += len(d.get("cells", []))
         assert agg["totals"]["n_artifacts"] == expected, (
             f"the audit covers {agg['totals']['n_artifacts']} artifacts but the committed "
@@ -702,3 +708,217 @@ def test_a_surrogate_is_never_built_from_a_missing_rarity():
     assert slab["r"] is None
     assert slab["per_mode"]["patch2"] is None
     assert slab["per_mode"]["patch1"] is not None
+
+
+# --- 9. ring2d (paper 3) enters the audit -------------------------------------
+_RING_SWEEP = _REPO / "scripts" / "ring2d_rarity_sweep.py"
+_ring_spec = importlib.util.spec_from_file_location("ring2d_rarity_sweep_mod",
+                                                    _RING_SWEEP)
+ring_sweep = importlib.util.module_from_spec(_ring_spec)
+_ring_spec.loader.exec_module(ring_sweep)
+
+
+def _ring2d_campaign_files():
+    return sorted((_REPO / "results").glob("continuous_synthesis_ring2d_*.json"))
+
+
+def test_env_key_ring2d_separates_every_stream_field():
+    """All five stream-defining fields (gap, channel, start, ring_norm, multi)
+    plus n_rollouts must each change the key: leaving one out is the
+    slab-vs-square collision on a sixth instrument."""
+    base = {"instrument": "ring2d"}
+    variants = [
+        base,
+        {**base, "gap": 0.6},
+        {**base, "gap": 0.6, "channel": "hidden"},
+        {**base, "start": "inside"},
+        {**base, "ring_norm": "cheby"},
+        {**base, "multi": True, "start": "middle"},
+        {**base, "start": "inside", "n_rollouts": 80},
+    ]
+    keys = [env_key(v) for v in variants]
+    assert len(set(keys)) == len(keys), keys
+
+
+def test_env_key_ring2d_defaults_are_indistinguishable_from_absent():
+    """A campaign that serialised the explicit defaults must key identically to
+    an old file that predates the flags (this is what keeps committed keys
+    stable when a flag is added)."""
+    assert env_key({"instrument": "ring2d"}) == "ring2d_gap0"
+    assert env_key({"instrument": "ring2d", "gap": 0.0, "channel": "facing",
+                    "start": "outside", "ring_norm": "euclid", "multi": False,
+                    "n_rollouts": 40,
+                    # other instruments' defaults ride along in the namespace
+                    # and must not touch the key
+                    "x_wall": 8.0, "k1": 3.0, "k2": 7.0,
+                    "patch_shape": "disc"}) == "ring2d_gap0"
+
+
+def test_env_key_ring2d_matches_the_campaigns_own_knob():
+    """The key must be ring2d_<KNOB> with the synthesis script's own knob
+    string (mirrored by the sweep's knob_of), plus the _n suffix exactly when
+    the campaign overrode --n-rollouts."""
+    files = _ring2d_campaign_files()
+    assert files, "no committed ring2d campaigns found"
+    for f in files:
+        params = json.loads(f.read_text())["params"]
+        knob = ring_sweep.knob_of(ring_sweep.config_of(params))
+        expect = f"ring2d_{knob}"
+        n = params.get("n_rollouts", 40)
+        if n != 40:
+            expect += f"_n{n}"
+        assert env_key(params) == expect, f.name
+
+
+def test_env_key_ring2d_neck_enters_the_key():
+    """The thin-neck knob changes the rollout stream (the band's outer face
+    dips inside the sector), so it must enter the key, with placement as the
+    'h' suffix; absent and explicit-None key identically, so no committed key
+    moves."""
+    base = {"instrument": "ring2d"}
+    assert env_key({**base, "neck": 0.1}) == "ring2d_gap0-nk0.1"
+    assert env_key({**base, "neck": 0.1, "neck_channel": "hidden"}) \
+        == "ring2d_gap0-nk0.1h"
+    assert env_key({**base, "neck": None, "neck_channel": "facing"}) \
+        == "ring2d_gap0"
+    keys = [env_key({**base, "neck": n}) for n in (0.1, 0.2, 0.4)]
+    assert len(set(keys)) == 3
+
+
+def test_env_from_params_ring2d_carries_the_neck():
+    """Dropping the neck would rebuild a neck campaign as the uniform band and
+    score it against the wrong truth (the start_arc bug on a third
+    instrument)."""
+    from cwm.continuous.envs import RingField2D
+    assert env_from_params({"instrument": "ring2d", "neck": 0.1}) \
+        == RingField2D(neck=0.1)
+    assert env_from_params({"instrument": "ring2d", "neck": 0.1,
+                            "neck_channel": "hidden"}) \
+        == RingField2D(neck=0.1, neck_center=0.0)
+    assert env_from_params({"instrument": "ring2d", "neck": None}) \
+        == RingField2D()
+
+
+def test_sweep_mirror_carries_the_neck():
+    """config_of/env_of/knob_of must carry the neck exactly as the synthesis
+    script's block does, and OMIT it when None so no stored config key
+    changes retroactively."""
+    import dataclasses
+    p = {"instrument": "ring2d", "neck": 0.1, "neck_channel": "facing"}
+    cfg = ring_sweep.config_of(p)
+    assert ring_sweep.knob_of(cfg) == "gap0-nk0.1"
+    assert dataclasses.asdict(ring_sweep.env_of(cfg)) \
+        == dataclasses.asdict(env_from_params(p))
+    assert "neck" not in ring_sweep.config_of({"instrument": "ring2d"})
+
+
+def test_env_from_params_ring2d_matches_the_sweep_mirror():
+    """env_from_params and the sweep script's env_of are two mirrors of the
+    same synthesis-script block; they must rebuild the SAME env for every
+    committed campaign, field for field."""
+    import dataclasses
+    for f in _ring2d_campaign_files():
+        params = json.loads(f.read_text())["params"]
+        a = env_from_params(params)
+        b = ring_sweep.env_of(ring_sweep.config_of(params))
+        assert dataclasses.asdict(a) == dataclasses.asdict(b), f.name
+
+
+@pytest.mark.parametrize("fname", [
+    # closed ring, outside start (the headline configuration)
+    "continuous_synthesis_ring2d_compat-qwen3-coder-30b-a3b-instruct_gap0.json",
+])
+def test_reproduced_training_sample_reproduces_the_stored_gate_score_ring2d(fname):
+    """Same strongest-available check as for the paper-2 instruments: the
+    reproduced D_train must give back the committed artifact's stored gate
+    accuracy and mode-presence flag exactly."""
+    d = json.loads((_REPO / "results" / fname).read_text())
+    env = env_from_params(d["params"])
+    cell = d["cells"][0]
+    d_train, _, _ = split_for_cell(env, cell, n_eval=1)
+    assert mode_presence(env, d_train)["any"] == cell["sample_contains_wall"]
+    acc, _ = contract_accuracy(cell["code"], d_train, eps=cell["eps"],
+                               timeout=300.0)
+    assert acc == cell["gate_accuracy"]
+
+
+def test_ring2d_rarity_entries_use_the_firing_rarity():
+    """The r-vs-r_int decision, pinned: every ring2d entry's prediction
+    argument is the mode-FIRING rarity (kind 'firing', the event the audit's
+    contingency counts), r_interior is carried alongside as provenance with
+    its own source path, and both values match the sweep JSON exactly."""
+    sweep = json.loads((_REPO / "results" / "ring2d_rarity_sweep.json")
+                       .read_text())
+    rows = {r["knob"]: r for r in sweep["rows"]}
+    thin = json.loads((_REPO / "results" / "ring2d_thin_neck.json")
+                      .read_text())
+    thin_rows = {r["knob"]: r for r in thin["rows"]}
+    ring_keys = {k: v for k, v in R_SOURCES.items() if k.startswith("ring2d_")}
+    assert ring_keys, "no ring2d entries in R_SOURCES"
+    for key, meta in ring_keys.items():
+        knob = key[len("ring2d_"):].split("_n")[0]
+        if "-nk" in knob:
+            # thin-neck cells: calibrated by their own 30k sweep, whose rows
+            # key on "nk{...}"/"nk{...}-hid" without the "gap0-" prefix
+            tail = knob.split("-nk", 1)[1]
+            row = thin_rows[f"nk{tail[:-1]}-hid" if tail.endswith("h")
+                            else f"nk{tail}"]
+            expect_source = "results/ring2d_thin_neck.json"
+        else:
+            row = rows[knob]
+            expect_source = "results/ring2d_rarity_sweep.json"
+        assert meta["kind"] == "firing", key
+        assert meta["r"] == row["r"], key
+        assert meta["r_interior"] == row["r_interior"], key
+        assert meta["source"] == expect_source, key
+        assert "r_interior_path" in meta, key
+
+
+def test_committed_ring2d_audit_json_is_self_consistent():
+    """The ring2d audit's own output file, held to the same recount checks as
+    paper 2's -- and completeness judged against the ring2d campaigns only
+    (its scope), never against paper 2's."""
+    path = _REPO / "results" / "heldout_gate_audit_ring2d.json"
+    if not path.exists():
+        pytest.skip("results/heldout_gate_audit_ring2d.json not produced yet")
+    doc = json.loads(path.read_text())
+    assert doc["split"]["all_disjoint"] is True
+    assert doc["params"]["n_gate"] >= N_GATE
+    assert doc["params"].get("instruments") == ["ring2d"]
+    arts = doc["artifacts"]
+    keys = [(a["file"], a["arm"], a["seed"]) for a in arts]
+    assert len(set(keys)) == len(keys), "duplicate artifacts in the audit"
+    agg = doc["aggregates"]
+    assert agg["totals"]["n_artifacts"] == len(arts)
+    assert agg["totals"]["n_heldout_accepted"] == sum(
+        1 for a in arts if a["accepted_heldout"])
+    assert agg["totals"]["n_regressions"] == sum(
+        1 for a in arts if a["in_sample_gate_passed"]
+        and not a["accepted_heldout"])
+    for a in arts:
+        assert a["accepted_heldout"] == (a["gate"]["accuracy"] == 1.0)
+        assert a["gate"]["n"] == doc["params"]["n_gate"] * 80
+    if doc.get("complete"):
+        expected = sum(
+            len(json.loads(f.read_text()).get("cells", []))
+            for f in _ring2d_campaign_files())
+        assert agg["totals"]["n_artifacts"] == expected, (
+            f"the ring2d audit covers {agg['totals']['n_artifacts']} artifacts "
+            f"but the committed ring2d campaigns hold {expected}: re-run "
+            f"scripts/heldout_gate_audit.py --instruments ring2d")
+        # ONE reproduction mismatch is known and pinned rather than allowed
+        # away: mini_gap0.6-hid seed 10000 hacked the in-sample gate with an
+        # exact-equality point trap on the contact state's floats, and its
+        # hardcoded y is 2 ULPs from what this platform's libm produces along
+        # the same trajectory -- so the stored 1.0 is platform-contingent and
+        # the recomputed score is 3199/3200. Held-out conclusions are
+        # unaffected (D_gate's contact states are different floats entirely,
+        # so the trap misses them on EVERY platform). Any OTHER mismatch is a
+        # real reproduction failure and must fail here.
+        mm = agg["train_reproduction_check"]["mismatches"]
+        assert [(m["file"], m["seed"], m["recomputed_train_accuracy"])
+                for m in mm] in (
+            [],  # a run on the original platform reproduces even the trap
+            [("continuous_synthesis_ring2d_mini_gap0.6-hid.json", 10000,
+              0.9996875)],
+        ), mm

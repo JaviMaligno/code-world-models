@@ -89,7 +89,7 @@ check_paper() {
 }
 
 overall=0
-for dir in docs/paper docs/paper2; do
+for dir in docs/paper docs/paper2 docs/paper3; do
   ( check_paper "$dir" )
   status=$?
   if [ "$status" -ne 0 ]; then overall=1; fi

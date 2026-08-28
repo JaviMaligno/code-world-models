@@ -204,7 +204,16 @@ breadth/generality the result needed.
    rarity knob), gate (pinned-integrator, near-exact), MPC planner, synthesis
    arms, order of work — in
    `docs/specs/2026-07-06-continuous-hybrid-cwm-design.md`.
-6. **Rethink applications beyond games (open, deliberate brainstorm needed).**
+6. **Paper 3 — topology of the critical region (shaping started 2026-07-19).**
+   The annulus/non-trivial-homology idea deliberately does NOT go into paper 2
+   (decision + full rationale, thesis, instrument ladder, n-dimensional
+   program, and provable-vs-measured split in
+   `docs/paper3/RESEARCH-DIRECTION.md`; formal propositions in
+   `docs/paper3/THEORY.md`). Working branch `claude/paper-tres-topology-4w813y`
+   (carries the paper-2 continuous stack by merge). Its LLM synthesis arm
+   waits for the disc-repair confound cells
+   (`docs/superpowers/plans/2026-07-19-disc-confounds-square-ablation.md`).
+7. **Rethink applications beyond games (open, deliberate brainstorm needed).**
    The Code World Model pattern (LLM synthesizes a verifiable executable model
    from examples + classical planning/checking on top) may transfer to non-game
    domains — e.g. business rules / pricing (connects to the author's real work

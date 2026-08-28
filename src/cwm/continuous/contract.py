@@ -190,18 +190,24 @@ class RefineResult:
     accuracy: float
     iterations: int
     usages: list
+    history: list | None = None   # [(code, accuracy)] when keep_history
 
 
 def refine_continuous(provider, model: str, contract: str, code: str,
                       transitions: list[dict], eps: float,
                       max_iters: int = 5, guidance: str = "",
-                      max_failures: int = 20) -> RefineResult:
+                      max_failures: int = 20,
+                      keep_history: bool = False) -> RefineResult:
     """Refine until the sample matches at eps (mirrors cwm.refiner.refine_cwm:
     the SAME sample is re-checked each iteration — it is the gate).
     `guidance`/`max_failures` are the confound-closure knobs (2026-07-19);
-    the defaults reproduce the original refine message byte-for-byte."""
+    the defaults reproduce the original refine message byte-for-byte.
+    `keep_history` (opt-in, default off) records (code, accuracy) for the
+    initial synthesis and every refine iteration; off by default so existing
+    outputs are unchanged."""
     usages = []
     acc, failures = contract_accuracy(code, transitions, eps)
+    history = [(code, acc)] if keep_history else None
     iterations = 0
     while acc < 1.0 and iterations < max_iters:
         msg = (f"{contract}\n\nThe current implementation is below. It fails "
@@ -216,9 +222,11 @@ def refine_continuous(provider, model: str, contract: str, code: str,
         usages.append(completion.usage)
         code = extract_code(completion.text)
         acc, failures = contract_accuracy(code, transitions, eps)
+        if keep_history:
+            history.append((code, acc))
         iterations += 1
     return RefineResult(code=code, accuracy=acc, iterations=iterations,
-                        usages=usages)
+                        usages=usages, history=history)
 
 
 class SynthesizedModel:
@@ -281,6 +289,7 @@ def synthesize_and_evaluate(provider, model_name, env,
                             max_examples: int = 30, omit: tuple = (),
                             guidance: str = "",
                             max_failures: int = 20,
+                            keep_history: bool = False,
                             hint: str | None = None) -> dict:
     """One cell of the synthesis experiment: collect the sample, synthesize,
     refine on the sample (the gate), then classify the artifact. Returns a
@@ -291,6 +300,11 @@ def synthesize_and_evaluate(provider, model_name, env,
     "sample_contains_mode_per" (dict), while "wall_blindness" becomes the mean
     of the mode_blindness dict (or None when the gate failed)."""
     transitions = collect_transitions(env, n_rollouts, seed=seed)
+    if callable(guidance):
+        # per-seed dynamic guidance (paper 3 TDA arm): the guidance text is
+        # computed FROM this seed's own sample (e.g. a topological summary of
+        # its contact evidence), so it must be resolved after collection.
+        guidance = guidance(env, transitions)
     contract = build_contract(env, include_mode, omit=omit, hint=hint)
     msgs = build_synthesis_messages(contract, transitions, max_examples,
                                     guidance=guidance)
@@ -298,7 +312,8 @@ def synthesize_and_evaluate(provider, model_name, env,
     code = extract_code(completion.text)
     refined = refine_continuous(provider, model_name, contract, code,
                                 transitions, eps, max_iters=max_iters,
-                                guidance=guidance, max_failures=max_failures)
+                                guidance=guidance, max_failures=max_failures,
+                                keep_history=keep_history)
     spec = spec_for(env)
     mb = mode_blindness(refined.code, env) if refined.accuracy == 1.0 else None
     cell = {
@@ -314,7 +329,12 @@ def synthesize_and_evaluate(provider, model_name, env,
                           else (sum(mb.values()) / len(mb) if mb else None)),
         "code": refined.code,
     }
+    if keep_history:
+        cell["history"] = [{"code": c, "gate_accuracy": a}
+                           for c, a in refined.history]
     if spec.sample_modes is not None:
         cell["mode_blindness"] = mb
         cell["sample_contains_mode_per"] = spec.sample_modes(env, transitions)
+    if guidance:
+        cell["guidance_text"] = guidance   # audit trail for dynamic guidance
     return cell

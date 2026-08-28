@@ -1,0 +1,94 @@
+```python
+import math
+
+# Physical constants (fixed integrator contract).
+_DT = 0.1
+_GAIN = 3.0
+_DRAG = 0.3
+_A_MAX = 1.0
+
+# Reward centers.
+_REAL_CX, _REAL_CY = -6.0, 0.0
+_PHANTOM_CX, _PHANTOM_CY = 12.0, 0.0
+
+# --- Hypothesis about the anomalous ("freeze") trigger region --------------
+#
+# None of the 120 example transitions given for this seed are themselves
+# anomalous: every next-state and every reward(next) value is reproduced
+# exactly by the plain integrator + reward formula in the contract (checked
+# numerically -- the largest |integrator_prediction - observed_next| over
+# all rows and all four state components is 0.0, and the reward formula
+# matches every reward(next) value to full float precision as well). So
+# this batch contains no *direct* example of the freeze rule firing; the
+# only evidence for it is the accompanying diagnostics plus the geometry
+# of the states that ARE shown:
+#
+#   * 74 distinct anomalous "landing" positions (post-step positions the
+#     plain integrator alone cannot explain), forming 24 spatial clusters.
+#   * Their bounding box is x in [8.46, 15.59], y in [-3.53, 3.54] -- a
+#     square of half-extent ~3.5-3.6 centered almost exactly on
+#     (12.0, 0.0), i.e. on the PHANTOM reward center, not the real one.
+#   * beta_1 = 1: those 74 points trace exactly one closed loop.
+#   * "freeze-type anomalies are only ever observed on the REACHABLE side
+#     of their trigger region; the region may extend beyond the observed
+#     positions on the far side."
+#
+# Independently, every position actually visited in this batch (both start
+# and landing points, over all 120 rows) lies at radius in
+# [0.096, 3.493] from (12, 0) -- and none of them is anomalous. That is
+# exactly consistent with a ring-shaped trigger region centered on the
+# phantom target (12, 0) whose *inner* (reachable) edge sits just beyond
+# the radius this batch's ordinary trajectories ever reach (~3.49),
+# matching the ~3.5-3.6 half-extent of the anomaly bounding box: the 74
+# anomalous points are recorded exactly where trajectories first cross
+# into the ring from the normally-explored interior, which is why they
+# trace a single closed loop (beta_1 = 1) around that interior instead of
+# filling it in. Because the freeze halts further radial motion right at
+# that inner edge, no trajectory ever reaches the ring's outer edge, so
+# its true outer radius cannot be pinned down from the data ("the region
+# may extend beyond the observed positions on the far side"). We therefore
+# model the region as unbounded outward from the inner edge -- i.e.
+# effectively a circular containment wall around the phantom target at
+# radius ~3.5 -- rather than guessing an unfounded outer radius.
+#
+# Rule: compute the plain-integrator landing position first (steps 1-6 of
+# the contract, unchanged). If that landing position's distance from the
+# phantom center (12, 0) is at least _RING_R_IN, the landing *position* is
+# kept as computed but the landing *velocity* is frozen to zero -- a
+# "freeze" anomaly, matching the diagnostics' terminology. This never
+# fires on any of the 120 given transitions (max radius reached is
+# ~3.493, safely below the threshold), by construction.
+_RING_CX, _RING_CY = _PHANTOM_CX, _PHANTOM_CY
+_RING_R_IN = 3.5  # just above the largest clean radius observed (~3.493)
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    a = min(_A_MAX, max(-_A_MAX, action))
+    phi = math.pi * a / _A_MAX
+
+    vx2 = vx + (_GAIN * math.cos(phi) - _DRAG * vx) * _DT
+    vy2 = vy + (_GAIN * math.sin(phi) - _DRAG * vy) * _DT
+    x2 = x + vx2 * _DT
+    y2 = y + vy2 * _DT
+
+    d_ring = math.hypot(x2 - _RING_CX, y2 - _RING_CY)
+    if d_ring >= _RING_R_IN:
+        vx2 = 0.0
+        vy2 = 0.0
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+
+    d1 = math.hypot(x - _REAL_CX, y - _REAL_CY)
+    d2 = math.hypot(x - _PHANTOM_CX, y - _PHANTOM_CY)
+
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+
+    return real + phantom
+```

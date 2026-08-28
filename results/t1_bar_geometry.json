@@ -1,0 +1,155 @@
+[
+ {
+  "gap": 0.6,
+  "seed": 10000,
+  "rho": 3.566,
+  "birth": 2.441,
+  "death": 6.144,
+  "pred_birth": 2.108,
+  "death_over_rho": 1.723
+ },
+ {
+  "gap": 0.6,
+  "seed": 20000,
+  "rho": 3.606,
+  "birth": 3.237,
+  "death": 6.242,
+  "pred_birth": 2.131,
+  "death_over_rho": 1.731
+ },
+ {
+  "gap": 0.6,
+  "seed": 30000,
+  "rho": 3.598,
+  "birth": 3.868,
+  "death": 6.122,
+  "pred_birth": 2.127,
+  "death_over_rho": 1.701
+ },
+ {
+  "gap": 0.9,
+  "seed": 10000,
+  "rho": 3.557,
+  "birth": 3.907,
+  "death": 6.144,
+  "pred_birth": 3.094,
+  "death_over_rho": 1.728
+ },
+ {
+  "gap": 0.9,
+  "seed": 20000,
+  "rho": 3.571,
+  "birth": 3.498,
+  "death": 6.242,
+  "pred_birth": 3.106,
+  "death_over_rho": 1.748
+ },
+ {
+  "gap": 0.9,
+  "seed": 30000,
+  "rho": 3.566,
+  "birth": 4.365,
+  "death": 6.122,
+  "pred_birth": 3.102,
+  "death_over_rho": 1.717
+ },
+ {
+  "gap": 1.2,
+  "seed": 10000,
+  "rho": 3.536,
+  "birth": 4.03,
+  "death": 6.144,
+  "pred_birth": 3.993,
+  "death_over_rho": 1.738
+ },
+ {
+  "gap": 1.2,
+  "seed": 20000,
+  "rho": 3.676,
+  "birth": 4.305,
+  "death": 6.327,
+  "pred_birth": 4.152,
+  "death_over_rho": 1.721
+ },
+ {
+  "gap": 1.2,
+  "seed": 30000,
+  "rho": 3.578,
+  "birth": 5.032,
+  "death": 6.122,
+  "pred_birth": 4.04,
+  "death_over_rho": 1.711
+ },
+ {
+  "gap": 1.5,
+  "seed": 10000,
+  "rho": 3.537,
+  "birth": 5.089,
+  "death": 6.123,
+  "pred_birth": 4.822,
+  "death_over_rho": 1.731
+ },
+ {
+  "gap": 1.5,
+  "seed": 20000,
+  "rho": 3.779,
+  "birth": 5.356,
+  "death": 6.327,
+  "pred_birth": 5.152,
+  "death_over_rho": 1.674
+ },
+ {
+  "gap": 1.5,
+  "seed": 30000,
+  "rho": 3.568,
+  "birth": 5.893,
+  "death": 6.122,
+  "pred_birth": 4.864,
+  "death_over_rho": 1.716
+ },
+ {
+  "gap": 1.8,
+  "seed": 10000,
+  "rho": 3.549,
+  "birth": 6.043,
+  "death": 6.445,
+  "pred_birth": 5.561,
+  "death_over_rho": 1.816
+ },
+ {
+  "gap": 1.8,
+  "seed": 20000,
+  "rho": 3.546,
+  "birth": 6.273,
+  "death": 6.327,
+  "pred_birth": 5.556,
+  "death_over_rho": 1.784
+ },
+ {
+  "gap": 1.8,
+  "seed": 30000,
+  "rho": 3.549,
+  "birth": 6.068,
+  "death": 6.175,
+  "pred_birth": 5.56,
+  "death_over_rho": 1.74
+ },
+ {
+  "gap": 2.1,
+  "seed": 10000,
+  "rho": 3.546,
+  "top": null
+ },
+ {
+  "gap": 2.1,
+  "seed": 20000,
+  "rho": 3.546,
+  "top": null
+ },
+ {
+  "gap": 2.1,
+  "seed": 30000,
+  "rho": 3.548,
+  "top": null
+ }
+]

@@ -1,0 +1,64 @@
+{
+ "R": 0.030491666666666667,
+ "R_n": 120000,
+ "density_at_pi": 1.0166712216452582,
+ "density_window": 0.1,
+ "rows": [
+  {
+   "gap": 0.05,
+   "d": 9.5e-05,
+   "R_dens_gamma": 0.0015500000000000002,
+   "throughput_ratio": 0.06129032258064516,
+   "arrivals": 277,
+   "through": 19,
+   "throughput_counts": 0.06859205776173286
+  },
+  {
+   "gap": 0.1,
+   "d": 0.00034,
+   "R_dens_gamma": 0.0031000000000000003,
+   "throughput_ratio": 0.10967741935483871,
+   "arrivals": 594,
+   "through": 68,
+   "throughput_counts": 0.11447811447811448
+  },
+  {
+   "gap": 0.2,
+   "d": 0.001195,
+   "R_dens_gamma": 0.006200000000000001,
+   "throughput_ratio": 0.19274193548387097,
+   "arrivals": 1184,
+   "through": 239,
+   "throughput_counts": 0.20185810810810811
+  },
+  {
+   "gap": 0.3,
+   "d": 0.00224,
+   "R_dens_gamma": 0.0093,
+   "throughput_ratio": 0.24086021505376343,
+   "arrivals": 1765,
+   "through": 448,
+   "throughput_counts": 0.2538243626062323
+  },
+  {
+   "gap": 0.4,
+   "d": 0.00327,
+   "R_dens_gamma": 0.012400000000000001,
+   "throughput_ratio": 0.2637096774193548,
+   "arrivals": 2332,
+   "through": 654,
+   "throughput_counts": 0.2804459691252144
+  },
+  {
+   "gap": 0.6,
+   "d": 0.00524,
+   "R_dens_gamma": 0.0186,
+   "throughput_ratio": 0.2817204301075269,
+   "arrivals": 3352,
+   "through": 1048,
+   "throughput_counts": 0.3126491646778043
+  }
+ ],
+ "throughput_slope": 0.639584194439536,
+ "N_entry": 200000
+}

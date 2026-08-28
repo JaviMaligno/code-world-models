@@ -1,0 +1,42 @@
+[
+ {
+  "gap": 0.6,
+  "channel": "hidden",
+  "policy": "steered",
+  "episodes": 100,
+  "interior_entries": 0,
+  "entry_rate": 0.0
+ },
+ {
+  "gap": 1.2,
+  "channel": "hidden",
+  "policy": "steered",
+  "episodes": 100,
+  "interior_entries": 100,
+  "entry_rate": 1.0
+ },
+ {
+  "gap": 0.0,
+  "channel": "hidden",
+  "policy": "steered",
+  "episodes": 100,
+  "interior_entries": 0,
+  "entry_rate": 0.0
+ },
+ {
+  "gap": 0.6,
+  "channel": "hidden",
+  "policy": "random",
+  "episodes": 100,
+  "interior_entries": 0,
+  "entry_rate": 0.0
+ },
+ {
+  "gap": 1.2,
+  "channel": "hidden",
+  "policy": "random",
+  "episodes": 100,
+  "interior_entries": 0,
+  "entry_rate": 0.0
+ }
+]

@@ -1,0 +1,28 @@
+```python
+import math
+
+dt = 0.1
+gain = 3.0
+drag = 0.3
+a_max = 1.0
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+    a = min(a_max, max(-a_max, action))
+    phi = math.pi * a / a_max
+    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt
+    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt
+    x2 = x + vx2 * dt
+    y2 = y + vy2 * dt
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+    d1 = math.hypot(x - (-6.0), y - 0.0)
+    d2 = math.hypot(x - 12.0, y - 0.0)
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```

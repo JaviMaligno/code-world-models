@@ -1,0 +1,94 @@
+```python
+"""
+Deterministic 2D control world model.
+
+Anomaly analysis (from the observed transitions):
+
+The base integrator (steps 1-6 in the spec) explains almost every
+transition exactly. A handful of transitions, however, return the
+*input* state's position unchanged and force velocity to exactly
+(0.0, 0.0), even though the base integrator would have produced a
+different (moving) state. Examples of the anomalous inputs (position,
+action):
+
+  (8.767068684832110, -1.125382203908213), action= 0.372329...
+  (10.004247945445188, 2.859002042162781), action= 0.709458...
+  (13.492489904281664, 3.151625084548451), action=-0.490189...
+  (10.578545955464245, 3.194229365675020), action= 0.539973...
+  (10.928277460018686, 3.300695682207877), action=-0.630863...
+  (12.264272369076965, -3.480750882324036), action=-0.139420...
+
+For every one of these cases, computing the *base-integrator*
+prediction for the next position [x2, y2] and measuring its distance
+from the point (12.0, 0.0) -- which is exactly the "phantom" reward
+center used in reward() -- gives a value that is always > ~3.50,
+whereas for every other (non-anomalous) transition in the data the
+predicted next position's distance from (12.0, 0.0) is always < ~3.49.
+The anomalous *input* positions themselves lie at distances
+3.42-3.50 from (12.0, 0.0): i.e. they sit right at the edge of the
+disk, on the reachable (inside) side, and the action in question would
+have pushed the point out past the boundary.
+
+The 6 anomalous positions found are spread around this edge (angles
+covering most of the circle, both positive/negative y, x from ~8.8 to
+~13.5), consistent with the diagnostic that the anomalous landing
+positions trace a closed loop (beta_1 = 1) enclosing an area (the
+interior/near-center disk, which is normally visited, is irrelevant
+here -- the loop of *anomalies* itself lies on a circle, and the area
+the sample never visits is the exterior of that circle, since the rule
+below prevents ever crossing it). This matches the environment name
+"ring2d": a circular hard-wall centered on the phantom reward point.
+
+Hypothesis: there is a circular hard wall of radius R = 3.5 centered
+at (12.0, 0.0) (the phantom-reward center). If the base integrator's
+predicted next position [x2, y2] would land outside this disk
+(distance from (12.0, 0.0) > R), the wall blocks all motion for that
+step: the returned state is the *original* [x, y] (unchanged) with
+velocity forced to [0.0, 0.0]. Otherwise the base integrator's result
+is returned unchanged. This was checked against all matching and
+non-matching transitions in the observed data and reproduces every one
+exactly.
+"""
+
+import math
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+
+    dt = 0.1
+    gain = 3.0
+    drag = 0.3
+    a_max = 1.0
+
+    # 1. clamp the action
+    a = min(a_max, max(-a_max, action))
+    # 2. thrust heading
+    phi = math.pi * a / a_max
+    # 3-6. base integrator
+    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt
+    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt
+    x2 = x + vx2 * dt
+    y2 = y + vy2 * dt
+
+    # Ring hard-wall rule: circular boundary of radius R centered on the
+    # phantom reward point (12.0, 0.0). Reaching outside it is blocked:
+    # the step is fully cancelled (position unchanged, velocity zeroed).
+    wall_cx, wall_cy, wall_r = 12.0, 0.0, 3.5
+    if math.hypot(x2 - wall_cx, y2 - wall_cy) > wall_r:
+        return [x, y, 0.0, 0.0]
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+
+    d1 = math.hypot(x - (-6.0), y - 0.0)
+    d2 = math.hypot(x - 12.0, y - 0.0)
+
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+
+    return real + phantom
+```

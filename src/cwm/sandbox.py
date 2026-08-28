@@ -14,7 +14,15 @@ class SandboxResult:
 
 def run_in_sandbox(code: str, call: str, timeout: float = 5.0) -> SandboxResult:
     source = code + "\n" + call + "\n"
-    f = tempfile.NamedTemporaryFile("w", suffix=".py", delete=False)
+    # encoding is pinned, not left to the locale: a .py file with no coding
+    # declaration is read as UTF-8 by the interpreter (PEP 3120), while an
+    # unpinned text handle writes in locale.getpreferredencoding() -- cp1252 on
+    # a Spanish Windows. Any non-ASCII character in the code (an em dash in a
+    # docstring is enough) then came back as "SyntaxError: Non-UTF-8 code
+    # starting with '\x97'", i.e. every case scored as an execution error on
+    # that machine and as a pass everywhere else.
+    f = tempfile.NamedTemporaryFile("w", suffix=".py", delete=False,
+                                    encoding="utf-8")
     try:
         f.write(source)
         f.flush()
@@ -23,6 +31,7 @@ def run_in_sandbox(code: str, call: str, timeout: float = 5.0) -> SandboxResult:
             proc = subprocess.run(
                 [sys.executable, "-I", f.name],   # -I: isolated, ignore env & user site
                 capture_output=True, text=True, timeout=timeout,
+                encoding="utf-8",   # same reason, for what comes back
             )
         except subprocess.TimeoutExpired:
             return SandboxResult(ok=False, stdout="", stderr="timeout", timed_out=True)

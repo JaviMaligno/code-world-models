@@ -42,6 +42,7 @@ to induce from data than a symbolic rule (either outcome is a finding).
 """
 import argparse
 import json
+import math
 import pathlib
 import statistics
 import sys
@@ -56,7 +57,10 @@ import os  # noqa: E402
 
 sys.path.insert(0, str(_REPO / "src"))
 
-from cwm.continuous.envs import CartWall, PatchField2D, PendulumStop  # noqa: E402
+from cwm.continuous.envs import (  # noqa: E402
+    CartWall, PatchField2D, PendulumStop, RingField2D)
+from cwm.continuous.tda import (  # noqa: E402
+    topological_summary, topological_summary_flipped)
 from cwm.continuous import harness  # noqa: E402
 from cwm.continuous.contract import (  # noqa: E402
     SynthesizedModel, build_contract, synthesize_and_evaluate)
@@ -87,8 +91,8 @@ def _seed_index(cell: dict, seed_offset: int = 0) -> int:
 def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
                   seed_offset: int = 0, hint=None,
                    n_rollouts, eps, max_iters, max_examples=30, guidance="",
-                   max_failures=20, play_episodes=6, j_truth, j_random,
-                   meta, print_fn=print) -> dict:
+                   max_failures=20, keep_history=False, play_episodes=6,
+                   j_truth, j_random, meta, print_fn=print) -> dict:
     """Runs the (arm, seed) synthesis grid, checkpointing atomically to
     `out_path` after EVERY cell (hard project rule: any long-running /
     money-costing run must checkpoint per unit and resume, so a killed run
@@ -123,10 +127,10 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
         stored_p = results.get("params", {}) or {}
         current_p = meta.get("params", {}) or {}
         _RESULT_KEYS = ("instrument", "x_wall", "th_stop", "k1", "k2",
-                        "patch_shape", "mode_effect", "mode_hint", "start_arc",
-                        "prompt_variant",
-                        "n_rollouts", "eps", "max_iters", "play_episodes",
-                        "compat_model")
+                        "patch_shape", "gap", "channel", "start", "ring_norm",
+                        "mode_effect", "mode_hint", "start_arc",
+                        "prompt_variant", "n_rollouts", "eps",
+                        "max_iters", "play_episodes", "compat_model")
         mismatch = {k: (stored_p[k], current_p[k]) for k in _RESULT_KEYS
                     if k in stored_p and k in current_p
                     and stored_p[k] != current_p[k]}
@@ -165,7 +169,8 @@ def run_synthesis(provider, model_name, env, arms, n_seeds, out_path, *,
                 n_rollouts=n_rollouts,
                 seed=10_000 * (seed + 1 + seed_offset),
                 eps=eps, max_iters=max_iters, max_examples=max_examples,
-                guidance=guidance, max_failures=max_failures, hint=hint)
+                guidance=guidance, max_failures=max_failures,
+                keep_history=keep_history, hint=hint)
             if cell["gate_passed"]:
                 model = SynthesizedModel(cell["code"], env)
                 eps_play = []
@@ -210,6 +215,37 @@ _REGION_TEXT = (
     "x > c or an axis-aligned half-plane. Check your hypothesized region "
     "against ALL matching and non-matching transitions before settling "
     "on it.")
+
+
+def _contact_landings(env, transitions):
+    """The refuted integrator landings of the contact transitions — the
+    contact-evidence cloud a repair loop can honestly compute."""
+    pts = []
+    for tr in transitions:
+        if tr["contact"]:
+            x2, y2, _, _ = env._integrate(tr["state"], tr["action"])
+            pts.append((x2, y2))
+    return pts
+
+
+def _tda_guidance(env, transitions):
+    """paper-3 'tda' variant: region-level guidance PLUS the per-seed
+    topological summary of the sample's own contact evidence, so the delta
+    vs the 'region' variant isolates the summary's contribution."""
+    return (_GUIDED_TEXT + "\n\n" + _REGION_TEXT + "\n\n"
+            + topological_summary(_contact_landings(env, transitions)))
+
+
+def _tda_flip_guidance(env, transitions):
+    """The H2 INTERVENTION arm (docs/paper3/INTERVENTION-DESIGN.md):
+    byte-identical to the 'tda' variant except the summary's topology claim,
+    which is deliberately negated. Run ONLY on the pre-registered
+    intervention campaign; the paired contrast against the committed 'tda'
+    arm on the same seeds isolates the claim line's causal contribution."""
+    return (_GUIDED_TEXT + "\n\n" + _REGION_TEXT + "\n\n"
+            + topological_summary_flipped(_contact_landings(env, transitions)))
+
+
 # Review point #4's second confound (2026-07-27). The audit of the 40 guided
 # PatchField2D artifacts found 36/40 conditioning the freeze rule on the
 # CURRENT position (x, y) instead of on the LANDING position (x2, y2) — the
@@ -225,6 +261,8 @@ _LANDING_TEXT = (
     "WOULD produce for this step — the landing position (x2, y2) from the "
     "integrator equations above — not on the position the step began at "
     "(x, y).")
+
+
 PROMPT_VARIANTS = {
     "default": {"max_examples": 30, "guidance": "", "max_failures": 20},
     "guided": {"max_examples": 120, "guidance": _GUIDED_TEXT,
@@ -232,6 +270,11 @@ PROMPT_VARIANTS = {
     "region": {"max_examples": 120,
                "guidance": _GUIDED_TEXT + "\n\n" + _REGION_TEXT,
                "max_failures": 40},
+    "tda": {"max_examples": 120, "guidance": _tda_guidance,
+            "max_failures": 40},
+    # the H2 intervention arm: identical to 'tda' except the flipped claim
+    "tda-flip": {"max_examples": 120, "guidance": _tda_flip_guidance,
+                 "max_failures": 40},
     # 'landing' = 'region' + _LANDING_TEXT, appended and nothing else changed
     # (same 120 examples / 40 failure lines), so a landing-vs-region contrast
     # isolates the variable-identification confound exactly.
@@ -255,7 +298,8 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--x-wall", type=float, default=8.0,
                     help="8.0: gate misses the wall ~60%% of seeds at N=40; "
                     "4.0: gate nearly always catches it")
-    ap.add_argument("--instrument", choices=["cart", "pendulum", "patch2d"],
+    ap.add_argument("--instrument",
+                    choices=["cart", "pendulum", "patch2d", "ring2d"],
                     default="cart")
     ap.add_argument("--th-stop", type=float, default=1.4,
                     help="pendulum mode knob (1.4 headline ~balanced; 1.0 caught)")
@@ -306,8 +350,38 @@ def build_parser() -> argparse.ArgumentParser:
                     "patch-1 contact rarity calibrated to match the disc's; "
                     "everything else (4D state, two modes, lodes, freeze "
                     "semantics) is unchanged")
+    ap.add_argument("--gap", type=float, default=0.0,
+                    help="ring2d: angular channel width (0 = closed ring, "
+                    "beta1=1 and the interior is reach-null)")
+    ap.add_argument("--channel", choices=["facing", "hidden"], default="facing",
+                    help="ring2d: channel orientation — facing the start "
+                    "(gap_center=pi) or hidden on the far side (gap_center=0)")
+    ap.add_argument("--multi", action="store_true",
+                    help="ring2d: add a second nested ring [7.5, 9.0] "
+                    "(multi-chamber instrument; three reach-null chambers)")
+    ap.add_argument("--start", choices=["outside", "inside", "middle"],
+                    default="outside",
+                    help="ring2d: initial-state placement (mu0 knob); inside "
+                    "puts x0 at the ring center — the loop-evidence regime")
+    ap.add_argument("--ring-norm", choices=["euclid", "cheby"],
+                    default="euclid",
+                    help="ring2d: separator norm — euclid (round ring) or "
+                    "cheby (square ring, the zero-curvature separator "
+                    "ablation)")
+    ap.add_argument("--neck", type=float, default=None,
+                    help="ring2d: thin-neck thickness (THIN-NECK-DESIGN.md) — "
+                    "the band dips FROM OUTSIDE to [r_in, r_in+neck] inside "
+                    "the sector; beta1 stays 1, Lemma 2's METRIC hypothesis "
+                    "breaks. None = uniform band, bit-identical to every "
+                    "committed run")
+    ap.add_argument("--neck-channel", choices=["facing", "hidden"],
+                    default="facing",
+                    help="ring2d: neck placement — facing the start "
+                    "(neck_center=pi) or hidden on the far side "
+                    "(neck_center=0)")
     ap.add_argument("--prompt-variant",
-                    choices=["default", "guided", "region", "landing"],
+                    choices=["default", "guided", "region", "tda",
+                             "tda-flip", "landing"],
                     default="default",
                     help="confound-closure arms for the 0/76 (paper 2 s10): "
                     "'guided' = 120 examples + 40 failures shown + describe-the-"
@@ -341,6 +415,10 @@ def build_parser() -> argparse.ArgumentParser:
                     "switches provider to OpenAICompatProvider with HF_TOKEN "
                     "and ignores the positional size")
     ap.add_argument("--compat-base-url", default="https://router.huggingface.co/v1")
+    ap.add_argument("--keep-history", action="store_true",
+                    help="record per-iteration (code, gate) in each cell as "
+                    "'history' (additive metadata; off by default so "
+                    "existing outputs are byte-identical)")
     # A FILENAME tag, deliberately not a treatment: it never enters _RESULT_KEYS. Use it
     # when the same treatment is re-run under a different SERVING PATH so the runs land in
     # separate, self-describing files instead of resuming into a mixed-provenance one --
@@ -372,8 +450,39 @@ if __name__ == "__main__":
 
     if args.patch_shape != "disc" and args.instrument != "patch2d":
         ap.error("--patch-shape is a patch2d knob")
+    if args.instrument != "ring2d" and (
+            args.gap != 0.0 or args.channel != "facing"
+            or args.start != "outside" or args.ring_norm != "euclid"
+            or args.multi or args.neck is not None
+            or args.neck_channel != "facing"):
+        ap.error("--gap/--channel/--start/--ring-norm/--multi/--neck/"
+                 "--neck-channel are ring2d knobs")
 
-    if args.instrument == "pendulum":
+    if args.instrument == "ring2d":
+        if args.start == "middle" and not args.multi:
+            ap.error("--start middle requires --multi")
+        _c = RingField2D().center
+        _x0 = {"outside": (0.0, 0.0), "inside": _c,
+               "middle": (_c[0] - 6.25, _c[1])}[args.start]
+        ENV = RingField2D(
+            gap=args.gap,
+            gap_center=math.pi if args.channel == "facing" else 0.0,
+            x0_center=_x0,
+            norm=args.ring_norm,
+            neck=args.neck,
+            neck_center=math.pi if args.neck_channel == "facing" else 0.0,
+            r_in2=7.5 if args.multi else None,
+            r_out2=9.0 if args.multi else None)
+        KNOB = (("sq" if args.ring_norm == "cheby" else "")
+                + f"gap{args.gap:g}"
+                + ("-m2" if args.multi else "")
+                + ("" if args.channel == "facing" else "-hid")
+                + {"outside": "", "inside": "-in", "middle": "-mid"}[args.start]
+                + ("" if args.neck is None else
+                   f"-nk{args.neck:g}"
+                   + ("" if args.neck_channel == "facing" else "h")))
+        INSTR_TAG = "ring2d_"
+    elif args.instrument == "pendulum":
         ENV = PendulumStop(th_stop=args.th_stop)
         KNOB = f"thstop{args.th_stop:g}"
         INSTR_TAG = "pendulum_"
@@ -400,6 +509,19 @@ if __name__ == "__main__":
     # while the truth is a slab, making the control meaningless. The incomplete
     # arm is unaffected (it never mentions the mode at all, which is exactly
     # what keeps it byte-identical across shapes).
+    # Same failure shape as the slab guard below, on the ring: the ring2d
+    # rules text has no variable-thickness clause, so a full arm at --neck
+    # would hand the model a UNIFORM-band contract while the truth dips —
+    # the control would not describe the truth. The neck campaign's question
+    # (does a family ever WRITE a variable-thickness band from evidence?) is
+    # the incomplete arm's; add the neck clause to _ring2d_rules_text before
+    # ever running a full arm here.
+    if args.instrument == "ring2d" and args.neck is not None and "full" in ARMS:
+        ap.error("--neck with --arm full/both: _ring2d_rules_text has no "
+                 "variable-thickness clause yet, so the full arm's contract "
+                 "would describe the uniform band, not the truth. Run "
+                 "--arm incomplete, or add the neck clause first.")
+
     if args.patch_shape == "slab" and "full" in ARMS:
         _full_text = build_contract(ENV, include_mode=True)
         if "radius R =" in _full_text or "half-side R =" in _full_text:
@@ -424,6 +546,8 @@ if __name__ == "__main__":
         SUFFIX += f"_pv-{args.prompt_variant}"
     if args.max_iters != 5:
         SUFFIX += f"_it{args.max_iters}"
+    if args.n_rollouts != 40:
+        SUFFIX += f"_N{args.n_rollouts}"
     if args.out_tag:
         SUFFIX += f"_{args.out_tag}"
 
@@ -446,7 +570,8 @@ if __name__ == "__main__":
         seed_offset=args.seed_offset, hint=args.mode_hint,
         n_rollouts=args.n_rollouts, eps=args.eps, max_iters=args.max_iters,
         max_examples=VARIANT["max_examples"], guidance=VARIANT["guidance"],
-        max_failures=VARIANT["max_failures"], play_episodes=args.play_episodes,
+        max_failures=VARIANT["max_failures"], keep_history=args.keep_history,
+        play_episodes=args.play_episodes,
         j_truth=J_TRUTH, j_random=J_RANDOM, meta=meta,
         print_fn=lambda s: print(s, flush=True))
 

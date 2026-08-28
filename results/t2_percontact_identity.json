@@ -1,0 +1,80 @@
+[
+ {
+  "gap": 0.3,
+  "episodes": 6,
+  "planner": {
+   "horizon": 40,
+   "n_samples": 48,
+   "block": 10,
+   "seeding": "per (episode, step)"
+  },
+  "max_identity_residual": 3.907985046680551e-14,
+  "dirty_per_episode": [
+   21,
+   20,
+   23,
+   22,
+   20,
+   21
+  ],
+  "A": {
+   "n": 127,
+   "mean": 0.12927116540521374,
+   "max": 11.647725330235097,
+   "min": -13.667334618965022,
+   "negative_fraction": 0.4015748031496063
+  }
+ },
+ {
+  "gap": 0.6,
+  "episodes": 6,
+  "planner": {
+   "horizon": 40,
+   "n_samples": 48,
+   "block": 10,
+   "seeding": "per (episode, step)"
+  },
+  "max_identity_residual": 4.263256414560601e-14,
+  "dirty_per_episode": [
+   13,
+   16,
+   13,
+   13,
+   14,
+   19
+  ],
+  "A": {
+   "n": 88,
+   "mean": 0.16845378721247697,
+   "max": 2.7029471691216997,
+   "min": -2.4093217359162225,
+   "negative_fraction": 0.3977272727272727
+  }
+ },
+ {
+  "gap": 1.2,
+  "episodes": 6,
+  "planner": {
+   "horizon": 40,
+   "n_samples": 48,
+   "block": 10,
+   "seeding": "per (episode, step)"
+  },
+  "max_identity_residual": 4.618527782440651e-14,
+  "dirty_per_episode": [
+   10,
+   12,
+   10,
+   8,
+   11,
+   12
+  ],
+  "A": {
+   "n": 63,
+   "mean": 0.11838333653492687,
+   "max": 2.2587118377160778,
+   "min": -2.836605361608868,
+   "negative_fraction": 0.3968253968253968
+  }
+ }
+]

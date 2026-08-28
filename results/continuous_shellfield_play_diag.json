@@ -1,0 +1,53 @@
+{
+  "script": "continuous_shellfield_play_diag.py",
+  "params": {
+    "n": 2,
+    "episodes": 10,
+    "seed": 0,
+    "horizon": 40,
+    "n_samples": 200,
+    "block": 10,
+    "bias_samples": 100000,
+    "out": "results/continuous_shellfield_play_diag.json"
+  },
+  "rows": [
+    {
+      "variant": "percomponent",
+      "j_truth": 16.846776170570873,
+      "j_blind": 14.935257541584198,
+      "j_random": 0.735861625319892,
+      "play_cost": 0.11864743144268829,
+      "blind_contact_rate": 0.1,
+      "truth_contact_rate": 0.0,
+      "n_episodes": 10
+    },
+    {
+      "variant": "direction_uniform",
+      "j_truth": 16.694389251314675,
+      "j_blind": 16.694389251314675,
+      "j_random": 0.12006197869940946,
+      "play_cost": 0.0,
+      "blind_contact_rate": 0.0,
+      "truth_contact_rate": 0.0,
+      "n_episodes": 10
+    },
+    {
+      "variant": "percomponent_axial",
+      "j_truth": 16.846776170570873,
+      "j_blind": 0.13178670922852306,
+      "j_random": 0.735861625319892,
+      "play_cost": 1.0374947625967907,
+      "blind_contact_rate": 1.0,
+      "truth_contact_rate": 0.0,
+      "n_episodes": 10
+    }
+  ],
+  "bias": {
+    "n_samples": 100000,
+    "deg": 10.0,
+    "east_fraction_percomponent": 0.04453,
+    "east_fraction_direction_uniform": 0.05614,
+    "east_fraction_direction_uniform_analytic": 0.05555555555555555
+  },
+  "elapsed_s": 415.6
+}

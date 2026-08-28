@@ -7,9 +7,17 @@
       "pooled-inference": 1,
       "printed-zero": 20,
       "process-prose": 3,
-      "soundness-scope": 26
+      "soundness-scope": 22
     },
     "docs/paper2/main.tex": {
+      "hand-constant": 0,
+      "modal-scope": 0,
+      "pooled-inference": 0,
+      "printed-zero": 0,
+      "process-prose": 0,
+      "soundness-scope": 0
+    },
+    "docs/paper3/main.tex": {
       "hand-constant": 0,
       "modal-scope": 0,
       "pooled-inference": 0,
@@ -33,6 +41,6 @@
     "pooled-inference": 1,
     "printed-zero": 20,
     "process-prose": 3,
-    "soundness-scope": 26
+    "soundness-scope": 22
   }
 }

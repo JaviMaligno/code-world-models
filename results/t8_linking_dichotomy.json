@@ -1,0 +1,91 @@
+{
+  "lemma_X": {
+    "polylines": 400,
+    "hypothesis_triggered": 71
+  },
+  "witnesses": {
+    "aligned_thread": {
+      "landings": 14,
+      "min_g": 2.023530221225524,
+      "thread": 1,
+      "gauss_lk": 1.0006025752693612
+    },
+    "offset_thread": {
+      "landings": 18,
+      "min_g": 2.023530221225524,
+      "thread": 1,
+      "gauss_lk": 1.0006467775798753
+    },
+    "offset_around": {
+      "landings": 28,
+      "min_g": 2.518863743081991,
+      "thread": 0,
+      "gauss_lk": -0.00016717648459516274
+    }
+  },
+  "corridor": {
+    "margin": 0.5,
+    "rows": [
+      {
+        "offset": 0.0,
+        "min_g_straight": 2.0,
+        "queries_forced_in_corridor": false
+      },
+      {
+        "offset": 0.5,
+        "min_g_straight": 1.5,
+        "queries_forced_in_corridor": false
+      },
+      {
+        "offset": 1.0,
+        "min_g_straight": 1.0,
+        "queries_forced_in_corridor": false
+      },
+      {
+        "offset": 1.5,
+        "min_g_straight": 0.5,
+        "queries_forced_in_corridor": false
+      },
+      {
+        "offset": 1.75,
+        "min_g_straight": 0.25,
+        "queries_forced_in_corridor": true
+      },
+      {
+        "offset": 2.0,
+        "min_g_straight": 0.0,
+        "queries_forced_in_corridor": true
+      }
+    ]
+  },
+  "real_dynamics": {
+    "aligned": {
+      "episodes": 300,
+      "real_positions_in_tube": 0,
+      "D_crossings_outside_clearance": 0,
+      "n_plane_crossings": 1,
+      "thread_nonzero_rate": 0.0
+    },
+    "offset15": {
+      "episodes": 300,
+      "real_positions_in_tube": 0,
+      "D_crossings_outside_clearance": 0,
+      "n_plane_crossings": 1,
+      "thread_nonzero_rate": 0.0
+    },
+    "aligned_east": {
+      "episodes": 300,
+      "real_positions_in_tube": 0,
+      "D_crossings_outside_clearance": 0,
+      "n_plane_crossings": 190,
+      "thread_nonzero_rate": 0.5066666666666667
+    },
+    "offset15_east": {
+      "episodes": 300,
+      "real_positions_in_tube": 0,
+      "D_crossings_outside_clearance": 0,
+      "n_plane_crossings": 178,
+      "thread_nonzero_rate": 0.2833333333333333
+    }
+  }
+}

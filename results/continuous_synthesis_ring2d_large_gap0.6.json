@@ -1,0 +1,610 @@
+{
+  "script": "continuous_danger_synthesis.py",
+  "model": "gpt-5.4",
+  "size": "large",
+  "tag": "large",
+  "params": {
+    "size": "large",
+    "n_seeds": 20,
+    "arm": "incomplete",
+    "x_wall": 8.0,
+    "instrument": "ring2d",
+    "th_stop": 1.4,
+    "k1": 3.0,
+    "k2": 7.0,
+    "patch_shape": "disc",
+    "gap": 0.6,
+    "channel": "facing",
+    "start": "outside",
+    "prompt_variant": "default",
+    "n_rollouts": 40,
+    "eps": 1e-09,
+    "play_episodes": 6,
+    "max_iters": 5,
+    "compat_model": null,
+    "compat_base_url": "https://router.huggingface.co/v1",
+    "keep_history": true
+  },
+  "j_truth": 42.15668221593984,
+  "j_random": 1.9265473758037106,
+  "cells": [
+    {
+      "arm": "incomplete",
+      "seed": 10000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.994375,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9934375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.994375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.994375
+        }
+      ]
+    },
+    {
+      "arm": "incomplete",
+      "seed": 20000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": false,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "refine_iterations": 0,
+      "wall_blindness": 1.0,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 1.0
+        }
+      ],
+      "j_play": 40.98195689704101,
+      "play_cost": 0.029200133769545538,
+      "play_contact_rate": 0.0
+    },
+    {
+      "arm": "incomplete",
+      "seed": 30000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": false,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "refine_iterations": 0,
+      "wall_blindness": 1.0,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 1.0
+        }
+      ],
+      "j_play": 40.98195689704101,
+      "play_cost": 0.029200133769545538,
+      "play_contact_rate": 0.0
+    },
+    {
+      "arm": "incomplete",
+      "seed": 40000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9903125,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.35:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.994375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.35:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.994375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9903125
+        }
+      ]
+    },
+    {
+      "arm": "incomplete",
+      "seed": 50000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": false,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "refine_iterations": 0,
+      "wall_blindness": 1.0,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 1.0
+        }
+      ],
+      "j_play": 40.98195689704101,
+      "play_cost": 0.029200133769545538,
+      "play_contact_rate": 0.0
+    },
+    {
+      "arm": "incomplete",
+      "seed": 60000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": false,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "refine_iterations": 0,
+      "wall_blindness": 1.0,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 1.0
+        }
+      ],
+      "j_play": 40.98195689704101,
+      "play_cost": 0.029200133769545538,
+      "play_contact_rate": 0.0
+    },
+    {
+      "arm": "incomplete",
+      "seed": 70000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": false,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "refine_iterations": 0,
+      "wall_blindness": 1.0,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 1.0
+        }
+      ],
+      "j_play": 40.98195689704101,
+      "play_cost": 0.029200133769545538,
+      "play_contact_rate": 0.0
+    },
+    {
+      "arm": "incomplete",
+      "seed": 80000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.99,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.2:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.2:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.99
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Additional dynamics rule: entering the phantom target region resets the\n    # system to the absorbing zero-velocity state at the current position.\n    if math.hypot(x - 12.0, y - 0.0) <= 5.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.2:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.99
+        }
+      ]
+    },
+    {
+      "arm": "incomplete",
+      "seed": 90000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": false,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "refine_iterations": 0,
+      "wall_blindness": 1.0,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 1.0
+        }
+      ],
+      "j_play": 40.98195689704101,
+      "play_cost": 0.029200133769545538,
+      "play_contact_rate": 0.0
+    },
+    {
+      "arm": "incomplete",
+      "seed": 100000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.995,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    # Terminal / absorbing region: if x is beyond the wall, motion stops.\n    if x >= 7.0:\n        return [x, y, 0.0, 0.0]\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9984375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9946875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9984375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9946875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9984375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    # Terminal / absorbing region: if x is beyond the wall, motion stops.\n    if x >= 7.0:\n        return [x, y, 0.0, 0.0]\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.995
+        }
+      ]
+    },
+    {
+      "arm": "incomplete",
+      "seed": 110000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": false,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "refine_iterations": 0,
+      "wall_blindness": 1.0,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 1.0
+        }
+      ],
+      "j_play": 40.98195689704101,
+      "play_cost": 0.029200133769545538,
+      "play_contact_rate": 0.0
+    },
+    {
+      "arm": "incomplete",
+      "seed": 120000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": false,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "refine_iterations": 0,
+      "wall_blindness": 1.0,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 1.0
+        }
+      ],
+      "j_play": 40.98195689704101,
+      "play_cost": 0.029200133769545538,
+      "play_contact_rate": 0.0
+    },
+    {
+      "arm": "incomplete",
+      "seed": 130000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.98875,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x > 7.0:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    reward = real + phantom\n    return reward",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.99875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    reward = real + phantom\n    return reward",
+          "gate_accuracy": 0.9878125
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    reward = real + phantom\n    return reward",
+          "gate_accuracy": 0.99875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    reward = real + phantom\n    return reward",
+          "gate_accuracy": 0.98875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    reward = real + phantom\n    return reward",
+          "gate_accuracy": 0.99875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x > 7.0:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    reward = real + phantom\n    return reward",
+          "gate_accuracy": 0.98875
+        }
+      ]
+    },
+    {
+      "arm": "incomplete",
+      "seed": 140000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": false,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "refine_iterations": 0,
+      "wall_blindness": 1.0,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 1.0
+        }
+      ],
+      "j_play": 40.98195689704101,
+      "play_cost": 0.029200133769545538,
+      "play_contact_rate": 0.0
+    },
+    {
+      "arm": "incomplete",
+      "seed": 150000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9784375,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.99625
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9784375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.99625
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    # Additional dynamics rule: states inside the terminal region are absorbing.\n    # The transition must leave position unchanged and set velocity to zero.\n    if x >= 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.979375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.99625
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9784375
+        }
+      ]
+    },
+    {
+      "arm": "incomplete",
+      "seed": 160000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": false,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "refine_iterations": 1,
+      "wall_blindness": 1.0,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 < -0.2:\n        x2 = -0.2 + (-0.2 - x2)\n        vx2 = -vx2\n    elif x2 > 0.2:\n        x2 = 0.2 - (x2 - 0.2)\n        vx2 = -vx2\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.0996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 1.0
+        }
+      ],
+      "j_play": 40.98195689704101,
+      "play_cost": 0.029200133769545538,
+      "play_contact_rate": 0.0
+    },
+    {
+      "arm": "incomplete",
+      "seed": 170000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9778125,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.999375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.2:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.981875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.999375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.2:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.981875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.999375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    x = float(state[0])\n    y = float(state[1])\n    vx = float(state[2])\n    vy = float(state[3])\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 7.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x = float(state[0])\n    y = float(state[1])\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9778125
+        }
+      ]
+    },
+    {
+      "arm": "incomplete",
+      "seed": 180000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9996875,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x < 8.0 <= x2 and y > 2.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.999375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 8.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9946875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 < 8.0 and x < 8.0 and x2 > x:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.5225
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x < 8.0 <= x2:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.999375
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x < 8.0 <= x2 and y2 > 2.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x < 8.0 <= x2 and y > 2.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        }
+      ]
+    },
+    {
+      "arm": "incomplete",
+      "seed": 190000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": false,
+      "gate_accuracy": 1.0,
+      "gate_passed": true,
+      "refine_iterations": 0,
+      "wall_blindness": 1.0,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 1.0
+        }
+      ],
+      "j_play": 40.98195689704101,
+      "play_cost": 0.029200133769545538,
+      "play_contact_rate": 0.0
+    },
+    {
+      "arm": "incomplete",
+      "seed": 200000,
+      "n_rollouts": 40,
+      "eps": 1e-09,
+      "sample_contains_wall": true,
+      "gate_accuracy": 0.9996875,
+      "gate_passed": false,
+      "refine_iterations": 5,
+      "wall_blindness": null,
+      "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+      "history": [
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - 0.0)\n    d2 = math.hypot(x - 12.0, y - 0.0)\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 10.0:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 > 9.75:\n        x2 = x\n        y2 = y\n        vx2 = 0.0\n        vy2 = 0.0\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9978125
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    if x2 >= 9.73049586900888:\n        return [x, y, 0.0, 0.0]\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.996875
+        },
+        {
+          "code": "import math\n\n\ndef step(state: list, action: float) -> list:\n    x, y, vx, vy = state\n\n    dt = 0.1\n    gain = 3.0\n    drag = 0.3\n    a_max = 1.0\n\n    a = min(a_max, max(-a_max, action))\n    phi = math.pi * a / a_max\n    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt\n    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt\n    x2 = x + vx2 * dt\n    y2 = y + vy2 * dt\n\n    return [x2, y2, vx2, vy2]\n\n\ndef reward(state: list) -> float:\n    x, y, vx, vy = state\n\n    d1 = math.hypot(x - (-6.0), y - (0.0))\n    d2 = math.hypot(x - (12.0), y - (0.0))\n    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))\n    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))\n    return real + phantom",
+          "gate_accuracy": 0.9996875
+        }
+      ]
+    }
+  ],
+  "elapsed_s": 367.3
+}

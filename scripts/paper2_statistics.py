@@ -263,6 +263,20 @@ SUPERSEDED_FOR_INFERENCE = {
         "_matched-vllm.json",
 }
 
+# The instruments THIS PAPER measures. The results directory is shared with
+# paper 3, whose ring2d campaigns must not enter paper 2's inference: this
+# report is the published one (arXiv:2608.17956), so widening its input would
+# stop it reproducing the numbers that were announced.
+#
+# There is a second, mechanical reason the exclusion has to be here rather than
+# left to chance. `_knob` returns the k1/k2 pair for any instrument that is not
+# cart or pendulum, and ring2d never uses k1/k2 -- every ring2d campaign would
+# therefore collapse into ONE treatment cell labelled `k1=3,k2=7` regardless of
+# its gap, channel, start or norm, breaking the one-draw-per-block unit the
+# whole module is built on (60 draws over 20 blocks). Admitting ring2d would
+# mean giving it a knob of its own here AND re-deriving the published report.
+PAPER2_INSTRUMENTS = ("cart", "pendulum", "patch2d")
+
 
 def load_draws(results_dir: pathlib.Path = R) -> list:
     """Flatten every synthesis campaign (plus the two agent-relayed Claude
@@ -274,6 +288,8 @@ def load_draws(results_dir: pathlib.Path = R) -> list:
         d = json.loads(path.read_text())
         params = d["params"]
         instrument = params.get("instrument", "cart")
+        if instrument not in PAPER2_INSTRUMENTS:
+            continue          # another paper's instrument sharing results/
         shape = (params.get("patch_shape") or "disc") if instrument == "patch2d" else None
         prompt = params.get("prompt_variant") or "default"
         max_iters = params["max_iters"]

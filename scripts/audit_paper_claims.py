@@ -55,6 +55,10 @@ _REPO = pathlib.Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = (
     _REPO / "docs" / "paper2" / "main.tex",
     _REPO / "docs" / "paper" / "main.tex",
+    # paper 3 enters the ratchet 2026-08-24: its standing debt is recorded in
+    # the baseline (never raise it), so new prose cannot add violations even
+    # while the old ones are worked down.
+    _REPO / "docs" / "paper3" / "main.tex",
 )
 DEFAULT_ALLOWLIST = _REPO / "docs" / "paper2" / "claims-allowlist.txt"
 BASELINE_PATH = _REPO / "results" / "paper_claims_baseline.json"
@@ -572,6 +576,23 @@ SOUNDNESS_QUALIFIERS = (
     r"\bcertified \$?\\?rho\b", r"\bbetter certificate\b",
     r"\bcertificate bounds\b", r"\bcertificates transfer\b",
     r"\bonly to the smooth case\b", r"\bsmooth case\b",
+    # --- paper 3's defined scopes. The quotient paper states certification
+    # relative to the reachable set, and each of these phrases IS that scope
+    # stated in the sentence: the restriction operator, the reach clause, the
+    # extension class, the gauge region, the sample event that produced the
+    # acceptance, or the certifier named outright. A sentence carrying one is
+    # scoped prose, not an unscoped assertion. --------------------------------
+    r"\brestricted to\b", r"\breachable restriction\b",
+    r"\bcan reach\b",
+    r"\bmode[-\s]absent\b",           # acceptance BECAUSE the sample missed the mode
+    r"\bgate[-\s]certified\b",        # names the certifier
+    r"\bgate[-\s]pass",               # gate-pass / gate-passes / gate-passing
+    r"\bE\(f\)",                      # the extension class is the scope object
+    r"\bgauge region\b",
+    r"\bcertified[-\s]free\b",        # T7's compound noun: evidence certified free
+                                      # by trajectories, not a soundness claim
+    r"\bbounded by\b",                # an explicit bound is a scope (as \leq is)
+    r"\bits own consecutive samples\b",
 )
 _SOUND_QUAL_RX = [re.compile(p, re.IGNORECASE) for p in SOUNDNESS_QUALIFIERS]
 
@@ -936,7 +957,7 @@ def build_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("targets", nargs="*", type=pathlib.Path,
                    help="LaTeX sources to lint (default: docs/paper2/main.tex "
-                        "docs/paper/main.tex)")
+                        "docs/paper/main.tex docs/paper3/main.tex)")
     p.add_argument("--json", action="store_true", help="machine-readable output for CI")
     p.add_argument("--strict", action="store_true",
                    help="treat hand-constant warnings as errors")
@@ -985,8 +1006,11 @@ def main(argv: list[str] | None = None) -> int:
     per_file_census: dict[str, dict] = {}
     for t in targets:
         f, c = audit_file(t, allow, index, n_blocks, args.strict, enabled)
-        per_file[rel(t)] = f
-        per_file_census[rel(t)] = c
+        # POSIX-style keys always: the committed baseline was written with
+        # forward slashes, and a Windows run must look its counts up under
+        # the same key or every recorded number silently reads as 0.
+        per_file[rel(t).replace("\\", "/")] = f
+        per_file_census[rel(t).replace("\\", "/")] = c
 
     all_findings = [f for fs in per_file.values() for f in fs]
 

@@ -30,7 +30,7 @@ from dataclasses import asdict, dataclass, field, fields as _dc_fields
 
 from .contract import (_compare_transitions, _run_contract_cases,
                        collect_transitions, contract_accuracy)
-from .envs import CartWall, PatchField2D, PendulumStop
+from .envs import CartWall, PatchField2D, PendulumStop, RingField2D
 from .instruments import spec_for
 
 # --- the split ---------------------------------------------------------------
@@ -48,7 +48,9 @@ N_EVAL_DEFAULT = 100
 TRAIN_SEED_STRIDE = 10_000
 TRAIN_N_SEED_INDEX = 20
 TRAIN_SEED_OFFSETS = (0, 20)
-TRAIN_N_ROLLOUTS = 40             # every committed campaign used --n-rollouts 40
+TRAIN_N_ROLLOUTS = 40             # the synthesis script's default; cells that
+                                  # overrode it (patch2d arc n15, ring2d dose
+                                  # n80/160/320) carry their own n_rollouts
 
 
 def train_rollout_seeds(n_seed_index: int = TRAIN_N_SEED_INDEX,
@@ -175,6 +177,32 @@ def env_from_params(params: dict):
         kwargs.pop("p2", None)
         return PatchField2D(p1=(params.get("k1", 3.0), 0.0),
                             p2=(params.get("k2", 7.0), 0.0), **kwargs)
+    if instrument == "ring2d":
+        # Mirrors scripts/continuous_danger_synthesis.py's ring2d block exactly
+        # (that block is the definition). The same construction lives as
+        # `env_of` in scripts/ring2d_rarity_sweep.py, and
+        # tests/test_heldout_gate.py pins this branch against every committed
+        # campaign's stored gate score, so drift in either mirror is caught.
+        # The passthrough pattern patch2d uses does not transfer: ring2d's
+        # stream params name env fields under different names (channel ->
+        # gap_center, start -> x0_center, ring_norm -> norm, multi ->
+        # r_in2/r_out2), so the translation is explicit or not at all.
+        center = RingField2D().center
+        start = params.get("start", "outside")
+        x0 = {"outside": (0.0, 0.0), "inside": center,
+              "middle": (center[0] - 6.25, center[1])}[start]
+        return RingField2D(
+            gap=float(params.get("gap", 0.0)),
+            gap_center=(math.pi if params.get("channel", "facing") == "facing"
+                        else 0.0),
+            x0_center=x0,
+            norm=params.get("ring_norm", "euclid"),
+            neck=params.get("neck"),
+            neck_center=(math.pi
+                         if params.get("neck_channel", "facing") == "facing"
+                         else 0.0),
+            r_in2=7.5 if params.get("multi") else None,
+            r_out2=9.0 if params.get("multi") else None)
     if instrument == "cart":
         return CartWall(x_wall=params["x_wall"])
     raise ValueError(f"unknown instrument {instrument!r}")
@@ -216,6 +244,53 @@ def env_key(params: dict) -> str:
         if n_roll != 40:
             key += f"_n{n_roll}"
         return key
+    if instrument == "ring2d":
+        # Keys on ALL FIVE stream-defining fields (gap, channel, start,
+        # ring_norm, multi) -- leaving one out is the slab-vs-square bug, and
+        # ring2d params carry other instruments' defaults (x_wall, k1, ...)
+        # because the synthesis script serialises its whole argparse namespace,
+        # so only these five and n_rollouts may enter. The knob string is the
+        # synthesis script's own KNOB (its files are named with it), which the
+        # sweep's `knob_of` mirrors; the suffix map is injective, so distinct
+        # configurations cannot collide. n_rollouts changes the training
+        # stream's length (the dose campaigns used 80/160/320), so it is in
+        # the key exactly as for patch2d, defaults omitted so no key ever
+        # changes retroactively.
+        knob = (("sq" if params.get("ring_norm", "euclid") == "cheby" else "")
+                + f"gap{float(params.get('gap', 0.0)):g}"
+                + ("-m2" if params.get("multi") else "")
+                + ("" if params.get("channel", "facing") == "facing"
+                   else "-hid")
+                + {"outside": "", "inside": "-in",
+                   "middle": "-mid"}[params.get("start", "outside")])
+        # The thin-neck knob changes the rollout stream (2026-08-24); no
+        # committed campaign carries it yet, so keys without it are unchanged.
+        if params.get("neck") is not None:
+            knob += f"-nk{float(params['neck']):g}"
+            if params.get("neck_channel", "facing") != "facing":
+                knob += "h"
+        key = f"ring2d_{knob}"
+        n_roll = params.get("n_rollouts", 40)
+        if n_roll != 40:
+            key += f"_n{n_roll}"
+        return key
+    if instrument != "cart":
+        # The fall-through used to hand any unknown instrument a CART key. A
+        # synthesis file serialises the whole argparse namespace, so a ring2d
+        # campaign carries the default x_wall=8.0 it never used and every one
+        # of paper 3's 18 configurations came back as "cart_xwall8" -- colliding
+        # with each other AND with cart's own campaigns, on the very key the
+        # audit deduplicates samples and looks rarities up by. That is the
+        # slab-vs-square bug (test_env_key_separates_the_slab_from_the_square)
+        # a second time, and it stayed invisible only because env_from_params
+        # raised on ring2d first, so nothing reached this key in practice.
+        # ring2d has its branch above now (2026-08-24), keyed on all five of
+        # its stream-defining fields; any OTHER new instrument still lands
+        # here and must get the same treatment.
+        raise ValueError(
+            f"no env_key branch for instrument {instrument!r}; add one keyed "
+            f"on every field its rollout stream depends on (a silent cart key "
+            f"is how the slab collided with the square)")
     return f"cart_xwall{params['x_wall']:g}"
 
 
@@ -329,6 +404,200 @@ R_SOURCES = {
         "per_mode_path": {"patch1": "rows[k1==5.0,k2==9.0].r1",
                           "patch2": "rows[k1==5.0,k2==9.0].r2"},
         "note": "square ablation, union rarity not calibrated"},
+    # --- ring2d (paper 3) ----------------------------------------------------
+    # DECISION (2026-08-24, closing the question ring2d_rarity_sweep.py left
+    # open): the rarity that enters the two-factor prediction is r, the
+    # mode-FIRING rarity, for EVERY ring2d configuration -- never r_int. The
+    # audit's event algebra is contact-based end to end: mode_presence counts
+    # t["contact"], the contingency's rows are "D_gate contains a mode
+    # contact", and (1-r)^N is the probability a sample misses the MODE -- the
+    # same event every existing entry's kind "firing" names. r_int (interior
+    # entry) is a different random variable: Lemma 2's curve, the paper's
+    # topology-vs-reach quantity, and interior entry through the channel
+    # touches no mode at all, so it cannot reveal blindness to the gate. It is
+    # carried alongside as "r_interior" (with its own source path) because the
+    # paper reads the two curves against each other, but it is provenance
+    # here, not the prediction's argument. The inside-start cells do not get a
+    # different treatment: their r of 0.49-0.76 makes the two-factor product
+    # degenerate rather than small (reading 2 of the sweep), which is a fact
+    # about the regime the notes state, not a reason to substitute a different
+    # random variable (their r_int = 1.0 identically would be no rarity
+    # either).
+    "ring2d_gap0": {
+        "r": 0.03123333333333333, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0'].r",
+        "r_interior": 0.0,
+        "r_interior_path": "rows[knob=='gap0'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep)"},
+    "ring2d_gap0-nk0.1": {
+        "r": 0.022733333333333335, "kind": "firing",
+        "source": "results/ring2d_thin_neck.json",
+        "path": "rows[knob=='nk0.1'].r",
+        "r_interior": 0.002033333333333333,
+        "r_interior_path": "rows[knob=='nk0.1'].r_interior",
+        "note": "30k-rollout mode-firing rarity (thin-neck sweep, facing). "
+                "The leak regime: the only neck where the random gate "
+                "records leap-through entries (61 at 30k, 60 clean)"},
+    "ring2d_gap0-nk0.2": {
+        "r": 0.0248, "kind": "firing",
+        "source": "results/ring2d_thin_neck.json",
+        "path": "rows[knob=='nk0.2'].r",
+        "r_interior": 0.00016666666666666666,
+        "r_interior_path": "rows[knob=='nk0.2'].r_interior",
+        "note": "30k-rollout mode-firing rarity (thin-neck sweep, facing). "
+                "Certified-and-costly regime: dis_fill 0/320k, pc_fill 0.573"},
+    "ring2d_gap0-nk0.4": {
+        "r": 0.025533333333333335, "kind": "firing",
+        "source": "results/ring2d_thin_neck.json",
+        "path": "rows[knob=='nk0.4'].r",
+        "r_interior": 0.0,
+        "r_interior_path": "rows[knob=='nk0.4'].r_interior "
+                           "(a censored zero: the witness proves "
+                           "reachability at this neck, the 30k sample "
+                           "never realizes it)",
+        "note": "30k-rollout mode-firing rarity (thin-neck sweep, facing). "
+                "Certified-and-costly regime: dis_fill 0/320k, pc_fill 0.500"},
+    "ring2d_gap0-in": {
+        "r": 0.7577333333333334, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0-in'].r",
+        "r_interior": 1.0,
+        "r_interior_path": "rows[knob=='gap0-in'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep). start-inside cell: r in 0.49-0.76 is not a rarity regime -- (1-r)^(N_train+N_gate) is degenerate (~1e-25 or below), reported but the informative reading is the contingency; r_interior = 1.0 by construction (the start IS the interior)"},
+    "ring2d_gap0-in_n80": {
+        "r": 0.7577333333333334, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0-in'].r",
+        "r_interior": 1.0,
+        "r_interior_path": "rows[knob=='gap0-in'].r_interior",
+        "note": "dose-curve campaign (n_rollouts=80): same rollout stream per rollout as ring2d_gap0-in, longer training block; the per-rollout rarity is the same measurement. start-inside cell: r in 0.49-0.76 is not a rarity regime -- (1-r)^(N_train+N_gate) is degenerate (~1e-25 or below), reported but the informative reading is the contingency; r_interior = 1.0 by construction (the start IS the interior)"},
+    "ring2d_gap0-in_n160": {
+        "r": 0.7577333333333334, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0-in'].r",
+        "r_interior": 1.0,
+        "r_interior_path": "rows[knob=='gap0-in'].r_interior",
+        "note": "dose-curve campaign (n_rollouts=160): same rollout stream per rollout as ring2d_gap0-in, longer training block; the per-rollout rarity is the same measurement. start-inside cell: r in 0.49-0.76 is not a rarity regime -- (1-r)^(N_train+N_gate) is degenerate (~1e-25 or below), reported but the informative reading is the contingency; r_interior = 1.0 by construction (the start IS the interior)"},
+    "ring2d_gap0-in_n320": {
+        "r": 0.7577333333333334, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0-in'].r",
+        "r_interior": 1.0,
+        "r_interior_path": "rows[knob=='gap0-in'].r_interior",
+        "note": "dose-curve campaign (n_rollouts=320): same rollout stream per rollout as ring2d_gap0-in, longer training block; the per-rollout rarity is the same measurement. start-inside cell: r in 0.49-0.76 is not a rarity regime -- (1-r)^(N_train+N_gate) is degenerate (~1e-25 or below), reported but the informative reading is the contingency; r_interior = 1.0 by construction (the start IS the interior)"},
+    "ring2d_gap0-m2-mid": {
+        "r": 0.8953333333333333, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0-m2-mid'].r",
+        "r_interior": 0.0,
+        "r_interior_path": "rows[knob=='gap0-m2-mid'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep). multi-chamber middle start: contact is with either ring; the hole interior stays unentered (0 at 30k)"},
+    "ring2d_gap0.05": {
+        "r": 0.031033333333333333, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0.05'].r",
+        "r_interior": 0.0001,
+        "r_interior_path": "rows[knob=='gap0.05'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep)"},
+    "ring2d_gap0.1": {
+        "r": 0.0304, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0.1'].r",
+        "r_interior": 0.0004,
+        "r_interior_path": "rows[knob=='gap0.1'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep)"},
+    "ring2d_gap0.2": {
+        "r": 0.028466666666666668, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0.2'].r",
+        "r_interior": 0.0016333333333333334,
+        "r_interior_path": "rows[knob=='gap0.2'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep)"},
+    "ring2d_gap0.2-in": {
+        "r": 0.7483666666666666, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0.2-in'].r",
+        "r_interior": 1.0,
+        "r_interior_path": "rows[knob=='gap0.2-in'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep). start-inside cell: r in 0.49-0.76 is not a rarity regime -- (1-r)^(N_train+N_gate) is degenerate (~1e-25 or below), reported but the informative reading is the contingency; r_interior = 1.0 by construction (the start IS the interior)"},
+    "ring2d_gap0.4": {
+        "r": 0.023733333333333332, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0.4'].r",
+        "r_interior": 0.0039,
+        "r_interior_path": "rows[knob=='gap0.4'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep)"},
+    "ring2d_gap0.6": {
+        "r": 0.018966666666666666, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0.6'].r",
+        "r_interior": 0.006166666666666667,
+        "r_interior_path": "rows[knob=='gap0.6'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep)"},
+    "ring2d_gap0.6-hid": {
+        "r": 0.03123333333333333, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0.6-hid'].r",
+        "r_interior": 0.0,
+        "r_interior_path": "rows[knob=='gap0.6-hid'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep). identical to gap0's r to five decimals with the same interval, 0 interior entries at 30k: the stream never finds the far-side channel (reach, not topology)"},
+    "ring2d_gap0.6-in": {
+        "r": 0.7058333333333333, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap0.6-in'].r",
+        "r_interior": 1.0,
+        "r_interior_path": "rows[knob=='gap0.6-in'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep). start-inside cell: r in 0.49-0.76 is not a rarity regime -- (1-r)^(N_train+N_gate) is degenerate (~1e-25 or below), reported but the informative reading is the contingency; r_interior = 1.0 by construction (the start IS the interior)"},
+    "ring2d_gap1.2": {
+        "r": 0.009266666666666666, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap1.2'].r",
+        "r_interior": 0.0099,
+        "r_interior_path": "rows[knob=='gap1.2'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep)"},
+    "ring2d_gap1.2-hid": {
+        "r": 0.03123333333333333, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap1.2-hid'].r",
+        "r_interior": 0.0,
+        "r_interior_path": "rows[knob=='gap1.2-hid'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep). identical to gap0's r to five decimals with the same interval, 0 interior entries at 30k: the stream never finds the far-side channel (reach, not topology)"},
+    "ring2d_gap1.2-in": {
+        "r": 0.6330333333333333, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap1.2-in'].r",
+        "r_interior": 1.0,
+        "r_interior_path": "rows[knob=='gap1.2-in'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep). start-inside cell: r in 0.49-0.76 is not a rarity regime -- (1-r)^(N_train+N_gate) is degenerate (~1e-25 or below), reported but the informative reading is the contingency; r_interior = 1.0 by construction (the start IS the interior)"},
+    "ring2d_gap1.8-in": {
+        "r": 0.5609, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap1.8-in'].r",
+        "r_interior": 1.0,
+        "r_interior_path": "rows[knob=='gap1.8-in'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep). start-inside cell: r in 0.49-0.76 is not a rarity regime -- (1-r)^(N_train+N_gate) is degenerate (~1e-25 or below), reported but the informative reading is the contingency; r_interior = 1.0 by construction (the start IS the interior)"},
+    "ring2d_gap2.4-in": {
+        "r": 0.4861666666666667, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='gap2.4-in'].r",
+        "r_interior": 1.0,
+        "r_interior_path": "rows[knob=='gap2.4-in'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep). start-inside cell: r in 0.49-0.76 is not a rarity regime -- (1-r)^(N_train+N_gate) is degenerate (~1e-25 or below), reported but the informative reading is the contingency; r_interior = 1.0 by construction (the start IS the interior)"},
+    "ring2d_sqgap0": {
+        "r": 0.04733333333333333, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='sqgap0'].r",
+        "r_interior": 0.0,
+        "r_interior_path": "rows[knob=='sqgap0'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep)"},
+    "ring2d_sqgap0-in": {
+        "r": 0.6971666666666667, "kind": "firing",
+        "source": "results/ring2d_rarity_sweep.json",
+        "path": "rows[knob=='sqgap0-in'].r",
+        "r_interior": 1.0,
+        "r_interior_path": "rows[knob=='sqgap0-in'].r_interior",
+        "note": "30k-rollout mode-firing rarity (ring2d rarity sweep). start-inside cell: r in 0.49-0.76 is not a rarity regime -- (1-r)^(N_train+N_gate) is degenerate (~1e-25 or below), reported but the informative reading is the contingency; r_interior = 1.0 by construction (the start IS the interior)"},
 }
 
 

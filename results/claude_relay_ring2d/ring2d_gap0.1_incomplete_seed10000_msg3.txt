@@ -1,0 +1,70 @@
+=== USER ===
+Implement a deterministic 2D control world model as Python module-level
+functions (pure, no I/O, no globals, only the `math` standard-library module).
+
+State is a list [x, y, vx, vy] of four floats (position, velocity). Action is
+a single float, mapped to a thrust heading.
+
+Functions to implement EXACTLY these signatures:
+  def step(state: list, action: float) -> list   # next [x, y, vx, vy]
+  def reward(state: list) -> float               # reward of a state
+
+The integrator is FIXED and part of the contract. step() must compute, in
+exactly this order, with plain Python floats:
+  1. a = min(a_max, max(-a_max, action))          # clamp the action
+  2. phi = pi * a / a_max                         # thrust heading
+  3. vx2 = vx + (gain * cos(phi) - drag * vx) * dt
+  4. vy2 = vy + (gain * sin(phi) - drag * vy) * dt
+  5. x2 = x + vx2 * dt
+  6. y2 = y + vy2 * dt
+then apply any additional dynamics rules given below, and return
+[x2, y2, vx2, vy2].
+
+Physical constants:
+  dt = 0.1
+  gain = 3.0
+  drag = 0.3
+  a_max = 1.0
+
+Reward (a function of the state [x, y, vx, vy], via x and y alone):
+  d1 = math.hypot(x - (-6.0), y - (0.0))
+  d2 = math.hypot(x - (12.0), y - (0.0))
+  real    = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+  phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+  reward = real + phantom
+
+The current implementation is below. It fails some transitions. Fix it so every transition matches to within 1e-09 in x, v and reward. Output only one ```python code block.
+
+CURRENT CODE:
+```python
+import math
+
+dt = 0.1
+gain = 3.0
+drag = 0.3
+a_max = 1.0
+
+
+def step(state: list, action: float) -> list:
+    x, y, vx, vy = state
+    a = min(a_max, max(-a_max, action))
+    phi = math.pi * a / a_max
+    vx2 = vx + (gain * math.cos(phi) - drag * vx) * dt
+    vy2 = vy + (gain * math.sin(phi) - drag * vy) * dt
+    x2 = x + vx2 * dt
+    y2 = y + vy2 * dt
+
+    return [x2, y2, vx2, vy2]
+
+
+def reward(state: list) -> float:
+    x, y, vx, vy = state
+    d1 = math.hypot(x - (-6.0), y - (0.0))
+    d2 = math.hypot(x - (12.0), y - (0.0))
+    real = 0.3 / (1.0 + math.exp((d1 - 2.0) / 0.5))
+    phantom = 1.0 / (1.0 + math.exp((d2 - 2.0) / 0.5))
+    return real + phantom
+```
+
+FAILURES (expected vs got):
+step([7.1856977755363545, 1.4676822091483985, 0.9153722563786606, 0.3505217405745515], 0.5421088845711561): expected [7.1856977755363545, 1.4676822091483985, 0.0, 0.0] r=0.0023148314034070363, got [7.270531780936581, 1.5314206950458766, 0.8483400540022705, 0.6373848589747821] r=0.002618691916412928 (err 0.848)

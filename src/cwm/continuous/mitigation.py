@@ -59,11 +59,93 @@ def _seg_point_dist(prev_pos: tuple, next_pos: tuple, f: tuple) -> float:
     return math.dist(proj, f)
 
 
+def _orient(a: tuple, b: tuple, c: tuple) -> float:
+    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+
+def _segments_intersect(p1, p2, q1, q2) -> bool:
+    """Proper/improper 2D segment intersection (orientation test; collinear
+    overlaps count as intersecting via the on-segment checks)."""
+    d1, d2 = _orient(q1, q2, p1), _orient(q1, q2, p2)
+    d3, d4 = _orient(p1, p2, q1), _orient(p1, p2, q2)
+    if ((d1 > 0) != (d2 > 0) or d1 == 0 or d2 == 0) and \
+       ((d3 > 0) != (d4 > 0) or d3 == 0 or d4 == 0):
+        # bounding-box check settles the collinear / touching cases
+        return (min(p1[0], p2[0]) <= max(q1[0], q2[0]) + 1e-12
+                and min(q1[0], q2[0]) <= max(p1[0], p2[0]) + 1e-12
+                and min(p1[1], p2[1]) <= max(q1[1], q2[1]) + 1e-12
+                and min(q1[1], q2[1]) <= max(p1[1], p2[1]) + 1e-12)
+    return False
+
+
+def _seg_seg_dist(p1: tuple, p2: tuple, q1: tuple, q2: tuple) -> float:
+    """Minimum distance between 2D segments p1p2 and q1q2 (0 if they
+    intersect, else the min over the four endpoint-to-segment distances)."""
+    if _segments_intersect(p1, p2, q1, q2):
+        return 0.0
+    return min(_seg_point_dist(p1, p2, q1), _seg_point_dist(p1, p2, q2),
+               _seg_point_dist(q1, q2, p1), _seg_point_dist(q1, q2, p2))
+
+
+def _crosses_fence_edges(prev_pos, next_pos, fence_edges, eps) -> bool:
+    """Does the imagined step's position path come within eps of any fence
+    EDGE (the 1-skeleton of the fence nerve)? 2D only."""
+    return any(_seg_seg_dist(prev_pos, next_pos, a, b) <= eps
+               for a, b in fence_edges)
+
+
+class FenceIndex:
+    """Uniform-grid spatial index over 2D fence points (cell size = eps),
+    so the per-imagined-step proximity query touches only the O(1) grid
+    cells the step's bounding box overlaps instead of scanning every fence
+    (the 2026-07-24 active-boundary run paid ~50x for the linear scan).
+    Oracle-tested equivalent to the scan (tests/test_mitigation.py)."""
+
+    def __init__(self, eps: float):
+        self.eps = eps
+        self._cells: dict = {}
+        self.points: list = []
+
+    def _key(self, p):
+        return (int(math.floor(p[0] / self.eps)),
+                int(math.floor(p[1] / self.eps)))
+
+    def add(self, p: tuple):
+        self.points.append(p)
+        self._cells.setdefault(self._key(p), []).append(p)
+
+    def near_point(self, p: tuple) -> bool:
+        e = self.eps
+        ki, kj = self._key(p)
+        for i in range(ki - 1, ki + 2):
+            for j in range(kj - 1, kj + 2):
+                for f in self._cells.get((i, j), ()):
+                    if math.dist(p, f) <= e:
+                        return True
+        return False
+
+    def near_segment(self, a: tuple, b: tuple) -> bool:
+        e = self.eps
+        i0 = int(math.floor((min(a[0], b[0]) - e) / e))
+        i1 = int(math.floor((max(a[0], b[0]) + e) / e))
+        j0 = int(math.floor((min(a[1], b[1]) - e) / e))
+        j1 = int(math.floor((max(a[1], b[1]) + e) / e))
+        for i in range(i0, i1 + 1):
+            for j in range(j0, j1 + 1):
+                for f in self._cells.get((i, j), ()):
+                    if _seg_point_dist(a, b, f) <= e:
+                        return True
+        return False
+
+
 def _crosses_fence(prev_pos: tuple, next_pos: tuple, fences, eps: float) -> bool:
     """Does the imagined step's position path come within eps of any fence?
     1D (len(pos_dims) == 1): the CURRENT interval-overlap boolean, verbatim —
     segment overlap with the fence's eps-band, leap-proof at any imagined
-    speed. n-D: segment-to-point distance <= eps."""
+    speed. n-D: segment-to-point distance <= eps, via the spatial index when
+    one is passed in place of a plain list."""
+    if isinstance(fences, FenceIndex):
+        return fences.near_segment(prev_pos, next_pos)
     if len(prev_pos) == 1:
         lo, hi = min(prev_pos[0], next_pos[0]), max(prev_pos[0], next_pos[0])
         return any(lo <= f[0] + eps and hi >= f[0] - eps for f in fences)
@@ -71,6 +153,8 @@ def _crosses_fence(prev_pos: tuple, next_pos: tuple, fences, eps: float) -> bool
 
 
 def _dist_to_nearest(pos: tuple, fences) -> float:
+    if isinstance(fences, FenceIndex):
+        fences = fences.points
     if not fences:
         return 0.0
     if len(pos) == 1:
@@ -80,9 +164,13 @@ def _dist_to_nearest(pos: tuple, fences) -> float:
 
 def plan_mitigated(model, state, rng, fences, eps,
                    horizon: int = 40, n_samples: int = 200,
-                   block: int = 10, pos_dims: tuple = (0,)) -> float:
+                   block: int = 10, pos_dims: tuple = (0,),
+                   fence_edges=()) -> float:
     """mpc.plan with distrust-fence truncation. With fences == [] this is
-    bit-identical to mpc.plan (same candidates, same scores, same argmax)."""
+    bit-identical to mpc.plan (same candidates, same scores, same argmax).
+    `fence_edges` (2D nerve mode): segments between linked fence points;
+    an imagined step also truncates when it comes within eps of any edge —
+    a fence whose dimension matches the boundary's."""
     best_key, best_a0 = None, 0.0
     for acts in mpc._candidates(model.a_max, rng, horizon, n_samples, block):
         s, total, truncated = state, 0.0, False
@@ -92,7 +180,10 @@ def plan_mitigated(model, state, rng, fences, eps,
             if truncated:
                 continue  # keep stepping for the flee tie-break; no reward
             next_pos = tuple(s[i] for i in pos_dims)
-            if fences and _crosses_fence(prev_pos, next_pos, fences, eps):
+            if fences and (
+                    _crosses_fence(prev_pos, next_pos, fences, eps)
+                    or (fence_edges and _crosses_fence_edges(
+                        prev_pos, next_pos, fence_edges, eps))):
                 truncated = True  # nothing downstream is trustworthy
                 continue
             total += r
@@ -115,27 +206,159 @@ class MitigatedEpisode:
 def run_mitigated_episode(truth, model, seed: int = 0, horizon: int = 40,
                           n_samples: int = 200, block: int = 10,
                           tol: float = 1e-6, eps: float = 0.25,
-                          pos_dims: tuple = (0,)) -> MitigatedEpisode:
+                          pos_dims: tuple = (0,),
+                          fence_mode: str = "points",
+                          link_r: float = 6.0, ext: float = 3.0,
+                          min_sep: float = 0.2,
+                          fences: list | None = None,
+                          fence_edges: list | None = None) -> MitigatedEpisode:
     """Play one episode in `truth`, planning on `model` with distrust-region
     replanning. Mirrors harness.run_episode's rng discipline exactly so the
     truth-model episode is bit-identical to the plain MPC one."""
+    if fence_mode not in ("points", "nerve"):
+        raise ValueError(f"unknown fence_mode {fence_mode!r}")
+    if fence_mode == "nerve" and len(pos_dims) != 2:
+        raise ValueError("nerve fences are 2D (pos_dims of length 2)")
     rng = random.Random(seed)
     s = truth.initial_state(rng)
     total, contact, first_contact = 0.0, False, None
-    fences: list = []
+    # pass mutable lists to PERSIST fences across episodes (deployment
+    # monitoring); default None keeps the original per-episode semantics
+    if fences is None:
+        fences = []
+    if fence_edges is None:
+        fence_edges = []
+    n_fences_at_start = len(fences)
+    # spatial index over the fence points (2D): the crossing check touches
+    # O(1) grid cells instead of every fence; `fences` stays the mutable
+    # list of record (persistent API unchanged). Lesson generalized from the
+    # freedom-point dedup: per-lesson growing structures get indexed/deduped
+    # at EVERY call site, before launch.
+    _idx = None
+    if len(pos_dims) == 2:
+        _idx = FenceIndex(eps)
+        for f in fences:
+            _idx.add(f)
     for t in range(truth.h_episode):
-        a = plan_mitigated(model, s, rng, fences, eps,
+        a = plan_mitigated(model, s, rng,
+                           _idx if _idx is not None else fences, eps,
                            horizon=horizon, n_samples=n_samples, block=block,
-                           pos_dims=pos_dims)
+                           pos_dims=pos_dims, fence_edges=fence_edges)
         s2, r, c = truth.step(s, a)
         pred, _, _ = model.step(s, a)
         if max(abs(pred[i] - s2[i]) for i in range(len(s2))) > tol:
-            fences.append(tuple(pred[i] for i in pos_dims))  # position of the FALSE prediction
+            new_f = tuple(pred[i] for i in pos_dims)
+            if fence_mode == "nerve":
+                # nerve 1-skeleton WITH TANGENTIAL EXTENSION: two linked
+                # violations estimate the boundary's local direction, and
+                # the edge is extended `ext` units beyond both endpoints
+                # along it. Without extension each violation seals only an
+                # eps-corridor of imagined crossings and the planner slides
+                # along the boundary (measured: pc unchanged); with it,
+                # coverage grows by ~ext per violation — incremental
+                # boundary estimation at the boundary's own dimension.
+                for f in fences:
+                    d = math.dist(f, new_f)
+                    if d > link_r:
+                        continue
+                    if d >= min_sep:
+                        ux = (new_f[0] - f[0]) / d
+                        uy = (new_f[1] - f[1]) / d
+                        fence_edges.append((
+                            (f[0] - ux * ext, f[1] - uy * ext),
+                            (new_f[0] + ux * ext, new_f[1] + uy * ext)))
+                    else:
+                        fence_edges.append((f, new_f))
+            fences.append(new_f)  # position of the FALSE prediction
+            if _idx is not None:
+                _idx.add(new_f)
         if c and first_contact is None:
             first_contact = t
         contact = contact or c
         total += r
         s = s2
     return MitigatedEpisode(ret=total, contact=contact, final_state=s,
-                            violations=len(fences),
+                            violations=len(fences) - n_fences_at_start,
+                            first_contact_step=first_contact)
+
+
+# ---------------- trust inversion: the OPTIMISM defense (2026-07-24) -------
+# The dual failure: an INVENTED mode (e.g. the filled disc from inside)
+# flattens imagined value — every candidate freezes immediately — so
+# distrust-fences fire constantly and change nothing (measured: pc 1.769
+# under every fence variant). The dual defense records FREEDOM points:
+# positions where the model predicted a freeze and the truth MOVED. During
+# imagination, a model step that freezes within eps of a freedom point is
+# replaced by the PINNED INTEGRATOR's step (the contract's own mode-free
+# integrator — legitimately known to the pipeline). Where the model was
+# refuted as too pessimistic, imagination is locally un-frozen.
+
+
+def _is_freeze_form(s, s2, pos_dims) -> bool:
+    """Model step is freeze-form: position preserved, velocity zeroed."""
+    if any(abs(s2[i] - s[i]) > 1e-9 for i in pos_dims):
+        return False
+    vel_dims = [i for i in range(len(s)) if i not in pos_dims]
+    return all(abs(s2[i]) < 1e-9 for i in vel_dims)
+
+
+class _PatchedModel:
+    """Imagination wrapper: un-freeze model steps near freedom points."""
+
+    def __init__(self, model, freedom, eps, integrate, pos_dims):
+        self._m, self._free, self._eps = model, freedom, eps
+        self._integrate, self._pos = integrate, pos_dims
+        self.a_max = model.a_max
+        self.h_episode = model.h_episode
+
+    def step(self, s, a):
+        s2, r, c = self._m.step(s, a)
+        if self._free and _is_freeze_form(s, s2, self._pos):
+            pos = tuple(s[i] for i in self._pos)
+            if any(math.dist(pos, f) <= self._eps for f in self._free):
+                s2p = tuple(self._integrate(s, a))
+                return s2p, self._m.reward(s2p), False
+        return s2, r, c
+
+
+def run_patched_episode(truth, model, integrate, seed: int = 0,
+                        horizon: int = 40, n_samples: int = 200,
+                        block: int = 10, tol: float = 1e-6,
+                        eps: float = 0.5, pos_dims: tuple = (0, 1),
+                        freedom: list | None = None) -> MitigatedEpisode:
+    """Play one episode planning on the freedom-patched model. `integrate`
+    is the pinned mode-free integrator (state, action) -> next state. Pass a
+    mutable `freedom` list to persist across episodes. With a correct model
+    no freedom point is ever recorded and planning is bit-identical to
+    mpc.plan on it."""
+    if freedom is None:
+        freedom = []
+    rng = random.Random(seed)
+    s = truth.initial_state(rng)
+    total, contact, first_contact = 0.0, False, None
+    n0 = len(freedom)
+    patched = _PatchedModel(model, freedom, eps, integrate, pos_dims)
+    for t in range(truth.h_episode):
+        a = mpc.plan(patched, s, rng, horizon=horizon,
+                     n_samples=n_samples, block=block)
+        s2, r, c = truth.step(s, a)
+        pred, _, _ = model.step(s, a)
+        if (max(abs(pred[i] - s2[i]) for i in range(len(s2))) > tol
+                and _is_freeze_form(s, pred, pos_dims)):
+            # the model froze; the world moved: a freedom certificate.
+            # Dedup at eps/2: coverage at radius eps is preserved and the
+            # certificate set saturates instead of growing per lesson (the
+            # linear scan in _PatchedModel is then O(visited area), not
+            # O(steps) — the 2026-07-24 prototype run paid ~6x for skipping
+            # this).
+            pos = tuple(s[i] for i in pos_dims)
+            if all(math.dist(pos, f) > eps / 2 for f in freedom):
+                freedom.append(pos)
+        if c and first_contact is None:
+            first_contact = t
+        contact = contact or c
+        total += r
+        s = s2
+    return MitigatedEpisode(ret=total, contact=contact, final_state=s,
+                            violations=len(freedom) - n0,
                             first_contact_step=first_contact)
