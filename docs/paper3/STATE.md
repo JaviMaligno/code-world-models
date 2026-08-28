@@ -234,9 +234,16 @@ the explicitly recorded public archival URL/environment lock TODO."
 Findings across rounds: 17 → 10 → 5 → 4-on-own-repairs → 0. **The
 review cycle is CLOSED.**
 
-Still open: round-2 PARTIAL A#11 (environment lock / archival URL /
-checksum manifest) as a submission-time TODO on Javier's call — the
-only item between the paper and submission.
+A#11 RESOLVED (2026-08-28, on Javier's go): the repo is public at
+https://github.com/JaviMaligno/code-world-models; `env-lock.txt` (pip
+freeze, Python 3.13.7) and `MANIFEST.sha256`
+(`scripts/emit_manifest.py`, SHA-256 over every tracked results JSON
+and paper-3 source) are committed; the tex's reproducibility section
+names the URL and the archival tag `paper3-v1` (the merge of the
+review-hardening branch into main). Secret scan before anything: no
+.env ever tracked, no key patterns in the tree.
+
+Nothing stands between the paper and submission.
 
 - **The rarity decision taken and pinned: r, the firing rarity** — the
   audit's whole event algebra is contact-based, r_int is Lemma 2's curve and

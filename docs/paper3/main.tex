@@ -2211,9 +2211,14 @@ complete invocation (the harness's full argument namespace, under
 deployment name, created to equal the model version, so provenance is in
 the data rather than the lab notebook). Numbers in tables and prose are
 emitted by the named scripts from the committed JSONs, never hand-carried;
-a claims audit enforces this as a ratchet in CI.
-% TODO: public repo URL + archival snapshot + environment lock at
-% submission time.
+a claims audit enforces this as a ratchet in CI. The repository is
+public at \url{https://github.com/JaviMaligno/code-world-models}; the
+archival snapshot for this paper is the tag \texttt{paper3-v1}, which
+carries the Python environment lock (\texttt{env-lock.txt}, pip freeze
+of the running venv, Python 3.13.7) and a SHA-256 manifest of every
+committed results JSON and paper source
+(\texttt{MANIFEST.sha256}, emitted by
+\texttt{scripts/emit\_manifest.py}).
 
 \bibliography{references}
 
