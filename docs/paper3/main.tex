@@ -41,11 +41,12 @@ question precise: acceptance-with-certainty determines the model exactly up
 to the reachable query set, so everything beyond reach is gauge. On a minimal
 ring instrument we prove the extreme case --- a wrong-topology filled-disc
 artifact is unfalsifiable by \emph{any} sampling gate and bitwise harmless at
-play --- and measure, with real LLM synthesis across three model families,
+play --- and measure, with real large-language-model (LLM) synthesis across
+three model families,
 how a single knob (an angular channel of width $\gamma$) walks the same
 artifact through three regimes: unfalsifiable-and-harmless,
-falsifiable-and-costly, and instantly falsified. Two results organize the
-empirics. First, \textbf{danger is topology relative to reach, not
+falsifiable-and-costly, and instantly falsified. Three principles organize
+the empirics. First, \textbf{danger is topology relative to reach, not
 topology}: opening a channel the planner can use collapses the blind model's
 exploitation (\texttt{play\_cost} $1.09 \to {\sim}0$ over a knee at
 $\gamma \approx 0.1$), while a hidden channel with the \emph{same} first
@@ -54,16 +55,16 @@ parameter-bound and sensor-bound}: from outside evidence no family recovers
 the region (superstitious point fits); from inside, models pose the right
 topology but cannot pin its parameters to the gate's precision --- and the
 persistent-homology summary that guides them has a measurable resolution
-limit --- geometric, not budgetary --- and the topology the loop's
-artifacts pose tracks that summary's wrong $\hat\beta_1$, not the truth.
-Planner-side mitigation obeys
-the same geometry: point distrust-fences, a zero-dimensional cover, fail
-against the one-dimensional closed boundary at their calibrated radius ---
+limit, geometric rather than budgetary, whose wrong $\hat\beta_1$ the posed
+topology tracks instead of the truth.
+Third, \textbf{mitigation must match the dimension and direction of the
+model's error}: point distrust-fences, a zero-dimensional cover, fail
+against the one-dimensional closed boundary at their calibrated radius,
 while a fence matched to the boundary's dimension and \emph{persisted}
 across episodes collapses the exploitation to a two-lesson transient
 ($\mathrm{play\_cost}$ $0.999 \to 0.058$, truth-equal returns from the
 second episode on). Against an \emph{invented} mode every fence fires
-constantly and recovers nothing --- and the dual certificate (freedom
+constantly and recovers nothing, and the dual certificate (freedom
 points that locally un-freeze imagination where the model was refuted as
 too pessimistic) collapses that failure symmetrically
 ($1.769 \to 0.029$): the two wrongnesses need opposite defenses, each
@@ -209,7 +210,8 @@ $\mathcal{R}$.
   $\mathrm{play\_cost} \approx 1.0$ at \emph{every} $n \le 6$ --- rarity
   (synthesis axis) and reachability (play axis) are independent knobs, and
   a high-$n$ enclosed mode maxes out both.
-\item \textbf{A behavioral audit methodology} (used throughout): probe each
+\item \textbf{A behavioral audit that separates absent, wrong, and
+  unidentifiable structure} (used throughout): probe each
   artifact's \texttt{step()} on a state grid, classify the shape of its
   deviation-from-integrator set. It reproduces the companion paper's hand
   inspection, reclassifies the inside-start failures, and separates
@@ -223,8 +225,9 @@ the safety question is never ``is the model right?''\ but ``does the
 place where it is wrong intersect the operative reach of a competent
 planner?''\ Everything in this paper --- the harmless wrong topology, the
 danger knee, the hidden-channel persistence, the parameter-bound repairs,
-the sensor's resolution limit --- is that one sentence measured from six
-directions.
+the mitigation asymmetry, the sensor's resolution limit, and the
+dimensional rarity collapse --- is that one sentence measured from a
+different direction.
 
 \section{The instrument: a mode with an inside}
 \label{sec:instrument}
@@ -284,7 +287,14 @@ dimension $n$ becomes a fourth knob.
 \section{Theory: the gate quotient}
 \label{sec:theory}
 
-\paragraph{Setup.} Deterministic dynamics $f : S \times A \to S$ on
+This section establishes the paper's governing equivalence: a sampling
+gate identifies dynamics only on its reachable query set, so everything
+beyond reach is gauge. It then specializes that quotient to the enclosed
+ring --- where the extreme case is a theorem --- and shows how the
+channel width reopens identifiability from an exact zero.
+
+\paragraph{Reachable queries define the gate's equivalence class.}
+Deterministic dynamics $f : S \times A \to S$ on
 $S \subseteq \mathbb{R}^d$, initial distribution $\mu_0$, episode horizon
 $h$, and a \emph{gate policy} $\rho$ selecting actions (uniform-random in
 our gates, though nothing below needs that). The \textbf{reachable query
@@ -457,9 +467,10 @@ deterministic planner selects the same action at every real step, and the
 real environment does the rest.
 \end{proof}
 
-Measured \emph{bitwise}, as designed: paired-seed MPC episodes on $f$
-versus $\hat f_{\mathrm{fill}}$ are identical in return, final state, and
-contact, seed for seed.
+Paired-seed model-predictive-control (MPC) episodes confirm
+Proposition~\ref{prop:harmless} \emph{bitwise}: return, final state, and
+contact are identical under $f$ and $\hat f_{\mathrm{fill}}$, seed for
+seed.
 
 \begin{remark}[the triad]
 \label{rem:triad}
@@ -508,7 +519,8 @@ If the $\gamma_2$-trajectory first fires at step $t$ with no $D$-landing
 before $t$, Lemma~\ref{lem:divergence} makes the trajectories agree
 through $t$ and the landing lies in $A(\gamma_2) \subseteq A(\gamma_1)$;
 if some $D$-landing occurs at $s \le t$, a landing in $D$ \emph{is} a
-landing in $A(\gamma_1)$. ($0$ violations in $44{,}000$ CRN checks.)
+landing in $A(\gamma_1)$. ($0$ violations in $44{,}000$
+common-random-number (CRN) checks.)
 \end{proof}
 
 \begin{proposition}[continuity of the $\gamma$-curves, with explicit modulus]
@@ -702,15 +714,10 @@ waypoint family finds a controller entering $100/100$ within the same
 horizon, machine-checked. Reachability is jointly a property of geometry,
 policy, and budget, and the policy axis is cheap to search: what the gate
 policy cannot reach in $400$ rollouts, ten tuned parameters reach every
-time.) Under two checkable
-hypotheses --- (RG), a reward gap making some channel-entering candidate
-dominate every non-entering one, and (C), candidate coverage --- the blind
-planner's imagined argmax path must cross the annulus, so the planner
-queries the disagreement region with probability~1: the companion paper's
-play-cost upper bound is tight-side-active on this instrument. (RG) is
-verified numerically over the visited-state envelope before every arm, in
-the pre-registration style of the discrete paper; (C) is logged. Measured:
-blind contact rate $1.0$ at every $\gamma$ in calibration.
+time.) The steering witness also fixes the query side: under
+Proposition~\ref{prop:query}'s checkable hypotheses the competent blind
+planner reaches the disagreement region with probability~$1$, and the
+measured blind contact rate is $1.0$ at every calibrated $\gamma$.
 
 \begin{figure}[t]
 \centering
@@ -762,7 +769,10 @@ $\mathrm{pc}_{\mathrm{blind}}$ & $\mathrm{pc}_{\mathrm{fill}}$ \\
 unfalsifiable and harmless ($\gamma = 0$, the bitwise theorem), falsifiable
 and costly (facing channel), instantly falsified (inside start). The hidden
 channel is observationally identical to the closed ring although it changes
-$\beta_1$. Rates over $400$ rollouts ($r$, $r_{\mathrm{int}}$; the JSON
+$\beta_1$. Columns: $r$ contact rarity, $r_{\mathrm{int}}$ interior
+entry, $\mathrm{disagree}_{\mathrm{fill}}$ per-transition filled-model
+disagreement, $\mathrm{pc}$ \texttt{play\_cost}.
+Rates over $400$ rollouts ($r$, $r_{\mathrm{int}}$; the JSON
 carries per-cell Wilson CIs, e.g.\ $r = 0.045 \in [0.029, 0.070]$) and
 $32{,}000$ transitions ($\mathrm{disagree}_{\mathrm{fill}}$); a zero cell
 has 95\% Wilson upper bound $0.0095$ (rollout rates) and $1.2 \times
@@ -810,7 +820,12 @@ returns to this pair with the danger curve.
 \section{LLM synthesis on the closed ring: three families}
 \label{sec:synthesis}
 
-The synthesis arm runs the companion paper's protocol verbatim
+Throughout the experimental sections an \emph{arm} is a prompt/start
+configuration, a \emph{cell} fixes every knob within an arm, and a
+\emph{seed block} is the disjoint set of rollout seeds behind one
+synthesis draw --- the experimental unit every interval in this paper is
+computed over. The synthesis arm runs the companion paper's protocol
+verbatim
 (Azure GPT-5.x mini and large, $20$ seeds/cell, $N = 40$,
 $\varepsilon = 10^{-9}$, $\le 5$ refines) on four pre-registered cells of
 the closed ring: \textbf{A} (default prompt, outside start), \textbf{B}
@@ -846,10 +861,10 @@ evidence (${\approx}0.999$ outside, $0.971$ inside) --- the empirical gate
 bands are: correct ${\approx}1.0$; blind ${\approx}0.97$; posed-but-%
 mis-parameterized hollow structures $0.5$--$0.9$; interior-filling
 structures $0.02$--$0.4$ (they freeze states the evidence shows moving). A
-posed region with wrong parameters scores far \emph{below} blind --- so
-``mean gate fell'' can mean \emph{more} mode-posing, not less, and reading
-terminal gates without the reference invites exactly the misreading we
-document (and correct) in Section~\ref{sec:openring}. \textbf{Per-patch
+posed region with wrong parameters scores far \emph{below} blind --- so a
+terminal gate is interpretable only relative to the blind reference: a
+lower mean gate can mean \emph{more} mode-posing, not less
+(Section~\ref{sec:openring} shows this reversal live). \textbf{Per-patch
 coverage}: the same mask measures whether an artifact encodes a
 \emph{specific} region (e.g., the seen versus unseen patch of the companion
 paper's bi-modal instrument, where the audit verified the published hand
@@ -871,7 +886,10 @@ D$_{\mathrm{lg}}$ & tda / inside  & 1/20 & 20 & 0.971 & arc 5, point 4, blind 4,
 D$_{\mathrm{mi}}$ & tda / inside  & 0/20 & 20 & 0.971 & disc 5, loop 5, arc 5, blind 4, compl.\ 1 \\
 \bottomrule
 \end{tabular}
-\caption{GPT-5.x on the closed ring ($\gamma = 0$; lg = large, mi = mini;
+\caption{GPT-5.x on the closed ring ($\gamma = 0$; lg = large, mi =
+mini; ``tda'' = the per-seed topological-data-analysis summary of the
+sample's own contact evidence, cell C/D's guidance; ``present'' counts
+mode-present training samples;
 the two sizes share seeds, so their samples --- and the mode-present counts
 --- are identical by construction, not independent replications;
 \texttt{results/continuous\_synthesis\_ring2d\_\{mini,large\}\_gap0\{,\_pv-tda,-in\_pv-tda\}.json},
@@ -896,21 +914,22 @@ blocks, the unit both sizes share) --- yielded a certified, fully
 mode-blind artifact, exploited at
 $\mathrm{play\_cost} \approx 1.12$ with contact rate $1.0$, in every
 family tested: GPT-5.x (both sizes, full arm $20/20$ clean in both), Qwen
-(HF router, spot check), and Claude (agent-relayed, spot check). The play
+(Hugging Face router, spot check), and Claude (agent-relayed, spot
+check). The play
 number is bit-identical across families because the blind artifact is the
 same program: identifiability is a property of the sample, not the model
 --- the companion papers' law, now on a mode with an inside.
 
 \paragraph{Held-out replication: independent-gate acceptance coincides
-with that gate's own mode-miss, $156/156$.} Re-scoring every committed
-artifact on an independent gate
-block (a disjoint $40$-rollout stream per seed;
-\texttt{scripts/heldout\_gate\_audit.py} under its \texttt{ring2d} scope,
-output \texttt{results/heldout\_\allowbreak gate\_\allowbreak
-audit\_\allowbreak ring2d.json}: $903$
-artifacts over $39$ campaigns, the thin-neck synthesis cells of
+with that gate's own mode-miss, $156/156$.} An independent-gate audit
+re-scores all $903$ synthesized artifacts from the $39$ synthesis
+conditions --- the thin-neck cells of
 Section~\ref{sec:thinneck} and the two summary-intervention arms of
-Section~\ref{sec:sensor} included) turns the identifiability law into a
+Section~\ref{sec:sensor} included --- on a disjoint $40$-rollout gate
+block per seed
+(\texttt{scripts/heldout\_gate\_audit.py}, \texttt{ring2d} scope; output
+\texttt{results/heldout\_\allowbreak gate\_\allowbreak
+audit\_\allowbreak ring2d.json}), turning the identifiability law into a
 held-out
 measurement. On the incomplete arm restricted to artifacts whose
 \emph{training} sample missed the mode, held-out acceptance coincides
@@ -920,7 +939,8 @@ $91$ disjoint seed blocks (the two sizes share their blocks by
 construction), zero off-diagonal --- and the two-factor prediction
 $(1-r)^{N_{\mathrm{train}}+N_{\mathrm{gate}}}$ lies inside
 the Wilson $95\%$ interval of the measured accepted-and-blind rate in
-every one of the $39$ campaigns (each interval over that campaign's own
+every one of the $39$ synthesis conditions (each interval over that
+condition's own
 disjoint, independent seed blocks --- never pooled across sizes), the
 hidden-channel cells included --- audited
 under the closed ring's $r$, which their own $30$k calibration equals to
@@ -945,7 +965,7 @@ ring) freezes on exact \texttt{==} equality with its sample's single
 contact state, and the hardcoded coordinate sits $2$ ulps from the same
 trajectory under a different \texttt{libm} --- its stored in-sample
 $1.000$ is a property of the last bit of $\sin/\cos$ on the machine that
-ran the campaign, and the independent gate rejects it on every platform
+generated it, and the independent gate rejects it on every platform
 (\texttt{results/heldout\_gate\_audit\_ring2d.json},
 \texttt{train\_reproduction\_check}). This is Corollary~\ref{cor:evidence} operating:
 from outside, ring and disc evidence are pathwise identical, so the
@@ -993,7 +1013,8 @@ even when its \emph{topology} comes from the guidance. The D failures
 are not template-prior collapse: the behavioral audit classifies them as
 right-structure-wrong-parameters, which is a different failure mode.
 
-\paragraph{How the one passer passed.} The single gate-certified D recovery
+\paragraph{The sole gate-certified recovery uses the gauge-free
+disc-complement form.} The single gate-certified D recovery
 (large, $1/20$) freezes exactly when the post-integration landing has
 $\lVert p - c \rVert \ge 3.5$: the \emph{disc-complement} form. It is
 certified perfect on its own gate sample (gate $1.0$, blindness $0.0$, $\mathrm{play\_cost}$
@@ -1031,13 +1052,11 @@ $\gamma$); and Claude relay spots at the knee and at wide $\gamma$.
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.72\linewidth]{figures/danger_curve}
-\caption{\textbf{H1: danger is topology relative to reach.} The blind
-model's exploitation collapses over a knee at $\gamma \approx 0.1$ when
-the channel faces the start (blue: dense CPU curve, 16 paired MPC episodes
-per point; green: the LLM arms' exploited blind artifacts, identical in all
-three model families) --- while the \emph{hidden} channel (orange) holds
-full danger at the same $\gamma$ and the same $\beta_1 = 0$. The knee
-sits where the channel's arc width admits the planner's step.}
+\caption{Blind-model play cost versus channel width $\gamma$. Blue: the
+dense CPU sweep of the facing channel ($16$ paired MPC episodes per
+point); green: the LLM arms' exploited blind artifacts (the same blind
+program in all three model families); orange: the hidden-channel control
+at the same $\gamma$ and the same $\beta_1 = 0$.}
 \label{fig:dangercurve}
 \end{figure}
 
@@ -1052,22 +1071,18 @@ $\mathrm{pc}_{\mathrm{blind}}$ (facing) & 0.999 & 0.543 & 0.340 & 0.139 & 0.001 
 contact rate & 1.00 & 0.94 & 0.56 & 0.44 & 0.12 & 0.06 & 0.00$^{\dagger}$ & 0.00$^{\dagger}$ & 0.00$^{\dagger}$ \\
 \bottomrule
 \end{tabular}
-\caption{H1, the danger curve (CPU, 16 paired MPC episodes/point): the blind
-model's exploitation collapses over a knee at $\gamma \approx 0.1$ ---
-channel arc-width $\gamma \, r_{\mathrm{in}} \approx 0.35$, comparable to
-the planner's step. The \emph{hidden} channel holds
-$\mathrm{pc} = 1.116$ at $\gamma = 0.6$ \emph{and} $1.2$: same $\beta_1$,
-opposite danger. LLM-arm confirmations at $\gamma \in \{0.1, 0.6\}$
-reproduce the curve in both model sizes and in the Claude relay
-(0.348 at the knee, all three families); Figure~\ref{fig:dangercurve}
-plots all three series. $^{\dagger}$censored: $0/16$ episodes, Wilson
-upper $0.19$.}
+\caption{The facing danger curve (CPU, $16$ paired MPC episodes per
+point; $\mathrm{pc}$ denotes \texttt{play\_cost};
+\texttt{results/continuous\_ring2d\_open\_sweep\_summary.json}, one
+seed-block cell per $(\gamma, \text{arm}, \text{size})$). The
+\emph{hidden} channel holds $\mathrm{pc} = 1.116$ at $\gamma = 0.6$
+\emph{and} $1.2$. Figure~\ref{fig:dangercurve} plots all three series.
+$^{\dagger}$censored: $0/16$ episodes, Wilson upper $0.19$.}
 \label{tab:dangercurve}
 \end{table}
 
-\paragraph{H1 confirmed --- with the clincher
-(\texttt{results/continuous\_ring2d\_open\_sweep\_summary.json}, one
-seed-block cell per $(\gamma, \text{arm}, \text{size})$).} The facing
+\paragraph{H1 confirmed: a facing channel collapses danger; an equally
+wide hidden channel keeps it.} The facing
 curve collapses
 over a knee at $\gamma \approx 0.1$--$0.15$; the LLM cells reproduce it on
 their exploited blind artifacts in both sizes and in the Claude relay
@@ -1129,7 +1144,9 @@ topology never moves, and reachability below the threshold is
 leaps the $0.5$ neck (one $0.547$-step from $d = 4.03$), and the same
 $40$-witness family is blocked at neck $\ge 1.0$.
 
-\begin{center}\small
+\begin{table}[h]
+\centering
+\small
 \begin{tabular}{lrrrrr}
 \toprule
 neck (facing) & $r$ & $r_{\mathrm{int}}$ & $\mathrm{dis}_{\mathrm{fill}}$ &
@@ -1144,21 +1161,25 @@ closed & 0.0312 & $0^{\ast}$ & $0^{\ast}$ & 0.999 & $0.000^{\ast}$ \\
 1.2 & 0.0292 & $0^{\ast}$ & $0^{\ast}$ & 0.993 & $0.000^{\ast}$ \\
 \bottomrule
 \end{tabular}
-\end{center}
-
-\noindent ($30{,}000$ rollouts, $320{,}000$ disagreement transitions and
-$16$ paired MPC episodes per cell,
-\texttt{results/ring2d\_thin\_neck.json}; design and readings
-pre-registered in the repository before the run. $^{\ast}$exact --- the
+\caption{The thin-neck control, topology held fixed ($r$ contact rarity,
+$r_{\mathrm{int}}$ interior entry, $\mathrm{dis}_{\mathrm{fill}}$
+per-transition filled-model disagreement, $\mathrm{pc}$
+\texttt{play\_cost}). Each cell uses $30{,}000$ gate rollouts,
+$320{,}000$ disagreement transitions, and $16$ paired MPC episodes
+(\texttt{results/ring2d\_thin\_neck.json}; design and readings
+pre-registered before the run). $^{\ast}$exact --- the
 closed row by Lemma~\ref{lem:crossing} and
 Proposition~\ref{prop:harmless}, the neck-$1.2$ row by the local lemma at
-$\Delta = 1.0 < 1.2$, imagined steps included; $^{\dagger}$censored ---
-$0$ occurrences in that sample, Wilson $95\%$ uppers $1.3\times10^{-4}$
+$\Delta = 1.0 < 1.2$, imagined steps included. $^{\dagger}$censored ---
+$0$ occurrences in that sample; Wilson $95\%$ uppers $1.3\times10^{-4}$
 (rollouts), $1.2\times10^{-5}$ (transitions), $0.19$ (episodes;
 \texttt{results/ring2d\_zero\_wilson.json}, emitted from the sweep's own
-denominators).)
+denominators).}
+\label{tab:thinneck}
+\end{table}
 
-Three findings. \textbf{Hidden necks are bit-identical to the closed
+Table~\ref{tab:thinneck} carries three findings. \textbf{Hidden necks
+are bit-identical to the closed
 ring} at all six thicknesses (the same $r$ to the last float, $0$
 entries, $\mathrm{pc}_{\mathrm{blind}} = 0.999$): reach, not geometry, a
 third time on this instrument. \textbf{The planner leaks only at the
@@ -1246,7 +1267,11 @@ nerve fence, episodic & 0.5 & 0.999 & 0.957 & 1.00 & 2.0 \\
 per cell;
 \texttt{results/continuous\_mitigation\_ring\{,\_eps1,\_eps2,\_nerve\}.json}
 and \texttt{results/continuous\_ring2d\_optimism.json}, the paired episode
-as the unit). Point fences --- the defense that collapsed the patch
+as the unit). $\mathrm{pc}_{\mathrm{model}}$/$\mathrm{pc}_{\mathrm{mitigated}}$
+are \texttt{play\_cost} before/under the defense; a \emph{nerve} fence
+links violations into tangentially-extended segments; a \emph{freedom
+patch} locally un-freezes imagination where the model was refuted as too
+pessimistic. Point fences --- the defense that collapsed the patch
 exploitation --- do \emph{nothing} at their calibrated radius, partially
 relieve only at a radius of the geometry's own scale, and are exactly inert
 against the invented mode while firing constantly ($18.6$ fences per
@@ -1319,10 +1344,9 @@ the prober too --- $\mathrm{pc}$ $0.123$), and \emph{passivity} (the
 planner's own contacts, $9$ lessons spread over $16$ episodes,
 $\mathrm{pc}$ $0.152$ with occasional regressions). Persistence is the
 ingredient common to everything that works; geometry beats exploration
-beats waiting. The fence is
-itself an estimated boundary, i.e.\ the same object as
-Section~\ref{sec:sensor}'s evidence summaries, and inherits the same
-resolution limits.
+beats waiting. The fence is itself an estimated boundary ---
+Section~\ref{sec:sensor} shows next that any such boundary
+representation inherits the evidence sensor's finite-resolution limit.
 
 \paragraph{Against an invented mode, distrust is inert by construction.}
 The filled-disc model from inside (the below-random cell of
@@ -1384,8 +1408,8 @@ have resolution: measured on regenerated inside evidence, the detector
 reports $\hat\beta_1 = 1$ for every $\gamma \le 1.2$ --- it bridges any
 channel narrower than about two arc-units at this density --- flips
 seed-dependently at $\gamma = 1.8$, and is cleanly $0$ at $2.4$; the true
-$\beta_1$ is $0$ for every $\gamma > 0$. The sweep therefore
-manufactures, at no extra cost, the experiment H2 needs: gaps where
+$\beta_1$ is $0$ for every $\gamma > 0$. The sweep therefore supplies
+the contrasts H2 needs: gaps where
 guidance and truth disagree, one gap where guidance disagrees with itself
 across seeds, and gaps where they agree.
 
@@ -1396,42 +1420,47 @@ $\in \{30, 90, 270\}$ points $\times$ evidence
 $N \in \{40, 160\}$ rollouts $\times$ $\gamma$, five seeds each)
 shows the flip does not move: $\hat\beta_1 = 1$ at every
 $\gamma \le 1.2$ under \emph{every} budget and dose, $0$ at $2.4$ under
-all of them, with only the boundary gap $1.8$ wobbling. The mechanism is
-Rips geometry, and it can be written as a law: to the resolution of the
-proved two-sided sandwich below, the detector reports
-$\hat\beta_1 = 1$ when $\sqrt{3}\rho - 2\rho
-\sin(\Delta\theta_{\max}/2) > \tau$ --- the mean-radius display is the
-sandwich's collapse at $r_{\min} \approx r_{\max} \approx \rho$, and as a
-pointwise predictor it is measured, not exact ---
-where $\rho$ is the cloud's mean
-radius, $\Delta\theta_{\max}$ the \emph{largest angular gap of the
-sample} (the channel or a subsampling gap, whichever is larger), and
-$\tau$ the detector's persistence threshold --- the bar is born exactly at the
-largest gap's chord (proved: a winding cycle must contain an edge spanning
-every angular gap), cannot die before $\sqrt{3}\, r_{\min}$ (proved
-self-containedly: below that scale every triangle's boundary has winding
-zero, so winding obstructs filling), and dies by
-$2 r_{\max} \sin(\theta^*/2)$ with an explicit $\theta^*$
+all of them, with only the boundary gap $1.8$ wobbling.
+
+\paragraph{A two-sided barcode sandwich explains the flip.} The
+mechanism is Vietoris--Rips geometry. To the resolution of the proved
+sandwich, the detector reports $\hat\beta_1 = 1$ when
+$\sqrt{3}\rho - 2\rho \sin(\Delta\theta_{\max}/2) > \tau$, where $\rho$
+is the cloud's mean radius, $\Delta\theta_{\max}$ the \emph{largest
+angular gap of the sample} (the channel or a subsampling gap, whichever
+is larger), and $\tau$ the detector's persistence threshold; this
+mean-radius display is the sandwich's collapse at
+$r_{\min} \approx r_{\max} \approx \rho$, and as a pointwise predictor
+it is measured, not exact. The exact result is two-sided. The winding
+bar is born exactly at the largest gap's chord (proved: a winding cycle
+must contain an edge spanning every angular gap); it cannot die before
+$\sqrt{3}\, r_{\min}$ (proved self-containedly: below that scale every
+triangle's boundary has winding zero, so winding obstructs filling); and
+it dies by $2 r_{\max} \sin(\theta^*/2)$ with an explicit $\theta^*$
 (the filling lemma, proved: an explicit gap-aware spanning triangle of
 winding one plus a fan retraction exhibit the 2-chain that bounds the
-born \emph{class} --- no general filling machinery needed --- and a
-pairing lemma transfers the sandwich from the class to the \emph{bar}
-whenever exactly one bar spans
-$[2 r_{\max}\sin(\Delta\theta_{\max}/2),\, \sqrt3\,r_{\min})$, a rank
-condition read off the barcode and true in every factorial row;
-$\theta^* \to 2\pi/3$ for dense samples, recovering the Vietoris--Rips
-circle constant \citep{adamaszek2017vietoris}, and the measured
-death$/\bar\rho \in [1.70, 1.82]$ around $\sqrt 3 = 1.732$ is the radial
-thickness). The law is therefore \emph{two-sided}: $\hat\beta_1 \ge 1$ is
+born \emph{class}, no general filling machinery needed). A pairing lemma
+transfers the sandwich from the class to the \emph{bar} whenever exactly
+one bar spans
+$[2 r_{\max}\sin(\Delta\theta_{\max}/2),\, \sqrt3\,r_{\min})$ --- a rank
+condition read off the barcode, true in every factorial row.
+Consequently $\hat\beta_1 \ge 1$ is
 guaranteed when $\sqrt3\,r_{\min} - 2 r_{\max}\sin(\Delta\theta_{\max}/2)
 > \tau$, and no persistent winding bar exists when
 $2 r_{\max}\sin(\theta^*/2) - 2 r_{\min}\sin(\Delta\theta_{\max}/2) <
 \tau$ (only a spurious non-winding class could still fire --- never
-observed). On the factorial: the sandwich holds for $57/57$ winding bars,
+observed). For dense samples $\theta^* \to 2\pi/3$, recovering the
+Vietoris--Rips circle constant \citep{adamaszek2017vietoris}, and the
+measured death$/\bar\rho \in [1.70, 1.82]$ around $\sqrt 3 = 1.732$ is
+the radial thickness. On the factorial: the sandwich holds for $57/57$
+winding bars,
 the guaranteed bands have $0$ violations ($34$ and $5$ rows), and the
 pointwise law reproduces $78/80$ rows, the $2$ misses falling in the
 proved undecided band ($\gamma = 1.8$ boundary, subsampling-gap
-lottery). Worse, more evidence is counterproductive at the
+lottery).
+
+\paragraph{More evidence can strengthen the wrong topological report.}
+More evidence is counterproductive at the
 boundary: at $\gamma = 1.8$ the false-loop rate \emph{rises} from $1/5$
 to $3/5$ seeds when the dose quadruples ($n = 5$ paired seeds ---
 directional, underpowered;
@@ -1441,7 +1470,9 @@ on the two flipping seeds the spurious bar's persistence grows with the
 dose ($0.05 \to 0.50$ and $0.11 \to 0.43$), outrunning the threshold,
 which itself grows modestly ($4/5$ seeds) --- the sensor gets
 \emph{more confident} in the wrong topology as the data grows. Resolving a
-narrow channel requires a different filtration, not a bigger sample. A
+narrow channel requires a different filtration, not a bigger sample.
+
+\paragraph{Relative homology avoids the edge-deletion pathology.} A
 prototype confirms the direction and locates the real problem: censoring
 Rips edges that free trajectory segments properly cross restores
 specificity at every $\gamma > 0$ ($19/20$ versus $0/15$ for plain Rips at
@@ -1499,7 +1530,10 @@ keeping the open-ring specificity is unmeasured.
 The same one-step landing law that makes the continuity modulus explicit
 (Proposition~\ref{prop:continuity}) is what caps the sensor here. Only
 the interleaving-stability theorem, which the pair formulation makes
-routine, remains. Nested boundaries
+routine, remains.
+
+\paragraph{Nested boundaries expose a separate resolution failure.}
+Nested boundaries
 break the detector a third way: with two concentric rings (the
 multi-chamber instrument) the middle-chamber evidence cloud is two
 concentric circles ($\beta_1 = 2$), and the pre-registered detector
@@ -1549,12 +1583,12 @@ flip --- is directional only (closed structures $3/27$ in the
 $\hat\beta_1 = 1$ subset versus $2/33$ in the $\hat\beta_1 = 0$ subset,
 $n = 60$: consistent in sign, not significant). What these measurements
 establish is: \textbf{posed topology tracks the sensor's report, not the
-truth} --- the cross-gap crossover above. Whether the summary's
-\emph{claim line alone} causes this we tested with a pre-registered
-isolating intervention
-(\texttt{docs/paper3/INTERVENTION-DESIGN.md}, analysis committed before
-any outcome was read): a full paired crossover at $\gamma = 1.8$ inside
-(mini, the same $60$ seeds, bit-identical evidence blocks) in which the
+truth} --- the cross-gap crossover above. A pre-registered paired
+intervention isolates whether the summary's \emph{claim line alone}
+causes this association
+(\texttt{docs/paper3/INTERVENTION-DESIGN.md}; the analysis was fixed
+before any outcome existed): a full crossover at $\gamma = 1.8$ inside
+(mini, the same $60$ seeds, bit-identical evidence blocks) whose
 treatment prompt negates exactly the summary's $\hat\beta_1$ line and its
 one interpretive sentence --- every other prompt byte held fixed ---
 scored against a \emph{contemporaneous} honest replicate as primary
@@ -1582,7 +1616,8 @@ ShellField-$n$ (Section~\ref{sec:ndim}), persistent homology of the
 $n \in \{2..6\}$ --- at low $n$ the cloud is plentiful but traces only
 the reachable arc (signal clarity), at high $n$ it starves as $r(n)$
 collapses ($0.18\times$ down to $0.002\times$ the
-Niyogi--Smale--Weinberger covering density \citep{niyogi2008finding},
+Niyogi--Smale--Weinberger (NSW) covering density
+\citep{niyogi2008finding},
 computed on the points the detector actually receives) --- while the
 \emph{inside} cloud recovers it cleanly at $n = 2..5$. The density
 bookkeeping matters: inside clouds \emph{offer} $10$--$2700\times$ the
@@ -1668,7 +1703,10 @@ spherical-cap prediction $\sin\theta = r_{\mathrm{out}}/L = 5/12 =
 0.4167$ --- agreement to $1.5\%$. So the collapse rate is the mode's
 \emph{angular size from the start}, $r(n) \asymp (r_{\mathrm{out}}/L)^n$,
 and nothing else: not its volume, not its thickness, not the horizon.
-The exponential law is moreover a \emph{theorem} once the action
+
+\paragraph{An isotropic action interface yields the spherical-cap rate
+exactly.} The exponential law is moreover a \emph{theorem} once the
+action
 interface is chosen well. If the thrust direction is uniform on
 $S^{n-1}$, the displacement is a sum of independent spherically
 symmetric vectors, hence spherically symmetric, so its direction is
@@ -1685,9 +1723,12 @@ non-vacuous from $n \approx 7$ against $n \approx 400$ for the
 exchangeability bound, and verified at $n = 3\ldots8$ (simulated decay
 $0.431$ against the predicted $0.4167$).
 
-The instrument's own thrust is cube-uniform and norm-capped, whose
-symmetry group is finite, so that argument does not apply to it --- but
-a different structure does, and it gives the \emph{sharp} rate. The norm
+\paragraph{The instrument's cube-uniform interface retains exponential
+decay.} The instrument's own thrust is cube-uniform and norm-capped,
+whose
+symmetry group is finite, so the spherical argument does not apply to it
+--- conditional sign independence supplies its replacement and gives the
+\emph{sharp} rate. The norm
 cap depends only on the absolute values of the action, and the action's
 coordinates are independent and symmetric; hence conditionally on all
 absolute values the signs are i.i.d. Rademacher and the displacement
@@ -1700,9 +1741,11 @@ exponent gives $P \le E[e^{\lambda\gamma^2 Z_1^2}]\prod_{i\ge2}
 E[e^{-\lambda Z_i^2}]$, and optimizing $\lambda$ in the Gaussian regime
 returns $\sqrt{en/(1+\gamma^2)}\,(1-\kappa^2)^{(n-1)/2}$: the cap rate
 exactly, losing only $\sqrt n$. Two ingredients close it. The first is Hoeffding
-sub-Gaussianity for $Z_1$. The second is that a Rademacher sum is no
-more concentrated near zero than its Gaussian counterpart --- which in
-its clean form is \emph{false} (equal weights leave an atom at the
+sub-Gaussianity for $Z_1$. The second would be that a Rademacher sum is
+no
+more concentrated near zero than its Gaussian counterpart --- a direct
+Gaussian comparison whose clean form is \emph{false} (equal weights
+leave an atom at the
 origin), and whose correct form we prove by writing
 $E[e^{-\lambda Z^2}] = E_g\prod_s \cos(\sqrt{2\lambda}\,g\,c_s)$ and
 splitting on $|g|$: since $|\cos x| \le e^{-x^2/2}$ for
@@ -1715,7 +1758,10 @@ $|x| \le 1.778$,
 with no hypothesis on the weights for validity. The instrument's own
 conditional profile has $\rho$ of median $4.0$ and minimum $2.34$ over
 ${\approx}8000$ samples, so the error costs ${\approx}3\times10^{-3}$:
-the per-dimension rate is $0.418$ against the sharp $0.4167$. Two things then matter about $\rho$. It is bounded below by $1$ for
+the per-dimension rate is $0.418$ against the sharp $0.4167$. The
+remaining issue is uniform control of the coordinate scales ---
+pointwise factors below one do not alone give an exponential product
+bound. Two things then matter about $\rho$. It is bounded below by $1$ for
 free (Cauchy--Schwarz), and once $\lambda$ is optimised \emph{with} the
 error term included the resulting factor
 $(1+u)^{-1/2} + 2\bar\Phi(1.778/\sqrt u)$ is below $1$ for
@@ -1741,8 +1787,8 @@ $0.4167^n$. Details
 and machine checks are in the repository's theory notes (Lemmas~C/E/F/G/
 H/I, Theorems~T5-C and T5-I, Proposition~T5-T).
 
-\paragraph{A methods note: the danger needs a competent planner, and
-``competent'' is an interface property.} An $n$-sweep whose vector-action
+\paragraph{Planner competence is a property of the action interface.}
+An $n$-sweep whose vector-action
 MPC uses only the scalar planner's constant-candidate analogue measures
 $\mathrm{play\_cost} \approx 0$ at every $n$. The cause is neither
 dimensional concentration nor the phantom's distance: that candidate set
@@ -1776,17 +1822,19 @@ $600$ rollouts per cell,
 \texttt{results/continuous\_shellfield.json}; $^{\dagger}$censored ---
 $0/600$ observed, the $600$ rollouts being independent samples within the
 cell, Wilson $95\%$ upper $6.4 \times 10^{-3}$.
-$\mathrm{pc}_{\mathrm{blind}}$ with the axial-candidate planner (see the
-methods note in the text).}
+$\mathrm{pc}_{\mathrm{blind}}$ with the axial-candidate planner (see
+``Planner competence is a property of the action interface'' in the
+text).}
 \label{tab:ndim}
 \end{table}
 
-\subsection{The non-separating control: obstruction is path-relative,
-gauge is separation-relative}
+\subsection{A non-separating mode separates the two halves: obstruction
+is path-relative, gauge is separation-relative}
 \label{sec:tube}
 
-One control remained to disentangle the thesis's two halves. A solid torus
-in $\mathbb{R}^3$ placed between start and lode
+A non-separating solid torus disentangles the thesis's two halves:
+danger stays path-relative while an exact gauge region requires
+separation. The torus, placed in $\mathbb{R}^3$ between start and lode
 (\texttt{TubeField3D}; thrust-vector action) does \emph{not} separate
 space: an explicit around-path reaches the far side contact-free, so
 nothing is reach-null, there is \emph{no exact gauge region}, and the
@@ -1861,7 +1909,7 @@ acceptance is property-based testing \citep{claessen2000quickcheck} applied
 to dynamics; Proposition~\ref{prop:quotient} is the exact statement of
 what such acceptance can pin down.
 
-\paragraph{Model error in model-based RL.} The pervasive-error framing
+\paragraph{Model error in model-based reinforcement learning (RL).} The pervasive-error framing
 \citep{janner2019mbpo, lambert2020objective, hafner2020dreamer,
 nagabandi2018neural, chua2018deep} is the backdrop the companion continuous
 paper argued against for hybrid systems; here the localized error is not
@@ -1903,8 +1951,15 @@ measured failure law for TDA \emph{as a component of a certification
 loop}: the sensor's resolution propagates into the gate-certified
 artifact.
 
-\section{Limitations and scope}
+\section{Boundary results and limitations}
 \label{sec:limitations}
+
+This section separates empirical scope limitations from three boundary
+results: the mechanism behind the play-cost tail, the strongest
+available direct-entry bound, and the detector-specific scope of the
+sensor conclusion.
+
+\subsection{Empirical scope}
 
 \paragraph{One instrument family, mostly round and separating.} The core
 results live on round shells with freeze semantics, where the crossing
@@ -1924,6 +1979,8 @@ $\gamma = 1.8$ remains directional-only even after doubling the cell to
 $n = 60$ ($3/27$ versus $2/33$); the cross-gap crossover carries H2.
 The Qwen D cell is missing (provider credits), so the D-cell family
 contrast rests on GPT ($1/20$) versus Claude ($3/3$).
+
+\subsection{Boundary analyses}
 
 \paragraph{Two candidate mechanisms for the tail, both false.} The heavy
 tail of the play-cost decomposition is not a freeze transient: the freeze
@@ -2017,15 +2074,17 @@ aligned-channel degeneracy is about. What stays unproved is the
 inequality itself, a property of the model--planner pair --- exactly what
 the negative result above says any tight bound must characterise.
 
-\paragraph{The honest math ledger.} The two $\gamma$-curve regularities
+\paragraph{Proved and measured bounds on the funnel defect and the
+direct-entry rate.} The two $\gamma$-curve regularities
 (monotonicity of $r_{\mathrm{int}}$, and that the wall never helps net
 entry) are theorems only \emph{up to the funnel defect}
 (Corollary~\ref{cor:funneldefect}), which we bound by measurement
-($17\times$ below the effect) rather than by proof. The routes to the
-unconditional statement are closed \emph{with evidence}, not abandoned:
-the pathwise route by an explicit counterexample (seed $50543$), the
-pointwise estimate by refutation in the data ($91/91$ CI-separated
-violations via a freeze-rescue effect). A third route closed the same
+($17\times$ below the effect) rather than by proof. Unconditional
+pathwise monotonicity is false: seed $50543$ is an explicit
+counterexample, and the required pointwise estimate fails in the data
+($91/91$ CI-separated
+violations via a freeze-rescue effect). A third candidate proof fails
+the same
 way. Since freeze-rescue is caused by one modelling choice --- a contact
 zeroes the velocity --- a variant in which contact blocks the position
 but leaves the velocity updating freely would, if it made the ordering
@@ -2115,14 +2174,15 @@ danger law takes as its argument and this series measures per instrument.
 It also explains why no moment bound reaches it: the exact second moment of
 the Pearson walk puts the target at $1.3$ times the rms displacement, so
 the event is in the tail --- the mode's rarity and the failure of
-Chebyshev-type bounds are the same fact. Elsewhere the ledger has moved the other way, and we
-report both directions: the continuity modulus, the barcode sandwich, the
-non-separating query bound, and the play-cost decomposition are now
-theorems with explicit constants (some of them, like the refuted
-unconditional linking bound, negative results). Refutations are part of
-the record.
+Chebyshev-type bounds are the same fact. The continuity modulus, the
+barcode sandwich, the
+non-separating query bound, and the play-cost decomposition are
+theorems with explicit constants, and the package includes its negative
+results with the same status --- the refuted unconditional linking
+bound among them.
 
-\paragraph{The sensor constant is ours; the mechanism is the claim.} The
+\paragraph{The measured sensor constant is detector-specific; the flip
+mechanism is proved under the sandwich's hypotheses.} The
 resolution flip at $\gamma \approx 1.8$ belongs to one pre-registered
 detector at one density (Rips, dedup $0.05$, cap $90$, $3\times$
 median-NN). Other detectors move the constant; what the paper measures
