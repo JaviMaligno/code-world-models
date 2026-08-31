@@ -5,10 +5,9 @@ numbers and the arguments live in the documents it names, and are not copied
 here, because a second copy is how `THEORY.md`'s list and its sections came to
 contradict each other twice (CAMPAIGN-LOG.md, "Ledger hygiene").
 
-Last updated 2026-08-27 (review-hardening session — Codex rounds 1–2
-triaged and repaired; the pre-registered H2 flipped-summary intervention
-RUN and folded: directional 9:2 but p = 0.065, the causal reading stays
-unearned).
+Last updated 2026-08-31 — the paper is ANNOUNCED as arXiv:2608.28541.
+See "Announced" at the foot of this file for what that closed and what is
+still open on the arXiv side.
 
 ## The state in one paragraph
 
@@ -245,7 +244,7 @@ review-hardening branch into main). Secret scan before anything: no
 
 Nothing stands between the paper and submission.
 
-**SUBMITTED to arXiv 2026-08-28** as `submit/8006768` (cs.LG primary,
+**ANNOUNCED as [arXiv:2608.28541](https://arxiv.org/abs/2608.28541)** (2026-08-31), submitted 2026-08-28 as `submit/8006768` (cs.LG primary,
 cs.AI cross-list — eess.SY not possible from this account's groups; CC
 BY 4.0; arXiv compile SUCCEEDED, 33 pages). Details and the
 post-announcement checklist: `ARXIV-SUBMISSION.md`. Javier reviewed the
@@ -359,3 +358,19 @@ maths is done in a separate session.
     a run passes `size=nano`, so it costs nothing to leave out.
 - This machine drops work when saturated: keep worker pools small (the rarity
   sweep defaults to 4) and never run two suites at once.
+
+## Announced (2026-08-31)
+
+arXiv:2608.28541, cs.LG primary with cs.AI cross-list. The announced v1 is the
+CORRECTED source: the `tab:ndim` cell fixed after the first submission
+(`CHANGELOG-corrections.md`) is in the published PDF, verified against the
+PDF's own text stream. Post-announcement state:
+
+- README, this file and `ARXIV-SUBMISSION.md` carry the ID.
+- eess.SY cross-list: the account's `eess` group was enabled on 2026-08-29
+  (the v1.5 forms only offer archives from your registered groups, which is
+  why it could not be set at submission time); the cross-list request itself
+  is the remaining arXiv-side step.
+- Companion blog posts are scheduled in the `personal-website` repo:
+  `being-wrong-can-be-free` (2026-09-02) and its digestible companion
+  `the-bug-nobody-can-reach` (2026-09-05), both with the real ID substituted.
