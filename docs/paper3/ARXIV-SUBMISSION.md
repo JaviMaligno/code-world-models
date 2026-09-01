@@ -24,11 +24,10 @@ The entry for anyone citing this paper:
 
 What was submitted, for the record:
 
-- Primary **cs.LG**, cross-list **cs.AI**. **eess.SY could NOT be
-  cross-listed** (unlike paper 2): the submitter account's registered
-  groups are cs and math only, and the v1.5 cross-list dropdown offers
-  only those archives. If wanted, request the eess.SY cross-list after
-  announcement (or extend the account's groups first next time).
+- Primary **cs.LG**, cross-list **cs.AI** at submission time; **eess.SY
+  added afterwards** (announced 2026-09-01) once the account's `eess` group
+  was enabled — the v1.5 dropdowns only offer archives from your registered
+  groups, which is why it could not go in with the paper.
 - Licence **CC BY 4.0** (matching papers 1 and 2). Author
   `Javier Aguilar Mart\'in` (TeX encoding in the form; renders with the
   accent). Comments: `33 pages, 2 figures. Paper 3 of a series
@@ -65,8 +64,11 @@ After announcement:
 1. ~~Add the arXiv ID to the README and to `docs/paper3/STATE.md`.~~ Done.
 2. ~~Update this repo's citations of paper 3 anywhere they say
    "in preparation".~~ Nothing inside this repo cites paper 3.
-3. eess.SY cross-list: the `eess` group was enabled on the account
-   (2026-08-29); the request is made from *Articles You Own* →
-   **Cross list** on the arXiv account page.
+3. ~~eess.SY cross-list.~~ Done — requested 2026-08-31 (`submit/8015233`)
+   and announced 2026-09-01 00:00 UTC. Subjects now read cs.LG (primary);
+   cs.AI; eess.SY. For next time: the v1.5 forms only offer archives from
+   the account's registered groups, so enable the group under *Change User
+   Information* BEFORE submitting and the cross-list can go in with the
+   paper instead of afterwards.
 4. Companion blog post, if the trilogy pattern continues (paper 2's is
    scheduled for 2026-08-30 from the `personal-website` repo).

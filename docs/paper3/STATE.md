@@ -245,7 +245,7 @@ review-hardening branch into main). Secret scan before anything: no
 Nothing stands between the paper and submission.
 
 **ANNOUNCED as [arXiv:2608.28541](https://arxiv.org/abs/2608.28541)** (2026-08-31), submitted 2026-08-28 as `submit/8006768` (cs.LG primary,
-cs.AI cross-list — eess.SY not possible from this account's groups; CC
+cs.AI cross-list at submission time, eess.SY added on 2026-09-01; CC
 BY 4.0; arXiv compile SUCCEEDED, 33 pages). Details and the
 post-announcement checklist: `ARXIV-SUBMISSION.md`. Javier reviewed the
 preview and pressed Submit himself.
@@ -367,10 +367,12 @@ CORRECTED source: the `tab:ndim` cell fixed after the first submission
 PDF's own text stream. Post-announcement state:
 
 - README, this file and `ARXIV-SUBMISSION.md` carry the ID.
-- eess.SY cross-list: the account's `eess` group was enabled on 2026-08-29
-  (the v1.5 forms only offer archives from your registered groups, which is
-  why it could not be set at submission time); the cross-list request itself
-  is the remaining arXiv-side step.
+- eess.SY cross-list: DONE, announced 2026-09-01 00:00 UTC. The paper now
+  carries cs.LG (primary), cs.AI and eess.SY, matching paper 2. The route
+  was: enable the account's `eess` group (2026-08-29 — the v1.5 forms only
+  offer archives from your registered groups, which is why it could not be
+  set at submission time), then *Articles You Own* -> **Cross list**
+  (`submit/8015233`). Nothing on the arXiv side is open.
 - Companion blog posts are scheduled in the `personal-website` repo:
   `being-wrong-can-be-free` (2026-09-02) and its digestible companion
   `the-bug-nobody-can-reach` (2026-09-05), both with the real ID substituted.
