@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   paper:
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
     name: LaTeX presentation guard
     runs-on: ubuntu-latest
     steps:
@@ -57,7 +57,7 @@ jobs:
       - name: Check Python syntax without importing project code
         run: python -m compileall -q src tests
       - name: Bootstrap verified pip before dependency installation
-        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
         shell: bash
         run: |
           set -euo pipefail
@@ -68,13 +68,13 @@ jobs:
           printf '%s  %s\n' fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70 "$PIP_WHEEL" | sha256sum --check
           PYTHONPATH="$PIP_WHEEL" python -m pip install --no-index --no-deps "$PIP_WHEEL"
       - name: Install package
-        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
         run: python -m pip install -c requirements/runtime-security.txt -e ".[dev]"
       - name: Run test suite
-        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
         run: pytest -q
       - name: Verify the separate hashed security environment (no experiment replay)
-        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
         shell: bash
         run: |
           set -euo pipefail
@@ -92,7 +92,7 @@ jobs:
           PY
 
   lean_proofs:
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
     name: Lean formalization (paper 2 prop:risk; paper 3 metric core)
     runs-on: ubuntu-latest
     steps:
@@ -107,7 +107,7 @@ jobs:
           lake-package-directory: formal/Paper2Props
 
   paper_numbers:
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
     name: Paper 2 numbers match results/
     runs-on: ubuntu-latest
     steps:

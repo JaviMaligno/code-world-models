@@ -32,4 +32,4 @@ also installs the hashed alternative in a separate Linux/Python 3.12.15 environm
 and runs the fake-provider, cost-accounting and isolated sandbox tests with network
 connections forbidden. This checks installation and basic runtime compatibility;
 it does not replay experiments or revalidate historical paper claims. The hosted
-Linux check must pass before readiness is claimed.
+Linux check must pass before Linux compatibility is claimed.
