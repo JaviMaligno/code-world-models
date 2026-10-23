@@ -4,13 +4,25 @@ on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   paper:
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
     name: LaTeX presentation guard
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.15"
       - name: Install TeX Live
         run: |
           sudo apt-get update
@@ -41,13 +53,46 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.12.15"
+      - name: Check Python syntax without importing project code
+        run: python -m compileall -q src tests
+      - name: Bootstrap verified pip before dependency installation
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+        shell: bash
+        run: |
+          set -euo pipefail
+          PIP_WHEEL="$RUNNER_TEMP/pip-26.2.2-py3-none-any.whl"
+          curl --fail --silent --show-error --location \
+            https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl \
+            --output "$PIP_WHEEL"
+          printf '%s  %s\n' fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70 "$PIP_WHEEL" | sha256sum --check
+          PYTHONPATH="$PIP_WHEEL" python -m pip install --no-index --no-deps "$PIP_WHEEL"
       - name: Install package
-        run: pip install -e ".[dev]"
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+        run: python -m pip install -c requirements/runtime-security.txt -e ".[dev]"
       - name: Run test suite
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
         run: pytest -q
+      - name: Verify the separate hashed security environment (no experiment replay)
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --no-deps uv==0.13.5
+          uv venv --python 3.12.15 "$RUNNER_TEMP/cwm-security"
+          uv pip sync --python "$RUNNER_TEMP/cwm-security/bin/python" --require-hashes requirements/paper2-security.txt
+          uv pip install --python "$RUNNER_TEMP/cwm-security/bin/python" --no-deps -e .
+          "$RUNNER_TEMP/cwm-security/bin/python" - <<'PY'
+          import socket
+          import pytest
+          def forbid_network(*args, **kwargs):
+              raise AssertionError("Network is forbidden in security compatibility checks")
+          socket.socket.connect = forbid_network
+          raise SystemExit(pytest.main(["-q", "tests/test_provider.py", "tests/test_cost_meter.py", "tests/test_sandbox.py"]))
+          PY
 
   lean_proofs:
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
     name: Lean formalization (paper 2 prop:risk; paper 3 metric core)
     runs-on: ubuntu-latest
     steps:
@@ -62,13 +107,14 @@ jobs:
           lake-package-directory: formal/Paper2Props
 
   paper_numbers:
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
     name: Paper 2 numbers match results/
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.12.15"
       # Every table cell and the counted prose claims of docs/paper2/main.tex are
       # re-derived from the versioned result JSONs, at the paper's own printed
       # precision. A stale transcription fails here rather than in a preprint.
