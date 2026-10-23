@@ -27,5 +27,9 @@ For fresh development/CI installations, `requirements/runtime-security.txt`
 constrains the two affected network trust/runtime packages without replacing the
 historical capture or forcing its other scientific package versions. CI bootstraps
 pip 26.2.2 from a hash-verified wheel before dependency installation. Draft PRs run
-syntax checks; full Python, paper and proof checks run after Ready. Hosted CI and
-separate compatibility checks are still required before readiness is claimed.
+syntax checks; full Python, paper and proof checks run after Ready. The same job
+also installs the hashed alternative in a separate Linux/Python 3.12.15 environment
+and runs the fake-provider, cost-accounting and isolated sandbox tests with network
+connections forbidden. This checks installation and basic runtime compatibility;
+it does not replay experiments or revalidate historical paper claims. The hosted
+Linux check must pass before readiness is claimed.

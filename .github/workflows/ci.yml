@@ -73,6 +73,23 @@ jobs:
       - name: Run test suite
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         run: pytest -q
+      - name: Verify the separate hashed security environment (no experiment replay)
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --no-deps uv==0.13.5
+          uv venv --python 3.12.15 "$RUNNER_TEMP/cwm-security"
+          uv pip sync --python "$RUNNER_TEMP/cwm-security/bin/python" --require-hashes requirements/paper2-security.txt
+          uv pip install --python "$RUNNER_TEMP/cwm-security/bin/python" --no-deps -e .
+          "$RUNNER_TEMP/cwm-security/bin/python" - <<'PY'
+          import socket
+          import pytest
+          def forbid_network(*args, **kwargs):
+              raise AssertionError("Network is forbidden in security compatibility checks")
+          socket.socket.connect = forbid_network
+          raise SystemExit(pytest.main(["-q", "tests/test_provider.py", "tests/test_cost_meter.py", "tests/test_sandbox.py"]))
+          PY
 
   lean_proofs:
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
